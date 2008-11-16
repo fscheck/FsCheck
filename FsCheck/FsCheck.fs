@@ -185,65 +185,25 @@ let collect v = label <| any_to_string v
 let prop b = gen { return {nothing with ok = Some b}} |> Prop
 let propl b = gen { return {nothing with ok = Some (lazy b)}} |> Prop
 
+type TestData = { NumberOfTests: int; Stamps: seq<int * list<string>>}
+type TestResult = 
+    | True of TestData
+    | False of TestData * list<string> //the arguments that produced the failed test
+    | Exhausted of TestData
+type IRunner =
+    abstract member OnArguments: int * list<string> * (int -> list<string> -> string) -> unit
+    abstract member OnFinished: string * TestResult -> unit
 
 type Config = 
     { maxTest : int
       maxFail : int
+      name    : string
       size    : float -> float  //determines size passed to the generator as funtion of the previous size. Rounded up.
                             //float is used to allow for smaller increases than 1.
                             //note: in QuickCheck, this is a function of the test number!
-      every   : int -> string list -> string } //determines what to print if new arguments args are generated in test n
+      every   : int -> string list -> string  //determines what to print if new arguments args are generated in test n
+      runner  : IRunner } //the test runner  
 
-let quick = { maxTest = 100
-              maxFail = 1000
-              size    = fun prevSize -> prevSize + 0.5
-              every   = fun ntest args -> "" } 
-         
-let verbose = 
-    { quick with every = fun n args -> any_to_string n + ":\n" + (List.fold_left (fun b a -> a + "\n" + b) "" args)  }
-
-let defaultConfig = quick
-
-
-
-
-//type Outcome = 
-//    | Passed 
-//    | Failed of list<string> //arguments with which the test failed
-//    | ArgumentsExhausted
-//
-//type TestRun = { Outcome : Outcome;
-//                 NumberOfTests: int;
-//                 Stamps : seq<list<string>> } with
-//    override x.ToString() = 
-//        let display l = match l with
-//                            | []  -> ".\n"
-//                            | [x] -> " (" + x + ").\n"
-//                            | xs  -> ".\n" + List.fold_left (fun acc x -> x + ".\n"+ acc) "" xs
-//        let percentage n m = any_to_string ((100 * n) / m) + "%"
-//        let rec intersperse sep l = match l with
-//                                    | [] -> []
-//                                    | [x] -> [x]
-//                                    | x::xs -> x :: sep :: intersperse sep xs  
-//        let entry (n,xs) = (percentage n x.NumberOfTests) + " " + (intersperse ", " xs |> Seq.to_array |> String.Concat)
-//        let table = x.Stamps
-//                    |> Seq.filter (fun l -> l <> []) 
-//                    |> Seq.sort_by (fun x -> x) 
-//                    |> Seq.group_by (fun x -> x) 
-//                    |> Seq.map (fun (l, ls) -> (Seq.length ls, l))
-//                    |> Seq.sort_by (fun (l, ls) -> l)
-//                    |> Seq.map entry
-//                    |> Seq.to_list
-//                    |> display
-//        match x.Outcome with
-//            | Passed -> sprintf "Ok, passed %i tests%s" x.NumberOfTests table
-//            | Failed arguments -> sprintf "Falsifiable, after %i tests:\n%A" x.NumberOfTests arguments
-//            | ArgumentsExhausted -> sprintf "Arguments exhausted after %i %s" x.NumberOfTests table
-        //mesg + " " + any_to_string ntest + " tests" + table:string
-        
-
-
-//type TestResult = Passed | Falsified | Failed
 type TestStep = 
     | Generated of list<string> //test number and generated arguments (test not yet executed)
     | Passed of list<string> //passed, test number and stamps for this test
@@ -253,46 +213,24 @@ type TestStep =
 let (|Lazy|) (inp:Lazy<'a>) = inp.Force()             
 
 let rec test initSize resize rnd0 gen =
-//    let mutable ntest = 0
-//    let mutable nfail = 0
     seq { let rnd1,rnd2 = split rnd0
           let newSize = resize initSize
           let result = generate (newSize |> round |> int) rnd2 gen
           yield Generated result.arguments
           match result.ok with
             | None -> 
-                //nfail <- nfail + 1
                 yield Failed  
-                yield! test newSize resize rnd1 gen //ntest (nfail+1) stamps
+                yield! test newSize resize rnd1 gen
             | Some (Lazy true) -> 
                 yield Passed result.stamp
-                //ntest <- ntest + 1
                 yield! test newSize resize rnd1 gen
             | Some (Lazy false) -> 
                 yield Falsified result.arguments
-                //ntest <- ntest + 1
                 yield! test newSize resize rnd1 gen
     }
 
-
-//TODO: refactor this so we get a nice output object containing passed/falsified/failed with the table in a checkable format
-let testsDone outcome (ntest:int) stamps =
-    let message outcome = 
-            match outcome with
-                | Passed _ -> "Ok, passed"
-                | Falsified _ -> "Falsifiable, after"
-                | Failed _ -> "Arguments exhausted after"
-                | _ -> failwith "Test ended prematurely"
-    let display l = match l with
-                        | []  -> ".\n"
-                        | [x] -> " (" + x + ").\n"
-                        | xs  -> ".\n" + List.fold_left (fun acc x -> x + ".\n"+ acc) "" xs
-    let percentage n m = any_to_string ((100 * n) / m) + "%"
-    let rec intersperse sep l = match l with
-                                | [] -> []
-                                | [x] -> [x]
-                                | x::xs -> x :: sep :: intersperse sep xs  
-    let entry (n,xs) = (percentage n ntest) + " " + (intersperse ", " xs |> Seq.to_array |> String.Concat)
+let testsDone config outcome ntest stamps =    
+    let entry (n,xs) = (100 * n / ntest),xs
     let table = stamps 
                 |> Seq.filter (fun l -> l <> []) 
                 |> Seq.sort_by (fun x -> x) 
@@ -300,11 +238,18 @@ let testsDone outcome (ntest:int) stamps =
                 |> Seq.map (fun (l, ls) -> (Seq.length ls, l))
                 |> Seq.sort_by (fun (l, ls) -> l)
                 |> Seq.map entry
-                |> Seq.to_list
-                |> display
-    Console.Write(message outcome + " " + any_to_string ntest + " tests" + table:string)
+                //|> Seq.to_list
+                //|> display
+    let testResult =
+        match outcome with
+            | Passed _ -> True { NumberOfTests = ntest; Stamps = table }
+            | Falsified args -> False ({ NumberOfTests = ntest; Stamps = table }, args)
+            | Failed _ -> Exhausted { NumberOfTests = ntest; Stamps = table }
+            | _ -> failwith "Test ended prematurely"
+    config.runner.OnFinished(config.name,testResult)
+    //Console.Write(message outcome + " " + any_to_string ntest + " tests" + table:string)
 
-let consoleRunner config property = 
+let runner config property = 
     let testNb = ref 0
     let failedNb = ref 0
     let lastStep = ref Failed
@@ -312,7 +257,7 @@ let consoleRunner config property =
     Seq.take_while (fun step ->
         lastStep := step
         match step with
-            | Generated args -> Console.Write(config.every !testNb args); true
+            | Generated args -> config.runner.OnArguments(!testNb, args, config.every); true//Console.Write(config.every !testNb args); true
             | Passed _ -> testNb := !testNb + 1; !testNb <> config.maxTest //stop if we have enough tests
             | Falsified _ -> testNb := !testNb + 1; false //falsified, always stop
             | Failed -> failedNb := !failedNb + 1; !failedNb <> config.maxFail) |> //failed, stop if we have too much failed tests
@@ -321,34 +266,46 @@ let consoleRunner config property =
             | Passed stamp -> (stamp :: acc)
             | _ -> acc
     ) [] |>   
-    testsDone !lastStep !testNb
-            
-//let rec tests config rnd0 gen ntest nfail stamps =
-//    if ntest = config.maxTest then 
-//        { Outcome = Passed; NumberOfTests=ntest; Stamps=stamps}//testsDone "Ok, passed" ntest stamps
-//    elif nfail = config.maxFail then 
-//        { Outcome = ArgumentsExhausted; NumberOfTests=ntest; Stamps=stamps}//testsDone "Arguments exhausted after" ntest stamps
-//    else
-//        let rnd1, rnd2 = split rnd0
-//        let result = generate (config.size ntest) rnd2 gen
-//        Console.Write(config.every ntest result.arguments);
-//        match result.ok with
-//            | None -> tests config rnd1 gen ntest (nfail+1) stamps
-//            | Some (Lazy true) -> tests config rnd1 gen (ntest+1) nfail (result.stamp :: stamps)
-//            | Some (Lazy false) -> { Outcome = Failed result.arguments; NumberOfTests=ntest; Stamps=stamps}//Console.WriteLine( "Falsifiable, after " + any_to_string ntest + " tests:\n" + any_to_string result.arguments);
+    testsDone config !lastStep !testNb
 
-          
-
-//let toConsole testRun = Console.Write(testRun.ToString())
+let consoleRunner =
+    let display l = match l with
+                        | []  -> ".\n"
+                        | [x] -> " (" + x + ").\n"
+                        | xs  -> ".\n" + List.fold_left (fun acc x -> x + ".\n"+ acc) "" xs
+    let rec intersperse sep l = match l with
+                                | [] -> []
+                                | [x] -> [x]
+                                | x::xs -> x :: sep :: intersperse sep xs  
+    let entry (p,xs) = any_to_string p + "% " + (intersperse ", " xs |> Seq.to_array |> String.Concat)
+    let stamps_to_string s = s |> Seq.map entry |> Seq.to_list |> display
+    { new IRunner with
+        member x.OnArguments (ntest,args, every) =
+            printf "%s" (every ntest args)
+        member x.OnFinished(name,testResult) = 
+            let name = (name+"-")
+            match testResult with
+                | True data -> printf "%sOk, passed %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
+                | False (data, args) -> printf "%sFalsifiable, after %i tests: %A\n" name data.NumberOfTests args 
+                | Exhausted data -> printf "%sArguments exhausted after %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
+    }
        
-let check config a = consoleRunner config a
-//tests config (newSeed()) (evaluate a) 0 0 [] 
+let check config property = runner config property
+
+let quick = { maxTest = 100
+              maxFail = 1000
+              name    = ""
+              size    = fun prevSize -> prevSize + 0.5
+              every   = fun ntest args -> "" 
+              runner  = consoleRunner } 
+         
+let verbose = 
+    { quick with every = fun n args -> any_to_string n + ":\n" + (List.fold_left (fun b a -> a + "\n" + b) "" args)  }
 
 let quickCheck p = p |> check quick
 let verboseCheck p = p |> check verbose
 let qcheck gen p = forAll gen p |> quickCheck
 let vcheck gen p = forAll gen p |> verboseCheck
-
 
 //parametrized active pattern that recognizes generic types with generic type definitions equal to the first paramater, 
 //and that returns the generic type parameters of the generic type.
@@ -371,14 +328,10 @@ let findGenerators =
             ) l
     addMethods []
 
-
-    
 let generators = new Dictionary<_,_>()
 
 let registerGenerators t =
-    //let dict = new Dictionary<_,_>()
     findGenerators t |> Seq.iter (fun (t,mi) -> generators.Add(t, mi))
-    //dict
 
 registerGenerators (typeof<Gen>)
 
@@ -404,8 +357,6 @@ let rec getGenerator (genericMap:IDictionary<_,_>) (t:Type)  =
         let mi' = if mi.ContainsGenericParameters then mi.MakeGenericMethod(typeargs) else mi
         mi'.Invoke(null, args)
 
-//let getGeneratorFor<'t> = getGenerator(typeof<'t>) |> unbox<Gen<'t>>
-
 let rec resolve (a:Type) (f:Type) (acc:Dictionary<_,_>) =
     if f.IsGenericParameter then
         if not (acc.ContainsKey(f)) then acc.Add(f,a)
@@ -428,7 +379,7 @@ let invokeMethod (m:MethodInfo) args =
     m.Invoke(null, args)
 
 
-let qcheckType (t:Type) = 
+let qcheckType config (t:Type) = 
     t.GetMethods((BindingFlags.Static ||| BindingFlags.Public)) |>
     Array.map(fun m -> 
         let genericMap = new Dictionary<_,_>()
@@ -438,47 +389,5 @@ let qcheckType (t:Type) =
                     |> Array.to_list
                     |> sequence
                     |> (fun gen -> gen.Map List.to_array)
-        printf "%s.%s-" t.Name m.Name
-        qcheck gen (fun g -> invokeMethod m g |> unbox<Property> )) |>
+        check {config with name = t.Name+"."+m.Name} (forAll gen (fun g -> invokeMethod m g |> unbox<Property> ))) |>
     ignore
-
-
-//let fromLazy lazyPred a = (lazyPred a) |> prop
-//let fromPred pred a = (pred a) |> Lazy.CreateFromValue |> prop
-//
-//type Fs =
-//    [<OverloadID("1")>]
-//    static member ForAll(generator,property) = 
-//        forAll generator property
-//    [<OverloadID("2")>]
-//    static member ForAll(generator,lazyPredicate) = 
-//        forAll generator (fromLazy lazyPredicate)//(fun a -> (lazyPredicate a) |> prop)
-//    [<OverloadID("3")>]
-//    static member ForAll(generator,predicate) = 
-//        forAll generator (fromPred predicate)//(fun a -> (predicate a) |> lazy_from_val |> prop)
-//    [<OverloadID("1")>]
-//    static member Filter(condition, property) = 
-//        condition ==> property
-//    [<OverloadID("2")>]
-//    static member Filter(condition, lazyPredicate) = 
-//        condition ==> prop lazyPredicate
-//    static member Check property = quickCheck property
-//    static member CheckVerbose property = verboseCheck property
-//    [<OverloadID("1")>]
-//    static member CheckGen(generator, property) = 
-//        qcheck generator property
-//    [<OverloadID("2")>]
-//    static member CheckGen(generator, lazyPredicate) = 
-//        qcheck generator (fromLazy lazyPredicate)
-//    [<OverloadID("3")>]
-//    static member CheckGen(generator, predicate) = 
-//        qcheck generator (fromPred predicate)
-
-
-//problems with this overload approach:
-//- ugly
-//- combination properties of functions are lost due to mandatory tuple
-//- no infix possible
-//+ prop is superfluous
-//+ lazy is sometimes optional
-//--> member overload is out
