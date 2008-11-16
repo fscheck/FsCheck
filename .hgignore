@@ -1,0 +1,5 @@
+syntax: glob
+FsCheck\obj\Debug/*.cache
+FsCheck\obj\Debug/*.txt
+*.pdb
+*.dll

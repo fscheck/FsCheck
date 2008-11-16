@@ -8,14 +8,18 @@
     <ProjectGuid>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Architude.FsCheck</RootNamespace>
-    <AssemblyName>Architude.FsCheck</AssemblyName>
+    <AssemblyName>FsCheck</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Name>Architude.FsCheck</Name>
-    <SccProjectName>Svn</SccProjectName>
-    <SccProvider>SubversionScc</SccProvider>
-    <SccAuxPath>Svn</SccAuxPath>
-    <SccLocalPath>Svn</SccLocalPath>
+    <SccProjectName>
+    </SccProjectName>
+    <SccProvider>
+    </SccProvider>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccLocalPath>
+    </SccLocalPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
