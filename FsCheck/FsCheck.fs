@@ -45,7 +45,12 @@ type GenBuilder () =
     //member b.Let(p, rest) : Gen<_> = rest p
     //not so sure about this one...should delay executing until just before it is executed,
     //for side-effects. Examples are usually like = fun () -> runGen (f ())
-    member b.Delay(f : unit -> Gen<_>) : Gen<_> = Gen (fun n r -> match f() with (Gen g) -> g n r )
+    member b.Delay(f : unit -> Gen<_>) : Gen<_> = 
+        Gen (fun n r -> match f() with (Gen g) -> g n r )
+    member b.TryFinally(Gen m,handler ) = 
+        Gen (fun n r -> try m n r finally handler)
+    member b.TryWith(Gen m, handler) = 
+        Gen (fun n r -> try m n r with e -> handler e)
 
 ///The workflow function for generators, e.g. gen { ... }
 let gen = GenBuilder()
@@ -204,10 +209,15 @@ let result res = gen { return res } |> Prop
                        
 let evaluate (Prop gen) = gen
 
+//TODO: check the correctness of try-catch stuff
 let forAll gn body = 
     let argument a res = { res with arguments = (box a) :: res.arguments } in
     Prop <|  gen { let! a = gn
-                   let! res = (evaluate (body a))
+                   let! res = 
+                       try 
+                            (evaluate (body a))
+                       with
+                            e -> gen { return { nothing with ok = Some (lazy false) }}
                    return (argument a res) }
 
 let emptyProperty = result nothing
