@@ -7,6 +7,7 @@ open Random
 open Microsoft.FSharp.Control
 open Microsoft.FSharp.Reflection
  
+ 
 type internal IGen = 
     abstract AsGenObject : Gen<obj>
     
@@ -196,12 +197,13 @@ type Co =
               return! cob (f x) gn }
 
 
-
 type Result = { ok : option<Lazy<bool>>
                 stamp : list<string>
-                arguments : list<obj> }
+                arguments : list<obj> 
+                exc: option<Exception> }
 
-let nothing = { ok = None; stamp = []; arguments = [] }
+
+let nothing = { ok = None; stamp = []; arguments = []; exc = None }
 
 type Property = Prop of Gen<Result>
 
@@ -217,7 +219,7 @@ let forAll gn body =
                        try 
                             (evaluate (body a))
                        with
-                            e -> gen { return { nothing with ok = Some (lazy false) }}
+                            e -> gen { return { nothing with ok = Some (lazy false); exc = Some e }}
                    return (argument a res) }
 
 let emptyProperty = result nothing
@@ -241,8 +243,16 @@ let propl b = gen { return {nothing with ok = Some (lazy b)}} |> Prop
 type TestData = { NumberOfTests: int; Stamps: seq<int * list<string>>}
 type TestResult = 
     | True of TestData
-    | False of TestData * list<obj> //the arguments that produced the failed test
+    | False of TestData * list<obj> * option<Exception> //the arguments that produced the failed test
     | Exhausted of TestData
+
+type TestStep = 
+    | Generated of list<obj>    //test number and generated arguments (test not yet executed)
+    | Passed of list<string>    //passed, test number and stamps for this test
+    | Falsified of list<obj> * option<Exception>   //falsified the property with given arguments, potentially exception was thrown
+    | Failed                    //generated arguments did not pass precondition
+
+
 type IRunner =
     abstract member OnArguments: int * list<obj> * (int -> list<obj> -> string) -> unit
     abstract member OnFinished: string * TestResult -> unit
@@ -257,11 +267,6 @@ type Config =
       every   : int -> list<obj> -> string  //determines what to print if new arguments args are generated in test n
       runner  : IRunner } //the test runner  
 
-type TestStep = 
-    | Generated of list<obj> //test number and generated arguments (test not yet executed)
-    | Passed of list<string> //passed, test number and stamps for this test
-    | Falsified of list<obj>  //falsified the property with given arguments. test number and args passed again for convenience)
-    | Failed //of int(*number of test*) * int (*nb of failed tests*)  //generated arguments did not pass precondition, number of already failed tests is given
 
 let (|Lazy|) (inp:Lazy<'a>) = inp.Force()             
 
@@ -278,7 +283,7 @@ let rec test initSize resize rnd0 gen =
                 yield Passed result.stamp
                 yield! test newSize resize rnd1 gen
             | Some (Lazy false) -> 
-                yield Falsified result.arguments
+                yield Falsified (result.arguments,result.exc)
                 yield! test newSize resize rnd1 gen
     }
 
@@ -296,7 +301,7 @@ let testsDone config outcome ntest stamps =
     let testResult =
         match outcome with
             | Passed _ -> True { NumberOfTests = ntest; Stamps = table }
-            | Falsified args -> False ({ NumberOfTests = ntest; Stamps = table }, args)
+            | Falsified (args,exc) -> False ({ NumberOfTests = ntest; Stamps = table }, args, exc)
             | Failed _ -> Exhausted { NumberOfTests = ntest; Stamps = table }
             | _ -> failwith "Test ended prematurely"
     config.runner.OnFinished(config.name,testResult)
@@ -339,7 +344,8 @@ let consoleRunner =
             let name = (name+"-")
             match testResult with
                 | True data -> printf "%sOk, passed %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
-                | False (data, args) -> printf "%sFalsifiable, after %i tests: %A\n" name data.NumberOfTests args 
+                | False (data, args, None) -> printf "%sFalsifiable, after %i tests: %A\n" name data.NumberOfTests args 
+                | False (data, args, Some exc) -> printf "%sFalsifiable, after %i tests: %A\n with exception:\n%O" name data.NumberOfTests args exc
                 | Exhausted data -> printf "%sArguments exhausted after %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
     }
        
@@ -383,8 +389,7 @@ let findGenerators =
 
 let generators = new Dictionary<_,_>()
 
-let registerGenerators t =
-    findGenerators t |> Seq.iter (fun (t,mi) -> generators.Add(t, mi))
+let registerGenerators t = findGenerators t |> Seq.iter generators.Add //(fun (t,mi) -> generators.Add(t, mi))
 
 registerGenerators (typeof<Gen>)
 
@@ -410,24 +415,25 @@ let rec getGenerator (genericMap:IDictionary<_,_>) (t:Type)  =
         let mi' = if mi.ContainsGenericParameters then mi.MakeGenericMethod(typeargs) else mi
         mi'.Invoke(null, args)
 
-let rec resolve (a:Type) (f:Type) (acc:Dictionary<_,_>) =
+// resolve fails if the generic type is only determined by the return type 
+//(e.g., Array.zero_create) but that is easily fixed by additionally passing in the return type...
+let rec resolve (acc:Dictionary<_,_>) (a:Type, f:Type) =
     if f.IsGenericParameter then
         if not (acc.ContainsKey(f)) then acc.Add(f,a)
     else 
-        Array.zip (a.GetGenericArguments()) (f.GetGenericArguments())
-        |> Array.iter (fun (act,form) -> resolve act form acc)
-
+        if a.HasElementType then resolve acc (a.GetElementType(), f.GetElementType())
+        Array.zip (a.GetGenericArguments()) (f.GetGenericArguments()) |>
+        Array.iter (resolve acc)
 
 //for invoking functions: http://cs.hubfs.net/forums/thread/7820.aspx
 let invokeMethod (m:MethodInfo) args =
     let m = if m.ContainsGenericParameters then
                 let typeMap = new Dictionary<_,_>()
-                Array.zip args (m.GetParameters()) 
-                |> Array.iter (fun (a,f) -> 
-                    resolve (a.GetType()) f.ParameterType typeMap)  
+                Array.zip args (m.GetParameters()) |> 
+                Array.iter (fun (a,f) -> resolve typeMap (a.GetType(),f.ParameterType))  
                 let actuals = 
-                    m.GetGenericArguments() 
-                    |> Array.map (fun formal -> typeMap.[formal])
+                    m.GetGenericArguments() |> 
+                    Array.map (fun formal -> typeMap.[formal])
                 m.MakeGenericMethod(actuals)
             else 
                 m
@@ -444,5 +450,11 @@ let qcheckType config (t:Type) =
                     |> Array.to_list
                     |> sequence
                     |> (fun gen -> gen.Map List.to_array)
-        check {config with name = t.Name+"."+m.Name} (forAll gen (fun g -> invokeMethod m g |> unbox<Property> ))) |>
-    ignore
+        let property args =
+            if m.ReturnType = typeof<bool> then
+                invokeMethod m args |> unbox<bool> |> propl
+            elif m.ReturnType = typeof<Property> then
+                invokeMethod m args |> unbox<Property>
+            else
+                failwith "Invalid return type: must be either bool or Property"
+        check {config with name = t.Name+"."+m.Name} (forAll gen property)) |> ignore
