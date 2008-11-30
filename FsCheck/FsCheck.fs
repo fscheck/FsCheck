@@ -436,8 +436,24 @@ let invokeMethod (m:MethodInfo) args =
                 m
     m.Invoke(null, args)
 
+let private hasTestableReturnType (m:MethodInfo) =
+    m.ReturnType = typeof<bool> 
+    || m.ReturnType = typeof<Lazy<bool>> 
+    || m.ReturnType = typeof<Property>
+
+let private makeProperty invoker returnType args = 
+    if returnType = typeof<bool> then
+        invoker args |> unbox<bool> |> propl
+    elif returnType = typeof<Lazy<bool>> then
+        invoker args |> unbox<Lazy<bool>> |> prop
+    elif returnType = typeof<Property> then
+        invoker args |> unbox<Property>
+    else
+        failwith "Invalid return type: must be either bool, Lazy<bool> or Property"
+
 let checkType config (t:Type) = 
     t.GetMethods((BindingFlags.Static ||| BindingFlags.Public)) |>
+    Array.filter hasTestableReturnType |>
     Array.map(fun m -> 
         let genericMap = new Dictionary<_,_>()
         //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
@@ -446,15 +462,7 @@ let checkType config (t:Type) =
                     |> Array.to_list
                     |> sequence
                     |> (fun gen -> gen.Map List.to_array)
-        let property args =
-            if m.ReturnType = typeof<bool> then
-                invokeMethod m args |> unbox<bool> |> propl
-            elif m.ReturnType = typeof<Lazy<bool>> then
-                invokeMethod m args |> unbox<Lazy<bool>> |> prop
-            elif m.ReturnType = typeof<Property> then
-                invokeMethod m args |> unbox<Property>
-            else
-                failwith "Invalid return type: must be either bool or Property"
+        let property = makeProperty (invokeMethod m) (m.ReturnType)
         checkProperty {config with name = t.Name+"."+m.Name} (forAll gen property)) |> ignore
 
 let rec findFunctionArgumentTypes fType = 
@@ -475,15 +483,7 @@ let checkFunction config f =
                 |> List.map(fun p -> (getGenerator genericMap p  :?> IGen).AsGenObject )
                 |> sequence
                 |> (fun gen -> gen.Map List.to_array)
-    let property args =
-        if ret = typeof<bool> then
-            invokeFunction f args |> unbox<bool> |> propl
-        elif ret = typeof<Lazy<bool>> then
-            invokeFunction f args |> unbox<Lazy<bool>> |> prop
-        elif ret = typeof<Property> then
-            invokeFunction f args |> unbox<Property>
-        else
-            failwith "Invalid return type: must be either bool or Property"
+    let property = makeProperty (invokeFunction f) ret
     checkProperty config (forAll gen property) |> ignore
 
 let check config (whatever:obj) =
@@ -495,5 +495,8 @@ let check config (whatever:obj) =
 let quickCheck p = p |> check quick
 let verboseCheck p = p |> check verbose
 
+[<ObsoleteAttribute("Use quickCheck instead.")>]
 let qcheck gen p = forAll gen p |> quickCheck
+
+[<ObsoleteAttribute("Use verboseCheck instead.")>]
 let vcheck gen p = forAll gen p |> verboseCheck

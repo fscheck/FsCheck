@@ -1,4 +1,8 @@
 syntax: glob
-FsCheck\obj\*
+*\obj\Debug\*
+*\obj\Release\*
+*\bin\Debug\*
+*\bin\Release\*
 *.pdb
 *.dll
+*.suo
