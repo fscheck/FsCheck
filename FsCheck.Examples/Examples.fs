@@ -10,22 +10,25 @@ open System.Collections.Generic;
 
 //-------A Simple Example----------
 
-//short version, also 'truly' generic (i.e. will get lists of ints, chars, floats,...)
-let prop_RevRev xs = List.rev(List.rev xs) = xs    
+//short version, also polymorphic (i.e. will get lists of bools, chars,...)
+let prop_RevRev xs = List.rev(List.rev xs) = xs
 quickCheck prop_RevRev 
 
-//long version: define your own generator (constraint to list<int>)
+//long version: define your own generator (constraint to list<char>)
 let lprop_RevRev =     
-    forAll (Gen.List(Gen.Int)) (fun xs -> List.rev(List.rev xs) = xs |> propl)    
+    forAll (Gen.List(Gen.Char)) (fun xs -> List.rev(List.rev xs) = xs |> propl)    
 quickCheck prop_RevRev 
-
-//this style is obsolote
-//advantages:  generators are swapped more easily (are they? forall already does this...)
-//let prop_RevRev' (xs:list<int>) = List.rev (List.rev xs) = xs  |> propl  
-//qcheck (Gen.List(Gen.Int)) prop_RevRev'    
 
 let prop_RevId xs = List.rev xs = xs
 quickCheck prop_RevId
+
+//------Grouping properties--------
+type ListProperties =
+    static member RevRev xs = prop_RevRev xs
+    static member RevId xs = prop_RevId xs
+quickCheck (typeof<ListProperties>)
+
+//quickCheck (typeof<ListProperties>.DeclaringType)
 
 
 
@@ -43,11 +46,11 @@ let prop_Insert = forAll (Gen.Tuple(Gen.Int, Gen.List(Gen.Int)))
                     |> trivial (List.length xs = 0))
 quickCheck prop_Insert
 
-//other style
-let prop_Insert' (x:int,xs) =  
-    ordered xs ==> prop (lazy (ordered (insert x xs)))
-    |> trivial (List.length xs = 0)    
-qcheck (Gen.Tuple(Gen.Int, Gen.List(Gen.Int))) prop_Insert'
+////other style
+//let prop_Insert' (x:int,xs) =  
+//    ordered xs ==> prop (lazy (ordered (insert x xs)))
+//    |> trivial (List.length xs = 0)    
+//qcheck (Gen.Tuple(Gen.Int, Gen.List(Gen.Int))) prop_Insert'
 
 
 let prop_Insert2 = 

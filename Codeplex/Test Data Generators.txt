@@ -1,0 +1,141 @@
+!! Test Data Generators: The Type Gen
+
+Test data is produced by test data generators. FsCheck defines default generators for some often used types, but you can use your own, and will need to define your own generators for any new types you introduce. 
+
+Generators have types of the form Gen<'a>; this is a generator for values of type a. For manipulating values of type Gen, a computation expression called gen is provided by FsCheck.
+
+Generators are built up on top of the function
+
+{{
+val choose : (int * int -> int Gen)
+}}
+which makes a random choice of a value from an interval, with a uniform distribution. For example, to make a random choice between the elements of a list, use
+
+{{
+let chooseFromList xs = gen { let! i = choose (0, List.length xs-1) 
+                              return (List.nth xs i) }
+}}
+
+*Choosing Between Alternatives*
+
+A generator may take the form 
+oneof <list of generators>
+
+which chooses among the generators in the list with equal probability. For example, 
+
+{{
+oneof [ gen { return true }; gen { return false } ]
+}}
+generates a random boolean which is true with probability one half. 
+
+We can control the distribution of results using the function 
+
+{{
+val frequency: (int * 'a Gen) list -> 'a Gen 
+}}
+instead. Frequency chooses a generator from the list randomly, but weights the probability of choosing each alternative by the factor given. For example,
+
+{{
+frequency [ (2, gen { return true }); (1, gen { return false })]
+}}
+
+generates true two thirds of the time. 
+
+*The Size of Test Data*
+
+Test data generators have an implicit size parameter; FsCheck begins by generating small test cases, and gradually increases the size as testing progresses. Different test data generators interpret the size parameter in different ways: some ignore it, while the list generator, for example, interprets it as an upper bound on the length of generated lists. You are free to use it as you wish to control your own test data generators. 
+
+You can obtain the value of the size parameter using 
+
+{{
+val sized : ((int -> 'a Gen) -> 'a Gen)
+}}
+{{sized g}} calls g, passing it the current size as a parameter. For example, to generate natural numbers in the range 0 to size, use 
+
+{{
+sized <| fun s -> choose (0,s)
+}}
+The purpose of size control is to ensure that test cases are large enough to reveal errors, while remaining small enough to test fast. Sometimes the default size control does not achieve this. For example, towards the end of a test run arbitrary lists may have up to 50 elements, so arbitrary lists of lists may have up to 2500, which is too large for efficient testing. In such cases it can be useful to modify the size parameter explicitly. You can do so using
+
+{{
+val resize : (int -> 'a Gen -> 'a Gen)
+}}
+{{resize n g}} invokes generator g with size parameter n. The size parameter should never be negative. For example, to generate a random matrix it might be appropriate to take the square root of the original size:
+
+{{
+let matrix gn = sized <| fun s -> resize (s|>float|>sqrt|>int) gn
+}}
+
+*Generating Recursive Data Types*
+
+Generators for recursive data types are easy to express using oneof or frequency to choose between constructors, and F#'s standard computation expression syntax to form a generator for each case. There are also liftGen functions for arity up to 4 to lift constructors and functions into the Gen type. For example, if the type of trees is defined by
+
+{{
+type Tree = Leaf of int | Branch of Tree * Tree
+}}
+then a generator for trees might be defined by
+
+{{
+let rec unsafeTree() = 
+    oneof [ liftGen (Leaf) Gen.Int; 
+                  liftGen2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
+}}
+However, a recursive generator like this may fail to terminate, or produce very large results. To avoid this, recursive generators should always use the size control mechanism. For example, 
+
+{{
+let tree =
+    let rec tree' s = 
+        match s with
+          | 0 -> liftGen (Leaf) Gen.Int
+          | n when n>0 -> 
+            let subtree = tree' (n/2) in
+            oneof [ liftGen (Leaf) Gen.Int; 
+                          liftGen2 (fun x y -> Branch (x,y)) subtree subtree]
+    sized tree'
+}}
+Note that 
+* We guarantee termination by forcing the result to be a leaf when the size is zero. 
+* We halve the size at each recursion, so that the size gives an upper bound on the number of nodes in the tree. We are free to interpret the size as we will. 
+* The fact that we share the subtree generator between the two branches of a Branch does not, of course, mean that we generate the same tree in each case.
+
+*Useful Generator Combinators*
+
+If g is a generator for type t, then 
+{{two g}} generates a pair of t's, 
+{{three g}} generates a triple of t's, 
+{{four g}} generates a quadruple of t's, 
+{{vector n g}} generates a list of n t's. 
+If xs is a list, then {{elements xs}} generates an arbitrary element of xs.
+
+*Default Generators*
+
+FsCheck uses static members of the type Gen to define default test data generators for some types. FsCheck defines instances for the types (), bool, int, float, char, string, pairs, triples, quadruples, lists, and functions. You can define new ones by making new instances of 'a Gen.
+
+To generate random functions of type 'a->'b, you need to provide an instance of type 'a-> 'b Gen -> 'b Gen, which we'll call the cogenerator. The implementation of ('a->'b) Gen uses a cogenerator for type a. If you only want to generate random values of a type, you need only to define a generator for that type, while if you want to generate random functions over the type also, then you should define a cogenerator as well. 
+
+A cogenerator function interprets a value of type a as a generator transformer. It should be defined so that different values are interpreted as independent generator transformers. These can be programmed using the function
+
+{{
+val variant : (int -> 'a Gen -> 'a Gen)
+}}
+For different natural numbers i and j, variant i g and variant j g are independent generator transformers. The argument of variant must be non-negative, and, for efficiency, should be small. Cogenerators can be defined by composing together generator transformers constructed with variant. 
+
+For example,for the type Tree defined above, a suitable instance of a cogenerator, allowing you to define functions Tree -> 'a, can be defined as follows
+
+{{
+let rec cotree t = 
+    match t with
+       | (Leaf n) -> variant 0 << Co.Int n
+       | (Branch (t1,t2)) -> variant 1 << cotree t1 << cotree t2
+}}
+
+*Properties of Functions*
+
+Since FsCheck can generate random function values, it can check properties of functions. For example, we can check associativity of function composition as follows:
+
+{{
+let treegen = (Gen.Tuple(tree,three (Gen.Arrow(cotree,tree))))
+let prop_Assoc gen = forAll gen (fun (x,(f,g,h)) -> 
+    propl ( ((f >> g) >> h) x = (f >> ( g >> h)) x ))
+}}
+where we use the generator and cogenerator for trees defined above; we thus generate functions Tree -> Tree. If a counter-example is found, function values will be displayed as "<func>".

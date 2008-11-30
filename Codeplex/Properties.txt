@@ -1,0 +1,193 @@
+!! Properties
+
+Properties are expressed as F# function definitions (in the documentation, we give them names beginning with prop_, but this is not necessary). 
+
+Properties are universally quantified over their parameters, so
+
+{{
+let prop_RevRev xs = List.rev(List.rev xs) = xs
+}}
+means that the equality holds for all lists xs. 
+
+Properties must _not_ have monomorphic types. (Note to QuickCheck users: in QuickCheck, they do.) 
+`Polymorphic' properties, such as the one above will be tested by FsCheck as if the generic arguments are of type object; this means, that values of various simple types (int, float, char, string,...) are generated. It may even be the case that one generated list contains more than one type, e.g. {"['r', 1, true]"} would be a list that can be used to check the property above.
+
+The generated values are based on the type however, so you may change this behavior simply by giving xs a different inferred or explicit type:
+
+{{
+let prop_RevRevInt (xs:list<int>) = List.rev(List.rev xs) = xs
+}}
+is only checked with lists of int.
+
+The result type of a property should be bool, or Lazy<bool>, or the FsCheck provided type Property.
+
+*Conditional Properties*
+
+Properties may take the form
+<condition> ==> <property>
+
+For example, 
+
+{{
+let rec ordered xs = 
+    match xs with
+         | [] -> true
+         | [x] -> true
+         | x::y::ys ->  (x <= y) && ordered (y::ys)
+let rec insert x xs = 
+     match xs with
+         | [] -> [x]
+         | c::cs -> if x <= c then x::xs else c::(insert x cs)                  
+let prop_Insert (x:int) xs = ordered xs ==> propl (ordered (insert x xs))
+}}
+Such a property holds if the property after ==> holds whenever the condition does. 
+
+The function propl (val: bool -> Property) is used to lift its bool argument to a value of type Property; all property combinators expect the type Property as argument, so this is usually the first thing to do if you want to use any of the property combinators.
+
+Testing discards test cases which do not satisfy the condition. Test case generation continues until 100 cases which do satisfy the condition have been found, or until an overall limit on the number of test cases is reached (to avoid looping if the condition never holds). In this case a message such as
+
+{{
+Arguments exhausted after 97 tests. 
+}}
+indicates that 97 test cases satisfying the condition were found, and that the property held in those 97 cases. 
+
+Notice that in this case the generated values had to be restricted to int. This is because the generated values need to be comparable, but this is not reflected in the types. Therefore, without the explicit restriction, FsCheck could generate lists containing different types (subtypes of objects), and these are not mutually comparable.
+
+*Lazy Properties*
+
+Since F# has eager evaluation by default, the above property does more work than necessary: it evaluates the property at the right of the condition no matter what the outcome of the condition on the left. While only a performance consideration in the above example, this may limit the expressiveness of properties - consider:
+
+{{
+let prop_Eager a = a <> 0 ==> propl (1/a = 1/a)
+> quickCheck prop_Eager;;
+-Falsifiable, after 1 tests: [[|0|]]
+ with exception:
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.DivideByZeroException: Attempted to divide by zero.
+}}
+However, FsCheck also provides the function prop which lifts a lazy bool to a property, and so requires the F# keyword lazy to force the lazy evaluation of the condition:
+
+{{
+let prop_Lazy a = a <> 0 ==> prop (lazy (1/a = 1/a))
+> quickCheck prop_Lazy;;
+-Ok, passed 100 tests.
+}}
+Works as expected. propl is actually a shorthand for prop (lazy ...), but beware: the argument of propl is evaluated eagerly!
+
+*Quantified Properties*
+
+Properties may take the form 
+	forAll <generator>  (fun <pattern> -> <property>)
+
+For example, 
+
+{{
+let prop_InsertWithGen x = forAll orderedList (fun xs -> propl (ordered (insert x xs)))
+}}
+The first argument of forAll is a test data generator; by supplying a custom generator, instead of using the default generator for that type, it is possible to control the distribution of test data. In the example, by supplying a custom generator for ordered lists, rather than filtering out test cases which are not ordered, we guarantee that 100 test cases can be generated without reaching the overall limit on test cases. Combinators for defining generators are described later.
+
+*Observing Test Case Distribution*
+
+It is important to be aware of the distribution of test cases: if test data is not well distributed then conclusions drawn from the test results may be invalid. In particular, the ==> operator can skew the distribution of test data badly, since only test data which satisfies the given condition is used. 
+
+FsCheck provides several ways to observe the distribution of test data. Code for making observations is incorporated into the statement of properties, each time the property is actually tested the observation is made, and the collected observations are then summarized when testing is complete. 
+
+*Counting Trivial Cases*
+
+A property may take the form
+trivial <condition> <property>
+
+For example,
+{{
+let prop_InsertTrivial (x:int) xs = 
+    ordered xs ==> propl (ordered (insert x xs))
+    |> trivial (List.length xs = 0)
+}}
+Test cases for which the condition is true are classified as trivial, and the proportion of trivial test cases in the total is reported. In this example, testing produces
+
+{{
+> quickCheck prop_InsertTrivial;;
+Ok, passed 100 tests (46% trivial).
+}}
+
+*Classifying Test Cases*
+
+A property may take the form
+classify <condition> <string> <property>
+
+For example,
+
+{{
+let prop_InsertClassify (x:int) xs = 
+    ordered xs ==> propl (ordered (insert x xs))
+    |> classify (ordered (x::xs)) "at-head"
+    |> classify (ordered (xs @ [x])) "at-tail"
+}}
+
+Test cases satisfying the condition are assigned the classification given, and the distribution of classifications is reported after testing. In this case the result is
+
+{{
+> quickCheck prop_InsertClassify;;
+-Ok, passed 100 tests.
+52% at-tail, at-head.
+22% at-tail.
+22% at-head.
+}}
+Note that a test case may fall into more than one classification.
+
+Collecting Data Values
+
+A property may take the form
+collect <expression> <property>
+
+For example, 
+
+{{
+let prop_InsertCollect (x:int) xs = 
+    ordered xs ==> propl (ordered (insert x xs))
+        |> collect (List.length xs) 
+}}
+
+The argument of collect is evaluated in each test case, and the distribution of values is reported. The type of this argument is printed using any_to_string. In the example above, the output is
+
+{{
+> quickCheck prop_InsertCollect;;
+-Ok, passed 100 tests.
+44% 0.
+29% 1.
+15% 2.
+10% 3.
+1% 8.
+}}
+
+*Combining Observations*
+
+The observations described here may be combined in any way. All the observations of each test case are combined, and the distribution of these combinations is reported. For example, testing the property
+
+{{
+let prop_InsertCombined (x:int) xs = 
+    ordered xs ==> propl (ordered (insert x xs))
+        |> classify (ordered (x::xs)) "at-head"
+        |> classify (ordered (xs @ [x])) "at-tail"
+        |> collect (List.length xs)
+}} 
+produces
+
+{{
+> quickCheck prop_InsertCombined;;
+-Arguments exhausted after 97 tests.
+32% 0, at-tail, at-head.
+14% 1, at-tail.
+12% 1, at-head.
+9% 2, at-tail.
+7% 2, at-head.
+5% 2, at-tail, at-head.
+5% 1, at-tail, at-head.
+3% 3.
+3% 2.
+2% 4.
+2% 3, at-tail.
+2% 3, at-head.
+1% 5, at-tail.
+}}
+  
+from which we see that insertion at the beginning or end of a list has not been tested for lists of four elements.

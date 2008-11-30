@@ -1,0 +1,16 @@
+What is FsCheck?*
+
+FsCheck is a tool for testing F# programs automatically. The programmer provides a specification of the program, in the form of properties which functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. While writing the properties, you are actually writing a testable specification of your program. Specifications are expressed in F#, using combinators defined in the FsCheck library. FsCheck provides combinators to define properties, observe the distribution of test data, and define test data generators. 
+
+FsCheck is a port of Haskell's [url:QuickCheck 0.1|http://www.cs.chalmers.se/~rjmh/QuickCheck/]. Important parts of the manual for using FsCheck is almost literally "adapted" from the QuickCheck [url:manual|http://www.cs.chalmers.se/~rjmh/QuickCheck/manual.html] and [url:paper|http://www.md.chalmers.se/~koen/Papers/quick.ps]. Any errors and omissions are entirely my responsibility.
+
+FsCheck test cases and specifications are currently best written using F#. Non-functional languages like C# and VB.net lack the language features necessary to use FsCheck effectively. FsCheck still might be useful for testing programs written in other languages.  The generator combinators can be used in any testing framework to easily generate a number of random values for many types. 
+
+*Download*
+
+*Find out more*
+[QuickStart]
+[Properties]
+[Test Data Generators]
+
+

@@ -16,7 +16,7 @@ type StdGen = StdGen of int * int
 // divMod               | ?
 // quotRem              | divRem
 
-//since the implementation uses divMod and mod, we need to reimplment these.
+//since the implementation uses divMod and mod, we need to reimplement these.
 //fortunately that's fairly easy given Math.DivRem
 let divMod (n:int) d = 
     let (q,r) as qr = Math.DivRem(n,d) //neat F# feature here: out parameters are converted to tuples!
