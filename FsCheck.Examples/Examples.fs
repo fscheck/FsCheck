@@ -9,18 +9,14 @@ open System.Collections.Generic;
 
 
 //-------A Simple Example----------
-
 //short version, also polymorphic (i.e. will get lists of bools, chars,...)
 let prop_RevRev xs = List.rev(List.rev xs) = xs
-quickCheck prop_RevRev 
 
-//long version: define your own generator (constraint to list<char>)
+//long version: define your own generator (constrain to list<char>)
 let lprop_RevRev =     
-    forAll (Gen.List(Gen.Char)) (fun xs -> List.rev(List.rev xs) = xs |> propl)    
-quickCheck prop_RevRev 
+    forAll (Gen.List(Gen.Char)) (fun xs -> List.rev(List.rev xs) = xs |> propl)     
 
 let prop_RevId xs = List.rev xs = xs
-quickCheck prop_RevId
 
 //------Grouping properties--------
 type ListProperties =
@@ -28,63 +24,71 @@ type ListProperties =
     static member RevId xs = prop_RevId xs
 quickCheck (typeof<ListProperties>)
 
-//quickCheck (typeof<ListProperties>.DeclaringType)
 
+//-----Properties----------------
+let prop_RevRevFloat (xs:list<float>) = List.rev(List.rev xs) = xs
 
-
-//helper functions
+//Conditional Properties
 let rec private ordered xs = match xs with
                              | [] -> true
                              | [x] -> true
                              | x::y::ys ->  (x <= y) && ordered (y::ys)
 let rec insert x xs = match xs with
                       | [] -> [x]
-                      | c::cs -> if x<=c then x::xs else c::(insert x cs)
-let prop_Insert = forAll (Gen.Tuple(Gen.Int, Gen.List(Gen.Int))) 
-                    (fun (x,xs) -> 
-                    ordered xs ==> prop (lazy (ordered (insert x xs)))
-                    |> trivial (List.length xs = 0))
-quickCheck prop_Insert
+                      | c::cs -> if x <= c then x::xs else c::(insert x cs)                      
+let prop_Insert (x:int) xs = ordered xs ==> propl (ordered (insert x xs))
 
-////other style
-//let prop_Insert' (x:int,xs) =  
-//    ordered xs ==> prop (lazy (ordered (insert x xs)))
-//    |> trivial (List.length xs = 0)    
-//qcheck (Gen.Tuple(Gen.Int, Gen.List(Gen.Int))) prop_Insert'
+//Lazy properties
+let prop_Eager a = a <> 0 ==> propl (1/a = 1/a)
+let prop_Lazy a = a <> 0 ==> prop (lazy (1/a = 1/a))
 
+//Counting trivial cases
+let prop_InsertTrivial (x:int) xs = 
+    ordered xs ==> propl (ordered (insert x xs))
+    |> trivial (List.length xs = 0)
 
-let prop_Insert2 = 
-    forAll (Gen.Tuple(Gen.Int, Gen.List(Gen.Int))) (fun (x,xs) -> 
-        ordered xs ==> prop( lazy (ordered (insert x xs)))
-        |> classify (ordered (x::xs)) "at-head"
-        |> classify (ordered (xs @ [x])) "at-tail") 
+//Classifying test cases
+let prop_InsertClassify (x:int) xs = 
+    ordered xs ==> propl (ordered (insert x xs))
+    |> classify (ordered (x::xs)) "at-head"
+    |> classify (ordered (xs @ [x])) "at-tail" 
+    
+//Collecting data values
+let prop_InsertCollect (x:int) xs = 
+    ordered xs ==> propl (ordered (insert x xs))
+        |> collect (List.length xs)
 
-let prop_Insert2' (x:int,xs) = 
-        ordered xs ==> prop( lazy (ordered (insert x xs)))
-        |> classify (ordered (x::xs)) "at-head"
-        |> classify (ordered (xs @ [x])) "at-tail"
-qcheck (Gen.Tuple(Gen.Int, Gen.List(Gen.Int))) prop_Insert2'
-
-let prop_Insert3 = 
-    forAll (Gen.Tuple(Gen.Int, Gen.List(Gen.Int))) (fun (x,xs) -> 
-        ordered xs ==> prop (lazy (ordered (insert x xs)))
+//Combining observations
+let prop_InsertCombined (x:int) xs = 
+    ordered xs ==> propl (ordered (insert x xs))
         |> classify (ordered (x::xs)) "at-head"
         |> classify (ordered (xs @ [x])) "at-tail"
-        |> collect (List.length xs))
-            
-let prop_Insert3' (x:int,xs) =
-        ordered xs ==> prop (lazy (ordered (insert x xs)))
-        |> classify (ordered (x::xs)) "at-head"
-        |> classify (ordered (xs @ [x])) "at-tail"
-        |> collect (List.length xs)    
-qcheck (Gen.Tuple(Gen.Int, Gen.List(Gen.Int))) prop_Insert3'
+        |> collect (List.length xs)
 
-//custom generators
+//--------Test Data Generators----------
+let private chooseFromList xs = 
+    gen {   let! i = choose (0, List.length xs-1) 
+            return (List.nth xs i) }
+//to generate a value out of a generator:
+//generate <size> <seed> <generator>
+//generate 0 (Random.newSeed()) (chooseFromList [1;2;3])
+
+//Choosing between alternatives
+let private chooseBool = 
+    oneof [ gen { return true }; gen { return false } ]
+    
+let private chooseBool2 = 
+    frequency [ (2, gen { return true }); (1, gen { return false })]
+
+//The size of test data
+let matrix gen = sized <| fun s -> resize (s|>float|>sqrt|>int) gen
+
+//Generating Recusrive data types
 type Tree = Leaf of int | Branch of Tree * Tree
 
-(*let rec unsafeTree = 
+let rec private unsafeTree() = 
     oneof [ liftGen (Leaf) Gen.Int; 
-            liftGen2 (fun x y -> Branch (x,y)) unsafeTree unsafeTree]*)
+            liftGen2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
 
 let tree =
     let rec tree' s = 
@@ -96,47 +100,50 @@ let tree =
                     liftGen2 (fun x y -> Branch (x,y)) subtree subtree]
             | _ -> raise(ArgumentException"Only positive arguments are allowed")
     sized tree'
+
+//Generating functions
 let rec cotree t = 
     match t with
        | (Leaf n) -> variant 0 << Co.Int n
        | (Branch (t1,t2)) -> variant 1 << cotree t1 << cotree t2
 
+//Default generators by type
 
-let private eq f g x = (f x) = (g x) 
-let treegen = Gen.Tuple(tree,three (Gen.Arrow(cotree,tree)))
+type Box<'a> = Whitebox of 'a | Blackbox of 'a
 
-Console.WriteLine("prop_Assoc");
+let boxgen gena = 
+    gen {   let! a = gena
+            return! elements [ Whitebox a; Blackbox a] }
+
+type MyGenerators =
+    static member Tree = tree
+    static member Box(gena) = boxgen gena
+     
+    
+let prop_RevRevTree (xs:list<Tree>) = List.rev(List.rev xs) = xs
+
+let prop_RevRevBox (xs:list<Box<int>>) = List.rev(List.rev xs) = xs
+
+//----------Tips and tricks-------
+//Testing functions
+let private treeGen = Gen.Tuple(tree,three (Gen.Arrow(cotree,tree)))
+
 let prop_Assoc = 
-    forAll (Gen.Tuple(Gen.Int, Gen.Arrow(Co.Int, Gen.Int) |> three)) (fun (x,(f,g,h)) ->
+    forAll treeGen (fun (x,(f,g,h)) ->
         ((f >> g) >> h) x = (f >> (g >> h)) x |> propl)
-quickCheck prop_Assoc
-Console.WriteLine("done prop_Assoc");
 
-let prop_RevUnit = forAll Gen.Int (fun x -> List.rev [x] = [x] |> propl)
-quickCheck prop_RevUnit
+//-------------examples from QuickCheck paper-------------
+let prop_RevUnit (x:char) = List.rev [x] = [x]
 
-let prop_RevApp = forAll (Gen.Tuple(Gen.Int,Gen.List(Gen.Int)))(fun (x,xs) -> 
-                    List.rev (x::xs) = List.rev xs @ [x] 
-                        |> propl
-                        |> trivial (xs = [])
-                        |> trivial (xs.Length = 1))
-quickCheck prop_RevApp
+let prop_RevApp (x:string) xs = 
+    List.rev (x::xs) = List.rev xs @ [x] 
+        |> propl
+        |> trivial (xs = [])
+        |> trivial (xs.Length = 1)
 
-let prop_MaxLe = forAll (Gen.Tuple(Gen.Int, Gen.Int)) (fun (x,y) ->  
-                    (x <= y) ==> prop (lazy (max  x y = y)))
-quickCheck prop_MaxLe
+let prop_MaxLe (x:float) y = (x <= y) ==> prop (lazy (max  x y = y))
 
-
-let chooseFromList xs = gen { let! i = choose (0, List.length xs) 
-                              return (List.nth xs i) }
-
-let chooseBool = oneof [ gen { return true }; gen { return false } ]
-let chooseBool2 = frequency [ (2, gen { return true }); (1, gen { return false })]
-let exampleSize = sized <| fun s -> choose (0,s)
-let matrix gn = sized <| fun s -> resize (s|>float|>sqrt|>int) gn
-
-let prop_CheckLazy = forAll (Gen.Int) (fun a -> false ==> prop (lazy (Console.WriteLine("boom"); a = 0)))
-let prop_CheckLazy2 = forAll (Gen.Int) (fun a -> a <> 0 ==> prop (lazy (1/a = 1/a)))
+//----------various examples
 
 //let arr = Gen.Arrow(Co.Float,Gen.Arrow(Co.Int,Gen.Bool))
 //let arr2 = Gen.Arrow(Co.Arrow (Gen.Float,Co.Int),Gen.Bool) //fun i -> 10.5) Gen.Int
@@ -158,7 +165,11 @@ type Properties =
 
 quickCheck (typeof<Properties>)
 
-Console.WriteLine("----------Do it all again----------------");
-quickCheck (typeof<Properties>.DeclaringType)
+Console.WriteLine("----------Check all toplevel properties----------------");
+type Marker = member x.Null = ()
+registerGenerators (typeof<Marker>.DeclaringType)
+quickCheck (typeof<Marker>.DeclaringType)
+
+overwriteGenerators (typeof<MyGenerators>)
 
 Console.ReadKey() |> ignore

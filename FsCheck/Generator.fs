@@ -1,12 +1,14 @@
-#light
+﻿#light
 
-open System
-open System.Collections.Generic
-open System.Reflection
+namespace FsCheck
+
+[<AutoOpen>]
+module Generator
+
 open Random
-open Microsoft.FSharp.Control
-open Microsoft.FSharp.Reflection
- 
+open System
+open System.Reflection
+open System.Collections.Generic
  
 type internal IGen = 
     abstract AsGenObject : Gen<obj>
@@ -52,6 +54,9 @@ type GenBuilder () =
         Gen (fun n r -> try m n r finally handler)
     member b.TryWith(Gen m, handler) = 
         Gen (fun n r -> try m n r with e -> handler e)
+    member b.Using (a, k) =  //'a * ('a -> Gen<'b>) -> Gen<'b> when 'a :> System.IDisposable
+        use disposea = a
+        k disposea
 
 ///The workflow function for generators, e.g. gen { ... }
 let gen = GenBuilder()
@@ -211,192 +216,16 @@ type Co =
     static member Arrow (gena,cob) f (gn:Gen<_>) = 
         gen { let! x = gena
               return! cob (f x) gn }
-
-///The result of one execution of a property.
-type Result = { ok : option<Lazy<bool>>
-                stamp : list<string>
-                arguments : list<obj> 
-                exc: option<Exception> }
-
-//--------------------------all above to module and separate file with generators------------------
-
-
-let private nothing = { ok = None; stamp = []; arguments = []; exc = None }
-
-type Property = private Prop of Gen<Result>
-
-let private result res = gen { return res } |> Prop
-                       
-let private evaluate (Prop gen) = gen
-
-///Quantified property combinator. Provide a custom test data generator to a property.
-let forAll gn body = 
-    let argument a res = { res with arguments = (box a) :: res.arguments } in
-    Prop <|  gen { let! a = gn
-                   let! res = 
-                       try 
-                            (evaluate (body a))
-                       with
-                            e -> gen { return { nothing with ok = Some (lazy false); exc = Some e }}
-                   return (argument a res) }
-
-let private emptyProperty = result nothing
-
-let private implies b a = if b then a else emptyProperty
-///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
-let (==>) b a = implies b a
-
-let private label str a = 
-    let add res = { res with stamp = str :: res.stamp } in
-    Prop ((evaluate a).Map add)
-
-///Classify test cases combinator. Test cases satisfying the condition are assigned the classification given.
-let classify b name a = if b then label name a else a
-
-///Count trivial cases property combinator. Test cases for which the condition is True are classified as trivial.
-let trivial b = classify b "trivial"
-
-///Collect data values property combinator. The argument of collect is evaluated in each test case, 
-///and the distribution of values is reported, using any_to_string.
-let collect v = label <| any_to_string v
-
-///Property constructor. Constructs a property from a bool.
-let prop b = gen { return {nothing with ok = Some b}} |> Prop
-///Lazy property constructor. Constructs a property from a Lazy<bool>.
-let propl b = gen { return {nothing with ok = Some (lazy b)}} |> Prop
-
-
-//--------------------all above to module and separate file with property combinators-----------------
-
-type TestData = { NumberOfTests: int; Stamps: seq<int * list<string>>}
-type TestResult = 
-    | True of TestData
-    | False of TestData * list<obj> * option<Exception> //the arguments that produced the failed test
-    | Exhausted of TestData
-    
-type TestStep = 
-    | Generated of list<obj>    //test number and generated arguments (test not yet executed)
-    | Passed of list<string>    //passed, test number and stamps for this test
-    | Falsified of list<obj> * option<Exception>   //falsified the property with given arguments, potentially exception was thrown
-    | Failed                    //generated arguments did not pass precondition
-
-type IRunner =
-    abstract member OnArguments: int * list<obj> * (int -> list<obj> -> string) -> unit
-    abstract member OnFinished: string * TestResult -> unit
-
-type Config = 
-    { maxTest : int
-      maxFail : int
-      name    : string
-      size    : float -> float  //determines size passed to the generator as funtion of the previous size. Rounded up.
-                            //float is used to allow for smaller increases than 1.
-                            //note: in QuickCheck, this is a function of the test number!
-      every   : int -> list<obj> -> string  //determines what to print if new arguments args are generated in test n
-      runner  : IRunner } //the test runner  
-
-
-let (|Lazy|) (inp:Lazy<'a>) = inp.Force()             
-
-let rec test initSize resize rnd0 gen =
-    seq { let rnd1,rnd2 = split rnd0
-          let newSize = resize initSize
-          let result = generate (newSize |> round |> int) rnd2 gen
-          yield Generated result.arguments
-          match result.ok with
-            | None -> 
-                yield Failed  
-                yield! test newSize resize rnd1 gen
-            | Some (Lazy true) -> 
-                yield Passed result.stamp
-                yield! test newSize resize rnd1 gen
-            | Some (Lazy false) -> 
-                yield Falsified (result.arguments,result.exc)
-                yield! test newSize resize rnd1 gen
-    }
-
-let testsDone config outcome ntest stamps =    
-    let entry (n,xs) = (100 * n / ntest),xs
-    let table = stamps 
-                |> Seq.filter (fun l -> l <> []) 
-                |> Seq.sort_by (fun x -> x) 
-                |> Seq.group_by (fun x -> x) 
-                |> Seq.map (fun (l, ls) -> (Seq.length ls, l))
-                |> Seq.sort_by (fun (l, ls) -> l)
-                |> Seq.map entry
-                //|> Seq.to_list
-                //|> display
-    let testResult =
-        match outcome with
-            | Passed _ -> True { NumberOfTests = ntest; Stamps = table }
-            | Falsified (args,exc) -> False ({ NumberOfTests = ntest; Stamps = table }, args, exc)
-            | Failed _ -> Exhausted { NumberOfTests = ntest; Stamps = table }
-            | _ -> failwith "Test ended prematurely"
-    config.runner.OnFinished(config.name,testResult)
-    //Console.Write(message outcome + " " + any_to_string ntest + " tests" + table:string)
-
-let runner config property = 
-    let testNb = ref 0
-    let failedNb = ref 0
-    let lastStep = ref Failed
-    test 0.0 (config.size) (newSeed()) (evaluate property) |>
-    Seq.take_while (fun step ->
-        lastStep := step
-        match step with
-            | Generated args -> config.runner.OnArguments(!testNb, args, config.every); true//Console.Write(config.every !testNb args); true
-            | Passed _ -> testNb := !testNb + 1; !testNb <> config.maxTest //stop if we have enough tests
-            | Falsified _ -> testNb := !testNb + 1; false //falsified, always stop
-            | Failed -> failedNb := !failedNb + 1; !failedNb <> config.maxFail) |> //failed, stop if we have too much failed tests
-    Seq.fold (fun acc elem ->
-        match elem with
-            | Passed stamp -> (stamp :: acc)
-            | _ -> acc
-    ) [] |>   
-    testsDone config !lastStep !testNb
-
-let consoleRunner =
-    let display l = match l with
-                        | []  -> ".\n"
-                        | [x] -> " (" + x + ").\n"
-                        | xs  -> ".\n" + List.fold_left (fun acc x -> x + ".\n"+ acc) "" xs
-    let rec intersperse sep l = match l with
-                                | [] -> []
-                                | [x] -> [x]
-                                | x::xs -> x :: sep :: intersperse sep xs  
-    let entry (p,xs) = any_to_string p + "% " + (intersperse ", " xs |> Seq.to_array |> String.Concat)
-    let stamps_to_string s = s |> Seq.map entry |> Seq.to_list |> display
-    { new IRunner with
-        member x.OnArguments (ntest,args, every) =
-            printf "%s" (every ntest args)
-        member x.OnFinished(name,testResult) = 
-            let name = (name+"-")
-            match testResult with
-                | True data -> printf "%sOk, passed %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
-                | False (data, args, None) -> printf "%sFalsifiable, after %i tests: %A\n" name data.NumberOfTests args 
-                | False (data, args, Some exc) -> printf "%sFalsifiable, after %i tests: %A\n with exception:\n%O" name data.NumberOfTests args exc
-                | Exhausted data -> printf "%sArguments exhausted after %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
-    }
-       
-let checkProperty config property = runner config property
-
-let quick = { maxTest = 100
-              maxFail = 1000
-              name    = ""
-              size    = fun prevSize -> prevSize + 0.5
-              every   = fun ntest args -> "" 
-              runner  = consoleRunner } 
-         
-let verbose = 
-    { quick with every = fun n args -> any_to_string n + ":\n" + (args |> List.fold_left (fun b a -> any_to_string a + "\n" + b) "")  }
-
+              
 //parametrized active pattern that recognizes generic types with generic type definitions equal to the first paramater, 
 //and that returns the generic type parameters of the generic type.
-let (|GenericTypeDef|_|) (p:Type) (t:Type) = 
+let private (|GenericTypeDef|_|) (p:Type) (t:Type) = 
     try
         let generic = t.GetGenericTypeDefinition() 
         if p.Equals(generic) then Some(t.GetGenericArguments()) else None
     with _ -> None
 
-let findGenerators = 
+let private findGenerators = 
     let addMethods l (t:Type) =
         t.GetMethods((BindingFlags.Static ||| BindingFlags.Public)) |>
         Seq.fold (fun l m ->
@@ -409,20 +238,27 @@ let findGenerators =
             ) l
     addMethods []
 
-let generators = new Dictionary<_,_>()
+///The currently registered generators, by the type they are generating.
+let private generators = new Dictionary<_,_>()
 
+///Register all the generators for types defined by static members of the given class type. Throws an exception if
+///any of them are already registered.
 let registerGenerators t = findGenerators t |> Seq.iter generators.Add //(fun (t,mi) -> generators.Add(t, mi))
 
-registerGenerators (typeof<Gen>)
+///Register all the generators for types defined by static members of the given class type. If
+///any of them are already registered, the old ones are overwritten by the given ones.
+let overwriteGenerators t = findGenerators t |> Seq.iter (fun (t,mi) -> generators.[t] <- mi)
 
-let rec getGenerator (genericMap:IDictionary<_,_>) (t:Type)  =
+do registerGenerators (typeof<Gen>)
+
+let rec internal getGenerator (genericMap:IDictionary<_,_>) (t:Type)  =
     if t.IsGenericParameter then
         //special code for when a generic parameter needs to be generated
         Gen.Object |> box
         //the code below chooses one generator type per generic type and then sticks with it
         //however, because of the difference in behavior between methodinfo.GetGenericArgs (return a name for
         //generic args) and FSharpType.GetFunctionElements (returns obj for generic args), the code below
-        //caused a difference in behavior. Now both will generate Whatever<obj>. 
+        //causes a discrepancy. Now both will generate Whatever<obj>. 
 //        if genericMap.ContainsKey(t) then 
 //            genericMap.[t]
 //        else
@@ -442,91 +278,3 @@ let rec getGenerator (genericMap:IDictionary<_,_>) (t:Type)  =
         let typeargs = args |> Array.map (fun o -> o.GetType().GetGenericArguments().[0])
         let mi' = if mi.ContainsGenericParameters then mi.MakeGenericMethod(typeargs) else mi
         mi'.Invoke(null, args)
-
-// resolve fails if the generic type is only determined by the return type 
-//(e.g., Array.zero_create) but that is easily fixed by additionally passing in the return type...
-let rec resolve (acc:Dictionary<_,_>) (a:Type, f:Type) =
-    if f.IsGenericParameter then
-        if not (acc.ContainsKey(f)) then acc.Add(f,a)
-    else 
-        if a.HasElementType then resolve acc (a.GetElementType(), f.GetElementType())
-        Array.zip (a.GetGenericArguments()) (f.GetGenericArguments()) |>
-        Array.iter (resolve acc)
-
-let invokeMethod (m:MethodInfo) args =
-    let m = if m.ContainsGenericParameters then
-                let typeMap = new Dictionary<_,_>()
-                Array.zip args (m.GetParameters()) |> 
-                Array.iter (fun (a,f) -> resolve typeMap (a.GetType(),f.ParameterType))  
-                let actuals = 
-                    m.GetGenericArguments() |> 
-                    Array.map (fun formal -> typeMap.[formal])
-                m.MakeGenericMethod(actuals)
-            else 
-                m
-    m.Invoke(null, args)
-
-let private hasTestableReturnType (m:MethodInfo) =
-    m.ReturnType = typeof<bool> 
-    || m.ReturnType = typeof<Lazy<bool>> 
-    || m.ReturnType = typeof<Property>
-
-let private makeProperty invoker returnType args = 
-    if returnType = typeof<bool> then
-        invoker args |> unbox<bool> |> propl
-    elif returnType = typeof<Lazy<bool>> then
-        invoker args |> unbox<Lazy<bool>> |> prop
-    elif returnType = typeof<Property> then
-        invoker args |> unbox<Property>
-    else
-        failwith "Invalid return type: must be either bool, Lazy<bool> or Property"
-
-let checkType config (t:Type) = 
-    t.GetMethods((BindingFlags.Static ||| BindingFlags.Public)) |>
-    Array.filter hasTestableReturnType |>
-    Array.map(fun m -> 
-        let genericMap = new Dictionary<_,_>()
-        //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
-        let gen = m.GetParameters() 
-                    |> Array.map(fun p -> (getGenerator genericMap p.ParameterType :?> IGen).AsGenObject)
-                    |> Array.to_list
-                    |> sequence
-                    |> (fun gen -> gen.Map List.to_array)
-        let property = makeProperty (invokeMethod m) (m.ReturnType)
-        checkProperty {config with name = t.Name+"."+m.Name} (forAll gen property)) |> ignore
-
-let rec findFunctionArgumentTypes fType = 
-    if not (FSharpType.IsFunction fType) then  
-            ([],fType)
-    else
-        let dom,range = FSharpType.GetFunctionElements fType
-        let args,ret = findFunctionArgumentTypes range
-        (dom :: args,ret)
-
-let invokeFunction f args = 
-    f.GetType().InvokeMember("Invoke", System.Reflection.BindingFlags.InvokeMethod, null, f, args)
-
-let checkFunction config f = 
-    let genericMap = new Dictionary<_,_>()  
-    let args,ret = findFunctionArgumentTypes (f.GetType())  
-    let gen = args    
-                |> List.map(fun p -> (getGenerator genericMap p  :?> IGen).AsGenObject )
-                |> sequence
-                |> (fun gen -> gen.Map List.to_array)
-    let property = makeProperty (invokeFunction f) ret
-    checkProperty config (forAll gen property) |> ignore
-
-let check config (whatever:obj) =
-    match whatever with
-        | :? Property as p -> checkProperty config p
-        | :? Type as t ->  checkType config t
-        | f -> checkFunction config f
-    
-let quickCheck p = p |> check quick
-let verboseCheck p = p |> check verbose
-
-[<ObsoleteAttribute("Use quickCheck instead.")>]
-let qcheck gen p = forAll gen p |> quickCheck
-
-[<ObsoleteAttribute("Use verboseCheck instead.")>]
-let vcheck gen p = forAll gen p |> verboseCheck

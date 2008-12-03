@@ -1,5 +1,9 @@
 #light
 
+namespace FsCheck
+
+module Random
+
 open System
 
 //from Hugs' Haskell implementation 

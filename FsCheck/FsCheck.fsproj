@@ -40,7 +40,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Random.fs" />
-    <Compile Include="FsCheck.fs" />
+    <Compile Include="Generator.fs" />
+    <Compile Include="Property.fs" />
+    <Compile Include="Runner.fs" />
     <None Include="Examples.fsx" />
   </ItemGroup>
   <ItemGroup>

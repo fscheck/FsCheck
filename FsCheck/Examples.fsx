@@ -1,22 +1,22 @@
 ﻿#light
 
+//strangely, the fsx file reports error, although it runs fine
+
 #r "FSharp.Powerpack.dll"
-#load "Random.fs"
-#load "FsCheck.fs"
+#load "Random.fs" "Generator.fs" "Property.fs" "Runner.fs"
 
 open System
 open System.Reflection
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
-open System.Collections.Generic;
+open System.Collections.Generic
 open FsCheck
 
 //-------A Simple Example----------
-
 //short version, also polymorphic (i.e. will get lists of bools, chars,...)
 let prop_RevRev xs = List.rev(List.rev xs) = xs
 
-//long version: define your own generator (constraint to list<char>)
+//long version: define your own generator (constrain to list<char>)
 let lprop_RevRev =     
     forAll (Gen.List(Gen.Char)) (fun xs -> List.rev(List.rev xs) = xs |> propl)     
 
@@ -104,17 +104,34 @@ let tree =
             | _ -> raise(ArgumentException"Only positive arguments are allowed")
     sized tree'
 
-//Default generators --> TODO update docs to take into account registerGenerators and stuff
+//Generating functions
 let rec cotree t = 
     match t with
        | (Leaf n) -> variant 0 << Co.Int n
        | (Branch (t1,t2)) -> variant 1 << cotree t1 << cotree t2
 
+//Default generators by type
+
+type Box<'a> = Whitebox of 'a | Blackbox of 'a
+
+type MyGenerators =
+    static member Tree = tree
+    static member Box(gena) = 
+        gen {   let! a = gena
+                return! elements [ Whitebox a; Blackbox a] }
+    
+registerGenerators (typeof<MyGenerators>)
+
+let prop_RevRevTree (xs:list<Tree>) = List.rev(List.rev xs) = xs
+
+let prop_RevRevBox (xs:list<Box<int>>) = List.rev(List.rev xs) = xs |> propl |> collect xs
+
+//----------Tips and tricks-------
+//Testing functions
 let treeGen = Gen.Tuple(tree,three (Gen.Arrow(cotree,tree)))
 
 let prop_Assoc = 
     forAll treeGen (fun (x,(f,g,h)) ->
         ((f >> g) >> h) x = (f >> (g >> h)) x |> propl)
-
 
 quickCheck (typeof<ListProperties>.DeclaringType)
