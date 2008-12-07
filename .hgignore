@@ -3,6 +3,4 @@ syntax: glob
 *\obj\Release\*
 *\bin\Debug\*
 *\bin\Release\*
-*.pdb
-*.dll
 *.suo
