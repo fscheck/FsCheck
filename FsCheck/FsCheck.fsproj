@@ -38,6 +38,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DocumentationFile>bin\Debug\FsCheck.XML</DocumentationFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Random.fs" />
     <Compile Include="Generator.fs" />
