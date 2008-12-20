@@ -102,7 +102,7 @@ let private runner config property =
     ) [] |>   
     testsDone config !lastStep !testNb
 
-let consoleRunner =
+let testFinishedToString name testResult = 
     let display l = match l with
                         | []  -> ".\n"
                         | [x] -> " (" + x + ").\n"
@@ -110,19 +110,23 @@ let consoleRunner =
     let rec intersperse sep l = match l with
                                 | [] -> []
                                 | [x] -> [x]
-                                | x::xs -> x :: sep :: intersperse sep xs  
+                                | x::xs -> x :: sep :: intersperse sep xs
     let entry (p,xs) = any_to_string p + "% " + (intersperse ", " xs |> Seq.to_array |> String.Concat)
     let stamps_to_string s = s |> Seq.map entry |> Seq.to_list |> display
+    let name = (name+"-")
+    match testResult with
+        | True data -> sprintf "%sOk, passed %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
+        | False (data, args, None) -> sprintf "%sFalsifiable, after %i tests: %A\n" name data.NumberOfTests args 
+        | False (data, args, Some exc) -> sprintf "%sFalsifiable, after %i tests: %A\n with exception:\n%O" name data.NumberOfTests args exc
+        | Exhausted data -> sprintf "%sArguments exhausted after %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
+
+
+let consoleRunner =
     { new IRunner with
         member x.OnArguments (ntest,args, every) =
             printf "%s" (every ntest args)
         member x.OnFinished(name,testResult) = 
-            let name = (name+"-")
-            match testResult with
-                | True data -> printf "%sOk, passed %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
-                | False (data, args, None) -> printf "%sFalsifiable, after %i tests: %A\n" name data.NumberOfTests args 
-                | False (data, args, Some exc) -> printf "%sFalsifiable, after %i tests: %A\n with exception:\n%O" name data.NumberOfTests args exc
-                | Exhausted data -> printf "%sArguments exhausted after %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
+            printf "%s" (testFinishedToString name testResult)
     }
        
 let private checkProperty config property = runner config property
