@@ -5,11 +5,9 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck", "FsCheck\FsCheck.
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Examples", "FsCheck.Examples\FsCheck.Examples.fsproj", "{7662113E-E531-4223-99C4-62EFCDDD77FF}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSCheck-CS", "FsCheck-CS\FSCheck-CS.fsproj", "{DDD03C5B-320F-42CA-8A18-4AA8ADA4714C}"
+EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -23,8 +21,16 @@ Global
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDD03C5B-320F-42CA-8A18-4AA8ADA4714C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDD03C5B-320F-42CA-8A18-4AA8ADA4714C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDD03C5B-320F-42CA-8A18-4AA8ADA4714C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDD03C5B-320F-42CA-8A18-4AA8ADA4714C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
