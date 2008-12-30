@@ -8,7 +8,7 @@
     <ProjectGuid>{ddd03c5b-320f-42ca-8a18-4aa8ada4714c}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>FSCheck</RootNamespace>
-    <AssemblyName>FSCheck</AssemblyName>
+    <AssemblyName>FSCheck-CS</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Name>FSCheck</Name>
