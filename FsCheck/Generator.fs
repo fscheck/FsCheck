@@ -231,9 +231,17 @@ let private findGenerators =
         Seq.fold (fun l m ->
             //let returnType = m.ReturnType
             let gen = typedefof<Gen<_>>
+            let s = gen.GetGenericArguments
             match m.ReturnType with
                 | GenericTypeDef gen args -> 
-                    ((if args.[0].IsGenericType then args.[0].GetGenericTypeDefinition() else args.[0]), m) :: l  
+                    let typeToAdd = 
+                        if args.[0].IsGenericType then 
+                            if m.GetParameters().Length <> args.[0].GetGenericArguments().Length then
+                                failwithf "Error in %A: Generator methods _must_ take a generator as parameter for each generic argument of the type-to-generate." m
+                            args.[0].GetGenericTypeDefinition() 
+                        else 
+                            args.[0]
+                    (typeToAdd, m) :: l   
                 | _ -> l
             ) l
     addMethods []
@@ -243,13 +251,15 @@ let private generators = new Dictionary<_,_>()
 
 ///Register all the generators for types defined by static members of the given class type. Throws an exception if
 ///any of them are already registered.
-let registerGenerators t = findGenerators t |> Seq.iter generators.Add //(fun (t,mi) -> generators.Add(t, mi))
+let registerGenerators t = findGenerators t |> Seq.iter generators.Add//(fun (t,mi) -> generators.Add(t, mi); printfn "%A" (t,mi))
 
 ///Register all the generators for types defined by static members of the given class type. If
 ///any of them are already registered, the old ones are overwritten by the given ones.
 let overwriteGenerators t = findGenerators t |> Seq.iter (fun (t,mi) -> generators.[t] <- mi)
 
 do registerGenerators (typeof<Gen>)
+
+
 
 let rec internal getGenerator (genericMap:IDictionary<_,_>) (t:Type)  =
     if t.IsGenericParameter then
@@ -272,9 +282,15 @@ let rec internal getGenerator (genericMap:IDictionary<_,_>) (t:Type)  =
 //            genericMap.Add(t, newGenerator)
 //            newGenerator 
     else
-        let t' = if t.IsGenericType then t.GetGenericTypeDefinition() else t
-        let mi = generators.[t']
-        let args = t.GetGenericArguments() |> Array.map (getGenerator genericMap)
-        let typeargs = args |> Array.map (fun o -> o.GetType().GetGenericArguments().[0])
-        let mi' = if mi.ContainsGenericParameters then mi.MakeGenericMethod(typeargs) else mi
-        mi'.Invoke(null, args)
+        let (mi,args) = 
+            match generators.TryGetValue(t) with 
+            |(true, mi) -> (mi,null) //we found a specific generator, use that
+            |(false, _) -> 
+                //no specific generator, assume for now there is a generic one...
+                let mi = generators.[t.GetGenericTypeDefinition()] 
+                //let t' = if t.IsGenericType then t.GetGenericTypeDefinition() else t
+                //let mi = generators.[t']
+                let args = t.GetGenericArguments() |> Array.map (getGenerator genericMap)
+                let typeargs = args |> Array.map (fun o -> o.GetType().GetGenericArguments().[0])
+                if mi.ContainsGenericParameters then (mi.MakeGenericMethod(typeargs),args) else (mi,args)
+        mi.Invoke(null, args)

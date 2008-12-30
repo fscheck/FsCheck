@@ -7,7 +7,6 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
-
 //-------A Simple Example----------
 //short version, also polymorphic (i.e. will get lists of bools, chars,...)
 let prop_RevRev xs = List.rev(List.rev xs) = xs
@@ -171,5 +170,19 @@ registerGenerators (typeof<Marker>.DeclaringType)
 quickCheck (typeof<Marker>.DeclaringType)
 
 overwriteGenerators (typeof<MyGenerators>)
+
+
+
+//------generators must take generic arguments-----------------------
+type Heap<'a> = Heap of list<'a>
+let insertH x (Heap xs) = Heap <| x::xs
+let empty = Heap []
+
+type WrongGen =
+    static member Heap = Gen.List(Gen.Int).Map (fun l -> List.fold_right insertH l empty)
+
+//registerGenerators(typeof<SpecificGen>) //--> will fail because of generator!
+//let prop_Heap (h:Heap<int>) = true
+//verboseCheck prop_Heap  
 
 Console.ReadKey() |> ignore
