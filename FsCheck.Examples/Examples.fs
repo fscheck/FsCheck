@@ -181,6 +181,9 @@ let empty = Heap []
 type WrongGen =
     static member Heap = Gen.List(Gen.Int).Map (fun l -> List.fold_right insertH l empty)
 
+type RightGen =
+    static member Heap(elementGen) = (Gen.List(elementGen)).Map (fun l -> List.fold_right insertH l empty)
+
 //registerGenerators(typeof<SpecificGen>) //--> will fail because of generator!
 //let prop_Heap (h:Heap<int>) = true
 //verboseCheck prop_Heap  
