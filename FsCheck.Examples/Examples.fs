@@ -7,6 +7,8 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
+(*
+
 //-------A Simple Example----------
 //short version, also polymorphic (i.e. will get lists of bools, chars,...)
 let prop_RevRev xs = List.rev(List.rev xs) = xs
@@ -187,5 +189,42 @@ type RightGen =
 //registerGenerators(typeof<SpecificGen>) //--> will fail because of generator!
 //let prop_Heap (h:Heap<int>) = true
 //verboseCheck prop_Heap  
+
+*)
+
+//---GenReflect tests---
+//a record type containing an array type
+type List<'a> = {list : 'a[]}
+
+//a recursive union type containing a record type
+type Tree<'a> = 
+    | Leaf of string
+    | Branch of List<Tree<'a>>
+
+let rec xmlSafeTree (x : Tree<string>) =
+    match x with
+    | Leaf x -> not (x.StartsWith " " || x.EndsWith " ")
+    //| Branch (a,b) -> xmlSafeTree a && xmlSafeTree b
+    | Branch xs -> Array.for_all xmlSafeTree xs.list
+
+checkFunction quick (fun x -> xmlSafeTree x |>propl)
+
+//quickCheck <| fun (x:int,y:int) -> (x > 0 && y > 0) ==> propl (x*y > 0)
+
+let revStr (x : string) =
+    let cs = x.ToCharArray()
+    Array.Reverse cs
+    new String(cs)
+
+//let prop_revstr = forAll (Gen.Int) (fun i -> forAll Gen.String (fun x -> propl (x = revStr x)))
+let prop_revstr (x,y)  = propl (x = revStr y)
+checkFunction quick prop_revstr
+//quickCheck prop_revstr
+
+let idempotent f x = let y = f x in f y = y
+
+//quickCheck (propl << idempotent (fun (x : string) -> x.ToUpper()))
+
+
 
 Console.ReadKey() |> ignore

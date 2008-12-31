@@ -1,6 +1,6 @@
 #light
 
-#r "bin\Debug\FSCheck.dll"
+#r "bin\Debug\FSCheck-CS.dll"
 
 open System
 

@@ -111,7 +111,7 @@ let testFinishedToString name testResult =
                                 | [] -> []
                                 | [x] -> [x]
                                 | x::xs -> x :: sep :: intersperse sep xs
-    let entry (p,xs) = any_to_string p + "% " + (intersperse ", " xs |> Seq.to_array |> String.Concat)
+    let entry (p,xs) = any_to_string p + "% " + (intersperse ", " xs |> List.to_array |> String.Concat)
     let stamps_to_string s = s |> Seq.map entry |> Seq.to_list |> display
     let name = (name+"-")
     match testResult with
@@ -206,15 +206,15 @@ let rec private findFunctionArgumentTypes fType =
 let private invokeFunction f args = 
     f.GetType().InvokeMember("Invoke", System.Reflection.BindingFlags.InvokeMethod, null, f, args)
 
-let private checkFunction config f = 
+let checkFunction config (f :'a ->Property) = 
     let genericMap = new Dictionary<_,_>()  
     let args,ret = findFunctionArgumentTypes (f.GetType())  
     let gen = args    
                 |> List.map(fun p -> (getGenerator genericMap p  :?> IGen).AsGenObject )
                 |> sequence
-                |> (fun gen -> gen.Map List.to_array)
-    let property = makeProperty (invokeFunction f) ret
-    checkProperty config (forAll gen property) |> ignore
+                |> (fun gen -> gen.Map (fun lobj -> lobj |> List.hd |> unbox<'a>))//FSharpValue.MakeTuple (List.to_array lobj, FSharpType.MakeTupleType <| List.to_array args) |> unbox<'a>))
+    //let property = makeProperty (invokeFunction f) ret
+    checkProperty config (forAll gen f) |> ignore
 
 ///Check the given Property or members of the given class Type or the given function, depending
 ///on the type of the argument.
@@ -222,7 +222,8 @@ let check config (whatever:obj) =
     match whatever with
         | :? Property as p -> checkProperty config p
         | :? Type as t ->  checkType config t
-        | f -> checkFunction config f
+        | _ -> failwith "unrecgnized type"
+        //| f -> checkFunction config (f :?> obj -> Property)
 
 ///Check with the configuration 'quick'.  
 let quickCheck p = p |> check quick
