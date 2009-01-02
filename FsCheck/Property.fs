@@ -51,10 +51,14 @@ let forAll gn body =
     // return true if you can continue to shrink (i.e. ok = false)
     let f x =
         let (Gen v) = (evaluate (body x))
-        failed (v 0 (Random.newSeed())) //TODO: put this in the computation expression
+        failed (v 0 (Random.newSeed()))
     let argument a res = { res with arguments = (box a) :: res.arguments } in
         Prop <|  gen { let! a = gn
-                       let! res = (evaluate (body a))
+                       let! res = 
+                            try 
+                                evaluate (body a)
+                            with
+                                e -> gen { return { nothing with ok = Some (lazy false); exc = Some e }}
                        let a2 = if failed res then Shrink.shrink f a else a
                        return (argument a2 res) }
 //    Prop <|  gen {  let! a = gn

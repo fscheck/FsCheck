@@ -7,8 +7,6 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
-(*
-
 //-------A Simple Example----------
 //short version, also polymorphic (i.e. will get lists of bools, chars,...)
 let prop_RevRev xs = List.rev(List.rev xs) = xs
@@ -133,6 +131,34 @@ let prop_Assoc =
     forAll treeGen (fun (x,(f,g,h)) ->
         ((f >> g) >> h) x = (f >> (g >> h)) x |> propl)
 
+//---GenReflect tests---
+
+//a record type containing an array type
+type List<'a> = {list : 'a[]}
+
+//a recursive union type containing a record type
+type Tree<'a> = 
+    | Leaf of string
+    | Branch of List<Tree<'a>>
+
+let rec prop_xmlSafeTree (x : Tree<string>) =
+    match x with
+    | Leaf x -> not (x.StartsWith " " && x.EndsWith " ")
+    | Branch xs -> Array.for_all prop_xmlSafeTree xs.list
+
+let prop_Product (x:int,y:int) = (x > 0 && y > 0) ==> propl (x*y > 0)
+
+let revStr (x : string) =
+    let cs = x.ToCharArray()
+    Array.Reverse cs
+    new String(cs)
+
+let prop_revstr (x,y) = (x = revStr y)
+
+let private idempotent f x = let y = f x in f y = y
+quickCheck (propl << idempotent (fun (x : string) -> x.ToUpper()))
+
+
 //-------------examples from QuickCheck paper-------------
 let prop_RevUnit (x:char) = List.rev [x] = [x]
 
@@ -150,14 +176,14 @@ let prop_MaxLe (x:float) y = (x <= y) ==> prop (lazy (max  x y = y))
 //let arr2 = Gen.Arrow(Co.Arrow (Gen.Float,Co.Int),Gen.Bool) //fun i -> 10.5) Gen.Int
 
 type Properties =
-    static member Test1 b = propl (b = true)
+    static member Test1 b c = propl (b = true && c = false) //not recognized as test since is compiled as a method returning a function type
     static member Test2 i = propl (i < 100)
     static member Test3 (i,j) = propl (i < 10 && j < 5.1)
     static member Test4 l = propl ( List.rev l = l)
     static member Test5 (l:list<float>) = propl ( List.rev l = l)
     //this property is falsifiable: sometimes the generator for float generates nan; and nan <> nan
     //so when checking the reverse of the reverse list's equality with the original list, the check fails. 
-    static member Test6 (l:list<list<int*int> * float>) = propl ((l |> List.rev |> List.rev) = l) |> trivial (List.length l = 0)
+    //static member Test6 (l:list<list<int*int> * float>) = propl ((l |> List.rev |> List.rev) = l) |> trivial (List.length l = 0)
     static member Test7 (a,b) = propl (fst a = snd b)
     static member Test8 (l:list<obj>) = propl ( List.rev l = l)
     static member Test9 (s:string) = propl ( new String(s.ToCharArray()) = s )
@@ -186,44 +212,16 @@ type WrongGen =
 type RightGen =
     static member Heap(elementGen) = (Gen.List(elementGen)).Map (fun l -> List.fold_right insertH l empty)
 
-//registerGenerators(typeof<SpecificGen>) //--> will fail because of generator!
+//registerGenerators(typeof<WrongGen>) //--> will fail because of generator!
 //let prop_Heap (h:Heap<int>) = true
 //verboseCheck prop_Heap  
 
-*)
 
-//---GenReflect tests---
-//a record type containing an array type
-type List<'a> = {list : 'a[]}
+//--shrink bug
+//let shrinkBug (l:list<list<float>>) = propl ((l |> List.rev |> List.rev) = l)
+//quickCheck shrinkBug
 
-//a recursive union type containing a record type
-type Tree<'a> = 
-    | Leaf of string
-    | Branch of List<Tree<'a>>
 
-let rec xmlSafeTree (x : Tree<string>) =
-    match x with
-    | Leaf x -> not (x.StartsWith " " || x.EndsWith " ")
-    //| Branch (a,b) -> xmlSafeTree a && xmlSafeTree b
-    | Branch xs -> Array.for_all xmlSafeTree xs.list
-
-checkFunction quick (fun x -> xmlSafeTree x |>propl)
-
-//quickCheck <| fun (x:int,y:int) -> (x > 0 && y > 0) ==> propl (x*y > 0)
-
-let revStr (x : string) =
-    let cs = x.ToCharArray()
-    Array.Reverse cs
-    new String(cs)
-
-//let prop_revstr = forAll (Gen.Int) (fun i -> forAll Gen.String (fun x -> propl (x = revStr x)))
-let prop_revstr (x,y)  = propl (x = revStr y)
-checkFunction quick prop_revstr
-//quickCheck prop_revstr
-
-let idempotent f x = let y = f x in f y = y
-
-//quickCheck (propl << idempotent (fun (x : string) -> x.ToUpper()))
 
 
 

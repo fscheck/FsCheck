@@ -179,6 +179,8 @@ let idempotent f x = let y = f x in f y = y
 
 let runIdempotont () = quickCheck' (propl << idempotent (fun (x : string) -> x.ToUpper()))
 
+let runNested() = quickCheck' <| (fun (x:list<list<int*int>*float>) -> List.rev x = x |>propl)
+
 (*
     printfn "Finished"
 

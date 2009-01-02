@@ -2,6 +2,7 @@
 
 namespace FsCheck
 
+//TODO make internal
 module internal Reflect
 
 open System
