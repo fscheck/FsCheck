@@ -6,7 +6,48 @@ open System.Reflection
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
+open TypeClass
 
+type IArbitrary<'a> =
+    abstract Arbitrary : list<'a>
+    abstract Shrink : 'a -> list<'a>
+
+let arbitrary<'a> = getInstance (typedefof<IArbitrary<_>>) (typeof<'a>) |> unbox<IArbitrary<'a>> |> (fun arb -> arb.Arbitrary)
+let shrink<'a> = getInstance (typedefof<IArbitrary<_>>) (typeof<'a>) |> unbox<(IArbitrary<'a>)> |> (fun arb -> arb.Shrink)
+
+newTypeClass<IArbitrary<_>>
+
+type ArbitraryInstances() =
+    static member Unit() = 
+        { new IArbitrary<unit> with
+            override x.Arbitrary = [()]
+            override x.Shrink _ = [] }
+    static member Bool() = 
+        { new IArbitrary<bool> with
+            override x.Arbitrary = [true;false]
+            override x.Shrink _ = [true;false] }
+    static member Option<'a>() = 
+        { new IArbitrary<option<'a>> with
+            override x.Arbitrary = [ for i in arbitrary -> Some i]
+            override x.Shrink a = match a with None -> [] | Some v -> [ for i in shrink v -> Some i ] }
+    static member ListInt() = 
+        { new IArbitrary<list<int>> with
+            override x.Arbitrary = [ for i in 1..10 -> [i;i+1]]
+            override x.Shrink a = match a with (x::xs) -> [xs] | _ -> [] }
+    static member List<'a>() =
+        { new IArbitrary<list<'a>> with
+            override x.Arbitrary = [ for i in arbitrary -> [i]]
+            override x.Shrink a = match a with (x::xs) -> [xs] | _ -> [] }
+
+registerInstances<IArbitrary<_>,ArbitraryInstances>()
+
+printfn "%A" <| List.map shrink (arbitrary<bool>)
+printfn "%A" <| List.map shrink (arbitrary<option<bool>>)
+printfn "%A" <| arbitrary<list<int>>
+printfn "%A" <| List.map shrink (arbitrary<list<int>>)
+printfn "%A" <| List.map shrink (arbitrary<list<bool>>)
+
+(*
 //-------A Simple Example----------
 //short version, also polymorphic (i.e. will get lists of bools, chars,...)
 let prop_RevRev xs = List.rev(List.rev xs) = xs
@@ -187,5 +228,5 @@ type RightGen =
 //registerGenerators(typeof<SpecificGen>) //--> will fail because of generator!
 //let prop_Heap (h:Heap<int>) = true
 //verboseCheck prop_Heap  
-
+*)
 Console.ReadKey() |> ignore

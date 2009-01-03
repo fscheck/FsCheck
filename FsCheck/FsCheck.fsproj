@@ -43,6 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Random.fs" />
+    <Compile Include="TypeClass.fs" />
     <Compile Include="Generator.fs" />
     <Compile Include="Property.fs" />
     <Compile Include="Runner.fs" />
