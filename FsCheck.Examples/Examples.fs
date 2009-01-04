@@ -6,8 +6,9 @@ open System.Reflection
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
-open TypeClass
+open FsCheck.TypeClass
 
+(*
 type IArbitrary<'a> =
     abstract Arbitrary : list<'a>
     abstract Shrink : 'a -> list<'a>
@@ -38,14 +39,29 @@ type ArbitraryInstances() =
         { new IArbitrary<list<'a>> with
             override x.Arbitrary = [ for i in arbitrary -> [i]]
             override x.Shrink a = match a with (x::xs) -> [xs] | _ -> [] }
+    static member CatchAll<'any>() =
+        { new IArbitrary<'any> with
+            override x.Arbitrary = [ "1" |> box |> unbox<'any> ]
+            override x.Shrink (_:'any) :'any list = [ "1" |> box |> unbox<'any>]   }
 
 registerInstances<IArbitrary<_>,ArbitraryInstances>()
 
 printfn "%A" <| List.map shrink (arbitrary<bool>)
 printfn "%A" <| List.map shrink (arbitrary<option<bool>>)
 printfn "%A" <| arbitrary<list<int>>
-printfn "%A" <| List.map shrink (arbitrary<list<int>>)
+printfn "%A" <| List.map shrink (arbitrary<option<list<int>>>)
 printfn "%A" <| List.map shrink (arbitrary<list<bool>>)
+
+printfn "any %A" <| arbitrary<string>
+//printfn "any %A" <| arbitrary<int>
+*)
+
+let prop_RevRev (xs:list<DateTime>) (ys:list<char>) = 
+    xs <> [] ==> (List.rev(List.rev xs) = xs)
+    |> collect ys
+    |> trivial (xs.Length = 1)
+
+quickCheck prop_RevRev
 
 (*
 //-------A Simple Example----------

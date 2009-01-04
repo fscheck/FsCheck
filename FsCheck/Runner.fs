@@ -171,29 +171,29 @@ let private hasTestableReturnType (m:MethodInfo) =
     || m.ReturnType = typeof<Lazy<bool>> 
     || m.ReturnType = typeof<Property>
 
-let private makeProperty invoker returnType args = 
-    if returnType = typeof<bool> then
-        invoker args |> unbox<bool> |> propl
-    elif returnType = typeof<Lazy<bool>> then
-        invoker args |> unbox<Lazy<bool>> |> prop
-    elif returnType = typeof<Property> then
-        invoker args |> unbox<Property>
-    else
-        failwith "Invalid return type: must be either bool, Lazy<bool> or Property"
+//let private makeProperty invoker returnType args = 
+//    if returnType = typeof<bool> then
+//        invoker args |> unbox<bool> |> propl
+//    elif returnType = typeof<Lazy<bool>> then
+//        invoker args |> unbox<Lazy<bool>> |> prop
+//    elif returnType = typeof<Property> then
+//        invoker args |> unbox<Property>
+//    else
+//        failwith "Invalid return type: must be either bool, Lazy<bool> or Property"
 
-let private checkType config (t:Type) = 
-    t.GetMethods((BindingFlags.Static ||| BindingFlags.Public)) |>
-    Array.filter hasTestableReturnType |>
-    Array.map(fun m -> 
-        let genericMap = new Dictionary<_,_>()
-        //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
-        let gen = m.GetParameters() 
-                    |> Array.map(fun p -> (getGenerator genericMap p.ParameterType :?> IGen).AsGenObject)
-                    |> Array.to_list
-                    |> sequence
-                    |> (fun gen -> gen.Map List.to_array)
-        let property = makeProperty (invokeMethod m) (m.ReturnType)
-        checkProperty {config with name = t.Name+"."+m.Name} (forAll gen property)) |> ignore
+//let private checkType config (t:Type) = 
+//    t.GetMethods((BindingFlags.Static ||| BindingFlags.Public)) |>
+//    Array.filter hasTestableReturnType |>
+//    Array.map(fun m -> 
+//        let genericMap = new Dictionary<_,_>()
+//        //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
+//        let gen = m.GetParameters() 
+//                    |> Array.map(fun p -> (getGenerator genericMap p.ParameterType :?> IGen).AsGenObject)
+//                    |> Array.to_list
+//                    |> sequence
+//                    |> (fun gen -> gen.Map List.to_array)
+//        let property = makeProperty (invokeMethod m) (m.ReturnType)
+//        checkProperty {config with name = t.Name+"."+m.Name} (forAll gen property)) |> ignore
 
 let rec private findFunctionArgumentTypes fType = 
     if not (FSharpType.IsFunction fType) then  
@@ -206,31 +206,33 @@ let rec private findFunctionArgumentTypes fType =
 let private invokeFunction f args = 
     f.GetType().InvokeMember("Invoke", System.Reflection.BindingFlags.InvokeMethod, null, f, args)
 
-let private checkFunction config f = 
-    let genericMap = new Dictionary<_,_>()  
-    let args,ret = findFunctionArgumentTypes (f.GetType())  
-    let gen = args    
-                |> List.map(fun p -> (getGenerator genericMap p  :?> IGen).AsGenObject )
-                |> sequence
-                |> (fun gen -> gen.Map List.to_array)
-    let property = makeProperty (invokeFunction f) ret
-    checkProperty config (forAll gen property) |> ignore
+//let private checkFunction config f = 
+//    let genericMap = new Dictionary<_,_>()  
+//    let args,ret = findFunctionArgumentTypes (f.GetType())  
+//    let gen = args    
+//                |> List.map(fun p -> (getGenerator genericMap p  :?> IGen).AsGenObject )
+//                |> sequence
+//                |> (fun gen -> gen.Map List.to_array)
+//    let property = makeProperty (invokeFunction f) ret
+//    checkProperty config (forAll gen property) |> ignore
 
 ///Check the given Property or members of the given class Type or the given function, depending
 ///on the type of the argument.
-let check config (whatever:obj) =
-    match whatever with
-        | :? Property as p -> checkProperty config p
-        | :? Type as t ->  checkType config t
-        | f -> checkFunction config f
+//let check config (whatever:obj) =
+//    match whatever with
+//        | :? Property as p -> checkProperty config p
+//        | :? Type as t ->  checkType config t
+//        | f -> checkFunction config f
+
+let check config p = checkProperty config (forAll arbitrary p)
 
 ///Check with the configuration 'quick'.  
 let quickCheck p = p |> check quick
 ///Check with the configuration 'verbose'.
 let verboseCheck p = p |> check verbose
 
-[<ObsoleteAttribute("Use quickCheck instead.")>]
-let qcheck gen p = forAll gen p |> quickCheck
-
-[<ObsoleteAttribute("Use verboseCheck instead.")>]
-let vcheck gen p = forAll gen p |> verboseCheck
+//[<ObsoleteAttribute("Use quickCheck instead.")>]
+//let qcheck gen p = forAll gen p |> quickCheck
+//
+//[<ObsoleteAttribute("Use verboseCheck instead.")>]
+//let vcheck gen p = forAll gen p |> verboseCheck
