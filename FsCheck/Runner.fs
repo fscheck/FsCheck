@@ -185,14 +185,18 @@ let private hasTestableReturnType (m:MethodInfo) =
 //    t.GetMethods((BindingFlags.Static ||| BindingFlags.Public)) |>
 //    Array.filter hasTestableReturnType |>
 //    Array.map(fun m -> 
-//        let genericMap = new Dictionary<_,_>()
-//        //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
-//        let gen = m.GetParameters() 
-//                    |> Array.map(fun p -> (getGenerator genericMap p.ParameterType :?> IGen).AsGenObject)
-//                    |> Array.to_list
-//                    |> sequence
-//                    |> (fun gen -> gen.Map List.to_array)
-//        let property = makeProperty (invokeMethod m) (m.ReturnType)
+////        let genericMap = new Dictionary<_,_>()
+////        //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
+////        let gen = m.GetParameters() 
+////                    |> Array.map(fun p -> (getGenerator genericMap p.ParameterType :?> IGen).AsGenObject)
+////                    |> Array.to_list
+////                    |> sequence
+////                    |> (fun gen -> gen.Map List.to_array)
+////        let property = makeProperty (invokeMethod m) (m.ReturnType)
+//        static members:   'method firstArg Second' gets compiled as 'method(firstArg):FastFunc<second,res>
+//                          'method firstArg' gets compiled as method(firstArg)
+//          let in module: let f first second third gets compiled as f(first,second,third)
+//        let property = FSharpType.M
 //        checkProperty {config with name = t.Name+"."+m.Name} (forAll gen property)) |> ignore
 
 //let rec private findFunctionArgumentTypes fType = 

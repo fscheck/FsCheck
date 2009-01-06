@@ -64,6 +64,8 @@ let prop_RevRev (xs:list<DateTime>) (ys:list<char>) =
 quickCheck prop_RevRev
 *)
 
+quickCheck (fun b y (x:char,z) -> if b then (fun q -> y+1 = z + int q) else (fun q -> q =10.0)) 
+
 //-------A Simple Example----------
 //short version, also polymorphic (i.e. will get lists of bools, chars,...)
 let prop_RevRev (xs:list<int>) = List.rev(List.rev xs) = xs
@@ -95,8 +97,8 @@ let rec private ordered xs = match xs with
 let rec insert x xs = match xs with
                       | [] -> [x]
                       | c::cs -> if x <= c then x::xs else c::(insert x cs)                      
-let prop_Insert (x:int) xs = ordered xs ==> propl (ordered (insert x xs))
-quickCheck prop_RevRevFloat
+let prop_Insert (x:int) xs = ordered xs ==> ordered (insert x xs)
+quickCheck prop_Insert
 
 //Lazy properties
 let prop_Eager a = a <> 0 ==> (1/a = 1/a)
@@ -203,7 +205,7 @@ quickCheck prop_RevRevTree
 //----------Tips and tricks-------
 //Testing functions
 let prop_Assoc x (f,g,h) = ((f >> g) >> h) x = (f >> (g >> h)) x
-verboseCheck prop_RevRevTree
+quickCheck prop_RevRevTree
 
 //-------------examples from QuickCheck paper-------------
 let prop_RevUnit (x:char) = List.rev [x] = [x]
@@ -221,7 +223,7 @@ let prop_MaxLe (x:float) y = (x <= y) ==> (lazy (max  x y = y))
 //let arr2 = Gen.Arrow(Co.Arrow (Gen.Float,Co.Int),Gen.Bool) //fun i -> 10.5) Gen.Int
 
 type Properties =
-    static member Test1 b = propl (b = true)
+    static member Test1 b (b2:bool) = propl (b = b2)
     static member Test2 i = propl (i < 100)
     static member Test3 (i,j) = propl (i < 10 && j < 5.1)
     static member Test4 l = propl ( List.rev l = l)
