@@ -16,15 +16,19 @@ module Shrink =
     let shrinkMap : Ref<Map<string, Lazy<ShrinkType>>> = ref (Map.empty)
 
 
-    let rec children0 (tFind : Type) (t : Type) : (obj -> list<obj>) =
+    let rec children0 (seen : Set<string>) (tFind : Type) (t : Type) : (obj -> list<obj>) =
             if tFind = t then
                 fun o -> [o]
             else
-                children1 tFind t
+                children1 seen tFind t
 
-        and children1 (tFind : Type) (t : Type) =
-            if t.IsArray then
-                let f = children0 tFind (t.GetElementType())
+        and children1 (seen : Set<string>) (tFind : Type) (t : Type) =
+            let ts = t.ToString();
+            let seen2 = seen.Add ts
+            if seen.Contains ts then
+                fun _ -> []
+            elif t.IsArray then
+                let f = children0 seen2 tFind (t.GetElementType())
                 fun o ->
                     let x = o :?> Array
                     List.concat [ for i in 0 .. x.Length-1 -> f (x.GetValue i) ]
@@ -33,19 +37,19 @@ module Shrink =
                 let mp =
                     Map.of_array
                         [| for _,(tag,ts,_,destroy) in getUnionCases t ->
-                            let cs = [ for t in ts -> children0 tFind t ]
+                            let cs = [ for u in ts -> children0 seen2 tFind u ]
                             tag, fun o -> List.concat <| List.map2 (<|) cs (List.of_array <| destroy o)
                         |]
                 fun o -> mp.[read o] o
             elif isRecordType t then
                 let destroy = getRecordReader t
-                let cs = [ for i in getRecordFields t -> children0 tFind i.PropertyType ]
+                let cs = [ for i in getRecordFields t -> children0 seen2 tFind i.PropertyType ]
                 fun o -> List.concat <| List.map2 (<|) cs (List.of_array <| destroy o)
             else
                 fun _ -> []
 
     let hunt (t : Type) : ShrinkType =
-        let cs = children1 t t
+        let cs = children1 Set.empty t t
         fun test o ->
             let rec f xs =
                 match xs with

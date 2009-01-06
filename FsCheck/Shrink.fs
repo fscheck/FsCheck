@@ -15,48 +15,47 @@ type ShrinkType = (obj -> bool) -> obj -> option<obj>
 let shrinkMap : Ref<Map<string, Lazy<ShrinkType>>> = ref (Map.empty)
 
 
-let rec children0 (tFind : Type) (t : Type) : (obj -> list<obj>) =
-        if (debug) then printfn "children0 with tFind %A and t %A" tFind t
-        if tFind = t then
-            fun o -> [o] //tFind has no children
-        else
-            children1 tFind t
-    //return a function that, when given an object, returns an array of possible shrinked possibilities
-    //based on the tFind, which is always the type of the object, and t, which is kind of an accumulator (only
-    //it decreases in size...)
-    and children1 (tFind : Type) (t : Type) =
-        if (debug) then printfn "children1 with tFind %A and t %A" tFind t
-        if t.IsArray then
-            let f = children0 tFind (t.GetElementType())
-            fun o ->
-                let x = o :?> Array
-                List.concat [ for i in 0 .. x.Length-1 -> f (x.GetValue i) ]
-        elif isUnionType t then
-            let read = getUnionTagReader t
-            let mp =
-                Map.of_array
-                    [| for _,(tag,ts,_,destroy) in getUnionCases t ->
-                        if (debug) then printfn "ts %A" ts
-                        let cs = [ for t in ts -> children0 tFind t ]
-                        tag, fun o -> List.concat <| List.map2 (<|) cs (List.of_array <| destroy o)
-                    |]
-            fun o -> mp.[read o] o
-        elif isRecordType t then
-            let destroy = getRecordReader t
-            let cs = [ for i in getRecordFields t -> children0 tFind i.PropertyType ]
-            fun o -> List.concat <| List.map2 (<|) cs (List.of_array <| destroy o)
-        else
-            fun _ -> []
+let rec children0 (seen : Set<string>) (tFind : Type) (t : Type) : (obj -> list<obj>) =
+            if tFind = t then
+                fun o -> [o]
+            else
+                children1 seen tFind t
+
+        and children1 (seen : Set<string>) (tFind : Type) (t : Type) =
+            let ts = t.ToString();
+            let seen2 = seen.Add ts
+            if seen.Contains ts then
+                fun _ -> []
+            elif t.IsArray then
+                let f = children0 seen2 tFind (t.GetElementType())
+                fun o ->
+                    let x = o :?> Array
+                    List.concat [ for i in 0 .. x.Length-1 -> f (x.GetValue i) ]
+            elif isUnionType t then
+                let read = getUnionTagReader t
+                let mp =
+                    Map.of_array
+                        [| for _,(tag,ts,_,destroy) in getUnionCases t ->
+                            let cs = [ for u in ts -> children0 seen2 tFind u ]
+                            tag, fun o -> List.concat <| List.map2 (<|) cs (List.of_array <| destroy o)
+                        |]
+                fun o -> mp.[read o] o
+            elif isRecordType t then
+                let destroy = getRecordReader t
+                let cs = [ for i in getRecordFields t -> children0 seen2 tFind i.PropertyType ]
+                fun o -> List.concat <| List.map2 (<|) cs (List.of_array <| destroy o)
+            else
+                fun _ -> []
 
 let hunt (t : Type) : ShrinkType =
-    let cs = children1 t t
-    fun test o ->
-        let rec f xs =
-            match xs with
-            | [] -> None
-            | x :: xs -> if test x then Some x else f xs
-        let v = f (cs o)
-        v
+        let cs = children1 Set.empty t t
+        fun test o ->
+            let rec f xs =
+                match xs with
+                | [] -> None
+                | x :: xs -> if test x then Some x else f xs
+            let v = f (cs o)
+            v
 
 
 let rec getShrink (t : Type) : Lazy<ShrinkType> =

@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Examples", "FsCheck
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSCheck-CS", "FsCheck-CS\FSCheck-CS.fsproj", "{DDD03C5B-320F-42CA-8A18-4AA8ADA4714C}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSCheck-CS.Example", "FSCheck-CS.Example\FSCheck-CS.Example.fsproj", "{0C35A5F3-38D4-4ACE-AC93-65F5145AFC67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{DDD03C5B-320F-42CA-8A18-4AA8ADA4714C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDD03C5B-320F-42CA-8A18-4AA8ADA4714C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDD03C5B-320F-42CA-8A18-4AA8ADA4714C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C35A5F3-38D4-4ACE-AC93-65F5145AFC67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C35A5F3-38D4-4ACE-AC93-65F5145AFC67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C35A5F3-38D4-4ACE-AC93-65F5145AFC67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C35A5F3-38D4-4ACE-AC93-65F5145AFC67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
