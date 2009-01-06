@@ -195,16 +195,16 @@ let private hasTestableReturnType (m:MethodInfo) =
 //        let property = makeProperty (invokeMethod m) (m.ReturnType)
 //        checkProperty {config with name = t.Name+"."+m.Name} (forAll gen property)) |> ignore
 
-let rec private findFunctionArgumentTypes fType = 
-    if not (FSharpType.IsFunction fType) then  
-            ([],fType)
-    else
-        let dom,range = FSharpType.GetFunctionElements fType
-        let args,ret = findFunctionArgumentTypes range
-        (dom :: args,ret)
-
-let private invokeFunction f args = 
-    f.GetType().InvokeMember("Invoke", System.Reflection.BindingFlags.InvokeMethod, null, f, args)
+//let rec private findFunctionArgumentTypes fType = 
+//    if not (FSharpType.IsFunction fType) then  
+//            ([],fType)
+//    else
+//        let dom,range = FSharpType.GetFunctionElements fType
+//        let args,ret = findFunctionArgumentTypes range
+//        (dom :: args,ret)
+//
+//let private invokeFunction f args = 
+//    f.GetType().InvokeMember("Invoke", System.Reflection.BindingFlags.InvokeMethod, null, f, args)
 
 //let private checkFunction config f = 
 //    let genericMap = new Dictionary<_,_>()  

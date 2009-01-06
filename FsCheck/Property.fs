@@ -27,8 +27,6 @@ type Testable<'prop> =
 
 let property<'a> p = getInstance (typedefof<Testable<_>>) (typeof<'a>) |> unbox<Testable<'a>> |> (fun t -> t.Property p)
 
-//evaluate a = gen where Prop gen = property a
-
 let internal evaluate a = let (Prop gen) = property a in gen
 
 ///Quantified property combinator. Provide a custom test data generator to a property.
@@ -43,26 +41,6 @@ let forAll gn body =
                     return (argument a res) }
 
 newTypeClass<Testable<_>>
-
-(*
-class Testable a where
-  property :: a -> Property
-
-instance Testable () where
-  property _ = result nothing
-
-instance Testable Bool where
-  property b = result (nothing{ ok = Just b })
-
-instance Testable Result where
-  property res = result res
-
-instance Testable Property where
-  property prop = prop
-
-instance (Arbitrary a, Show a, Testable b) => Testable (a -> b) where
-  property f = forAll arbitrary f
-*)
 
 type Testable =
     static member Unit() =
@@ -86,8 +64,6 @@ type Testable =
 
 do registerInstances<Testable<_>,Testable>()
        
-//let private emptyProperty = result nothing
-
 let private implies b a = if b then property a else property ()
 ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
 let (==>) b a = implies b a
@@ -107,6 +83,8 @@ let trivial b = classify b "trivial"
 let collect v = label <| any_to_string v
 
 /////Property constructor. Constructs a property from a bool.
-//let prop b = gen { return {nothing with ok = Some b}} |> Prop
+[<Obsolete("Please omit this function call: it's no longer necessary.")>]
+let prop b = property b//gen { return {nothing with ok = Some b}} |> Prop
 /////Lazy property constructor. Constructs a property from a Lazy<bool>.
-//let propl b = gen { return {nothing with ok = Some (lazy b)}} |> Prop
+[<Obsolete("Please omit this function call: it's no longer necessary.")>]
+let propl b = property b //gen { return {nothing with ok = Some (lazy b)}} |> Prop

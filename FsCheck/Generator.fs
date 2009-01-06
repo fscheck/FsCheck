@@ -245,6 +245,9 @@ type Arbitrary() =
         }
         
 do registerInstances<Arbitrary<_>,Arbitrary>()
+
+let registerGenerators<'t>() = registerInstances<Arbitrary<_>,'t>()
+let overwriteGenerators<'t>() = overwriteInstances<Arbitrary<_>,'t>()
               
 ////parametrized active pattern that recognizes generic types with generic type definitions equal to the first paramater, 
 ////and that returns the generic type parameters of the generic type.
