@@ -7,6 +7,7 @@ module Property
 
 open System
 open Generator
+open TypeClass
 
 ///The result of one execution of a property.
 type Result = { ok : option<Lazy<bool>>
@@ -20,8 +21,13 @@ let private nothing = { ok = None; stamp = []; arguments = []; exc = None }
 type Property = private Prop of Gen<Result>
 
 let private result res = gen { return res } |> Prop
-                       
-let internal evaluate (Prop gen) = gen
+
+type Testable<'prop> =
+    abstract Property : 'prop -> Property
+
+let property<'a> p = getInstance (typedefof<Testable<_>>) (typeof<'a>) |> unbox<Testable<'a>> |> (fun t -> t.Property p)
+
+let internal evaluate a = let (Prop gen) = property a in gen
 
 //let forAllShrink (gn : Gen<'a>) (body : 'a -> Property) : Property = 
 //    let failed res =
@@ -61,19 +67,32 @@ let forAll gn body =
                                 e -> gen { return { nothing with ok = Some (lazy false); exc = Some e }}
                        let a2 = if failed res then Shrink.shrink f a else a
                        return (argument a2 res) }
-//    Prop <|  gen {  let! a = gn
-//                    let! res = 
-//                        try 
-//                            evaluate (body a)
-//                        with
-//                            e -> gen { return { nothing with ok = Some (lazy false); exc = Some e }}
-//                    //do printfn "
-//                    let shrunk_a = if failed res then Shrink.shrink f a else a
-//                    return (argument shrunk_a res) }
 
-let private emptyProperty = result nothing
+newTypeClass<Testable<_>>
 
-let private implies b a = if b then a else emptyProperty
+type Testable =
+    static member Unit() =
+        { new Testable<unit> with
+            member x.Property _ = property nothing }
+    static member Bool() =
+        { new Testable<bool> with
+            member x.Property b = result { nothing with ok = Some (lazy b) } }
+    static member LazyBool() =
+        { new Testable<Lazy<bool>> with
+            member x.Property b = result { nothing with ok = Some b } }
+    static member Result() =
+        { new Testable<Result> with
+            member x.Property res = result res }
+    static member Property() =
+        { new Testable<Property> with
+            member x.Property prop = prop }
+    static member Arrow() =
+        { new Testable<('a->'b)> with
+            member x.Property f = forAll arbitrary f }
+
+do registerInstances<Testable<_>,Testable>()
+       
+let private implies b a = if b then property a else property ()
 ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
 let (==>) b a = implies b a
 
@@ -82,7 +101,7 @@ let private label str a =
     Prop ((evaluate a).Map add)
 
 ///Classify test cases combinator. Test cases satisfying the condition are assigned the classification given.
-let classify b name a = if b then label name a else a
+let classify b name = if b then label name else property
 
 ///Count trivial cases property combinator. Test cases for which the condition is True are classified as trivial.
 let trivial b = classify b "trivial"
@@ -91,7 +110,9 @@ let trivial b = classify b "trivial"
 ///and the distribution of values is reported, using any_to_string.
 let collect v = label <| any_to_string v
 
-///Property constructor. Constructs a property from a bool.
-let prop b = gen { return {nothing with ok = Some b}} |> Prop
-///Lazy property constructor. Constructs a property from a Lazy<bool>.
-let propl b = gen { return {nothing with ok = Some (lazy b)}} |> Prop
+/////Property constructor. Constructs a property from a bool.
+[<Obsolete("Please omit this function call: it's no longer necessary.")>]
+let prop b = property b//gen { return {nothing with ok = Some b}} |> Prop
+/////Lazy property constructor. Constructs a property from a Lazy<bool>.
+[<Obsolete("Please omit this function call: it's no longer necessary.")>]
+let propl b = property b //gen { return {nothing with ok = Some (lazy b)}} |> Prop

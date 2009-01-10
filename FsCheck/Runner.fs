@@ -41,7 +41,7 @@ type Config =
                             //float is used to allow for smaller increases than 1.
                             //note: in QuickCheck, this is a function of the test number!
       every   : int -> list<obj> -> string  //determines what to print if new arguments args are generated in test n
-      runner  : IRunner } //the test runner  
+      runner  : IRunner } //the test runner 
 
 
 let private (|Lazy|) (inp:Lazy<'a>) = inp.Force()             
@@ -111,7 +111,7 @@ let testFinishedToString name testResult =
                                 | [] -> []
                                 | [x] -> [x]
                                 | x::xs -> x :: sep :: intersperse sep xs
-    let entry (p,xs) = any_to_string p + "% " + (intersperse ", " xs |> List.to_array |> String.Concat)
+    let entry (p,xs) = any_to_string p + "% " + (intersperse ", " xs |> Seq.to_array |> String.Concat)
     let stamps_to_string s = s |> Seq.map entry |> Seq.to_list |> display
     let name = (name+"-")
     let printArgs = List.map any_to_string >> intersperse "\n" >> List.reduce_left (+)
@@ -119,6 +119,8 @@ let testFinishedToString name testResult =
         | True data -> sprintf "%sOk, passed %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
         | False (data, args, None) -> sprintf "%sFalsifiable, after %i tests: \n%s\n" name data.NumberOfTests (args |> printArgs) 
         | False (data, args, Some exc) -> sprintf "%sFalsifiable, after %i tests: \n%s\n with exception:\n%O" name data.NumberOfTests (args |> printArgs) exc
+
+
         | Exhausted data -> sprintf "%sArguments exhausted after %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
 
 
@@ -130,7 +132,7 @@ let consoleRunner =
             printf "%s" (testFinishedToString name testResult)
     }
        
-let private checkProperty config property = runner config property
+//let private checkProperty config property = runner config property
 
 ///The quick configuration only prints a summary result at the end of the test.
 let quick = { maxTest = 100
@@ -172,99 +174,97 @@ let private hasTestableReturnType (m:MethodInfo) =
     || m.ReturnType = typeof<Lazy<bool>> 
     || m.ReturnType = typeof<Property>
 
-let private makeProperty invoker returnType args = 
-    if returnType = typeof<bool> then
-        invoker args |> unbox<bool> |> propl
-    elif returnType = typeof<Lazy<bool>> then
-        invoker args |> unbox<Lazy<bool>> |> prop
-    elif returnType = typeof<Property> then
-        invoker args |> unbox<Property>
-    else
-        failwith "Invalid return type: must be either bool, Lazy<bool> or Property"
+//let private makeProperty invoker returnType args = 
+//    if returnType = typeof<bool> then
+//        invoker args |> unbox<bool> |> propl
+//    elif returnType = typeof<Lazy<bool>> then
+//        invoker args |> unbox<Lazy<bool>> |> prop
+//    elif returnType = typeof<Property> then
+//        invoker args |> unbox<Property>
+//    else
+//        failwith "Invalid return type: must be either bool, Lazy<bool> or Property"
 
-let private checkType config (t:Type) =
-    //sigh. Isn't there a better way to do this than tupleing and untupling? it seems very inefficient. 
-    let makeTuple (objs:obj[]) = 
-        if objs.Length = 0 then
-            box ()
-        elif objs.Length = 1 then 
-            objs.[0]
-        else
-            FSharpValue.MakeTuple (objs, FSharpType.MakeTupleType <| Array.map (fun p-> p.GetType()) objs)
-    let unTuple tuple =
-        if tuple = null then
-            Array.empty
-        elif FSharpType.IsTuple(tuple.GetType()) then
-            FSharpValue.GetTupleFields(tuple)
-        else
-            [| tuple |]
-    t.GetMethods((BindingFlags.Static ||| BindingFlags.Public)) |>
-    Array.filter hasTestableReturnType |>
-    Array.map(fun m -> 
-        let genericMap = new Dictionary<_,_>()
-        //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
-        let gen = m.GetParameters() 
-                    |> Array.map(fun p -> (getGenerator genericMap p.ParameterType :?> IGen).AsGenObject)
-                    |> Array.to_list
-                    |> sequence
-                    |> (fun gen -> gen.Map (List.to_array >> makeTuple))
-        let property = makeProperty (unTuple >> (invokeMethod m)) (m.ReturnType)
-        checkProperty {config with name = t.Name+"."+m.Name} (forAll gen property)) |> ignore
 
-let rec private findFunctionArgumentTypes fType = 
-    if not (FSharpType.IsFunction fType) then  
-            ([],fType)
-    else
-        let dom,range = FSharpType.GetFunctionElements fType
-        let args,ret = findFunctionArgumentTypes range
-        (dom :: args,ret)
 
-let private invokeFunction f args = 
-    f.GetType().InvokeMember("Invoke", System.Reflection.BindingFlags.InvokeMethod, null, f, args)
+//let rec private findFunctionArgumentTypes fType = 
+//    if not (FSharpType.IsFunction fType) then  
+//            ([],fType)
+//    else
+//        let dom,range = FSharpType.GetFunctionElements fType
+//        let args,ret = findFunctionArgumentTypes range
+//        (dom :: args,ret)
+//
+//let private invokeFunction f args = 
+//    f.GetType().InvokeMember("Invoke", System.Reflection.BindingFlags.InvokeMethod, null, f, args)
 
-//let checkFunction config (f :'a ->Property) = 
+//let private checkFunction config f = 
 //    let genericMap = new Dictionary<_,_>()  
-//    let gen = typeof<'a> 
-//                |> getGenerator genericMap 
-//                |> (fun g -> (g :?> IGen).AsGenObject.Map(unbox))
-//                //|> (fun g -> g.Map (unbox))
-////    let args,ret = findFunctionArgumentTypes (f.GetType()) 
-////    let gen = args    
-////                |> List.map(fun p -> (getGenerator genericMap p  :?> IGen).AsGenObject )
-////                |> sequence
-////                |> (fun gen -> gen.Map (fun lobj -> lobj |> List.hd |> unbox<'a>))//FSharpValue.MakeTuple (List.to_array lobj, FSharpType.MakeTupleType <| List.to_array args) |> unbox<'a>))
-//    //let property = makeProperty (invokeFunction f) ret
-//    checkProperty config (forAll gen f)
-
-
-let checkFunction config boxedFunc =
-    let args,ret = findFunctionArgumentTypes (boxedFunc.GetType())
-    let genericMap = new Dictionary<_,_>() 
-    let gens = args |> List.map(fun p -> (getGenerator genericMap p :?> IGen).AsGenObject)
-    let rec forAlls gens boxf argacc =
-        match gens with
-        | [x] -> forAll x (fun xp -> makeProperty (invokeFunction boxf) ret (List.to_array ((box xp)::argacc)))
-        | x::xs -> forAll x (fun xp -> forAlls xs boxf (xp::argacc))
-        | _ -> failwith "bug in makeCheckFunction.forAlls"
-    checkProperty config (forAlls gens boxedFunc [])
+//    let args,ret = findFunctionArgumentTypes (f.GetType())  
+//    let gen = args    
+//                |> List.map(fun p -> (getGenerator genericMap p  :?> IGen).AsGenObject )
+//                |> sequence
+//                |> (fun gen -> gen.Map List.to_array)
+//    let property = makeProperty (invokeFunction f) ret
+//    checkProperty config (forAll gen property) |> ignore
 
 ///Check the given Property or members of the given class Type or the given function, depending
 ///on the type of the argument.
-let check config (whatever:obj) =
-    match whatever with
-        | :? Property as p -> checkProperty config p
-        | :? Type as t ->  checkType config t
-        | f -> checkFunction config f
-        //| _ -> failwith "unrecgnized type"
-        
+//let check config (whatever:obj) =
+//    match whatever with
+//        | :? Property as p -> checkProperty config p
+//        | :? Type as t ->  checkType config t
+//        | f -> checkFunction config f
+
+let checkProperty config p = runner config (forAll arbitrary p)
+
+let private checkMethodInfo = typeof<Config>.DeclaringType.GetMethod("checkProperty",BindingFlags.Static ||| BindingFlags.Public)
+
+let private arrayToTupleType (arr:Type[]) =
+    if arr.Length = 0 then
+        typeof<unit>
+    elif arr.Length = 1 then
+        arr.[0]
+    else
+        FSharpType.MakeTupleType(arr)
+
+let private tupleToArray t = 
+    let ttype = t.GetType()
+    if FSharpType.IsTuple ttype then
+        FSharpValue.GetTupleFields(t)
+    else
+        [|t|]
+
+let checkType config (t:Type) = 
+    t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
+    Array.filter hasTestableReturnType |>
+    Array.iter(fun m -> 
+//        let genericMap = new Dictionary<_,_>()
+//        //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
+//        let gen = m.GetParameters() 
+//                    |> Array.map(fun p -> (getGenerator genericMap p.ParameterType :?> IGen).AsGenObject)
+//                    |> Array.to_list
+//                    |> sequence
+//                    |> (fun gen -> gen.Map List.to_array)
+//        let property = makeProperty (invokeMethod m) (m.ReturnType)
+//        static members:   'method firstArg Second' gets compiled as 'method(firstArg):FastFunc<second,res>
+//                          'method firstArg' gets compiled as method(firstArg)
+//          let in module: let f first second third gets compiled as f(first,second,third)
+        let fromP = m.GetParameters() |> Array.map (fun p -> p.ParameterType) |> arrayToTupleType
+        let toP = m.ReturnType
+        let funType = FSharpType.MakeFunctionType(fromP, toP)
+        let funValue = FSharpValue.MakeFunction(funType, tupleToArray >> invokeMethod m)
+        let c = {config with name = t.Name+"."+m.Name}
+        let genericM = checkMethodInfo.MakeGenericMethod([|fromP;toP|])
+        genericM.Invoke(null, [|box c; funValue|]) |> ignore
+        )
+
 
 ///Check with the configuration 'quick'.  
-let quickCheck p = p |> check quick
+let quickCheck p = p |> checkProperty quick
 ///Check with the configuration 'verbose'.
-let verboseCheck p = p |> check verbose
+let verboseCheck p = p |> checkProperty verbose 
 
-[<ObsoleteAttribute("Use quickCheck instead.")>]
-let qcheck gen p = forAll gen p |> quickCheck
-
-[<ObsoleteAttribute("Use verboseCheck instead.")>]
-let vcheck gen p = forAll gen p |> verboseCheck
+///Check all properties in given type with configuration 'quick'
+let quickCheckAll t = t |> checkType quick
+/// Check all properties in given type with configuration 'verbose'
+let verboseCheckAll t = t |> checkType verbose 

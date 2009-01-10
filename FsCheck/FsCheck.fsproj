@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Random.fs" />
     <Compile Include="Reflect.fs" />
+    <Compile Include="TypeClass.fs" />
     <Compile Include="Generator.fs" />
     <Compile Include="Shrink.fs" />
     <Compile Include="Property.fs" />
