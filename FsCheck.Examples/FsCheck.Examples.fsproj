@@ -8,7 +8,7 @@
     <ProjectGuid>{7662113e-e531-4223-99c4-62efcddd77ff}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Architude.FsCheck.Examples</RootNamespace>
-    <AssemblyName>Architude.FsCheck.Examples</AssemblyName>
+    <AssemblyName>FsCheck.Examples</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Name>Architude.FsCheck.Examples</Name>

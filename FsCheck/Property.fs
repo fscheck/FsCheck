@@ -23,16 +23,53 @@ let private result res = gen { return res } |> Prop
                        
 let internal evaluate (Prop gen) = gen
 
+//let forAllShrink (gn : Gen<'a>) (body : 'a -> Property) : Property = 
+//    let failed res =
+//        match res.ok with
+//        | None -> false
+//        | Some x -> not x.Value
+//    
+//    // return true if you can continue to shrink (i.e. ok = false)
+//    let f x =
+//        let (Gen v) = (evaluate (body x))
+//        failed (v 0 (newSeed()))
+//
+//    let argument a res = { res with arguments = lazy (any_to_string a :: res.arguments.Value) } in
+//    Prop <|  gen { let! a = gn
+//                   let! res = (evaluate (body a))
+//                   let a2 = if failed res then shrink f a else a
+//                   return (argument a2 res) }
+
+
 ///Quantified property combinator. Provide a custom test data generator to a property.
 let forAll gn body = 
+    let failed res =
+        match res.ok with
+        | None -> false
+        | Some x -> not x.Value
+    
+    // return true if you can continue to shrink (i.e. ok = false)
+    let f x =
+        let (Gen v) = (evaluate (body x))
+        failed (v 0 (Random.newSeed()))
     let argument a res = { res with arguments = (box a) :: res.arguments } in
-    Prop <|  gen {  let! a = gn
-                    let! res = 
-                        try 
-                            (evaluate (body a))
-                        with
-                            e -> gen { return { nothing with ok = Some (lazy false); exc = Some e }}
-                    return (argument a res) }
+        Prop <|  gen { let! a = gn
+                       let! res = 
+                            try 
+                                evaluate (body a)
+                            with
+                                e -> gen { return { nothing with ok = Some (lazy false); exc = Some e }}
+                       let a2 = if failed res then Shrink.shrink f a else a
+                       return (argument a2 res) }
+//    Prop <|  gen {  let! a = gn
+//                    let! res = 
+//                        try 
+//                            evaluate (body a)
+//                        with
+//                            e -> gen { return { nothing with ok = Some (lazy false); exc = Some e }}
+//                    //do printfn "
+//                    let shrunk_a = if failed res then Shrink.shrink f a else a
+//                    return (argument shrunk_a res) }
 
 let private emptyProperty = result nothing
 
