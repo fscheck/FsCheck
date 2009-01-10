@@ -8,63 +8,8 @@ open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 open FsCheck.TypeClass
 
-(*
-type IArbitrary<'a> =
-    abstract Arbitrary : list<'a>
-    abstract Shrink : 'a -> list<'a>
-
-let arbitrary<'a> = getInstance (typedefof<IArbitrary<_>>) (typeof<'a>) |> unbox<IArbitrary<'a>> |> (fun arb -> arb.Arbitrary)
-let shrink<'a> = getInstance (typedefof<IArbitrary<_>>) (typeof<'a>) |> unbox<(IArbitrary<'a>)> |> (fun arb -> arb.Shrink)
-
-newTypeClass<IArbitrary<_>>
-
-type ArbitraryInstances() =
-    static member Unit() = 
-        { new IArbitrary<unit> with
-            override x.Arbitrary = [()]
-            override x.Shrink _ = [] }
-    static member Bool() = 
-        { new IArbitrary<bool> with
-            override x.Arbitrary = [true;false]
-            override x.Shrink _ = [true;false] }
-    static member Option<'a>() = 
-        { new IArbitrary<option<'a>> with
-            override x.Arbitrary = [ for i in arbitrary -> Some i]
-            override x.Shrink a = match a with None -> [] | Some v -> [ for i in shrink v -> Some i ] }
-    static member ListInt() = 
-        { new IArbitrary<list<int>> with
-            override x.Arbitrary = [ for i in 1..10 -> [i;i+1]]
-            override x.Shrink a = match a with (x::xs) -> [xs] | _ -> [] }
-    static member List<'a>() =
-        { new IArbitrary<list<'a>> with
-            override x.Arbitrary = [ for i in arbitrary -> [i]]
-            override x.Shrink a = match a with (x::xs) -> [xs] | _ -> [] }
-    static member CatchAll<'any>() =
-        { new IArbitrary<'any> with
-            override x.Arbitrary = [ "1" |> box |> unbox<'any> ]
-            override x.Shrink (_:'any) :'any list = [ "1" |> box |> unbox<'any>]   }
-
-registerInstances<IArbitrary<_>,ArbitraryInstances>()
-
-printfn "%A" <| List.map shrink (arbitrary<bool>)
-printfn "%A" <| List.map shrink (arbitrary<option<bool>>)
-printfn "%A" <| arbitrary<list<int>>
-printfn "%A" <| List.map shrink (arbitrary<option<list<int>>>)
-printfn "%A" <| List.map shrink (arbitrary<list<bool>>)
-
-printfn "any %A" <| arbitrary<string>
-//printfn "any %A" <| arbitrary<int>
 
 
-let prop_RevRev (xs:list<DateTime>) (ys:list<char>) = 
-    xs <> [] ==> (List.rev(List.rev xs) = xs)
-    |> collect ys
-    |> trivial (xs.Length = 1)
-
-quickCheck prop_RevRev
-*)
-
-quickCheck (fun b y (x:char,z) -> if b then (fun q -> y+1 = z + int q) else (fun q -> q =10.0)) 
 
 //-------A Simple Example----------
 //short version, also polymorphic (i.e. will get lists of bools, chars,...)
@@ -200,12 +145,12 @@ let prop_RevRevTree (xs:list<Tree>) = List.rev(List.rev xs) = xs
 quickCheck prop_RevRevTree
 
 let prop_RevRevBox (xs:list<Box<int>>) = List.rev(List.rev xs) = xs
-quickCheck prop_RevRevTree
+quickCheck prop_RevRevBox
 
 //----------Tips and tricks-------
 //Testing functions
-let prop_Assoc x (f,g,h) = ((f >> g) >> h) x = (f >> (g >> h)) x
-quickCheck prop_RevRevTree
+let prop_Assoc (x:Tree) (f:Tree->float,g:float->char,h:char->int) = ((f >> g) >> h) x = (f >> (g >> h)) x
+quickCheck prop_Assoc
 
 //-------------examples from QuickCheck paper-------------
 let prop_RevUnit (x:char) = List.rev [x] = [x]
@@ -222,31 +167,33 @@ let prop_MaxLe (x:float) y = (x <= y) ==> (lazy (max  x y = y))
 //let arr = Gen.Arrow(Co.Float,Gen.Arrow(Co.Int,Gen.Bool))
 //let arr2 = Gen.Arrow(Co.Arrow (Gen.Float,Co.Int),Gen.Bool) //fun i -> 10.5) Gen.Int
 
+//convoluted, absurd property, but shows the power of the combinators: it's no problem to return
+//functions that return properties from your properties.
+quickCheck (fun b y (x:char,z) -> if b then (fun q -> y+1 = z + int q) else (fun q -> q =10.0)) 
+
 type Properties =
-    static member Test1 b (b2:bool) = propl (b = b2)
-    static member Test2 i = propl (i < 100)
-    static member Test3 (i,j) = propl (i < 10 && j < 5.1)
-    static member Test4 l = propl ( List.rev l = l)
-    static member Test5 (l:list<float>) = propl ( List.rev l = l)
+    static member Test1 (b,(b2:bool)) = (b = b2)
+    static member Test2 i = (i < 100)
+    static member Test3 (i,j) = (i < 10 && j < 5.1)
+    //static member Test4 l = propl ( List.rev l = l) //generic args no longer work
+    static member Test5 (l:list<float>) = List.rev l = l
     //this property is falsifiable: sometimes the generator for float generates nan; and nan <> nan
     //so when checking the reverse of the reverse list's equality with the original list, the check fails. 
-    static member Test6 (l:list<list<int*int> * float>) = propl ((l |> List.rev |> List.rev) = l) |> trivial (List.length l = 0)
-    static member Test7 (a,b) = propl (fst a = snd b)
-    static member Test8 (l:list<obj>) = propl ( List.rev l = l)
-    static member Test9 (s:string) = propl ( new String(s.ToCharArray()) = s )
-    static member Test10 i = propl (i = 'r')
+    static member Test6 (l:list<list<int*int> * float>) = ((l |> List.rev |> List.rev) = l) |> trivial (List.length l = 0)
+    static member Test7 (a:int*bool,b:float*int) = (fst a = snd b)
+    //static member Test8 (l:list<obj>) = propl ( List.rev l = l) //no generator for objs yet
+    static member Test9 (s:string) = ( new String(s.ToCharArray()) = s )
+    static member Test10 i = (i = 'r')
     static member NoTest i = "30"
 
-//quickCheck (typeof<Properties>)
+checkType quick (typeof<Properties>)
 
 Console.WriteLine("----------Check all toplevel properties----------------");
 type Marker = member x.Null = ()
 //registerGenerators (typeof<Marker>.DeclaringType)
-//quickCheck (typeof<Marker>.DeclaringType)
+checkType quick (typeof<Marker>.DeclaringType)
 
 //overwriteGenerators (typeof<MyGenerators>)
-
-
 
 ////------generators must take generic arguments-----------------------
 //type Heap<'a> = Heap of list<'a>

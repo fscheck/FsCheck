@@ -129,7 +129,7 @@ let consoleRunner =
             printf "%s" (testFinishedToString name testResult)
     }
        
-let private checkProperty config property = runner config property
+//let private checkProperty config property = runner config property
 
 ///The quick configuration only prints a summary result at the end of the test.
 let quick = { maxTest = 100
@@ -181,23 +181,7 @@ let private hasTestableReturnType (m:MethodInfo) =
 //    else
 //        failwith "Invalid return type: must be either bool, Lazy<bool> or Property"
 
-//let private checkType config (t:Type) = 
-//    t.GetMethods((BindingFlags.Static ||| BindingFlags.Public)) |>
-//    Array.filter hasTestableReturnType |>
-//    Array.map(fun m -> 
-////        let genericMap = new Dictionary<_,_>()
-////        //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
-////        let gen = m.GetParameters() 
-////                    |> Array.map(fun p -> (getGenerator genericMap p.ParameterType :?> IGen).AsGenObject)
-////                    |> Array.to_list
-////                    |> sequence
-////                    |> (fun gen -> gen.Map List.to_array)
-////        let property = makeProperty (invokeMethod m) (m.ReturnType)
-//        static members:   'method firstArg Second' gets compiled as 'method(firstArg):FastFunc<second,res>
-//                          'method firstArg' gets compiled as method(firstArg)
-//          let in module: let f first second third gets compiled as f(first,second,third)
-//        let property = FSharpType.M
-//        checkProperty {config with name = t.Name+"."+m.Name} (forAll gen property)) |> ignore
+
 
 //let rec private findFunctionArgumentTypes fType = 
 //    if not (FSharpType.IsFunction fType) then  
@@ -228,15 +212,52 @@ let private hasTestableReturnType (m:MethodInfo) =
 //        | :? Type as t ->  checkType config t
 //        | f -> checkFunction config f
 
-let check config p = checkProperty config (forAll arbitrary p)
+let check config p = runner config (forAll arbitrary p)
+
+let private checkMethodInfo = typeof<Config>.DeclaringType.GetMethod("check",BindingFlags.Static ||| BindingFlags.Public)
 
 ///Check with the configuration 'quick'.  
 let quickCheck p = p |> check quick
 ///Check with the configuration 'verbose'.
 let verboseCheck p = p |> check verbose
 
-//[<ObsoleteAttribute("Use quickCheck instead.")>]
-//let qcheck gen p = forAll gen p |> quickCheck
-//
-//[<ObsoleteAttribute("Use verboseCheck instead.")>]
-//let vcheck gen p = forAll gen p |> verboseCheck
+
+let private arrayToTupleType (arr:Type[]) =
+    if arr.Length = 0 then
+        typeof<unit>
+    elif arr.Length = 1 then
+        arr.[0]
+    else
+        FSharpType.MakeTupleType(arr)
+
+let private tupleToArray t = 
+    let ttype = t.GetType()
+    if FSharpType.IsTuple ttype then
+        FSharpValue.GetTupleFields(t)
+    else
+        [|t|]
+
+let checkType config (t:Type) = 
+    t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
+    Array.filter hasTestableReturnType |>
+    Array.iter(fun m -> 
+//        let genericMap = new Dictionary<_,_>()
+//        //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
+//        let gen = m.GetParameters() 
+//                    |> Array.map(fun p -> (getGenerator genericMap p.ParameterType :?> IGen).AsGenObject)
+//                    |> Array.to_list
+//                    |> sequence
+//                    |> (fun gen -> gen.Map List.to_array)
+//        let property = makeProperty (invokeMethod m) (m.ReturnType)
+//        static members:   'method firstArg Second' gets compiled as 'method(firstArg):FastFunc<second,res>
+//                          'method firstArg' gets compiled as method(firstArg)
+//          let in module: let f first second third gets compiled as f(first,second,third)
+        let fromP = m.GetParameters() |> Array.map (fun p -> p.ParameterType) |> arrayToTupleType
+        let toP = m.ReturnType
+        let funType = FSharpType.MakeFunctionType(fromP, toP)
+        let funValue = FSharpValue.MakeFunction(funType, tupleToArray >> invokeMethod m)
+        let c = {config with name = t.Name+"."+m.Name}
+        let genericM = checkMethodInfo.MakeGenericMethod([|fromP;toP|])
+        genericM.Invoke(null, [|box c; funValue|]) |> ignore
+        )
+        
