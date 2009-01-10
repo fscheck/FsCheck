@@ -41,7 +41,7 @@ type Config =
                             //float is used to allow for smaller increases than 1.
                             //note: in QuickCheck, this is a function of the test number!
       every   : int -> list<obj> -> string  //determines what to print if new arguments args are generated in test n
-      runner  : IRunner } //the test runner  
+      runner  : IRunner } //the test runner 
 
 
 let private (|Lazy|) (inp:Lazy<'a>) = inp.Force()             
@@ -212,15 +212,9 @@ let private hasTestableReturnType (m:MethodInfo) =
 //        | :? Type as t ->  checkType config t
 //        | f -> checkFunction config f
 
-let check config p = runner config (forAll arbitrary p)
+let checkProperty config p = runner config (forAll arbitrary p)
 
 let private checkMethodInfo = typeof<Config>.DeclaringType.GetMethod("check",BindingFlags.Static ||| BindingFlags.Public)
-
-///Check with the configuration 'quick'.  
-let quickCheck p = p |> check quick
-///Check with the configuration 'verbose'.
-let verboseCheck p = p |> check verbose
-
 
 let private arrayToTupleType (arr:Type[]) =
     if arr.Length = 0 then
@@ -260,4 +254,14 @@ let checkType config (t:Type) =
         let genericM = checkMethodInfo.MakeGenericMethod([|fromP;toP|])
         genericM.Invoke(null, [|box c; funValue|]) |> ignore
         )
-        
+
+
+///Check with the configuration 'quick'.  
+let quickCheck p = p |> checkProperty quick
+///Check with the configuration 'verbose'.
+let verboseCheck p = p |> checkProperty verbose 
+
+///Check all properties in given type with configuration 'quick'
+let quickCheckAll t = t |> checkType quick
+/// Check all properties in given type with configuration 'verbose'
+let verboseCheckAll t = t |> checkType verbose 
