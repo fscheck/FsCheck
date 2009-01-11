@@ -201,6 +201,22 @@ let prop_MaxLe (x:float) y = (x <= y) ==> (lazy (max  x y = y))
 //functions that return properties from your properties.
 quickCheck (fun b y (x:char,z) -> if b then (fun q -> y+1 = z + int q) else (fun q -> q =10.0)) 
 
+quickCheck (fun (arr:int[]) -> Array.rev arr = arr)
+
+type ARecord = { XPos : int; YPos : int; Name: string }
+
+quickCheck (fun (record:ARecord) -> (record.XPos > 0 && record.YPos > 0) ==> lazy (record.XPos * record.YPos > 0))
+
+quickCheck (fun (a:int,b,c,d:int,e,f) (g,h,i) -> a > b && b > c && d > e && f > g && e > f && h > i && a > i)
+
+type ADisc = 
+    | First of int 
+    | Second of char
+    | Third of ADisc
+    | Fourth of ADisc[]
+    
+quickCheck (fun (d:ADisc) -> match d with First i -> i = 2 | Second c -> true | Third _ -> true)
+
 type Properties =
     static member Test1 (b,(b2:bool)) = (b = b2)
     static member Test2 i = (i < 100)
@@ -239,5 +255,6 @@ checkType quick (typeof<Marker>.DeclaringType)
 ////registerGenerators(typeof<SpecificGen>) //--> will fail because of generator!
 ////let prop_Heap (h:Heap<int>) = true
 ////verboseCheck prop_Heap  
+
 
 Console.ReadKey() |> ignore
