@@ -245,7 +245,7 @@ let checkFunction config boxedFunc =
         match gens with
         | [x] -> forAll x (fun xp -> makeProperty (invokeFunction boxf) ret (List.to_array ((box xp)::argacc)))
         | x::xs -> forAll x (fun xp -> forAlls xs boxf (xp::argacc))
-        | _ -> failwith "bug in makeCheckFunction.forAlls"
+        | _ -> failwith "bug in checkFunction.forAlls"
     checkProperty config (forAlls gens boxedFunc [])
 
 ///Check the given Property or members of the given class Type or the given function, depending
