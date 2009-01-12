@@ -2,7 +2,6 @@
 
 namespace FsCheck
 
-//TODO make internal
 module internal Reflect
 
 open System
@@ -43,8 +42,8 @@ let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj)
 /// Get reader for union case name (aka tag)
 let getUnionTagReader unionType = 
     FSharpValue.PrecomputeUnionTagReader(unionType, recordFieldBindingFlags)
-    
-//was in "common" module
+
+///Equality for generic types    
 let genericTypeEq (lhs: System.Type) (rhs: System.Type) : bool =
         lhs.IsGenericType && rhs.IsGenericType &&
             (lhs.GetGenericTypeDefinition() = rhs.GetGenericTypeDefinition())

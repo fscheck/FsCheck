@@ -6,19 +6,10 @@ open System.Reflection
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
-open FsCheck.TypeClass
-
-
-
 
 //-------A Simple Example----------
-//short version, also polymorphic (i.e. will get lists of bools, chars,...)
 let prop_RevRev (xs:list<int>) = List.rev(List.rev xs) = xs
 quickCheck prop_RevRev
-
-//long version: define your own generator (constrain to list<char>)
-//let lprop_RevRev =     
-//    forAll (Gen.FsList(Gen.Char)) (fun xs -> List.rev(List.rev xs) = xs |> propl)     
 
 let prop_RevId (xs:list<int>) = List.rev xs = xs
 quickCheck prop_RevId
@@ -27,8 +18,7 @@ quickCheck prop_RevId
 type ListProperties =
     static member RevRev xs = prop_RevRev xs
     static member RevId xs = prop_RevId xs
-//quickCheck (typeof<ListProperties>)
-
+quickCheckAll (typeof<ListProperties>)
 
 //-----Properties----------------
 let prop_RevRevFloat (xs:list<float>) = List.rev(List.rev xs) = xs
@@ -82,6 +72,7 @@ quickCheck prop_InsertCombined
 let private chooseFromList xs = 
     gen {   let! i = choose (0, List.length xs-1) 
             return (List.nth xs i) }
+
 //to generate a value out of a generator:
 //generate <size> <seed> <generator>
 //generate 0 (Random.newSeed()) (chooseFromList [1;2;3])
@@ -108,9 +99,9 @@ let tree =
         match s with
             | 0 -> liftGen (Leaf) arbitrary
             | n when n>0 -> 
-            let subtree = tree' (n/2) in
+            let subtree() = tree' (n/2)
             oneof [ liftGen (Leaf) arbitrary; 
-                    liftGen2 (fun x y -> Branch (x,y)) subtree subtree]
+                    liftGen2 (fun x y -> Branch (x,y)) (subtree()) (subtree())]
             | _ -> raise(ArgumentException"Only positive arguments are allowed")
     sized tree'
 
@@ -121,9 +112,7 @@ let rec cotree t =
        | (Branch (t1,t2)) -> variant 1 << cotree t1 << cotree t2
 
 
-
 //Default generators by type
-
 type Box<'a> = Whitebox of 'a | Blackbox of 'a
 
 let boxgen() = 
@@ -152,10 +141,7 @@ quickCheck prop_RevRevBox
 let prop_Assoc (x:Tree) (f:Tree->float,g:float->char,h:char->int) = ((f >> g) >> h) x = (f >> (g >> h)) x
 quickCheck prop_Assoc
 
-
-
 //---GenReflect tests---
-
 //a record type containing an array type
 type List<'a> = {list : 'a[]}
 
@@ -168,18 +154,19 @@ let rec prop_xmlSafeTree (x : Tree<string>) =
     match x with
     | Leaf x -> not (x.StartsWith " " && x.EndsWith " ")
     | Branch xs -> Array.for_all prop_xmlSafeTree xs.list
+verboseCheck prop_xmlSafeTree
 
-let prop_Product (x:int,y:int) = (x > 0 && y > 0) ==> propl (x*y > 0)
+let prop_Product (x:int,y:int) = (x > 0 && y > 0) ==> (x*y > 0)
 
-let revStr (x : string) =
+let RevString (x : string) =
     let cs = x.ToCharArray()
     Array.Reverse cs
     new String(cs)
 
-let prop_revstr (x,y) = (x = revStr y)
+let prop_revstr x = RevString (RevString x) = x
 
 let private idempotent f x = let y = f x in f y = y
-quickCheck (propl << idempotent (fun (x : string) -> x.ToUpper()))
+quickCheck (idempotent (fun (x : string) -> x.ToUpper()))
 
 
 //-------------examples from QuickCheck paper-------------
@@ -192,13 +179,10 @@ let prop_RevApp (x:string) xs =
 
 let prop_MaxLe (x:float) y = (x <= y) ==> (lazy (max  x y = y))
 
-//----------various examples
-
-//let arr = Gen.Arrow(Co.Float,Gen.Arrow(Co.Int,Gen.Bool))
-//let arr2 = Gen.Arrow(Co.Arrow (Gen.Float,Co.Int),Gen.Bool) //fun i -> 10.5) Gen.Int
+//----------various examples-------------------------------
 
 //convoluted, absurd property, but shows the power of the combinators: it's no problem to return
-//functions that return properties from your properties.
+//functions that return properties.
 quickCheck (fun b y (x:char,z) -> if b then (fun q -> y+1 = z + int q) else (fun q -> q =10.0)) 
 
 quickCheck (fun (arr:int[]) -> Array.rev arr = arr)
@@ -227,7 +211,7 @@ type Properties =
     //so when checking the reverse of the reverse list's equality with the original list, the check fails. 
     static member Test6 (l:list<list<int*int> * float>) = ((l |> List.rev |> List.rev) = l) |> trivial (List.length l = 0)
     static member Test7 (a:int*bool,b:float*int) = (fst a = snd b)
-    //static member Test8 (l:list<obj>) = propl ( List.rev l = l) //no generator for objs yet
+    static member Test8 (l:list<obj>) = ( List.rev l = l)
     static member Test9 (s:string) = ( new String(s.ToCharArray()) = s )
     static member Test10 i = (i = 'r')
     static member NoTest i = "30"
@@ -236,25 +220,9 @@ checkType quick (typeof<Properties>)
 
 Console.WriteLine("----------Check all toplevel properties----------------");
 type Marker = member x.Null = ()
-//registerGenerators (typeof<Marker>.DeclaringType)
-checkType quick (typeof<Marker>.DeclaringType)
+//overwriteGenerators (typeof<Marker>.DeclaringType)
+quickCheckAll (typeof<Marker>.DeclaringType)
 
 //overwriteGenerators (typeof<MyGenerators>)
-
-////------generators must take generic arguments-----------------------
-//type Heap<'a> = Heap of list<'a>
-//let insertH x (Heap xs) = Heap <| x::xs
-//let empty = Heap []
-//
-//type WrongGen =
-//    static member Heap = Gen.List(Gen.Int).Map (fun l -> List.fold_right insertH l empty)
-//
-//type RightGen =
-//    static member Heap(elementGen) = (Gen.List(elementGen)).Map (fun l -> List.fold_right insertH l empty)
-//
-////registerGenerators(typeof<SpecificGen>) //--> will fail because of generator!
-////let prop_Heap (h:Heap<int>) = true
-////verboseCheck prop_Heap  
-
 
 Console.ReadKey() |> ignore

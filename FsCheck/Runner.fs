@@ -41,10 +41,7 @@ type Config =
                             //float is used to allow for smaller increases than 1.
                             //note: in QuickCheck, this is a function of the test number!
       every   : int -> list<obj> -> string  //determines what to print if new arguments args are generated in test n
-      runner  : IRunner } //the test runner 
-
-
-let private (|Lazy|) (inp:Lazy<'a>) = inp.Force()             
+      runner  : IRunner } //the test runner    
 
 let rec private test initSize resize rnd0 gen =
     seq { let rnd1,rnd2 = split rnd0
@@ -55,10 +52,10 @@ let rec private test initSize resize rnd0 gen =
             | None -> 
                 yield Failed  
                 yield! test newSize resize rnd1 gen
-            | Some (Lazy true) -> 
+            | Some (Common.Lazy true) -> 
                 yield Passed result.stamp
                 yield! test newSize resize rnd1 gen
-            | Some (Lazy false) -> 
+            | Some (Common.Lazy false) -> 
                 yield Falsified (result.arguments,result.exc)
                 yield! test newSize resize rnd1 gen
     }

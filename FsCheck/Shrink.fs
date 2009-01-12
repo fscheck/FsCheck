@@ -175,7 +175,7 @@ let shrink (test : 'a -> bool) (x : 'a) : 'a =
     //let f = unbox >> test
     if (debug) then printfn "shrinking value of runtime type %A static type %A" (x.GetType()) (typeof<'a>)
     let f = fun x -> let v = test (unbox x) 
-                     if debugNeilCheck then printf "%s" (if v then "#" else ".")
+                     //printf "%s" (if v then "#" else ".")
                      v
     //unbox <| shrinkObj (typeof<'a>) (f) (box x)
     unbox <| shrinkObj (staticTypeOf <| x.GetType()) (f) (box x)

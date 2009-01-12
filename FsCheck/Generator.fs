@@ -179,9 +179,7 @@ let coarbitrary (a:'a)  =
     
 newTypeClass<Arbitrary<_>>
 
-//----------contirbution by Neil. Should be integrated with existing generators; currently given
-//generators for chars etc are not honored, and neither are user defined primitive types.
-let debugNeilCheck = false
+
 
 // first function given is impure
 //type NeilGen = (int -> int -> int) -> int -> obj
@@ -191,6 +189,8 @@ let debugNeilCheck = false
 // Compute which types are possible children of this type
 // Helps make union generation terminate quicker
 let private containedTypes (t : Type) : list<Type> = [] // TODO
+
+
 
 //let rec private getNeilGen (t : Type) : Lazy<NeilGen> =
 //        let ts = t.ToString()
@@ -208,119 +208,57 @@ let private productGen (ts : list<Type>) =
     let gs = [ for t in ts -> getGenerator t ]
     let n = gs.Length
     [ for g in gs -> sized (fun s -> resize ((s / n) - 1) (unbox<IGen> g).AsGenObject) ]
-    //fun next size -> [| for g in gs -> g.Value next ((size / n) - 1) |]
 
-//and intGen next size = next (-size) size 
-//and charGen next size = Char.chr (next 32 127)
+let reflectObj  =
+    Common.memoize (fun (t:Type) ->
+        if t.IsArray then
+            let t2 = t.GetElementType()
+            let inner = getGenerator t2
+            let toTypedArray (arrType:Type) (l:list<_>) = 
+                let res = Array.CreateInstance(arrType, l.Length)
+                List.iteri (fun i value -> res.SetValue(value,i)) l
+                res
+            let genArr s = vector inner s |> fmap (toTypedArray t2 >> box) //|> unbox<IGen> |> (fun g -> g.AsGenObject)
+            box <| sized genArr
 
-let neilGen (t : Type) = //: NeilGen =
-    if t.IsArray then
-        let t2 = t.GetElementType()
-        let inner = getGenerator t2
-        let toTypedArray (arrType:Type) (l:list<_>) = 
-            let res = Array.CreateInstance(arrType, l.Length)
-            List.iteri (fun i value -> res.SetValue(value,i)) l
-            res
-        let genArr s = vector inner s |> fmap (toTypedArray t2 >> box) //|> unbox<IGen> |> (fun g -> g.AsGenObject)
-        box <| sized genArr
-//        fun next size ->
-//            let n = max 0 (next 0 size)
-//            let res = Array.CreateInstance(t2, n)
-//            for i in 0 .. n-1 do
-//                res.SetValue(inner.Value next (size - 1), i)
-//            box res
-
-//    //this is for lists; based on the generator for arrays (turns an array into a list using reflection)
-//    elif genericTypeEq t (typeof<List<unit>>) then
-//        let t2 = (t.GetGenericArguments()).[0]
-//        let inner = getNeilGen (t2.MakeArrayType())
-//        
-//        let modu = t.Assembly.GetType "Microsoft.FSharp.Collections.ListModule"
-//        let meth = modu.GetMethod "of_array"
-//        let of_array = meth.MakeGenericMethod [| t2 |]
-//        
-//        fun next size -> box <| of_array.Invoke(null, [| inner.Value next size |])
-
-    
-//    elif isTupleType t then
-//        let ts = FSharpType.GetTupleElements t |> List.of_array
-//        let g = productGen ts
-//        let create = FSharpValue.PrecomputeRecordConstructor t
-//        let result = g |> Array.to_list |> sequence |> fmap (List.to_array >> create)
-//        box result
-//        //fun next size -> create (g next size)
-
-    elif isRecordType t then
-        let g = productGen [ for pi in getRecordFields t -> pi.PropertyType ]
-        let create = getRecordConstructor t
-        let result = g |> sequence |> fmap (List.to_array >> create)
-        box result
-        //fun next size -> create (g next size)
-
-
-    elif isUnionType t then
-        // figure out the "size" of a union
-        // 0 = nullary, 1 = non-recursive, 2 = recursive
-        let unionSize (ts : list<Type>) : int =
-            if ts.IsEmpty then 0 else
-                let tsStar = List.concat (ts :: List.map containedTypes ts) //containedTypes is not implemented, always returns[]
-                if List.exists(fun (x : Type) -> x.ToString() = t.ToString()) tsStar then 2 else 1
-                //so this wil either return 0 or 1, never 2...
-                
-        let unionGen create ts =
-            let g = productGen ts
-            let res = g |> sequence |> fmap (List.to_array >> create)
-            res
+        elif isRecordType t then
+            let g = productGen [ for pi in getRecordFields t -> pi.PropertyType ]
+            let create = getRecordConstructor t
+            let result = g |> sequence |> fmap (List.to_array >> create)
+            box result
             //fun next size -> create (g next size)
 
-        let gs = [ for _,(_,fields,create,_) in getUnionCases t -> unionSize fields, lazy (unionGen create fields) ]
-        let lowest = List.reduce_left min <| List.map fst gs
-        let small() = [ for i,g in gs do if i = lowest then yield g.Force() ]
-        let large() = [ for _,g in gs -> g.Force() ]
-        //fun next size ->
-        let getgs size = 
-            if size <= 0 then 
-                let sm = small()
-                resize (size / max 1 sm.Length) <| oneof sm
-            else 
-                let la = large()
-                resize (size / max 1 la.Length) <| oneof la
-        sized getgs |> box
-        //gs.[next 0 (gs.Length-1)] next size
+        elif isUnionType t then
+            // figure out the "size" of a union
+            // 0 = nullary, 1 = non-recursive, 2 = recursive
+            let unionSize (ts : list<Type>) : int =
+                if ts.IsEmpty then 0 else
+                    let tsStar = List.concat (ts :: List.map containedTypes ts) //containedTypes is not implemented, always returns[]
+                    if List.exists(fun (x : Type) -> x.ToString() = t.ToString()) tsStar then 2 else 1
+                    
+            let unionGen create ts =
+                let g = productGen ts
+                let res = g |> sequence |> fmap (List.to_array >> create)
+                res
 
+            let gs = [ for _,(_,fields,create,_) in getUnionCases t -> unionSize fields, lazy (unionGen create fields) ]
+            let lowest = List.reduce_left min <| List.map fst gs
+            let small() = [ for i,g in gs do if i = lowest then yield g.Force() ]
+            let large() = [ for _,g in gs -> g.Force() ]
+            let getgs size = 
+                if size <= 0 then 
+                    let sm = small()
+                    resize (size / max 1 sm.Length) <| oneof sm
+                else 
+                    let la = large()
+                    resize (size / max 1 la.Length) <| oneof la
+            sized getgs |> box
+        else
+            failwithf "Geneflect: type not handled %A" t)
 
-//    elif t = typeof<string> then
-//        let inner = getNeilGen (typeof<char[]>)
-//        fun next size -> box <| new String(unbox (inner.Value next size) : char[])
-//
-//    elif t = typeof<float> then
-//        fun next size ->
-//            let fraction a b c = double a + ( double b / abs (double c)) + 1.0 
-//            let value() = intGen next size
-//            box <| fraction (value()) (value()) (value())
-//
-//    elif t = typeof<unit> then
-//        fun next size -> box ()
-//    elif t = typeof<int> then
-//        fun next size -> box <| intGen next size
-//    elif t = typeof<char> then
-//        fun next size -> box <| charGen next size
-    else
-        failwithf "Geneflect: type not handled %A" t
+let private reflectGenObj (t:Type) = (reflectObj t |> unbox<IGen>).AsGenObject
 
-let private geneflectObj (t:Type) = (neilGen t |> unbox<IGen>).AsGenObject
-
-//and private geneflectObj (t : Type) : Gen<obj> = Gen <| fun size stdgen ->
-//    if debugNeilCheck then printfn "%A" size
-//    let gen = ref stdgen
-//    let next low high =
-//        let v,g = range (low,high) !gen
-//        gen := g
-//        v
-//    (getNeilGen t).Value next size
-
-//let geneflect() : Gen<'a> = (geneflectObj (typeof<'a>)).Map unbox
-//----------------end of contributed part-------------------
+let private reflectGen<'a> = fmap (unbox<'a>) (reflectGenObj (typeof<'a>))
 
 ///A collection of default generators.
 type Arbitrary() =
@@ -352,7 +290,6 @@ type Arbitrary() =
                 let m = if (spl.Length > 1) then spl.[1].Length else 0
                 let decodeFloat = (fl * float m |> int, m )
                 coarbitrary <| decodeFloat
-                //Co.Tuple(Co.Int, Co.Int) <| decodeFloat
         }
     ///Generates arbitrary chars, between ASCII codes Char.MinValue and 127.
     static member Char() = 
@@ -416,6 +353,18 @@ type Arbitrary() =
                 | [] -> variant 0
                 | x::xs -> coarbitrary x << variant 1 << coarbitrary xs
         }
+    ///Generate an object.
+    static member Object() =
+        { new Arbitrary<obj>() with
+            override x.Arbitrary = 
+                oneof [ fmap box <| arbitrary<char>; fmap box <| arbitrary<string>; fmap box <| arbitrary<bool> ]
+            override x.CoArbitrary o = 
+                match o with
+                    | :? char as c -> variant 0 >> coarbitrary c
+                    | :? string as s -> variant 1 >> coarbitrary s
+                    | :? bool as b -> variant 2 >> coarbitrary b
+                    | _ -> failwith "Unknown domain type in coarbitrary of obj" 
+        }
 //    static member Array() =
 //        { new Arbitrary<'a[]>() with
 //            override x.Arbitrary = arbitrary |> fmap List.to_array
@@ -431,7 +380,7 @@ type Arbitrary() =
         }
     static member CatchAll() =
         { new Arbitrary<'a>() with
-            override x.Arbitrary = fmap (unbox<'a>) (geneflectObj (typeof<'a>))
+            override x.Arbitrary = reflectGen
         }
         
 do registerInstances<Arbitrary<_>,Arbitrary>()
@@ -439,8 +388,6 @@ do registerInstances<Arbitrary<_>,Arbitrary>()
 let registerGenerators<'t>() = registerInstances<Arbitrary<_>,'t>()
 let overwriteGenerators<'t>() = overwriteInstances<Arbitrary<_>,'t>()
               
-
-
 //and internal getGenerator (genericMap:IDictionary<_,_>) (t:Type)  =
 //    if t.IsGenericParameter then
 //        //special code for when a generic parameter needs to be generated

@@ -42,6 +42,7 @@
     <DocumentationFile>bin\Debug\FsCheck.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Common.fs" />
     <Compile Include="Random.fs" />
     <Compile Include="Reflect.fs" />
     <Compile Include="TypeClass.fs" />
