@@ -157,10 +157,8 @@ let variant = fun v (Gen m) ->
     let rec rands r0 = seq { let r1,r2 = split r0 in yield! Seq.cons r1 (rands r2) } 
     Gen (fun n r -> m n (Seq.nth (v+1) (rands r)))
 
-
 type IArbitrary =
     abstract GenObj : Gen<obj>
-
 
 [<AbstractClass>]
 type Arbitrary<'a>() =
@@ -179,27 +177,9 @@ let coarbitrary (a:'a)  =
     
 newTypeClass<Arbitrary<_>>
 
-
-
-// first function given is impure
-//type NeilGen = (int -> int -> int) -> int -> obj
-
-//let private genMap : Ref<Map<string, Lazy<NeilGen>>> = ref (Map.empty)
-
 // Compute which types are possible children of this type
 // Helps make union generation terminate quicker
 let private containedTypes (t : Type) : list<Type> = [] // TODO
-
-
-
-//let rec private getNeilGen (t : Type) : Lazy<NeilGen> =
-//        let ts = t.ToString()
-//        match (!genMap).TryFind ts with
-//        | Some v -> v
-//        | None ->
-//            let res = lazy neilGen t
-//            genMap := (!genMap).Add (ts,res)
-//            res
 
 let private getGenerator t = getInstance (typedefof<Arbitrary<_>>, t) |> unbox<IArbitrary> |> (fun arb -> arb.GenObj)
 
@@ -385,42 +365,14 @@ type Arbitrary() =
         
 do registerInstances<Arbitrary<_>,Arbitrary>()
 
+///Register the generators that are static members of the type argument.
 let registerGenerators<'t>() = registerInstances<Arbitrary<_>,'t>()
+
+///Register the generators that are static members of the type argument, overwriting any existing generators.
 let overwriteGenerators<'t>() = overwriteInstances<Arbitrary<_>,'t>()
-              
-//and internal getGenerator (genericMap:IDictionary<_,_>) (t:Type)  =
-//    if t.IsGenericParameter then
-//        //special code for when a generic parameter needs to be generated
-//        Gen.Object |> box
-//        //the code below chooses one generator type per generic type and then sticks with it
-//        //however, because of the difference in behavior between methodinfo.GetGenericArgs (return a name for
-//        //generic args) and FSharpType.GetFunctionElements (returns obj for generic args), the code below
-//        //causes a discrepancy. Now both will generate Whatever<obj>. 
-////        if genericMap.ContainsKey(t) then 
-////            genericMap.[t]
-////        else
-////            let newGenerator =  
-////                [ Gen.Unit |> box;
-////                  Gen.Bool |> box;
-////                  Gen.Char |> box;
-////                  Gen.String |> box ]
-////                |> elements
-////                |> generate 0 (newSeed())
-////            genericMap.Add(t, newGenerator)
-////            newGenerator 
-//    else
-//        match generators.TryGetValue(t) with 
-//        |(true, mi) -> mi.Invoke(null, null) //we found a specific generator, use that
-//        |(false, _) -> 
-//            if t.IsGenericType then
-//                match generators.TryGetValue(t.GetGenericTypeDefinition()) with
-//                |(true, mi) -> 
-//                    //found a generic generator
-//                    let args = t.GetGenericArguments() |> Array.map (getGenerator genericMap)
-//                    let typeargs = args |> Array.map (fun o -> o.GetType().GetGenericArguments().[0])
-//                    let mi = if mi.ContainsGenericParameters then mi.MakeGenericMethod(typeargs) else mi
-//                    mi.Invoke(null, args)
-//                |(false, _) -> //we got nothing. Geneflect the thing.
-//                    geneflectObj t |> box 
-//            else
-//                geneflectObj t |> box
+
+///Register the generators that are static members of the given type.
+let registerGeneratorsByType t = registerInstancesByType (typeof<Arbitrary<_>>) t
+
+///Register the generators that are static members of the given type, overwriting any existing generators.
+let overwriteGeneratorsByType t = overwriteInstancesByType (typeof<Arbitrary<_>>) t

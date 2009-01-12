@@ -12,7 +12,7 @@ let prop_RevRev (xs:list<int>) = List.rev(List.rev xs) = xs
 quickCheck prop_RevRev
 
 let prop_RevId (xs:list<int>) = List.rev xs = xs
-quickCheck prop_RevId
+quickCheckN "RevId" prop_RevId
 
 //------Grouping properties--------
 type ListProperties =
@@ -204,7 +204,7 @@ type Properties =
     static member Test1 (b,(b2:bool)) = (b = b2)
     static member Test2 i = (i < 100)
     static member Test3 (i,j) = (i < 10 && j < 5.1)
-    //static member Test4 l = propl ( List.rev l = l) //generic args no longer work
+    //static member Test4 l =  List.rev l = l //generic args no longer work in quickCheckAll
     static member Test5 (l:list<float>) = List.rev l = l
     //this property is falsifiable: sometimes the generator for float generates nan; and nan <> nan
     //so when checking the reverse of the reverse list's equality with the original list, the check fails. 

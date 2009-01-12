@@ -47,15 +47,25 @@ let private findInstances (typeClass:Type) =
     addMethods []
 
 
+///Register instances in a given class as instances of the given type class. 
+let registerInstancesByType typeClass instance =
+    findInstances typeClass instance |> Seq.iter (typeClasses.[typeClass].Add)
+
 ///Register instances in a given class as instances of the given type class.
 let registerInstances<'typeClass,'instance>() = 
-    let typeClass = typedefof<'typeClass>
-    findInstances typeClass (typeof<'instance>) |> Seq.iter (typeClasses.[typeClass].Add)
+    //let typeClass = 
+    registerInstancesByType (typedefof<'typeClass>) (typeof<'instance>)
+    //findInstances typeClass  |> Seq.iter (typeClasses.[typeClass].Add)
+
+///Register instances in a given class as instances of the given type class, overwriting any existing instances. 
+let overwriteInstancesByType typeClass instance =
+    findInstances typeClass instance |> Seq.iter (fun (t,mi) -> typeClasses.[typeClass].[t] <- mi)
 
 ///Register instances in a given class as instances of the given type class, overwriting any existing instances.  
 let overwriteInstances<'typeClass,'instance>() = 
-    let typeClass = typedefof<'typeClass>
-    findInstances typeClass (typeof<'instance>) |> Seq.iter (fun (t,mi) -> typeClasses.[typeClass].[t] <- mi)
+    overwriteInstancesByType (typedefof<'typeClass>) (typeof<'instance>)
+    //let typeClass = typedefof<'typeClass>
+    //findInstances typeClass (typeof<'instance>) |> Seq.iter (fun (t,mi) -> typeClasses.[typeClass].[t] <- mi)
 
 let getInstance   =
     Common.memoize (fun (typeClass:Type, instance:Type) ->

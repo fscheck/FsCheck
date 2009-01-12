@@ -99,6 +99,7 @@ let private runner config property =
     ) [] |>   
     testsDone config !lastStep !testNb
 
+///A function that returns the default string that is printed as a result of the test.
 let testFinishedToString name testResult = 
     let display l = match l with
                         | []  -> ".\n"
@@ -120,7 +121,7 @@ let testFinishedToString name testResult =
 
         | Exhausted data -> sprintf "%sArguments exhausted after %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
 
-
+///A runner that simply prints results to the console.
 let consoleRunner =
     { new IRunner with
         member x.OnArguments (ntest,args, every) =
@@ -129,8 +130,6 @@ let consoleRunner =
             printf "%s" (testFinishedToString name testResult)
     }
        
-//let private checkProperty config property = runner config property
-
 ///The quick configuration only prints a summary result at the end of the test.
 let quick = { maxTest = 100
               maxFail = 1000
@@ -170,18 +169,7 @@ let private hasTestableReturnType (m:MethodInfo) =
     m.ReturnType = typeof<bool> 
     || m.ReturnType = typeof<Lazy<bool>> 
     || m.ReturnType = typeof<Property>
-
-//let private makeProperty invoker returnType args = 
-//    if returnType = typeof<bool> then
-//        invoker args |> unbox<bool> |> propl
-//    elif returnType = typeof<Lazy<bool>> then
-//        invoker args |> unbox<Lazy<bool>> |> prop
-//    elif returnType = typeof<Property> then
-//        invoker args |> unbox<Property>
-//    else
-//        failwith "Invalid return type: must be either bool, Lazy<bool> or Property"
-
-
+    //TODO: add FastFuncs that return any of these
 
 //let rec private findFunctionArgumentTypes fType = 
 //    if not (FSharpType.IsFunction fType) then  
@@ -204,15 +192,9 @@ let private hasTestableReturnType (m:MethodInfo) =
 //    let property = makeProperty (invokeFunction f) ret
 //    checkProperty config (forAll gen property) |> ignore
 
-///Check the given Property or members of the given class Type or the given function, depending
-///on the type of the argument.
-//let check config (whatever:obj) =
-//    match whatever with
-//        | :? Property as p -> checkProperty config p
-//        | :? Type as t ->  checkType config t
-//        | f -> checkFunction config f
-
 let checkProperty config p = runner config (forAll arbitrary p)
+
+let checkPropertyName name config p = runner { config with name = name } (forAll arbitrary p)
 
 let private checkMethodInfo = typeof<Config>.DeclaringType.GetMethod("checkProperty",BindingFlags.Static ||| BindingFlags.Public)
 
@@ -235,20 +217,9 @@ let checkType config (t:Type) =
     t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
     Array.filter hasTestableReturnType |>
     Array.iter(fun m -> 
-//        let genericMap = new Dictionary<_,_>()
-//        //this needs IGen cause can't cast Gen<anything> to Gen<obj> directly (no variance!)
-//        let gen = m.GetParameters() 
-//                    |> Array.map(fun p -> (getGenerator genericMap p.ParameterType :?> IGen).AsGenObject)
-//                    |> Array.to_list
-//                    |> sequence
-//                    |> (fun gen -> gen.Map List.to_array)
-//        let property = makeProperty (invokeMethod m) (m.ReturnType)
-//        static members:   'method firstArg Second' gets compiled as 'method(firstArg):FastFunc<second,res>
-//                          'method firstArg' gets compiled as method(firstArg)
-//          let in module: let f first second third gets compiled as f(first,second,third)
         let fromP = m.GetParameters() |> Array.map (fun p -> p.ParameterType) |> arrayToTupleType
         let toP = m.ReturnType
-        let funType = FSharpType.MakeFunctionType(fromP, toP)
+        let funType = FSharpType.MakeFunctionType(fromP, toP) 
         let funValue = FSharpValue.MakeFunction(funType, tupleToArray >> invokeMethod m)
         let c = {config with name = t.Name+"."+m.Name}
         let genericM = checkMethodInfo.MakeGenericMethod([|fromP;toP|])
@@ -260,6 +231,12 @@ let checkType config (t:Type) =
 let quickCheck p = p |> checkProperty quick
 ///Check with the configuration 'verbose'.
 let verboseCheck p = p |> checkProperty verbose 
+
+///Check with the configuration 'quick', and using the given name.
+let quickCheckN name p = p |> checkPropertyName name quick
+
+///Check with the configuration 'verbose', and using the given name.
+let verboseCheckN name p = p |> checkPropertyName name verbose
 
 ///Check all properties in given type with configuration 'quick'
 let quickCheckAll t = t |> checkType quick
