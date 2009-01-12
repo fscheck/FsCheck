@@ -25,7 +25,7 @@ let private result res = gen { return res } |> Prop
 type Testable<'prop> =
     abstract Property : 'prop -> Property
 
-let property<'a> p = getInstance (typedefof<Testable<_>>) (typeof<'a>) |> unbox<Testable<'a>> |> (fun t -> t.Property p)
+let property<'a> p = getInstance (typedefof<Testable<_>>, typeof<'a>) |> unbox<Testable<'a>> |> (fun t -> t.Property p)
 
 let internal evaluate a = let (Prop gen) = property a in gen
 

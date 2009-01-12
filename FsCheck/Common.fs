@@ -4,6 +4,7 @@ namespace FsCheck
 
 module internal Common
 
+//generic memoize function from Expert F# book
 let memoize (f: 'a -> 'b) =
     let t = new System.Collections.Generic.Dictionary<'a,'b>()
     fun n ->
@@ -12,4 +13,5 @@ let memoize (f: 'a -> 'b) =
              t.Add(n,res)
              res
 
+//used to be in FSharp libs
 let (|Lazy|) (inp:Lazy<'a>) = inp.Force()

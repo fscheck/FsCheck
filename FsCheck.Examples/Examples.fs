@@ -154,7 +154,6 @@ let rec prop_xmlSafeTree (x : Tree<string>) =
     match x with
     | Leaf x -> not (x.StartsWith " " && x.EndsWith " ")
     | Branch xs -> Array.for_all prop_xmlSafeTree xs.list
-verboseCheck prop_xmlSafeTree
 
 let prop_Product (x:int,y:int) = (x > 0 && y > 0) ==> (x*y > 0)
 

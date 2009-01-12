@@ -57,21 +57,22 @@ let overwriteInstances<'typeClass,'instance>() =
     let typeClass = typedefof<'typeClass>
     findInstances typeClass (typeof<'instance>) |> Seq.iter (fun (t,mi) -> typeClasses.[typeClass].[t] <- mi)
 
-let getInstance (typeClass:Type) (instance:Type)  =
-    let instances = typeClasses.[typeClass]
-    let tryCatchAll instance =
-        match !catchAll with
-        | Some mi   -> mi.MakeGenericMethod([|instance|])
-        | None      -> failwithf "No instances of class %A for type %A" typeClass instance
-    let mi =
-        match instances.TryGetValue(instance) with
-        | (true, res) -> res
-        | _ when instance.IsGenericType -> //exact type is not known, try the generic type
-            match instances.TryGetValue(instance.GetGenericTypeDefinition()) with
-            | (true, mi') -> if mi'.ContainsGenericParameters then (mi'.MakeGenericMethod(instance.GetGenericArguments())) else mi'
+let getInstance   =
+    Common.memoize (fun (typeClass:Type, instance:Type) ->
+        let instances = typeClasses.[typeClass]
+        let tryCatchAll instance =
+            match !catchAll with
+            | Some mi   -> mi.MakeGenericMethod([|instance|])
+            | None      -> failwithf "No instances of class %A for type %A" typeClass instance
+        let mi =
+            match instances.TryGetValue(instance) with
+            | (true, res) -> res
+            | _ when instance.IsGenericType -> //exact type is not known, try the generic type
+                match instances.TryGetValue(instance.GetGenericTypeDefinition()) with
+                | (true, mi') -> if mi'.ContainsGenericParameters then (mi'.MakeGenericMethod(instance.GetGenericArguments())) else mi'
+                | _ -> tryCatchAll instance
             | _ -> tryCatchAll instance
-        | _ -> tryCatchAll instance
-    mi.Invoke(null, Array.empty)
+        mi.Invoke(null, Array.empty))
 
 //attempt to add some type safety
 //let inline arbitraryUnit(c:^c) = (^c : (static member Unit: unit -> IArbitrary<unit>) ()) |>ignore

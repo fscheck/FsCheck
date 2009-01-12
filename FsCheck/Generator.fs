@@ -171,11 +171,11 @@ type Arbitrary<'a>() =
         member x.GenObj = (x.Arbitrary :> IGen).AsGenObject
 
 ///Returns a Gen<'a>
-let arbitrary<'a> = getInstance (typedefof<Arbitrary<_>>) (typeof<'a>) |> unbox<Arbitrary<'a>> |> (fun arb -> arb.Arbitrary)
+let arbitrary<'a> = getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<Arbitrary<'a>> |> (fun arb -> arb.Arbitrary)
 
 ///Returns a generator transformer for the given type, aka a coarbitrary function.
 let coarbitrary (a:'a)  = 
-    getInstance (typedefof<Arbitrary<_>>) (typeof<'a>) |> unbox<(Arbitrary<'a>)> |> (fun arb -> arb.CoArbitrary) <| a
+    getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<(Arbitrary<'a>)> |> (fun arb -> arb.CoArbitrary) <| a
     
 newTypeClass<Arbitrary<_>>
 
@@ -201,7 +201,7 @@ let private containedTypes (t : Type) : list<Type> = [] // TODO
 //            genMap := (!genMap).Add (ts,res)
 //            res
 
-let private getGenerator t = getInstance (typedefof<Arbitrary<_>>) t |> unbox<IArbitrary> |> (fun arb -> arb.GenObj)
+let private getGenerator t = getInstance (typedefof<Arbitrary<_>>, t) |> unbox<IArbitrary> |> (fun arb -> arb.GenObj)
 
 //this finds the generators for each of the types, then chooses one element for each type (so, a product type like tuples)
 let private productGen (ts : list<Type>) =
