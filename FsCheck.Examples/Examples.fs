@@ -219,9 +219,7 @@ checkType quick (typeof<Properties>)
 
 Console.WriteLine("----------Check all toplevel properties----------------");
 type Marker = member x.Null = ()
-//overwriteGenerators (typeof<Marker>.DeclaringType)
+overwriteGeneratorsByType (typeof<Marker>.DeclaringType)
 quickCheckAll (typeof<Marker>.DeclaringType)
-
-//overwriteGenerators (typeof<MyGenerators>)
 
 Console.ReadKey() |> ignore

@@ -169,7 +169,7 @@ let private hasTestableReturnType (m:MethodInfo) =
     m.ReturnType = typeof<bool> 
     || m.ReturnType = typeof<Lazy<bool>> 
     || m.ReturnType = typeof<Property>
-    //TODO: add FastFuncs that return any of these
+    //TODO: add FastFuncs that return any of the above
 
 //let rec private findFunctionArgumentTypes fType = 
 //    if not (FSharpType.IsFunction fType) then  
