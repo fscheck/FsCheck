@@ -21,7 +21,7 @@ quickCheckN "RevId" prop_RevId
 
 //------Grouping properties--------
 type ListProperties =
-    static member RevRev xs = prop_RevRev xs
+    static member RevRev (xs:list<int>) = prop_RevRev xs
     static member RevId xs = prop_RevId xs
 quickCheckAll (typeof<ListProperties>)
 
@@ -220,4 +220,4 @@ type Properties =
     static member Test10 i = (i = 'r')
     static member NoTest i = "30"
 
-checkType quick (typeof<Properties>)
+checkAll quick (typeof<Properties>)

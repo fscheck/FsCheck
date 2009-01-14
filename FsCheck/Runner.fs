@@ -192,11 +192,11 @@ let private hasTestableReturnType (m:MethodInfo) =
 //    let property = makeProperty (invokeFunction f) ret
 //    checkProperty config (forAll gen property) |> ignore
 
-let checkProperty config p = runner config (forAll arbitrary p)
+let check config p = runner config (forAll arbitrary p)
 
-let checkPropertyName name config p = runner { config with name = name } (forAll arbitrary p)
+let checkName name config p = runner { config with name = name } (forAll arbitrary p)
 
-let private checkMethodInfo = typeof<Config>.DeclaringType.GetMethod("checkProperty",BindingFlags.Static ||| BindingFlags.Public)
+let private checkMethodInfo = typeof<Config>.DeclaringType.GetMethod("check",BindingFlags.Static ||| BindingFlags.Public)
 
 let private arrayToTupleType (arr:Type[]) =
     if arr.Length = 0 then
@@ -213,7 +213,7 @@ let private tupleToArray t =
     else
         [|t|]
 
-let checkType config (t:Type) = 
+let checkAll config (t:Type) = 
     t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
     Array.filter hasTestableReturnType |>
     Array.iter(fun m -> 
@@ -228,17 +228,17 @@ let checkType config (t:Type) =
 
 
 ///Check with the configuration 'quick'.  
-let quickCheck p = p |> checkProperty quick
+let quickCheck p = p |> check quick
 ///Check with the configuration 'verbose'.
-let verboseCheck p = p |> checkProperty verbose 
+let verboseCheck p = p |> check verbose 
 
 ///Check with the configuration 'quick', and using the given name.
-let quickCheckN name p = p |> checkPropertyName name quick
+let quickCheckN name p = p |> checkName name quick
 
 ///Check with the configuration 'verbose', and using the given name.
-let verboseCheckN name p = p |> checkPropertyName name verbose
+let verboseCheckN name p = p |> checkName name verbose
 
 ///Check all properties in given type with configuration 'quick'
-let quickCheckAll t = t |> checkType quick
+let quickCheckAll t = t |> checkAll quick
 /// Check all properties in given type with configuration 'verbose'
-let verboseCheckAll t = t |> checkType verbose 
+let verboseCheckAll t = t |> checkAll verbose 

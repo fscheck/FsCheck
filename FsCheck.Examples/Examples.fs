@@ -215,7 +215,7 @@ type Properties =
     static member Test10 i = (i = 'r')
     static member NoTest i = "30"
 
-checkType quick (typeof<Properties>)
+checkAll quick (typeof<Properties>)
 
 Console.WriteLine("----------Check all toplevel properties----------------");
 type Marker = member x.Null = ()
