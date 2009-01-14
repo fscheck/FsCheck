@@ -13,7 +13,7 @@ open System.Collections.Generic
 open FsCheck
 
 //-------A Simple Example----------
-let prop_RevRev (xs:list<int>) = List.rev(List.rev xs) = xs
+let prop_RevRev xs = List.rev(List.rev xs) = xs
 quickCheck prop_RevRev
 
 let prop_RevId (xs:list<int>) = List.rev xs = xs
