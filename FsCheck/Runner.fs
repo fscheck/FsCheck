@@ -242,3 +242,7 @@ let verboseCheckN name p = p |> checkName name verbose
 let quickCheckAll t = t |> checkAll quick
 /// Check all properties in given type with configuration 'verbose'
 let verboseCheckAll t = t |> checkAll verbose 
+
+//necessary initializations
+do TypeClass.newTypeClass<Arbitrary<_>>
+do registerGenerators<Arbitrary.Arbitrary>()

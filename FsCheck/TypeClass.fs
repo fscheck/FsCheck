@@ -23,10 +23,10 @@ let newTypeClass<'typeClass> =
 //parametrized active pattern that recognizes generic types with generic type definitions equal to the first paramater, 
 //and that returns the generic type parameters of the generic type.
 let private (|GenericTypeDef|_|) (p:Type) (t:Type) = 
-    try
+    if t.IsGenericType then
         let generic = t.GetGenericTypeDefinition() 
         if p.Equals(generic) then Some(t.GetGenericArguments()) else None
-    with _ -> None
+    else None  
 
 //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank
 let private findInstances (typeClass:Type) instancesType = 

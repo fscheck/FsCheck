@@ -112,9 +112,9 @@ let rec getShrink (t : Type) : Lazy<ShrinkType> =
                 let x = o :?> System.Array
                 if x.Length = 0 then None
                 else
-//                    let empty = box <| Array.CreateInstance(t2, 0)
-//                    if test empty then Some empty
-//                    else
+                    let empty = box <| Array.CreateInstance(t2, 0)
+                    if test empty then Some empty
+                    else
                         let x2 = Array.CreateInstance(t2, x.Length)
                         Array.Copy(x, x2, x.Length)
                         arrayShrink (fun _ -> inner) test (box x2)
