@@ -7,6 +7,11 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
+
+
+
+
+
 //-------A Simple Example----------
 let prop_RevRev (xs:list<int>) = List.rev(List.rev xs) = xs
 quickCheck prop_RevRev
@@ -183,6 +188,13 @@ let prop_MaxLe (x:float) y = (x <= y) ==> (lazy (max  x y = y))
 //convoluted, absurd property, but shows the power of the combinators: it's no problem to return
 //functions that return properties.
 quickCheck (fun b y (x:char,z) -> if b then (fun q -> y+1 = z + int q) else (fun q -> q =10.0)) 
+
+//arrays
+let prop_RevRevArr (xs:int[]) = Array.rev(Array.rev xs) = xs
+quickCheck prop_RevRevArr
+
+let prop_RevRevArr2 (xs:int[][]) = xs.Rank = 1
+quickCheck prop_RevRevArr2
 
 quickCheck (fun (arr:int[]) -> Array.rev arr = arr)
 

@@ -191,22 +191,11 @@ let private productGen (ts : list<Type>) =
 
 let reflectObj  =
     Common.memoize (fun (t:Type) ->
-        if t.IsArray then
-            let t2 = t.GetElementType()
-            let inner = getGenerator t2
-            let toTypedArray (arrType:Type) (l:list<_>) = 
-                let res = Array.CreateInstance(arrType, l.Length)
-                List.iteri (fun i value -> res.SetValue(value,i)) l
-                res
-            let genArr s = vector inner s |> fmap (toTypedArray t2 >> box) //|> unbox<IGen> |> (fun g -> g.AsGenObject)
-            box <| sized genArr
-
-        elif isRecordType t then
+        if isRecordType t then
             let g = productGen [ for pi in getRecordFields t -> pi.PropertyType ]
             let create = getRecordConstructor t
             let result = g |> sequence |> fmap (List.to_array >> create)
             box result
-            //fun next size -> create (g next size)
 
         elif isUnionType t then
             // figure out the "size" of a union
@@ -345,11 +334,12 @@ type Arbitrary() =
                     | :? bool as b -> variant 2 >> coarbitrary b
                     | _ -> failwith "Unknown domain type in coarbitrary of obj" 
         }
-//    static member Array() =
-//        { new Arbitrary<'a[]>() with
-//            override x.Arbitrary = arbitrary |> fmap List.to_array
-//            //TODO: coarbitrary
-//        }
+    //Generate a rank 1 array.
+    static member Array() =
+        { new Arbitrary<'a[]>() with
+            override x.Arbitrary = arbitrary |> fmap List.to_array
+            override x.CoArbitrary a = a |> Array.to_list |> coarbitrary
+        }
      ///Generate a function value.
     static member Arrow() = 
         { new Arbitrary<'a->'b>() with
