@@ -31,29 +31,42 @@ let succeeded = { result with ok = Some (lazy true) }
 
 let rejected = { result with ok = None }
 
+//A rose is a pretty tree
+//Draw it and you'll see.
+//A Rose<Result> is used to keep, in a lazy way, the possible shrinks for the value in the node.
+//The fst value is the current Result, and the list contains the properties yielding possibly shrunk results.
+//Each of those can in turn have their own shrinks.
 type Rose<'a> = 
     MkRose of Lazy<'a> * seq<Rose<'a>> with
         member x.Map f = match x with MkRose (x,rs) -> MkRose (lazy (f <| x.Force()), Seq.map (fun (r:Rose<_>) -> r.Map f) rs) 
 
-let fmapRose f (a:Rose<_>) = a.Map f
+let private fmapRose f (a:Rose<_>) = a.Map f
    
-let rec join (MkRose (Lazy (MkRose(x,ts)),tts)) = 
-    MkRose (x,(Seq.append (Seq.map join tts) ts)) //first shrinks outer quantification; makes most sense
+//careful here: we can't pattern match as follows, as this will result in evaluation:
+//let rec join (MkRose (Lazy (MkRose(x,ts)),tts)) 
+//instead, define everything inside the MkRose, as a lazily evaluated expression. Haskell would use an irrefutable
+//pattern here (is this possible using an active pattern? -> to investigate!) 
+let rec private join (MkRose (r,tts)) =
+    //bweurgh. Need to match twice to keep it lazy.
+    let x = lazy (match r with (Lazy (MkRose (x,_))) -> x.Force())
+    let ts = Seq.append (Seq.map join tts) <| seq { yield! match r with (Lazy (MkRose (_,ts))) -> ts }
+    MkRose (x,ts) 
+  //first shrinks outer quantification; makes most sense
   // first shrinks inner quantification: MkRose (x,(ts ++ Seq.map join tts))
 
 type RoseBuilder() =
-    member b.Return(x) : Rose<_> = 
+    member internal b.Return(x) : Rose<_> = 
         MkRose (lazy x,Seq.empty)
-    member b.Bind(m, k) : Rose<_> = 
+    member internal b.Bind(m, k) : Rose<_> = 
         join ( fmapRose k m )              
 
-let rose = new RoseBuilder()
+let private rose = new RoseBuilder()
 
-let liftRose f = fun r -> rose{ let! r' = r
+let private liftRose f = fun r -> rose{ let! r' = r
                                 return f r' }
 
 type Prop = MkProp of Rose<Result>
-let unProp (MkProp rose) = rose
+let internal unProp (MkProp rose) = rose
 
 type Property = Gen<Prop>
 
@@ -62,35 +75,35 @@ type Testable<'prop> =
 
 let property<'a> p = getInstance (typedefof<Testable<_>>, typeof<'a>) |> unbox<Testable<'a>> |> (fun t -> t.Property p)
 
-let promoteRose m = Gen (fun s r -> liftRose (fun (Gen m') -> m' s r) m)
+let private promoteRose m = Gen (fun s r -> liftRose (fun (Gen m') -> m' s r) m)
 
 ///Property combinator to shrink an original value x using the shrinking function shrink:'a -> #seq<'a>, and the testable
 ///function pf. 
 let shrinking shrink x pf : Property =
-    let rec props x = MkRose (lazy (property (pf x)), shrink x |> Seq.map props |>Seq.cache)
-    let promoted = (promoteRose (props x))
-    fmapGen (MkProp << join << (fmapRose unProp)) promoted
+    //cache is important here to avoid re-evaluation of property
+    let rec props x = MkRose (lazy (property (pf x)), shrink x |> Seq.map props |> Seq.cache)
+    fmapGen (MkProp << join << (fmapRose unProp)) <| promoteRose (props x)
  
-let liftRoseResult t : Property = gen { return MkProp t }
+let private liftRoseResult t : Property = gen { return MkProp t }
 
 //liftResult :: Result -> Property
-let liftResult (r:Result) : Property = 
+let private liftResult (r:Result) : Property = 
     liftRoseResult <| rose { return r }
  
 ////liftBool :: Bool -> Property
-let liftBool b = liftResult <| { result with ok = Some (lazy b)  }
+let private liftBool b = liftResult <| { result with ok = Some (lazy b)  }
 
-let liftLazyBool lb = liftResult <| { result with ok = Some lb }
+let private liftLazyBool lb = liftResult <| { result with ok = Some lb }
 
 
 //mapProp :: Testable prop => (Prop -> Prop) -> prop -> Property
-let mapProp f :( _ -> Property) = fmapGen f << property
+let private mapProp f :( _ -> Property) = fmapGen f << property
 
 //mapRoseIOResult :: Testable prop => (Rose (IO Result) -> Rose (IO Result)) -> prop -> Property
-let mapRoseResult f = mapProp (fun (MkProp t) -> MkProp (f t))
+let private mapRoseResult f = mapProp (fun (MkProp t) -> MkProp (f t))
 
 //mapResult :: Testable prop => (Result -> Result) -> prop -> Property
-let mapResult f = mapRoseResult (fmapRose f)
+let private mapResult f = mapRoseResult (fmapRose f)
 
 ///Quantified property combinator. Provide a custom test data generator to a property.
 let forAll gn body : Property = 
@@ -111,7 +124,7 @@ let forAllShrink gn shrink body : Property =
     let argument a res = { res with arguments = (box a) :: res.arguments }
     gen{let! a = gn
         let! res = shrinking shrink a (fun a' ->
-            printfn "forAllShrink shrinking got %A" a'
+            //printfn "forAllShrink shrinking got %A" a'
             try 
                 property (body a')
             with
@@ -120,27 +133,6 @@ let forAllShrink gn shrink body : Property =
             )
         return res }
         //return fmapRose (argument a) (unProp res) |> MkProp }
-
-//let forAllShrink gn body = 
-//    let failed res =
-//        match res.ok with
-//        | None -> false
-//        | Some x -> not x.Value
-//    
-//    // return true if you can continue to shrink (i.e. ok = false)
-//    let f x =
-//        let (Gen v) = (evaluate (body x))
-//        failed (v 0 (Random.newSeed()))
-//    let argument a res = { res with arguments = (box a) :: res.arguments } in
-//        Prop <|  gen { let! a = gn
-//                       let! res = 
-//                            try 
-//                                evaluate (body a)
-//                            with
-//                                e -> gen { return { nothing with ok = Some (lazy false); exc = Some e }}
-//                       let a2 = if failed res then Shrink.doShrink f a else a
-//                       return (argument a2 res) }
-
 
 type Testable =
     static member Unit() =
