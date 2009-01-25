@@ -67,7 +67,7 @@ let promoteRose m = Gen (fun s r -> liftRose (fun (Gen m') -> m' s r) m)
 ///Property combinator to shrink an original value x using the shrinking function shrink:'a -> #seq<'a>, and the testable
 ///function pf. 
 let shrinking shrink x pf : Property =
-    let rec props x = MkRose (lazy (property (pf x)), shrink x |> Seq.map props)
+    let rec props x = MkRose (lazy (property (pf x)), shrink x |> Seq.map props |>Seq.cache)
     let promoted = (promoteRose (props x))
     fmapGen (MkProp << join << (fmapRose unProp)) promoted
  
@@ -116,9 +116,10 @@ let forAllShrink gn shrink body : Property =
                 property (body a')
             with
                 e -> gen { return MkProp <| rose { return { result with ok = Some (lazy false); exc = Some e }}}
+            |> fmapGen (unProp >> fmapRose (argument a'))
             )
-        //return res }
-        return fmapRose (argument a) (unProp res) |> MkProp }
+        return res }
+        //return fmapRose (argument a) (unProp res) |> MkProp }
 
 //let forAllShrink gn body = 
 //    let failed res =
@@ -160,6 +161,9 @@ type Testable =
     static member GenProp() =
         { new Testable<Gen<'a>> with
             member x.Property gena = gen { let! a = gena in return! property a } }
+    static member RoseResult() =
+        { new Testable<Rose<Result>> with
+            member x.Property rosea = gen { return MkProp rosea } } 
     static member Arrow() =
         { new Testable<('a->'b)> with
             member x.Property f = forAllShrink arbitrary shrink f }

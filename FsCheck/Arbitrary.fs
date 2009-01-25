@@ -87,12 +87,12 @@ type Arbitrary() =
             override x.Arbitrary = sized <| fun n -> choose (-n,n) 
             override x.CoArbitrary n = variant (if n >= 0 then 2*n else 2*(-n) + 1)
             override x.Shrink n = 
-                let smaller x y = abs x < abs y
+                let (|>|) x y = abs x > abs y
                 let res = 
                     seq {   if n < 0 then yield -n 
                             yield! Seq.unfold (fun st -> let st = st / 2 in Some (n-st, st)) n 
                                     |> Seq.cons 0 
-                                    |> Seq.take_while (smaller n) }
+                                    |> Seq.take_while ((|>|) n) }
                     |> Seq.distinct  
                 //printfn "shrink for %i: %A" n res
                 res
@@ -117,10 +117,10 @@ type Arbitrary() =
                 let decodeFloat = (fl * float m |> int, m )
                 coarbitrary <| decodeFloat
             override x.Shrink fl =
-                let smaller x y = abs x < abs y
+                let (|<|) x y = abs x < abs y
                 seq {   if fl < 0.0 then yield -fl
                         let truncated = truncate fl
-                        if smaller truncated fl then yield truncated }
+                        if truncated |<| fl then yield truncated }
                 |> Seq.distinct
         }
     ///Generates arbitrary chars, between ASCII codes Char.MinValue and 127.

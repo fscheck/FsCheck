@@ -7,11 +7,11 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
-quickCheck (fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 ))
+quickCheck <| (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 )))
 quickCheck (fun opt -> match opt with None -> false | Some b  -> b  )
 quickCheck (fun opt -> match opt with None -> true | Some n when n<0 -> false | Some n when n >= 0 -> true )
 
-let prop_RevId' (xs:list<int>) = if (xs.Length > 2) then false else true
+let prop_RevId' (xs:list<int>) (x:int) = if (xs.Length > 2) && (x >10) then false else true
 quickCheck prop_RevId'
 
 Console.ReadKey() |>ignore

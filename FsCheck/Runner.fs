@@ -56,7 +56,7 @@ let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
             let (MkRose ((Lazy result'),shrinks')) = Seq.hd shrinks
             match result'.ok with
             | Some (Lazy false) -> yield Shrunk result'; yield! shrinkResult result' shrinks'
-            | _                 -> printfn "no shrinkk: %A" result'.arguments; yield! shrinkResult result <| Seq.skip 1 shrinks
+            | _                 -> printfn "no shrink: %A" result'.arguments; yield! shrinkResult result <| Seq.skip 1 shrinks
           else
             yield EndShrink result
     }
