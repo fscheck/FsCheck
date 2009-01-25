@@ -12,6 +12,8 @@ open Random
 open Microsoft.FSharp.Reflection
 open Generator
 open Property
+open TypeClass
+open Common
 
 type TestData = { NumberOfTests: int; Stamps: seq<int * list<string>>}
 type TestResult = 
@@ -20,10 +22,12 @@ type TestResult =
     | Exhausted of TestData
     
 type private TestStep = 
-    | Generated of list<obj>    //test number and generated arguments (test not yet executed)
-    | Passed of list<string>    //passed, test number and stamps for this test
-    | Falsified of list<obj> * option<Exception>   //falsified the property with given arguments, potentially exception was thrown
-    | Failed                    //generated arguments did not pass precondition
+    | Generated of list<obj>    //generated arguments (test not yet executed)
+    | Passed of Result //list<string>    //passed, test number and stamps for this test
+    | Falsified of Result //list<obj> * option<Exception>   //falsified the property with given arguments, potentially exception was thrown
+    | Failed of Result                   //generated arguments did not pass precondition
+    | Shrunk of Result
+    | EndShrink of Result
 
 ///For implementing your own test runner.
 type IRunner =
@@ -43,21 +47,75 @@ type Config =
       every   : int -> list<obj> -> string  //determines what to print if new arguments args are generated in test n
       runner  : IRunner } //the test runner    
 
+//foundFailure :: State -> P.Result -> [Rose (IO P.Result)] -> IO ()
+//foundFailure st res ts =
+//  do localMin st{ numTryShrinks = 0, isShrinking = True } res ts
+//
+let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
+    seq { if not (Seq.is_empty shrinks) then
+            let (MkRose ((Lazy result'),shrinks')) = Seq.hd shrinks
+            match result'.ok with
+            | Some (Lazy false) -> yield Shrunk result'; yield! shrinkResult result' shrinks'
+            | _                 -> printfn "no shrinkk: %A" result'.arguments; yield! shrinkResult result <| Seq.skip 1 shrinks
+          else
+            yield EndShrink result
+    }
+
+
+//localMin :: State -> P.Result -> [Rose (IO P.Result)] -> IO ()
+//localMin st res [] =
+//  do putLine (terminal st)
+//       ( P.reason res
+//      ++ " (after " ++ number (numSuccessTests st+1) "test"
+//      ++ concat [ " and " ++ number (numSuccessShrinks st) "shrink"
+//                | numSuccessShrinks st > 0
+//                ]
+//      ++ "):  "
+//       )
+//     callbackPostFinalFailure st res
+//
+//localMin st res (t : ts) =
+//  do -- CALLBACK before_test
+//     (res',ts') <- run t
+//     putTemp (terminal st)
+//       ( short 35 (P.reason res)
+//      ++ " (after " ++ number (numSuccessTests st+1) "test"
+//      ++ concat [ " and "
+//               ++ show (numSuccessShrinks st)
+//               ++ concat [ "." ++ show (numTryShrinks st) | numTryShrinks st > 0 ]
+//               ++ " shrink"
+//               ++ (if numSuccessShrinks st == 1
+//                   && numTryShrinks st == 0
+//                   then "" else "s")
+//                | numSuccessShrinks st > 0 || numTryShrinks st > 0
+//                ]
+//      ++ ")..."
+//       )
+//     callbackPostTest st res'
+//     if ok res' == Just False
+//       then foundFailure st{ numSuccessShrinks = numSuccessShrinks st + 1 } res' ts'
+//       else localMin st{ numTryShrinks = numTryShrinks st + 1 } res ts
+
+
+
+    
+    
 let rec private test initSize resize rnd0 gen =
     seq { let rnd1,rnd2 = split rnd0
           let newSize = resize initSize
-          let result = generate (newSize |> round |> int) rnd2 gen
+          let (MkRose (Lazy result,shrinks)) = generate (newSize |> round |> int) rnd2 gen |> unProp
           yield Generated result.arguments
           match result.ok with
             | None -> 
-                yield Failed  
-                yield! test newSize resize rnd1 gen
-            | Some (Common.Lazy true) -> 
-                yield Passed result.stamp
-                yield! test newSize resize rnd1 gen
-            | Some (Common.Lazy false) -> 
-                yield Falsified (result.arguments,result.exc)
-                yield! test newSize resize rnd1 gen
+                yield Failed result 
+            | Some (Lazy true) -> 
+                yield Passed result//.stamp
+                //yield! test newSize resize rnd1 gen
+            | Some (Lazy false) -> 
+                yield Falsified result//.arguments,result.exc)
+                yield! shrinkResult result shrinks
+                //yield! test newSize resize rnd1 gen
+          yield! test newSize resize rnd1 gen
     }
 
 let private testsDone config outcome ntest stamps =    
@@ -74,37 +132,40 @@ let private testsDone config outcome ntest stamps =
     let testResult =
         match outcome with
             | Passed _ -> True { NumberOfTests = ntest; Stamps = table }
-            | Falsified (args,exc) -> False ({ NumberOfTests = ntest; Stamps = table }, args, exc)
+            | Falsified result (*(args,exc)*) -> False ({ NumberOfTests = ntest; Stamps = table }, result.arguments, result.exc)
             | Failed _ -> Exhausted { NumberOfTests = ntest; Stamps = table }
+            | EndShrink result -> False ({ NumberOfTests = ntest; Stamps = table }, result.arguments, result.exc)
             | _ -> failwith "Test ended prematurely"
     config.runner.OnFinished(config.name,testResult)
     //Console.Write(message outcome + " " + any_to_string ntest + " tests" + table:string)
 
-let private runner config property = 
+let private runner config prop = 
     let testNb = ref 0
     let failedNb = ref 0
-    let lastStep = ref Failed
-    test 0.0 (config.size) (newSeed()) (evaluate property) |>
+    let lastStep = ref (Failed rejected)
+    test 0.0 (config.size) (newSeed()) (property prop) |>
     Seq.take_while (fun step ->
         lastStep := step
         match step with
             | Generated args -> config.runner.OnArguments(!testNb, args, config.every); true//Console.Write(config.every !testNb args); true
             | Passed _ -> testNb := !testNb + 1; !testNb <> config.maxTest //stop if we have enough tests
-            | Falsified _ -> testNb := !testNb + 1; false //falsified, always stop
-            | Failed -> failedNb := !failedNb + 1; !failedNb <> config.maxFail) |> //failed, stop if we have too much failed tests
-    Seq.fold (fun acc elem ->
+            | Falsified result -> printfn "Falsified: %A" result.arguments; testNb := !testNb + 1; true //falsified, true to continue with shrinking
+            | Failed _ -> failedNb := !failedNb + 1; !failedNb <> config.maxFail //failed, stop if we have too much failed tests
+            | Shrunk result -> printfn "Shrunk: %A" result.arguments; true
+            | EndShrink result -> printfn "LastShrink: %A" result.arguments; false )
+    |> Seq.fold (fun acc elem ->
         match elem with
-            | Passed stamp -> (stamp :: acc)
+            | Passed result -> (result.stamp :: acc)
             | _ -> acc
-    ) [] |>   
-    testsDone config !lastStep !testNb
+    ) [] 
+    |> testsDone config !lastStep !testNb
 
 ///A function that returns the default string that is printed as a result of the test.
 let testFinishedToString name testResult = 
     let display l = match l with
-                        | []  -> ".\n"
-                        | [x] -> " (" + x + ").\n"
-                        | xs  -> ".\n" + List.fold_left (fun acc x -> x + ".\n"+ acc) "" xs
+                    | []  -> ".\n"
+                    | [x] -> " (" + x + ").\n"
+                    | xs  -> ".\n" + List.fold_left (fun acc x -> x + ".\n"+ acc) "" xs
     let rec intersperse sep l = match l with
                                 | [] -> []
                                 | [x] -> [x]
@@ -114,12 +175,10 @@ let testFinishedToString name testResult =
     let name = (name+"-")
     let printArgs = List.map any_to_string >> intersperse "\n" >> List.reduce_left (+)
     match testResult with
-        | True data -> sprintf "%sOk, passed %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
-        | False (data, args, None) -> sprintf "%sFalsifiable, after %i tests: \n%s\n" name data.NumberOfTests (args |> printArgs) 
-        | False (data, args, Some exc) -> sprintf "%sFalsifiable, after %i tests: \n%s\n with exception:\n%O" name data.NumberOfTests (args |> printArgs) exc
-
-
-        | Exhausted data -> sprintf "%sArguments exhausted after %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
+    | True data -> sprintf "%sOk, passed %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
+    | False (data, args, None) -> sprintf "%sFalsifiable, after %i tests: \n%s\n" name data.NumberOfTests (args |> printArgs) 
+    | False (data, args, Some exc) -> sprintf "%sFalsifiable, after %i tests: \n%s\n with exception:\n%O" name data.NumberOfTests (args |> printArgs) exc
+    | Exhausted data -> sprintf "%sArguments exhausted after %i tests%s" name data.NumberOfTests (data.Stamps |> stamps_to_string )
 
 ///A runner that simply prints results to the console.
 let consoleRunner =
@@ -192,7 +251,7 @@ let private hasTestableReturnType (m:MethodInfo) =
 //    let property = makeProperty (invokeFunction f) ret
 //    checkProperty config (forAll gen property) |> ignore
 
-let check config p = runner config (forAll arbitrary p)
+let check config p = runner config (forAllShrink arbitrary shrink p)
 
 let checkName name config p = runner { config with name = name } (forAll arbitrary p)
 
@@ -243,6 +302,10 @@ let quickCheckAll t = t |> checkAll quick
 /// Check all properties in given type with configuration 'verbose'
 let verboseCheckAll t = t |> checkAll verbose 
 
+
+
 //necessary initializations
-do TypeClass.newTypeClass<Arbitrary<_>>
+do newTypeClass<Arbitrary<_>>
 do registerGenerators<Arbitrary.Arbitrary>()
+do newTypeClass<Testable<_>>
+do registerInstances<Testable<_>,Testable>()

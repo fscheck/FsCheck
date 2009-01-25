@@ -26,7 +26,7 @@ and Gen<'a> =
         //match x with (Gen g) -> Gen (fun n r -> g n r |> box)
 
 ///Apply ('map') the function f on the value in the generator, yielding a new generator.
-let fmap f (gen:Gen<_>) = gen.Map f
+let fmapGen f (gen:Gen<_>) = gen.Map f
 
 ///Obtain the current size. sized g calls g, passing it the current size as a parameter.
 let sized fgen = Gen (fun n r -> let (Gen m) = fgen n in m n r)
@@ -162,9 +162,13 @@ type private IArbitrary =
 
 [<AbstractClass>]
 type Arbitrary<'a>() =
-    abstract Arbitrary : Gen<'a>
-    abstract CoArbitrary : 'a -> (Gen<'c> -> Gen<'c>) 
-    default x.CoArbitrary (_:'a) = failwithf "CoArbitrary for %A is not implemented" (typeof<'a>)
+    abstract Arbitrary      : Gen<'a>
+    abstract CoArbitrary    : 'a -> (Gen<'c> -> Gen<'c>) 
+    abstract Shrink         : 'a -> seq<'a>
+    default x.CoArbitrary (_:'a) = 
+        failwithf "CoArbitrary for %A is not implemented" (typeof<'a>)
+    default x.Shrink a = 
+        Seq.empty
     interface IArbitrary with
         member x.GenObj = (x.Arbitrary :> IGen).AsGenObject
 
@@ -174,7 +178,10 @@ let arbitrary<'a> = getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<Ar
 ///Returns a generator transformer for the given type, aka a coarbitrary function.
 let coarbitrary (a:'a)  = 
     getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<(Arbitrary<'a>)> |> (fun arb -> arb.CoArbitrary) <| a
-    
+
+let shrink (a:'a) = 
+    getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<(Arbitrary<'a>)> |> (fun arb -> arb.Shrink) <| a
+
 let internal getGenerator t = getInstance (typedefof<Arbitrary<_>>, t) |> unbox<IArbitrary> |> (fun arb -> arb.GenObj)
 
 ///Register the generators that are static members of the type argument.

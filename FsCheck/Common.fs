@@ -13,5 +13,9 @@ let memoize (f: 'a -> 'b) =
              t.Add(n,res)
              res
 
+//and 'a ``lazy`` = Lazy<'a>
+
 //used to be in FSharp libs
 let (|Lazy|) (inp:Lazy<'a>) = inp.Force()
+    
+let inline fmap (f:^c -> ^d) (a:^a) : ^b = (^a : (member Map: (^c -> ^d) -> ^b) (a,f))

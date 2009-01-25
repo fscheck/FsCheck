@@ -14,7 +14,6 @@ type ShrinkType = (obj -> bool) -> obj -> option<obj>
 
 let shrinkMap : Ref<Map<string, Lazy<ShrinkType>>> = ref (Map.empty)
 
-
 let rec children0 (seen : Set<string>) (tFind : Type) (t : Type) : (obj -> list<obj>) =
             if tFind = t then
                 fun o -> [o]
@@ -171,7 +170,7 @@ let staticTypeOf (t:Type) =
 
 // you want to find the smallest value value such that
 // test returns true, assuming (test x) = true
-let shrink (test : 'a -> bool) (x : 'a) : 'a =
+let doShrink (test : 'a -> bool) (x : 'a) : 'a =
     //let f = unbox >> test
     if (debug) then printfn "shrinking value of runtime type %A static type %A" (x.GetType()) (typeof<'a>)
     let f = fun x -> let v = test (unbox x) 
