@@ -11,25 +11,25 @@ open Common
 open TypeClass
 
 ///The result of one execution of a property.
-type Result = { ok : option<Lazy<bool>>
-                stamp : list<string>
-                arguments : list<obj> 
-                exc: option<Exception> }
+type Result = { Ok : option<Lazy<bool>>
+                Stamp : list<string>
+                Arguments : list<obj> 
+                Exc: option<Exception> }
 
 //let private nothing = { ok = None; stamp = []; arguments = []; exc = None }
 
 let result =
-  { ok        = None
-  ; stamp     = []
-  ; arguments = []
-  ; exc = None
+  { Ok        = None
+  ; Stamp     = []
+  ; Arguments = []
+  ; Exc = None
   }
 
-let failed = { result with ok = Some (lazy false) }
+let failed = { result with Ok = Some (lazy false) }
 
-let succeeded = { result with ok = Some (lazy true) }
+let succeeded = { result with Ok = Some (lazy true) }
 
-let rejected = { result with ok = None }
+let rejected = { result with Ok = None }
 
 //A rose is a pretty tree
 //Draw it and you'll see.
@@ -91,10 +91,9 @@ let private liftResult (r:Result) : Property =
     liftRoseResult <| rose { return r }
  
 ////liftBool :: Bool -> Property
-let private liftBool b = liftResult <| { result with ok = Some (lazy b)  }
+let private liftBool b = liftResult <| { result with Ok = Some (lazy b)  }
 
-let private liftLazyBool lb = liftResult <| { result with ok = Some lb }
-
+let private liftLazyBool lb = liftResult <| { result with Ok = Some lb }
 
 //mapProp :: Testable prop => (Prop -> Prop) -> prop -> Property
 let private mapProp f :( _ -> Property) = fmapGen f << property
@@ -107,32 +106,28 @@ let private mapResult f = mapRoseResult (fmapRose f)
 
 ///Quantified property combinator. Provide a custom test data generator to a property.
 let forAll gn body : Property = 
-    //let evaluate a = property a//let (Prop gen) = property a in gen
-    let argument a res = { res with arguments = (box a) :: res.arguments }
+    let argument a res = { res with Arguments = (box a) :: res.Arguments }
     gen{let! a = gn
         let! res = 
             try 
                 property (body a)
             with
-                e -> gen { return MkProp <| rose { return { result with ok = Some (lazy false); exc = Some e }}}
-        //return res }
+                e -> gen { return MkProp <| rose { return { result with Ok = Some (lazy false); Exc = Some e }}}
         return fmapRose (argument a) (unProp res) |> MkProp }
 
 ///Quantified property combinator. Provide a custom test data generator to a property. 
 ///Shrink failing test cases using the given shrink function.
 let forAllShrink gn shrink body : Property =
-    let argument a res = { res with arguments = (box a) :: res.arguments }
+    let argument a res = { res with Arguments = (box a) :: res.Arguments }
     gen{let! a = gn
         let! res = shrinking shrink a (fun a' ->
-            //printfn "forAllShrink shrinking got %A" a'
             try 
                 property (body a')
             with
-                e -> gen { return MkProp <| rose { return { result with ok = Some (lazy false); exc = Some e }}}
+                e -> gen { return MkProp <| rose { return { result with Ok = Some (lazy false); Exc = Some e }}}
             |> fmapGen (unProp >> fmapRose (argument a'))
             )
         return res }
-        //return fmapRose (argument a) (unProp res) |> MkProp }
 
 type Testable =
     static member Unit() =
@@ -167,7 +162,7 @@ let (==>) =
     implies
 
 let private label str a = 
-    let add res = { res with stamp = str :: res.stamp } 
+    let add res = { res with Stamp = str :: res.Stamp } 
     mapResult add (property a)
     //((property a).Map add)
 

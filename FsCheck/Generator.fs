@@ -158,7 +158,9 @@ let variant = fun v (Gen m) ->
     Gen (fun n r -> m n (Seq.nth (v+1) (rands r)))
 
 type private IArbitrary =
-    abstract GenObj : Gen<obj>
+    abstract ArbitraryObj : Gen<obj>
+    abstract ShrinkObj : obj -> seq<obj>
+    
 
 [<AbstractClass>]
 type Arbitrary<'a>() =
@@ -170,7 +172,8 @@ type Arbitrary<'a>() =
     default x.Shrink a = 
         Seq.empty
     interface IArbitrary with
-        member x.GenObj = (x.Arbitrary :> IGen).AsGenObject
+        member x.ArbitraryObj = (x.Arbitrary :> IGen).AsGenObject
+        member x.ShrinkObj o = (x.Shrink (unbox o)) |> Seq.map box
 
 ///Returns a Gen<'a>
 let arbitrary<'a> = getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<Arbitrary<'a>> |> (fun arb -> arb.Arbitrary)
@@ -182,7 +185,9 @@ let coarbitrary (a:'a)  =
 let shrink (a:'a) = 
     getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<(Arbitrary<'a>)> |> (fun arb -> arb.Shrink) <| a
 
-let internal getGenerator t = getInstance (typedefof<Arbitrary<_>>, t) |> unbox<IArbitrary> |> (fun arb -> arb.GenObj)
+let internal getGenerator t = getInstance (typedefof<Arbitrary<_>>, t) |> unbox<IArbitrary> |> (fun arb -> arb.ArbitraryObj)
+
+let internal getShrink t = getInstance (typedefof<Arbitrary<_>>, t) |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkObj)
 
 ///Register the generators that are static members of the type argument.
 let registerGenerators<'t>() = registerInstances<Arbitrary<_>,'t>()

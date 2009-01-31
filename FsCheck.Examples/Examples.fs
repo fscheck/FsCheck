@@ -7,6 +7,37 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
+
+type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }
+
+
+verboseCheck <| 
+    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:RecordStuff<string>) -> s.Yes)) 
+
+type Recursive<'a> = Void | Leaf of 'a | Branch of Recursive<'a> * 'a * Recursive<'a>
+
+//should yield 
+verboseCheck <| 
+    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Recursive<string>) -> 
+    match s with  Branch _ -> false | _ -> true)) 
+
+type Simple = Void | Void2 | Void3 | Leaf of int | Leaf2 of string * int *char * float
+
+//should yield a simplified Leaf2
+verboseCheck <| 
+    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
+    match s with Leaf2 _ -> false |  _ -> true)) 
+   
+
+//should yield a Void3
+verboseCheck <| 
+    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
+    match s with Leaf2 _ -> false | Void3 -> false |  _ -> true)) 
+
+
+
+
+
 verboseCheck <| (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 )))
 verboseCheck (fun opt -> match opt with None -> false | Some b  -> b  )
 verboseCheck (fun opt -> match opt with None -> true | Some n when n<0 -> false | Some n when n >= 0 -> true )

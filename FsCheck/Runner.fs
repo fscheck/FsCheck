@@ -57,7 +57,7 @@ type Config =
 let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
     seq { if not (Seq.is_empty shrinks) then
             let (MkRose ((Lazy result'),shrinks')) = Seq.hd shrinks
-            match result'.ok with
+            match result'.Ok with
             | Some (Lazy false) -> yield Shrink result'; yield! shrinkResult result' shrinks'
             | _                 -> yield NoShrink result'; yield! shrinkResult result <| Seq.skip 1 shrinks
           else
@@ -68,8 +68,8 @@ let rec private test initSize resize rnd0 gen =
     seq { let rnd1,rnd2 = split rnd0
           let newSize = resize initSize
           let (MkRose (Lazy result,shrinks)) = generate (newSize |> round |> int) rnd2 gen |> unProp
-          yield Generated result.arguments
-          match result.ok with
+          yield Generated result.Arguments
+          match result.Ok with
             | None -> 
                 yield Failed result 
             | Some (Lazy true) -> 
@@ -95,9 +95,9 @@ let private testsDone config outcome origArgs ntest nshrinks stamps =
         let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table }
         match outcome with
             | Passed _ -> True testData
-            | Falsified result -> False (testData, origArgs, result.arguments, result.exc)
+            | Falsified result -> False (testData, origArgs, result.Arguments, result.Exc)
             | Failed _ -> Exhausted testData
-            | EndShrink result -> False (testData, origArgs, result.arguments, result.exc)
+            | EndShrink result -> False (testData, origArgs, result.Arguments, result.Exc)
             | _ -> failwith "Test ended prematurely"
     config.Runner.OnFinished(config.Name,testResult)
     //Console.Write(message outcome + " " + any_to_string ntest + " tests" + table:string)
@@ -116,14 +116,14 @@ let private runner config prop =
         match step with
             | Generated args -> config.Runner.OnArguments(!testNb, args, config.Every); true//Console.Write(config.every !testNb args); true
             | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest //stop if we have enough tests
-            | Falsified result -> origArgs := result.arguments; testNb := !testNb + 1; true //falsified, true to continue with shrinking
+            | Falsified result -> origArgs := result.Arguments; testNb := !testNb + 1; true //falsified, true to continue with shrinking
             | Failed _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxFail //failed, stop if we have too much failed tests
-            | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Runner.OnShrink(result.arguments, config.EveryShrink); true
+            | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Runner.OnShrink(result.Arguments, config.EveryShrink); true
             | NoShrink _ -> tryShrinkNb := !tryShrinkNb + 1; true
             | EndShrink _ -> false )
     |> Seq.fold (fun acc elem ->
         match elem with
-            | Passed result -> (result.stamp :: acc)
+            | Passed result -> (result.Stamp :: acc)
             | _ -> acc
     ) [] 
     |> testsDone config !lastStep !origArgs !testNb !shrinkNb

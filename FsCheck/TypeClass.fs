@@ -85,6 +85,7 @@ let overwriteInstances<'typeClass,'instance>() =
     //let typeClass = typedefof<'typeClass>
     //findInstances typeClass (typeof<'instance>) |> Seq.iter (fun (t,mi) -> typeClasses.[typeClass].[t] <- mi)
 
+///Get the typeclass instance from the given typeclass and instance type.
 let getInstance =
     Common.memoize (fun (typeClass:Type, instance:Type) ->
         let instances = typeClasses.[typeClass]

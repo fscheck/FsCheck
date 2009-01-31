@@ -29,8 +29,8 @@ let getRecordConstructor recordType =
 let getRecordReader recordType = 
     FSharpValue.PrecomputeRecordReader(recordType, recordFieldBindingFlags)
     
-/// Get information on union type cases, supporting on only unary union cases
-/// Returns the case name, type, and functions that will construct a constructor and a reader respectively
+
+/// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
 let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list = 
     [ for case in FSharpType.GetUnionCases(unionType, recordFieldBindingFlags) -> 
         let types =    [ for fld in case.GetFields() -> fld.PropertyType ]              
