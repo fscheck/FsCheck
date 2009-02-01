@@ -50,12 +50,9 @@ let private reflectObj  =
             let small() = [ for i,g in gs do if i = lowest then yield g.Force() ]
             let large() = [ for _,g in gs -> g.Force() ]
             let getgs size = 
-                if size <= 0 then 
-                    let sm = small()
-                    oneof sm |> resize (size - 1)
-                else 
-                    let la = large()
-                    oneof la |> resize (size - 1) 
+                if size <= 0 then small() else large() 
+                |> oneof 
+                |> resize (size - 1) 
             sized getgs |> box
         else
             failwithf "Geneflect: type not handled %A" t)
@@ -65,95 +62,8 @@ let private reflectGenObj (t:Type) = (reflectObj t |> unbox<IGen>).AsGenObject
 ///Builds a generator for the given type based on reflection. Currently works for record and union types.
 let reflectGen<'a> = fmapGen (unbox<'a>) (reflectGenObj (typeof<'a>))
 
-//let debug = false
-//
-//type ShrinkType = (obj -> bool) -> obj -> option<obj>
-//
-//let shrinkMap : Ref<Map<string, Lazy<ShrinkType>>> = ref (Map.empty)
-//
-//let rec children0 (seen : Set<string>) (tFind : Type) (t : Type) : (obj -> list<obj>) =
-//            if tFind = t then
-//                fun o -> [o]
-//            else
-//                children1 seen tFind t
-//
-//        and children1 (seen : Set<string>) (tFind : Type) (t : Type) =
-//            let ts = t.ToString();
-//            let seen2 = seen.Add ts
-//            if seen.Contains ts then
-//                fun _ -> []
-//            elif isUnionType t then
-//                let read = getUnionTagReader t
-//                let mp =
-//                    Map.of_array
-//                        [| for _,(tag,ts,_,destroy) in getUnionCases t ->
-//                            let cs = [ for u in ts -> children0 seen2 tFind u ]
-//                            tag, fun o -> List.concat <| List.map2 (<|) cs (List.of_array <| destroy o)
-//                        |]
-//                fun o -> mp.[read o] o
-//            elif isRecordType t then
-//                let destroy = getRecordReader t
-//                let cs = [ for i in getRecordFields t -> children0 seen2 tFind i.PropertyType ]
-//                fun o -> List.concat <| List.map2 (<|) cs (List.of_array <| destroy o)
-//            else
-//                fun _ -> []
-//
-//let hunt (t : Type) : ShrinkType =
-//        let cs = children1 Set.empty t t
-//        fun test o ->
-//            let rec f xs =
-//                match xs with
-//                | [] -> None
-//                | x :: xs -> if test x then Some x else f xs
-//            let v = f (cs o)
-//            v
-//
-//
-//let rec getShrink (t : Type) : Lazy<ShrinkType> =
-//        if (debug) then printfn "getShrink type %A" t
-//        let ts = t.ToString()
-//        match (!shrinkMap).TryFind ts with
-//        | Some v -> v
-//        | None ->
-//            let res = lazy genShrink t
-//            shrinkMap := (!shrinkMap).Add (ts,res)
-//            res
-//
-//
-//    // Try to shrink by first looking for children
-//    // Then if that doesn't work, try something more specific
-//    and genShrink (t : Type) : ShrinkType =
-//        let gen = hunt t
-//        let spec = newShrink t
-//        let f g x = match g x with None -> false,x | Some y -> true,y
-//        let rec fs g x = match g x with None -> false,x | Some y -> true,snd (fs g y)
-//        fun test o ->
-//            let b1,o = fs (gen test) o
-//            let b2,o = f (spec test) o
-//            if b1 || b2 then Some o else None
-//
-//    and newShrink (t : Type) : ShrinkType =     
-//        if isUnionType t then
-//            let read = getUnionTagReader t
-//            let mp =
-//                Map.of_array
-//                    [| for _,(tag,fields,create,destroy) in getUnionCases t ->
-//                        let ss = [| for t in fields -> getShrink t |]
-//                        tag, listShrink destroy create fields
-//                    |]
-//            fun test o -> mp.[read o] test o
-//
-//        elif isRecordType t then
-//            let create = getRecordConstructor t
-//            let destroy = getRecordReader t
-//            let ts = [ for i in getRecordFields t -> i.PropertyType ]
-//            listShrink destroy create ts
-//        
-//        else
-//            fun test o -> None
-
-
 let private reflectShrinkObj o (t:Type) = 
+    //assumes that l contains at least one element. 
     let split3 l =
         let rec split3' front m back =
             seq { match back with
@@ -161,39 +71,34 @@ let private reflectShrinkObj o (t:Type) =
                     | x::xs -> yield (front,m,back); yield! split3' (front @ [m]) x xs }
         split3' [] (List.hd l) (List.tl l)
     if isUnionType t then
-        let unionSize (t:Type) (ts:list<Type>) =
-            if ts.IsEmpty then 0 
-            elif List.exists(fun x -> x.ToString() = t.ToString()) ts then 2 
+        let unionSize (t:Type) children =
+            if Seq.is_empty children then 0 
+            elif Seq.exists ((=) t)(*(fun x -> x.ToString() = t.ToString())*) children then 2 
             else 1
         let info,vals = FSharpValue.GetUnionFields(o,t)
         let makeCase = FSharpValue.PrecomputeUnionConstructor info
-        let childrenTypes = info.GetFields() |> Array.map ( fun x -> x.PropertyType ) |> Array.to_list
-        let partitionCase t (s0,s1,s2) (_,(_,children,make,read)) =
+        let childrenTypes = info.GetFields() |> Array.map ( fun x -> x.PropertyType ) //|> Array.to_list
+        let partitionCase t s0 (_,(_,children,make,_)) =
             match unionSize t children with
-            | 0 -> ((make,read)::s0, s1, s2)
-            | 1 -> (s0, (make,read)::s1, s2)
-            | 2 -> (s0, s1, (make,read)::s2)
-            | _ -> failwith "Unxpected union size" 
-        let partitionCases t =
+            | 0 -> (make::s0)
+            | _ -> s0 
+        let size0Shrinks() =
             getUnionCases t 
-            |> List.fold_left (partitionCase t) ([],[],[])
-        let size0,_,_ = partitionCases t //TODO: replace the partitions with something simple, only need size0 children
-        
+            |> List.fold_left (partitionCase t) []
+            |> List.map (fun make -> make [||])
+        //like tuple types: shrink first subtype first, then try second etc
+        let childShrinks =
+            seq{ for (front,(childVal,childType),back) in Seq.zip vals childrenTypes |> Seq.to_list |> split3 do
+                        for childShrink in getShrink childType childVal do
+                            yield makeCase ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)}
         match unionSize t childrenTypes with
         | 0 -> Seq.empty
-        | 1 -> seq {for res in size0 |> List.map (fst >> (fun make -> make [||])) do yield res 
-                   //like tuple types: shrink first subtype first, then try second etc
-                    for (front,(childVal,childType),back) in Seq.zip vals childrenTypes |> Seq.to_list |> split3 do
-                        for childShrink in getShrink childType childVal do
-                            yield makeCase ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)
-               }
-        | 2 -> seq {for res in size0 |> List.map (fst >> (fun make -> make [||])) do yield res
-                    //relies on the fact that unions are compiled as subclasses
+        | 1 -> seq {yield! size0Shrinks()
+                    yield! childShrinks }
+        | 2 -> seq {yield! size0Shrinks() 
+                    //try children. Relies on the fact that unions are compiled as subclasses
                     for child in vals |> Array.filter (fun o -> t.IsAssignableFrom(o.GetType())) do yield child
-                    for (front,(childVal,childType),back) in Seq.zip vals childrenTypes |> Seq.to_list |> split3 do
-                        for childShrink in getShrink childType childVal do
-                            yield makeCase ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)
-               }
+                    yield! childShrinks }
         | _ -> failwith "Unxpected union size" 
     elif isRecordType t then 
         let make = getRecordConstructor t
