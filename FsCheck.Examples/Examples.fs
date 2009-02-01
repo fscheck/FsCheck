@@ -7,6 +7,16 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
+//----bug involving recursive record types----------
+type A = { A : A }
+let private prop1 (a : A) = true
+
+let rec a : A = { A = a } 
+let private prop2() = forAll (elements [a]) prop1
+printfn "prop1 works: %b" (prop1 a)
+quickCheck prop2
+quickCheck (fun () -> forAll (elements [a]) prop1)
+
 //-------A Simple Example----------
 let prop_RevRev (xs:list<int>) = List.rev(List.rev xs) = xs
 quickCheck prop_RevRev
