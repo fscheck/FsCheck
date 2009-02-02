@@ -48,7 +48,6 @@
     <Compile Include="TypeClass.fs" />
     <Compile Include="Generator.fs" />
     <Compile Include="Arbitrary.fs" />
-    <Compile Include="Shrink.fs" />
     <Compile Include="Property.fs" />
     <Compile Include="Runner.fs" />
     <None Include="Examples.fsx" />

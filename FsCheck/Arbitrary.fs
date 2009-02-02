@@ -62,6 +62,39 @@ let private reflectGenObj (t:Type) = (reflectObj t |> unbox<IGen>).AsGenObject
 ///Builds a generator for the given type based on reflection. Currently works for record and union types.
 let reflectGen<'a> = fmapGen (unbox<'a>) (reflectGenObj (typeof<'a>))
 
+let rec private children0 (seen : Set<string>) (tFind : Type) (t : Type) : (obj -> list<obj>) =
+            if tFind = t then
+                fun o -> [o]
+            else
+                children1 seen tFind t
+
+and private children1 (seen : Set<string>) (tFind : Type) (t : Type) =
+    let ts = t.ToString();
+    let seen2 = seen.Add ts
+    if seen.Contains ts then
+        fun _ -> []
+    elif t.IsArray then
+        let f = children0 seen2 tFind (t.GetElementType())
+        fun o ->
+            let x = o :?> Array
+            List.concat [ for i in 0 .. x.Length-1 -> f (x.GetValue i) ]
+    elif isUnionType t then
+        let read = getUnionTagReader t
+        let mp =
+            Map.of_array
+                [| for _,(tag,ts,_,destroy) in getUnionCases t ->
+                    let cs = [ for u in ts -> children0 seen2 tFind u ]
+                    tag, fun o -> List.concat <| List.map2 (<|) cs (List.of_array <| destroy o)
+                |]
+        fun o -> mp.[read o] o
+    elif isRecordType t then
+        let destroy = getRecordReader t
+        let cs = [ for i in getRecordFields t -> children0 seen2 tFind i.PropertyType ]
+        fun o -> List.concat <| List.map2 (<|) cs (List.of_array <| destroy o)
+    else
+        fun _ -> []
+
+
 let private reflectShrinkObj o (t:Type) = 
     //assumes that l contains at least one element. 
     let split3 l =
@@ -91,14 +124,16 @@ let private reflectShrinkObj o (t:Type) =
             seq{ for (front,(childVal,childType),back) in Seq.zip vals childrenTypes |> Seq.to_list |> split3 do
                         for childShrink in getShrink childType childVal do
                             yield makeCase ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)}
+        let recursiveChildren() = children1 Set.empty t t o
         match unionSize t childrenTypes with
         | 0 -> Seq.empty
-        | 1 -> seq {yield! size0Shrinks()
-                    yield! childShrinks }
-        | 2 -> seq {yield! size0Shrinks() 
-                    //try children. Relies on the fact that unions are compiled as subclasses
-                    for child in vals |> Array.filter (fun o -> t.IsAssignableFrom(o.GetType())) do yield child
-                    yield! childShrinks }
+        //| 1 || 2 -> seq {yield! size0Shrinks()
+        //            yield! childShrinks }
+        | x when x = 1 || x = 2 -> 
+            seq { yield! size0Shrinks() 
+                 //try children. Relies on the fact that unions are compiled as subclasses
+                  yield! recursiveChildren() (*vals |> Array.filter (fun o -> t.IsAssignableFrom(o.GetType())) do yield child*)
+                  yield! childShrinks }
         | _ -> failwith "Unxpected union size" 
     elif isRecordType t then 
         let make = getRecordConstructor t
