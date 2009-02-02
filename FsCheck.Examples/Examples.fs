@@ -11,11 +11,40 @@ open System.Collections.Generic;
 type A = { A : A }
 let private prop1 (a : A) = true
 
-let rec a : A = { A = a } 
-let private prop2() = forAll (elements [a]) prop1
-printfn "prop1 works: %b" (prop1 a)
-quickCheck prop2
-quickCheck (fun () -> forAll (elements [a]) prop1)
+type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }
+
+
+quickCheck <| 
+    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:RecordStuff<string>) -> s.Yes)) 
+
+type Recursive<'a> = Void | Leaf of 'a | Branch of Recursive<'a> * 'a * Recursive<'a>
+
+//should yield 
+quickCheck <| 
+    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Recursive<string>) -> 
+    match s with  Branch _ -> false | _ -> true)) 
+
+type Simple = Void | Void2 | Void3 | Leaf of int | Leaf2 of string * int *char * float
+
+//should yield a simplified Leaf2
+quickCheck <| 
+    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
+    match s with Leaf2 _ -> false |  _ -> true)) 
+   
+
+//should yield a Void3
+quickCheck <| 
+    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
+    match s with Leaf2 _ -> false | Void3 -> false |  _ -> true)) 
+
+
+quickCheck <| (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 )))
+quickCheck (fun opt -> match opt with None -> false | Some b  -> b  )
+quickCheck (fun opt -> match opt with None -> true | Some n when n<0 -> false | Some n when n >= 0 -> true )
+
+let prop_RevId' (xs:list<int>) (x:int) = if (xs.Length > 2) && (x >10) then false else true
+quickCheck prop_RevId'
+
 
 //-------A Simple Example----------
 let prop_RevRev (xs:list<int>) = List.rev(List.rev xs) = xs
@@ -193,6 +222,13 @@ let prop_MaxLe (x:float) y = (x <= y) ==> (lazy (max  x y = y))
 //convoluted, absurd property, but shows the power of the combinators: it's no problem to return
 //functions that return properties.
 quickCheck (fun b y (x:char,z) -> if b then (fun q -> y+1 = z + int q) else (fun q -> q =10.0)) 
+
+//arrays
+let prop_RevRevArr (xs:int[]) = Array.rev(Array.rev xs) = xs
+quickCheck prop_RevRevArr
+
+let prop_RevRevArr2 (xs:int[][]) = xs.Rank = 1
+quickCheck prop_RevRevArr2
 
 quickCheck (fun (arr:int[]) -> Array.rev arr = arr)
 
