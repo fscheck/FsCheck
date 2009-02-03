@@ -63,7 +63,7 @@ type RoseBuilder() =
 let private rose = new RoseBuilder()
 
 let private liftRose f = fun r -> rose{ let! r' = r
-                                return f r' }
+                                        return f r' }
 
 type Prop = MkProp of Rose<Result>
 let internal unProp (MkProp rose) = rose
@@ -86,22 +86,17 @@ let shrinking shrink x pf : Property =
  
 let private liftRoseResult t : Property = gen { return MkProp t }
 
-//liftResult :: Result -> Property
 let private liftResult (r:Result) : Property = 
     liftRoseResult <| rose { return r }
  
-////liftBool :: Bool -> Property
 let private liftBool b = liftResult <| { result with Ok = Some (lazy b)  }
 
 let private liftLazyBool lb = liftResult <| { result with Ok = Some lb }
 
-//mapProp :: Testable prop => (Prop -> Prop) -> prop -> Property
 let private mapProp f :( _ -> Property) = fmapGen f << property
 
-//mapRoseIOResult :: Testable prop => (Rose (IO Result) -> Rose (IO Result)) -> prop -> Property
 let private mapRoseResult f = mapProp (fun (MkProp t) -> MkProp (f t))
 
-//mapResult :: Testable prop => (Result -> Result) -> prop -> Property
 let private mapResult f = mapRoseResult (fmapRose f)
 
 ///Quantified property combinator. Provide a custom test data generator to a property.
@@ -148,9 +143,15 @@ type Testable =
     static member GenProp() =
         { new Testable<Gen<'a>> with
             member x.Property gena = gen { let! a = gena in return! property a } }
+    static member LazyProperty() =
+        { new Testable<Lazy<Property>> with
+            member x.Property gena = gen { let! a = gena.Force() in return! property a } }
     static member RoseResult() =
         { new Testable<Rose<Result>> with
             member x.Property rosea = gen { return MkProp rosea } } 
+    static member Prop() =
+        { new Testable<Prop> with
+            member x.Property prop = gen { return prop } } 
     static member Arrow() =
         { new Testable<('a->'b)> with
             member x.Property f = forAllShrink arbitrary shrink f }
@@ -160,6 +161,11 @@ type Testable =
 let (==>) = 
     let implies b a = if b then property a else property ()
     implies
+
+///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
+///and a failure otherwise.
+let expectException<'t, 'a when 't :> exn> (p : Lazy<'a>) = 
+    try p.Force() |> ignore ; false with :? 't -> true
 
 let private label str a = 
     let add res = { res with Stamp = str :: res.Stamp } 

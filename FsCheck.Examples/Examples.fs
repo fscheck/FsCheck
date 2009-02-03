@@ -7,12 +7,25 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
-//----bug involving recursive record types----------
-type A = { A : A }
-let private prop1 (a : A) = true
+//---- recursive record types----------
+//type A = { A : A }
+//let private prop1 (a : A) = true
+
+let withPositiveInteger (p : int -> 'a) = fun n -> n <> 0 ==> lazy (p (abs n))
+
+let testProp() = withPositiveInteger ( fun x -> printfn "%i" x; x > 0 |> classify true "bla"  )
+quickCheck testProp
+
+//test exceptions
+let prop_Exc() = forAllShrink (resize 100 arbitrary) shrink (fun (s:string) -> failwith "error")
+quickCheck prop_Exc
+
+Console.ReadKey()
+
+quickCheck <|
+    (fun () -> expectException<DivideByZeroException,_> (lazy (raise <| DivideByZeroException())))
 
 type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }
-
 
 quickCheck <| 
     (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:RecordStuff<string>) -> s.Yes)) 
