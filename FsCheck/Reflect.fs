@@ -8,9 +8,11 @@ open System
 open Microsoft.FSharp.Reflection
 open System.Reflection
 
-let private recordFieldBindingFlags = BindingFlags.GetProperty ||| BindingFlags.Instance ||| BindingFlags.NonPublic ||| BindingFlags.Public
+let private recordFieldBindingFlags = 
+    BindingFlags.GetProperty ||| BindingFlags.Instance 
+    ||| BindingFlags.NonPublic ||| BindingFlags.Public
 
-let isRecordType (ty : System.Type) = FSharpType.IsRecord(ty, recordFieldBindingFlags)
+let isRecordType (ty : Type) = FSharpType.IsRecord(ty, recordFieldBindingFlags)
 let isUnionType ty = FSharpType.IsUnion ty
 let isTupleType ty = FSharpType.IsTuple ty
 

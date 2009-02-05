@@ -10,7 +10,6 @@ open Reflect
 open System
 open System.Reflection
 open System.Collections.Generic
-
 open TypeClass
  
 type internal IGen = 
@@ -23,7 +22,6 @@ and Gen<'a> =
         member x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> f <| g n r)
     interface IGen with
         member x.AsGenObject = x.Map box
-        //match x with (Gen g) -> Gen (fun n r -> g n r |> box)
 
 ///Apply ('map') the function f on the value in the generator, yielding a new generator.
 let fmapGen f (gen:Gen<_>) = gen.Map f
@@ -135,8 +133,6 @@ let liftGen6 f = fun a b c d e g -> gen {   let! a' = a
                                             let! g' = g
                                             return f a' b' c' d' e' g'}
 
-
-
 ///Sequence the given list of generators into a generator of a list.
 ///Note to QuickCheck users: this is monadic sequence, which cannot be expressed generally in F#.
 let rec sequence l = match l with
@@ -178,10 +174,11 @@ type Arbitrary<'a>() =
 ///Returns a Gen<'a>
 let arbitrary<'a> = getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<Arbitrary<'a>> |> (fun arb -> arb.Arbitrary)
 
-///Returns a generator transformer for the given type, aka a coarbitrary function.
+///Returns a generator transformer for the given value, aka a coarbitrary function.
 let coarbitrary (a:'a)  = 
     getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<(Arbitrary<'a>)> |> (fun arb -> arb.CoArbitrary) <| a
 
+///Returns the immediate shrinks for the given value.
 let shrink (a:'a) = 
     getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<(Arbitrary<'a>)> |> (fun arb -> arb.Shrink) <| a
 

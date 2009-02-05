@@ -30,25 +30,24 @@ let private (|GenericTypeDef|_|) (p:Type) (t:Type) =
 
 //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank
 let private findInstances (typeClass:Type) instancesType = 
+    let addMethod ((generics,catchAll,arrays) as acc) (m:MethodInfo) =
+        match m.ReturnType with
+        | GenericTypeDef typeClass args when args.Length <> 1 -> 
+            failwithf "Typeclasses must have exactly one generic parameter. Typeclass %A has %i" typeClass args.Length
+        | GenericTypeDef typeClass args when args.[0].IsGenericParameter -> 
+            generics, Some m, arrays
+        | GenericTypeDef typeClass args ->
+            let instance = args.[0]
+            if instance.IsGenericType && (instance.GetGenericArguments() |> Array.for_all (fun t -> t.IsGenericParameter)) then
+                (instance.GetGenericTypeDefinition(), m) :: generics,catchAll,arrays
+            elif instance.IsArray && instance.GetElementType().IsGenericParameter then
+                generics,catchAll, (instance.GetArrayRank(),m)::arrays
+            else
+                (args.[0], m) :: generics,catchAll,arrays
+        | _ -> acc
     let addMethods (t:Type) =
-        t.GetMethods((BindingFlags.Static ||| BindingFlags.Public)) |>
-        Seq.fold (fun ((generics,catchAll,arrays) as res) m ->
-            match m.ReturnType with
-                | GenericTypeDef typeClass args -> 
-                    if (args.Length <> 1) then
-                        failwithf "Typeclasses must have exactly one generic parameter. Typeclass %A has %i" typeClass args.Length
-                    elif args.[0].IsGenericParameter then
-                        generics, Some m, arrays
-                    else
-                        let instance = args.[0]
-                        if instance.IsGenericType && (instance.GetGenericArguments() |> Array.for_all (fun t -> t.IsGenericParameter)) then
-                            (instance.GetGenericTypeDefinition(), m) :: generics,catchAll,arrays
-                        elif instance.IsArray && instance.GetElementType().IsGenericParameter then
-                            generics,catchAll, (instance.GetArrayRank(),m)::arrays
-                        else
-                            (args.[0], m) :: generics,catchAll,arrays
-                | _ -> res
-            ) ([],None,[])
+        t.GetMethods((BindingFlags.Static ||| BindingFlags.Public))
+        |> Seq.fold addMethod ([],None,[])
     addMethods instancesType
 
 

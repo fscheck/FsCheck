@@ -256,8 +256,9 @@ let private arrayToTupleType (arr:Type[]) =
         FSharpType.MakeTupleType(arr)
 
 let private tupleToArray t = 
-    let ttype = t.GetType()
-    if FSharpType.IsTuple ttype then
+    if t = null then
+        Array.empty
+    elif FSharpType.IsTuple (t.GetType()) then
         FSharpValue.GetTupleFields(t)
     else
         [|t|]

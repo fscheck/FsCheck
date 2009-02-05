@@ -11,16 +11,15 @@ open System.Collections.Generic;
 //type A = { A : A }
 //let private prop1 (a : A) = true
 
-let withPositiveInteger (p : int -> 'a) = fun n -> n <> 0 ==> lazy (p (abs n))
+let private withPositiveInteger (p : int -> 'a) = fun n -> n <> 0 ==> lazy (p (abs n))
 
-let testProp() = withPositiveInteger ( fun x -> printfn "%i" x; x > 0 |> classify true "bla"  )
+let testProp() = withPositiveInteger ( fun x -> x > 0 |> classify true "bla"  )
 quickCheck testProp
 
 //test exceptions
 let prop_Exc() = forAllShrink (resize 100 arbitrary) shrink (fun (s:string) -> failwith "error")
-quickCheck prop_Exc
+quickCheckN "prop_Exc" prop_Exc
 
-Console.ReadKey()
 
 quickCheck <|
     (fun () -> expectException<DivideByZeroException,_> (lazy (raise <| DivideByZeroException())))

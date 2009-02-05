@@ -55,7 +55,7 @@ let stdSplit ((StdGen (s1,s2)) as std) =
     let right = StdGen (t1, new_s2)
     (left,right)
 
-let rec iLogBase b i = if i < b then 1 else 1 + iLogBase b (i / b)
+let rec private iLogBase b i = if i < b then 1 else 1 + iLogBase b (i / b)
 
 let rec stdRange (l,h) rng =
     if l > h then stdRange (h,l) rng
@@ -72,16 +72,3 @@ let rec stdRange (l,h) rng =
 let range = stdRange
 let split = stdSplit
 let newSeed() = DateTime.Now.Ticks |> int |> mkStdGen
-
-
-(*let rander s = Seq.unfold (fun st -> let (s,st') = stdNext st in Some (s, st')) s
-500 |> mkStdGen |> rander |> Seq.take 20 |> List.map (fun s -> Console.Write(s.ToString()+" "))
-Console.WriteLine();
-
-let ranger s = Seq.unfold (fun st -> let (s,st') = stdRange (-10,10) st in Some (s, st')) s
-500 |> mkStdGen |> ranger |> Seq.take 200 |> List.map (fun s -> Console.WriteLine(s))
-
-let splitter s = Seq.unfold (fun st -> let (s0,s1) = stdSplit st in Some((s0,s1), s1)) s 
-500 |> mkStdGen |> splitter |> Seq.take 20 |> List.map (printfn "%A")
-
-Console.ReadKey()*)
