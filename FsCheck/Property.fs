@@ -71,7 +71,7 @@ let internal unProp (MkProp rose) = rose
 type Property = Gen<Prop>
 
 type Testable<'prop> =
-    abstract Property : 'prop -> Property
+    abstract Property : Lazy<'prop> -> Property
 
 let property<'a> p = getInstance (typedefof<Testable<_>>, typeof<'a>) |> unbox<Testable<'a>> |> (fun t -> t.Property p)
 
@@ -81,7 +81,7 @@ let private promoteRose m = Gen (fun s r -> liftRose (fun (Gen m') -> m' s r) m)
 ///function pf. 
 let shrinking shrink x pf : Property =
     //cache is important here to avoid re-evaluation of property
-    let rec props x = MkRose (lazy (property (pf x)), shrink x |> Seq.map props |> Seq.cache)
+    let rec props x = MkRose (lazy (property (lazy (pf x))), shrink x |> Seq.map props |> Seq.cache)
     fmapGen (MkProp << join << (fmapRose unProp)) <| promoteRose (props x)
  
 let private liftRoseResult t : Property = gen { return MkProp t }
@@ -89,11 +89,11 @@ let private liftRoseResult t : Property = gen { return MkProp t }
 let private liftResult (r:Result) : Property = 
     liftRoseResult <| rose { return r }
  
-let private liftBool b = liftResult <| { result with Ok = Some (lazy b)  }
+//let private liftBool b = liftResult <| { result with Ok = Some (lazy b)  }
 
 let private liftLazyBool lb = liftResult <| { result with Ok = Some lb }
 
-let private mapProp f :( _ -> Property) = fmapGen f << property
+let private mapProp f  a:(Property) = fmapGen f <| property (lazy a)
 
 let private mapRoseResult f = mapProp (fun (MkProp t) -> MkProp (f t))
 
@@ -105,7 +105,7 @@ let forAll gn body : Property =
     gen{let! a = gn
         let! res = 
             try 
-                property (body a)
+                property (lazy (body a))
             with
                 e -> gen { return MkProp <| rose { return { result with Ok = Some (lazy false); Exc = Some e }}}
         return fmapRose (argument a) (unProp res) |> MkProp }
@@ -117,7 +117,7 @@ let forAllShrink gn shrink body : Property =
     gen{let! a = gn
         let! res = shrinking shrink a (fun a' ->
             try 
-                property (body a')
+                property (lazy (body a'))
             with
                 e -> gen { return MkProp <| rose { return { result with Ok = Some (lazy false); Exc = Some e }}}
             |> fmapGen (unProp >> fmapRose (argument a'))
@@ -127,39 +127,39 @@ let forAllShrink gn shrink body : Property =
 type Testable =
     static member Unit() =
         { new Testable<unit> with
-            member x.Property _ = property rejected }
+            member x.Property _ = property (lazy rejected) }
     static member Bool() =
         { new Testable<bool> with
-            member x.Property b = liftBool b }//result { nothing with ok = Some (lazy b) } }
-    static member LazyBool() =
-        { new Testable<Lazy<bool>> with
-            member x.Property b = liftLazyBool b }//result { nothing with ok = Some b } }
+            member x.Property b = liftLazyBool b }//result { nothing with ok = Some (lazy b) } }
+    static member Lazy() =
+        { new Testable<Lazy<'a>> with
+            member x.Property b = property (lazy b.Value.Value) }//result { nothing with ok = Some b } }
     static member Result() =
         { new Testable<Result> with
-            member x.Property res = liftResult res }
+            member x.Property res = liftResult res.Value }
     static member Property() =
         { new Testable<Property> with
-            member x.Property prop = prop }
+            member x.Property prop = prop.Value }
     static member GenProp() =
         { new Testable<Gen<'a>> with
-            member x.Property gena = gen { let! a = gena in return! property a } }
-    static member LazyProperty() =
-        { new Testable<Lazy<Property>> with
-            member x.Property gena = gen { let! a = gena.Force() in return! property a } }
+            member x.Property gena = gen { let! a = gena.Value in return! property (lazy a) } }
+//    static member LazyProperty() =
+//        { new Testable<Lazy<Property>> with
+//            member x.Property gena = gen { let! a = gena.Value.Value in return! property (lazy a) } }
     static member RoseResult() =
         { new Testable<Rose<Result>> with
-            member x.Property rosea = gen { return MkProp rosea } } 
+            member x.Property rosea = gen { return MkProp rosea.Value } } 
     static member Prop() =
         { new Testable<Prop> with
-            member x.Property prop = gen { return prop } } 
+            member x.Property prop = gen { return prop.Value } } 
     static member Arrow() =
         { new Testable<('a->'b)> with
-            member x.Property f = forAllShrink arbitrary shrink f }
+            member x.Property f = forAllShrink arbitrary shrink f.Value }
    
 
 ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
 let (==>) = 
-    let implies b a = if b then property a else property ()
+    let implies b a = if b then property (lazy a) else property (lazy ())
     implies
 
 ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
@@ -169,25 +169,22 @@ let expectException<'t, 'a when 't :> exn> (p : Lazy<'a>) =
 
 let private label str a = 
     let add res = { res with Stamp = str :: res.Stamp } 
-    mapResult add (property a)
+    mapResult add (property (lazy a))
     //((property a).Map add)
 
 ///Classify test cases combinator. Test cases satisfying the condition are assigned the classification given.
-let classify b name = if b then label name else property
+let classify b name a = if b then label name a else property (lazy a)
 
 ///Count trivial cases property combinator. Test cases for which the condition is True are classified as trivial.
 let trivial b = classify b "trivial"
 
 ///Collect data values property combinator. The argument of collect is evaluated in each test case, 
 ///and the distribution of values is reported, using any_to_string.
-let collect v = label <| any_to_string v
-
-
-    
+let collect v = label <| any_to_string v  
 
 /////Property constructor. Constructs a property from a bool.
 [<Obsolete("Please omit this function call: it's no longer necessary.")>]
-let prop b = property b//gen { return {nothing with ok = Some b}} |> Prop
+let prop b = property (lazy b)//gen { return {nothing with ok = Some b}} |> Prop
 /////Lazy property constructor. Constructs a property from a Lazy<bool>.
 [<Obsolete("Please omit this function call: it's no longer necessary.")>]
-let propl b = property b //gen { return {nothing with ok = Some (lazy b)}} |> Prop
+let propl b = property (lazy b) //gen { return {nothing with ok = Some (lazy b)}} |> Prop

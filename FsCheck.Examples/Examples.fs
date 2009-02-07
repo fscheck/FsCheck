@@ -13,7 +13,7 @@ open System.Collections.Generic;
 
 let private withPositiveInteger (p : int -> 'a) = fun n -> n <> 0 ==> lazy (p (abs n))
 
-let testProp() = withPositiveInteger ( fun x -> x > 0 |> classify true "bla"  )
+let testProp = withPositiveInteger ( fun x -> x > 0 |> classify true "bla"  )
 quickCheck testProp
 
 //test exceptions

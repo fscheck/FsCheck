@@ -54,12 +54,19 @@ type Config =
       EveryShrink   : list<obj> -> string  //determines what to print every time a counter-example is succesfully shrunk
       Runner        : IRunner } //the test runner    
 
+let private tryForce (v : Lazy<bool>) : bool = try v.Value
+                                               with _ -> false
+
 let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
     seq { if not (Seq.is_empty shrinks) then
             let (MkRose ((Lazy result'),shrinks')) = Seq.hd shrinks
             match result'.Ok with
-            | Some (Lazy false) -> yield Shrink result'; yield! shrinkResult result' shrinks'
-            | _                 -> yield NoShrink result'; yield! shrinkResult result <| Seq.skip 1 shrinks
+            //| Some (Lazy false) -> yield Shrink result'; yield! shrinkResult result' shrinks'
+            | Some x -> if not (tryForce x) then 
+                            yield Shrink result'; yield! shrinkResult result' shrinks'
+                        else
+                            yield NoShrink result'; yield! shrinkResult result <| Seq.skip 1 shrinks  
+            | _      -> yield NoShrink result'; yield! shrinkResult result <| Seq.skip 1 shrinks
           else
             yield EndShrink result
     }
@@ -70,13 +77,17 @@ let rec private test initSize resize rnd0 gen =
           let (MkRose (Lazy result,shrinks)) = generate (newSize |> round |> int) rnd2 gen |> unProp
           yield Generated result.Arguments
           match result.Ok with
-            | None -> 
-                yield Failed result 
-            | Some (Lazy true) -> 
-                yield Passed result
-            | Some (Lazy false) -> 
-                yield Falsified result
-                yield! shrinkResult result shrinks
+            | None ->   yield Failed result 
+            | Some v -> if tryForce v then
+                           yield Passed result
+                        else
+                           yield Falsified result
+                           yield! shrinkResult result shrinks
+//            | Some (Lazy true) -> 
+//                yield Passed result
+//            | Some (Lazy false) -> 
+//                yield Falsified result
+//                yield! shrinkResult result shrinks
           yield! test newSize resize rnd1 gen
     }
 
@@ -110,7 +121,7 @@ let private runner config prop =
     let tryShrinkNb = ref 0
     let origArgs = ref []
     let lastStep = ref (Failed rejected)
-    test 0.0 (config.Size) (newSeed()) (property prop) |>
+    test 0.0 (config.Size) (newSeed()) (property (lazy prop)) |>
     Seq.take_while (fun step ->
         lastStep := step
         match step with
