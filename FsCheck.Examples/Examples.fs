@@ -13,8 +13,19 @@ open System.Collections.Generic;
 
 let private withPositiveInteger (p : int -> 'a) = fun n -> n <> 0 ==> lazy (p (abs n))
 
-let testProp() = withPositiveInteger ( fun x -> x > 0 |> classify true "bla"  )
+let testProp = withPositiveInteger ( fun x -> x > 0 |> classify true "bla"  )
 quickCheck testProp
+
+let testProp2 = withPositiveInteger ( fun x -> withPositiveInteger (fun y -> x + y > 0  ))
+quickCheck testProp2
+
+let blah (s:string) = if s = "" then raise (new System.Exception("foo")) else s.Length > 3
+
+let private withNonEmptyString (p : string -> 'a) = forAll (oneof (List.map gen.Return [ "A"; "AA"; "AAA" ])) p
+
+quickCheck (fun () -> withNonEmptyString blah)
+
+Console.ReadKey()
 
 //test exceptions
 let prop_Exc() = forAllShrink (resize 100 arbitrary) shrink (fun (s:string) -> failwith "error")

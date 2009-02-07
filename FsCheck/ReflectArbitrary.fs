@@ -89,7 +89,7 @@ and private children1 (seen : Set<string>) (tFind : Type) (t : Type) =
     else
         fun _ -> []
 
-
+//TODO: add memoization
 let private reflectShrinkObj o (t:Type) = 
     //assumes that l contains at least one element. 
     let split3 l =

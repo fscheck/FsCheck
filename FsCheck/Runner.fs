@@ -56,9 +56,9 @@ type Config =
 
 let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
     seq { if not (Seq.is_empty shrinks) then
-            let (MkRose ((Lazy result'),shrinks')) = Seq.hd shrinks
+            let (MkRose ((Lazy result'),shrinks')) = Seq.hd shrinks //is the result forced here?
             match result'.Ok with
-            | Some (Lazy false) -> yield Shrink result'; yield! shrinkResult result' shrinks'
+            | Some false -> yield Shrink result'; yield! shrinkResult result' shrinks'
             | _                 -> yield NoShrink result'; yield! shrinkResult result <| Seq.skip 1 shrinks
           else
             yield EndShrink result
@@ -67,14 +67,14 @@ let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
 let rec private test initSize resize rnd0 gen =
     seq { let rnd1,rnd2 = split rnd0
           let newSize = resize initSize
-          let (MkRose (Lazy result,shrinks)) = generate (newSize |> round |> int) rnd2 gen |> unProp
+          let (MkRose (Lazy result,shrinks)) = generate (newSize |> round |> int) rnd2 gen //|> unProp //is the result forced here?
           yield Generated result.Arguments
           match result.Ok with
             | None -> 
                 yield Failed result 
-            | Some (Lazy true) -> 
+            | Some true -> 
                 yield Passed result
-            | Some (Lazy false) -> 
+            | Some false -> 
                 yield Falsified result
                 yield! shrinkResult result shrinks
           yield! test newSize resize rnd1 gen
@@ -156,7 +156,7 @@ let testFinishedToString name testResult =
             name data.NumberOfTests (pluralize data.NumberOfTests) 
             data.NumberOfShrinks (pluralize data.NumberOfShrinks) (args |> printArgs) 
     | False (data, origArgs, args, Some exc) -> 
-        sprintf "%sFalsifiable, after %i test%s (%i shrink%s): \n%s\n with exception:\n%O" 
+        sprintf "%sFalsifiable, after %i test%s (%i shrink%s): \n%s\n with exception:\n%O\n" 
             name data.NumberOfTests (pluralize data.NumberOfTests) 
             data.NumberOfShrinks (pluralize data.NumberOfShrinks) (args |> printArgs) exc
     | Exhausted data -> 
