@@ -204,6 +204,9 @@ let nonEmptyListOf gn =
         gen {   let! k = choose (1,max 1 n)
                 return! vectorOf k gn }
 
+///Generates the constant value v.          
+let constant v = gen { return v }
+
 ///Promote the given function f to a function generator.
 let promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)
 
