@@ -8,8 +8,11 @@ open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
 //---- recursive record types----------
-//type A = { A : A }
-//let private prop1 (a : A) = true
+type A = { A : A }
+let rec a : A = { A = a } 
+let private prop1 (a : A) = true
+//quickCheck prop1 produces a warning
+
 
 //----------------Function printing and shrinking------
 let propMap (Function (_,f)) (l:list<int>) =

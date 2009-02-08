@@ -22,7 +22,11 @@ let private reflectObj  =
     
     Common.memoize (fun (t:Type) ->
         if isRecordType t then
-            let g = productGen [ for pi in getRecordFields t -> pi.PropertyType ]
+            let g =
+                productGen [ for pi in getRecordFields t do 
+                                if pi.PropertyType = t then 
+                                    failwithf "Recursive record types cannot be generated automatically: %A" t 
+                                else yield pi.PropertyType ]
             let create = getRecordConstructor t
             let result = g |> sequence |> fmapGen (List.to_array >> create)
             box result
