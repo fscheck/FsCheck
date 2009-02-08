@@ -11,6 +11,13 @@ open System.Collections.Generic;
 //type A = { A : A }
 //let private prop1 (a : A) = true
 
+//----------------Function printing and shrinking------
+let propMap (Function (_,f)) (l:list<int>) =
+    not l.IsEmpty ==>
+    lazy (List.map f l = ((*f*)(List.hd l)) :: (List.map f (List.tl l)))
+verboseCheck propMap
+
+
 //------alternative to using forAll-----
 
 //to force registrating of type classes and FsCheck arbitrary generators. Also happens automatically whenever a function

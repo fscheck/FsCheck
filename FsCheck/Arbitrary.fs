@@ -8,6 +8,7 @@ open TypeClass
 open Generator
 open System
 open ReflectArbitrary
+open Functions
 
 let private fraction (a:int) (b:int) (c:int) = 
     double a + double b / (abs (double c) + 1.0) 
@@ -198,6 +199,15 @@ type Arbitrary() =
             override x.CoArbitrary f gen = 
                 gen {   let x = arbitrary
                         return! coarbitrary (fmapGen f x) gen } 
+        }
+    static member Function() =
+        { new Arbitrary<Function<'a,'b>>() with
+            override x.Arbitrary = fmapGen toFunction arbitrary
+            override x.Shrink f = 
+                let update x' y' f x = if x = x' then y' else f x
+                seq { for (x,y) in f.Table do 
+                        for y' in shrink y do 
+                            yield toFunction (update x y' f.Value) }
         }
     static member CatchAll() =
         { new Arbitrary<'a>() with

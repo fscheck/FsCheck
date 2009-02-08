@@ -1,7 +1,7 @@
 comp  = fsc -a
 refs  = FSharp.PowerPack.dll
 bin   = FsCheck.dll
-mods  = Common Random Reflect TypeClass Generator ReflectArbitrary Arbitrary Property Runner 
+mods  = Common Random Reflect TypeClass Generator Functions ReflectArbitrary Arbitrary Property Runner 
 files = $(addsuffix .fs,$(addprefix FsCheck/,$(mods)))
 
 $(bin): $(files)

@@ -129,13 +129,13 @@ let private runner config prop =
     |> testsDone config !lastStep !origArgs !testNb !shrinkNb
 
 
-let rec private intersperse sep l = 
-    match l with
-    | [] -> []
-    | [x] -> [x]
-    | x::xs -> x :: sep :: intersperse sep xs
+//let rec private intersperse sep l = 
+//    match l with
+//    | [] -> []
+//    | [x] -> [x]
+//    | x::xs -> x :: sep :: intersperse sep xs
 
-let private printArgs = List.map any_to_string >> intersperse "\n" >> List.reduce_left (+)
+let private printArgs = List.map any_to_string >> String.concat "\n" (*>> List.reduce_left (+)*)
 
 ///A function that returns the default string that is printed as a result of the test.
 let testFinishedToString name testResult =
@@ -144,7 +144,7 @@ let testFinishedToString name testResult =
                     | []  -> ".\n"
                     | [x] -> " (" + x + ").\n"
                     | xs  -> ".\n" + List.fold_left (fun acc x -> x + ".\n"+ acc) "" xs    
-    let entry (p,xs) = any_to_string p + "% " + (intersperse ", " xs |> Seq.to_array |> String.Concat)
+    let entry (p,xs) = any_to_string p + "% " + (String.concat ", " xs (*|> Seq.to_array |> String.Concat*))
     let stamps_to_string s = s |> Seq.map entry |> Seq.to_list |> display
     let name = (name+"-")  
     match testResult with
