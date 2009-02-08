@@ -98,6 +98,10 @@ let private reflectShrinkObj o (t:Type) =
                     | [] -> yield (front, m, back)
                     | x::xs -> yield (front,m,back); yield! split3' (front @ [m]) x xs }
         split3' [] (List.hd l) (List.tl l)
+    let shrinkChildren read make o childrenTypes =
+        seq{ for (front,(childVal,childType),back) in Seq.zip (read o) childrenTypes |> Seq.to_list |> split3 do
+                        for childShrink in getShrink childType childVal do
+                            yield make ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)}
     if isUnionType t then
         let unionSize (t:Type) children =
             if Seq.is_empty children then 0 
@@ -105,40 +109,41 @@ let private reflectShrinkObj o (t:Type) =
             else 1
         let info,vals = FSharpValue.GetUnionFields(o,t)
         let makeCase = FSharpValue.PrecomputeUnionConstructor info
+        let readCase = FSharpValue.PrecomputeUnionReader info
         let childrenTypes = info.GetFields() |> Array.map ( fun x -> x.PropertyType ) //|> Array.to_list
         let partitionCase t s0 (_,(_,children,make,_)) =
             match unionSize t children with
             | 0 -> (make::s0)
             | _ -> s0 
-        let size0Shrinks() =
+        let size0Cases() =
             getUnionCases t 
             |> List.fold_left (partitionCase t) []
             |> List.map (fun make -> make [||])
         //like tuple types: shrink first subtype first, then try second etc
-        let childShrinks =
-            seq{ for (front,(childVal,childType),back) in Seq.zip vals childrenTypes |> Seq.to_list |> split3 do
-                        for childShrink in getShrink childType childVal do
-                            yield makeCase ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)}
-        let recursiveChildren() = children1 Set.empty t t o
+        let shrunkChildren = shrinkChildren readCase makeCase o childrenTypes
+//            seq{ for (front,(childVal,childType),back) in Seq.zip vals childrenTypes |> Seq.to_list |> split3 do
+//                        for childShrink in getShrink childType childVal do
+//                            yield makeCase ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)}
+        let children() = children1 Set.empty t t o
         match unionSize t childrenTypes with
         | 0 -> Seq.empty
         | x when x = 1 || x = 2 -> 
-            seq { yield! size0Shrinks() 
-                 //try children. Relies on the fact that unions are compiled as subclasses
-                  yield! recursiveChildren() (*vals |> Array.filter (fun o -> t.IsAssignableFrom(o.GetType())) do yield child*)
-                  yield! childShrinks }
+            seq { yield! size0Cases() 
+                  yield! children()
+                  yield! shrunkChildren }
         | _ -> failwith "Unxpected union size" 
     elif isRecordType t then 
         let make = getRecordConstructor t
         let read = getRecordReader t
         let childrenTypes = FSharpType.GetRecordFields t |> Array.map (fun pi -> pi.PropertyType)
-        let vals = read o
-        seq {       
-            //like tuple types: shrink first subtype first, then try second etc TODO: factor out this common code
-            for (front,(childVal,childType),back) in Seq.zip vals childrenTypes |> Seq.to_list |> split3 do
-                for childShrink in getShrink childType childVal do
-                    yield make ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)
-        }
+        //let vals = read o
+        shrinkChildren read make o childrenTypes
+//        seq {       
+//            //like tuple types: shrink first subtype first, then try second etc TODO: factor out this common code
+//            for (front,(childVal,childType),back) in Seq.zip vals childrenTypes |> Seq.to_list |> split3 do
+//                for childShrink in getShrink childType childVal do
+//                    yield make ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)
+//        }
     else
         Seq.empty
 
