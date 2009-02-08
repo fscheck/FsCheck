@@ -179,3 +179,4 @@ let prop b = property b
 ///Lazy property constructor. Constructs a property from a Lazy<bool>.
 [<Obsolete("Please omit this function call: it's no longer necessary.")>]
 let propl b = property b
+

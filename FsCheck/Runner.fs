@@ -294,7 +294,8 @@ let quickCheckAll t = t |> checkAll quick
 let verboseCheckAll t = t |> checkAll verbose 
 
 //necessary initializations
-do newTypeClass<Arbitrary<_>>
-do registerGenerators<Arbitrary.Arbitrary>()
-do newTypeClass<Testable<_>>
-do registerInstances<Testable<_>,Testable>()
+let init = lazy (   do newTypeClass<Arbitrary<_>>
+                    do registerGenerators<Arbitrary.Arbitrary>()
+                    do newTypeClass<Testable<_>>
+                    do registerInstances<Testable<_>,Testable>())
+do init.Value

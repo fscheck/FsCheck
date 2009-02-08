@@ -11,6 +11,49 @@ open System.Collections.Generic;
 //type A = { A : A }
 //let private prop1 (a : A) = true
 
+//------alternative to using forAll-----
+
+//to force registrating of type classes and FsCheck arbitrary generators. Also happens automatically whenever a function
+//from the runner module is called.
+do init.Value
+
+type NonNegativeInt = NonNegative of int
+type NonZeroInt = NonZero of int
+type PositiveInt = Positive of int
+
+type ArbitraryModifiers =
+    static member NonNegativeInt() =
+        { new Arbitrary<NonNegativeInt>() with
+            override x.Arbitrary = arbitrary |> fmapGen (NonNegative << abs)
+            override x.CoArbitrary (NonNegative i) = coarbitrary i
+            override x.Shrink (NonNegative i) = shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative }
+    static member NonZeroInt() =
+        { new Arbitrary<NonZeroInt>() with
+            override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen NonZero 
+            override x.CoArbitrary (NonZero i) = coarbitrary i
+            override x.Shrink (NonZero i) = shrink i |> Seq.filter ((=) 0) |> Seq.map NonZero }
+    static member PositiveInt() =
+        { new Arbitrary<PositiveInt>() with
+            override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen (Positive << abs) 
+            override x.CoArbitrary (Positive i) = coarbitrary i
+            override x.Shrink (Positive i) = shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
+
+registerGenerators<ArbitraryModifiers>()
+
+let prop_NonNeg (NonNegative i) = i >= 0
+quickCheckN "NonNeg" prop_NonNeg
+
+let prop_NonZero (NonZero i) = i <> 0
+quickCheckN "NonZero" prop_NonZero
+
+let prop_Positive (Positive i) = i > 0
+quickCheckN "Pos" prop_Positive
+
+Console.ReadKey() |> ignore
+
+//-----Ganesh's tests------------------
+
+
 let private withPositiveInteger (p : int -> 'a) = fun n -> n <> 0 ==> lazy (p (abs n))
 
 let testProp = withPositiveInteger ( fun x -> x > 0 |> classify true "bla"  )
@@ -25,8 +68,6 @@ let private withNonEmptyString (p : string -> 'a) = forAll (oneof (List.map gen.
 
 quickCheck (fun () -> withNonEmptyString blah)
 
-Console.ReadKey()
-
 //test exceptions
 let prop_Exc() = forAllShrink (resize 100 arbitrary) shrink (fun (s:string) -> failwith "error")
 quickCheckN "prop_Exc" prop_Exc
@@ -35,6 +76,9 @@ quickCheckN "prop_Exc" prop_Exc
 quickCheck <|
     (fun () -> expectException<DivideByZeroException,_> (lazy (raise <| DivideByZeroException())))
 
+
+//-----------------test reflective shrinking--------
+
 type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }
 
 quickCheck <| 
@@ -42,7 +86,6 @@ quickCheck <|
 
 type Recursive<'a> = Void | Leaf of 'a | Branch of Recursive<'a> * 'a * Recursive<'a>
 
-//should yield 
 quickCheck <| 
     (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Recursive<string>) -> 
     match s with  Branch _ -> false | _ -> true)) 
@@ -53,7 +96,6 @@ type Simple = Void | Void2 | Void3 | Leaf of int | Leaf2 of string * int *char *
 quickCheck <| 
     (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
     match s with Leaf2 _ -> false |  _ -> true)) 
-   
 
 //should yield a Void3
 quickCheck <| 
