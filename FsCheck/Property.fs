@@ -155,7 +155,7 @@ let (==>) =
 
 ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
 ///and a failure otherwise.
-let expectException<'t, 'a when 't :> exn> (p : Lazy<'a>) = 
+let throws<'t, 'a when 't :> exn> (p : Lazy<'a>) = 
     try p.Force() |> ignore ; false with :? 't -> true
 
 let private label str a = 

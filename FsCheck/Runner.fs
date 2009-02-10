@@ -56,10 +56,11 @@ type Config =
 
 let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
     seq { if not (Seq.is_empty shrinks) then
-            let (MkRose ((Lazy result'),shrinks')) = Seq.hd shrinks //is the result forced here?
+            //result forced here
+            let (MkRose ((Lazy result'),shrinks')) = Seq.hd shrinks 
             match result'.Ok with
             | Some false -> yield Shrink result'; yield! shrinkResult result' shrinks'
-            | _                 -> yield NoShrink result'; yield! shrinkResult result <| Seq.skip 1 shrinks
+            | _          -> yield NoShrink result'; yield! shrinkResult result <| Seq.skip 1 shrinks
           else
             yield EndShrink result
     }
@@ -67,7 +68,11 @@ let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
 let rec private test initSize resize rnd0 gen =
     seq { let rnd1,rnd2 = split rnd0
           let newSize = resize initSize
-          let (MkRose (Lazy result,shrinks)) = generate (newSize |> round |> int) rnd2 gen //|> unProp //is the result forced here?
+          printfn "Before generate"
+          //result forced here!
+          let (MkRose (Lazy result,shrinks)) = generate (newSize |> round |> int) rnd2 gen
+          printfn "After generate"
+          //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
           yield Generated result.Arguments
           match result.Ok with
             | None -> 

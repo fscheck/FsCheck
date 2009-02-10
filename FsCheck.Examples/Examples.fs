@@ -7,6 +7,9 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
+
+verboseCheck (fun () -> printfn"Begin prop";Threading.Thread.Sleep(3000);printfn"End prop";true)
+
 //---- recursive record types----------
 type A = { A : A }
 let rec a : A = { A = a } 
@@ -30,6 +33,7 @@ do init.Value
 type NonNegativeInt = NonNegative of int
 type NonZeroInt = NonZero of int
 type PositiveInt = Positive of int
+//type BoundedInt = Bounded of int
 
 type ArbitraryModifiers =
     static member NonNegativeInt() =
@@ -47,6 +51,9 @@ type ArbitraryModifiers =
             override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen (Positive << abs) 
             override x.CoArbitrary (Positive i) = coarbitrary i
             override x.Shrink (Positive i) = shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
+
+//let (|BoundedAP|_|) (l,h) b = match b with (Bounded i) -> Some (forAll <| choose (l,h))
+//let prop_Bounded (BoundedAP (0,5) bound) = bound (fun i -> 0<= i && i<=5)
 
 registerGenerators<ArbitraryModifiers>()
 
