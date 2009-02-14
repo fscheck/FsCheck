@@ -26,7 +26,8 @@ type Outcome =
     | True
     | Rejected with
     /// determines for which OUtcome the result should be shrunk, or shrinking should continue.
-    member x.Shrink = match x with Exception e -> true | False -> true | _ -> false
+    member x.Shrink = match x with Exception _ -> true | False -> true | _ -> false
+    //member x.ToOptionBool = match x with True -> Some true | Rejected -> None | _ -> Some false 
 
 
 ///The result of one execution of a property.
@@ -39,7 +40,7 @@ type Result =
     ///Returns a new result that is Succeeded if and only if both this
     ///and the given Result are Succeeded.
     member l.And(r:Result) = 
-        //finally, a place where FSharp's completeness cheching of pattern matches shines...
+        //printfn "And of l %A and r %A" l.Outcome r.Outcome
         match (l.Outcome,r.Outcome) with
         | (Exception _,_) -> l //here a potential exception in r is thrown away...
         | (_,Exception _) -> r
@@ -116,6 +117,12 @@ let private rose = new RoseBuilder()
 
 let private liftRose f = fun r -> rose{ let! r' = r
                                         return f r' }
+
+let private liftRose2 f = fun r1 r2  -> 
+                            rose {  let! r1' = r1
+                                    let! r2' = r2
+                                    return f r1' r2' }
+                                 
 
 let private lazyRose x = MkRose (x,Seq.empty)
 
@@ -228,8 +235,31 @@ let (|@) x = x |> flip label
     
 let (@|) = label
 
-//let private andProperty p1 p2 = 
-//    let and' res 
+let private combine f a b:Property = 
+    let pa = property a //Gen<Rose<Result>>
+    let pb = property b
+    liftGen2 (liftRose2 f) pa pb
+
+let (.&.) l r = 
+    let andProp = combine (fun a b -> a.And(b)) l r
+    andProp
+
+let (.|.) l r =
+    let orProp = combine (fun a b -> a.Or(b)) l r
+    orProp
+
+type Prop =
+    static member And(p1,p2)               = p1 .&. p2
+    static member And(p1,p2,p3)            = p1 .&. p2 .&. p3
+    static member And(p1,p2,p3,p4)         = p1 .&. p2 .&. p3 .&. p4
+    static member And(p1,p2,p3,p4,p5)      = p1 .&. p2 .&. p3 .&. p4 .&. p5
+    static member And(p1,p2,p3,p4,p5,p6)   = p1 .&. p2 .&. p3 .&. p4 .&. p5 .&. p6
+    static member Or(p1,p2)                = p1 .|. p2
+    static member Or(p1,p2,p3)             = p1 .|. p2 .|. p3
+    static member Or(p1,p2,p3,p4)          = p1 .|. p2 .|. p3 .|. p4
+    static member Or(p1,p2,p3,p4,p5)       = p1 .|. p2 .|. p3 .|. p4 .|. p5
+    static member Or(p1,p2,p3,p4,p5,p6)    = p1 .|. p2 .|. p3 .|. p4 .|. p5 .|. p6
+
 
 ///Property constructor. Constructs a property from a bool.
 [<Obsolete("Please omit this function call: it's no longer necessary.")>]

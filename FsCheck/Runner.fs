@@ -168,23 +168,32 @@ let testFinishedToString name testResult =
                     | xs  -> ".\n" + List.fold_left (fun acc x -> x + ".\n"+ acc) "" xs    
     let entry (p,xs) = any_to_string p + "% " + (String.concat ", " xs (*|> Seq.to_array |> String.Concat*))
     let stamps_to_string s = s |> Seq.map entry |> Seq.to_list |> display
-    let name = (name+"-")  
+    let labels_to_string l = String.concat ", " l
+    let maybePrintLabels (l:Set<_>) = 
+        if l.Count > 0 then
+            sprintf "Label%s of failing property: %s\n" (pluralize l.Count) (labels_to_string l)
+        else
+            String.Empty
+    let name = if String.IsNullOrEmpty(name) then String.Empty else (name+"-")  
     match testResult with
     | True data -> 
         sprintf "%sOk, passed %i test%s%s" 
             name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
     | False (data, origArgs, args, Exception exc) -> 
-        sprintf "%sFalsifiable, after %i test%s (%i shrink%s):\nLabel: %A\n%s\n with exception:\n%O\n" 
-            name data.NumberOfTests (pluralize data.NumberOfTests) 
-            data.NumberOfShrinks (pluralize data.NumberOfShrinks) data.Labels (args |> printArgs) exc
+        sprintf "%sFalsifiable, after %i test%s (%i shrink%s):\n" 
+            name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks)
+        + maybePrintLabels data.Labels  
+        + sprintf "%s\n" (args |> printArgs)
+        + sprintf "with exception:\n%O\n" exc
     | False (data, origArgs, args, Timeout i) -> 
         sprintf "%sTimeout of %i seconds exceeded, after %i test%s (%i shrink%s):\nLabel: %A\n%s\n" 
             name i data.NumberOfTests (pluralize data.NumberOfTests) 
             data.NumberOfShrinks (pluralize data.NumberOfShrinks) data.Labels (args |> printArgs)
     | False (data, origArgs, args, _) -> 
-        sprintf "%sFalsifiable, after %i test%s (%i shrink%s):\nLabel: %A\n%s\n" 
-            name data.NumberOfTests (pluralize data.NumberOfTests) 
-            data.NumberOfShrinks (pluralize data.NumberOfShrinks) data.Labels (args |> printArgs) 
+        sprintf "%sFalsifiable, after %i test%s (%i shrink%s):\n" 
+            name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks)
+        + maybePrintLabels data.Labels  
+        + sprintf "%s\n" (args |> printArgs) 
     | Exhausted data -> 
         sprintf "%sArguments exhausted after %i test%s%s" 
             name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )

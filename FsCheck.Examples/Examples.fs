@@ -11,8 +11,26 @@ open System.Collections.Generic;
 //-------labelling sub properties------
 
 
-let prop_Label() = "Always false" @| false
+let prop_Label (x:int) = 
+    "Always false" @| false
+    .&. "Always true" @| (x > 0 ==> (abs x - x = 0))
 quickCheck prop_Label
+
+let propMul (n: int, m: int) =
+  let res = n*m
+  (sprintf "evidence = %i" res) @| Prop.And(
+    "div1" @| (m <> 0 ==> lazy (res / m = n)),
+    "div2" @| (n <> 0 ==> lazy (res / n = m)),
+    "lt1"  @| (res > m),
+    "lt2"  @| (res > n))
+quickCheck propMul
+
+let complexProp (m: int) (n: int) =
+  let res = n + m
+  (res >= m)    |@ "result > #1" .&.
+  (res >= n)    |@ "result > #2" .&.
+  (res < m + n) |@ "result not sum"
+quickCheck complexProp
 
 Console.ReadKey() |> ignore
 
