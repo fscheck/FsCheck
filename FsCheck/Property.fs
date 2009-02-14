@@ -1,4 +1,13 @@
-﻿#light
+﻿(*--------------------------------------------------------------------------*\
+**  FsCheck                                                                 **
+**  Copyright (c) 2008-2009 Kurt Schelfthout. All rights reserved.          **
+**  http://www.codeplex.com/fscheck                                         **
+**                                                                          **
+**  This software is released under the terms of the Revised BSD License.   **
+**  See the file License.txt for the full text.                             **
+\*--------------------------------------------------------------------------*)
+
+#light
 
 namespace FsCheck
 
@@ -10,27 +19,66 @@ open Generator
 open Common
 open TypeClass
 
+type Outcome = 
+    | Timeout of int
+    | Exception of exn
+    | False
+    | True
+    | Rejected with
+    /// determines for which OUtcome the result should be shrunk, or shrinking should continue.
+    member x.Shrink = match x with Exception e -> true | False -> true | _ -> false
+
+
 ///The result of one execution of a property.
 type Result = 
-    {   Ok : option<bool>
-        Stamp : list<string>
-        Arguments : list<obj> 
-        Exc: option<Exception> }
+    {   Outcome     : Outcome
+        Stamp       : list<string>
+        Labels      : Set<string>
+        Arguments   : list<obj> } with
+        //Reason: Reason } with 
+    ///Returns a new result that is Succeeded if and only if both this
+    ///and the given Result are Succeeded.
+    member l.And(r:Result) = 
+        //finally, a place where FSharp's completeness cheching of pattern matches shines...
+        match (l.Outcome,r.Outcome) with
+        | (Exception _,_) -> l //here a potential exception in r is thrown away...
+        | (_,Exception _) -> r
+        | (Timeout _,_) -> l
+        | (_,Timeout _) -> r
+        | (False,_) -> l
+        | (_,False) -> r
+        | (_,True) -> l
+        | (True,_) -> r
+        | (Rejected,Rejected) -> l //or r, whatever
+    member l.Or(r:Result) =
+        match (l.Outcome, r.Outcome) with
+        | (Exception _,_) -> l //here a potential exception in r is thrown away...
+        | (_,Exception _) -> r
+        | (Timeout _,_) -> l
+        | (_,Timeout _) -> r
+        | (_,False) -> l
+        | (False,_) -> r
+        | (True,_) -> l
+        | (_,True) -> r
+        | (Rejected,Rejected) -> l //or r, whatever
+        
+        
 
 let private result =
-  { Ok        = None
-  ; Stamp     = []
-  ; Arguments = []
-  ; Exc = None
+  { Outcome     = Rejected
+  ; Stamp       = []
+  ; Labels       = Set.empty
+  ; Arguments   = []
+//  ; Exc = None
   }
 
-let internal failed = { result with Ok = Some false }
+let internal failed = { result with Outcome = False }
 
-let internal exc e = { result with Ok = Some false; Exc = Some e }
+let internal exc e = { result with Outcome = Exception e }
 
-let internal succeeded = { result with Ok = Some true }
+let internal succeeded = { result with Outcome = True }
 
-let internal rejected = { result with Ok = None }
+let internal rejected = { result with Outcome = Rejected }
 
 //A rose is a pretty tree
 //Draw it and you'll see.
@@ -93,7 +141,7 @@ let private liftRoseResult t : Property = gen { return t }
 let private liftResult (r:Result) : Property = 
     liftRoseResult <| rose { return r }
  
-let private liftBool b = liftResult <| { result with Ok = Some b  }
+let private liftBool b = liftResult <| if b then succeeded else failed
 
 let private mapRoseResult f :( _ -> Property) = fmapGen f << property
 
@@ -158,19 +206,30 @@ let (==>) =
 let throws<'t, 'a when 't :> exn> (p : Lazy<'a>) = 
     try p.Force() |> ignore ; false with :? 't -> true
 
-let private label str a = 
+let private stamp str = 
     let add res = { res with Stamp = str :: res.Stamp } 
-    mapResult add (property a)
+    mapResult add
 
 ///Classify test cases combinator. Test cases satisfying the condition are assigned the classification given.
-let classify b name = if b then label name else property
+let classify b name = if b then stamp name else property
 
 ///Count trivial cases property combinator. Test cases for which the condition is True are classified as trivial.
 let trivial b = classify b "trivial"
 
 ///Collect data values property combinator. The argument of collect is evaluated in each test case, 
 ///and the distribution of values is reported, using any_to_string.
-let collect v = label <| any_to_string v
+let collect v = stamp <| any_to_string v
+
+let label l = 
+    let add res = { res with Labels = Set.add l res.Labels }
+    mapResult add
+    
+let (|@) x = x |> flip label 
+    
+let (@|) = label
+
+//let private andProperty p1 p2 = 
+//    let and' res 
 
 ///Property constructor. Constructs a property from a bool.
 [<Obsolete("Please omit this function call: it's no longer necessary.")>]

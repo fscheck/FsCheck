@@ -1,3 +1,12 @@
+(*--------------------------------------------------------------------------*\
+**  FsCheck                                                                 **
+**  Copyright (c) 2008-2009 Kurt Schelfthout. All rights reserved.          **
+**  http://www.codeplex.com/fscheck                                         **
+**                                                                          **
+**  This software is released under the terms of the Revised BSD License.   **
+**  See the file License.txt for the full text.                             **
+\*--------------------------------------------------------------------------*)
+
 #light
 
 namespace FsCheck
@@ -15,13 +24,19 @@ open Property
 open TypeClass
 open Common
 
-type TestData = { NumberOfTests: int; NumberOfShrinks: int; Stamps: seq<int * list<string>>}
+type TestData = 
+    { NumberOfTests: int
+    ; NumberOfShrinks: int
+    ; Stamps: seq<int * list<string>>
+    ; Labels: Set<string>
+    }
+
 type TestResult = 
     | True of TestData
     | False of TestData 
                 * list<obj>(*the original arguments that produced the failed test*)
                 * list<obj>(*the shrunk arguments that produce a failed test*)
-                * option<Exception>(*possibly exception that falsified the property*) 
+                * Outcome(*possibly exception or timeout that falsified the property*) 
     | Exhausted of TestData
     
 type private TestStep = 
@@ -58,9 +73,8 @@ let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
     seq { if not (Seq.is_empty shrinks) then
             //result forced here
             let (MkRose ((Lazy result'),shrinks')) = Seq.hd shrinks 
-            match result'.Ok with
-            | Some false -> yield Shrink result'; yield! shrinkResult result' shrinks'
-            | _          -> yield NoShrink result'; yield! shrinkResult result <| Seq.skip 1 shrinks
+            if result'.Outcome.Shrink then yield Shrink result'; yield! shrinkResult result' shrinks'
+            else yield NoShrink result'; yield! shrinkResult result <| Seq.skip 1 shrinks
           else
             yield EndShrink result
     }
@@ -68,24 +82,27 @@ let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
 let rec private test initSize resize rnd0 gen =
     seq { let rnd1,rnd2 = split rnd0
           let newSize = resize initSize
-          printfn "Before generate"
+          //printfn "Before generate"
           //result forced here!
           let (MkRose (Lazy result,shrinks)) = generate (newSize |> round |> int) rnd2 gen
-          printfn "After generate"
+          //printfn "After generate"
           //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
           yield Generated result.Arguments
-          match result.Ok with
-            | None -> 
+          match result.Outcome with
+            | Rejected -> 
                 yield Failed result 
-            | Some true -> 
+            | Outcome.True -> 
                 yield Passed result
-            | Some false -> 
+            | o when o.Shrink -> 
                 yield Falsified result
                 yield! shrinkResult result shrinks
+            | _ ->
+                yield Falsified result
+                yield EndShrink result
           yield! test newSize resize rnd1 gen
     }
 
-let private testsDone config outcome origArgs ntest nshrinks stamps =    
+let private testsDone config outcome origArgs ntest nshrinks stamps  =    
     let entry (n,xs) = (100 * n / ntest),xs
     let table = stamps 
                 |> Seq.filter (fun l -> l <> []) 
@@ -97,18 +114,17 @@ let private testsDone config outcome origArgs ntest nshrinks stamps =
                 //|> Seq.to_list
                 //|> display
     let testResult =
-        let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table }
+        let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
         match outcome with
             | Passed _ -> True testData
-            | Falsified result -> False (testData, origArgs, result.Arguments, result.Exc)
+            | Falsified result -> False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome)
             | Failed _ -> Exhausted testData
-            | EndShrink result -> False (testData, origArgs, result.Arguments, result.Exc)
+            | EndShrink result -> False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome)
             | _ -> failwith "Test ended prematurely"
     config.Runner.OnFinished(config.Name,testResult)
     //Console.Write(message outcome + " " + any_to_string ntest + " tests" + table:string)
 
 let private runner config prop = 
-    //let (++) orig = orig := !orig + 1
     let testNb = ref 0
     let failedNb = ref 0
     let shrinkNb = ref 0
@@ -118,6 +134,7 @@ let private runner config prop =
     test 0.0 (config.Size) (newSeed()) (property prop) |>
     Seq.take_while (fun step ->
         lastStep := step
+        //printfn "%A" step
         match step with
             | Generated args -> config.Runner.OnArguments(!testNb, args, config.Every); true//Console.Write(config.every !testNb args); true
             | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest //stop if we have enough tests
@@ -156,14 +173,18 @@ let testFinishedToString name testResult =
     | True data -> 
         sprintf "%sOk, passed %i test%s%s" 
             name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
-    | False (data, origArgs, args, None) -> 
-        sprintf "%sFalsifiable, after %i test%s (%i shrink%s): \n%s\n" 
+    | False (data, origArgs, args, Exception exc) -> 
+        sprintf "%sFalsifiable, after %i test%s (%i shrink%s):\nLabel: %A\n%s\n with exception:\n%O\n" 
             name data.NumberOfTests (pluralize data.NumberOfTests) 
-            data.NumberOfShrinks (pluralize data.NumberOfShrinks) (args |> printArgs) 
-    | False (data, origArgs, args, Some exc) -> 
-        sprintf "%sFalsifiable, after %i test%s (%i shrink%s): \n%s\n with exception:\n%O\n" 
+            data.NumberOfShrinks (pluralize data.NumberOfShrinks) data.Labels (args |> printArgs) exc
+    | False (data, origArgs, args, Timeout i) -> 
+        sprintf "%sTimeout of %i seconds exceeded, after %i test%s (%i shrink%s):\nLabel: %A\n%s\n" 
+            name i data.NumberOfTests (pluralize data.NumberOfTests) 
+            data.NumberOfShrinks (pluralize data.NumberOfShrinks) data.Labels (args |> printArgs)
+    | False (data, origArgs, args, _) -> 
+        sprintf "%sFalsifiable, after %i test%s (%i shrink%s):\nLabel: %A\n%s\n" 
             name data.NumberOfTests (pluralize data.NumberOfTests) 
-            data.NumberOfShrinks (pluralize data.NumberOfShrinks) (args |> printArgs) exc
+            data.NumberOfShrinks (pluralize data.NumberOfShrinks) data.Labels (args |> printArgs) 
     | Exhausted data -> 
         sprintf "%sArguments exhausted after %i test%s%s" 
             name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )

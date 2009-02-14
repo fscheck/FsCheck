@@ -8,7 +8,15 @@ open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
 
-verboseCheck (fun () -> printfn"Begin prop";Threading.Thread.Sleep(3000);printfn"End prop";true)
+//-------labelling sub properties------
+
+
+let prop_Label() = "Always false" @| false
+quickCheck prop_Label
+
+Console.ReadKey() |> ignore
+
+//verboseCheck (fun () -> printfn"Begin prop";Threading.Thread.Sleep(3000);printfn"End prop";true)
 
 //---- recursive record types----------
 type A = { A : A }
@@ -22,7 +30,7 @@ let propMap (Function (_,f)) (l:list<int>) =
     not l.IsEmpty ==>
     lazy (List.map f l = ((*f*)(List.hd l)) :: (List.map f (List.tl l)))
 verboseCheck propMap
-
+Console.ReadKey() |> ignore
 
 //------alternative to using forAll-----
 
@@ -91,7 +99,7 @@ quickCheckN "prop_Exc" prop_Exc
 
 
 quickCheck <|
-    (fun () -> expectException<DivideByZeroException,_> (lazy (raise <| DivideByZeroException())))
+    (fun () -> throws<DivideByZeroException,_> (lazy (raise <| DivideByZeroException())))
 
 
 //-----------------test reflective shrinking--------
