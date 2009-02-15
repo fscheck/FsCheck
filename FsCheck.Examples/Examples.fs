@@ -2,11 +2,27 @@
 
 open FsCheck
 open System
+open System.Threading
 open System.Reflection
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic;
 
+
+
+//---------timeout---------
+
+let prop_timeout (a:int) = 
+    lazy
+        if a>10 then
+            while true do 
+                Thread.Sleep(1000)
+            false
+        else 
+            true
+    |> within 2000
+
+quickCheck prop_timeout
 
 //-------labelling sub properties------
 
@@ -18,12 +34,22 @@ quickCheck prop_Label
 
 let propMul (n: int, m: int) =
   let res = n*m
-  (sprintf "evidence = %i" res) @| Prop.And(
+  sprintf "evidence = %i" res @| Prop.And(
     "div1" @| (m <> 0 ==> lazy (res / m = n)),
     "div2" @| (n <> 0 ==> lazy (res / n = m)),
     "lt1"  @| (res > m),
     "lt2"  @| (res > n))
 quickCheck propMul
+
+let propOr (n:int) (m:int) =
+    let res = n - m
+    "Positive"  @| (res > 0) .|.
+    "Negative"  @| (res < 0) .|.
+    "Zero"      @| (res = 0)
+    |> classify (res > 0) "Positive"
+    |> classify (res < 0) "Negative"
+    
+quickCheck propOr
 
 let complexProp (m: int) (n: int) =
   let res = n + m
@@ -32,9 +58,7 @@ let complexProp (m: int) (n: int) =
   (res < m + n) |@ "result not sum"
 quickCheck complexProp
 
-Console.ReadKey() |> ignore
 
-//verboseCheck (fun () -> printfn"Begin prop";Threading.Thread.Sleep(3000);printfn"End prop";true)
 
 //---- recursive record types----------
 type A = { A : A }
@@ -47,8 +71,7 @@ let private prop1 (a : A) = true
 let propMap (Function (_,f)) (l:list<int>) =
     not l.IsEmpty ==>
     lazy (List.map f l = ((*f*)(List.hd l)) :: (List.map f (List.tl l)))
-verboseCheck propMap
-Console.ReadKey() |> ignore
+quickCheck propMap
 
 //------alternative to using forAll-----
 
@@ -91,8 +114,6 @@ quickCheckN "NonZero" prop_NonZero
 
 let prop_Positive (Positive i) = i > 0
 quickCheckN "Pos" prop_Positive
-
-Console.ReadKey() |> ignore
 
 //-----Ganesh's tests------------------
 

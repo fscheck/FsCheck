@@ -77,6 +77,8 @@ let internal failed = { result with Outcome = False }
 
 let internal exc e = { result with Outcome = Exception e }
 
+let internal timeout i = { result with Outcome = Timeout i }
+
 let internal succeeded = { result with Outcome = True }
 
 let internal rejected = { result with Outcome = Rejected }
@@ -211,7 +213,7 @@ let (==>) =
 ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
 ///and a failure otherwise.
 let throws<'t, 'a when 't :> exn> (p : Lazy<'a>) = 
-    try p.Force() |> ignore ; false with :? 't -> true
+   property <| try p.Force() |> ignore ; failed with :? 't -> succeeded
 
 let private stamp str = 
     let add res = { res with Stamp = str :: res.Stamp } 
@@ -260,6 +262,16 @@ type Prop =
     static member Or(p1,p2,p3,p4,p5)       = p1 .|. p2 .|. p3 .|. p4 .|. p5
     static member Or(p1,p2,p3,p4,p5,p6)    = p1 .|. p2 .|. p3 .|. p4 .|. p5 .|. p6
 
+
+///Fails the property if it does not complete within t seconds. Note that the called property gets a
+///cancel signal, but whether it responds to that is up to the property; the execution may not actually stop.
+let within t (a:Lazy<_>) =
+    try 
+        let test = new Func<_>(fun () -> property a.Value)
+        let asyncTest = Async.BuildPrimitive(test.BeginInvoke, test.EndInvoke)                     
+        Async.Run(asyncTest, timeout = t)
+    with
+        :? TimeoutException -> Async.DefaultGroup.TriggerCancel("FsCheck timeout exceeded"); property (timeout t)    
 
 ///Property constructor. Constructs a property from a bool.
 [<Obsolete("Please omit this function call: it's no longer necessary.")>]
