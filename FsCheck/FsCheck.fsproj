@@ -50,6 +50,7 @@
     <Compile Include="Functions.fs" />
     <Compile Include="ReflectArbitrary.fs" />
     <Compile Include="Arbitrary.fs" />
+    <Compile Include="Commands.fs" />
     <Compile Include="Property.fs" />
     <Compile Include="Runner.fs" />
   </ItemGroup>
