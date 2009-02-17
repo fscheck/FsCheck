@@ -62,11 +62,20 @@ quickCheck prop_Label
 
 let propMul (n: int, m: int) =
   let res = n*m
-  sprintf "evidence = %i" res @| Prop.And(
+  sprintf "evidence = %i" res @| (
     "div1" @| (m <> 0 ==> lazy (res / m = n)),
     "div2" @| (n <> 0 ==> lazy (res / n = m)),
     "lt1"  @| (res > m),
     "lt2"  @| (res > n))
+quickCheck propMul
+
+let propMulList (n: int, m: int) =
+  let res = n*m
+  sprintf "evidence = %i" res @| [
+    "div1" @| (m <> 0 ==> lazy (res / m = n));
+    "div2" @| (n <> 0 ==> lazy (res / n = m));
+    "lt1"  @| (res > m);
+    "lt2"  @| (res > n)]
 quickCheck propMul
 
 let propOr (n:int) (m:int) =

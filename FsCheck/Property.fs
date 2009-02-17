@@ -250,17 +250,27 @@ let (.|.) l r =
     let orProp = combine (fun a b -> a.Or(b)) l r
     orProp
 
-type Prop =
-    static member And(p1,p2)               = p1 .&. p2
-    static member And(p1,p2,p3)            = p1 .&. p2 .&. p3
-    static member And(p1,p2,p3,p4)         = p1 .&. p2 .&. p3 .&. p4
-    static member And(p1,p2,p3,p4,p5)      = p1 .&. p2 .&. p3 .&. p4 .&. p5
-    static member And(p1,p2,p3,p4,p5,p6)   = p1 .&. p2 .&. p3 .&. p4 .&. p5 .&. p6
-    static member Or(p1,p2)                = p1 .|. p2
-    static member Or(p1,p2,p3)             = p1 .|. p2 .|. p3
-    static member Or(p1,p2,p3,p4)          = p1 .|. p2 .|. p3 .|. p4
-    static member Or(p1,p2,p3,p4,p5)       = p1 .|. p2 .|. p3 .|. p4 .|. p5
-    static member Or(p1,p2,p3,p4,p5,p6)    = p1 .|. p2 .|. p3 .|. p4 .|. p5 .|. p6
+//And some handy overloads for complicated testables
+type Testable with
+    static member Tuple2() =
+        { new Testable<'a*'b> with
+            member x.Property ((a,b)) = a .&. b }
+    static member Tuple3() =
+        { new Testable<'a*'b*'c> with
+            member x.Property ((a,b,c)) = a .&. b .&. c }
+    static member Tuple4() =
+        { new Testable<'a*'b*'c*'d> with
+            member x.Property ((a,b,c,d)) = a .&. b .&. c .&. d }
+    static member Tuple5() =
+        { new Testable<'a*'b*'c*'d*'e> with
+            member x.Property ((a,b,c,d,e)) = a .&. b .&. c .&. d .&. e }
+    static member Tuple6() =
+        { new Testable<'a*'b*'c*'d*'e*'f> with
+            member x.Property ((a,b,c,d,e,f)) = a .&. b .&. c .&. d .&. e .&. f}
+    static member List() =
+        { new Testable<list<'a>> with
+            member x.Property l = List.fold_left (.&.) (property <| List.hd l) (List.tl l) }
+            
 
 
 ///Fails the property if it does not complete within t seconds. Note that the called property gets a
