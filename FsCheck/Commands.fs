@@ -11,19 +11,20 @@
 
 namespace FsCheck
 
+[<AutoOpen>]
 module Commands
 
 [<AbstractClass>]
-type ICommand<'o,'s> =
+type ICommand<'o,'s>() =
     abstract RunActual : 'o -> 'o
     abstract RunModel : 's -> 's
     abstract Pre : 's -> bool
-    abstract Post : 's * 'o -> bool
+    abstract Post : 'o * 's -> bool //(*Testable 'a*)
     default x.Pre _ = true
     default x.Post (_,_) = true
 
 type ISpecification<'o,'s> =
-    abstract Initial : unit -> 's * 'o
+    abstract Initial : unit -> 'o * 's
     abstract GenCommand : 's -> Gen<ICommand<'o,'s>>
 
 let genCommands (spec:ISpecification<_,_>) = 
@@ -36,6 +37,20 @@ let genCommands (spec:ISpecification<_,_>) =
             else
                 return []
         }
-    sized <| genCommandsS (spec.Initial() |> fst)      
+        |> fmapGen List.rev
+    sized <| genCommandsS (spec.Initial() |> snd)      
 
-let propCommand (spec:ISpecification<_,_>) = ()
+//let shrinkCommands cmds =
+    
+
+let propCommand (spec:ISpecification<_,_>) =
+    let rec applyCommands (actual,model) (cmds:list<ICommand<_,_>>) =
+        match cmds with
+        | [] -> property true
+        | (c::cs) -> 
+            c.Pre model ==> 
+                let newActual = c.RunActual actual
+                let newModel = c.RunModel model
+                c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs
+    forAllShrink (genCommands spec) shrink (fun l -> l |> applyCommands (spec.Initial()))
+    
