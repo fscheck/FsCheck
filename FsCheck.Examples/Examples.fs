@@ -34,7 +34,7 @@ let spec =
         member x.Initial() = (new Counter(),0)
         member x.GenCommand _ = elements [inc;dec] }
 
-verboseCheck (fun () -> propCommand spec)
+verboseCheck (fun () -> asProperty spec)
 
 Console.ReadKey() |> ignore
 
@@ -43,9 +43,8 @@ Console.ReadKey() |> ignore
 let prop_timeout (a:int) = 
     lazy
         if a>10 then
-            while true do 
-                Thread.Sleep(1000)
-            false
+            while true do Thread.Sleep(1000)
+            true
         else 
             true
     |> within 2000

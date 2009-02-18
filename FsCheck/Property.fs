@@ -178,7 +178,7 @@ let forAllShrink gn shrink body : Property =
 type Testable =
     static member Unit() =
         { new Testable<unit> with
-            member x.Property _ = property rejected }
+            member x.Property _ = property succeeded }
     static member Bool() =
         { new Testable<bool> with
             member x.Property b = liftBool b }
@@ -207,7 +207,7 @@ type Testable =
 
 ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
 let (==>) = 
-    let implies b a = if b then property a else property ()
+    let implies b a = if b then property a else property rejected
     implies
 
 ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
