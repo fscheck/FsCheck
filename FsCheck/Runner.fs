@@ -280,7 +280,7 @@ let private hasTestableReturnType (m:MethodInfo) =
 
 let check config p = runner config (forAllShrink arbitrary shrink p)
 
-let checkName name config p = runner { config with Name = name } (forAll arbitrary p)
+let checkName name config p = check { config with Name = name } p
 
 let private checkMethodInfo = typeof<Config>.DeclaringType.GetMethod("check",BindingFlags.Static ||| BindingFlags.Public)
 

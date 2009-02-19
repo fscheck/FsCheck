@@ -173,8 +173,7 @@ let suchThatOption p gn =
 
 
 ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
-///by increasing the size of the original generator ad infinitum. So make sure when you use this that there is a reasonable
-///chance that the predicate can become satisfied.
+///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that the predicate is satisfied.
 ///Note to QuickCheck users: order of arguments wrt QuickCheck is reversed, to make piping easier.
 let rec suchThat p gn =
     gen {   let! mx = suchThatOption p gn
