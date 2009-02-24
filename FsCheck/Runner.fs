@@ -331,8 +331,8 @@ let quickCheckAll t = t |> checkAll quick
 let verboseCheckAll t = t |> checkAll verbose 
 
 //necessary initializations
-let init = lazy (   do newTypeClass<Arbitrary<_>>
+let init = lazy (   initArbitraryTypeClass.Value
                     do registerGenerators<Arbitrary.Arbitrary>()
-                    do newTypeClass<Testable<_>>
+                    initTestableTypeClass.Value
                     do registerInstances<Testable<_>,Testable>())
 do init.Value

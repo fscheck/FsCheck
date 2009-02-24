@@ -268,4 +268,8 @@ let registerGeneratorsByType t = registerInstancesByType (typeof<Arbitrary<_>>) 
 ///Register the generators that are static members of the given type, overwriting any existing generators.
 let overwriteGeneratorsByType t = overwriteInstancesByType (typeof<Arbitrary<_>>) t
 
-
+//so init can be called from other modules. Depending on startup order, initialization may occur from different places.
+//lazy then takes care that it occurs exactly once.
+//(this technique for initialization I picked up from Jon Harrop)
+let internal initArbitraryTypeClass = lazy do newTypeClass<Arbitrary<_>>
+do initArbitraryTypeClass.Value

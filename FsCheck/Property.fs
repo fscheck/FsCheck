@@ -291,3 +291,5 @@ let prop b = property b
 [<Obsolete("Please omit this function call: it's no longer necessary.")>]
 let propl b = property b
 
+let internal initTestableTypeClass = lazy do newTypeClass<Testable<_>>
+initTestableTypeClass.Value

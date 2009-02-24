@@ -8,10 +8,20 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic
 
+//---put this first to check for initalization bug---
+type Generators =
+  static member Int64() =
+    { new Arbitrary<int64>() with
+        override x.Arbitrary = arbitrary |> fmapGen int64 }
+registerGenerators<Generators>()
 
+//bug: labels not printed when throwing exception
+let prop_LabelBug (x:int) =
+    if x=0 then lazy (failwith "nul") else lazy true
+    |> label "bla"
+quickCheck prop_LabelBug
 
-
-
+Console.ReadKey() |> ignore
 
 //-------A Simple Example----------
 let prop_RevRev (xs:list<int>) = List.rev(List.rev xs) = xs
@@ -244,10 +254,6 @@ let propMap (Function (_,f)) (l:list<int>) =
 quickCheck propMap
 
 //alternative to using forAll
-
-//to force registrating of type classes and FsCheck arbitrary generators. Also happens automatically whenever a function
-//from the runner module is called.
-do init.Value
 
 type NonNegativeInt = NonNegative of int
 type NonZeroInt = NonZero of int
