@@ -278,7 +278,7 @@ let private hasTestableReturnType (m:MethodInfo) =
 //    let property = makeProperty (invokeFunction f) ret
 //    checkProperty config (forAll gen property) |> ignore
 
-let check config p = runner config (forAllShrink arbitrary shrink p)
+let check config p = runner config (property p)//(forAllShrink arbitrary shrink p)
 
 let checkName name config p = check { config with Name = name } p
 
@@ -309,7 +309,7 @@ let checkAll config (t:Type) =
         let funType = FSharpType.MakeFunctionType(fromP, toP) 
         let funValue = FSharpValue.MakeFunction(funType, tupleToArray >> invokeMethod m)
         let c = {config with Name = t.Name+"."+m.Name}
-        let genericM = checkMethodInfo.MakeGenericMethod([|fromP;toP|])
+        let genericM = checkMethodInfo.MakeGenericMethod([|funType(*fromP;toP*)|])
         genericM.Invoke(null, [|box c; funValue|]) |> ignore
         )
 

@@ -17,7 +17,7 @@ registerGenerators<Generators>()
 
 //bug: labels not printed when throwing exception
 let prop_LabelBug (x:int) =
-    if x=0 then lazy (failwith "nul") else lazy true
+    if x=0 then (failwith "nul") else true
     |> label "bla"
 quickCheck prop_LabelBug
 
@@ -34,7 +34,7 @@ quickCheckN "RevId" prop_RevId
 type ListProperties =
     static member RevRev xs = prop_RevRev xs
     static member RevId xs = prop_RevId xs
-quickCheckAll (typeof<ListProperties>)
+quickCheckAll (typeof<ListProperties>) 
 
 
 
@@ -240,7 +240,7 @@ let spec =
         member x.Initial() = (new Counter(),0)
         member x.GenCommand _ = elements [inc;dec] }
 
-quickCheckN "Counter" (fun () -> asProperty spec)
+quickCheckN "Counter" (asProperty spec)
 
 //----------Tips and tricks-------
 //Testing functions
@@ -385,9 +385,9 @@ let blah (s:string) = if s = "" then raise (new System.Exception("foo")) else s.
 
 let private withNonEmptyString (p : string -> 'a) = forAll (oneof (List.map gen.Return [ "A"; "AA"; "AAA" ])) p
 
-quickCheck (fun () -> withNonEmptyString blah)
+quickCheck (withNonEmptyString blah)
 
-let prop_Exc() = forAllShrink (resize 100 arbitrary) shrink (fun (s:string) -> failwith "error")
+let prop_Exc = forAllShrink (resize 100 arbitrary) shrink (fun (s:string) -> failwith "error")
 quickCheckN "prop_Exc" prop_Exc
 
 
@@ -396,28 +396,28 @@ quickCheckN "prop_Exc" prop_Exc
 type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }
 
 quickCheck <| 
-    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:RecordStuff<string>) -> s.Yes)) 
+    forAllShrink (resize 100 arbitrary) shrink (fun (s:RecordStuff<string>) -> s.Yes)
 
 type Recursive<'a> = Void | Leaf of 'a | Branch of Recursive<'a> * 'a * Recursive<'a>
 
 quickCheck <| 
-    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Recursive<string>) -> 
-    match s with  Branch _ -> false | _ -> true)) 
+    forAllShrink (resize 100 arbitrary) shrink (fun (s:Recursive<string>) -> 
+    match s with  Branch _ -> false | _ -> true)
 
 type Simple = Void | Void2 | Void3 | Leaf of int | Leaf2 of string * int *char * float
 
 //should yield a simplified Leaf2
 quickCheck <| 
-    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
-    match s with Leaf2 _ -> false |  _ -> true)) 
+    forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
+    match s with Leaf2 _ -> false |  _ -> true)
 
 //should yield a Void3
 quickCheck <| 
-    (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
-    match s with Leaf2 _ -> false | Void3 -> false |  _ -> true)) 
+    forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
+    match s with Leaf2 _ -> false | Void3 -> false |  _ -> true) 
 
 
-quickCheck <| (fun () -> forAllShrink (resize 100 arbitrary) shrink (fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 )))
+quickCheck <| forAllShrink (resize 100 arbitrary) shrink (fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 ))
 quickCheck (fun opt -> match opt with None -> false | Some b  -> b  )
 quickCheck (fun opt -> match opt with None -> true | Some n when n<0 -> false | Some n when n >= 0 -> true )
 
