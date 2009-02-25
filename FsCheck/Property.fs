@@ -61,16 +61,13 @@ type Result =
         | (False,_) -> r
         | (True,_) -> l
         | (_,True) -> r
-        | (Rejected,Rejected) -> l //or r, whatever
-        
-        
+        | (Rejected,Rejected) -> l //or r, whatever   
 
 let private result =
   { Outcome     = Rejected
   ; Stamp       = []
   ; Labels       = Set.empty
   ; Arguments   = []
-//  ; Exc = None
   }
 
 let internal failed = { result with Outcome = False }
@@ -82,6 +79,8 @@ let internal timeout i = { result with Outcome = Timeout i }
 let internal succeeded = { result with Outcome = True }
 
 let internal rejected = { result with Outcome = Rejected }
+
+
 
 //A rose is a pretty tree
 //Draw it and you'll see.
@@ -101,7 +100,7 @@ let private fmapRose f (a:Rose<_>) = a.Map f
 //pattern here (is this possible using an active pattern? -> to investigate!) 
 let rec private join (MkRose (r,tts)) =
     //bweurgh. Need to match twice to keep it lazy.
-    let x = lazy (match r with (Lazy (MkRose (x,_))) -> x.Force())
+    let x = lazy (match r with (Lazy (MkRose (x,_))) -> x.Value)
     let ts = Seq.append (Seq.map join tts) <| seq { yield! match r with (Lazy (MkRose (_,ts))) -> ts }
     MkRose (x,ts) 
   //first shrinks outer quantification; makes most sense
@@ -112,8 +111,6 @@ type RoseBuilder() =
         MkRose (lazy x,Seq.empty)
     member internal b.Bind(m, k) : Rose<_> = 
         join ( fmapRose k m )              
-
-
 
 let private rose = new RoseBuilder()
 
@@ -156,10 +153,17 @@ let private mapRoseResult f :( _ -> Property) = fmapGen f << property
 
 let private mapResult f = mapRoseResult (fmapRose f)
 
-let private evaluate body a =
+let private safeForce (body:Lazy<_>) =
+    try
+        property body.Value
+    with
+        e -> liftResult (exc e)
+
+let private evaluate body a : Property =
     let argument a res = { res with Arguments = (box a) :: res.Arguments }
+    //safeForce (lazy ( body a )) //this doesn't work - exception escapes??
     try 
-        property (body a)
+        body a |> property
     with
         e -> liftResult (exc e)
     |> fmapGen (fmapRose (argument a))
@@ -178,7 +182,7 @@ let forAllShrink gn shrink body : Property =
 type Testable =
     static member Unit() =
         { new Testable<unit> with
-            member x.Property _ = property succeeded }
+            member x.Property _ = liftResult succeeded }
     static member Bool() =
         { new Testable<bool> with
             member x.Property b = liftBool b }
@@ -187,7 +191,7 @@ type Testable =
             member x.Property b =
                 let promoteLazy (m:Lazy<_>) = 
                     Gen (fun s r -> join <| lazyRose (lazy (match m.Value with (Gen g) -> g s r)))
-                promoteLazy (lazy (property b.Value)) }
+                promoteLazy (lazy (safeForce (lazy b.Value))) }
     static member Result() =
         { new Testable<Result> with
             member x.Property res = liftResult res }
@@ -213,7 +217,7 @@ let (==>) =
 ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
 ///and a failure otherwise.
 let throws<'t, 'a when 't :> exn> (p : Lazy<'a>) = 
-   property <| try p.Force() |> ignore ; failed with :? 't -> succeeded
+   property <| try ignore p.Value; failed with :? 't -> succeeded
 
 let private stamp str = 
     let add res = { res with Stamp = str :: res.Stamp } 
@@ -229,26 +233,31 @@ let trivial b = classify b "trivial"
 ///and the distribution of values is reported, using any_to_string.
 let collect v = stamp <| any_to_string v
 
+///Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
 let label l = 
     let add res = { res with Labels = Set.add l res.Labels }
     mapResult add
-    
+
+///Add the given label to the property. Property on the left hand side, label on the right.
 let (|@) x = x |> flip label 
-    
+
+///Add the given label to the property. label on the left hand side, property on the right.
 let (@|) = label
 
 let private combine f a b:Property = 
-    let pa = property a //Gen<Rose<Result>>
+    let pa = property a
     let pb = property b
     liftGen2 (liftRose2 f) pa pb
 
+///Construct a property that succeeds if both succeed. (cfr 'and')
 let (.&.) l r = 
-    let andProp = combine (fun a b -> a.And(b)) l r
-    andProp
+    let andProp = combine (fun a b -> a.And(b))
+    andProp l r
 
+///Construct a property that fails if both fail. (cfr 'or')
 let (.|.) l r =
-    let orProp = combine (fun a b -> a.Or(b)) l r
-    orProp
+    let orProp = combine (fun a b -> a.Or(b))
+    orProp  l r
 
 //And some handy overloads for complicated testables
 type Testable with
@@ -271,8 +280,6 @@ type Testable with
         { new Testable<list<'a>> with
             member x.Property l = List.fold_left (.&.) (property <| List.hd l) (List.tl l) }
             
-
-
 ///Fails the property if it does not complete within t seconds. Note that the called property gets a
 ///cancel signal, but whether it responds to that is up to the property; the execution may not actually stop.
 let within t (a:Lazy<_>) =

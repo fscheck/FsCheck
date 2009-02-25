@@ -8,16 +8,32 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic
 
-//---put this first to check for initalization bug---
+//let private safeForce (body:Lazy<_>) =
+//    try
+//        Choice2_1 body.Value
+//    with
+//        e -> Choice2_2 e
+//
+//printfn "%A" <| safeForce ( lazy ( if true then failwith "exc" else false))
+//
+//Console.ReadKey() |> ignore
+
+//---too early initialization bug (put this first): fixed---
 type Generators =
   static member Int64() =
     { new Arbitrary<int64>() with
         override x.Arbitrary = arbitrary |> fmapGen int64 }
 registerGenerators<Generators>()
 
-//bug: labels not printed when throwing exception
+//bug: exception escapes: fixed
+let prop_EscapingException (x:int) =
+    if x=0 then lazy (failwith "nul") else lazy true
+    |> label "bla"
+quickCheck prop_EscapingException
+
+//bug: label not printed because of exception
 let prop_LabelBug (x:int) =
-    if x=0 then (failwith "nul") else true
+    if x=0 then failwith "nul" else true
     |> label "bla"
 quickCheck prop_LabelBug
 
