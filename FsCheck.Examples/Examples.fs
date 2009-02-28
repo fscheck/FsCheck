@@ -8,16 +8,6 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic
 
-//let private safeForce (body:Lazy<_>) =
-//    try
-//        Choice2_1 body.Value
-//    with
-//        e -> Choice2_2 e
-//
-//printfn "%A" <| safeForce ( lazy ( if true then failwith "exc" else false))
-//
-//Console.ReadKey() |> ignore
-
 //---too early initialization bug (put this first): fixed---
 type Generators =
   static member Int64() =
@@ -31,13 +21,21 @@ let prop_EscapingException (x:int) =
     |> label "bla"
 quickCheck prop_EscapingException
 
-//bug: label not printed because of exception
+//more escaping exceptions?
+let somefailingFunction() = failwith "escaped"
+
+let prop_EscapingException2 (x:int) =
+    x <> 0 ==> lazy (if x=0 then false else (somefailingFunction()))
+quickCheck prop_EscapingException2
+
+//bug: label not printed because of exception. Workaround: use lazy.
+//actually I don't hink this is fixable, as the exception rolls up the stack, so the labelling
+//that happens when a property "returns" gets bypassed.
+//this is irritating when using Assert statements from unit testing frameworks though.
 let prop_LabelBug (x:int) =
-    if x=0 then failwith "nul" else true
+    if x=0 then lazy (failwith "nul") else lazy true
     |> label "bla"
 quickCheck prop_LabelBug
-
-Console.ReadKey() |> ignore
 
 //-------A Simple Example----------
 let prop_RevRev (xs:list<int>) = List.rev(List.rev xs) = xs
