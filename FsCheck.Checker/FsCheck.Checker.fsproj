@@ -5,21 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Architude.FsCheck</RootNamespace>
-    <AssemblyName>FsCheck</AssemblyName>
+    <ProjectGuid>{5199b1a0-9f3d-4b19-a857-2d49257cc643}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>FsCheck.Checker</RootNamespace>
+    <AssemblyName>FsCheck.Checker</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <Name>Architude.FsCheck</Name>
-    <SccProjectName>
-    </SccProjectName>
-    <SccProvider>
-    </SccProvider>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccLocalPath>
-    </SccLocalPath>
+    <Name>FsCheck.Checker</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,36 +30,21 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DocumentationFile>bin\Debug\FsCheck.XML</DocumentationFile>
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Common.fs" />
-    <Compile Include="Random.fs" />
-    <Compile Include="Reflect.fs" />
-    <Compile Include="TypeClass.fs" />
-    <Compile Include="Generator.fs" />
-    <Compile Include="Functions.fs" />
-    <Compile Include="ReflectArbitrary.fs" />
-    <Compile Include="Arbitrary.fs" />
-    <Compile Include="Property.fs" />
-    <Compile Include="Commands.fs" />
-    <Compile Include="Runner.fs" />
-    <Compile Include="Checks.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="FSharp.Core, Version=1.9.6.2, Culture=neutral, PublicKeyToken=a19089b1c74d0809">
-      <Name>FSharp.Core</Name>
-      <AssemblyName>FSharp.Core.dll</AssemblyName>
-    </Reference>
-    <Reference Include="FSharp.PowerPack, Version=1.9.6.2, Culture=neutral, PublicKeyToken=a19089b1c74d0809">
-      <Name>FSharp.PowerPack</Name>
-      <AssemblyName>FSharp.PowerPack.dll</AssemblyName>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FsCheck\FsCheck.fsproj">
+      <Name>FsCheck</Name>
+      <Project>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\FSharp\1.0\Microsoft.FSharp.Targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

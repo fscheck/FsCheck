@@ -78,15 +78,15 @@ let gen = GenBuilder()
 ///Note to QuickCheck users: this function is more general in QuickCheck, generating a Random a.
 let choose (l, h) = rand.Map (range (l,h) >> fst) 
 
-///Build a generator that randomly generates one of the values in the given list.
+///Build a generator that randomly generates one of the values in the given non-empty list.
 let elements xs = (choose (0, (List.length xs)-1) ).Map(List.nth xs)
 
-///Build a generator that generates a value from one of the generators in the given list, with
+///Build a generator that generates a value from one of the generators in the given non-empty list, with
 ///equal probability.
 let oneof gens = gen.Bind(elements gens, fun x -> x)
 
-///Build a generator that generates a value from one of the generators in the given list, with
-///given probabilities.
+///Build a generator that generates a value from one of the generators in the given non-empty list, with
+///given probabilities. The sum of the probabilities must be larger than zero.
 let frequency xs = 
     let tot = List.sum_by (fun x -> x) (List.map fst xs)
     let rec pick n ys = match ys with
@@ -218,12 +218,12 @@ let constant v = gen { return v }
 ///Promote the given function f to a function generator.
 let promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)
 
-///Basic co-arbitrary generator, which is dependent on an int.
+///Basic co-arbitrary generator transformer, which is dependent on an int.
 let variant v (Gen m) =
     let rec rands r0 = seq { let r1,r2 = split r0 in yield! Seq.cons r1 (rands r2) } 
     Gen (fun n r -> m n (Seq.nth (v+1) (rands r)))
 
-//privat interface for reflection
+//private interface for reflection
 type private IArbitrary =
     abstract ArbitraryObj : Gen<obj>
     abstract ShrinkObj : obj -> seq<obj>   
