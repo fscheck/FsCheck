@@ -173,7 +173,8 @@ let suchThatOption p gn =
 
 
 ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
-///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that the predicate is satisfied.
+///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
+///the predicate is satisfied.
 ///Note to QuickCheck users: order of arguments wrt QuickCheck is reversed, to make piping easier.
 let rec suchThat p gn =
     gen {   let! mx = suchThatOption p gn
@@ -181,10 +182,10 @@ let rec suchThat p gn =
             | Some x    -> return x
             | None      -> return! sized (fun n -> resize (n+1) (suchThat p gn)) }
 
-/// Takes a list of increasing size, and chooses
-/// among an initial segment of the list. The size of this initial
-/// segment increases with the size parameter.
-/// The input list must be non-empty.
+///// Takes a list of increasing size, and chooses
+///// among an initial segment of the list. The size of this initial
+///// segment increases with the size parameter.
+///// The input list must be non-empty.
 //let growingElements xs =
 //    match xs with
 //    | [] -> failwith "growingElements used with empty list"
@@ -212,7 +213,7 @@ let nonEmptyListOf gn =
         gen {   let! k = choose (1,max 1 n)
                 return! vectorOf k gn }
 
-///Generates the constant value v.          
+///Always generate v.          
 let constant v = gen { return v }
 
 ///Promote the given function f to a function generator.
@@ -220,7 +221,7 @@ let promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)
 
 ///Basic co-arbitrary generator transformer, which is dependent on an int.
 let variant v (Gen m) =
-    let rec rands r0 = seq { let r1,r2 = split r0 in yield! Seq.cons r1 (rands r2) } 
+    let rec rands r0 = seq { let r1,r2 = split r0 in yield! Seq.cons r1 (rands r2) }
     Gen (fun n r -> m n (Seq.nth (v+1) (rands r)))
 
 //private interface for reflection
@@ -230,8 +231,13 @@ type private IArbitrary =
 
 [<AbstractClass>]
 type Arbitrary<'a>() =
+    ///Returns a generator for 'a.
     abstract Arbitrary      : Gen<'a>
+    ///Returns a generator transformer for 'a. Necessary to generate functions with 'a as domain. Fails by
+    ///default if it is not overridden.
     abstract CoArbitrary    : 'a -> (Gen<'c> -> Gen<'c>) 
+    ///Returns a sequence of the immediate shrinks of the given value. The immediate shrinks should not include
+    ///doubles or the given value itself. The default implementation returns the empty sequence (i.e. no shrinking).
     abstract Shrink         : 'a -> seq<'a>
     default x.CoArbitrary (_:'a) = 
         failwithf "CoArbitrary for %A is not implemented" (typeof<'a>)
