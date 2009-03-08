@@ -22,19 +22,6 @@ module Helpers =
         sample n (Random.newSeed()) []
 
     let sample1 gn = sample 1 gn |> List.hd
-open Helpers
-
-module Common = 
-
-    open FsCheck.Common
-
-    let Memoize (f:int->string) (a:int) = memoize f a = f a
-
-    let Flip (f: char -> int -> string) a b = flip f a b = f b a
-
-module Generator = 
-
-    open FsCheck.Generator
     
     type Interval = Interval of int * int
     type NonNegativeInt = NonNegative of int
@@ -67,7 +54,23 @@ module Generator =
                 override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen (Positive << abs) 
                 override x.CoArbitrary (Positive i) = coarbitrary i
                 override x.Shrink (Positive i) = shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
-    registerGenerators<Arbitraries>()
+    do registerGenerators<Arbitraries>()
+
+open Helpers
+
+module Common = 
+
+    open FsCheck.Common
+
+    let Memoize (f:int->string) (a:int) = memoize f a = f a
+
+    let Flip (f: char -> int -> string) a b = flip f a b = f b a
+
+module Generator = 
+
+    open FsCheck.Generator
+    
+    
     
     let Choose (Interval (l,h)) = 
         choose (l,h)
@@ -201,10 +204,23 @@ module Arbitrary =
     
     open FsCheck.Arbitrary
     
+    let private addLabels (generator,shrinker) = ( generator |@ "Generator", shrinker |@ "Shrinker")
+    
     let Unit() = 
-        (   arbitrary<unit> |> sample 10 |> List.for_all ((=) ()) |@ "Generator"
-        ,   shrink<unit>() |> Seq.is_empty |@ "Shrinker"
-        )
+        (   arbitrary<unit> |> sample 10 |> List.for_all ((=) ()),
+            shrink<unit>() |> Seq.is_empty)
+        |> addLabels
+    
+    let Boolean (b:bool) =
+        (   arbitrary<bool> |> sample 10 |> List.for_all (fun v -> v  || true),
+            shrink<bool> b |> Seq.is_empty)
+        |> addLabels
+    
+    let Int32 (NonNegative size) (v:int) =
+        (   arbitrary<int> |> resize size |> sample 10 |> List.for_all (fun v -> -size <= v && v <= size),
+            shrink<int> v |> Seq.for_all (fun shrunkv -> shrunkv <= abs v))
+            
+    String.
         
     
         
