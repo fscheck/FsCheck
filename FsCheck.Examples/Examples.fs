@@ -184,7 +184,7 @@ let rec private unsafeTree() =
     oneof [ liftGen (Leaf) arbitrary; 
             liftGen2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
 
-let tree =
+let private tree =
     let rec tree' s = 
         match s with
             | 0 -> liftGen (Leaf) arbitrary
@@ -196,7 +196,7 @@ let tree =
     sized tree'
 
 //Generating functions
-let rec cotree t = 
+let rec private cotree t = 
     match t with
        | (Leaf n) -> variant 0 << coarbitrary n
        | (Branch (t1,t2)) -> variant 1 << cotree t1 << cotree t2

@@ -1,6 +1,28 @@
-﻿#light
+﻿(*--------------------------------------------------------------------------*\
+**  FsCheck                                                                 **
+**  Copyright (c) 2008-2009 Kurt Schelfthout. All rights reserved.          **
+**  http://www.codeplex.com/fscheck                                         **
+**                                                                          **
+**  This software is released under the terms of the Revised BSD License.   **
+**  See the file License.txt for the full text.                             **
+\*--------------------------------------------------------------------------*)
+
+#light
 
 namespace FsCheck.Checks
+
+open FsCheck
+
+module Helpers = 
+
+    let sample n gn  = 
+        let rec sample i seed samples =
+            if i = 0 then samples
+            else sample (i-1) (Random.stdSplit seed |> snd) (generate 1000 seed gn :: samples)
+        sample n (Random.newSeed()) []
+
+    let sample1 gn = sample 1 gn |> List.hd
+open Helpers
 
 module Common = 
 
@@ -10,18 +32,9 @@ module Common =
 
     let Flip (f: char -> int -> string) a b = flip f a b = f b a
 
-module Generator =
-    
-    open FsCheck
+module Generator = 
+
     open FsCheck.Generator
-    
-    let sample n gn  = 
-        let rec sample i seed samples =
-            if i = 0 then samples
-            else sample (i-1) (Random.stdSplit seed |> snd) (generate 1000 seed gn :: samples)
-        sample n (Random.newSeed()) []
-    
-    let sample1 gn = sample 1 gn |> List.hd
     
     type Interval = Interval of int * int
     type NonNegativeInt = NonNegative of int
@@ -174,4 +187,24 @@ module Generator =
     let Variant (NonNegative var) (v:char) =
         variant var (constant v) |> sample1 |>  ((=) v)
     
+ 
+ module Functions =
+ 
+    open FsCheck.Functions
     
+    let Funtion (f:int->char) (vs:list<int>) =
+        let tabledF = toFunction f
+        (List.map tabledF.Value vs) = (List.map f vs)
+        && List.for_all (fun v -> List.try_assoc v tabledF.Table = Some (f v)) vs
+        
+module Arbitrary =
+    
+    open FsCheck.Arbitrary
+    
+    let Unit() = 
+        (   arbitrary<unit> |> sample 10 |> List.for_all ((=) ()) |@ "Generator"
+        ,   shrink<unit>() |> Seq.is_empty |@ "Shrinker"
+        )
+        
+    
+        
