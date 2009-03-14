@@ -14,6 +14,7 @@ namespace FsCheck
 module internal Reflect
 
 open System
+open System.Collections.Generic
 open Microsoft.FSharp.Reflection
 open System.Reflection
 
@@ -58,3 +59,26 @@ let getUnionTagReader unionType =
 let genericTypeEq (lhs: System.Type) (rhs: System.Type) : bool =
         lhs.IsGenericType && rhs.IsGenericType &&
             (lhs.GetGenericTypeDefinition() = rhs.GetGenericTypeDefinition())
+            
+// resolve fails if the generic type is only determined by the return type 
+//(e.g., Array.zero_create) but that is easily fixed by additionally passing in the return type...
+let rec private resolve (acc:Dictionary<_,_>) (a:Type, f:Type) =
+    if f.IsGenericParameter then
+        if not (acc.ContainsKey(f)) then acc.Add(f,a)
+    else 
+        if a.HasElementType then resolve acc (a.GetElementType(), f.GetElementType())
+        Array.zip (a.GetGenericArguments()) (f.GetGenericArguments()) |>
+        Array.iter (resolve acc)
+
+let internal invokeMethod (m:MethodInfo) target args =
+    let m = if m.ContainsGenericParameters then
+                let typeMap = new Dictionary<_,_>()
+                Array.zip args (m.GetParameters()) |> 
+                Array.iter (fun (a,f) -> resolve typeMap (a.GetType(),f.ParameterType))  
+                let actuals = 
+                    m.GetGenericArguments() |> 
+                    Array.map (fun formal -> typeMap.[formal])
+                m.MakeGenericMethod(actuals)
+            else 
+                m
+    match target with None -> m.Invoke(null, args) | Some t -> m.Invoke(t,args)

@@ -228,28 +228,7 @@ let verbose =
         //any_to_string n + ":\n" + (args |> List.fold_left (fun b a -> any_to_string a + "\n" + b) "")  } 
     }
 
-// resolve fails if the generic type is only determined by the return type 
-//(e.g., Array.zero_create) but that is easily fixed by additionally passing in the return type...
-let rec private resolve (acc:Dictionary<_,_>) (a:Type, f:Type) =
-    if f.IsGenericParameter then
-        if not (acc.ContainsKey(f)) then acc.Add(f,a)
-    else 
-        if a.HasElementType then resolve acc (a.GetElementType(), f.GetElementType())
-        Array.zip (a.GetGenericArguments()) (f.GetGenericArguments()) |>
-        Array.iter (resolve acc)
 
-let private invokeMethod (m:MethodInfo) args =
-    let m = if m.ContainsGenericParameters then
-                let typeMap = new Dictionary<_,_>()
-                Array.zip args (m.GetParameters()) |> 
-                Array.iter (fun (a,f) -> resolve typeMap (a.GetType(),f.ParameterType))  
-                let actuals = 
-                    m.GetGenericArguments() |> 
-                    Array.map (fun formal -> typeMap.[formal])
-                m.MakeGenericMethod(actuals)
-            else 
-                m
-    m.Invoke(null, args)
 
 let private hasTestableReturnType (m:MethodInfo) =
     m.ReturnType = typeof<bool> 
@@ -307,7 +286,7 @@ let checkAll config (t:Type) =
         let fromP = m.GetParameters() |> Array.map (fun p -> p.ParameterType) |> arrayToTupleType
         let toP = m.ReturnType
         let funType = FSharpType.MakeFunctionType(fromP, toP) 
-        let funValue = FSharpValue.MakeFunction(funType, tupleToArray >> invokeMethod m)
+        let funValue = FSharpValue.MakeFunction(funType, tupleToArray >> Reflect.invokeMethod m None)
         let c = {config with Name = t.Name+"."+m.Name}
         let genericM = checkMethodInfo.MakeGenericMethod([|funType(*fromP;toP*)|])
         genericM.Invoke(null, [|box c; funValue|]) |> ignore
