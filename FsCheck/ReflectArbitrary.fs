@@ -133,9 +133,6 @@ let private reflectShrinkObj o (t:Type) =
             |> List.map (fun make -> make [||])
         //like tuple types: shrink first subtype first, then try second etc
         let shrunkChildren = shrinkChildren readCase makeCase o childrenTypes
-//            seq{ for (front,(childVal,childType),back) in Seq.zip vals childrenTypes |> Seq.to_list |> split3 do
-//                        for childShrink in getShrink childType childVal do
-//                            yield makeCase ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)}
         let children() = children1 Set.empty t t o
         match unionSize t childrenTypes with
         | 0 -> Seq.empty
@@ -148,14 +145,7 @@ let private reflectShrinkObj o (t:Type) =
         let make = getRecordConstructor t
         let read = getRecordReader t
         let childrenTypes = FSharpType.GetRecordFields t |> Array.map (fun pi -> pi.PropertyType)
-        //let vals = read o
         shrinkChildren read make o childrenTypes
-//        seq {       
-//            //like tuple types: shrink first subtype first, then try second etc TODO: factor out this common code
-//            for (front,(childVal,childType),back) in Seq.zip vals childrenTypes |> Seq.to_list |> split3 do
-//                for childShrink in getShrink childType childVal do
-//                    yield make ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)
-//        }
     else
         Seq.empty
 

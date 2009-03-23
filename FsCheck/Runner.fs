@@ -231,9 +231,15 @@ let verbose =
 
 
 let private hasTestableReturnType (m:MethodInfo) =
-    m.ReturnType = typeof<bool> 
-    || m.ReturnType = typeof<Lazy<bool>> 
-    || m.ReturnType = typeof<Property>
+    try
+        getInstance (typedefof<Testable<_>>,m.ReturnType) |> ignore
+        true
+    with
+        e -> false
+//    m.ReturnType = typeof<bool> 
+//    || m.ReturnType = typeof<Lazy<bool>> 
+//    || m.ReturnType = typeof<Property>
+//    || FSharpType.IsTuple m.ReturnType
     //TODO: add FastFuncs that return any of the above
 
 //let rec private findFunctionArgumentTypes fType = 
