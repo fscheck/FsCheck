@@ -220,7 +220,3 @@ module Arbitrary =
         (   arbitrary<int> |> resize size |> sample 10 |> List.for_all (fun v -> -size <= v && v <= size),
             shrink<int> v |> Seq.for_all (fun shrunkv -> shrunkv <= abs v))
             
-    String.
-        
-    
-        
