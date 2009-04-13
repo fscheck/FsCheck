@@ -10,9 +10,13 @@ namespace FsCheck.CSharpExamples
     {
         static void Main(string[] args)
         {
-            var spec = new Spec();
+            Spec.For(Any.OfType<char>(), c => c.Equals('a'))
+                 .When(c => c == 'a')
+                 .AndFor(Any.OfType<int>(), i => i> 10)
+                 .Classify((c,i) => i >5, "bigger")
+                 .QuickCheck();
 
-            spec.For(Any.OfType<char>(), c => c.Equals('a'));
+            Console.ReadKey();
         }
     }
 }

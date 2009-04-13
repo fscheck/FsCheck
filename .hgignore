@@ -4,3 +4,4 @@ syntax: glob
 *\bin\Debug\*
 *\bin\Release\*
 *.suo
+*.csproj.user
