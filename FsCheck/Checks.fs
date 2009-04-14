@@ -28,6 +28,7 @@ module Helpers =
     type NonZeroInt = NonZero of int
     type PositiveInt = Positive of int
     let unPositive (Positive i) = i
+    type IntWithMax = IntWithMax of int
     
     type Arbitraries =
         //generates an interval between two positive ints
@@ -54,6 +55,12 @@ module Helpers =
                 override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen (Positive << abs) 
                 override x.CoArbitrary (Positive i) = coarbitrary i
                 override x.Shrink (Positive i) = shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
+        static member IntWithMax() =
+            { new Arbitrary<IntWithMax>() with
+                override x.Arbitrary = frequency    [ (1,elements [IntWithMax Int32.max_int; IntWithMax Int32.min_int])
+                                                    ; (10,arbitrary |> fmapGen IntWithMax) ] 
+                override x.CoArbitrary (IntWithMax i) = coarbitrary i
+                override x.Shrink (IntWithMax i) = shrink i |> Seq.map IntWithMax }
     do registerGenerators<Arbitraries>()
 
 open Helpers
@@ -65,12 +72,20 @@ module Common =
     let Memoize (f:int->string) (a:int) = memoize f a = f a
 
     let Flip (f: char -> int -> string) a b = flip f a b = f b a
+    
+module Random =
+
+    open FsCheck.Random
+
+    let DivMod (x:int) (y:int) = 
+        y <> 0 ==> lazy (let (d,m) = divMod x y in d*y + m = x)
+        
+    let MkStdGen (IntWithMax seed) =
+        within 1000 <| lazy (let (StdGen (s1,s2)) = mkStdGen seed in true (*todo:add check*) ) //check for bug: hangs when seed = min_int
 
 module Generator = 
 
     open FsCheck.Generator
-    
-    
     
     let Choose (Interval (l,h)) = 
         choose (l,h)

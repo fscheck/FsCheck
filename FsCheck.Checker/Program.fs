@@ -3,6 +3,10 @@
 open FsCheck
 open System
 
+quickCheckAll <| Type.GetType( "FsCheck.Checks.Random, FsCheck", true)
+
+Console.ReadKey() |> ignore
+
 quickCheckAll <| Type.GetType( "FsCheck.Checks.Arbitrary, FsCheck", true)
 
 quickCheckAll <| Type.GetType( "FsCheck.Checks.Common, FsCheck", true)
