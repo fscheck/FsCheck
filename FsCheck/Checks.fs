@@ -195,7 +195,7 @@ module Generator =
  
     open FsCheck.Functions
     
-    let Funtion (f:int->char) (vs:list<int>) =
+    let Function (f:int->char) (vs:list<int>) =
         let tabledF = toFunction f
         (List.map tabledF.Value vs) = (List.map f vs)
         && List.for_all (fun v -> List.try_assoc v tabledF.Table = Some (f v)) vs
@@ -220,7 +220,7 @@ module Arbitrary =
         (   arbitrary<int> |> resize size |> sample 10 |> List.for_all (fun v -> -size <= v && v <= size),
             shrink<int> v |> Seq.for_all (fun shrunkv -> shrunkv <= abs v))
             
-    String.
+    //String.
         
     
         
