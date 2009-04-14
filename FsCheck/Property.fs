@@ -280,7 +280,7 @@ type Testable with
         { new Testable<list<'a>> with
             member x.Property l = List.fold_left (.&.) (property <| List.hd l) (List.tl l) }
             
-///Fails the property if it does not complete within t seconds. Note that the called property gets a
+///Fails the property if it does not complete within t milliseconds. Note that the called property gets a
 ///cancel signal, but whether it responds to that is up to the property; the execution may not actually stop.
 let within t (a:Lazy<_>) =
     try 

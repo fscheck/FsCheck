@@ -186,8 +186,8 @@ let testFinishedToString name testResult =
         + sprintf "%s\n" (args |> printArgs)
         + sprintf "with exception:\n%O\n" exc
     | False (data, origArgs, args, Timeout i) -> 
-        sprintf "%sTimeout of %i seconds exceeded, after %i test%s (%i shrink%s):\n" 
-            name (i/1000) data.NumberOfTests (pluralize data.NumberOfTests) 
+        sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s):\n" 
+            name i data.NumberOfTests (pluralize data.NumberOfTests) 
             data.NumberOfShrinks (pluralize data.NumberOfShrinks) 
         + maybePrintLabels data.Labels 
         + sprintf "%s\n" (args |> printArgs)
