@@ -37,6 +37,7 @@ type TestResult =
                 * list<obj>(*the original arguments that produced the failed test*)
                 * list<obj>(*the shrunk arguments that produce a failed test*)
                 * Outcome(*possibly exception or timeout that falsified the property*) 
+                * StdGen (*the seed used*)
     | Exhausted of TestData
     
 type private TestStep = 
@@ -61,6 +62,7 @@ type IRunner =
 type Config = 
     { MaxTest       : int
       MaxFail       : int
+      Replay        : StdGen option
       Name          : string
       Size          : float -> float  //determines size passed to the generator as funtion of the previous size. Rounded up.
                             //float is used to allow for smaller increases than 1.
@@ -102,7 +104,7 @@ let rec private test initSize resize rnd0 gen =
           yield! test newSize resize rnd1 gen
     }
 
-let private testsDone config outcome origArgs ntest nshrinks stamps  =    
+let private testsDone config outcome origArgs ntest nshrinks usedSeed stamps  =    
     let entry (n,xs) = (100 * n / ntest),xs
     let table = stamps 
                 |> Seq.filter (fun l -> l <> []) 
@@ -117,9 +119,9 @@ let private testsDone config outcome origArgs ntest nshrinks stamps  =
         let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
         match outcome with
             | Passed _ -> True testData
-            | Falsified result -> False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome)
+            | Falsified result -> False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
             | Failed _ -> Exhausted testData
-            | EndShrink result -> False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome)
+            | EndShrink result -> False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
             | _ -> failwith "Test ended prematurely"
     config.Runner.OnFinished(config.Name,testResult)
     //Console.Write(message outcome + " " + any_to_string ntest + " tests" + table:string)
@@ -131,7 +133,8 @@ let private runner config prop =
     let tryShrinkNb = ref 0
     let origArgs = ref []
     let lastStep = ref (Failed rejected)
-    test 0.0 (config.Size) (newSeed()) (property prop) |>
+    let seed = match config.Replay with None -> newSeed() | Some s -> s
+    test 0.0 (config.Size) seed (property prop) |>
     Seq.take_while (fun step ->
         lastStep := step
         //printfn "%A" step
@@ -148,14 +151,7 @@ let private runner config prop =
             | Passed result -> (result.Stamp :: acc)
             | _ -> acc
     ) [] 
-    |> testsDone config !lastStep !origArgs !testNb !shrinkNb
-
-
-//let rec private intersperse sep l = 
-//    match l with
-//    | [] -> []
-//    | [x] -> [x]
-//    | x::xs -> x :: sep :: intersperse sep xs
+    |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed
 
 let private printArgs = List.map any_to_string >> String.concat "\n" (*>> List.reduce_left (+)*)
 
@@ -179,21 +175,20 @@ let testFinishedToString name testResult =
     | True data -> 
         sprintf "%sOk, passed %i test%s%s" 
             name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
-    | False (data, origArgs, args, Exception exc) -> 
-        sprintf "%sFalsifiable, after %i test%s (%i shrink%s):\n" 
-            name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks)
+    | False (data, origArgs, args, Exception exc, usedSeed) -> 
+        sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):\n" 
+            name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed
         + maybePrintLabels data.Labels  
         + sprintf "%s\n" (args |> printArgs)
         + sprintf "with exception:\n%O\n" exc
-    | False (data, origArgs, args, Timeout i) -> 
-        sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s):\n" 
-            name i data.NumberOfTests (pluralize data.NumberOfTests) 
-            data.NumberOfShrinks (pluralize data.NumberOfShrinks) 
+    | False (data, origArgs, args, Timeout i, usedSeed) -> 
+        sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):\n" 
+            name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed 
         + maybePrintLabels data.Labels 
         + sprintf "%s\n" (args |> printArgs)
-    | False (data, origArgs, args, _) -> 
-        sprintf "%sFalsifiable, after %i test%s (%i shrink%s):\n" 
-            name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks)
+    | False (data, origArgs, args, _, usedSeed) -> 
+        sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):\n" 
+            name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed
         + maybePrintLabels data.Labels  
         + sprintf "%s\n" (args |> printArgs) 
     | Exhausted data -> 
@@ -214,6 +209,7 @@ let consoleRunner =
 ///The quick configuration only prints a summary result at the end of the test.
 let quick = { MaxTest       = 100
               MaxFail       = 1000
+              Replay        = None
               Name          = ""
               Size          = fun prevSize -> prevSize + 0.5
               Every         = fun ntest args -> String.Empty
@@ -228,43 +224,17 @@ let verbose =
         //any_to_string n + ":\n" + (args |> List.fold_left (fun b a -> any_to_string a + "\n" + b) "")  } 
     }
 
-
-
 let private hasTestableReturnType (m:MethodInfo) =
     try
         getInstance (typedefof<Testable<_>>,m.ReturnType) |> ignore
         true
     with
         e -> false
-//    m.ReturnType = typeof<bool> 
-//    || m.ReturnType = typeof<Lazy<bool>> 
-//    || m.ReturnType = typeof<Property>
-//    || FSharpType.IsTuple m.ReturnType
-    //TODO: add FastFuncs that return any of the above
 
-//let rec private findFunctionArgumentTypes fType = 
-//    if not (FSharpType.IsFunction fType) then  
-//            ([],fType)
-//    else
-//        let dom,range = FSharpType.GetFunctionElements fType
-//        let args,ret = findFunctionArgumentTypes range
-//        (dom :: args,ret)
-//
-//let private invokeFunction f args = 
-//    f.GetType().InvokeMember("Invoke", System.Reflection.BindingFlags.InvokeMethod, null, f, args)
+///Check the given property p using the given Config.
+let check config p = runner config (property p)
 
-//let private checkFunction config f = 
-//    let genericMap = new Dictionary<_,_>()  
-//    let args,ret = findFunctionArgumentTypes (f.GetType())  
-//    let gen = args    
-//                |> List.map(fun p -> (getGenerator genericMap p  :?> IGen).AsGenObject )
-//                |> sequence
-//                |> (fun gen -> gen.Map List.to_array)
-//    let property = makeProperty (invokeFunction f) ret
-//    checkProperty config (forAll gen property) |> ignore
-
-let check config p = runner config (property p)//(forAllShrink arbitrary shrink p)
-
+//Check the given property p using the given Config, and the given test name.
 let checkName name config p = check { config with Name = name } p
 
 let private checkMethodInfo = typeof<Config>.DeclaringType.GetMethod("check",BindingFlags.Static ||| BindingFlags.Public)
@@ -285,6 +255,7 @@ let private tupleToArray t =
     else
         [|t|]
 
+///Check all public static methods on the given type that have a Testable return type(this includes let-bound functions in a module)
 let checkAll config (t:Type) = 
     t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
     Array.filter hasTestableReturnType |>
@@ -310,12 +281,13 @@ let quickCheckN name p = p |> checkName name quick
 ///Check with the configuration 'verbose', and using the given name.
 let verboseCheckN name p = p |> checkName name verbose
 
-///Check all properties in given type with configuration 'quick'
+///Check all public static methods on the given type that have a Testable return type with configuration 'quick'
 let quickCheckAll t = t |> checkAll quick
-/// Check all properties in given type with configuration 'verbose'
+/// Check all public static methods on the given type that have a Testable return type with configuration 'verbose'
 let verboseCheckAll t = t |> checkAll verbose 
 
-//necessary initializations
+///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
+///In any case, it can be forced any number of times without problem.
 let init = lazy (   initArbitraryTypeClass.Value
                     do registerGenerators<Arbitrary.Arbitrary>()
                     initTestableTypeClass.Value
