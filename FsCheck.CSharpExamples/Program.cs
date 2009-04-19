@@ -16,6 +16,12 @@ namespace FsCheck.CSharpExamples
                  .Classify((c,i) => i >5, "bigger")
                  .QuickCheck();
 
+            var gen = from x in Any.OfType<int>()
+                      from y in Any.IntBetween(5, 10)
+                      where x > 5
+                      select new { Fst = x, Snd = y };
+
+
             Console.ReadKey();
         }
     }

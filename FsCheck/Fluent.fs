@@ -8,6 +8,7 @@ namespace FsCheck
 open System
 open System.Linq
 open System.ComponentModel
+open System.Collections.Generic
 
 //TODO:
 //Label
@@ -22,9 +23,24 @@ open System.ComponentModel
 //    abstract QuickCheck : unit -> unit
 //    abstract VerboseCheck : unit -> unit
 
+type WeightAndValue<'a>(weight:int,value:'a) =
+    member x.Weight = weight
+    member x.Value = value
+    
+
 type Any = 
     static member OfType<'a>() = arbitrary<'a>
-
+    static member Value (value) = constant value
+    static member ValueIn (values : seq<_>) = values |> Seq.to_list |> elements
+    static member IntBetween (l,h) = choose (l,h)
+    static member GeneratorIn (generators : seq<Gen<_>>) = generators |> Seq.to_list |> oneof
+    static member WeighedGeneratorIn ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
+        weighedValues |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> Seq.to_list |> frequency
+    static member ListOf<'a> (generator) = listOf generator |> fmapGen (fun list -> new List<'a>(list))
+    static member NonEmptyListOf<'a> (generator) = nonEmptyListOf generator |> fmapGen (fun list -> new List<'a>(list))
+    static member ListOfN<'a> (count, generator) = vectorOf count generator |> fmapGen (fun list -> new List<'a>(list))
+    static member SequenceOf<'a> (generators:seq<Gen<_>>) = generators |> Seq.to_list |> sequence |> fmapGen (fun list -> new List<'a>(list))
+ 
 
 [<AbstractClass>]
 type UnbrowsableObject() =
@@ -86,15 +102,15 @@ and SpecBuilder<'a,'b>(generator0:'a Gen,generator1:'b Gen,
         SpecBuilder<'a,'b>(generator0, generator1, assertion0,conditions,collectedValue::collects,classifies)
     member x.Classify(filter:Func<'a,'b,bool>,name:string) =
         SpecBuilder<'a,'b>(generator0,generator1,assertion0,conditions,collects,(filter,name)::classifies)
-    member x.AndFor<'c>(generator:'c Gen, assertion:Func<'c,bool>) =
-        SpecBuilder<'a,'b,'c>   (generator0
-                                ,generator1
-                                ,generator
-                                ,fun a b c -> assertion0.Invoke(a,b) && assertion.Invoke(c)
-                                ,conditions |> List.map (fun f -> Func<'a,'b,'c,bool>(fun a b c -> f.Invoke(a,b)))
-                                ,collects |> List.map (fun f -> Func<'a,'b,'c,string>(fun a b c -> f.Invoke(a,b)))
-                                ,classifies |> List.map (fun (f,name) -> (Func<'a,'b,'c,bool>(fun a b c -> f.Invoke(a,b)),name))
-                                )
+//    member x.AndFor<'c>(generator:'c Gen, assertion:Func<'c,bool>) =
+//        SpecBuilder<'a,'b,'c>   (generator0
+//                                ,generator1
+//                                ,generator
+//                                ,fun a b c -> assertion0.Invoke(a,b) && assertion.Invoke(c)
+//                                ,conditions |> List.map (fun f -> Func<'a,'b,'c,bool>(fun a b c -> f.Invoke(a,b)))
+//                                ,collects |> List.map (fun f -> Func<'a,'b,'c,string>(fun a b c -> f.Invoke(a,b)))
+//                                ,classifies |> List.map (fun (f,name) -> (Func<'a,'b,'c,bool>(fun a b c -> f.Invoke(a,b)),name))
+//                                )
 and SpecBuilder<'a,'b,'c>(generator0:'a Gen,generator1:'b Gen, generator2:'c Gen, 
                             assertion0:Func<'a,'b,'c,bool>,
                             conditions:Func<'a,'b,'c,bool> list, 
@@ -116,5 +132,26 @@ type Spec =
         SpecBuilder<'a>(generator, assertion, [], [], [])
     static member For<'a,'b>(generator1:'a Gen,generator2:'b Gen, assertion:Func<'a,'b,bool>) =
         SpecBuilder<'a,'b>(generator1, generator2, assertion,[],[],[])
- 
+
+open Generator
+
+[<System.Runtime.CompilerServices.Extension>]
+type GeneratorExtensions = 
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Select(g:Gen<_>, selector : Func<_,_>) = g.Map(fun a -> selector.Invoke(a))
+    
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Where(g:Gen<_>, predicate : Func<_,_>) = suchThat (fun a -> predicate.Invoke(a)) g
+    
+    [<System.Runtime.CompilerServices.Extension>]
+    static member SelectMany(source:Gen<_>, f:Func<_, Gen<_>>) = 
+        gen { let! a = source
+              return! f.Invoke(a) }
+    
+    [<System.Runtime.CompilerServices.Extension>]
+    static member SelectMany(source:Gen<_>, f:Func<_, Gen<_>>, select:Func<_,_,_>) =
+        gen { let! a = source
+              let! b = f.Invoke(a)
+              return select.Invoke(a,b) }
+
 init.Force()
