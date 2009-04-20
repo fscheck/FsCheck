@@ -16,18 +16,12 @@ open System.Collections.Generic
 //Or
 //Within
 //Throws
-
-//shrinking??
-
-//type IPropertyBuilder =
-//    abstract QuickCheck : unit -> unit
-//    abstract VerboseCheck : unit -> unit
+//shrinking
 
 type WeightAndValue<'a>(weight:int,value:'a) =
     member x.Weight = weight
     member x.Value = value
     
-
 type Any = 
     static member OfType<'a>() = arbitrary<'a>
     static member Value (value) = constant value
@@ -36,12 +30,8 @@ type Any =
     static member GeneratorIn (generators : seq<Gen<_>>) = generators |> Seq.to_list |> oneof
     static member WeighedGeneratorIn ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
         weighedValues |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> Seq.to_list |> frequency
-    static member ListOf<'a> (generator) = listOf generator |> fmapGen (fun list -> new List<'a>(list))
-    static member NonEmptyListOf<'a> (generator) = nonEmptyListOf generator |> fmapGen (fun list -> new List<'a>(list))
-    static member ListOfN<'a> (count, generator) = vectorOf count generator |> fmapGen (fun list -> new List<'a>(list))
     static member SequenceOf<'a> (generators:seq<Gen<_>>) = generators |> Seq.to_list |> sequence |> fmapGen (fun list -> new List<'a>(list))
  
-
 [<AbstractClass>]
 type UnbrowsableObject() =
     inherit obj()
@@ -68,7 +58,7 @@ and SpecBuilder<'a>( generator0:'a Gen
             let conditions' a = conditions |> List.fold_left (fun s f -> s && f.Invoke(a)) true
             let collects' a prop = collects |> List.fold_left (fun prop f -> prop |> collect (f.Invoke(a))) prop
             let classifies' a prop = classifies |> List.fold_left (fun prop (f,name) -> prop |> classify (f.Invoke(a)) name) prop  
-            forAll generator0 (fun a -> (conditions' a) ==> (assertion0.Invoke(a)) |> collects' a |> classifies' a)
+            forAll generator0 (fun a -> (conditions' a) ==> lazy (assertion0.Invoke(a)) |> collects' a |> classifies' a)
     member x.When( condition:Func<'a,bool> ) = 
         SpecBuilder<'a>(generator0, assertion0, condition::conditions, collects, classifies)
     member x.Collect(collectedValue:Func<'a,string>)=
@@ -95,22 +85,22 @@ and SpecBuilder<'a,'b>(generator0:'a Gen,generator1:'b Gen,
             let conditions' a b = conditions |> List.fold_left (fun s f -> s && f.Invoke(a,b)) true
             let collects' a b prop = collects |> List.fold_left (fun prop f -> prop |> collect (f.Invoke(a,b))) prop
             let classifies' a b prop = classifies |> List.fold_left (fun prop (f,name) -> prop |> classify (f.Invoke(a,b)) name) prop  
-            forAll generator0 (fun a -> forAll generator1 (fun b -> (conditions' a b) ==> (assertion0.Invoke(a,b)) |> collects' a b |> classifies' a b))
+            forAll generator0 (fun a -> forAll generator1 (fun b -> (conditions' a b) ==> lazy (assertion0.Invoke(a,b)) |> collects' a b |> classifies' a b))
     member x.When( condition:Func<'a,'b,bool> ) = 
         SpecBuilder<'a,'b>(generator0, generator1, assertion0, condition::conditions, collects, classifies)
     member x.Collect(collectedValue:Func<'a,'b,string>)=
         SpecBuilder<'a,'b>(generator0, generator1, assertion0,conditions,collectedValue::collects,classifies)
     member x.Classify(filter:Func<'a,'b,bool>,name:string) =
         SpecBuilder<'a,'b>(generator0,generator1,assertion0,conditions,collects,(filter,name)::classifies)
-//    member x.AndFor<'c>(generator:'c Gen, assertion:Func<'c,bool>) =
-//        SpecBuilder<'a,'b,'c>   (generator0
-//                                ,generator1
-//                                ,generator
-//                                ,fun a b c -> assertion0.Invoke(a,b) && assertion.Invoke(c)
-//                                ,conditions |> List.map (fun f -> Func<'a,'b,'c,bool>(fun a b c -> f.Invoke(a,b)))
-//                                ,collects |> List.map (fun f -> Func<'a,'b,'c,string>(fun a b c -> f.Invoke(a,b)))
-//                                ,classifies |> List.map (fun (f,name) -> (Func<'a,'b,'c,bool>(fun a b c -> f.Invoke(a,b)),name))
-//                                )
+    member x.AndFor<'c>(generator:'c Gen, assertion:Func<'c,bool>) =
+        SpecBuilder<'a,'b,'c>   (generator0
+                                ,generator1
+                                ,generator
+                                ,fun a b c -> assertion0.Invoke(a,b) && assertion.Invoke(c)
+                                ,conditions |> List.map (fun f -> Func<'a,'b,'c,bool>(fun a b c -> f.Invoke(a,b)))
+                                ,collects |> List.map (fun f -> Func<'a,'b,'c,string>(fun a b c -> f.Invoke(a,b)))
+                                ,classifies |> List.map (fun (f,name) -> (Func<'a,'b,'c,bool>(fun a b c -> f.Invoke(a,b)),name))
+                                )
 and SpecBuilder<'a,'b,'c>(generator0:'a Gen,generator1:'b Gen, generator2:'c Gen, 
                             assertion0:Func<'a,'b,'c,bool>,
                             conditions:Func<'a,'b,'c,bool> list, 
@@ -124,13 +114,20 @@ and SpecBuilder<'a,'b,'c>(generator0:'a Gen,generator1:'b Gen, generator2:'c Gen
             forAll generator0 (fun a -> 
             forAll generator1 (fun b -> 
             forAll generator2 (fun c ->
-                (conditions' a b c) ==> (assertion0.Invoke(a,b,c)) |> collects' a b c |> classifies' a b c))) 
-                
+                (conditions' a b c) ==> lazy (assertion0.Invoke(a,b,c)) |> collects' a b c |> classifies' a b c))) 
+    member x.When( condition:Func<'a,'b,'c,bool> ) = 
+        SpecBuilder<'a,'b,'c>(generator0, generator1, generator2, assertion0, condition::conditions, collects, classifies)
+    member x.Collect(collectedValue:Func<'a,'b,'c,string>)=
+        SpecBuilder<'a,'b,'c>(generator0, generator1, generator2, assertion0,conditions,collectedValue::collects,classifies)
+    member x.Classify(filter:Func<'a,'b,'c,bool>,name:string) =
+        SpecBuilder<'a,'b,'c>(generator0,generator1,generator2, assertion0,conditions,collects,(filter,name)::classifies)         
                 
 type Spec =
-    static member For<'a>(generator:'a Gen, assertion:Func<'a,bool>) =
+    static member ForAny<'a>(assertion:Func<'a,bool>) =
+        Spec.For(Any.OfType<'a>(),assertion)
+    static member For(generator:'a Gen, assertion:Func<'a,bool>) =
         SpecBuilder<'a>(generator, assertion, [], [], [])
-    static member For<'a,'b>(generator1:'a Gen,generator2:'b Gen, assertion:Func<'a,'b,bool>) =
+    static member For(generator1:'a Gen,generator2:'b Gen, assertion:Func<'a,'b,bool>) =
         SpecBuilder<'a,'b>(generator1, generator2, assertion,[],[],[])
 
 open Generator
@@ -153,5 +150,14 @@ type GeneratorExtensions =
         gen { let! a = source
               let! b = f.Invoke(a)
               return select.Invoke(a,b) }
+    
+    [<System.Runtime.CompilerServices.Extension>]
+    static member MakeList<'a> (generator) = listOf generator |> fmapGen (fun list -> new List<'a>(list))
+    
+    [<System.Runtime.CompilerServices.Extension>]
+    static member MakeNonEmptyList<'a> (generator) = nonEmptyListOf generator |> fmapGen (fun list -> new List<'a>(list))
+    
+    [<System.Runtime.CompilerServices.Extension>]
+    static member MakeListOfLength<'a> (generator, count) = vectorOf count generator |> fmapGen (fun list -> new List<'a>(list))
 
 init.Force()
