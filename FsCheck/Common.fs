@@ -26,3 +26,7 @@ let memoize (f: 'a -> 'b) =
 let (|Lazy|) (inp:Lazy<'a>) = inp.Force()
 
 let flip f x y = f y x
+
+let curry f = fun a b -> f (a,b)
+
+let uncurry f = fun (a,b) -> f a b
