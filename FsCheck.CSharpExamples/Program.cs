@@ -10,6 +10,23 @@ namespace FsCheck.CSharpExamples
     {
         static void Main(string[] args)
         {
+            //A Simple example
+            Spec.ForAny<int[]>(xs => xs.Reverse().Reverse().SequenceEqual( xs ))
+                .QuickCheck();
+
+            Spec.ForAny<int[]>(xs => xs.Reverse().SequenceEqual(xs))
+                .QuickCheck();
+
+            //Grouping properties : TODO
+
+
+            //--------Properties--------------
+            Spec.ForAny<float[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
+                .QuickCheck();
+
+
+
+
             Spec.For(Any.OfType<char>(), c => c.Equals('a'))
                  .When(c => c == 'a')
                  .AndFor(Any.OfType<int>(), i => i> 10)
