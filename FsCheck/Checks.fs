@@ -81,7 +81,8 @@ module Random =
         y <> 0 ==> lazy (let (d,m) = divMod x y in d*y + m = x)
         
     let MkStdGen (IntWithMax seed) =
-        within 1000 <| lazy (let (StdGen (s1,s2)) = mkStdGen seed in true (*todo:add check*) ) //check for bug: hangs when seed = min_int
+        within 1000 <| lazy (let (StdGen (s1,s2)) = mkStdGen seed in s1 > 0 && s2 > 0 (*todo:add check*) ) //check for bug: hangs when seed = min_int
+        //|> collect seed
 
 module Generator = 
 

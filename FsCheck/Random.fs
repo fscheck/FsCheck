@@ -40,7 +40,8 @@ let hMod n d =
     r
 
 let mkStdGen s = 
-    let s = abs s
+    //let s = abs s
+    let s = if -s < 0 then 0 else -s
     let (q, s1) = divMod s 2147483562
     let s2 = hMod q 2147483398
     StdGen (s1+1,s2+1)
