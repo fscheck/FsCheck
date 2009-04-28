@@ -11,9 +11,11 @@ open System.Collections.Generic
 open Common
 
 //TODO:
-//Label: not sure if this 'll fit in the fluent interface - what would be the meaning
 //Within -> rely on testing frameworks
 //Throws-> probqbly just don't do it - rely on unit testing frameworks
+//config
+//checkAll?
+//
 
 type WeightAndValue<'a>(weight:int,value:'a) =
     member x.Weight = weight
@@ -157,6 +159,12 @@ type Spec =
     [<OverloadIDAttribute("ForAnyAction")>]
     static member ForAny(assertion:Action<'a>) =
         Spec.For(Any.OfType<'a>(),assertion)
+    [<OverloadIDAttribute("ForAnyFunc2")>]
+    static member ForAny(assertion:Func<'a,'b,bool>) =
+        Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),assertion)
+    [<OverloadIDAttribute("ForAnyAction2")>]
+    static member ForAny(assertion:Action<'a,'b>) =
+        Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),assertion)
         
     [<OverloadIDAttribute("For1Func")>]
     static member For(generator:'a Gen, assertion:Func<'a,bool>) =
