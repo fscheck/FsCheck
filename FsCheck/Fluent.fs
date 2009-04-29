@@ -73,17 +73,17 @@ and SpecBuilder<'a>( generator0:'a Gen
     member x.Label( name:string ) =
         SpecBuilder<'a>(generator0, shrinker0, label name << assertion0,conditions, collects, classifies)
     [<OverloadIDAttribute("0")>]
-    member x.And(assertion : 'a -> Property) =
-        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (assertion a)) , conditions, collects, classifies)
+    member x.And(assertion : Func<'a,bool>) =
+        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (assertion.Invoke(a))), conditions, collects, classifies)
     [<OverloadIDAttribute("1")>]
-    member x.And(assertion : 'a -> Property, name:string ) =
-        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (label name (assertion a))) , conditions, collects, classifies)
+    member x.And(assertion : Func<'a,bool>, name:string ) =
+        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
     [<OverloadIDAttribute("0")>]
-    member x.Or(assertion : 'a -> Property) =
-        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (assertion a)) , conditions, collects, classifies)
+    member x.Or(assertion : Func<'a,bool>) =
+        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (assertion.Invoke(a))), conditions, collects, classifies)
     [<OverloadIDAttribute("1")>]
-    member x.Or(assertion : 'a -> Property, name:string ) =
-        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (label name (assertion a))) , conditions, collects, classifies)
+    member x.Or(assertion : Func<'a,bool>, name:string ) =
+        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
     member x.AndFor<'b>(generator:'b Gen, assertion:Func<'b,bool>) =
         SpecBuilder<'a,'b>  (generator0
                             ,shrinker0 
@@ -116,12 +116,26 @@ and SpecBuilder<'a,'b>( generator0:'a Gen
         SpecBuilder<'a,'b>(generator0, shrinker0, generator1, shrinker1, assertion0,conditions,(fun a b -> collectedValue.Invoke(a,b))::collects,classifies)
     member x.Classify(filter:Func<'a,'b,bool>,name:string) =
         SpecBuilder<'a,'b>(generator0, shrinker0,generator1, shrinker1,assertion0,conditions,collects,((fun a b -> filter.Invoke(a,b)),name)::classifies)
-    member x.And(assertion : 'a -> 'b -> Property) =
+    member x.Shrink(shrinker:Func<'b,'b seq>) =
+        SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker.Invoke, assertion0, conditions, collects, classifies)
+    member x.Label( name:string ) =
+        SpecBuilder<'a,'b>(generator0, shrinker0, generator1, shrinker1, (fun a b-> label name (assertion0 a b)),conditions, collects, classifies)
+    [<OverloadIDAttribute("0")>]
+    member x.And(assertion : Func<'a,'b,bool>) =
         SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1,
-            (fun a b -> (assertion0 a b) .&. (assertion a b)) , conditions, collects, classifies)
-    member x.Or(assertion : 'a -> 'b -> Property) =
-        SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1,
-            (fun a b -> (assertion0 a b) .|. (assertion a b)) , conditions, collects, classifies)
+            (fun a b -> (assertion0 a b) .&. (assertion.Invoke(a, b))) , conditions, collects, classifies)
+    [<OverloadIDAttribute("1")>]
+    member x.And(assertion : Func<'a,'b,bool>, name:string ) =
+        SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
+            (fun a b -> (assertion0 a b) .&. (label name (assertion.Invoke(a,b)))), conditions, collects, classifies)
+    [<OverloadIDAttribute("0")>]
+    member x.Or(assertion : Func<'a,'b,bool>) =
+        SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
+            (fun a b -> (assertion0 a b) .|. (assertion.Invoke(a,b))), conditions, collects, classifies)
+    [<OverloadIDAttribute("1")>]
+    member x.Or(assertion : Func<'a,'b,bool>, name:string ) =
+        SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
+            (fun a b-> (assertion0 a b) .|. (label name (assertion.Invoke(a,b)))), conditions, collects, classifies)
 //    member x.AndFor<'c>(generator:'c Gen, assertion:Func<'c,bool>) =
 //        SpecBuilder<'a,'b,'c>   (generator0
 //                                ,generator1

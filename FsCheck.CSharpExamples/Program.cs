@@ -100,15 +100,19 @@ namespace FsCheck.CSharpExamples
                 .Collect((x, xs) => "length " + xs.Count().ToString())
                 .QuickCheck();
 
-
-
+            //---labelling sub properties-----
+            //hmm. Cannot express result = m + n once this way.
+            Spec.ForAny<int, int>((m, n) => m + n >= m).Label("result > #1") //maybe add overload with label to ForAny?
+                .And((m, n) => m + n >= n, "result > #2")
+                .And((m, n) => m + n < m + n, "result not sum")
+                .QuickCheck();
 
             //misc tests
-            Spec.For(Any.OfType<char>(), c => c.Equals('a'))
-                 .When(c => c == 'a')
-                 .AndFor(Any.OfType<int>(), i => i> 10)
-                 .Classify((c,i) => i >5, "bigger")
-                 .QuickCheck();
+            //Spec.For(Any.OfType<char>(), c => c.Equals('a'))
+            //     .When(c => c == 'a')
+            //     .AndFor(Any.OfType<int>(), i => i> 10)
+            //     .Classify((c,i) => i >5, "bigger")
+            //     .QuickCheck();
 
             var gen = from x in Any.OfType<int>()
                       from y in Any.IntBetween(5, 10)
