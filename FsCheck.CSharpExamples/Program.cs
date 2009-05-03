@@ -52,45 +52,45 @@ namespace FsCheck.CSharpExamples
         {
             //A Simple example
             Spec.ForAny<int[]>(xs => xs.Reverse().Reverse().SequenceEqual( xs ))
-                .QuickCheck();
+                .QuickCheck("RevRev");
 
             Spec.ForAny<int[]>(xs => xs.Reverse().SequenceEqual(xs))
-                .QuickCheck();
+                .QuickCheck("RevId");
 
             //Grouping properties : TODO
 
 
             //--------Properties--------------
             Spec.ForAny<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
-                .QuickCheck();
+                .QuickCheck("RevRevFloat");
 
             //conditional properties
             Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
                 .When((x, xs) => xs.IsOrdered())
-                .QuickCheck();
+                .QuickCheck("Insert");
 
             Spec.ForAny<int>(a => 1 / a == 1 / a)
                 .When(a => a != 0)
-                .QuickCheck();
+                .QuickCheck("DivByZero");
 
             //counting trivial cases
             Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
                 .When((x, xs) => xs.IsOrdered())
                 .Classify( (x,xs) => xs.Count() == 0, "trivial")
-                .QuickCheck();
+                .QuickCheck("InsertTrivial");
 
             //classifying test values
             Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
                 .When((x, xs) => xs.IsOrdered())
                 .Classify((x, xs) => new int[] { x }.Concat(xs).IsOrdered(), "at-head")
                 .Classify((x, xs) => xs.Concat(new int[] { x }).IsOrdered(), "at-tail")
-                .QuickCheck();
+                .QuickCheck("InsertClassify");
 
             //collecting data values
             Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
                 .When((x, xs) => xs.IsOrdered())
                 .Collect((x, xs) => "length " + xs.Count().ToString())
-                .QuickCheck();
+                .QuickCheck("InsertCollect");
 
             //combining observations
             Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -98,14 +98,40 @@ namespace FsCheck.CSharpExamples
                 .Classify((x, xs) => new int[] { x }.Concat(xs).IsOrdered(), "at-head")
                 .Classify((x, xs) => xs.Concat(new int[] { x }).IsOrdered(), "at-tail")
                 .Collect((x, xs) => "length " + xs.Count().ToString())
-                .QuickCheck();
+                .QuickCheck("InsertCombined");
 
             //---labelling sub properties-----
             //hmm. Cannot express result = m + n once this way.
             Spec.ForAny<int, int>((m, n) => m + n >= m).Label("result > #1") //maybe add overload with label to ForAny?
                 .And((m, n) => m + n >= n, "result > #2")
                 .And((m, n) => m + n < m + n, "result not sum")
-                .QuickCheck();
+                .QuickCheck("ComplexProp");
+
+            Spec.ForAny<int>(x => false).Label("Always false")
+                .And(x => Math.Abs(x) - x == 0) //actually, And should start a new property, not just a new assertion...
+                .QuickCheck("Label");
+
+            //rest seem hard to express without real "And" and "Or" support
+
+            //-------Test data generators-----------
+            //can't be made generic, only in separate method?
+            Func<int[],Generator.Gen<int>> chooseFromList = xs =>
+                from i in Any.IntBetween(0,xs.Length-1)
+                select xs[i];
+            
+            var chooseBool = Any.GeneratorIn( Any.Value( true), Any.Value(false));
+
+            //no tuples in C# until BCL 4.0...can we do better now?
+            var chooseBool2 = Any.WeighedValueIn(
+                new WeightAndValue<bool>(2, true),
+                new WeightAndValue<bool>(1, false));
+
+            //the size of test data : see matrix method
+
+            //generating recursive data types: no practicaly equivalent in C#?
+
+            //generating functions: idem? Add Func/Action generators?
+            
 
             //misc tests
             //Spec.For(Any.OfType<char>(), c => c.Equals('a'))
@@ -123,6 +149,10 @@ namespace FsCheck.CSharpExamples
             Console.ReadKey();
         }
 
+        public static Generator.Gen<T> Matrix<T>(Generator.Gen<T> gen)
+        {
+            return gen.Resize(s => Convert.ToInt32(Math.Sqrt(s)));
+        }
         
     }
 }

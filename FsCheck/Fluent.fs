@@ -11,28 +11,92 @@ open System.Collections.Generic
 open Common
 
 //TODO:
-//Within -> rely on testing frameworks
-//Throws-> probqbly just don't do it - rely on unit testing frameworks
-//config
-//checkAll?
-//
+//Within -> rely on testing frameworks?
+//Throws -> rely on testing frameworks?
+//"And" and "Or" should start a new property, with own classifies and labels etc (see prop_Label)
+//label: add some overloads, should be able to nest (see propMul)
+//registering default generators per type
 
 type WeightAndValue<'a>(weight:int,value:'a) =
     member x.Weight = weight
     member x.Value = value
     
 type Any = 
-    static member OfType<'a>() = arbitrary<'a>
-    static member Value (value) = constant value
-    static member ValueIn (values : seq<_>) = values |> Seq.to_list |> elements
-    static member IntBetween (l,h) = choose (l,h)
-    static member GeneratorIn (generators : seq<Gen<_>>) = generators |> Seq.to_list |> oneof
+    static member private OneOfSeqGen gs = 
+        gs |> Seq.to_list |> oneof
+    static member private OneOfSeqValue vs = 
+        vs |> Seq.to_list |> elements
+    static member private SequenceSeq<'a> gs = 
+        gs |> Seq.to_list |> sequence |> fmapGen (fun list -> new List<'a>(list))
+    static member OfType<'a>() = 
+        arbitrary<'a>
+    static member Value (value) = 
+        constant value
+    [<OverloadIDAttribute("0")>]
+    static member ValueIn (values : seq<_>) = 
+        values |> Any.OneOfSeqValue
+    [<OverloadIDAttribute("1")>]
+    static member ValueIn ([<ParamArrayAttribute>] values : array<_>) = 
+        values |> Any.OneOfSeqValue
+    static member IntBetween (l,h) = 
+        choose (l,h)
+    [<OverloadIDAttribute("0")>]
+    static member WeighedValueIn ( weighedValues : seq<WeightAndValue<'a>> ) =
+        weighedValues |> Any.OneOfWeighedSeqValue
+    [<OverloadIDAttribute("1")>]
+    static member WeighedValueIn ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<'a>> ) =
+        weighedValues |> Any.OneOfWeighedSeqValue
+    static member private OneOfWeighedSeqValue ws = 
+        ws |> Seq.map (fun wv -> (wv.Weight, constant wv.Value)) |> Seq.to_list |> frequency
+    [<OverloadIDAttribute("0")>]
+    static member GeneratorIn (generators : seq<Gen<_>>) = 
+        generators |> Any.OneOfSeqGen
+    [<OverloadIDAttribute("1")>]
+    static member GeneratorIn ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
+        generators |> Any.OneOfSeqGen
+    [<OverloadIDAttribute("0")>]
     static member WeighedGeneratorIn ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
-        weighedValues |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> Seq.to_list |> frequency
-    static member SequenceOf<'a> (generators:seq<Gen<_>>) = generators |> Seq.to_list |> sequence |> fmapGen (fun list -> new List<'a>(list))
+        weighedValues |> Any.OneOfWeighedSeq
+    [<OverloadIDAttribute("1")>]
+    static member WeighedGeneratorIn ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<Gen<'a>>> ) =
+        weighedValues |> Any.OneOfWeighedSeq
+    static member private OneOfWeighedSeq ws = 
+        ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> Seq.to_list |> frequency
+    [<OverloadIDAttribute("0")>]
+    static member SequenceOf<'a> (generators:seq<Gen<'a>>) = 
+        generators |> Any.SequenceSeq
+    [<OverloadIDAttribute("1")>]
+    static member SequenceOf<'a> ([<ParamArrayAttribute>]generators:array<Gen<'a>>) = 
+        generators |> Any.SequenceSeq
 
 type Shrink =
     static member Type<'a>() = shrink<'a>
+
+//mutable counterpart of the Config type
+type Configuration() =
+    let mutable maxTest = Runner.quick.MaxTest
+    let mutable maxFail = Runner.quick.MaxFail
+    let mutable name = Runner.quick.Name
+    let mutable every = Runner.quick.Every
+    let mutable everyShrink = Runner.quick.EveryShrink
+    let mutable size = Runner.quick.Size
+    let mutable runner = Runner.quick.Runner
+    member x.MaxNbOfTest with get() = maxTest and set(v) = maxTest <- v
+    member x.MaxNbOfFailedTests with get() = maxFail and set(v) = maxFail <- v
+    member x.Name with get() = name and set(v) = name <- v
+    member x.Every with get() = every and set(v:Func<int,obj array,string>) = every <- fun i os -> v.Invoke(i,List.to_array os)
+    member x.EveryShrink with get() = everyShrink and set(v:Func<obj array,string>) = everyShrink <- fun os -> v.Invoke(List.to_array os)
+    member x.Size with get() = size and set(v:Func<double,double>) = size <- v.Invoke
+    member x.Runner with get() = runner and set(v) = runner <- v
+    member internal x.ToConfig() =
+        { MaxTest = maxTest
+        ; MaxFail = maxFail 
+        ; Name = name
+        ; Every = every
+        ; EveryShrink = everyShrink
+        ; Size= size
+        ; Runner = runner
+        }
 
 [<AbstractClass>]
 type UnbrowsableObject() =
@@ -49,6 +113,9 @@ type UnbrowsableObject() =
     abstract Build : unit -> Property
     member x.QuickCheck() = quickCheck <| x.Build()
     member x.VerboseCheck() = verboseCheck <| x.Build()
+    member x.QuickCheck(name:string) = quickCheckN name <| x.Build()
+    member x.VerboseCheck(name:string) = verboseCheckN name <| x.Build()
+    member x.Check(configuration:Configuration) = check (configuration.ToConfig()) <| x.Build()
 
 and SpecBuilder<'a>( generator0:'a Gen
                    , shrinker0: 'a -> 'a seq
@@ -222,5 +289,9 @@ type GeneratorExtensions =
     
     [<System.Runtime.CompilerServices.Extension>]
     static member MakeListOfLength<'a> (generator, count) = vectorOf count generator |> fmapGen (fun list -> new List<'a>(list))
+    
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Resize (generator, sizeTransform : Func<int,int>) =
+        sized <| fun s -> resize (sizeTransform.Invoke(s)) generator
     
 init.Force()
