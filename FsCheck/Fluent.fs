@@ -14,7 +14,7 @@ open Common
 //Within -> rely on testing frameworks?
 //Throws -> rely on testing frameworks?
 //"And" and "Or" should start a new property, with own classifies and labels etc (see prop_Label)
-//label: add some overloads, should be able to nest (see propMul)
+//label: maybe add some overloads, should be able to nest (see propMul)
 //registering default generators per type
 
 type WeightAndValue<'a>(weight:int,value:'a) =
@@ -68,6 +68,9 @@ type Any =
     [<OverloadIDAttribute("1")>]
     static member SequenceOf<'a> ([<ParamArrayAttribute>]generators:array<Gen<'a>>) = 
         generators |> Any.SequenceSeq
+    static member OfSize (sizedGen : Func<int,Gen<_>>) =
+        sized <| fun s -> (sizedGen.Invoke(s))
+
 
 type Shrink =
     static member Type<'a>() = shrink<'a>
@@ -293,5 +296,10 @@ type GeneratorExtensions =
     [<System.Runtime.CompilerServices.Extension>]
     static member Resize (generator, sizeTransform : Func<int,int>) =
         sized <| fun s -> resize (sizeTransform.Invoke(s)) generator
+        
     
+type DefaultArbitraries =
+    static member Add<'t>() = registerGenerators<'t>()
+    static member Overwrite<'t>() = overwriteGenerators<'t>()
+  
 init.Force()

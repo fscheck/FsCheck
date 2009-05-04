@@ -145,6 +145,10 @@ namespace FsCheck.CSharpExamples
                       where x > 5
                       select new { Fst = x, Snd = y };
 
+            DefaultArbitraries.Add<MyArbitraries>();
+
+            Spec.ForAny<long>(l => l + 1 > l)
+                .QuickCheck();
             
             Console.ReadKey();
         }
@@ -152,6 +156,23 @@ namespace FsCheck.CSharpExamples
         public static Generator.Gen<T> Matrix<T>(Generator.Gen<T> gen)
         {
             return gen.Resize(s => Convert.ToInt32(Math.Sqrt(s)));
+        }
+
+        public class ArbitraryLong : FsCheck.Generator.Arbitrary<long>
+        {
+            public override Generator.Gen<long> Arbitrary
+            {
+	            get { 
+                    return Any.OfSize( s => Any.IntBetween(-s,s))
+                        .Select( i => Convert.ToInt64(i)); 
+                }
+            }
+        }
+
+
+        public class MyArbitraries
+        {
+            public static FsCheck.Generator.Arbitrary<long> Long() { return new ArbitraryLong(); }
         }
         
     }
