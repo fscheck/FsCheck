@@ -84,6 +84,7 @@ type Configuration() =
     let mutable everyShrink = Runner.quick.EveryShrink
     let mutable size = Runner.quick.Size
     let mutable runner = Runner.quick.Runner
+    let mutable replay = Runner.quick.Replay
     member x.MaxNbOfTest with get() = maxTest and set(v) = maxTest <- v
     member x.MaxNbOfFailedTests with get() = maxFail and set(v) = maxFail <- v
     member x.Name with get() = name and set(v) = name <- v
@@ -91,6 +92,8 @@ type Configuration() =
     member x.EveryShrink with get() = everyShrink and set(v:Func<obj array,string>) = everyShrink <- fun os -> v.Invoke(List.to_array os)
     member x.Size with get() = size and set(v:Func<double,double>) = size <- v.Invoke
     member x.Runner with get() = runner and set(v) = runner <- v
+    //TODO: figure out how to deal with null values
+    //member x.Replay with get() = (match replay with None -> null | Some s -> s) and set(v) = replay = Some v
     member internal x.ToConfig() =
         { MaxTest = maxTest
         ; MaxFail = maxFail 
@@ -99,6 +102,7 @@ type Configuration() =
         ; EveryShrink = everyShrink
         ; Size= size
         ; Runner = runner
+        ; Replay = None
         }
 
 [<AbstractClass>]
