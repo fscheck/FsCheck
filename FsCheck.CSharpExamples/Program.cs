@@ -50,14 +50,14 @@ namespace FsCheck.CSharpExamples
     {
         static void Main(string[] args)
         {
-            //A Simple example
+            //A simple example
             Spec.ForAny<int[]>(xs => xs.Reverse().Reverse().SequenceEqual( xs ))
                 .QuickCheck("RevRev");
 
             Spec.ForAny<int[]>(xs => xs.Reverse().SequenceEqual(xs))
                 .QuickCheck("RevId");
 
-            //Grouping properties : TODO
+            //Grouping properties : not yet implemented
 
 
             //--------Properties--------------
@@ -128,28 +128,25 @@ namespace FsCheck.CSharpExamples
 
             //the size of test data : see matrix method
 
-            //generating recursive data types: no practicaly equivalent in C#?
+            //generating recursive data types: not so common in C#?
 
             //generating functions: idem? Add Func/Action generators?
-            
 
-            //misc tests
-            //Spec.For(Any.OfType<char>(), c => c.Equals('a'))
-            //     .When(c => c == 'a')
-            //     .AndFor(Any.OfType<int>(), i => i> 10)
-            //     .Classify((c,i) => i >5, "bigger")
-            //     .QuickCheck();
-
+            //generators support select, selectmany and where
             var gen = from x in Any.OfType<int>()
                       from y in Any.IntBetween(5, 10)
                       where x > 5
                       select new { Fst = x, Snd = y };
 
+            //registering default arbitrary instances
             DefaultArbitraries.Add<MyArbitraries>();
 
             Spec.ForAny<long>(l => l + 1 > l)
                 .QuickCheck();
-            
+
+            Spec.ForAny<string>(s => true)
+                .Check(new Configuration { Name = "Configuration Demo", MaxNbOfTest = 500 });
+
             Console.ReadKey();
         }
 
@@ -158,7 +155,7 @@ namespace FsCheck.CSharpExamples
             return gen.Resize(s => Convert.ToInt32(Math.Sqrt(s)));
         }
 
-        public class ArbitraryLong : FsCheck.Generator.Arbitrary<long>
+        public class ArbitraryLong : Generator.Arbitrary<long>
         {
             public override Generator.Gen<long> Arbitrary
             {
@@ -172,7 +169,7 @@ namespace FsCheck.CSharpExamples
 
         public class MyArbitraries
         {
-            public static FsCheck.Generator.Arbitrary<long> Long() { return new ArbitraryLong(); }
+            public static Generator.Arbitrary<long> Long() { return new ArbitraryLong(); }
         }
         
     }
