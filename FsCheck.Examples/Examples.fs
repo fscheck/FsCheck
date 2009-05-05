@@ -256,6 +256,10 @@ let spec =
 
 quickCheckN "Counter" (asProperty spec)
 
+//---------Replaying previous tests-----------
+
+check { quick with Name="Counter-replay"; Replay = Some <| Random.StdGen (395461793,1) } (asProperty spec)
+
 //----------Tips and tricks-------
 //Testing functions
 let prop_Assoc (x:Tree) (f:Tree->float,g:float->char,h:char->int) = ((f >> g) >> h) x = (f >> (g >> h)) x

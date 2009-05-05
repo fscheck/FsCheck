@@ -11,13 +11,13 @@
 
 namespace FsCheck
 
+//based Hugs' Random implementation
 module Random
 
 open System
 
-//from Hugs' Haskell implementation 
-type StdGen = StdGen of int * int
-                with override x.ToString() = match x with (StdGen (s1,s2)) -> sprintf "%A" (s1,s2) 
+type StdGen = StdGen of int * int //with 
+                //override x.ToString() = match x with (StdGen (s1,s2)) -> sprintf "%A" (s1,s2) 
 
 //Haskell has mod,quot, en divMod. .NET has DivRem, % and /.
 // Haskell              | F#
@@ -39,11 +39,12 @@ let hMod n d =
     let _,r = divMod n d
     r
 
-let rec mkStdGen s = match s with
-                     | s when s < 0 -> mkStdGen (-s)
-                     | _ -> let (q, s1) = divMod s 2147483562
-                            let s2 = hMod q 2147483398
-                            StdGen (s1+1,s2+1)
+let mkStdGen s = 
+    //let s = abs s
+    let s = if -s < 0 then 0 else -s
+    let (q, s1) = divMod s 2147483562
+    let s2 = hMod q 2147483398
+    StdGen (s1+1,s2+1)
 
 let stdNext (StdGen (s1,s2)) =
     let k = s1 / 53668
