@@ -80,8 +80,6 @@ let internal succeeded = { result with Outcome = True }
 
 let internal rejected = { result with Outcome = Rejected }
 
-
-
 //A rose is a pretty tree
 //Draw it and you'll see.
 //A Rose<Result> is used to keep, in a lazy way, a Result and the possible shrinks for the value in the node.

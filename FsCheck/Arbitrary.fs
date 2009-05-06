@@ -65,7 +65,7 @@ type Arbitrary() =
             override x.Shrink fl =
                 let (|<|) x y = abs x < abs y
                 seq {   if Double.IsInfinity fl || Double.IsNaN fl then 
-                            yield 0.
+                            yield 0.0
                         else
                             if fl < 0.0 then yield -fl
                             let truncated = truncate fl
