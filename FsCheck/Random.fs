@@ -35,31 +35,43 @@ let divMod (n:int) d =
     let (q,r) as qr = Math.DivRem(n,d) //neat F# feature here: out parameters are converted to tuples!
     if (Math.Sign(r) = -Math.Sign(d)) then (q-1,r+d) else (q,r)
 
+let divMod64 (n:int64) d = 
+    let (q,r) as qr = Math.DivRem(n,d)
+    if (Math.Sign(r) = -Math.Sign(d)) then (q-1L,r+d) else (q,r)
+
 let hMod n d = 
     let _,r = divMod n d
     r
 
+let hMod64 n d = 
+    let _,r = divMod64 n d
+    r
+
+let q1,q2 = 53668,52774
+let a1,a2 = 40014,40692
+let r1,r2 = 12211,3791
+let m1,m2 = 2147483563,2147483399
+
 let mkStdGen s = 
-    //let s = abs s
-    let s = if -s < 0 then 0 else -s
-    let (q, s1) = divMod s 2147483562
-    let s2 = hMod q 2147483398
-    StdGen (s1+1,s2+1)
+    let s = if s < 0L then -s else s
+    let (q, s1) = divMod64 s (int64 (m1-1))  //2147483562L
+    let s2 = hMod64 q (int64 (m2-1)) //2147483398L
+    StdGen (int (s1+1L),int (s2+1L))
 
 let stdNext (StdGen (s1,s2)) =
-    let k = s1 / 53668
-    let s1' = 40014 * (s1 - k * 53668) - k * 12211
-    let s1'' = if (s1' < 0) then s1 + 2147483563 else s1'
-    let k' = s2 / 52774
-    let s2' = 40692 * (s2 - k' * 52774) - k' * 3791
-    let s2'' = if s2' < 0 then s2' + 2147483399 else s2'
+    let k = s1 / q1
+    let s1' = a1 * (s1 - k * q1) - k * r1
+    let s1'' = if (s1' < 0) then s1 + m1 else s1'
+    let k' = s2 / q2
+    let s2' = a2 * (s2 - k' * q2) - k' * r2
+    let s2'' = if s2' < 0 then s2' + m2 else s2'
     let z = s1'' - s2''
-    let z' = if z < 1 then z + 2147483562 else z
+    let z' = if z < 1 then z + m1 - 1 else z
     (z', StdGen (s1'', s2''))
     
 let stdSplit ((StdGen (s1,s2)) as std) = 
-    let new_s1 = if s1 = 2147483562 then 1 else s1 + 1
-    let new_s2 = if s2 = 1 then 2147483398 else s2 - 1
+    let new_s1 = if s1 = (m1-1) then 1 else s1 + 1
+    let new_s2 = if s2 = 1 then (m2-1) else s2 - 1
     let (StdGen (t1,t2)) = snd (stdNext std) 
     let left = StdGen (new_s1, t2)
     let right = StdGen (t1, new_s2)
@@ -78,7 +90,6 @@ let rec stdRange (l,h) rng =
             else let (x,g') = stdNext g in f (n-1) (x + acc * b) g'
         match (f n 1 rng) with (v, rng') -> (l + abs(v) % k, rng')
 
-
 let range = stdRange
 let split = stdSplit
-let newSeed() = DateTime.Now.Ticks |> int |> mkStdGen
+let newSeed() = DateTime.Now.Ticks |> mkStdGen
