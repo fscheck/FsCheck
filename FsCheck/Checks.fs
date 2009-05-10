@@ -251,6 +251,7 @@ module Arbitrary =
 module Property =
     open FsCheck.Property
     open FsCheck.Generator
+    open FsCheck.Common
     open System
     
     type SymProp =  | Unit | Bool of bool | Exception
@@ -258,10 +259,40 @@ module Property =
                     | Implies of bool * SymProp
                     | Classify of bool * string * SymProp
                     | Collect of int * SymProp
-                    
+                    | Label of string * SymProp
+                    | And of SymProp * SymProp
+                    | Or of SymProp * SymProp
+                    | Lazy of SymProp
+                    | Tuple2 of SymProp * SymProp
+                    | Tuple3 of SymProp * SymProp * SymProp //and 4,5,6
+                    | List of SymProp list
+     
+    let rec private symPropGen =
+        let rec recGen size =
+            match size with
+            | 0 -> oneof [constant Unit; liftGen (Bool) arbitrary; constant Exception]
+            | n when n>0 ->
+                let subProp = recGen (size/2)
+                oneof   [ liftGen2 (curry ForAll) arbitrary (subProp)
+                        ; liftGen2 (curry Implies) arbitrary (subProp)
+                        ; liftGen2 (curry Collect) arbitrary (subProp)
+                        ; liftGen3 (curry2 Classify) arbitrary arbitrary (subProp)
+                        ; liftGen2 (curry Label) arbitrary (subProp)
+                        ; liftGen2 (curry And) (subProp) (subProp)
+                        ; liftGen2 (curry Or) (subProp) (subProp)
+                        ; liftGen Lazy subProp
+                        ; liftGen2 (curry Tuple2) subProp subProp
+                        ; liftGen3 (curry2 Tuple3) subProp subProp subProp
+                        ; liftGen List (resize 3 <| nonEmptyListOf subProp)
+                        ]
+            | _ -> failwith "symPropGen: size must be positive"
+        sized recGen
+                  
     let rec private determineResult prop =
         let addStamp stamp res = { res with Stamp = stamp :: res.Stamp }
         let addArgument arg res = { res with Arguments = arg :: res.Arguments }
+        let addLabel label (res:Result) = { res with Labels = Set.add label res.Labels }
+        let andCombine prop1 prop2 = let (r1:Result,r2) = determineResult prop1, determineResult prop2 in r1.And(r2)
         match prop with
         | Unit -> succeeded
         | Bool true -> succeeded
@@ -273,16 +304,30 @@ module Property =
         | Classify (true,stamp,prop) -> determineResult prop |> addStamp stamp
         | Classify (false,_,prop) -> determineResult prop
         | Collect (i,prop) -> determineResult prop |> addStamp (any_to_string i)
+        | Label (l,prop) -> determineResult prop |> addLabel l
+        | And (prop1, prop2) -> andCombine prop1 prop2
+        | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in r1.Or(r2)
+        | Lazy prop -> determineResult prop
+        | Tuple2 (prop1,prop2) -> andCombine prop1 prop2
+        | Tuple3 (prop1,prop2,prop3) -> (andCombine prop1 prop2).And(determineResult prop3)
+        | List props -> List.fold_left (fun st p -> st.And(determineResult p)) (List.hd props |> determineResult) (List.tl props)
         
-    let rec private toActualProperty prop =
+    let rec private toProperty prop =
         match prop with
         | Unit -> property ()
         | Bool b -> property b
-        | Exception -> property (lazy (raise <| InvalidOperationException()))
-        | ForAll (i,prop) -> forAll (constant i) (fun i -> toActualProperty prop)
-        | Implies (b,prop) -> b ==> (toActualProperty prop)
-        | Classify (b,stamp,prop) -> classify b stamp (toActualProperty prop)
-        | Collect (i,prop) -> collect i (toActualProperty prop)
+        | Exception -> let p = (lazy (raise <| InvalidOperationException();())) in property p
+        | ForAll (i,prop) -> forAll (constant i) (fun i -> toProperty prop)
+        | Implies (b,prop) -> b ==> (toProperty prop)
+        | Classify (b,stamp,prop) -> classify b stamp (toProperty prop)
+        | Collect (i,prop) -> collect i (toProperty prop)
+        | Label (l,prop) -> label l (toProperty prop)
+        | And (prop1,prop2) -> (toProperty prop1) .&. (toProperty prop2)
+        | Or (prop1,prop2) -> (toProperty prop1) .|. (toProperty prop2)
+        | Lazy prop -> toProperty prop
+        | Tuple2 (prop1,prop2) -> (toProperty prop1) .&. (toProperty prop2)
+        | Tuple3 (prop1,prop2,prop3) -> (toProperty prop1) .&. (toProperty prop2) .&. (toProperty prop3)
+        | List props -> List.fold_left (fun st p -> st .&. toProperty p) (List.hd props |> toProperty) (List.tl props)
     
     let private areSame (r0:Result) (r1:Result) =
         match r0.Outcome,r1.Outcome with
@@ -295,11 +340,32 @@ module Property =
         && List.for_all2 (fun s0 s1 -> s0 = s1) r0.Stamp r1.Stamp
         && Set.equal r0.Labels r1.Labels
         && List.for_all2 (fun s0 s1 -> s0 = s1) r0.Arguments r1.Arguments
-     
-    let Property (symprop:SymProp) = 
-        let expected = determineResult symprop 
-        let actual = match (toActualProperty symprop) with Gen g ->  match g 1 (Random.newSeed()) with MkRose (Common.Lazy res,_) -> res
-        (areSame expected actual) |@ sprintf "expected = %A - actual = %A" expected actual
-        |> collect symprop
+    
+    let rec private depth (prop:SymProp) =
+        match prop with
+        | Unit -> 0
+        | Bool b -> 0
+        | Exception -> 0
+        | ForAll (_,prop) -> 1 + (depth prop)
+        | Implies (_,prop) -> 1 + (depth prop)
+        | Classify (_,_,prop) -> 1 + (depth prop)
+        | Collect (_,prop) -> 1 + (depth prop)
+        | Label (_,prop) -> 1 + (depth prop)
+        | And (prop1,prop2) -> 1 + Math.Max(depth prop1, depth prop2)
+        | Or (prop1,prop2) -> 1 + Math.Max(depth prop1, depth prop2)
+        | Lazy prop -> 1 + (depth prop)
+        | Tuple2 (prop1,prop2) -> 1 + Math.Max(depth prop1, depth prop2)
+        | Tuple3 (prop1,prop2,prop3) -> 1 + Math.Max(Math.Max(depth prop1, depth prop2),depth prop3)
+        | List props -> 1 + List.fold_left (fun a b -> Math.Max(a, depth b)) 0 props
+    
+    let Property = 
+        forAllShrink symPropGen shrink (fun symprop ->
+            let expected = determineResult symprop
+            let (MkRose (Common.Lazy actual,_)) = generate 1 (Random.newSeed()) (toProperty symprop) 
+            areSame expected actual
+            |> label (sprintf "expected = %A - actual = %A" expected actual)
+            |> collect (depth symprop)
+        )
+            
         
         

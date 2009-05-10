@@ -29,4 +29,8 @@ let flip f x y = f y x
 
 let curry f = fun a b -> f (a,b)
 
+let curry2 f = fun a b c -> f (a,b,c)
+
 let uncurry f = fun (a,b) -> f a b
+
+let uncurry2 f = fun (a,b,c) -> f a b c
