@@ -15,11 +15,6 @@ type Generators =
         override x.Arbitrary = arbitrary |> fmapGen int64 }
 registerGenerators<Generators>()
 
-let prop_Regression() =
-    label "whatever" (lazy (raise <| InvalidOperationException()))
-quickCheck prop_Regression
-Console.ReadKey()
-
 //bug: exception escapes: fixed
 let prop_EscapingException (x:int) =
     if x=0 then lazy (failwith "nul") else lazy true

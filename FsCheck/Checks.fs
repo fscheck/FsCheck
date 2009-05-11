@@ -316,7 +316,7 @@ module Property =
         match prop with
         | Unit -> property ()
         | Bool b -> property b
-        | Exception -> let p = (lazy (raise <| InvalidOperationException();())) in property p
+        | Exception -> property (lazy (raise <| InvalidOperationException()))
         | ForAll (i,prop) -> forAll (constant i) (fun i -> toProperty prop)
         | Implies (b,prop) -> b ==> (toProperty prop)
         | Classify (b,stamp,prop) -> classify b stamp (toProperty prop)
