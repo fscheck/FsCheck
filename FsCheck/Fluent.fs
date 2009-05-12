@@ -229,7 +229,6 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
                                     , conditions:('a -> 'b -> 'c -> bool) list
                                     , collects:('a -> 'b -> 'c -> string) list
                                     , classifies:(('a -> 'b -> 'c -> bool) * string) list) = 
-
     inherit UnbrowsableObject()
     override x.Build() =
             let conditions' a b c = conditions |> List.fold_left (fun s f -> s && f a b c) true
@@ -244,7 +243,28 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
     member x.Collect(collectedValue:Func<'a,'b,'c,string>)=
         SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, assertion0, conditions,(fun a b c -> collectedValue.Invoke(a,b,c))::collects,classifies)
     member x.Classify(filter:Func<'a,'b,'c,bool>,name:string) =
-        SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, assertion0,conditions,collects,((fun a b c -> filter.Invoke(a,b,c)),name)::classifies)         
+        SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, assertion0, conditions, collects,((fun a b c -> filter.Invoke(a,b,c)),name)::classifies)         
+    member x.Shrink(shrinker:Func<'c,'c seq>) =
+        SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker.Invoke, assertion0, conditions, collects, classifies)
+    member x.Label( name:string ) =
+        SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, (fun a b c -> label name (assertion0 a b c)),conditions, collects, classifies)
+    [<OverloadIDAttribute("0")>]
+    member x.And(assertion : Func<'a,'b,'c,bool>) =
+        SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1,generator2, shrinker2,
+            (fun a b c -> (assertion0 a b c) .&. (assertion.Invoke(a, b, c))) , conditions, collects, classifies)
+    [<OverloadIDAttribute("1")>]
+    member x.And(assertion : Func<'a,'b,'c,bool>, name:string ) =
+        SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1, generator2, shrinker2,
+            (fun a b c -> (assertion0 a b c) .&. (label name (assertion.Invoke(a,b,c)))), conditions, collects, classifies)
+    [<OverloadIDAttribute("0")>]
+    member x.Or(assertion : Func<'a,'b,'c,bool>) =
+        SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1, generator2, shrinker2,
+            (fun a b c -> (assertion0 a b c) .|. (assertion.Invoke(a,b,c))), conditions, collects, classifies)
+    [<OverloadIDAttribute("1")>]
+    member x.Or(assertion : Func<'a,'b,'c,bool>, name:string ) =
+        SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1,generator2, shrinker2, 
+            (fun a b c -> (assertion0 a b c) .|. (label name (assertion.Invoke(a,b,c)))), conditions, collects, classifies)  
+      
                 
 type Spec =
     [<OverloadIDAttribute("ForAnyFunc")>]
