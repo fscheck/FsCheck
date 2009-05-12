@@ -36,6 +36,22 @@ type Arbitrary() =
             override x.Arbitrary = elements [true; false] 
             override x.CoArbitrary b = if b then variant 0 else variant 1
         }
+    //byte generator contributed by Steve Gilham.
+    ///Generates arbitrary bytes.
+    static member Byte() =   
+        { new Arbitrary <byte>() with  
+            override x.Arbitrary = sized <| fun n ->   
+               let ig = if n > 255 then choose (0, 255) else choose (0,n)  
+               ig.Map byte  
+            override x.CoArbitrary n = variant (if n >= byte(0) then 2*int(n) else 2*(- int(n)) + 1)  
+            override x.Shrink n =   
+                let (|>|) x y = abs (int(x)) > abs (int(y))  
+                seq {   if n < byte(0) then yield byte(-int(n))  
+                        yield! Seq.map byte (Seq.unfold (fun st -> let st = st / 2 in Some (n-(byte(st)), st)) (int(n))  
+                                |> Seq.cons (byte(0))  
+                                |> Seq.take_while ((|>|) n)) }  
+                |> Seq.distinct  
+        }  
     ///Generate arbitrary int that is between -size and size.
     static member Int() = 
         { new Arbitrary<int>() with
