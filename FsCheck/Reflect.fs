@@ -35,25 +35,25 @@ let getRecordFields (recordType: System.Type) =
 
 /// Get constructor for record type
 let getRecordConstructor recordType = 
-    FSharpValue.PrecomputeRecordConstructor(recordType, recordFieldBindingFlags)              
+    FSharpValue.PreComputeRecordConstructor(recordType, recordFieldBindingFlags)              
 
 /// Get reader for record type
 let getRecordReader recordType = 
-    FSharpValue.PrecomputeRecordReader(recordType, recordFieldBindingFlags)
+    FSharpValue.PreComputeRecordReader(recordType, recordFieldBindingFlags)
     
 
 /// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
 let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list = 
     [ for case in FSharpType.GetUnionCases(unionType, recordFieldBindingFlags) -> 
         let types =    [ for fld in case.GetFields() -> fld.PropertyType ]              
-        let ctorFn =   FSharpValue.PrecomputeUnionConstructor(case, recordFieldBindingFlags)                           
-        let readerFn = FSharpValue.PrecomputeUnionReader(case, recordFieldBindingFlags)
+        let ctorFn =   FSharpValue.PreComputeUnionConstructor(case, recordFieldBindingFlags)                           
+        let readerFn = FSharpValue.PreComputeUnionReader(case, recordFieldBindingFlags)
             
         case.Name, (case.Tag, types, ctorFn, readerFn)]
 
 /// Get reader for union case name (aka tag)
 let getUnionTagReader unionType = 
-    FSharpValue.PrecomputeUnionTagReader(unionType, recordFieldBindingFlags)
+    FSharpValue.PreComputeUnionTagReader(unionType, recordFieldBindingFlags)
 
 ///Equality for generic types    
 let genericTypeEq (lhs: System.Type) (rhs: System.Type) : bool =

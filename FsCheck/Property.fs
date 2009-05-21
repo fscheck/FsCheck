@@ -229,7 +229,7 @@ let trivial b = classify b "trivial"
 
 ///Collect data values property combinator. The argument of collect is evaluated in each test case, 
 ///and the distribution of values is reported, using any_to_string.
-let collect v = stamp <| any_to_string v
+let collect v = stamp <| sprintf "%A" v
 
 ///Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
 let label l = 
@@ -276,7 +276,7 @@ type Testable with
             member x.Property ((a,b,c,d,e,f)) = a .&. b .&. c .&. d .&. e .&. f}
     static member List() =
         { new Testable<list<'a>> with
-            member x.Property l = List.fold_left (.&.) (property <| List.hd l) (List.tl l) }
+            member x.Property l = List.fold (.&.) (property <| List.hd l) (List.tl l) }
             
 ///Fails the property if it does not complete within t milliseconds. Note that the called property gets a
 ///cancel signal, but whether it responds to that is up to the property; the execution may not actually stop.
@@ -284,7 +284,7 @@ let within t (a:Lazy<_>) =
     try 
         let test = new Func<_>(fun () -> property a.Value)
         let asyncTest = Async.BuildPrimitive(test.BeginInvoke, test.EndInvoke)                     
-        Async.Run(asyncTest, timeout = t)
+        Async.RunSynchronously(asyncTest, timeout = t)
     with
         :? TimeoutException -> Async.DefaultGroup.TriggerCancel("FsCheck timeout exceeded"); property (timeout t)    
 

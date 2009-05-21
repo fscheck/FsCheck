@@ -15,6 +15,8 @@ open FsCheck
 
 module Helpers = 
 
+    open System
+
     let sample n gn  = 
         let rec sample i seed samples =
             if i = 0 then samples
@@ -57,13 +59,10 @@ module Helpers =
                 override x.Shrink (Positive i) = shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
         static member IntWithMax() =
             { new Arbitrary<IntWithMax>() with
-                override x.Arbitrary = frequency    [ (1,elements [IntWithMax Int32.max_int; IntWithMax Int32.min_int])
+                override x.Arbitrary = frequency    [ (1,elements [IntWithMax Int32.MaxValue; IntWithMax Int32.MinValue])
                                                     ; (10,arbitrary |> fmapGen IntWithMax) ] 
                 override x.CoArbitrary (IntWithMax i) = coarbitrary i
                 override x.Shrink (IntWithMax i) = shrink i |> Seq.map IntWithMax }
-    do registerGenerators<Arbitraries>()
-
-open Helpers
 
 module Common = 
 
@@ -76,6 +75,7 @@ module Common =
 module Random =
 
     open FsCheck.Random
+    open Helpers
 
     let DivMod (x:int) (y:int) = 
         y <> 0 ==> lazy (let (d,m) = divMod x y in d*y + m = x)
@@ -87,31 +87,32 @@ module Random =
 module Generator = 
 
     open FsCheck.Generator
+    open Helpers
     
     let Choose (Interval (l,h)) = 
         choose (l,h)
         |> sample 10
-        |> List.for_all (fun v -> l <= v && v <= h)
+        |> List.forall (fun v -> l <= v && v <= h)
      
-    let private isIn l elem = List.mem elem l
+    let private isIn l elem = List.contains elem l
        
     let Elements (l:list<char>) =
         not l.IsEmpty ==> 
         lazy (  elements l
                 |> sample 50
-                |> List.for_all (isIn l))
+                |> List.forall (isIn l))
     
     let Constant (v : char) =
         constant v
         |> sample 10
-        |> List.for_all ((=) v)
+        |> List.forall ((=) v)
     
     let Oneof (l:list<string>) =
         not l.IsEmpty ==> 
         lazy (  List.map constant l
                 |> oneof
                 |> sample 50
-                |> List.for_all (isIn l))
+                |> List.forall (isIn l))
     
     let Frequency (l:list<NonNegativeInt*string>) =
         let generatedValues = l |> List.filter (fst >> (fun (NonNegative p) -> p) >> (<>) 0) |> List.map snd
@@ -120,12 +121,12 @@ module Generator =
          lazy ( List.map (fun (NonNegative freq,s) -> (freq,constant s)) l
                 |> frequency
                 |> sample 100
-                |> List.for_all (isIn generatedValues)))
+                |> List.forall (isIn generatedValues)))
     
     let LiftGen (f:string -> int) v =
         liftGen f (constant v)
         |> sample 1
-        |> List.for_all ((=) (f v))
+        |> List.forall ((=) (f v))
         
     let LiftGen2 (f:char -> int -> int) a b =
         liftGen2 f (constant a) (constant b)
@@ -147,10 +148,10 @@ module Generator =
         |> sample1
         |> ((=) (f a b c d e))
         
-    let LiftGen6 (f:bool -> char -> int -> char -> bool -> int -> char ) a b c d e g =
-        liftGen6 f (constant a) (constant b) (constant c) (constant d) (constant e) (constant g)
-        |> sample1
-        |> ((=) (f a b c d e g))
+//    let LiftGen6 (f:bool -> char -> int -> char -> bool -> int -> char ) a b c d e g = //6 tuple here because otherwise the whole thing is a 7-tuple for which no generator exists
+//        liftGen6 f (constant a) (constant b) (constant c) (constant d) (constant e) (constant g)
+//        |> sample1
+//        |> ((=) (f a b c d e g))
     
     let Two (v:int) =
         two (constant v)
@@ -194,12 +195,12 @@ module Generator =
     let ListOf (NonNegative size) (v:char) =
         resize size (listOf <| constant v)
         |> sample 10
-        |> List.for_all (fun l -> l.Length <= size && List.for_all ((=) v) l)
+        |> List.forall (fun l -> l.Length <= size && List.forall ((=) v) l)
     
     let NonEmptyListOf (NonNegative size) (v:string) =
         let actual = resize size (nonEmptyListOf <| constant v) |> sample 10
         actual
-        |> List.for_all (fun l -> 0 < l.Length && l.Length <= max 1 size && List.for_all ((=) v) l) 
+        |> List.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && List.forall ((=) v) l) 
         |> label (sprintf "Actual: %A" actual)
     
     //variant generators should be independent...this is not a good check for that.
@@ -214,37 +215,40 @@ module Generator =
     let Function (f:int->char) (vs:list<int>) =
         let tabledF = toFunction f
         (List.map tabledF.Value vs) = (List.map f vs)
-        && List.for_all (fun v -> List.try_assoc v tabledF.Table = Some (f v)) vs
+        && List.forall (fun v -> List.tryFind (fst >> (=) v) tabledF.Table = Some (v,f v)) vs
         
 module Arbitrary =
     
     open FsCheck.Arbitrary
     open System
+    open Helpers
+    
+
     
     let private addLabels (generator,shrinker) = ( generator |@ "Generator", shrinker |@ "Shrinker")
     
     let Unit() = 
-        (   arbitrary<unit> |> sample 10 |> List.for_all ((=) ())
-        ,   shrink<unit>() |> Seq.is_empty)
+        (   arbitrary<unit> |> sample 10 |> List.forall ((=) ())
+        ,   shrink<unit>() |> Seq.isEmpty)
         |> addLabels
     
     let Boolean (b:bool) =
-        (   arbitrary<bool> |> sample 10 |> List.for_all (fun v -> v  || true)
-        ,    shrink<bool> b |> Seq.is_empty)
+        (   arbitrary<bool> |> sample 10 |> List.forall (fun v -> v  || true)
+        ,    shrink<bool> b |> Seq.isEmpty)
         |> addLabels
     
     let Int32 (NonNegative size) (v:int) =
-        (   arbitrary<int> |> resize size |> sample 10 |> List.for_all (fun v -> -size <= v && v <= size)
-        ,   shrink<int> v |> Seq.for_all (fun shrunkv -> shrunkv <= abs v))
+        (   arbitrary<int> |> resize size |> sample 10 |> List.forall (fun v -> -size <= v && v <= size)
+        ,   shrink<int> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v))
             
     let Double (NonNegative size) (value:float) =
         (   arbitrary<float> |> resize size |> sample 10
-            |> List.for_all (fun v -> 
+            |> List.forall (fun v -> 
                 (-2.0 * float size <= v && v <= 2.0 * float size )
                 || Double.IsNaN(v) || Double.IsInfinity(v)
                 || v = Double.Epsilon || v = Double.MaxValue || v = Double.MinValue)
         ,   shrink<float> value 
-            |> Seq.for_all (fun shrunkv -> shrunkv = 0.0 || shrunkv <= abs value))
+            |> Seq.forall (fun shrunkv -> shrunkv = 0.0 || shrunkv <= abs value))
         |> addLabels
     //String.
         
@@ -303,14 +307,14 @@ module Property =
         | Implies (false,_) -> rejected
         | Classify (true,stamp,prop) -> determineResult prop |> addStamp stamp
         | Classify (false,_,prop) -> determineResult prop
-        | Collect (i,prop) -> determineResult prop |> addStamp (any_to_string i)
+        | Collect (i,prop) -> determineResult prop |> addStamp (sprintf "%A" i)
         | Label (l,prop) -> determineResult prop |> addLabel l
         | And (prop1, prop2) -> andCombine prop1 prop2
         | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in r1.Or(r2)
         | Lazy prop -> determineResult prop
         | Tuple2 (prop1,prop2) -> andCombine prop1 prop2
         | Tuple3 (prop1,prop2,prop3) -> (andCombine prop1 prop2).And(determineResult prop3)
-        | List props -> List.fold_left (fun st p -> st.And(determineResult p)) (List.hd props |> determineResult) (List.tl props)
+        | List props -> List.fold (fun st p -> st.And(determineResult p)) (List.hd props |> determineResult) (List.tl props)
         
     let rec private toProperty prop =
         match prop with
@@ -327,7 +331,7 @@ module Property =
         | Lazy prop -> toProperty prop
         | Tuple2 (prop1,prop2) -> (toProperty prop1) .&. (toProperty prop2)
         | Tuple3 (prop1,prop2,prop3) -> (toProperty prop1) .&. (toProperty prop2) .&. (toProperty prop3)
-        | List props -> List.fold_left (fun st p -> st .&. toProperty p) (List.hd props |> toProperty) (List.tl props)
+        | List props -> List.fold (fun st p -> st .&. toProperty p) (List.hd props |> toProperty) (List.tl props)
     
     let private areSame (r0:Result) (r1:Result) =
         match r0.Outcome,r1.Outcome with
@@ -337,9 +341,9 @@ module Property =
         | True,True -> true
         | Rejected,Rejected -> true
         | _ -> false
-        && List.for_all2 (fun s0 s1 -> s0 = s1) r0.Stamp r1.Stamp
-        && Set.equal r0.Labels r1.Labels
-        && List.for_all2 (fun s0 s1 -> s0 = s1) r0.Arguments r1.Arguments
+        && List.forall2 (fun s0 s1 -> s0 = s1) r0.Stamp r1.Stamp
+        && r0.Labels = r1.Labels
+        && List.forall2 (fun s0 s1 -> s0 = s1) r0.Arguments r1.Arguments
     
     let rec private depth (prop:SymProp) =
         match prop with
@@ -356,7 +360,7 @@ module Property =
         | Lazy prop -> 1 + (depth prop)
         | Tuple2 (prop1,prop2) -> 1 + Math.Max(depth prop1, depth prop2)
         | Tuple3 (prop1,prop2,prop3) -> 1 + Math.Max(Math.Max(depth prop1, depth prop2),depth prop3)
-        | List props -> 1 + List.fold_left (fun a b -> Math.Max(a, depth b)) 0 props
+        | List props -> 1 + List.fold (fun a b -> Math.Max(a, depth b)) 0 props
     
     let Property = 
         forAllShrink symPropGen shrink (fun symprop ->

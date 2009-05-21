@@ -54,7 +54,7 @@ let private reflectObj  =
                 res
 
             let gs = [ for _,(_,fields,create,_) in getUnionCases t -> unionSize fields, lazy (unionGen create fields) ]
-            let lowest = List.reduce_left min <| List.map fst gs
+            let lowest = List.reduce min <| List.map fst gs
             let small() = [ for i,g in gs do if i = lowest then yield g.Force() ]
             let large() = [ for _,g in gs -> g.Force() ]
             let getgs size = 
@@ -116,12 +116,12 @@ let private reflectShrinkObj o (t:Type) =
                             yield make ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.to_array)}
     if isUnionType t then
         let unionSize (t:Type) children =
-            if Seq.is_empty children then 0 
+            if Seq.isEmpty children then 0 
             elif Seq.exists ((=) t)(*(fun x -> x.ToString() = t.ToString())*) children then 2 
             else 1
         let info,vals = FSharpValue.GetUnionFields(o,t)
-        let makeCase = FSharpValue.PrecomputeUnionConstructor info
-        let readCase = FSharpValue.PrecomputeUnionReader info
+        let makeCase = FSharpValue.PreComputeUnionConstructor info
+        let readCase = FSharpValue.PreComputeUnionReader info
         let childrenTypes = info.GetFields() |> Array.map ( fun x -> x.PropertyType ) //|> Array.to_list
         let partitionCase t s0 (_,(_,children,make,_)) =
             match unionSize t children with
@@ -129,7 +129,7 @@ let private reflectShrinkObj o (t:Type) =
             | _ -> s0 
         let size0Cases() =
             getUnionCases t 
-            |> List.fold_left (partitionCase t) []
+            |> List.fold (partitionCase t) []
             |> List.map (fun make -> make [||])
         //like tuple types: shrink first subtype first, then try second etc
         let shrunkChildren = shrinkChildren readCase makeCase o childrenTypes

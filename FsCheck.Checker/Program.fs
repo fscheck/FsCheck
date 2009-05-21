@@ -3,6 +3,8 @@
 open FsCheck
 open System
 
+do registerGenerators<Checks.Helpers.Arbitraries>()
+
 quickCheckAll <| Type.GetType( "FsCheck.Checks.Random, FsCheck", true)
 
 quickCheckAll <| Type.GetType( "FsCheck.Checks.Common, FsCheck", true)

@@ -21,7 +21,7 @@ open System.Reflection
 open System.Collections.Generic
 open TypeClass
  
-type internal IGen = 
+type IGen = 
     abstract AsGenObject : Gen<obj>
     
 ///Generator of a random value, based on a size parameter and a randomly generated int.
@@ -88,7 +88,7 @@ let oneof gens = gen.Bind(elements gens, fun x -> x)
 ///Build a generator that generates a value from one of the generators in the given non-empty list, with
 ///given probabilities. The sum of the probabilities must be larger than zero.
 let frequency xs = 
-    let tot = List.sum_by (fun x -> x) (List.map fst xs)
+    let tot = List.sumBy (fun x -> x) (List.map fst xs)
     let rec pick n ys = match ys with
                         | (k,x)::xs -> if n<=k then x else pick (n-k) xs
                         | _ -> raise (ArgumentException("Bug in frequency function"))
@@ -221,11 +221,11 @@ let promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)
 
 ///Basic co-arbitrary generator transformer, which is dependent on an int.
 let variant v (Gen m) =
-    let rec rands r0 = seq { let r1,r2 = split r0 in yield! Seq.cons r1 (rands r2) }
+    let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
     Gen (fun n r -> m n (Seq.nth (v+1) (rands r)))
 
 //private interface for reflection
-type private IArbitrary =
+type IArbitrary =
     abstract ArbitraryObj : Gen<obj>
     abstract ShrinkObj : obj -> seq<obj>   
 
@@ -247,6 +247,8 @@ type Arbitrary<'a>() =
         member x.ArbitraryObj = (x.Arbitrary :> IGen).AsGenObject
         member x.ShrinkObj o = (x.Shrink (unbox o)) |> Seq.map box
 
+
+
 ///Returns a Gen<'a>
 let arbitrary<'a> = getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<Arbitrary<'a>> |> (fun arb -> arb.Arbitrary)
 
@@ -262,20 +264,29 @@ let internal getGenerator t = getInstance (typedefof<Arbitrary<_>>, t) |> unbox<
 
 let internal getShrink t = getInstance (typedefof<Arbitrary<_>>, t) |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkObj)
 
-///Register the generators that are static members of the type argument.
-let registerGenerators<'t>() = registerInstances<Arbitrary<_>,'t>()
-
-///Register the generators that are static members of the type argument, overwriting any existing generators.
-let overwriteGenerators<'t>() = overwriteInstances<Arbitrary<_>,'t>()
-
-///Register the generators that are static members of the given type.
-let registerGeneratorsByType t = registerInstancesByType (typeof<Arbitrary<_>>) t
-
-///Register the generators that are static members of the given type, overwriting any existing generators.
-let overwriteGeneratorsByType t = overwriteInstancesByType (typeof<Arbitrary<_>>) t
-
 //so init can be called from other modules. Depending on startup order, initialization may occur from different places.
 //lazy then takes care that it occurs exactly once.
-//(this technique for initialization I picked up from Jon Harrop)
+//(this technique for initialization picked up from Jon Harrop)
 let internal initArbitraryTypeClass = lazy do newTypeClass<Arbitrary<_>>
-do initArbitraryTypeClass.Value
+//do initArbitraryTypeClass.Value doesn't work anymore in this module. It does work in Runner.fs. Weird.
+
+///Register the generators that are static members of the type argument.
+let registerGenerators<'t>() = 
+    do initArbitraryTypeClass.Value
+    registerInstances<Arbitrary<_>,'t>()
+
+///Register the generators that are static members of the type argument, overwriting any existing generators.
+let overwriteGenerators<'t>() = 
+    do initArbitraryTypeClass.Value
+    overwriteInstances<Arbitrary<_>,'t>()
+
+///Register the generators that are static members of the given type.
+let registerGeneratorsByType t = 
+    do initArbitraryTypeClass.Value
+    registerInstancesByType (typeof<Arbitrary<_>>) t
+
+///Register the generators that are static members of the given type, overwriting any existing generators.
+let overwriteGeneratorsByType t = 
+    do initArbitraryTypeClass.Value
+    overwriteInstancesByType (typeof<Arbitrary<_>>) t
+

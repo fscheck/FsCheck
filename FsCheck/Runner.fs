@@ -72,7 +72,7 @@ type Config =
       Runner        : IRunner } //the test runner    
 
 let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
-    seq { if not (Seq.is_empty shrinks) then
+    seq { if not (Seq.isEmpty shrinks) then
             //result forced here
             let (MkRose ((Lazy result'),shrinks')) = Seq.hd shrinks 
             if result'.Outcome.Shrink then yield Shrink result'; yield! shrinkResult result' shrinks'
@@ -107,11 +107,11 @@ let rec private test initSize resize rnd0 gen =
 let private testsDone config outcome origArgs ntest nshrinks usedSeed stamps  =    
     let entry (n,xs) = (100 * n / ntest),xs
     let table = stamps 
-                |> Seq.filter (fun l -> l <> []) 
-                |> Seq.sort_by (fun x -> x) 
-                |> Seq.group_by (fun x -> x) 
+                |> Seq.filter (not << List.isEmpty) //  (fun l -> l <> []) 
+                |> Seq.sort  //_by (fun x -> x) 
+                |> Seq.groupBy (fun x -> x) 
                 |> Seq.map (fun (l, ls) -> (Seq.length ls, l))
-                |> Seq.sort_by (fun (l, ls) -> l)
+                |> Seq.sortBy fst // (fun (l, ls) -> l)
                 |> Seq.map entry
                 //|> Seq.to_list
                 //|> display
@@ -135,7 +135,7 @@ let private runner config prop =
     let lastStep = ref (Failed rejected)
     let seed = match config.Replay with None -> newSeed() | Some s -> s
     test 0.0 (config.Size) seed (property prop) |>
-    Seq.take_while (fun step ->
+    Seq.takeWhile (fun step ->
         lastStep := step
         //printfn "%A" step
         match step with
@@ -153,7 +153,7 @@ let private runner config prop =
     ) [] 
     |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed
 
-let private printArgs = List.map any_to_string >> String.concat "\n" (*>> List.reduce_left (+)*)
+let private printArgs = List.map (sprintf "%A") >> String.concat "\n" (*>> List.reduce_left (+)*)
 
 ///A function that returns the default string that is printed as a result of the test.
 let testFinishedToString name testResult =
@@ -161,8 +161,8 @@ let testFinishedToString name testResult =
     let display l = match l with
                     | []  -> ".\n"
                     | [x] -> " (" + x + ").\n"
-                    | xs  -> ".\n" + List.fold_left (fun acc x -> x + ".\n"+ acc) "" xs    
-    let entry (p,xs) = any_to_string p + "% " + (String.concat ", " xs (*|> Seq.to_array |> String.Concat*))
+                    | xs  -> ".\n" + List.fold (fun acc x -> x + ".\n"+ acc) "" xs    
+    let entry (p,xs) = sprintf "%A%s %s" p "%" (String.concat ", " xs)
     let stamps_to_string s = s |> Seq.map entry |> Seq.to_list |> display
     let labels_to_string l = String.concat ", " l
     let maybePrintLabels (l:Set<_>) = 
@@ -231,8 +231,19 @@ let private hasTestableReturnType (m:MethodInfo) =
     with
         e -> false
 
+///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
+///In any case, it can be forced any number of times without problem.
+let init = lazy (   initArbitraryTypeClass.Value
+                    do registerGenerators<Arbitrary.Arbitrary>()
+                    initTestableTypeClass.Value
+                    do registerInstances<Testable<_>,Testable>())
+//do init.Value
+
 ///Check the given property p using the given Config.
-let check config p = runner config (property p)
+let check config p = 
+    //every check, even the reflective one, passes through here. So:
+    init.Value // should always work
+    runner config (property p)
 
 //Check the given property p using the given Config, and the given test name.
 let checkName name config p = check { config with Name = name } p
@@ -286,10 +297,4 @@ let quickCheckAll t = t |> checkAll quick
 /// Check all public static methods on the given type that have a Testable return type with configuration 'verbose'
 let verboseCheckAll t = t |> checkAll verbose 
 
-///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
-///In any case, it can be forced any number of times without problem.
-let init = lazy (   initArbitraryTypeClass.Value
-                    do registerGenerators<Arbitrary.Arbitrary>()
-                    initTestableTypeClass.Value
-                    do registerInstances<Testable<_>,Testable>())
-do init.Value
+

@@ -43,13 +43,14 @@ type Arbitrary() =
             override x.Arbitrary = sized <| fun n ->   
                let ig = if n > 255 then choose (0, 255) else choose (0,n)  
                ig.Map byte  
-            override x.CoArbitrary n = variant (if n >= byte(0) then 2*int(n) else 2*(- int(n)) + 1)  
+            override x.CoArbitrary n = variant (if n >= byte(0) then 2*int(n) else 2*(- int(n)) + 1) 
+            //TODO: check if something like int |> shrink |> byte works 
             override x.Shrink n =   
                 let (|>|) x y = abs (int(x)) > abs (int(y))  
                 seq {   if n < byte(0) then yield byte(-int(n))  
-                        yield! Seq.map byte (Seq.unfold (fun st -> let st = st / 2 in Some (n-(byte(st)), st)) (int(n))  
-                                |> Seq.cons (byte(0))  
-                                |> Seq.take_while ((|>|) n)) }  
+                        if n <> 0uy then yield byte(0)
+                        yield! Seq.map byte (Seq.unfold (fun st -> let st = st / 2 in Some (n-(byte(st)), st)) (int(n))    
+                                |> Seq.takeWhile ((|>|) n)) }  
                 |> Seq.distinct  
         }  
     ///Generate arbitrary int that is between -size and size.
@@ -59,10 +60,10 @@ type Arbitrary() =
             override x.CoArbitrary n = variant (if n >= 0 then 2*n else 2*(-n) + 1)
             override x.Shrink n = 
                 let (|>|) x y = abs x > abs y 
-                seq {   if n < 0 then yield -n 
+                seq {   if n < 0 then yield -n
+                        if n <> 0 then yield 0 
                         yield! Seq.unfold (fun st -> let st = st / 2 in Some (n-st, st)) n 
-                                |> Seq.cons 0 
-                                |> Seq.take_while ((|>|) n) }
+                                |> Seq.takeWhile ((|>|) n) }
                 |> Seq.distinct
         }
     ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
@@ -221,9 +222,9 @@ type Arbitrary() =
     static member Arrow() = 
         { new Arbitrary<'a->'b>() with
             override x.Arbitrary = promote (fun a -> coarbitrary a arbitrary)
-            override x.CoArbitrary f gen = 
-                gen {   let x = arbitrary
-                        return! coarbitrary (fmapGen f x) gen } 
+            override x.CoArbitrary f = 
+                (fun gn -> gen {let x = arbitrary
+                                return! coarbitrary (fmapGen f x) gn }) 
         }
     static member Function() =
         { new Arbitrary<Function<'a,'b>>() with

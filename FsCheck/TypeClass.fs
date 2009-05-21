@@ -47,7 +47,7 @@ let private findInstances (typeClass:Type) instancesType =
             generics, Some m, arrays
         | GenericTypeDef typeClass args ->
             let instance = args.[0]
-            if instance.IsGenericType && (instance.GetGenericArguments() |> Array.for_all (fun t -> t.IsGenericParameter)) then
+            if instance.IsGenericType && (instance.GetGenericArguments() |> Array.forall (fun t -> t.IsGenericParameter)) then
                 (instance.GetGenericTypeDefinition(), m) :: generics,catchAll,arrays
             elif instance.IsArray && instance.GetElementType().IsGenericParameter then
                 generics,catchAll, (instance.GetArrayRank(),m)::arrays

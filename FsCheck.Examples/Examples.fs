@@ -19,7 +19,7 @@ registerGenerators<Generators>()
 let prop_EscapingException (x:int) =
     if x=0 then lazy (failwith "nul") else lazy true
     |> label "bla"
-quickCheck prop_EscapingException
+verboseCheck prop_EscapingException
 
 //more escaping exceptions?
 let somefailingFunction() = failwith "escaped"
@@ -342,7 +342,7 @@ type ADisc =
     | Third of ADisc
     | Fourth of ADisc[]
     
-quickCheck (fun (d:ADisc) -> match d with First i -> i = 2 | Second c -> true | Third _ -> true)
+quickCheck (fun (d:ADisc) -> match d with First i -> i = 2 | Second c -> true | Third _ -> true | Fourth _ -> raise <| InvalidOperationException())
 
 type Properties =
     static member Test1 (b,(b2:bool)) = (b = b2)
@@ -373,7 +373,7 @@ type Tree<'a> =
 let rec prop_xmlSafeTree (x : Tree<string>) =
     match x with
     | Leaf x -> not (x.StartsWith " " && x.EndsWith " ")
-    | Branch xs -> Array.for_all prop_xmlSafeTree xs.list
+    | Branch xs -> Array.forall prop_xmlSafeTree xs.list
 
 let prop_Product (x:int,y:int) = (x > 0 && y > 0) ==> (x*y > 0)
 
@@ -437,7 +437,7 @@ quickCheck <|
 
 quickCheck <| forAllShrink (resize 100 arbitrary) shrink (fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 ))
 quickCheck (fun opt -> match opt with None -> false | Some b  -> b  )
-quickCheck (fun opt -> match opt with None -> true | Some n when n<0 -> false | Some n when n >= 0 -> true )
+quickCheck (fun opt -> match opt with Some n when n<0 -> false | Some n when n >= 0 -> true | _ -> true )
 
 let prop_RevId' (xs:list<int>) (x:int) = if (xs.Length > 2) && (x >10) then false else true
 quickCheck prop_RevId'
