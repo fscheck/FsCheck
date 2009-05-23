@@ -224,12 +224,7 @@ let verbose =
         //any_to_string n + ":\n" + (args |> List.fold_left (fun b a -> any_to_string a + "\n" + b) "")  } 
     }
 
-let private hasTestableReturnType (m:MethodInfo) =
-    try
-        getInstance (typedefof<Testable<_>>,m.ReturnType) |> ignore
-        true
-    with
-        e -> false
+
 
 ///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
 ///In any case, it can be forced any number of times without problem.
@@ -237,7 +232,15 @@ let init = lazy (   initArbitraryTypeClass.Value
                     do registerGenerators<Arbitrary.Arbitrary>()
                     initTestableTypeClass.Value
                     do registerInstances<Testable<_>,Testable>())
-//do init.Value
+
+
+let private hasTestableReturnType (m:MethodInfo) =
+    do init.Value
+    try
+        getInstance (typedefof<Testable<_>>,m.ReturnType) |> ignore
+        true
+    with
+        e -> false
 
 ///Check the given property p using the given Config.
 let check config p = 
