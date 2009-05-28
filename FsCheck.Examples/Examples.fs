@@ -305,6 +305,33 @@ quickCheckN "NonZero" prop_NonZero
 let prop_Positive (Positive i) = i > 0
 quickCheckN "Pos" prop_Positive
 
+type Foo = Foo of int
+type Bar = Bar of string
+
+let formatter (o:obj) =
+    match o with
+    | :? Foo as foo -> box "it's a foo"
+    | :? Bar as bar -> box "it's a bar"
+    | _ -> o
+
+//customizing output of counter-examples etc
+let formatterRunner =
+    { new IRunner with
+        member x.OnArguments (ntest,args, every) =
+            printf "%s" (every ntest (args |> List.map formatter))
+        member x.OnShrink(args, everyShrink) =
+            printf "%s" (everyShrink (args |> List.map formatter))
+        member x.OnFinished(name,testResult) = 
+            let testResult' = match testResult with 
+                                | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
+                                    TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
+                                | t -> t
+            printf "%s" (testFinishedToString name testResult') 
+    }
+
+let formatter_prop (foo:Foo) (bar:Bar) (i:int) = i < 10 //so it takes a while before the fail
+check { verbose with Runner = formatterRunner} formatter_prop
+
 //-------------examples from QuickCheck paper-------------
 let prop_RevUnit (x:char) = List.rev [x] = [x]
 
