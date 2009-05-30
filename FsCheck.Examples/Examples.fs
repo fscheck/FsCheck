@@ -272,7 +272,6 @@ let propMap (Function (_,f)) (l:list<int>) =
 quickCheck propMap
 
 //alternative to using forAll
-
 type NonNegativeInt = NonNegative of int
 type NonZeroInt = NonZero of int
 type PositiveInt = Positive of int
@@ -330,7 +329,42 @@ let formatterRunner =
     }
 
 let formatter_prop (foo:Foo) (bar:Bar) (i:int) = i < 10 //so it takes a while before the fail
-check { verbose with Runner = formatterRunner} formatter_prop
+check { quick with Runner = formatterRunner} formatter_prop
+
+let (.=.) left right = left = right |@ sprintf "%A = %A" left right
+
+let compare (i:int) (j:int) = 2*i+1  .=. 2*j-1
+quickCheck compare
+
+//smart shrinking
+[<StructuredFormatDisplay("{Display}")>]
+type Smart<'a> = 
+    Smart of int * 'a with
+        override x.ToString() = match x with Smart (_,a) -> sprintf "%A" a
+        member x.Display = x.ToString()
+    
+
+type SmartShrinker =
+    static member Smart() =
+        { new Arbitrary<Smart<'a>>() with
+            override x.Arbitrary = arbitrary |> fmapGen (fun arb -> Smart (0,arb))
+            override x.Shrink (Smart (i,x)) = //shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative 
+                let ys = Seq.zip {0..Int32.MaxValue} (shrink x) |> Seq.map Smart 
+                let i' = Math.Max(0,i-2)
+                let rec interleave left right =
+                    match (left,right) with
+                    | ([],rs) -> rs
+                    | (ls,[]) -> ls
+                    | (l::ls,r::rs) -> l::r::(interleave ls rs)
+                interleave (Seq.take i' ys |> Seq.to_list) (Seq.skip i' ys |> Seq.to_list) |> List.to_seq
+        }
+
+registerGenerators<SmartShrinker>()
+
+let smartShrink (Smart (_,i)) = i < 20
+quickCheck smartShrink
+
+Console.ReadKey() |> ignore
 
 //-------------examples from QuickCheck paper-------------
 let prop_RevUnit (x:char) = List.rev [x] = [x]
