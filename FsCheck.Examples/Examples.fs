@@ -8,12 +8,45 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic
 
+init.Value
+
 //---too early initialization bug (put this first): fixed---
 type Generators =
   static member Int64() =
     { new Arbitrary<int64>() with
         override x.Arbitrary = arbitrary |> fmapGen int64 }
 registerGenerators<Generators>()
+
+//overwrite catchall generator
+let enumOfType (t: System.Type) : Gen<Enum> = 
+    let vals: Array = System.Enum.GetValues(t) 
+    elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> Enum ]
+
+/// Generate a random enum of the type specified by the type parameter
+let enumOf() : Gen<'enumType> when 'enumType :> Enum = 
+    liftGen unbox (enumOfType (typeof<'enumType>))
+
+type EnumGen =
+    static member Enum() = 
+        { new Arbitrary<'a>() with 
+            override x.Arbitrary = 
+                if (typeof<Enum>).IsAssignableFrom(typeof<'a>) then
+                    enumOf<'a>()
+                else
+                    FsCheck.Arbitrary.Arbitrary.CatchAll().Arbitrary
+            override x.Shrink a = FsCheck.Arbitrary.Arbitrary.CatchAll().Shrink a }
+
+overwriteGenerators<EnumGen>()
+
+type TestEnum =
+    | First = 0
+    | Second = 1
+    | Third = 2
+
+let testEnum (e:TestEnum) = e = TestEnum.First
+quickCheck testEnum
+
+Console.ReadKey() |> ignore
 
 //bug: exception escapes: fixed
 let prop_EscapingException (x:int) =
