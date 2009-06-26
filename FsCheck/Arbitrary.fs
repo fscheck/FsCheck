@@ -240,3 +240,207 @@ type Arbitrary() =
             override x.Arbitrary = reflectGen
             override x.Shrink a = reflectShrink a
         }
+
+
+module GeneratorUtils =
+   /// Shortcut for constructing an Arbitrary instance from a generator
+   /// shrink and coarb will not be supported for this type
+   let arbGen (gen: Gen<'a>) : Arbitrary<'a> =
+       { new Arbitrary<'a>() with
+           override x.Arbitrary = gen
+       }
+
+   /// Shortcut for constructing an Arbitrary instance from a generator and shrinker.
+   /// coarb will not be supported for this type.
+   let arbGenShrink (gen: Gen<'a>, shrinker: 'a -> seq<'a>): Arbitrary<'a> =
+       { new Arbitrary<'a>() with
+           override x.Arbitrary = gen
+           override x.Shrink a = shrinker a
+       }
+
+   /// Shortcut for constructing an Arbitrary instance from a generator and shrinker.
+   /// The values produced/consumed by the generator shrinker will bewrapped/unwrapped
+   /// in another type.
+   /// coarb will not be supported for this type.
+   let arbGenShrinkWrap (gen: Gen<'a>, shrinker: 'a -> seq<'a>) (wrap:'a->'b) (unwrap: 'b->'a) : Arbitrary<'b> =
+       { new Arbitrary<'b>() with
+           override x.Arbitrary = gen |> fmapGen wrap
+           override x.Shrink b = b |> unwrap |> shrinker |> Seq.map wrap
+       }
+
+   let filteredOf (gen: Gen<'a>, shrinker: 'a -> seq<'a>) (pred:'a->bool) : Gen<'a> * ('a -> seq<'a>) =
+       (gen |> suchThat pred, shrinker >> Seq.filter pred )
+
+
+   /// Return a generator and shrinker that is a 'filtered' version of an existing type
+   /// where the arbitrary and shrink instances are looked up by type class.
+   let filtered pred = filteredOf (arbitrary, shrink) pred
+
+   /// Given a generator, produce another generator that has a size parameter
+   /// equal to the sqrt of the current size parameter.
+   /// Useful when producing lists of lists or similar.
+   let resizeSqrt gen = sized <| fun s -> resize (s |> float |> sqrt |>int) gen
+
+
+type NonNegative = NonNegativeInt of int
+type PositiveInt = PositiveInt of int
+type NonZeroInt = NonZeroInt of int
+type NonEmptyString = NonEmptyString of string
+type StringNoNulls = StringNoNulls of string
+type NonEmptySet<'a> = NonEmptySet of Set<'a>
+type NonEmptyArray<'a> = NonEmptyArray of 'a[]
+type FixedSizeArray<'a> = FixedSizeArray of 'a[]
+
+module Gen =
+   open GeneratorUtils
+   
+   /// Generate a random enum of the type specified by the System.Type
+   let enumOfType (t: System.Type) : Gen<Enum> =
+       let vals: Array = System.Enum.GetValues(t)
+       elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> Enum ]
+
+   /// Generate a random enum of the type specified by the type parameter
+   let enumOf() : Gen<'enumType> when 'enumType :> Enum =
+       liftGen unbox (enumOfType (typeof<'enumType>))
+
+   /// Generate a date with no time-part
+   let date = gen { let! PositiveInt yOffset = arbitrary
+                    let y = 1900 + yOffset
+                    let! m = choose(1, 12)
+                    let! d = choose(1, DateTime.DaysInMonth(y, m))
+                    return System.DateTime(y, m, d) }
+
+   /// Arbitrary instances for the above
+   type BasicArbs =
+       static member DateTime() = arbGen date
+
+//   //necessary initializations
+//   let basicInit = lazy (   FsCheck.Runner.init.Force()
+//                            do registerGenerators<BasicArbs>())
+//   do basicInit.Value
+
+   /// Generate an array of a specified size and generator
+   let arrayOfSize (g: Gen<'a>) n : Gen<'a[]> = vector g n |> liftGen Array.of_list
+
+   /// Generate an array using the specified generator
+   let arrayOf (g: Gen<'a>) : Gen<'a[]> = gen {
+       let! size = sized <| fun n -> choose(0, n)
+       return! arrayOfSize g size
+   }
+
+   /// Generate a 2D array of a specified size
+   // TODO: Rescale appropriately
+   let array2DOfSize (g: Gen<'a>) (rows: int) (cols: int) : Gen<'a[,]> = gen {
+       let! arr1 = arrayOfSize g (rows * cols)
+       return Array2D.init rows cols (fun r c -> arr1.[cols*r + c])
+   }
+
+   /// Generate a 2D array of an arbitrary size
+   // TODO: Rescale appropriately
+   let array2DOf (g: Gen<'a>) : Gen<'a[,]> = gen {
+       let! rows = sized <| fun n -> choose(0, n)
+       let! cols = sized <| fun n -> choose(0, n)
+       return! array2DOfSize g rows cols
+   }
+
+   /// Generate a set using the given generator
+   let setOf (g: Gen<'a>) : Gen<Set<'a>> = listOf g |> liftGen Set.of_list
+
+   /// Generator/shrinker for non-negative integers
+   let nonNegativeInt, shrinkNonNegativeInt = filtered ((>=) 0)
+
+   /// Generator/shrinker for non-negative integers
+   let positiveInt, shrinkPositiveInt = filtered ((>) 0)
+
+   let nonZeroInt, shrinkNonZeroInt = filtered ((<>) 0)
+
+   let stringNoNulls, shrinkStringNoNulls = filtered (fun s -> not(String.exists (fun c -> c = '\000') s))
+
+   let nonEmptyString, shrinkNonEmptyString =
+       filtered (fun s -> s <> "" && not (String.exists (fun c -> c ='\000') s))
+
+   /// Generate a subset of an existing set
+   let subsetOf (s: Set<'a>) : Gen<Set<'a>> =
+       gen { // Convert the set into an array
+             let setElems: 'a[] = Array.of_seq s
+             // Generate indices into the array (up to the number of elements)
+             let! size = choose(0, s.Count)
+             let! indices = arrayOfSize (choose(0, s.Count-1)) size
+             // Extract the elements
+             let arr: 'a[] = indices |> Array.map (fun i -> setElems.[i])
+             // Construct a set (which eliminates dups)
+             return Set.of_array arr }
+
+   /// Generate a non-empty subset of an existing (non-empty) set
+   let nonEmptySubsetOf (s: Set<'a>) : Gen<Set<'a>> =
+       gen { // Convert the set into an array
+             let setElems: 'a[] = Array.of_seq s
+             // Generate indices into the array (up to the number of elements)
+             let! size = choose(1, s.Count)
+             let! indices = arrayOfSize (choose(0, s.Count-1)) size
+             // Extract the elements
+             let arr: 'a[] = indices |> Array.map (fun i -> setElems.[i])
+             // Construct a set (which eliminates dups)
+             return Set.of_array arr }
+
+   /// Shrink the size of set, ensuring it is still non-empty
+   let shrinkNonEmptySetSize (s: Set<'a>) : seq<Set<'a>> =
+       Seq.map (fun a -> Set.remove a s) s |> Seq.filter (fun s -> s.Count > 0)
+
+   /// Generate a set
+   let set() = arbitrary |> fmapGen Set.of_list
+   /// Shrink a set
+   let shrinkSet s = s |> Set.to_list |> shrink |> Seq.map Set.of_list
+
+   /// Generate a map
+   let map() = arbitrary |> fmapGen Map.of_list
+   /// Shrink a map
+   let shrinkMap m = m |> Map.to_list |> shrink |> Seq.map Map.of_list
+
+   let private nonEmptySetGenShrink() = filtered (fun s -> Set.count s > 0)
+   /// Generate a non-empty set
+   let nonEmptySet() = fst <| nonEmptySetGenShrink()
+   /// Shrink a non-empty set, keeping it non-empty
+   let shrinkNonEmptySet s = (snd <| nonEmptySetGenShrink()) s
+
+   let private nonEmptyArrayGenShrink() = filtered (fun a -> Array.length a > 0)
+   /// Generate a non-empty array
+   let nonEmptyArray() = fst <| nonEmptyArrayGenShrink()
+   /// Shrink a non-empty array, keeping it non-empty
+   let shrinkNonEmptyArray a = (snd <| nonEmptyArrayGenShrink()) a
+
+   /// Shrink a fixed-size array by shrinking data values only
+   let shrinkFixedSizeArray a = a |> Seq.mapi (fun i x -> shrink x |> Seq.map (fun x' ->
+                                                       let data' = Array.copy a
+                                                       data'.[i] <- x'
+                                                       data')
+                                               ) |> Seq.concat
+
+   /// Arbitrary instances for the above
+   type Arbs =
+       static member Array2D() = arbGen <| array2DOf arbitrary
+       static member NonNegativeInt() =
+           arbGenShrinkWrap (nonNegativeInt, shrinkNonNegativeInt) NonNegativeInt (fun (NonNegativeInt n) -> n)
+       static member PositiveInt() =
+           arbGenShrinkWrap (positiveInt, shrinkPositiveInt) PositiveInt (fun (PositiveInt n) -> n)
+       static member NonZeroInt() =
+           arbGenShrinkWrap (nonZeroInt, shrinkNonZeroInt) NonZeroInt (fun (NonZeroInt n) -> n)
+       static member StringNoNulls() =
+           arbGenShrinkWrap (stringNoNulls, shrinkStringNoNulls) StringNoNulls (fun (StringNoNulls s) -> s)
+       static member NonEmptyString() =
+           arbGenShrinkWrap (nonEmptyString, shrinkNonEmptyString) NonEmptyString (fun (NonEmptyString s) -> s)
+       static member Set() = arbGenShrink (set(), shrinkSet)
+       static member Map() = arbGenShrink (map(), shrinkMap)
+
+       static member NonEmptyArray() =
+           arbGenShrinkWrap (nonEmptyArrayGenShrink()) NonEmptyArray (fun (NonEmptyArray s) -> s)
+       static member NonEmptySet() =
+           arbGenShrinkWrap (nonEmptySetGenShrink()) NonEmptySet (fun (NonEmptySet s) -> s)
+       static member FixedSizeArray() =
+           arbGenShrinkWrap (arbitrary, shrinkFixedSizeArray) FixedSizeArray (fun (FixedSizeArray a) -> a)
+
+//   //necessary initializations
+//   let init = lazy (   FsCheck.Runner.init.Force()
+//                       basicInit.Force()
+//                       do registerGenerators<Arbs>())
+//   do init.Value
