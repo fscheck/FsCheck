@@ -11,26 +11,26 @@
 
 namespace FsCheck
 
-module internal Common
+module internal Common =
 
-//generic memoize function from Expert F# book
-let memoize (f: 'a -> 'b) =
-    let t = new System.Collections.Generic.Dictionary<'a,'b>()
-    fun n ->
-        if t.ContainsKey(n) then t.[n]
-        else let res = f n
-             t.Add(n,res)
-             res
+    //generic memoize function from Expert F# book
+    let memoize (f: 'a -> 'b) =
+        let t = new System.Collections.Generic.Dictionary<'a,'b>()
+        fun n ->
+            if t.ContainsKey(n) then t.[n]
+            else let res = f n
+                 t.Add(n,res)
+                 res
 
-//used to be in FSharp libs
-let (|Lazy|) (inp:Lazy<'a>) = inp.Force()
+    //used to be in FSharp libs
+    let (|Lazy|) (inp:Lazy<'a>) = inp.Force()
 
-let flip f x y = f y x
+    let flip f x y = f y x
 
-let curry f = fun a b -> f (a,b)
+    let curry f = fun a b -> f (a,b)
 
-let curry2 f = fun a b c -> f (a,b,c)
+    let curry2 f = fun a b c -> f (a,b,c)
 
-let uncurry f = fun (a,b) -> f a b
+    let uncurry f = fun (a,b) -> f a b
 
-let uncurry2 f = fun (a,b,c) -> f a b c
+    let uncurry2 f = fun (a,b,c) -> f a b c

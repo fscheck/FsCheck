@@ -31,49 +31,39 @@ type WeightAndValue<'a>(weight:int,value:'a) =
     
 type Any = 
     static member private OneOfSeqGen gs = 
-        gs |> Seq.to_list |> oneof
+        gs |> Seq.toList |> oneof
     static member private OneOfSeqValue vs = 
-        vs |> Seq.to_list |> elements
+        vs |> Seq.toList |> elements
     static member private SequenceSeq<'a> gs = 
-        gs |> Seq.to_list |> sequence |> fmapGen (fun list -> new List<'a>(list))
+        gs |> Seq.toList |> sequence |> fmapGen (fun list -> new List<'a>(list))
     static member OfType<'a>() = 
         arbitrary<'a>
     static member Value (value) = 
         constant value
-    [<OverloadIDAttribute("0")>]
     static member ValueIn (values : seq<_>) = 
         values |> Any.OneOfSeqValue
-    [<OverloadIDAttribute("1")>]
     static member ValueIn ([<ParamArrayAttribute>] values : array<_>) = 
         values |> Any.OneOfSeqValue
     static member IntBetween (l,h) = 
         choose (l,h)
-    [<OverloadIDAttribute("0")>]
     static member WeighedValueIn ( weighedValues : seq<WeightAndValue<'a>> ) =
         weighedValues |> Any.OneOfWeighedSeqValue
-    [<OverloadIDAttribute("1")>]
     static member WeighedValueIn ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<'a>> ) =
         weighedValues |> Any.OneOfWeighedSeqValue
     static member private OneOfWeighedSeqValue ws = 
-        ws |> Seq.map (fun wv -> (wv.Weight, constant wv.Value)) |> Seq.to_list |> frequency
-    [<OverloadIDAttribute("0")>]
+        ws |> Seq.map (fun wv -> (wv.Weight, constant wv.Value)) |> Seq.toList |> frequency
     static member GeneratorIn (generators : seq<Gen<_>>) = 
         generators |> Any.OneOfSeqGen
-    [<OverloadIDAttribute("1")>]
     static member GeneratorIn ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
         generators |> Any.OneOfSeqGen
-    [<OverloadIDAttribute("0")>]
     static member WeighedGeneratorIn ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
         weighedValues |> Any.OneOfWeighedSeq
-    [<OverloadIDAttribute("1")>]
     static member WeighedGeneratorIn ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<Gen<'a>>> ) =
         weighedValues |> Any.OneOfWeighedSeq
     static member private OneOfWeighedSeq ws = 
-        ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> Seq.to_list |> frequency
-    [<OverloadIDAttribute("0")>]
+        ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> Seq.toList |> frequency
     static member SequenceOf<'a> (generators:seq<Gen<'a>>) = 
         generators |> Any.SequenceSeq
-    [<OverloadIDAttribute("1")>]
     static member SequenceOf<'a> ([<ParamArrayAttribute>]generators:array<Gen<'a>>) = 
         generators |> Any.SequenceSeq
     static member OfSize (sizedGen : Func<int,Gen<_>>) =
@@ -96,8 +86,8 @@ type Configuration() =
     member x.MaxNbOfTest with get() = maxTest and set(v) = maxTest <- v
     member x.MaxNbOfFailedTests with get() = maxFail and set(v) = maxFail <- v
     member x.Name with get() = name and set(v) = name <- v
-    member x.Every with get() = every and set(v:Func<int,obj array,string>) = every <- fun i os -> v.Invoke(i,List.to_array os)
-    member x.EveryShrink with get() = everyShrink and set(v:Func<obj array,string>) = everyShrink <- fun os -> v.Invoke(List.to_array os)
+    member x.Every with get() = every and set(v:Func<int,obj array,string>) = every <- fun i os -> v.Invoke(i,List.toArray os)
+    member x.EveryShrink with get() = everyShrink and set(v:Func<obj array,string>) = everyShrink <- fun os -> v.Invoke(List.toArray os)
     member x.Size with get() = size and set(v:Func<double,double>) = size <- v.Invoke
     member x.Runner with get() = runner and set(v) = runner <- v
     //TODO: figure out how to deal with null values
@@ -139,7 +129,7 @@ and SpecBuilder<'a> internal   ( generator0:'a Gen
                                , collects:('a -> string) list
                                , classifies:(('a -> bool) * string) list) =
     inherit UnbrowsableObject()
-    override internal x.Build() =
+    override x.Build() =
             let conditions' a = conditions |> List.fold (fun s f -> s && f a) true
             let collects' a prop = collects |> List.fold (fun prop f -> prop |> collect (f a)) prop
             let classifies' a prop = classifies |> List.fold (fun prop (f,name) -> prop |> classify (f a) name) prop  
@@ -154,16 +144,12 @@ and SpecBuilder<'a> internal   ( generator0:'a Gen
         SpecBuilder<'a>( generator0, shrinker.Invoke, assertion0, conditions, collects, classifies)
     member x.Label( name:string ) =
         SpecBuilder<'a>(generator0, shrinker0, label name << assertion0,conditions, collects, classifies)
-    [<OverloadIDAttribute("0")>]
     member x.And(assertion : Func<'a,bool>) =
         SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (assertion.Invoke(a))), conditions, collects, classifies)
-    [<OverloadIDAttribute("1")>]
     member x.And(assertion : Func<'a,bool>, name:string ) =
         SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
-    [<OverloadIDAttribute("0")>]
     member x.Or(assertion : Func<'a,bool>) =
         SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (assertion.Invoke(a))), conditions, collects, classifies)
-    [<OverloadIDAttribute("1")>]
     member x.Or(assertion : Func<'a,bool>, name:string ) =
         SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
     member x.AndFor<'b>(generator:'b Gen, assertion:Func<'b,bool>) =
@@ -187,7 +173,7 @@ and SpecBuilder<'a,'b> internal   ( generator0:'a Gen
                                   , collects:('a -> 'b -> string) list
                                   , classifies:(('a -> 'b -> bool) * string) list) = 
     inherit UnbrowsableObject()
-    override internal x.Build() =
+    override x.Build() =
             let conditions' a b = conditions |> List.fold (fun s f -> s && f a b) true
             let collects' a b prop = collects |> List.fold (fun prop f -> prop |> collect (f a b)) prop
             let classifies' a b prop = classifies |> List.fold (fun prop (f,name) -> prop |> classify (f a b) name) prop  
@@ -202,19 +188,15 @@ and SpecBuilder<'a,'b> internal   ( generator0:'a Gen
         SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker.Invoke, assertion0, conditions, collects, classifies)
     member x.Label( name:string ) =
         SpecBuilder<'a,'b>(generator0, shrinker0, generator1, shrinker1, (fun a b-> label name (assertion0 a b)),conditions, collects, classifies)
-    [<OverloadIDAttribute("0")>]
     member x.And(assertion : Func<'a,'b,bool>) =
         SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1,
             (fun a b -> (assertion0 a b) .&. (assertion.Invoke(a, b))) , conditions, collects, classifies)
-    [<OverloadIDAttribute("1")>]
     member x.And(assertion : Func<'a,'b,bool>, name:string ) =
         SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
             (fun a b -> (assertion0 a b) .&. (label name (assertion.Invoke(a,b)))), conditions, collects, classifies)
-    [<OverloadIDAttribute("0")>]
     member x.Or(assertion : Func<'a,'b,bool>) =
         SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
             (fun a b -> (assertion0 a b) .|. (assertion.Invoke(a,b))), conditions, collects, classifies)
-    [<OverloadIDAttribute("1")>]
     member x.Or(assertion : Func<'a,'b,bool>, name:string ) =
         SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
             (fun a b-> (assertion0 a b) .|. (label name (assertion.Invoke(a,b)))), conditions, collects, classifies)
@@ -257,19 +239,15 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
         SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker.Invoke, assertion0, conditions, collects, classifies)
     member x.Label( name:string ) =
         SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, (fun a b c -> label name (assertion0 a b c)),conditions, collects, classifies)
-    [<OverloadIDAttribute("0")>]
     member x.And(assertion : Func<'a,'b,'c,bool>) =
         SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1,generator2, shrinker2,
             (fun a b c -> (assertion0 a b c) .&. (assertion.Invoke(a, b, c))) , conditions, collects, classifies)
-    [<OverloadIDAttribute("1")>]
     member x.And(assertion : Func<'a,'b,'c,bool>, name:string ) =
         SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1, generator2, shrinker2,
             (fun a b c -> (assertion0 a b c) .&. (label name (assertion.Invoke(a,b,c)))), conditions, collects, classifies)
-    [<OverloadIDAttribute("0")>]
     member x.Or(assertion : Func<'a,'b,'c,bool>) =
         SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1, generator2, shrinker2,
             (fun a b c -> (assertion0 a b c) .|. (assertion.Invoke(a,b,c))), conditions, collects, classifies)
-    [<OverloadIDAttribute("1")>]
     member x.Or(assertion : Func<'a,'b,'c,bool>, name:string ) =
         SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1,generator2, shrinker2, 
             (fun a b c -> (assertion0 a b c) .|. (label name (assertion.Invoke(a,b,c)))), conditions, collects, classifies)  
@@ -277,29 +255,21 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
                 
 type Spec() =
     static do init.Value
-    [<OverloadIDAttribute("ForAnyFunc")>]
     static member ForAny(assertion:Func<'a,bool>) =
         Spec.For(Any.OfType<'a>(),assertion)
-    [<OverloadIDAttribute("ForAnyAction")>]
     static member ForAny(assertion:Action<'a>) =
         Spec.For(Any.OfType<'a>(),assertion)
-    [<OverloadIDAttribute("ForAnyFunc2")>]
     static member ForAny(assertion:Func<'a,'b,bool>) =
         Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),assertion)
-    [<OverloadIDAttribute("ForAnyAction2")>]
     static member ForAny(assertion:Action<'a,'b>) =
         Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),assertion)
         
-    [<OverloadIDAttribute("For1Func")>]
     static member For(generator:'a Gen, assertion:Func<'a,bool>) =
         SpecBuilder<'a>(generator, shrink, property << assertion.Invoke, [], [], [])
-    [<OverloadIDAttribute("For1Action")>]
     static member For(generator:'a Gen, assertion:Action<'a>) =
         SpecBuilder<'a>(generator, shrink, property << assertion.Invoke, [], [], [])
-    [<OverloadIDAttribute("For2Func")>]
     static member For(generator1:'a Gen,generator2:'b Gen, assertion:Func<'a,'b,bool>) =
         SpecBuilder<'a,'b>(generator1, shrink, generator2, shrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
-    [<OverloadIDAttribute("For2Action")>]
     static member For(generator1:'a Gen,generator2:'b Gen, assertion:Action<'a,'b>) =
         SpecBuilder<'a,'b>(generator1, shrink, generator2, shrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
 

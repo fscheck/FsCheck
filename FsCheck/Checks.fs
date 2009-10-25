@@ -23,7 +23,7 @@ module Helpers =
             else sample (i-1) (Random.stdSplit seed |> snd) (generate 1000 seed gn :: samples)
         sample n (Random.newSeed()) []
 
-    let sample1 gn = sample 1 gn |> List.hd
+    let sample1 gn = sample 1 gn |> List.head
     
     type Interval = Interval of int * int
     type NonNegativeInt = NonNegative of int
@@ -314,7 +314,7 @@ module Property =
         | Lazy prop -> determineResult prop
         | Tuple2 (prop1,prop2) -> andCombine prop1 prop2
         | Tuple3 (prop1,prop2,prop3) -> (andCombine prop1 prop2).And(determineResult prop3)
-        | List props -> List.fold (fun st p -> st.And(determineResult p)) (List.hd props |> determineResult) (List.tl props)
+        | List props -> List.fold (fun st p -> st.And(determineResult p)) (List.head props |> determineResult) (List.tail props)
         
     let rec private toProperty prop =
         match prop with
@@ -331,7 +331,7 @@ module Property =
         | Lazy prop -> toProperty prop
         | Tuple2 (prop1,prop2) -> (toProperty prop1) .&. (toProperty prop2)
         | Tuple3 (prop1,prop2,prop3) -> (toProperty prop1) .&. (toProperty prop2) .&. (toProperty prop3)
-        | List props -> List.fold (fun st p -> st .&. toProperty p) (List.hd props |> toProperty) (List.tl props)
+        | List props -> List.fold (fun st p -> st .&. toProperty p) (List.head props |> toProperty) (List.tail props)
     
     let private areSame (r0:Result) (r1:Result) =
         match r0.Outcome,r1.Outcome with

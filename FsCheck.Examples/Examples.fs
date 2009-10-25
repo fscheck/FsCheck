@@ -18,35 +18,35 @@ type Generators =
 registerGenerators<Generators>()
 
 //overwrite catchall generator
-let enumOfType (t: System.Type) : Gen<Enum> = 
-    let vals: Array = System.Enum.GetValues(t) 
-    elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> Enum ]
-
-/// Generate a random enum of the type specified by the type parameter
-let enumOf() : Gen<'enumType> when 'enumType :> Enum = 
-    liftGen unbox (enumOfType (typeof<'enumType>))
-
-type EnumGen =
-    static member Enum() = 
-        { new Arbitrary<'a>() with 
-            override x.Arbitrary = 
-                if (typeof<Enum>).IsAssignableFrom(typeof<'a>) then
-                    enumOf<'a>()
-                else
-                    FsCheck.Arbitrary.Arbitrary.CatchAll().Arbitrary
-            override x.Shrink a = FsCheck.Arbitrary.Arbitrary.CatchAll().Shrink a }
-
-overwriteGenerators<EnumGen>()
-
-type TestEnum =
-    | First = 0
-    | Second = 1
-    | Third = 2
-
-let testEnum (e:TestEnum) = e = TestEnum.First
-quickCheck testEnum
-
-Console.ReadKey() |> ignore
+//let enumOfType (t: System.Type) : Gen<Enum> = 
+//    let vals: Array = System.Enum.GetValues(t) 
+//    elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> Enum ]
+//
+///// Generate a random enum of the type specified by the type parameter
+//let enumOf() : Gen<'enumType> when 'enumType :> Enum = 
+//    liftGen unbox (enumOfType (typeof<'enumType>))
+//
+//type EnumGen =
+//    static member Enum() = 
+//        { new Arbitrary<'a>() with 
+//            override x.Arbitrary = 
+//                if (typeof<Enum>).IsAssignableFrom(typeof<'a>) then
+//                    enumOf()
+//                else
+//                    FsCheck.Arbitrary.Arbitrary.CatchAll().Arbitrary
+//            override x.Shrink a = FsCheck.Arbitrary.Arbitrary.CatchAll().Shrink a }
+//
+//overwriteGenerators<EnumGen>()
+//
+//type TestEnum =
+//    | First = 0
+//    | Second = 1
+//    | Third = 2
+//
+//let testEnum (e:TestEnum) = e = TestEnum.First
+//quickCheck testEnum
+//
+//Console.ReadKey() |> ignore
 
 //bug: exception escapes: fixed
 let prop_EscapingException (x:int) =
@@ -301,7 +301,7 @@ quickCheck prop_Assoc
 //Function printing and shrinking
 let propMap (Function (_,f)) (l:list<int>) =
     not l.IsEmpty ==>
-    lazy (List.map f l = ((*f*)(List.hd l)) :: (List.map f (List.tl l)))
+    lazy (List.map f l = ((*f*)(List.head l)) :: (List.map f (List.tail l)))
 quickCheck propMap
 
 //alternative to using forAll
@@ -364,7 +364,7 @@ let formatterRunner =
 let formatter_prop (foo:Foo) (bar:Bar) (i:int) = i < 10 //so it takes a while before the fail
 check { quick with Runner = formatterRunner} formatter_prop
 
-let (.=.) left right = left = right |@ sprintf "%A = %A" left right
+let private (.=.) left right = left = right |@ sprintf "%A = %A" left right
 
 let compare (i:int) (j:int) = 2*i+1  .=. 2*j-1
 quickCheck compare
@@ -389,7 +389,7 @@ type SmartShrinker =
                     | ([],rs) -> rs
                     | (ls,[]) -> ls
                     | (l::ls,r::rs) -> l::r::(interleave ls rs)
-                interleave (Seq.take i' ys |> Seq.to_list) (Seq.skip i' ys |> Seq.to_list) |> List.to_seq
+                interleave (Seq.take i' ys |> Seq.toList) (Seq.skip i' ys |> Seq.toList) |> List.toSeq
         }
 
 registerGenerators<SmartShrinker>()
