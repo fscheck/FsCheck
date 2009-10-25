@@ -17,31 +17,6 @@ type Generators =
         override x.Arbitrary = arbitrary |> fmapGen int64 }
 registerGenerators<Generators>()
 
-//overwrite catchall generator
-//let enumOfType (t: System.Type) : Gen<Enum> = 
-//    let vals: Array = System.Enum.GetValues(t) 
-//    elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> Enum ]
-//
-///// Generate a random enum of the type specified by the type parameter
-//let enumOf() : Gen<'enumType> when 'enumType :> Enum = 
-//    liftGen unbox (enumOfType (typeof<'enumType>))
-//
-//type EnumGen =
-//    static member Enum() : Arbitrary<'a>  = 
-//        { new Arbitrary<'a>() with 
-//            override x.Arbitrary = 
-//                if (typeof<Enum>).IsAssignableFrom(typeof<'a>) then
-//                    Arbitrary.enumOf()//.Map( fun a ->  (upcast a) :?> 'a )
-//                else
-//                    FsCheck.Arbitrary.Arbitrary.CatchAll().Arbitrary
-//            override x.Shrink a = 
-//                if (typeof<Enum>).IsAssignableFrom(typeof<'a>) then
-//                    Seq.empty
-//                else
-//                    FsCheck.Arbitrary.Arbitrary.CatchAll().Shrink a }
-//
-//overwriteGenerators<EnumGen>()
-
 type TestEnum =
     | First = 0
     | Second = 1
@@ -49,8 +24,6 @@ type TestEnum =
 
 let testEnum (e:TestEnum) = e = TestEnum.First
 quickCheck testEnum
-//
-//Console.ReadKey() |> ignore
 
 //bug: exception escapes: fixed
 let prop_EscapingException (x:int) =
