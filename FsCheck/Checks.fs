@@ -362,7 +362,7 @@ module Property =
         | Tuple3 (prop1,prop2,prop3) -> 1 + Math.Max(Math.Max(depth prop1, depth prop2),depth prop3)
         | List props -> 1 + List.fold (fun a b -> Math.Max(a, depth b)) 0 props
     
-    let Property = 
+    let DSL() = 
         forAllShrink symPropGen shrink (fun symprop ->
             let expected = determineResult symprop
             let (MkRose (Common.Lazy actual,_)) = generate 1 (Random.newSeed()) (toProperty symprop) 

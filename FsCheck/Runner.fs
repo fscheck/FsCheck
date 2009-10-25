@@ -271,6 +271,7 @@ module Runner =
 
     ///Check all public static methods on the given type that have a Testable return type(this includes let-bound functions in a module)
     let checkAll config (t:Type) = 
+        printfn "--- Checking %s ---" t.Name
         t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
         Array.filter hasTestableReturnType |>
         Array.iter(fun m -> 
@@ -282,6 +283,7 @@ module Runner =
             let genericM = checkMethodInfo.MakeGenericMethod([|funType(*fromP;toP*)|])
             genericM.Invoke(null, [|box c; funValue|]) |> ignore
             )
+        printf "\n"
 
 
     ///Check with the configuration 'quick'.  

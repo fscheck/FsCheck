@@ -18,6 +18,11 @@ module internal ReflectArbitrary =
     open Microsoft.FSharp.Reflection
     open Reflect
 
+    /// Generate a random enum of the type specified by the System.Type
+    let enumOfType (t: System.Type) : Gen<Enum> =
+       let vals: Array = System.Enum.GetValues(t)
+       elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> Enum ]
+
     let private reflectObj  =
         // Compute which types are possible children of this type
         // Helps make union generation terminate quicker
@@ -62,6 +67,8 @@ module internal ReflectArbitrary =
                     |> oneof 
                     |> resize (size - 1) 
                 sized getgs |> box
+            elif (typeof<Enum>).IsAssignableFrom(t) then
+                    enumOfType t |> box 
             else
                 failwithf "Geneflect: type not handled %A" t)
 

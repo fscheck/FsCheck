@@ -27,24 +27,28 @@ registerGenerators<Generators>()
 //    liftGen unbox (enumOfType (typeof<'enumType>))
 //
 //type EnumGen =
-//    static member Enum() = 
+//    static member Enum() : Arbitrary<'a>  = 
 //        { new Arbitrary<'a>() with 
 //            override x.Arbitrary = 
 //                if (typeof<Enum>).IsAssignableFrom(typeof<'a>) then
-//                    enumOf()
+//                    Arbitrary.enumOf()//.Map( fun a ->  (upcast a) :?> 'a )
 //                else
 //                    FsCheck.Arbitrary.Arbitrary.CatchAll().Arbitrary
-//            override x.Shrink a = FsCheck.Arbitrary.Arbitrary.CatchAll().Shrink a }
+//            override x.Shrink a = 
+//                if (typeof<Enum>).IsAssignableFrom(typeof<'a>) then
+//                    Seq.empty
+//                else
+//                    FsCheck.Arbitrary.Arbitrary.CatchAll().Shrink a }
 //
 //overwriteGenerators<EnumGen>()
-//
-//type TestEnum =
-//    | First = 0
-//    | Second = 1
-//    | Third = 2
-//
-//let testEnum (e:TestEnum) = e = TestEnum.First
-//quickCheck testEnum
+
+type TestEnum =
+    | First = 0
+    | Second = 1
+    | Third = 2
+
+let testEnum (e:TestEnum) = e = TestEnum.First
+quickCheck testEnum
 //
 //Console.ReadKey() |> ignore
 
