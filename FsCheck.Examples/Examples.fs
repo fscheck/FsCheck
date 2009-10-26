@@ -8,8 +8,6 @@ open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic
 
-init.Value
-
 //---too early initialization bug (put this first): fixed---
 type Generators =
   static member Int64() =
