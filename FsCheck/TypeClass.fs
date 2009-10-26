@@ -57,12 +57,17 @@ module public TypeClass =
         let addMethods (t:Type) =
             t.GetMethods((BindingFlags.Static ||| BindingFlags.Public))
             |> Seq.fold addMethod ([],None,[])
-        addMethods instancesType
+        let (generics, catchAll, array) = addMethods instancesType
+        if generics.Length = 0 && catchAll.IsNone && array.Length = 0 then 
+            failwithf "No instances found on type %s. Check that the type is public and has public static members with the right signature." instancesType.FullName
+        else
+            (generics, catchAll, array)
 
 
-    ///Register instances in a given class as instances of the given type class. 
+    ///Register instances in a given class as instances of the given type class.
+    ///Thows a failure exception if no instances are found.
     let registerInstancesByType typeClass instance =
-        let (generics, catchAll, array) = findInstances typeClass instance 
+        let (generics, catchAll, array) = findInstances typeClass instance
         Seq.iter (typeClasses.[typeClass].Add) generics
         if catchAll.IsSome then
             if catchAlls.[typeClass].IsSome then 

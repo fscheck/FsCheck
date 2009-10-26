@@ -17,6 +17,14 @@ type Generators =
         override x.Arbitrary = arbitrary |> fmapGen int64 }
 registerGenerators<Generators>()
 
+
+//check that registering typeclass instances with a class that does not define any no longer fails silently
+//type internal NoInstancesFails() =
+//    static member Int64() =
+//        { new Arbitrary<int64>() with
+//            override x.Arbitrary = arbitrary |> fmapGen int64 }
+//overwriteGenerators<NoInstancesFails>()
+
 type TestEnum =
     | First = 0
     | Second = 1
@@ -374,8 +382,6 @@ registerGenerators<SmartShrinker>()
 let smartShrink (Smart (_,i)) = i < 20
 quickCheck smartShrink
 
-Console.ReadKey() |> ignore
-
 //-------------examples from QuickCheck paper-------------
 let prop_RevUnit (x:char) = List.rev [x] = [x]
 
@@ -517,7 +523,8 @@ quickCheck prop_RevId'
 //----------Checking toplevel properties trick------------------
 Console.WriteLine("----------Check all toplevel properties----------------");
 type Marker = member x.Null = ()
-overwriteGeneratorsByType (typeof<Marker>.DeclaringType)
+//if there are instances defined: (throws exception if not)
+//overwriteGeneratorsByType (typeof<Marker>.DeclaringType)
 quickCheckAll (typeof<Marker>.DeclaringType)
 
 Console.ReadKey() |> ignore
