@@ -433,6 +433,7 @@ type Properties =
     static member Test9 (s:string) = ( new String(s.ToCharArray()) = s )
     static member Test10 i = (i = 'r')
     static member NoTest i = "30"
+    static member OptionTest (o:option<int>) = match o with Some _ -> false | _ -> true
 
 checkAll quick (typeof<Properties>)
 
@@ -462,6 +463,8 @@ let prop_revstr x = RevString (RevString x) = x
 let private idempotent f x = let y = f x in f y = y
 quickCheck (idempotent (fun (x : string) -> x.ToUpper()))
 
+let propBigTuple (a:bool,b:float,c:string,d:char,e:byte,f:float,g:string,h:option<float>,i) = if i > 10 then false else true
+quickCheckN "propBigTuple" propBigTuple
 
 //-----property combinators------------------
 

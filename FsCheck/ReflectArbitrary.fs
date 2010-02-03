@@ -36,11 +36,10 @@ module internal ReflectArbitrary =
         
         Common.memoize (fun (t:Type) ->
             if isRecordType t then
-                let g =
-                    productGen [ for pi in getRecordFields t do 
-                                    if pi.PropertyType = t then 
-                                        failwithf "Recursive record types cannot be generated automatically: %A" t 
-                                    else yield pi.PropertyType ]
+                let g = [ for pi in getRecordFields t do 
+                            if pi.PropertyType = t then 
+                                failwithf "Recursive record types cannot be generated automatically: %A" t 
+                            else yield getGenerator pi.PropertyType ]
                 let create = getRecordConstructor t
                 let result = g |> sequence |> fmapGen (List.toArray >> create)
                 box result
@@ -67,8 +66,16 @@ module internal ReflectArbitrary =
                     |> oneof 
                     |> resize (size - 1) 
                 sized getgs |> box
-            elif (typeof<Enum>).IsAssignableFrom(t) then
-                    enumOfType t |> box 
+            
+            elif isTupleType t then
+                let g = [ for pi in FSharpType.GetTupleElements t -> getGenerator pi ]
+                let create = fun tuple -> FSharpValue.MakeTuple(tuple,t)
+                let result = g |> sequence |> fmapGen (List.toArray >> create)
+                box result
+                
+            elif t.IsEnum then
+                    enumOfType t |> box
+                     
             else
                 failwithf "Geneflect: type not handled %A" t)
 
@@ -152,6 +159,11 @@ module internal ReflectArbitrary =
             let make = getRecordConstructor t
             let read = getRecordReader t
             let childrenTypes = FSharpType.GetRecordFields t |> Array.map (fun pi -> pi.PropertyType)
+            shrinkChildren read make o childrenTypes
+        elif isTupleType t then
+            let childrenTypes = FSharpType.GetTupleElements t
+            let make = fun tuple -> FSharpValue.MakeTuple(tuple,t)
+            let read = FSharpValue.GetTupleFields
             shrinkChildren read make o childrenTypes
         else
             Seq.empty
