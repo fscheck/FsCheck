@@ -37,6 +37,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
+    <DocumentationFile>bin\Release\FsCheck.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DocumentationFile>bin\Debug\FsCheck.XML</DocumentationFile>
@@ -44,7 +45,7 @@
     </OtherFlags>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DocumentationFile>bin\Release\.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\FsCheck.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common.fs" />
