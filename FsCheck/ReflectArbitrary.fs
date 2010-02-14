@@ -1,6 +1,6 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2009 Kurt Schelfthout. All rights reserved.          **
+**  Copyright (c) 2008-2010 Kurt Schelfthout. All rights reserved.          **
 **  http://www.codeplex.com/fscheck                                         **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
@@ -27,21 +27,20 @@ module internal ReflectArbitrary =
         // Compute which types are possible children of this type
         // Helps make union generation terminate quicker
         let containedTypes (t : Type) : list<Type> = [] // TODO
-
-        //this finds the generators for each of the types, then chooses one element for each type (so, a product type like tuples)
-        let productGen (ts : list<Type>) =
-            let gs = [ for t in ts -> getGenerator t ]
-            let n = gs.Length
-            [ for g in gs -> sized (fun s -> resize ((s / n) - 1) g )]//(unbox<IGen> g).AsGenObject) ]
-        
+                
         Common.memoize (fun (t:Type) ->
             if isRecordType t then
-                let g =
-                    productGen [ for pi in getRecordFields t do 
-                                    if pi.PropertyType = t then 
-                                        failwithf "Recursive record types cannot be generated automatically: %A" t 
-                                    else yield pi.PropertyType ]
+                let g = [ for pi in getRecordFields t do 
+                            if pi.PropertyType = t then 
+                                failwithf "Recursive record types cannot be generated automatically: %A" t 
+                            else yield getGenerator pi.PropertyType ]
                 let create = getRecordConstructor t
+                let result = g |> sequence |> fmapGen (List.toArray >> create)
+                box result
+
+            elif isTupleType t then
+                let g = [ for elem in FSharpType.GetTupleElements t do yield getGenerator elem ]
+                let create elems = FSharpValue.MakeTuple (elems,t)
                 let result = g |> sequence |> fmapGen (List.toArray >> create)
                 box result
 
@@ -54,6 +53,10 @@ module internal ReflectArbitrary =
                         if List.exists(fun (x : Type) -> x.ToString() = t.ToString()) tsStar then 2 else 1
                         
                 let unionGen create ts =
+                    let productGen (ts : list<Type>) =
+                        let gs = [ for t in ts -> getGenerator t ]
+                        let n = gs.Length
+                        [ for g in gs -> sized (fun s -> resize ((s / n) - 1) g )]
                     let g = productGen ts
                     let res = g |> sequence |> fmapGen (List.toArray >> create)
                     res

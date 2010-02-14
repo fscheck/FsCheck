@@ -1,6 +1,6 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2009 Kurt Schelfthout. All rights reserved.          **
+**  Copyright (c) 2008-2010 Kurt Schelfthout. All rights reserved.          **
 **  http://www.codeplex.com/fscheck                                         **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **

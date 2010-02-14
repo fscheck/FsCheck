@@ -1,6 +1,6 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2009 Kurt Schelfthout. All rights reserved.          **
+**  Copyright (c) 2008-2010 Kurt Schelfthout. All rights reserved.          **
 **  http://www.codeplex.com/fscheck                                         **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
@@ -94,7 +94,7 @@ module Generator =
         |> sample 10
         |> List.forall (fun v -> l <= v && v <= h)
      
-    let private isIn l elem = List.contains elem l
+    let private isIn l elem = List.exists ((=) elem) l
        
     let Elements (l:list<char>) =
         not l.IsEmpty ==> 
@@ -222,8 +222,6 @@ module Arbitrary =
     open FsCheck.Arbitrary
     open System
     open Helpers
-    
-
     
     let private addLabels (generator,shrinker) = ( generator |@ "Generator", shrinker |@ "Shrinker")
     

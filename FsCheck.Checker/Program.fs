@@ -17,4 +17,4 @@ quickCheckAll <| Type.GetType( "FsCheck.Checks.Arbitrary, FsCheck", true)
 
 quickCheckAll <| Type.GetType( "FsCheck.Checks.Property, FsCheck", true)
 
-Console.ReadKey() |> ignore
+printfn "Done. Press any key to exit.";Console.ReadKey() |> ignore
