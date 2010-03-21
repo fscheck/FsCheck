@@ -83,13 +83,9 @@ module Gen =
     open System.Reflection
     open System.Collections.Generic
     open TypeClass
-     
-
 
     ///Apply ('map') the function f on the value in the generator, yielding a new generator.
     let map f (gen:Gen<_>) = gen.Map f
-
-    
 
     ///Obtain the current size. sized g calls g, passing it the current size as a parameter.
     let sized fgen = Gen (fun n r -> let (Gen m) = fgen n in m n r)
@@ -99,7 +95,7 @@ module Gen =
 
     ///Default generator that generates a random number generator. Useful for starting off the process
     ///of generating a random value.
-    let rand = Gen (fun n r -> r)
+    let internal rand = Gen (fun n r -> r)
 
     ///Generates a value out of the generator with maximum size n.
     let generate n rnd (Gen m) = 
