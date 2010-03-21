@@ -12,8 +12,8 @@ open System.Collections.Generic
 type Generators =
   static member Int64() =
     { new Arbitrary<int64>() with
-        override x.Arbitrary = arbitrary |> fmapGen int64 }
-registerGenerators<Generators>()
+        override x.Arbitrary = Gen.arbitrary |> Gen.map int64 }
+Gen.register<Generators>()
 
 
 //check that registering typeclass instances with a class that does not define any no longer fails silently
@@ -176,7 +176,7 @@ quickCheck propOr
 
 //--------Test Data Generators----------
 let private chooseFromList xs = 
-    gen {   let! i = choose (0, List.length xs-1) 
+    gen {   let! i = Gen.choose (0, List.length xs-1) 
             return (List.nth xs i) }
 
 //to generate a value out of a generator:
@@ -185,45 +185,45 @@ let private chooseFromList xs =
 
 //Choosing between alternatives
 let private chooseBool = 
-    oneof [ gen { return true }; gen { return false } ]
+    Gen.oneof [ gen { return true }; gen { return false } ]
     
 let private chooseBool2 = 
-    frequency [ (2, gen { return true }); (1, gen { return false })]
+    Gen.frequency [ (2, gen { return true }); (1, gen { return false })]
 
 //The size of test data
-let matrix gen = sized <| fun s -> resize (s|>float|>sqrt|>int) gen
+let matrix gen = Gen.sized <| fun s -> Gen.resize (s|>float|>sqrt|>int) gen
 
 //Generating Recusrive data types
 type Tree = Leaf of int | Branch of Tree * Tree
 
 let rec private unsafeTree() = 
-    oneof [ liftGen (Leaf) arbitrary; 
-            liftGen2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
+    Gen.oneof [ Gen.map Leaf Gen.arbitrary; 
+                Gen.map2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
 
 let private tree =
     let rec tree' s = 
         match s with
-            | 0 -> liftGen (Leaf) arbitrary
+            | 0 -> Gen.map Leaf Gen.arbitrary
             | n when n>0 -> 
             let subtree() = tree' (n/2)
-            oneof [ liftGen (Leaf) arbitrary; 
-                    liftGen2 (fun x y -> Branch (x,y)) (subtree()) (subtree())]
+            Gen.oneof [ Gen.map Leaf Gen.arbitrary; 
+                        Gen.map2 (fun x y -> Branch (x,y)) (subtree()) (subtree())]
             | _ -> raise(ArgumentException"Only positive arguments are allowed")
-    sized tree'
+    Gen.sized tree'
 
 //Generating functions
 let rec private cotree t = 
     match t with
-       | (Leaf n) -> variant 0 << coarbitrary n
-       | (Branch (t1,t2)) -> variant 1 << cotree t1 << cotree t2
+       | (Leaf n) -> Gen.variant 0 << Gen.coarbitrary n
+       | (Branch (t1,t2)) -> Gen.variant 1 << cotree t1 << cotree t2
 
 
 //Default generators by type
 type Box<'a> = Whitebox of 'a | Blackbox of 'a
 
 let boxgen() = 
-    gen {   let! a = arbitrary
-            return! elements [ Whitebox a; Blackbox a] }
+    gen {   let! a = Gen.arbitrary
+            return! Gen.elements [ Whitebox a; Blackbox a] }
 
 type MyGenerators =
     static member Tree() =
@@ -235,7 +235,7 @@ type MyGenerators =
         {new Arbitrary<Box<'a>>() with
             override x.Arbitrary = boxgen() }
 
-registerGenerators<MyGenerators>()
+Gen.register<MyGenerators>()
 
 let prop_RevRevTree (xs:list<Tree>) = List.rev(List.rev xs) = xs
 quickCheck prop_RevRevTree
@@ -268,7 +268,7 @@ let spec =
             override x.ToString() = "dec"}
     { new ISpecification<Counter,int> with
         member x.Initial() = (new Counter(),0)
-        member x.GenCommand _ = elements [inc;dec] }
+        member x.GenCommand _ = Gen.elements [inc;dec] }
 
 quickCheckN "Counter" (asProperty spec)
 
@@ -295,21 +295,21 @@ type PositiveInt = Positive of int
 type ArbitraryModifiers =
     static member NonNegativeInt() =
         { new Arbitrary<NonNegativeInt>() with
-            override x.Arbitrary = arbitrary |> fmapGen (NonNegative << abs)
-            override x.CoArbitrary (NonNegative i) = coarbitrary i
-            override x.Shrink (NonNegative i) = shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative }
+            override x.Arbitrary = Gen.arbitrary |> Gen.map (NonNegative << abs)
+            override x.CoArbitrary (NonNegative i) = Gen.coarbitrary i
+            override x.Shrink (NonNegative i) = Gen.shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative }
     static member NonZeroInt() =
         { new Arbitrary<NonZeroInt>() with
-            override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen NonZero 
-            override x.CoArbitrary (NonZero i) = coarbitrary i
-            override x.Shrink (NonZero i) = shrink i |> Seq.filter ((=) 0) |> Seq.map NonZero }
+            override x.Arbitrary = Gen.arbitrary |> Gen.suchThat ((<>) 0) |> Gen.map NonZero 
+            override x.CoArbitrary (NonZero i) = Gen.coarbitrary i
+            override x.Shrink (NonZero i) = Gen.shrink i |> Seq.filter ((=) 0) |> Seq.map NonZero }
     static member PositiveInt() =
         { new Arbitrary<PositiveInt>() with
-            override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen (Positive << abs) 
-            override x.CoArbitrary (Positive i) = coarbitrary i
-            override x.Shrink (Positive i) = shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
+            override x.Arbitrary = Gen.arbitrary |> Gen.suchThat ((<>) 0) |> Gen.map (Positive << abs) 
+            override x.CoArbitrary (Positive i) = Gen.coarbitrary i
+            override x.Shrink (Positive i) = Gen.shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
 
-registerGenerators<ArbitraryModifiers>()
+Gen.register<ArbitraryModifiers>()
 
 let prop_NonNeg (NonNegative i) = i >= 0
 quickCheckN "NonNeg" prop_NonNeg
@@ -363,9 +363,9 @@ type Smart<'a> =
 type SmartShrinker =
     static member Smart() =
         { new Arbitrary<Smart<'a>>() with
-            override x.Arbitrary = arbitrary |> fmapGen (fun arb -> Smart (0,arb))
+            override x.Arbitrary = Gen.arbitrary |> Gen.map (fun arb -> Smart (0,arb))
             override x.Shrink (Smart (i,x)) = //shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative 
-                let ys = Seq.zip {0..Int32.MaxValue} (shrink x) |> Seq.map Smart 
+                let ys = Seq.zip {0..Int32.MaxValue} (Gen.shrink x) |> Seq.map Smart 
                 let i' = Math.Max(0,i-2)
                 let rec interleave left right =
                     match (left,right) with
@@ -375,7 +375,7 @@ type SmartShrinker =
                 interleave (Seq.take i' ys |> Seq.toList) (Seq.skip i' ys |> Seq.toList) |> List.toSeq
         }
 
-registerGenerators<SmartShrinker>()
+Gen.register<SmartShrinker>()
 
 let smartShrink (Smart (_,i)) = i < 20
 quickCheck smartShrink
@@ -476,11 +476,11 @@ quickCheck testProp2
 
 let blah (s:string) = if s = "" then raise (new System.Exception("foo")) else s.Length > 3
 
-let private withNonEmptyString (p : string -> 'a) = forAll (oneof (List.map gen.Return [ "A"; "AA"; "AAA" ])) p
+let private withNonEmptyString (p : string -> 'a) = forAll (Gen.oneof (List.map gen.Return [ "A"; "AA"; "AAA" ])) p
 
 quickCheck (withNonEmptyString blah)
 
-let prop_Exc = forAllShrink (resize 100 arbitrary) shrink (fun (s:string) -> failwith "error")
+let prop_Exc = forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun (s:string) -> failwith "error")
 quickCheckN "prop_Exc" prop_Exc
 
 
@@ -489,28 +489,28 @@ quickCheckN "prop_Exc" prop_Exc
 type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }
 
 quickCheck <| 
-    forAllShrink (resize 100 arbitrary) shrink (fun (s:RecordStuff<string>) -> s.Yes)
+    forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun (s:RecordStuff<string>) -> s.Yes)
 
 type Recursive<'a> = Void | Leaf of 'a | Branch of Recursive<'a> * 'a * Recursive<'a>
 
 quickCheck <| 
-    forAllShrink (resize 100 arbitrary) shrink (fun (s:Recursive<string>) -> 
+    forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun (s:Recursive<string>) -> 
     match s with  Branch _ -> false | _ -> true)
 
 type Simple = Void | Void2 | Void3 | Leaf of int | Leaf2 of string * int *char * float
 
 //should yield a simplified Leaf2
 quickCheck <| 
-    forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
+    forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun (s:Simple) -> 
     match s with Leaf2 _ -> false |  _ -> true)
 
 //should yield a Void3
 quickCheck <| 
-    forAllShrink (resize 100 arbitrary) shrink (fun (s:Simple) -> 
+    forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun (s:Simple) -> 
     match s with Leaf2 _ -> false | Void3 -> false |  _ -> true) 
 
 
-quickCheck <| forAllShrink (resize 100 arbitrary) shrink (fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 ))
+quickCheck <| forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 ))
 quickCheck (fun opt -> match opt with None -> false | Some b  -> b  )
 quickCheck (fun opt -> match opt with Some n when n<0 -> false | Some n when n >= 0 -> true | _ -> true )
 

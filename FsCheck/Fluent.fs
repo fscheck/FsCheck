@@ -18,6 +18,7 @@ open System.Linq
 open System.ComponentModel
 open System.Collections.Generic
 open Common
+open Gen
 
 //TODO:
 //Within -> rely on testing frameworks?
@@ -35,7 +36,7 @@ type Any =
     static member private OneOfSeqValue vs = 
         vs |> Seq.toList |> elements
     static member private SequenceSeq<'a> gs = 
-        gs |> Seq.toList |> sequence |> fmapGen (fun list -> new List<'a>(list))
+        gs |> Seq.toList |> sequence |> map (fun list -> new List<'a>(list))
     static member OfType<'a>() = 
         arbitrary<'a>
     static member Value (value) = 
@@ -273,7 +274,7 @@ type Spec() =
     static member For(generator1:'a Gen,generator2:'b Gen, assertion:Action<'a,'b>) =
         SpecBuilder<'a,'b>(generator1, shrink, generator2, shrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
 
-open Generator
+open Gen
 
 [<System.Runtime.CompilerServices.Extension>]
 type GeneratorExtensions = 
@@ -295,13 +296,13 @@ type GeneratorExtensions =
               return select.Invoke(a,b) }
     
     [<System.Runtime.CompilerServices.Extension>]
-    static member MakeList<'a> (generator) = listOf generator |> fmapGen (fun list -> new List<'a>(list))
+    static member MakeList<'a> (generator) = listOf generator |> map (fun list -> new List<'a>(list))
     
     [<System.Runtime.CompilerServices.Extension>]
-    static member MakeNonEmptyList<'a> (generator) = nonEmptyListOf generator |> fmapGen (fun list -> new List<'a>(list))
+    static member MakeNonEmptyList<'a> (generator) = nonEmptyListOf generator |> map (fun list -> new List<'a>(list))
     
     [<System.Runtime.CompilerServices.Extension>]
-    static member MakeListOfLength<'a> (generator, count) = vectorOf count generator |> fmapGen (fun list -> new List<'a>(list))
+    static member MakeListOfLength<'a> (generator, count) = vectorOf count generator |> map (fun list -> new List<'a>(list))
     
     [<System.Runtime.CompilerServices.Extension>]
     static member Resize (generator, sizeTransform : Func<int,int>) =
@@ -309,7 +310,7 @@ type GeneratorExtensions =
         
     
 type DefaultArbitraries =
-    static member Add<'t>() = registerGenerators<'t>()
-    static member Overwrite<'t>() = overwriteGenerators<'t>()
+    static member Add<'t>() = Gen.register<'t>()
+    static member Overwrite<'t>() = Gen.overwrite<'t>()
   
 //do init.Value

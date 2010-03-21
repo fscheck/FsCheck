@@ -52,7 +52,7 @@
     <Compile Include="Random.fs" />
     <Compile Include="Reflect.fs" />
     <Compile Include="TypeClass.fs" />
-    <Compile Include="Generator.fs" />
+    <Compile Include="Gen.fs" />
     <Compile Include="Functions.fs" />
     <Compile Include="ReflectArbitrary.fs" />
     <Compile Include="GeneratorUtils.fs" />

@@ -11,9 +11,72 @@
 
 namespace FsCheck
 
-[<AutoOpen>]
-module Generator =
+open Random
 
+type internal IGen = 
+    abstract AsGenObject : Gen<obj>
+    
+///Generator of a random value, based on a size parameter and a randomly generated int.
+and Gen<'a> = 
+    internal Gen of (int -> StdGen -> 'a)
+        ///map the given function to the value in the generator, yielding a new generator of the result type.  
+        member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> f <| g n r)
+    interface IGen with
+        member x.AsGenObject = x.Map box
+
+//private interface for reflection
+type internal IArbitrary =
+    abstract ArbitraryObj : Gen<obj>
+    abstract ShrinkObj : obj -> seq<obj>   
+
+[<AbstractClass>]
+type Arbitrary<'a>() =
+    ///Returns a generator for 'a.
+    abstract Arbitrary      : Gen<'a>
+    ///Returns a generator transformer for 'a. Necessary to generate functions with 'a as domain. Fails by
+    ///default if it is not overridden.
+    abstract CoArbitrary    : 'a -> (Gen<'c> -> Gen<'c>) 
+    ///Returns a sequence of the immediate shrinks of the given value. The immediate shrinks should not include
+    ///doubles or the given value itself. The default implementation returns the empty sequence (i.e. no shrinking).
+    abstract Shrink         : 'a -> seq<'a>
+    default x.CoArbitrary (_:'a) = 
+        failwithf "CoArbitrary for %A is not implemented" (typeof<'a>)
+    default x.Shrink a = 
+        Seq.empty
+    interface IArbitrary with
+        member x.ArbitraryObj = (x.Arbitrary :> IGen).AsGenObject
+        member x.ShrinkObj o = (x.Shrink (unbox o)) |> Seq.map box
+
+
+
+[<AutoOpen>]
+module GenBuilder =
+
+    ///The workflow type for generators.
+    type GenBuilder internal() =
+        member b.Return(a) : Gen<_> = 
+            Gen (fun n r -> a)
+        member b.Bind((Gen m) : Gen<_>, k : _ -> Gen<_>) : Gen<_> = 
+            Gen (fun n r0 -> let r1,r2 = split r0
+                             let (Gen m') = k (m n r1) 
+                             m' n r2)                                      
+        member b.Delay(f : unit -> Gen<_>) : Gen<_> = 
+            Gen (fun n r -> match f() with (Gen g) -> g n r )
+        member b.TryFinally(Gen m,handler ) = 
+            Gen (fun n r -> try m n r finally handler)
+        member b.TryWith(Gen m, handler) = 
+            Gen (fun n r -> try m n r with e -> handler e)
+        member b.Using (a, k) =  //'a * ('a -> Gen<'b>) -> Gen<'b> when 'a :> System.IDisposable
+            use disposea = a
+            k disposea
+        member b.ReturnFrom(a:Gen<_>) = a
+
+    ///The workflow function for generators, e.g. gen { ... }
+    let gen = GenBuilder()
+
+module Gen =
+
+    open Common
     open Random
     open Reflect
     open System
@@ -21,19 +84,12 @@ module Generator =
     open System.Collections.Generic
     open TypeClass
      
-    type IGen = 
-        abstract AsGenObject : Gen<obj>
-        
-    ///Generator of a random value, based on a size parameter and a randomly generated int.
-    and Gen<'a> = 
-        Gen of (int -> StdGen -> 'a) 
-            ///map the given function to the value in the generator, yielding a new generator of the result type.  
-            member x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> f <| g n r)
-        interface IGen with
-            member x.AsGenObject = x.Map box
+
 
     ///Apply ('map') the function f on the value in the generator, yielding a new generator.
-    let fmapGen f (gen:Gen<_>) = gen.Map f
+    let map f (gen:Gen<_>) = gen.Map f
+
+    
 
     ///Obtain the current size. sized g calls g, passing it the current size as a parameter.
     let sized fgen = Gen (fun n r -> let (Gen m) = fgen n in m n r)
@@ -50,98 +106,72 @@ module Generator =
         let size,rnd' = range (0,n) rnd
         m size rnd'
 
-    ///The workflow type for generators.
-    type GenBuilder () =
-        member b.Return(a) : Gen<_> = 
-            Gen (fun n r -> a)
-        member b.Bind((Gen m) : Gen<_>, k : _ -> Gen<_>) : Gen<_> = 
-            Gen (fun n r0 -> let r1,r2 = split r0
-                             let (Gen m') = k (m n r1) 
-                             m' n r2)                                      
-        //member b.Let(p, rest) : Gen<_> = rest p
-        //not so sure about this one...should delay executing until just before it is executed,
-        //for side-effects. Examples are usually like = fun () -> runGen (f ())
-        member b.Delay(f : unit -> Gen<_>) : Gen<_> = 
-            Gen (fun n r -> match f() with (Gen g) -> g n r )
-        member b.TryFinally(Gen m,handler ) = 
-            Gen (fun n r -> try m n r finally handler)
-        member b.TryWith(Gen m, handler) = 
-            Gen (fun n r -> try m n r with e -> handler e)
-        member b.Using (a, k) =  //'a * ('a -> Gen<'b>) -> Gen<'b> when 'a :> System.IDisposable
-            use disposea = a
-            k disposea
-        member b.ReturnFrom(a:Gen<_>) = a
-
-    ///The workflow function for generators, e.g. gen { ... }
-    let gen = GenBuilder()
-
     ///Generates an integer between l and h, inclusive.
     ///Note to QuickCheck users: this function is more general in QuickCheck, generating a Random a.
-    let choose (l, h) = rand.Map (range (l,h) >> fst) 
+    let choose (l, h) = rand |> map (range (l,h) >> fst) 
 
     ///Build a generator that randomly generates one of the values in the given non-empty list.
-    let elements xs = (choose (0, (List.length xs)-1) ).Map(List.nth xs)
+    let elements xs = 
+        choose (0, (Seq.length xs)-1)  |> map(flip Seq.nth xs)
 
     ///Build a generator that generates a value from one of the generators in the given non-empty list, with
     ///equal probability.
-    let oneof gens = gen.Bind(elements gens, fun x -> x)
+    let oneof gens = gen.Bind(elements gens, id)
 
     ///Build a generator that generates a value from one of the generators in the given non-empty list, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
     let frequency xs = 
-        let tot = List.sumBy (fun x -> x) (List.map fst xs)
-        let rec pick n ys = match ys with
-                            | (k,x)::xs -> if n<=k then x else pick (n-k) xs
-                            | _ -> raise (ArgumentException("Bug in frequency function"))
-        in gen.Bind(choose (1,tot), fun n -> pick n xs)  
+        let tot = Seq.sumBy fst xs
+        let rec pick n ys = 
+            let (k,x),xs = Seq.head ys,Seq.skip 1 ys
+            if n<=k then x else pick (n-k) xs
+        in gen.Bind(choose (1,tot), fun n -> pick n xs) 
 
-    ///Lift the given function over values to a function over generators of those values.
-    let liftGen f = fun a -> gen {  let! a' = a
-                                    return f a' }
-
-    ///Lift the given function over values to a function over generators of those values.
-    let liftGen2 f = fun a b -> gen {   let! a' = a
-                                        let! b' = b
-                                        return f a' b' }
+    ///Map the given function over values to a function over generators of those values.
+    let map2 f = fun a b -> gen {   let! a' = a
+                                    let! b' = b
+                                    return f a' b' }
                                         
     ///Build a generator that generates a 2-tuple of the values generated by the given generator.
-    let two g = liftGen2 (fun a b -> (a,b)) g g
+    let two g = map2 (fun a b -> (a,b)) g g
 
-    ///Lift the given function over values to a function over generators of those values.
-    let liftGen3 f = fun a b c -> gen { let! a' = a
-                                        let! b' = b
-                                        let! c' = c
-                                        return f a' b' c' }
+    ///Map the given function over values to a function over generators of those values.
+    let map3 f = fun a b c -> gen { let! a' = a
+                                    let! b' = b
+                                    let! c' = c
+                                    return f a' b' c' }
 
     ///Build a generator that generates a 3-tuple of the values generated by the given generator.
-    let three g = liftGen3 (fun a b c -> (a,b,c)) g g g
+    let three g = map3 (fun a b c -> (a,b,c)) g g g
 
-    ///Lift the given function over values to a function over generators of those values.
-    let liftGen4 f = fun a b c d -> gen {   let! a' = a
-                                            let! b' = b
-                                            let! c' = c
-                                            let! d' = d
-                                            return f a' b' c' d' }
+    ///Map the given function over values to a function over generators of those values.
+    let map4 f = fun a b c d -> gen {   let! a' = a
+                                        let! b' = b
+                                        let! c' = c
+                                        let! d' = d
+                                        return f a' b' c' d' }
 
     ///Build a generator that generates a 4-tuple of the values generated by the given generator.
-    let four g = liftGen4 (fun a b c d -> (a,b,c,d)) g g g g
+    let four g = map4 (fun a b c d -> (a,b,c,d)) g g g g
 
-    ///Lift the given function over values to a function over generators of those values.
-    let liftGen5 f = fun a b c d e -> gen { let! a' = a
+    ///Map the given function over values to a function over generators of those values.
+    let map5 f = fun a b c d e -> gen {  let! a' = a
+                                         let! b' = b
+                                         let! c' = c
+                                         let! d' = d
+                                         let! e' = e
+                                         return f a' b' c' d' e'}
+
+    ///Map the given function over values to a function over generators of those values.
+    let map6 f = fun a b c d e g -> gen {   let! a' = a
                                             let! b' = b
                                             let! c' = c
                                             let! d' = d
                                             let! e' = e
-                                            return f a' b' c' d' e'}
+                                            let! g' = g
+                                            return f a' b' c' d' e' g'}
 
-    ///Lift the given function over values to a function over generators of those values.
-    let liftGen6 f = fun a b c d e g -> gen {   let! a' = a
-                                                let! b' = b
-                                                let! c' = c
-                                                let! d' = d
-                                                let! e' = e
-                                                let! g' = g
-                                                return f a' b' c' d' e' g'}
+    
 
     ///Sequence the given list of generators into a generator of a list.
     ///Note to QuickCheck users: this is monadic sequence, which cannot be expressed generally in F#.
@@ -225,29 +255,6 @@ module Generator =
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
         Gen (fun n r -> m n (Seq.nth (v+1) (rands r)))
 
-    //private interface for reflection
-    type IArbitrary =
-        abstract ArbitraryObj : Gen<obj>
-        abstract ShrinkObj : obj -> seq<obj>   
-
-    [<AbstractClass>]
-    type Arbitrary<'a>() =
-        ///Returns a generator for 'a.
-        abstract Arbitrary      : Gen<'a>
-        ///Returns a generator transformer for 'a. Necessary to generate functions with 'a as domain. Fails by
-        ///default if it is not overridden.
-        abstract CoArbitrary    : 'a -> (Gen<'c> -> Gen<'c>) 
-        ///Returns a sequence of the immediate shrinks of the given value. The immediate shrinks should not include
-        ///doubles or the given value itself. The default implementation returns the empty sequence (i.e. no shrinking).
-        abstract Shrink         : 'a -> seq<'a>
-        default x.CoArbitrary (_:'a) = 
-            failwithf "CoArbitrary for %A is not implemented" (typeof<'a>)
-        default x.Shrink a = 
-            Seq.empty
-        interface IArbitrary with
-            member x.ArbitraryObj = (x.Arbitrary :> IGen).AsGenObject
-            member x.ShrinkObj o = (x.Shrink (unbox o)) |> Seq.map box
-
 
 
     ///Returns a Gen<'a>
@@ -269,25 +276,51 @@ module Generator =
     //lazy then takes care that it occurs exactly once.
     //(this technique for initialization picked up from Jon Harrop)
     let internal initArbitraryTypeClass = lazy do newTypeClass<Arbitrary<_>>
-    //do initArbitraryTypeClass.Value doesn't work anymore in this module. It does work in Runner.fs. Weird.
 
     ///Register the generators that are static members of the type argument.
-    let registerGenerators<'t>() = 
-        do initArbitraryTypeClass.Value
+    let register<'t>() = 
+        initArbitraryTypeClass.Value
         registerInstances<Arbitrary<_>,'t>()
 
     ///Register the generators that are static members of the type argument, overwriting any existing generators.
-    let overwriteGenerators<'t>() = 
-        do initArbitraryTypeClass.Value
+    let overwrite<'t>() = 
+        initArbitraryTypeClass.Value
         overwriteInstances<Arbitrary<_>,'t>()
 
     ///Register the generators that are static members of the given type.
-    let registerGeneratorsByType t = 
-        do initArbitraryTypeClass.Value
+    let registerByType t = 
+        initArbitraryTypeClass.Value
         registerInstancesByType (typeof<Arbitrary<_>>) t
 
     ///Register the generators that are static members of the given type, overwriting any existing generators.
-    let overwriteGeneratorsByType t = 
-        do initArbitraryTypeClass.Value
+    let overwriteByType t = 
+        initArbitraryTypeClass.Value
         overwriteInstancesByType (typeof<Arbitrary<_>>) t
+
+    //---obsoleted functions-----
+
+    [<Obsolete("This function has been renamed to map, and will be removed in the following version of FsCheck.")>]
+    let fmapGen = map
+
+    [<Obsolete("This function has been renamed to map, and will be removed in the following version of FsCheck.")>]
+    let liftGen = map
+    [<Obsolete("This function has been renamed to map2, and will be removed in the following version of FsCheck.")>]
+    let liftGen2 = map2
+    [<Obsolete("This function has been renamed to map3, and will be removed in the following version of FsCheck.")>]
+    let liftGen3 = map3
+    [<Obsolete("This function has been renamed to map4, and will be removed in the following version of FsCheck.")>]
+    let liftGen4 = map4
+    [<Obsolete("This function has been renamed to map5, and will be removed in the following version of FsCheck.")>]
+    let liftGen5 = map5
+    [<Obsolete("This function has been renamed to map6, and will be removed in the following version of FsCheck.")>]
+    let liftGen6 = map6
+
+    [<Obsolete("This function has been renamed to registerByType, and will be removed in the following version of FsCheck.")>]
+    let registerGeneratorsByType = registerByType
+    [<Obsolete("This function has been renamed to overwriteByType, and will be removed in the following version of FsCheck.")>]
+    let overwriteGeneratorsByType = overwriteByType
+    [<Obsolete("This function has been renamed to register, and will be removed in the following version of FsCheck.")>]
+    let registerGenerators<'t> = register<'t>
+    [<Obsolete("This function has been renamed to overwrite, and will be removed in the following version of FsCheck.")>]
+    let overwriteGenerators<'t> = overwrite<'t>
 

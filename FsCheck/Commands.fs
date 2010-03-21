@@ -14,6 +14,8 @@ namespace FsCheck
 [<AutoOpen>]
 module Commands =
 
+    open Gen
+
     ///A single command describes pre and post conditions and the model for a single method under test.
     [<AbstractClass>]
     type ICommand<'o,'s>() =
@@ -47,7 +49,7 @@ module Commands =
                 else
                     return []
             }
-            |> fmapGen List.rev
+            |> map List.rev
         sized <| genCommandsS (spec.Initial() |> snd)      
      
     ///Turn a specification into a property.

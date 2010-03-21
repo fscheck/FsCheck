@@ -15,7 +15,7 @@ namespace FsCheck
 module Property =
 
     open System
-    open Generator
+    open Gen
     open Common
     open TypeClass
 
@@ -138,7 +138,7 @@ module Property =
     let shrinking shrink x pf : Property =
         //cache is important here to avoid re-evaluation of property
         let rec props x = MkRose (lazy (property (pf x)), shrink x |> Seq.map props |> Seq.cache)
-        fmapGen join <| promoteRose (props x)
+        map join <| promoteRose (props x)
      
     let private liftRoseResult t : Property = gen { return t }
 
@@ -147,7 +147,7 @@ module Property =
      
     let private liftBool b = liftResult <| if b then succeeded else failed
 
-    let private mapRoseResult f :( _ -> Property) = fmapGen f << property
+    let private mapRoseResult f :( _ -> Property) = map f << property
 
     let private mapResult f = mapRoseResult (fmapRose f)
 
@@ -164,7 +164,7 @@ module Property =
             body a |> property
         with
             e -> liftResult (exc e)
-        |> fmapGen (fmapRose (argument a))
+        |> map (fmapRose (argument a))
 
     ///Quantified property combinator. Provide a custom test data generator to a property.
     let forAll gn body : Property = 
@@ -245,7 +245,7 @@ module Property =
     let private combine f a b:Property = 
         let pa = property a
         let pb = property b
-        liftGen2 (liftRose2 f) pa pb
+        map2 (liftRose2 f) pa pb
 
     ///Construct a property that succeeds if both succeed. (cfr 'and')
     let (.&.) l r = 
