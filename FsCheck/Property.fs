@@ -290,13 +290,5 @@ module Property =
                 Async.CancelDefaultToken() (*.DefaultGroup.TriggerCancel("FsCheck timeout exceeded")*)
                 property (timeout t)    
 
-    ///Property constructor. Constructs a property from a bool.
-    [<Obsolete("Please omit this function call: it's no longer necessary.")>]
-    let prop b = property b
-
-    ///Lazy property constructor. Constructs a property from a Lazy<bool>.
-    [<Obsolete("Please omit this function call: it's no longer necessary.")>]
-    let propl b = property b
-
     let internal initTestableTypeClass = lazy do newTypeClass<Testable<_>>
     initTestableTypeClass.Value
