@@ -228,16 +228,16 @@ module Runner =
 
     ///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
     ///In any case, it can be forced any number of times without problem.
-    let init = lazy (   initArbitraryTypeClass.Value
+    let init = lazy (   //initArbitraryTypeClass.Value
                         do Gen.register<Arbitrary.Arbitrary>()
-                        initTestableTypeClass.Value
-                        do registerInstances<Testable<_>,Testable>())
+                        //initTestableTypeClass.Value
+                        do initTestableTypeClass.Value )
 
 
     let private hasTestableReturnType (m:MethodInfo) =
         do init.Value
         try
-            getInstance (typedefof<Testable<_>>,m.ReturnType) |> ignore
+            (!TestableTC).GetInstance m.ReturnType |> ignore
             true
         with
             e -> false

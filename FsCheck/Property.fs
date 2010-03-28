@@ -25,9 +25,8 @@ module Property =
         | False
         | True
         | Rejected with
-        /// determines for which OUtcome the result should be shrunk, or shrinking should continue.
-        member x.Shrink = match x with Exception _ -> true | False -> true | _ -> false
-        //member x.ToOptionBool = match x with True -> Some true | Rejected -> None | _ -> Some false 
+        /// determines for which Outcome the result should be shrunk, or shrinking should continue.
+        member x.Shrink = match x with Exception _ -> true | False -> true | _ -> false 
 
 
     ///The result of one execution of a property.
@@ -128,8 +127,10 @@ module Property =
 
     type Testable<'a> =
         abstract Property : 'a -> Property
+       
+    let internal TestableTC = ref <| TypeClass<Testable<obj>>.New()
 
-    let property<'a> p = getInstance (typedefof<Testable<_>>, typeof<'a>) |> unbox<Testable<'a>> |> (fun t -> t.Property p)
+    let property<'a> p = (!TestableTC).InstanceFor<'a,Testable<'a>>().Property p
 
     let private promoteRose m = Gen (fun s r -> liftRose (fun (Gen m') -> m' s r) m)
 
@@ -287,8 +288,7 @@ module Property =
             Async.RunSynchronously(asyncTest, timeout = t)
         with
             :? TimeoutException -> 
-                Async.CancelDefaultToken() (*.DefaultGroup.TriggerCancel("FsCheck timeout exceeded")*)
+                Async.CancelDefaultToken()
                 property (timeout t)    
 
-    let internal initTestableTypeClass = lazy do newTypeClass<Testable<_>>
-    initTestableTypeClass.Value
+    let internal initTestableTypeClass = lazy do TestableTC := (!TestableTC).Register typeof<Testable>

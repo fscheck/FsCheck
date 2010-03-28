@@ -251,47 +251,33 @@ module Gen =
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
         Gen (fun n r -> m n (Seq.nth (v+1) (rands r)))
 
-
+    let private Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
 
     ///Returns a Gen<'a>
-    let arbitrary<'a> = getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<Arbitrary<'a>> |> (fun arb -> arb.Arbitrary)
+    let arbitrary<'a> = (!Arbitrary).InstanceFor<'a,Arbitrary<'a>>().Arbitrary // |> (fun arb -> arb.Arbitrary)
 
     ///Returns a generator transformer for the given value, aka a coarbitrary function.
-    let coarbitrary (a:'a)  = 
-        getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<(Arbitrary<'a>)> |> (fun arb -> arb.CoArbitrary) <| a
+    let coarbitrary<'a,'b> (a:'a) : (Gen<'b> -> Gen<'b>) = 
+        (!Arbitrary).InstanceFor<'a,Arbitrary<'a>>().CoArbitrary a
 
     ///Returns the immediate shrinks for the given value.
     let shrink<'a> (a:'a) = 
-        getInstance (typedefof<Arbitrary<_>>,typeof<'a>) |> unbox<(Arbitrary<'a>)> |> (fun arb -> arb.Shrink) <| a
+        (!Arbitrary).InstanceFor<'a,Arbitrary<'a>>().Shrink a
 
-    let internal getGenerator t = getInstance (typedefof<Arbitrary<_>>, t) |> unbox<IArbitrary> |> (fun arb -> arb.ArbitraryObj)
+    let internal getGenerator t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ArbitraryObj)
 
-    let internal getShrink t = getInstance (typedefof<Arbitrary<_>>, t) |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkObj)
-
-    //so init can be called from other modules. Depending on startup order, initialization may occur from different places.
-    //lazy then takes care that it occurs exactly once.
-    //(this technique for initialization picked up from Jon Harrop)
-    let internal initArbitraryTypeClass = lazy do newTypeClass<Arbitrary<_>>
-
-    ///Register the generators that are static members of the type argument.
-    let register<'t>() = 
-        initArbitraryTypeClass.Value
-        registerInstances<Arbitrary<_>,'t>()
-
-    ///Register the generators that are static members of the type argument, overwriting any existing generators.
-    let overwrite<'t>() = 
-        initArbitraryTypeClass.Value
-        overwriteInstances<Arbitrary<_>,'t>()
+    let internal getShrink t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkObj)
 
     ///Register the generators that are static members of the given type.
     let registerByType t = 
-        initArbitraryTypeClass.Value
-        registerInstancesByType (typeof<Arbitrary<_>>) t
+        //initArbitraryTypeClass.Value
+        Arbitrary := (!Arbitrary).Register t
 
-    ///Register the generators that are static members of the given type, overwriting any existing generators.
-    let overwriteByType t = 
-        initArbitraryTypeClass.Value
-        overwriteInstancesByType (typeof<Arbitrary<_>>) t
+    ///Register the generators that are static members of the type argument.
+    let register<'t>() = 
+        //initArbitraryTypeClass.Value
+        registerByType typeof<'t>
+
 
     //---obsoleted functions-----
 
@@ -313,10 +299,8 @@ module Gen =
 
     [<Obsolete("This function has been renamed to registerByType, and will be removed in the following version of FsCheck.")>]
     let registerGeneratorsByType = registerByType
-    [<Obsolete("This function has been renamed to overwriteByType, and will be removed in the following version of FsCheck.")>]
-    let overwriteGeneratorsByType = overwriteByType
+   
     [<Obsolete("This function has been renamed to register, and will be removed in the following version of FsCheck.")>]
     let registerGenerators<'t> = register<'t>
-    [<Obsolete("This function has been renamed to overwrite, and will be removed in the following version of FsCheck.")>]
-    let overwriteGenerators<'t> = overwrite<'t>
+
 

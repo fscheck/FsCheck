@@ -13,14 +13,20 @@ namespace FsCheck
 
 module internal Common =
 
-    //generic memoize function from Expert F# book
-    let memoize (f: 'a -> 'b) =
-        let t = new System.Collections.Generic.Dictionary<'a,'b>()
+    open System.Collections.Generic
+
+    ///Memoize the given function using the given dictionary
+    let memoizeWith (memo:IDictionary<'a,'b>) (f: 'a -> 'b) =
         fun n ->
-            if t.ContainsKey(n) then t.[n]
+            if memo.ContainsKey(n) then memo.[n]
             else let res = f n
-                 t.Add(n,res)
+                 memo.Add(n,res)
                  res
+
+    ///Memoize the given function.
+    let memoize f =
+        let t = new Dictionary<_,_>()
+        memoizeWith t f
 
     //used to be in FSharp libs
     let (|Lazy|) (inp:Lazy<'a>) = inp.Force()

@@ -311,6 +311,6 @@ type GeneratorExtensions =
     
 type DefaultArbitraries =
     static member Add<'t>() = Gen.register<'t>()
-    static member Overwrite<'t>() = Gen.overwrite<'t>()
+    //static member Overwrite<'t>() = Gen.overwrite<'t>()
   
 //do init.Value
