@@ -55,8 +55,9 @@ module internal Reflect =
 
     ///Equality for generic types    
     let genericTypeEq (lhs: System.Type) (rhs: System.Type) : bool =
-            lhs.IsGenericType && rhs.IsGenericType &&
-                (lhs.GetGenericTypeDefinition() = rhs.GetGenericTypeDefinition())
+            lhs.IsGenericType && 
+            rhs.IsGenericType &&
+            lhs.GetGenericTypeDefinition() = rhs.GetGenericTypeDefinition()
                 
     // resolve fails if the generic type is only determined by the return type 
     //(e.g., Array.zero_create) but that is easily fixed by additionally passing in the return type...
@@ -68,7 +69,7 @@ module internal Reflect =
             Array.zip (a.GetGenericArguments()) (f.GetGenericArguments()) |>
             Array.iter (resolve acc)
 
-    let internal invokeMethod (m:MethodInfo) target args =
+    let invokeMethod (m:MethodInfo) target args =
         let m = if m.ContainsGenericParameters then
                     let typeMap = new Dictionary<_,_>()
                     Array.zip args (m.GetParameters()) |> 

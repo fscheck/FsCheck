@@ -9,14 +9,13 @@
 
 #light
 
-namespace FsCheck
-
-//module public Fluent //don't add a module - otherwise every class needs to be qualified
+namespace FsCheck.Fluent
 
 open System
 open System.Linq
 open System.ComponentModel
 open System.Collections.Generic
+open FsCheck
 open Common
 open Gen
 open Testable
@@ -84,7 +83,8 @@ type Configuration() =
     let mutable name = Config.Quick.Name
     let mutable every = Config.Quick.Every
     let mutable everyShrink = Config.Quick.EveryShrink
-    let mutable size = Config.Quick.Size
+    let mutable startSize = Config.Quick.StartSize
+    let mutable endSize = Config.Quick.EndSize
     let mutable runner = Config.Quick.Runner
     let mutable replay = Config.Quick.Replay
     member x.MaxNbOfTest with get() = maxTest and set(v) = maxTest <- v
@@ -92,19 +92,21 @@ type Configuration() =
     member x.Name with get() = name and set(v) = name <- v
     member x.Every with get() = every and set(v:Func<int,obj array,string>) = every <- fun i os -> v.Invoke(i,List.toArray os)
     member x.EveryShrink with get() = everyShrink and set(v:Func<obj array,string>) = everyShrink <- fun os -> v.Invoke(List.toArray os)
-    member x.Size with get() = size and set(v:Func<double,double>) = size <- v.Invoke
+    member x.StartSize with get() = startSize and set(v) = startSize <- v
+    member x.EndSize with get() = endSize and set(v) = endSize <- v
     member x.Runner with get() = runner and set(v) = runner <- v
     //TODO: figure out how to deal with null values
     //member x.Replay with get() = (match replay with None -> null | Some s -> s) and set(v) = replay = Some v
     member internal x.ToConfig() =
         { MaxTest = maxTest
-        ; MaxFail = maxFail 
-        ; Name = name
-        ; Every = every
-        ; EveryShrink = everyShrink
-        ; Size= size
-        ; Runner = runner
-        ; Replay = None
+          MaxFail = maxFail 
+          Name = name
+          Every = every
+          EveryShrink = everyShrink
+          StartSize = startSize
+          EndSize = endSize
+          Runner = runner
+          Replay = None
         }
 
 [<AbstractClass>]

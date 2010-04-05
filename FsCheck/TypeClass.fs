@@ -11,7 +11,7 @@
 
 namespace FsCheck
 
-module TypeClass =
+module internal TypeClass =
 
     open System
     open System.Collections.Generic

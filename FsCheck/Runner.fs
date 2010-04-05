@@ -41,15 +41,22 @@ type IRunner =
 
 ///For configuring a run.
 type Config = 
-    { MaxTest       : int
+    { ///The maximum number of tests that are run.
+      MaxTest       : int
+      ///The maximum number of tests where values are rejected, e.g. as the result of ==>
       MaxFail       : int
+      ///If set, the seed to use to start testing. Allows reproduction of previous runs.
       Replay        : StdGen option
+      ///Name of the test.
       Name          : string
-      Size          : float -> float  //determines size passed to the generator as funtion of the previous size. Rounded up.
-                            //float is used to allow for smaller increases than 1.
-                            //note: in QuickCheck, this is a function of the test number!
-      Every         : int -> list<obj> -> string  //determines what to print if new arguments args are generated in test n
-      EveryShrink   : list<obj> -> string  //determines what to print every time a counter-example is succesfully shrunk
+      ///The size to use for the first test.
+      StartSize     : int
+      ///The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.
+      EndSize       : int
+      ///What to print when new arguments args are generated in test n
+      Every         : int -> list<obj> -> string
+      ///What to print every time a counter-example is succesfully shrunk
+      EveryShrink   : list<obj> -> string  
       Runner        : IRunner } //the test runner 
 
 module Runner =
@@ -136,7 +143,8 @@ module Runner =
         let origArgs = ref []
         let lastStep = ref (Failed Res.rejected)
         let seed = match config.Replay with None -> newSeed() | Some s -> s
-        test 0.0 (config.Size) seed (property prop) |>
+        let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
+        test (float config.StartSize) ((+) increaseSizeStep) seed (property prop) |>
         Seq.takeWhile (fun step ->
             lastStep := step
             //printfn "%A" step
@@ -155,7 +163,7 @@ module Runner =
         ) [] 
         |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed
 
-    let printArgs = List.map (sprintf "%A") >> String.concat "\n" (*>> List.reduce_left (+)*)
+    let printArgs = List.map (sprintf "%A") >> String.concat "\n"
 
     ///A function that returns the default string that is printed as a result of the test.
     let testFinishedToString name testResult =
@@ -299,15 +307,17 @@ type Config with
               MaxFail       = 1000
               Replay        = None
               Name          = ""
-              Size          = fun prevSize -> prevSize + 0.5
+              StartSize     = 0
+              EndSize       = 100
+              //Size          = fun prevSize -> prevSize + 0.5
               Every         = fun ntest args -> String.Empty
               EveryShrink   = fun args -> String.Empty
               Runner        = consoleRunner } 
     ///The verbose configuration prints each generated argument.
     static member Verbose = 
         { Config.Quick with 
-            Every       = (fun n args -> sprintf "%i:\n%s\n" n (printArgs args));
-            EveryShrink = fun args -> sprintf "shrink:\n%s\n" <| printArgs args
+            Every       = fun n args -> sprintf "%i:\n%s\n" n (printArgs args)
+            EveryShrink = fun args -> sprintf "shrink:\n%s\n" (printArgs args)
         }
     ///The default configuration is the quick configuration.
     static member Default = Config.Quick

@@ -1,4 +1,3 @@
-#light
 
 open FsCheck
 open System
@@ -10,6 +9,9 @@ open System.Collections.Generic
 
 open Prop
 
+//Check.One ({Config.Verbose with MaxTest = 10},fun (i:int) -> true)
+//
+//Console.ReadKey()
 
 //---too early initialization bug (put this first): fixed---
 type Generators =
