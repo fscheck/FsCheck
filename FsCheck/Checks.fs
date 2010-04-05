@@ -13,6 +13,8 @@ namespace FsCheck.Checks
 
 open FsCheck
 open Gen
+open Prop
+
 module Helpers = 
 
     open System
@@ -250,7 +252,7 @@ module Arbitrary =
     //String.
         
 module Property =
-    open FsCheck.Property
+    open FsCheck.Prop
     open FsCheck.Common
     open System
     
@@ -292,31 +294,31 @@ module Property =
         let addStamp stamp res = { res with Stamp = stamp :: res.Stamp }
         let addArgument arg res = { res with Arguments = arg :: res.Arguments }
         let addLabel label (res:Result) = { res with Labels = Set.add label res.Labels }
-        let andCombine prop1 prop2 = let (r1:Result,r2) = determineResult prop1, determineResult prop2 in r1.And(r2)
+        let andCombine prop1 prop2 :Result = let (r1:Result,r2) = determineResult prop1, determineResult prop2 in r1 &&& r2
         match prop with
-        | Unit -> succeeded
-        | Bool true -> succeeded
-        | Bool false -> failed
-        | Exception  -> exc <| InvalidOperationException()
+        | Unit -> Res.succeeded
+        | Bool true -> Res.succeeded
+        | Bool false -> Res.failed
+        | Exception  -> Res.exc <| InvalidOperationException()
         | ForAll (i,prop) -> determineResult prop |> addArgument i
         | Implies (true,prop) -> determineResult prop
-        | Implies (false,_) -> rejected
+        | Implies (false,_) -> Res.rejected
         | Classify (true,stamp,prop) -> determineResult prop |> addStamp stamp
         | Classify (false,_,prop) -> determineResult prop
         | Collect (i,prop) -> determineResult prop |> addStamp (sprintf "%A" i)
         | Label (l,prop) -> determineResult prop |> addLabel l
         | And (prop1, prop2) -> andCombine prop1 prop2
-        | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in r1.Or(r2)
+        | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in r1 ||| r2
         | Lazy prop -> determineResult prop
         | Tuple2 (prop1,prop2) -> andCombine prop1 prop2
-        | Tuple3 (prop1,prop2,prop3) -> (andCombine prop1 prop2).And(determineResult prop3)
-        | List props -> List.fold (fun st p -> st.And(determineResult p)) (List.head props |> determineResult) (List.tail props)
+        | Tuple3 (prop1,prop2,prop3) -> (andCombine prop1 prop2) &&& (determineResult prop3)
+        | List props -> List.fold (fun st p -> st &&& determineResult p) (List.head props |> determineResult) (List.tail props)
         
     let rec private toProperty prop =
         match prop with
-        | Unit -> property ()
-        | Bool b -> property b
-        | Exception -> property (lazy (raise <| InvalidOperationException()))
+        | Unit -> Testable.property ()
+        | Bool b -> Testable.property b
+        | Exception -> Testable.property (lazy (raise <| InvalidOperationException()))
         | ForAll (i,prop) -> forAll (constant i) (fun i -> toProperty prop)
         | Implies (b,prop) -> b ==> (toProperty prop)
         | Classify (b,stamp,prop) -> classify b stamp (toProperty prop)
@@ -333,8 +335,8 @@ module Property =
         match r0.Outcome,r1.Outcome with
         | Timeout i,Timeout j when i = j -> true
         | Outcome.Exception _, Outcome.Exception _ -> true
-        | False,False -> true 
-        | True,True -> true
+        | Outcome.False,Outcome.False -> true 
+        | Outcome.True,Outcome.True -> true
         | Rejected,Rejected -> true
         | _ -> false
         && List.forall2 (fun s0 s1 -> s0 = s1) r0.Stamp r1.Stamp

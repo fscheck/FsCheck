@@ -271,7 +271,7 @@ module Gen =
     ///Register the generators that are static members of the given type.
     let registerByType t = 
         //initArbitraryTypeClass.Value
-        Arbitrary := (!Arbitrary).Register t
+        Arbitrary := (!Arbitrary).Register(onlyPublic=true,instancesType=t)
 
     ///Register the generators that are static members of the type argument.
     let register<'t>() = 

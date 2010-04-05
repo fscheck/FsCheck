@@ -11,35 +11,59 @@
 
 namespace FsCheck
 
-[<AutoOpen>]
+open Random
+
+type TestData = 
+    { NumberOfTests: int
+    ; NumberOfShrinks: int
+    ; Stamps: seq<int * list<string>>
+    ; Labels: Set<string>
+    }
+
+type TestResult = 
+    | True of TestData
+    | False of TestData 
+                * list<obj>(*the original arguments that produced the failed test*)
+                * list<obj>(*the shrunk arguments that produce a failed test*)
+                * Outcome(*possibly exception or timeout that falsified the property*) 
+                * StdGen (*the seed used*)
+    | Exhausted of TestData
+
+
+///For implementing your own test runner.
+type IRunner =
+    ///Called whenever arguments are generated and after the test is run.
+    abstract member OnArguments: int * list<obj> * (int -> list<obj> -> string) -> unit
+    ///Called on a succesful shrink.
+    abstract member OnShrink: list<obj> * (list<obj> -> string) -> unit
+    ///Called whenever all tests are done, either True, False or Exhausted.
+    abstract member OnFinished: string * TestResult -> unit
+
+///For configuring a run.
+type Config = 
+    { MaxTest       : int
+      MaxFail       : int
+      Replay        : StdGen option
+      Name          : string
+      Size          : float -> float  //determines size passed to the generator as funtion of the previous size. Rounded up.
+                            //float is used to allow for smaller increases than 1.
+                            //note: in QuickCheck, this is a function of the test number!
+      Every         : int -> list<obj> -> string  //determines what to print if new arguments args are generated in test n
+      EveryShrink   : list<obj> -> string  //determines what to print every time a counter-example is succesfully shrunk
+      Runner        : IRunner } //the test runner 
+
 module Runner =
 
     open System
     open System.Collections.Generic
     open System.Reflection
-    open Random
+
     open Microsoft.FSharp.Reflection
     open Gen
-    open Property
+    open Testable
     open TypeClass
     open Common
-
-    type TestData = 
-        { NumberOfTests: int
-        ; NumberOfShrinks: int
-        ; Stamps: seq<int * list<string>>
-        ; Labels: Set<string>
-        }
-
-    type TestResult = 
-        | True of TestData
-        | False of TestData 
-                    * list<obj>(*the original arguments that produced the failed test*)
-                    * list<obj>(*the shrunk arguments that produce a failed test*)
-                    * Outcome(*possibly exception or timeout that falsified the property*) 
-                    * StdGen (*the seed used*)
-        | Exhausted of TestData
-        
+   
     type private TestStep = 
         | Generated of list<obj>    //generated arguments (test not yet executed)
         | Passed of Result          //one test passed
@@ -49,28 +73,7 @@ module Runner =
         | NoShrink of Result        //could not falsify given result; so unsuccesful shrink.
         | EndShrink of Result       //gave up shrinking; (possibly) shrunk result is given
 
-    ///For implementing your own test runner.
-    type IRunner =
-        ///Called whenever arguments are generated and after the test is run.
-        abstract member OnArguments: int * list<obj> * (int -> list<obj> -> string) -> unit
-        ///Called on a succesful shrink.
-        abstract member OnShrink: list<obj> * (list<obj> -> string) -> unit
-        ///Called whenever all tests are done, either True, False or Exhausted.
-        abstract member OnFinished: string * TestResult -> unit
-
-    ///For configuring a run.
-    type Config = 
-        { MaxTest       : int
-          MaxFail       : int
-          Replay        : StdGen option
-          Name          : string
-          Size          : float -> float  //determines size passed to the generator as funtion of the previous size. Rounded up.
-                                //float is used to allow for smaller increases than 1.
-                                //note: in QuickCheck, this is a function of the test number!
-          Every         : int -> list<obj> -> string  //determines what to print if new arguments args are generated in test n
-          EveryShrink   : list<obj> -> string  //determines what to print every time a counter-example is succesfully shrunk
-          Runner        : IRunner } //the test runner    
-
+ 
     let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
         seq { if not (Seq.isEmpty shrinks) then
                 //result forced here
@@ -107,14 +110,13 @@ module Runner =
     let private testsDone config outcome origArgs ntest nshrinks usedSeed stamps  =    
         let entry (n,xs) = (100 * n / ntest),xs
         let table = stamps 
-                    |> Seq.filter (not << List.isEmpty) //  (fun l -> l <> []) 
-                    |> Seq.sort  //_by (fun x -> x) 
+                    |> Seq.filter (not << List.isEmpty)
+                    |> Seq.sort
                     |> Seq.groupBy (fun x -> x) 
                     |> Seq.map (fun (l, ls) -> (Seq.length ls, l))
-                    |> Seq.sortBy fst // (fun (l, ls) -> l)
+                    |> Seq.sortBy fst
                     |> Seq.map entry
-                    //|> Seq.toList
-                    //|> display
+
         let testResult =
             let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
             match outcome with
@@ -132,7 +134,7 @@ module Runner =
         let shrinkNb = ref 0
         let tryShrinkNb = ref 0
         let origArgs = ref []
-        let lastStep = ref (Failed rejected)
+        let lastStep = ref (Failed Res.rejected)
         let seed = match config.Replay with None -> newSeed() | Some s -> s
         test 0.0 (config.Size) seed (property prop) |>
         Seq.takeWhile (fun step ->
@@ -153,7 +155,7 @@ module Runner =
         ) [] 
         |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed
 
-    let private printArgs = List.map (sprintf "%A") >> String.concat "\n" (*>> List.reduce_left (+)*)
+    let printArgs = List.map (sprintf "%A") >> String.concat "\n" (*>> List.reduce_left (+)*)
 
     ///A function that returns the default string that is printed as a result of the test.
     let testFinishedToString name testResult =
@@ -206,52 +208,36 @@ module Runner =
                 printf "%s" (testFinishedToString name testResult)
         }
            
-    ///The quick configuration only prints a summary result at the end of the test.
-    let quick = { MaxTest       = 100
-                  MaxFail       = 1000
-                  Replay        = None
-                  Name          = ""
-                  Size          = fun prevSize -> prevSize + 0.5
-                  Every         = fun ntest args -> String.Empty
-                  EveryShrink   = fun args -> String.Empty
-                  Runner        = consoleRunner } 
+    
 
-    ///The verbose configuration prints each generated argument.
-    let verbose = 
-        { quick with 
-            Every       = (fun n args -> sprintf "%i:\n%s\n" n (printArgs args));
-            EveryShrink = fun args -> sprintf "shrink:\n%s\n" <| printArgs args
-            //any_to_string n + ":\n" + (args |> List.fold_left (fun b a -> any_to_string a + "\n" + b) "")  } 
-        }
 
+//    [<Obsolete("Use Config.Quick instead.")>]
+//    let quick = Config.Quick
+//
+//    [<Obsolete("Use Config.Verbose instead.")>]
+//    let verbose = Config.Verbose
 
 
     ///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
     ///In any case, it can be forced any number of times without problem.
-    let init = lazy (   //initArbitraryTypeClass.Value
-                        do Gen.register<Arbitrary.Arbitrary>()
-                        //initTestableTypeClass.Value
-                        do initTestableTypeClass.Value )
-
+    let init = lazy do Gen.register<Arbitrary.Arbitrary>()
 
     let private hasTestableReturnType (m:MethodInfo) =
         do init.Value
         try
-            (!TestableTC).GetInstance m.ReturnType |> ignore
+            TestableTC.GetInstance m.ReturnType |> ignore
             true
         with
             e -> false
 
-    ///Check the given property p using the given Config.
-    let check config p = 
+    let internal check config p = 
         //every check, even the reflective one, passes through here. So:
         init.Value // should always work
         runner config (property p)
 
-    //Check the given property p using the given Config, and the given test name.
-    let checkName name config p = check { config with Name = name } p
+    let internal checkName name config p = check { config with Name = name } p
 
-    let private checkMethodInfo = typeof<Config>.DeclaringType.GetMethod("check",BindingFlags.Static ||| BindingFlags.Public)
+    let private checkMethodInfo = typeof<TestStep>.DeclaringType.GetMethod("check",BindingFlags.Static ||| BindingFlags.NonPublic)
 
     let private arrayToTupleType (arr:Type[]) =
         if arr.Length = 0 then
@@ -269,8 +255,7 @@ module Runner =
         else
             [|t|]
 
-    ///Check all public static methods on the given type that have a Testable return type(this includes let-bound functions in a module)
-    let checkAll config (t:Type) = 
+    let internal checkAll config (t:Type) = 
         printfn "--- Checking %s ---" t.Name
         t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
         Array.filter hasTestableReturnType |>
@@ -286,20 +271,84 @@ module Runner =
         printf "\n"
 
 
-    ///Check with the configuration 'quick'.  
-    let quickCheck p = p |> check quick
-    ///Check with the configuration 'verbose'.
-    let verboseCheck p = p |> check verbose 
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Quick instead.")>]
+//    let quickCheck p = p |> check quick
+//
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Verbose instead.")>]
+//    let verboseCheck p = p |> check verbose 
+//
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Quick instead.")>]
+//    let quickCheckN name p = p |> checkName name quick
+//
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Verbose instead.")>]
+//    let verboseCheckN name p = p |> checkName name verbose
+//
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.AllQuick instead.")>]
+//    let quickCheckAll t = t |> checkAll quick
+//
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.AllVerbose instead.")>]
+//    let verboseCheckAll t = t |> checkAll verbose 
 
-    ///Check with the configuration 'quick', and using the given name.
-    let quickCheckN name p = p |> checkName name quick
+open Runner
+open System
 
-    ///Check with the configuration 'verbose', and using the given name.
-    let verboseCheckN name p = p |> checkName name verbose
+type Config with
+    ///The quick configuration only prints a summary result at the end of the test.
+    static member Quick =  
+            { MaxTest       = 100
+              MaxFail       = 1000
+              Replay        = None
+              Name          = ""
+              Size          = fun prevSize -> prevSize + 0.5
+              Every         = fun ntest args -> String.Empty
+              EveryShrink   = fun args -> String.Empty
+              Runner        = consoleRunner } 
+    ///The verbose configuration prints each generated argument.
+    static member Verbose = 
+        { Config.Quick with 
+            Every       = (fun n args -> sprintf "%i:\n%s\n" n (printArgs args));
+            EveryShrink = fun args -> sprintf "shrink:\n%s\n" <| printArgs args
+        }
+    ///The default configuration is the quick configuration.
+    static member Default = Config.Quick
 
-    ///Check all public static methods on the given type that have a Testable return type with configuration 'quick'
-    let quickCheckAll t = t |> checkAll quick
-    /// Check all public static methods on the given type that have a Testable return type with configuration 'verbose'
-    let verboseCheckAll t = t |> checkAll verbose 
+type Check =
 
+    //Check the given property using the given config.
+    static member One (config,property:'Testable) = check config property
 
+    //Check the given property using the given config, and the given test name.
+    static member One (name,config,property:'Testable) = check { config with Name = name } property
+
+    ///Check one property with the quick configuration.  
+    static member Quick (property:'Testable) = Check.One(Config.Quick,property)
+
+    ///Check one property with the quick configuration, and using the given name.
+    static member Quick(name,property:'Testable) = Check.One(name,Config.Quick,property)
+
+    ///Check one property with the verbose configuration.
+    static member Verbose (property:'Testable) = Check.One(Config.Verbose,property)
+
+    ///Check one property with the verbose configuration, and using the given name.
+    static member Verbose(name,property:'Testable) = Check.One(name,Config.Verbose,property)
+
+    ///Check all public static methods on the given type that have a testable return type with the given configuration.
+    ///This includes let-bound functions in a module.
+    static member All(config,test) = checkAll config test
+
+    ///Check all public static methods on the given type that have a testable return type with the given configuration.
+    ///This includes let-bound functions in a module.
+    static member All<'Test> config = Check.All(config,typeof<'Test>)
+
+    ///Check all public static methods on the given type that have a testable return type with quick configuration
+    static member QuickAll test = Check.All(Config.Quick,test)
+
+    ///Check all public static methods on the given type that have a testable return type with quick configuration
+    static member QuickAll<'Test>() = Check.All(Config.Quick,typeof<'Test>)
+
+    /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration
+    static member VerboseAll<'Test>() = Check.All(Config.Verbose,typeof<'Test>)
+
+    /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration
+    static member VerboseAll test = Check.All(Config.Verbose,test)
+    

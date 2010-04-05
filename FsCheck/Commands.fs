@@ -11,10 +11,10 @@
 
 namespace FsCheck
 
-[<AutoOpen>]
 module Commands =
 
     open Gen
+    open Prop
 
     ///A single command describes pre and post conditions and the model for a single method under test.
     [<AbstractClass>]
@@ -56,7 +56,7 @@ module Commands =
     let asProperty (spec:ISpecification<_,_>) =
         let rec applyCommands (actual,model) (cmds:list<ICommand<_,_>>) =
             match cmds with
-            | [] -> property true
+            | [] -> Testable.property true
             | (c::cs) -> 
                 c.Pre model ==> 
                     let newActual = c.RunActual actual

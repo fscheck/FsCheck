@@ -26,7 +26,7 @@ module TypeClass =
         else None  
 
     //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank
-    let private findInstances (typeClass:Type) instancesType = 
+    let private findInstances (typeClass:Type) bindingFlags instancesType = 
         let addMethod ((generics,catchAll,arrays) as acc) (m:MethodInfo) =
             match m.ReturnType with
             | GenericTypeDef typeClass args when args.Length <> 1 -> 
@@ -43,7 +43,7 @@ module TypeClass =
                     (args.[0], m) :: generics,catchAll,arrays
             | _ -> acc
         let addMethods (t:Type) =
-            t.GetMethods((BindingFlags.Static ||| BindingFlags.Public))
+            t.GetMethods((BindingFlags.Static ||| BindingFlags.Public ||| bindingFlags))
             |> Seq.fold addMethod ([],None,[])
         let (generics, catchAll, array) = addMethods instancesType
         if generics.Length = 0 && catchAll.IsNone && array.Length = 0 then 
@@ -66,8 +66,8 @@ module TypeClass =
 
         ///Merge the instances defined by the given instances type with the ones already defined in this TypeClass.
         ///Instances defined in the given type will override the ones given in the argument.
-        member x.Register instancesType =
-            let (newInstances,newCatchAll,newArrayInstances) = findInstances x.Class instancesType
+        member x.Register(onlyPublic,instancesType) =
+            let (newInstances,newCatchAll,newArrayInstances) = findInstances x.Class (if onlyPublic then BindingFlags.Default else BindingFlags.NonPublic)  instancesType
             let instancesUnion = 
                 newInstances
                 |> List.map (fun (k,v) -> (k.FullName,v))

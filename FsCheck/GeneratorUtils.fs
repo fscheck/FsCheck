@@ -11,7 +11,7 @@
 
 namespace FsCheck
 
-module GeneratorUtils =
+module internal GeneratorUtils =
 
    open Gen
 

@@ -7,8 +7,6 @@
 **  See the file License.txt for the full text.                             **
 \*--------------------------------------------------------------------------*)
 
-#light
-
 namespace FsCheck
 
 module internal Reflect =

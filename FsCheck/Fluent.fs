@@ -19,6 +19,9 @@ open System.ComponentModel
 open System.Collections.Generic
 open Common
 open Gen
+open Testable
+open Prop
+open Runner
 
 //TODO:
 //Within -> rely on testing frameworks?
@@ -76,14 +79,14 @@ type Shrink =
 
 //mutable counterpart of the Config type
 type Configuration() =
-    let mutable maxTest = Runner.quick.MaxTest
-    let mutable maxFail = Runner.quick.MaxFail
-    let mutable name = Runner.quick.Name
-    let mutable every = Runner.quick.Every
-    let mutable everyShrink = Runner.quick.EveryShrink
-    let mutable size = Runner.quick.Size
-    let mutable runner = Runner.quick.Runner
-    let mutable replay = Runner.quick.Replay
+    let mutable maxTest = Config.Quick.MaxTest
+    let mutable maxFail = Config.Quick.MaxFail
+    let mutable name = Config.Quick.Name
+    let mutable every = Config.Quick.Every
+    let mutable everyShrink = Config.Quick.EveryShrink
+    let mutable size = Config.Quick.Size
+    let mutable runner = Config.Quick.Runner
+    let mutable replay = Config.Quick.Replay
     member x.MaxNbOfTest with get() = maxTest and set(v) = maxTest <- v
     member x.MaxNbOfFailedTests with get() = maxFail and set(v) = maxFail <- v
     member x.Name with get() = name and set(v) = name <- v
@@ -117,11 +120,11 @@ type UnbrowsableObject() =
     override x.ToString() = base.ToString()
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     abstract Build : unit -> Property
-    member x.QuickCheck() = quickCheck <| x.Build()
-    member x.VerboseCheck() = verboseCheck <| x.Build()
-    member x.QuickCheck(name:string) = quickCheckN name <| x.Build()
-    member x.VerboseCheck(name:string) = verboseCheckN name <| x.Build()
-    member x.Check(configuration:Configuration) = check (configuration.ToConfig()) <| x.Build()
+    member x.QuickCheck() = Check.Quick(x.Build())
+    member x.VerboseCheck() = Check.Verbose(x.Build())
+    member x.QuickCheck(name:string) = Check.Quick(name,x.Build())
+    member x.VerboseCheck(name:string) = Check.Verbose(name,x.Build())
+    member x.Check(configuration:Configuration) = Check.One(configuration.ToConfig(),x.Build())
 
 and SpecBuilder<'a> internal   ( generator0:'a Gen
                                , shrinker0: 'a -> 'a seq
@@ -255,7 +258,7 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
       
                 
 type Spec() =
-    static do init.Value
+    static do Runner.init.Value
     static member ForAny(assertion:Func<'a,bool>) =
         Spec.For(Any.OfType<'a>(),assertion)
     static member ForAny(assertion:Action<'a>) =
