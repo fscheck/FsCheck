@@ -2,7 +2,8 @@
 open FsCheck
 open System
 
-do Gen.register<Checks.Helpers.Arbitraries>()
+printfn "%A" Runner.init.Value
+printfn "%A" (Gen.register<Checks.Helpers.Arbitraries>())
 
 Check.QuickAll <| Type.GetType( "FsCheck.Checks.Random, FsCheck", true)
 

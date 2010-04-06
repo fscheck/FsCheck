@@ -15,9 +15,9 @@ open Random
 
 type TestData = 
     { NumberOfTests: int
-    ; NumberOfShrinks: int
-    ; Stamps: seq<int * list<string>>
-    ; Labels: Set<string>
+      NumberOfShrinks: int
+      Stamps: seq<int * list<string>>
+      Labels: Set<string>
     }
 
 type TestResult = 
@@ -56,8 +56,9 @@ type Config =
       ///What to print when new arguments args are generated in test n
       Every         : int -> list<obj> -> string
       ///What to print every time a counter-example is succesfully shrunk
-      EveryShrink   : list<obj> -> string  
-      Runner        : IRunner } //the test runner 
+      EveryShrink   : list<obj> -> string 
+      ///A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit. 
+      Runner        : IRunner }
 
 module Runner =
 
@@ -144,8 +145,8 @@ module Runner =
         let lastStep = ref (Failed Res.rejected)
         let seed = match config.Replay with None -> newSeed() | Some s -> s
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
-        test (float config.StartSize) ((+) increaseSizeStep) seed (property prop) |>
-        Seq.takeWhile (fun step ->
+        test (float config.StartSize) ((+) increaseSizeStep) seed (property prop) 
+        |> Seq.takeWhile (fun step ->
             lastStep := step
             //printfn "%A" step
             match step with
@@ -160,7 +161,7 @@ module Runner =
             match elem with
                 | Passed result -> (result.Stamp :: acc)
                 | _ -> acc
-        ) [] 
+            ) [] 
         |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed
 
     let printArgs = List.map (sprintf "%A") >> String.concat "\n"
@@ -216,22 +217,13 @@ module Runner =
                 printf "%s" (testFinishedToString name testResult)
         }
            
-    
-
-
-//    [<Obsolete("Use Config.Quick instead.")>]
-//    let quick = Config.Quick
-//
-//    [<Obsolete("Use Config.Verbose instead.")>]
-//    let verbose = Config.Verbose
-
 
     ///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
     ///In any case, it can be forced any number of times without problem.
-    let init = lazy do Gen.register<Arbitrary.Arbitrary>()
+    let init = lazy Gen.register<Arbitrary.Arbitrary>()
 
     let private hasTestableReturnType (m:MethodInfo) =
-        do init.Value
+        ignore init.Value
         try
             TestableTC.GetInstance m.ReturnType |> ignore
             true
@@ -240,7 +232,7 @@ module Runner =
 
     let internal check config p = 
         //every check, even the reflective one, passes through here. So:
-        init.Value // should always work
+        ignore init.Value // should always work
         runner config (property p)
 
     let internal checkName name config p = check { config with Name = name } p
@@ -273,29 +265,10 @@ module Runner =
             let funType = FSharpType.MakeFunctionType(fromP, toP) 
             let funValue = FSharpValue.MakeFunction(funType, tupleToArray >> Reflect.invokeMethod m None)
             let c = {config with Name = t.Name+"."+m.Name}
-            let genericM = checkMethodInfo.MakeGenericMethod([|funType(*fromP;toP*)|])
+            let genericM = checkMethodInfo.MakeGenericMethod( [|funType|] )
             genericM.Invoke(null, [|box c; funValue|]) |> ignore
             )
         printf "\n"
-
-
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Quick instead.")>]
-//    let quickCheck p = p |> check quick
-//
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Verbose instead.")>]
-//    let verboseCheck p = p |> check verbose 
-//
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Quick instead.")>]
-//    let quickCheckN name p = p |> checkName name quick
-//
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Verbose instead.")>]
-//    let verboseCheckN name p = p |> checkName name verbose
-//
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.AllQuick instead.")>]
-//    let quickCheckAll t = t |> checkAll quick
-//
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.AllVerbose instead.")>]
-//    let verboseCheckAll t = t |> checkAll verbose 
 
 open Runner
 open System
@@ -309,7 +282,6 @@ type Config with
               Name          = ""
               StartSize     = 0
               EndSize       = 100
-              //Size          = fun prevSize -> prevSize + 0.5
               Every         = fun ntest args -> String.Empty
               EveryShrink   = fun args -> String.Empty
               Runner        = consoleRunner } 
@@ -361,4 +333,29 @@ type Check =
 
     /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration
     static member VerboseAll test = Check.All(Config.Verbose,test)
-    
+
+
+// -- removed stuff
+//    [<Obsolete("Use Config.Quick instead.")>]
+//    let quick = Config.Quick
+//
+//    [<Obsolete("Use Config.Verbose instead.")>]
+//    let verbose = Config.Verbose
+
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Quick instead.")>]
+//    let quickCheck p = p |> check quick
+//
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Verbose instead.")>]
+//    let verboseCheck p = p |> check verbose 
+//
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Quick instead.")>]
+//    let quickCheckN name p = p |> checkName name quick
+//
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Verbose instead.")>]
+//    let verboseCheckN name p = p |> checkName name verbose
+//
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.AllQuick instead.")>]
+//    let quickCheckAll t = t |> checkAll quick
+//
+//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.AllVerbose instead.")>]
+//    let verboseCheckAll t = t |> checkAll verbose    

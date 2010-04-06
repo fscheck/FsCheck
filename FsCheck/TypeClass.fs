@@ -11,7 +11,7 @@
 
 namespace FsCheck
 
-module internal TypeClass =
+module TypeClass =
 
     open System
     open System.Collections.Generic
@@ -53,6 +53,13 @@ module internal TypeClass =
 
     type TypeFullName = string
 
+    type TypeClassComparison =
+        { NewInstances : Set<TypeFullName>
+          OverriddenInstances : Set<TypeFullName>
+          NewCatchAll : bool
+          OverriddenCatchAll : bool
+        }
+
     type TypeClass<'TypeClass> internal(?catchAll:MethodInfo,?instances:Map<TypeFullName,MethodInfo>,?arrayInstances:Map<int,MethodInfo>) =
         let instances = defaultArg instances Map.empty
         let arrayInstances = defaultArg arrayInstances Map.empty
@@ -80,14 +87,21 @@ module internal TypeClass =
             | None -> TypeClass<'TypeClass>(instances=instancesUnion, arrayInstances=arraysUnion)
             | Some ca -> TypeClass<'TypeClass>(catchAll=ca,instances=instancesUnion,arrayInstances=arraysUnion)
 
+        ///Compares this TypeClass with the given TypeClass. Returns, respectively, the new instances, overridden instances,
+        ///new array instances, overridden array instances, new catch all or overridden catchall introduced by the other TypeClass.
         member x.Compare (other:TypeClass<'TypeClass>) =
             let newInstances = other.Instances - x.Instances
             let overriddenInstances = Set.intersect other.Instances x.Instances
-            let newArrayInstances = other.ArrayInstances - x.ArrayInstances
-            let overriddenArrayInstances = Set.intersect other.ArrayInstances x.ArrayInstances
+            let toArrayFullName rank : TypeFullName = sprintf "'T[%s]" (String.replicate (rank-1) ",")
+            let newArrayInstances = other.ArrayInstances - x.ArrayInstances |> Set.map toArrayFullName
+            let overriddenArrayInstances = Set.intersect other.ArrayInstances x.ArrayInstances |> Set.map toArrayFullName
             let hasNewCatchAll = (not x.HasCatchAll) && other.HasCatchAll
             let hasOverriddenCatchAll = x.HasCatchAll && other.HasCatchAll
-            (newInstances,overriddenInstances,newArrayInstances,overriddenArrayInstances,hasNewCatchAll,hasOverriddenCatchAll)
+            { NewInstances = newInstances + newArrayInstances
+              OverriddenInstances = overriddenInstances + overriddenArrayInstances
+              NewCatchAll = hasNewCatchAll
+              OverriddenCatchAll = hasOverriddenCatchAll
+            }
 
         member x.GetInstance =
             Common.memoizeWith memo (fun (instance:Type) ->

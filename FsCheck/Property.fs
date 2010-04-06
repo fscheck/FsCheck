@@ -93,10 +93,10 @@ module internal Rose =
     let rec join (MkRose (r,tts)) =
         //bweurgh. Need to match twice to keep it lazy.
         let x = lazy (match r with (Lazy (MkRose (x,_))) -> x.Value)
-        let ts = Seq.append (Seq.map join tts) <| seq { yield! match r with (Lazy (MkRose (_,ts))) -> ts }
+        let ts = Seq.append (Seq.map join tts) (match r with (Lazy (MkRose (_,ts))) -> ts)
         MkRose (x,ts) 
       //first shrinks outer quantification; makes most sense
-      // first shrinks inner quantification: MkRose (x,(ts ++ Seq.map join tts))
+      //first shrinks inner quantification: MkRose (x,(ts ++ Seq.map join tts))
 
     let ret x = MkRose (lazy x,Seq.empty)
     
@@ -165,8 +165,8 @@ module internal Testable =
         //safeForce (lazy ( body a )) //this doesn't work - exception escapes??
         try 
             body a |> property
-        with
-            e -> Prop.ofResult (Res.exc e)
+        with e -> 
+            Prop.ofResult (Res.exc e)
         |> Gen.map (Rose.map (argument a))
 
     let forAll gn body : Property = 

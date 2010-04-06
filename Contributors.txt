@@ -5,6 +5,7 @@ toyvo (Makefile for mono users)
 Steve Gilham (byte arbitrary instance)
 David Crocker (first version of replay mechanism, bug fix)
 Howard Mansell (lots of generators and arbitrary instances)
+David Jones (tail recursive version of Gen.sequence)
 (my sincerest apologies to anyone I overlooked - feel free to protest!)
 
 Thanks to:

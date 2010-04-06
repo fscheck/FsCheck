@@ -281,8 +281,10 @@ module Gen =
 
     ///Register the generators that are static members of the given type.
     let registerByType t = 
-        //initArbitraryTypeClass.Value
-        Arbitrary := (!Arbitrary).Register(onlyPublic=true,instancesType=t)
+        let newTypeClass = (!Arbitrary).Register(onlyPublic=true,instancesType=t)
+        let result = (!Arbitrary).Compare newTypeClass
+        Arbitrary := newTypeClass
+        result
 
     ///Register the generators that are static members of the type argument.
     let register<'t>() = 

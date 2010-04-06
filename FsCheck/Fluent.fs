@@ -260,7 +260,7 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
       
                 
 type Spec() =
-    static do Runner.init.Value
+    static let _ = Runner.init.Value
     static member ForAny(assertion:Func<'a,bool>) =
         Spec.For(Any.OfType<'a>(),assertion)
     static member ForAny(assertion:Action<'a>) =
