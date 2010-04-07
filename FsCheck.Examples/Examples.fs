@@ -470,7 +470,7 @@ let private idempotent f x = let y = f x in f y = y
 Check.Quick (idempotent (fun (x : string) -> x.ToUpper()))
 
 let propBigTuple (a:bool,b:float,c:string,d:char,e:byte,f:float,g:string,h:option<float>,i) = if i > 10 then false else true
-quickCheckN "propBigTuple" propBigTuple
+Check.Quick("propBigTuple",propBigTuple)
 
 //-----property combinators------------------
 

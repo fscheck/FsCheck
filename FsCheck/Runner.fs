@@ -273,7 +273,7 @@ module Runner =
         t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
         Array.filter hasTestableReturnType |>
         Array.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m)
-            let genericM = checkMethodInfo.MakeGenericMethod( [|funType|] )
+           // let genericM = checkMethodInfo.MakeGenericMethod( [|funType|] )
         printf "\n"
 
 open Runner
