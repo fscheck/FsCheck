@@ -11,188 +11,188 @@
 
 namespace FsCheck
 
-[<AutoOpen>]
-module Property =
-
-    open System
-    open Generator
-    open Common
-    open TypeClass
-
-    type Outcome = 
-        | Timeout of int
-        | Exception of exn
-        | False
-        | True
-        | Rejected with
-        /// determines for which OUtcome the result should be shrunk, or shrinking should continue.
-        member x.Shrink = match x with Exception _ -> true | False -> true | _ -> false
-        //member x.ToOptionBool = match x with True -> Some true | Rejected -> None | _ -> Some false 
+type Outcome = 
+    | Timeout of int
+    | Exception of exn
+    | False
+    | True
+    | Rejected 
+    /// determines for which Outcome the result should be shrunk, or shrinking should continue.
+    member internal x.Shrink = match x with Exception _ -> true | False -> true | _ -> false 
 
 
-    ///The result of one execution of a property.
-    type Result = 
-        {   Outcome     : Outcome
-            Stamp       : list<string>
-            Labels      : Set<string>
-            Arguments   : list<obj> } with
-            //Reason: Reason } with 
-        ///Returns a new result that is Succeeded if and only if both this
-        ///and the given Result are Succeeded.
-        member l.And(r:Result) = 
-            //printfn "And of l %A and r %A" l.Outcome r.Outcome
-            match (l.Outcome,r.Outcome) with
-            | (Exception _,_) -> l //here a potential exception in r is thrown away...
-            | (_,Exception _) -> r
-            | (Timeout _,_) -> l
-            | (_,Timeout _) -> r
-            | (False,_) -> l
-            | (_,False) -> r
-            | (_,True) -> l
-            | (True,_) -> r
-            | (Rejected,Rejected) -> l //or r, whatever
-        member l.Or(r:Result) =
-            match (l.Outcome, r.Outcome) with
-            | (Exception _,_) -> l //here a potential exception in r is thrown away...
-            | (_,Exception _) -> r
-            | (Timeout _,_) -> l
-            | (_,Timeout _) -> r
-            | (_,False) -> l
-            | (False,_) -> r
-            | (True,_) -> l
-            | (_,True) -> r
-            | (Rejected,Rejected) -> l //or r, whatever   
+///The result of one execution of a property.
+type Result = 
+    {   Outcome     : Outcome
+        Stamp       : list<string>
+        Labels      : Set<string>
+        Arguments   : list<obj> } 
+    ///Returns a new result that is Succeeded if and only if both this
+    ///and the given Result are Succeeded.
+    static member (&&&) (l,r) = 
+        //printfn "And of l %A and r %A" l.Outcome r.Outcome
+        match (l.Outcome,r.Outcome) with
+        | (Exception _,_) -> l //here a potential exception in r is thrown away...
+        | (_,Exception _) -> r
+        | (Timeout _,_) -> l
+        | (_,Timeout _) -> r
+        | (False,_) -> l
+        | (_,False) -> r
+        | (_,True) -> l
+        | (True,_) -> r
+        | (Rejected,Rejected) -> l //or r, whatever
+    static member (|||) (l,r) =
+        match (l.Outcome, r.Outcome) with
+        | (Exception _,_) -> l //here a potential exception in r is thrown away...
+        | (_,Exception _) -> r
+        | (Timeout _,_) -> l
+        | (_,Timeout _) -> r
+        | (_,False) -> l
+        | (False,_) -> r
+        | (True,_) -> l
+        | (_,True) -> r
+        | (Rejected,Rejected) -> l //or r, whatever  
+
+module internal Res =
 
     let private result =
       { Outcome     = Rejected
-      ; Stamp       = []
-      ; Labels       = Set.empty
-      ; Arguments   = []
+        Stamp       = []
+        Labels       = Set.empty
+        Arguments   = []
       }
 
-    let internal failed = { result with Outcome = False }
+    let failed = { result with Outcome = False }
 
-    let internal exc e = { result with Outcome = Exception e }
+    let exc e = { result with Outcome = Exception e }
 
-    let internal timeout i = { result with Outcome = Timeout i }
+    let timeout i = { result with Outcome = Timeout i }
 
-    let internal succeeded = { result with Outcome = True }
+    let succeeded = { result with Outcome = True }
 
-    let internal rejected = { result with Outcome = Rejected }
+    let rejected = { result with Outcome = Rejected }
 
-    //A rose is a pretty tree
-    //Draw it and you'll see.
-    //A Rose<Result> is used to keep, in a lazy way, a Result and the possible shrinks for the value in the node.
-    //The fst value is the current Result, and the list contains the properties yielding possibly shrunk results.
-    //Each of those can in turn have their own shrinks. 
-    type Rose<'a> = 
-        MkRose of Lazy<'a> * seq<Rose<'a>> with
-            member x.Map f = 
-                match x with MkRose (x,rs) -> MkRose (lazy (f x.Value), rs |> Seq.map (fun r -> r.Map f)) 
+     
 
-    let private fmapRose f (a:Rose<_>) = a.Map f
+
+//A rose is a pretty tree
+//Draw it and you'll see.
+//A Rose<Result> is used to keep, in a lazy way, a Result and the possible shrinks for the value in the node.
+//The fst value is the current Result, and the list contains the properties yielding possibly shrunk results.
+//Each of those can in turn have their own shrinks. 
+type Rose<'a> = internal MkRose of Lazy<'a> * seq<Rose<'a>>
+
+module internal Rose =
+
+    let rec map f (a:Rose<_>) = match a with MkRose (x,rs) -> MkRose (lazy (f x.Value), rs |> Seq.map (map f))
        
     //careful here: we can't pattern match as follows, as this will result in evaluation:
     //let rec join (MkRose (Lazy (MkRose(x,ts)),tts)) 
     //instead, define everything inside the MkRose, as a lazily evaluated expression. Haskell would use an irrefutable
     //pattern here (is this possible using an active pattern? -> to investigate!) 
-    let rec private join (MkRose (r,tts)) =
+    let rec join (MkRose (r,tts)) =
         //bweurgh. Need to match twice to keep it lazy.
         let x = lazy (match r with (Lazy (MkRose (x,_))) -> x.Value)
-        let ts = Seq.append (Seq.map join tts) <| seq { yield! match r with (Lazy (MkRose (_,ts))) -> ts }
+        let ts = Seq.append (Seq.map join tts) (match r with (Lazy (MkRose (_,ts))) -> ts)
         MkRose (x,ts) 
       //first shrinks outer quantification; makes most sense
-      // first shrinks inner quantification: MkRose (x,(ts ++ Seq.map join tts))
+      //first shrinks inner quantification: MkRose (x,(ts ++ Seq.map join tts))
 
-    type RoseBuilder() =
-        member internal b.Return(x) : Rose<_> = 
-            MkRose (lazy x,Seq.empty)
-        member internal b.Bind(m, k) : Rose<_> = 
-            join ( fmapRose k m )              
+    let ret x = MkRose (lazy x,Seq.empty)
+    
+    let bind m k = join ( map k m ) 
 
-    let private rose = new RoseBuilder()
-
-    let private liftRose f = fun r -> rose{ let! r' = r
-                                            return f r' }
-
-    let private liftRose2 f = fun r1 r2  -> 
-                                rose {  let! r1' = r1
-                                        let! r2' = r2
-                                        return f r1' r2' }
+    let map2 f r1 r2 =  bind r1 (fun r1' -> bind r2 (fun r2' -> ret <| f r1' r2'))
                                      
+    let ofLazy x = MkRose (x,Seq.empty)
 
-    let private lazyRose x = MkRose (x,Seq.empty)
+    type Builder() =
+        member internal b.Return(x) : Rose<_> = ret x
+        member internal b.Bind(m, k) : Rose<_> = bind m k
+                         
+    let rose = new Builder()
 
-    ///Type synonym for a test result generator.
-    type Property = Gen<Rose<Result>>
 
+///Type synonym for a test result generator.
+type Property = Gen<Rose<Result>>
+
+module internal Testable =
+
+    open System
+    open Common
+    open TypeClass
+                   
     type Testable<'a> =
         abstract Property : 'a -> Property
+    
+    type Testables = class end
+     
+    let internal TestableTC = 
+        (lazy
+            let empty = TypeClass<Testable<obj>>.New()
+            empty.Register(onlyPublic=false,instancesType=typeof<Testables>)).Force()
+        
+    let property<'a> p = TestableTC.InstanceFor<'a,Testable<'a>>().Property p
 
-    let property<'a> p = getInstance (typedefof<Testable<_>>, typeof<'a>) |> unbox<Testable<'a>> |> (fun t -> t.Property p)
+    module internal Prop = 
+    
+        let ofRoseResult t : Property = gen { return t }
 
-    let private promoteRose m = Gen (fun s r -> liftRose (fun (Gen m') -> m' s r) m)
+        let ofResult (r:Result) : Property = 
+            ofRoseResult <| Rose.rose { return r }
+         
+        let ofBool b = ofResult <| if b then Res.succeeded else Res.failed
 
-    ///Property combinator to shrink an original value x using the shrinking function shrink:'a -> #seq<'a>, and the testable
-    ///function pf. 
+        let mapRoseResult f :( _ -> Property) = Gen.map f << property
+
+        let mapResult f = mapRoseResult (Rose.map f)
+
+        let safeForce (body:Lazy<_>) =
+            try
+                property body.Value
+            with
+                e -> ofResult (Res.exc e)
+    
+
     let shrinking shrink x pf : Property =
+        let promoteRose m = Gen (fun s r -> Rose.map (fun (Gen m') -> m' s r) m)
         //cache is important here to avoid re-evaluation of property
         let rec props x = MkRose (lazy (property (pf x)), shrink x |> Seq.map props |> Seq.cache)
-        fmapGen join <| promoteRose (props x)
+        Gen.map Rose.join <| promoteRose (props x)
      
-    let private liftRoseResult t : Property = gen { return t }
-
-    let private liftResult (r:Result) : Property = 
-        liftRoseResult <| rose { return r }
-     
-    let private liftBool b = liftResult <| if b then succeeded else failed
-
-    let private mapRoseResult f :( _ -> Property) = fmapGen f << property
-
-    let private mapResult f = mapRoseResult (fmapRose f)
-
-    let private safeForce (body:Lazy<_>) =
-        try
-            property body.Value
-        with
-            e -> liftResult (exc e)
-
     let private evaluate body a : Property =
         let argument a res = { res with Arguments = (box a) :: res.Arguments }
         //safeForce (lazy ( body a )) //this doesn't work - exception escapes??
         try 
             body a |> property
-        with
-            e -> liftResult (exc e)
-        |> fmapGen (fmapRose (argument a))
+        with e -> 
+            Prop.ofResult (Res.exc e)
+        |> Gen.map (Rose.map (argument a))
 
-    ///Quantified property combinator. Provide a custom test data generator to a property.
     let forAll gn body : Property = 
-        gen{let! a = gn
-            return! evaluate body a }
+        gen{ let! a = gn
+             return! evaluate body a }
 
-    ///Quantified property combinator. Provide a custom test data generator to a property. 
-    ///Shrink failing test cases using the given shrink function.
     let forAllShrink gn shrink body : Property =
         gen{let! a = gn
             return! shrinking shrink a (fun a' -> evaluate body a')}
 
-    type Testable =
+    type Testables with
         static member Unit() =
             { new Testable<unit> with
-                member x.Property _ = liftResult succeeded }
+                member x.Property _ = Prop.ofResult Res.succeeded }
         static member Bool() =
             { new Testable<bool> with
-                member x.Property b = liftBool b }
+                member x.Property b = Prop.ofBool b }
         static member Lazy() =
             { new Testable<Lazy<'a>> with
                 member x.Property b =
                     let promoteLazy (m:Lazy<_>) = 
-                        Gen (fun s r -> join <| lazyRose (lazy (match m.Value with (Gen g) -> g s r)))
-                    promoteLazy (lazy (safeForce (lazy b.Value))) }
+                        Gen (fun s r -> Rose.join <| Rose.ofLazy (lazy (match m.Value with (Gen g) -> g s r)))
+                    promoteLazy (lazy (Prop.safeForce (lazy b.Value))) } //TODO: check if the lazy b.Value is necessary (b is already lazy?)
         static member Result() =
             { new Testable<Result> with
-                member x.Property res = liftResult res }
+                member x.Property res = Prop.ofResult res }
         static member Property() =
             { new Testable<Property> with
                 member x.Property prop = prop }
@@ -204,99 +204,108 @@ module Property =
                 member x.Property rosea = gen { return rosea } } 
         static member Arrow() =
             { new Testable<('a->'b)> with
-                member x.Property f = forAllShrink arbitrary shrink f }
-       
-
-    ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
-    let (==>) = 
-        let implies b a = if b then property a else property rejected
-        implies
-
-    ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
-    ///and a failure otherwise.
-    let throws<'t, 'a when 't :> exn> (p : Lazy<'a>) = 
-       property <| try ignore p.Value; failed with :? 't -> succeeded
-
-    let private stamp str = 
-        let add res = { res with Stamp = str :: res.Stamp } 
-        mapResult add
-
-    ///Classify test cases combinator. Test cases satisfying the condition are assigned the classification given.
-    let classify b name = if b then stamp name else property
-
-    ///Count trivial cases property combinator. Test cases for which the condition is True are classified as trivial.
-    let trivial b = classify b "trivial"
-
-    ///Collect data values property combinator. The argument of collect is evaluated in each test case, 
-    ///and the distribution of values is reported, using any_to_string.
-    let collect v = stamp <| sprintf "%A" v
-
-    ///Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
-    let label l = 
-        let add res = { res with Labels = Set.add l res.Labels }
-        mapResult add
-
-    ///Add the given label to the property. Property on the left hand side, label on the right.
-    let (|@) x = x |> flip label 
-
-    ///Add the given label to the property. label on the left hand side, property on the right.
-    let (@|) = label
+                member x.Property f = forAllShrink Gen.arbitrary Gen.shrink f }
 
     let private combine f a b:Property = 
         let pa = property a
         let pb = property b
-        liftGen2 (liftRose2 f) pa pb
+        Gen.map2 (Rose.map2 f) pa pb
 
-    ///Construct a property that succeeds if both succeed. (cfr 'and')
-    let (.&.) l r = 
-        let andProp = combine (fun a b -> a.And(b))
-        andProp l r
+    let (.&) l r = combine (&&&) l r
 
-    ///Construct a property that fails if both fail. (cfr 'or')
-    let (.|.) l r =
-        let orProp = combine (fun a b -> a.Or(b))
-        orProp  l r
+    let (.|) l r = combine (|||) l r
 
-    //And some handy overloads for complicated testables
-    type Testable with
+    type Testables with
         static member Tuple2() =
             { new Testable<'a*'b> with
-                member x.Property ((a,b)) = a .&. b }
+                member x.Property ((a,b)) = a .& b }
         static member Tuple3() =
             { new Testable<'a*'b*'c> with
-                member x.Property ((a,b,c)) = a .&. b .&. c }
+                member x.Property ((a,b,c)) = a .& b .& c }
         static member Tuple4() =
             { new Testable<'a*'b*'c*'d> with
-                member x.Property ((a,b,c,d)) = a .&. b .&. c .&. d }
+                member x.Property ((a,b,c,d)) = a .& b .& c .& d }
         static member Tuple5() =
             { new Testable<'a*'b*'c*'d*'e> with
-                member x.Property ((a,b,c,d,e)) = a .&. b .&. c .&. d .&. e }
+                member x.Property ((a,b,c,d,e)) = a .& b .& c .& d .& e }
         static member Tuple6() =
             { new Testable<'a*'b*'c*'d*'e*'f> with
-                member x.Property ((a,b,c,d,e,f)) = a .&. b .&. c .&. d .&. e .&. f}
+                member x.Property ((a,b,c,d,e,f)) = a .& b .& c .& d .& e .& f}
         static member List() =
             { new Testable<list<'a>> with
-                member x.Property l = List.fold (.&.) (property <| List.head l) (List.tail l) }
-                
+                member x.Property l = List.fold (.&) (property <| List.head l) (List.tail l) }
+
+
+module Prop =
+    open Testable
+    open System
+
+    ///Quantified property combinator. Provide a custom test data generator to a property.
+    let forAll (generator:Gen<'Value>) (body:'Value -> 'Testable) = forAll generator body
+
+    ///Quantified property combinator. Provide a custom test data generator to a property. 
+    ///Shrink failing test cases using the given shrink function.
+    let forAllShrink (generator:Gen<'Value>) (shrinker:'Value->#seq<'Value>) (body:'Value -> 'Testable)= forAllShrink generator shrinker body
+
+    ///Property combinator to shrink a given value using the shrinking function shrink:'a -> #seq<'a>, and the testable
+    ///function pf. 
+    let shrinking (shrinker:'Value->#seq<'Value>) (value:'Value) (body:'Value -> 'Testable) = shrinking shrinker value body
+
+    ///Depending on the condition, return the first testable if true and the second if false.
+    let given condition (iftrue:'TestableIfTrue,ifFalse:'TestableIfFalse) = 
+        if condition then property iftrue else property ifFalse
+
+    ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
+    let (==>) condition (assertion:'Testable) = given condition (assertion,property Res.rejected)
+
+    ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
+    ///and a failure otherwise.
+    let throws<'Exception, 'Testable when 'Exception :> exn> (p : Lazy<'Testable>) = 
+       property <| try ignore p.Value; Res.failed with :? 'Exception -> Res.succeeded
+
+    let private stamp str = 
+        let add res = { res with Stamp = str :: res.Stamp } 
+        Prop.mapResult add
+
+    ///Classify test cases combinator. Test cases satisfying the condition are assigned the classification given.
+    let classify b name : ('Testable -> Property) = if b then stamp name else property
+
+    ///Count trivial cases property combinator. Test cases for which the condition is True are classified as trivial.
+    let trivial b : ('Testable -> Property) = classify b "trivial"
+
+    ///Collect data values property combinator. The argument of collect is evaluated in each test case, 
+    ///and the distribution of values is reported, using any_to_string.
+    let collect (v:'CollectedValue) : ('Testable -> Property) = stamp <| sprintf "%A" v
+
+    ///Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
+    let label l : ('Testable -> Property) = 
+        let add res = { res with Labels = Set.add l res.Labels }
+        Prop.mapResult add
+
+    ///Add the given label to the property. Property on the left hand side, label on the right.
+    let (|@) x = x |> Common.flip label 
+
+    ///Add the given label to the property. label on the left hand side, property on the right.
+    let (@|) = label
+
+    ///Construct a property that succeeds if both succeed. (cfr 'and')
+    let (.&.) (l:'LeftTestable) (r:'RightTestable) = 
+        let andProp = l .& r
+        andProp
+
+    ///Construct a property that fails if both fail. (cfr 'or')
+    let (.|.) (l:'LeftTestable) (r:'RightTestable) = 
+        let orProp = l .| r
+        orProp
+
     ///Fails the property if it does not complete within t milliseconds. Note that the called property gets a
     ///cancel signal, but whether it responds to that is up to the property; the execution may not actually stop.
-    let within t (a:Lazy<_>) =
+    let within time (lazyProperty:Lazy<'Testable>) =
         try 
-            let test = new Func<_>(fun () -> property a.Value)
+            let test = new Func<_>(fun () -> property lazyProperty.Value)
             let asyncTest = Async.FromBeginEnd(test.BeginInvoke, test.EndInvoke)                     
-            Async.RunSynchronously(asyncTest, timeout = t)
+            Async.RunSynchronously(asyncTest, timeout = time)
         with
             :? TimeoutException -> 
-                Async.CancelDefaultToken() (*.DefaultGroup.TriggerCancel("FsCheck timeout exceeded")*)
-                property (timeout t)    
-
-    ///Property constructor. Constructs a property from a bool.
-    [<Obsolete("Please omit this function call: it's no longer necessary.")>]
-    let prop b = property b
-
-    ///Lazy property constructor. Constructs a property from a Lazy<bool>.
-    [<Obsolete("Please omit this function call: it's no longer necessary.")>]
-    let propl b = property b
-
-    let internal initTestableTypeClass = lazy do newTypeClass<Testable<_>>
-    initTestableTypeClass.Value
+                Async.CancelDefaultToken()
+                property (Res.timeout time)

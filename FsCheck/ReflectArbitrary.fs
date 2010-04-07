@@ -17,6 +17,7 @@ module internal ReflectArbitrary =
     open System.Reflection
     open Microsoft.FSharp.Reflection
     open Reflect
+    open Gen
 
     /// Generate a random enum of the type specified by the System.Type
     let enumOfType (t: System.Type) : Gen<Enum> =
@@ -35,13 +36,13 @@ module internal ReflectArbitrary =
                                 failwithf "Recursive record types cannot be generated automatically: %A" t 
                             else yield getGenerator pi.PropertyType ]
                 let create = getRecordConstructor t
-                let result = g |> sequence |> fmapGen (List.toArray >> create)
+                let result = g |> sequence |> map (List.toArray >> create)
                 box result
 
             elif isTupleType t then
                 let g = [ for elem in FSharpType.GetTupleElements t do yield getGenerator elem ]
                 let create elems = FSharpValue.MakeTuple (elems,t)
-                let result = g |> sequence |> fmapGen (List.toArray >> create)
+                let result = g |> sequence |> map (List.toArray >> create)
                 box result
 
             elif isUnionType t then
@@ -58,7 +59,7 @@ module internal ReflectArbitrary =
                         let n = gs.Length
                         [ for g in gs -> sized (fun s -> resize ((s / n) - 1) g )]
                     let g = productGen ts
-                    let res = g |> sequence |> fmapGen (List.toArray >> create)
+                    let res = g |> sequence |> map (List.toArray >> create)
                     res
 
                 let gs = [ for _,(_,fields,create,_) in getUnionCases t -> unionSize fields, lazy (unionGen create fields) ]
@@ -86,7 +87,7 @@ module internal ReflectArbitrary =
     let private reflectGenObj (t:Type) = (reflectObj t |> unbox<IGen>).AsGenObject
 
     ///Builds a generator for the given type based on reflection. Currently works for record and union types.
-    let reflectGen<'a> = fmapGen (unbox<'a>) (reflectGenObj (typeof<'a>))
+    let reflectGen<'a> = map (unbox<'a>) (reflectGenObj (typeof<'a>))
 
     let rec private children0 (seen : Set<string>) (tFind : Type) (t : Type) : (obj -> list<obj>) =
                 if tFind = t then

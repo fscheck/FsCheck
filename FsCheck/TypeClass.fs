@@ -11,24 +11,12 @@
 
 namespace FsCheck
 
-module public TypeClass =
+module TypeClass =
 
     open System
     open System.Collections.Generic
     open System.Reflection
-      
-    let private typeClasses = new Dictionary<_,_>() //generic types per typeClass
-    let private catchAlls = new Dictionary<_,_>()   //catchall types per typeClass
-    let private arrays = new Dictionary<_,_>()      //array types per typeClass
-
-    ///Define a new typeclass of the given (generic) type. The methods on this class are the ones that will be associated with
-    ///its generic type.
-    let newTypeClass<'typeClass> = 
-        let t = (typeof<'typeClass>).GetGenericTypeDefinition()
-        typeClasses.Add(t, new Dictionary<_,_>())
-        catchAlls.Add(t, None)
-        arrays.Add(t, Array.create 10 None) //index is array rank, so up to rank 10, should be enough
-
+    
     //parametrized active pattern that recognizes generic types with generic type definitions equal to the first paramater, 
     //and that returns the generic type parameters of the generic type.
     let private (|GenericTypeDef|_|) (p:Type) (t:Type) = 
@@ -38,7 +26,7 @@ module public TypeClass =
         else None  
 
     //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank
-    let private findInstances (typeClass:Type) instancesType = 
+    let private findInstances (typeClass:Type) bindingFlags instancesType = 
         let addMethod ((generics,catchAll,arrays) as acc) (m:MethodInfo) =
             match m.ReturnType with
             | GenericTypeDef typeClass args when args.Length <> 1 -> 
@@ -55,7 +43,7 @@ module public TypeClass =
                     (args.[0], m) :: generics,catchAll,arrays
             | _ -> acc
         let addMethods (t:Type) =
-            t.GetMethods((BindingFlags.Static ||| BindingFlags.Public))
+            t.GetMethods((BindingFlags.Static ||| BindingFlags.Public ||| bindingFlags))
             |> Seq.fold addMethod ([],None,[])
         let (generics, catchAll, array) = addMethods instancesType
         if generics.Length = 0 && catchAll.IsNone && array.Length = 0 then 
@@ -63,59 +51,80 @@ module public TypeClass =
         else
             (generics, catchAll, array)
 
+    type TypeFullName = string
 
-    ///Register instances in a given class as instances of the given type class.
-    ///Thows a failure exception if no instances are found.
-    let registerInstancesByType typeClass instance =
-        let (generics, catchAll, array) = findInstances typeClass instance
-        Seq.iter (typeClasses.[typeClass].Add) generics
-        if catchAll.IsSome then
-            if catchAlls.[typeClass].IsSome then 
-                failwithf "Catchall already registered for typeclass %A" typeClass
-            else
-                catchAlls.[typeClass] <- catchAll
-        Seq.iter (fun (i,m) -> 
-                    if arrays.[typeClass].[i] = None then 
-                        arrays.[typeClass].[i] <- Some m 
-                    else 
-                        failwithf "Rank %i array type already registered for typeclass %A" i typeClass) array
+    type TypeClassComparison =
+        { NewInstances : Set<TypeFullName>
+          OverriddenInstances : Set<TypeFullName>
+          NewCatchAll : bool
+          OverriddenCatchAll : bool
+        }
 
-    ///Register instances in a given class as instances of the given type class.
-    let registerInstances<'typeClass,'instance>() = 
-        registerInstancesByType (typedefof<'typeClass>) (typeof<'instance>)
+    type TypeClass<'TypeClass> internal(?catchAll:MethodInfo,?instances:Map<TypeFullName,MethodInfo>,?arrayInstances:Map<int,MethodInfo>) =
+        let instances = defaultArg instances Map.empty
+        let arrayInstances = defaultArg arrayInstances Map.empty
+        let keySet map = map |> Map.toSeq |> Seq.map fst |> Set.ofSeq
+        let memo = new Dictionary<_,_>() //should fix memo bug since the memo table is re-initialized when a new registration is done
 
-    ///Register instances in a given class as instances of the given type class, overwriting any existing instances. 
-    let overwriteInstancesByType typeClass instance =
-        let (generics, catchAll, array) = findInstances typeClass instance 
-        Seq.iter (fun (t,mi) -> typeClasses.[typeClass].[t] <- mi) generics
-        if catchAll.IsSome then catchAlls.[typeClass] <- catchAll
-        Seq.iter (fun (i,m) -> arrays.[typeClass].[i] <- Some m ) array               
-        //findInstances typeClass instance |> Seq.iter (fun (t,mi) -> typeClasses.[typeClass].[t] <- mi)
+        member x.Class = typedefof<'TypeClass>
+        member x.Instances = instances |> keySet
+        member x.ArrayInstances = arrayInstances |> keySet
+        member x.HasCatchAll = catchAll.IsSome
 
-    ///Register instances in a given class as instances of the given type class, overwriting any existing instances.  
-    let overwriteInstances<'typeClass,'instance>() = 
-        overwriteInstancesByType (typedefof<'typeClass>) (typeof<'instance>)
-        //let typeClass = typedefof<'typeClass>
-        //findInstances typeClass (typeof<'instance>) |> Seq.iter (fun (t,mi) -> typeClasses.[typeClass].[t] <- mi)
+        ///Merge the instances defined by the given instances type with the ones already defined in this TypeClass.
+        ///Instances defined in the given type will override the ones given in the argument.
+        member x.Register(onlyPublic,instancesType) =
+            let (newInstances,newCatchAll,newArrayInstances) = findInstances x.Class (if onlyPublic then BindingFlags.Default else BindingFlags.NonPublic)  instancesType
+            let instancesUnion = 
+                newInstances
+                |> List.map (fun (k,v) -> (k.FullName,v))
+                |> List.fold (fun map (k,v) -> Map.add k v map) instances
+            let arraysUnion = 
+                newArrayInstances
+                |> List.fold (fun map (k,v) -> Map.add k v map) arrayInstances
+            let catchAll = match newCatchAll with None -> catchAll | newC -> newC
+            match catchAll with 
+            | None -> TypeClass<'TypeClass>(instances=instancesUnion, arrayInstances=arraysUnion)
+            | Some ca -> TypeClass<'TypeClass>(catchAll=ca,instances=instancesUnion,arrayInstances=arraysUnion)
 
-    ///Get the typeclass instance from the given typeclass and instance type.
-    let getInstance =
-        Common.memoize (fun (typeClass:Type, instance:Type) ->
-            let instances = typeClasses.[typeClass]
-            let tryCatchAll instance =
-                match catchAlls.[typeClass] with
-                | Some mi   -> mi.MakeGenericMethod([|instance|])
-                | None      -> failwithf "No instances of class %A for type %A" typeClass instance
-            let mi =
-                match instances.TryGetValue(instance) with
-                | (true, res) -> res
-                | _ when instance.IsGenericType -> //exact type is not known, try the generic type
-                    match instances.TryGetValue(instance.GetGenericTypeDefinition()) with
-                    | (true, mi') -> if mi'.ContainsGenericParameters then (mi'.MakeGenericMethod(instance.GetGenericArguments())) else mi'
+        ///Compares this TypeClass with the given TypeClass. Returns, respectively, the new instances, overridden instances,
+        ///new array instances, overridden array instances, new catch all or overridden catchall introduced by the other TypeClass.
+        member x.Compare (other:TypeClass<'TypeClass>) =
+            let newInstances = other.Instances - x.Instances
+            let overriddenInstances = Set.intersect other.Instances x.Instances
+            let toArrayFullName rank : TypeFullName = sprintf "'T[%s]" (String.replicate (rank-1) ",")
+            let newArrayInstances = other.ArrayInstances - x.ArrayInstances |> Set.map toArrayFullName
+            let overriddenArrayInstances = Set.intersect other.ArrayInstances x.ArrayInstances |> Set.map toArrayFullName
+            let hasNewCatchAll = (not x.HasCatchAll) && other.HasCatchAll
+            let hasOverriddenCatchAll = x.HasCatchAll && other.HasCatchAll
+            { NewInstances = newInstances + newArrayInstances
+              OverriddenInstances = overriddenInstances + overriddenArrayInstances
+              NewCatchAll = hasNewCatchAll
+              OverriddenCatchAll = hasOverriddenCatchAll
+            }
+
+        member x.GetInstance =
+            Common.memoizeWith memo (fun (instance:Type) ->
+                //let instances = typeClasses.[typeClass]
+                let tryCatchAll instance =
+                    match catchAll with
+                    | Some mi   -> mi.MakeGenericMethod([|instance|])
+                    | None      -> failwithf "No instances of class %A for type %A" x.Class instance
+                let mi =
+                    match Map.tryFind instance.FullName instances with
+                    | Some res -> res
+                    | _ when instance.IsGenericType -> //exact type is not known, try the generic type
+                        match Map.tryFind (instance.GetGenericTypeDefinition().FullName) instances with
+                        | Some mi' -> if mi'.ContainsGenericParameters then (mi'.MakeGenericMethod(instance.GetGenericArguments())) else mi'
+                        | _ -> tryCatchAll instance
+                    | _ when instance.IsArray ->
+                        match Map.tryFind (instance.GetArrayRank()) arrayInstances with
+                        | Some mi' -> if mi'.ContainsGenericParameters then mi'.MakeGenericMethod([|instance.GetElementType()|]) else mi'
+                        | _ -> tryCatchAll instance
                     | _ -> tryCatchAll instance
-                | _ when instance.IsArray ->
-                    match arrays.[typeClass].[instance.GetArrayRank()] with
-                    | Some mi' -> if mi'.ContainsGenericParameters then mi'.MakeGenericMethod([|instance.GetElementType()|]) else mi'
-                    | _ -> tryCatchAll instance
-                | _ -> tryCatchAll instance
-            mi.Invoke(null, Array.empty))
+                mi.Invoke(null, Array.empty))
+
+        member x.InstanceFor<'T,'TypeClassT>() = x.GetInstance typeof<'T> |> unbox<'TypeClassT> //'TypeClassT = 'TypeClass<'T>
+        static member New<'TypeClass>() =
+            let t = (typedefof<'TypeClass>)
+            if t.IsGenericTypeDefinition then TypeClass<'TypeClass>() else failwith "'TypeClass type parameter must be a generic type definition."

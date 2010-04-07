@@ -7,8 +7,6 @@
 **  See the file License.txt for the full text.                             **
 \*--------------------------------------------------------------------------*)
 
-#light
-
 namespace FsCheck
 
 //based Hugs' Random implementation
@@ -16,8 +14,7 @@ module Random =
 
     open System
 
-    type StdGen = StdGen of int * int //with 
-                    //override x.ToString() = match x with (StdGen (s1,s2)) -> sprintf "%A" (s1,s2) 
+    type StdGen = StdGen of int * int
 
     //Haskell has mod,quot, en divMod. .NET has DivRem, % and /.
     // Haskell              | F#

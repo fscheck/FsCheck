@@ -7,11 +7,11 @@
 **  See the file License.txt for the full text.                             **
 \*--------------------------------------------------------------------------*)
 
-#light
-
 namespace FsCheck.Checks
 
 open FsCheck
+open Gen
+open Prop
 
 module Helpers = 
 
@@ -44,23 +44,23 @@ module Helpers =
              }
         static member NonNegativeInt() =
             { new Arbitrary<NonNegativeInt>() with
-                override x.Arbitrary = arbitrary |> fmapGen (NonNegative << abs)
+                override x.Arbitrary = arbitrary |> map (NonNegative << abs)
                 override x.CoArbitrary (NonNegative i) = coarbitrary i
                 override x.Shrink (NonNegative i) = shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative }
         static member NonZeroInt() =
             { new Arbitrary<NonZeroInt>() with
-                override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen NonZero 
+                override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> map NonZero 
                 override x.CoArbitrary (NonZero i) = coarbitrary i
                 override x.Shrink (NonZero i) = shrink i |> Seq.filter ((=) 0) |> Seq.map NonZero }
         static member PositiveInt() =
             { new Arbitrary<PositiveInt>() with
-                override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen (Positive << abs) 
+                override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> map (Positive << abs) 
                 override x.CoArbitrary (Positive i) = coarbitrary i
                 override x.Shrink (Positive i) = shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
         static member IntWithMax() =
             { new Arbitrary<IntWithMax>() with
                 override x.Arbitrary = frequency    [ (1,elements [IntWithMax Int32.MaxValue; IntWithMax Int32.MinValue])
-                                                    ; (10,arbitrary |> fmapGen IntWithMax) ] 
+                                                    ; (10,arbitrary |> map IntWithMax) ] 
                 override x.CoArbitrary (IntWithMax i) = coarbitrary i
                 override x.Shrink (IntWithMax i) = shrink i |> Seq.map IntWithMax }
 
@@ -86,7 +86,6 @@ module Random =
 
 module Generator = 
 
-    open FsCheck.Generator
     open Helpers
     
     let Choose (Interval (l,h)) = 
@@ -123,35 +122,35 @@ module Generator =
                 |> sample 100
                 |> List.forall (isIn generatedValues)))
     
-    let LiftGen (f:string -> int) v =
-        liftGen f (constant v)
+    let Map (f:string -> int) v =
+        map f (constant v)
         |> sample 1
         |> List.forall ((=) (f v))
         
-    let LiftGen2 (f:char -> int -> int) a b =
-        liftGen2 f (constant a) (constant b)
+    let Map2 (f:char -> int -> int) a b =
+        map2 f (constant a) (constant b)
         |> sample1
         |> ((=) (f a b))
         
-    let LiftGen3 (f:int -> char -> int -> int) a b c =
-        liftGen3 f (constant a) (constant b) (constant c)
+    let Map3 (f:int -> char -> int -> int) a b c =
+        map3 f (constant a) (constant b) (constant c)
         |> sample1
         |> ((=) (f a b c))
         
-    let LiftGen4 (f:char -> int -> char -> bool -> int) a b c d =
-        liftGen4 f (constant a) (constant b) (constant c) (constant d)
+    let Map4 (f:char -> int -> char -> bool -> int) a b c d =
+        map4 f (constant a) (constant b) (constant c) (constant d)
         |> sample1
         |> ((=) (f a b c d))
         
-    let LiftGen5 (f:bool -> char -> int -> char -> bool -> int) a b c d e =
-        liftGen5 f (constant a) (constant b) (constant c) (constant d) (constant e)
+    let Map5 (f:bool -> char -> int -> char -> bool -> int) a b c d e =
+        map5 f (constant a) (constant b) (constant c) (constant d) (constant e)
         |> sample1
         |> ((=) (f a b c d e))
         
-//    let LiftGen6 (f:bool -> char -> int -> char -> bool -> int -> char ) a b c d e g = //6 tuple here because otherwise the whole thing is a 7-tuple for which no generator exists
-//        liftGen6 f (constant a) (constant b) (constant c) (constant d) (constant e) (constant g)
-//        |> sample1
-//        |> ((=) (f a b c d e g))
+    let Map6 (f:bool -> char -> int -> char -> bool -> int -> char ) a b c d e g = 
+        map6 f (constant a) (constant b) (constant c) (constant d) (constant e) (constant g)
+        |> sample1
+        |> ((=) (f a b c d e g))
     
     let Two (v:int) =
         two (constant v)
@@ -251,8 +250,7 @@ module Arbitrary =
     //String.
         
 module Property =
-    open FsCheck.Property
-    open FsCheck.Generator
+    open FsCheck.Prop
     open FsCheck.Common
     open System
     
@@ -272,20 +270,20 @@ module Property =
     let rec private symPropGen =
         let rec recGen size =
             match size with
-            | 0 -> oneof [constant Unit; liftGen (Bool) arbitrary; constant Exception]
+            | 0 -> oneof [constant Unit; map (Bool) arbitrary; constant Exception]
             | n when n>0 ->
                 let subProp = recGen (size/2)
-                oneof   [ liftGen2 (curry ForAll) arbitrary (subProp)
-                        ; liftGen2 (curry Implies) arbitrary (subProp)
-                        ; liftGen2 (curry Collect) arbitrary (subProp)
-                        ; liftGen3 (curry2 Classify) arbitrary arbitrary (subProp)
-                        ; liftGen2 (curry Label) arbitrary (subProp)
-                        ; liftGen2 (curry And) (subProp) (subProp)
-                        ; liftGen2 (curry Or) (subProp) (subProp)
-                        ; liftGen Lazy subProp
-                        ; liftGen2 (curry Tuple2) subProp subProp
-                        ; liftGen3 (curry2 Tuple3) subProp subProp subProp
-                        ; liftGen List (resize 3 <| nonEmptyListOf subProp)
+                oneof   [ map2 (curry ForAll) arbitrary (subProp)
+                        ; map2 (curry Implies) arbitrary (subProp)
+                        ; map2 (curry Collect) arbitrary (subProp)
+                        ; map3 (curry2 Classify) arbitrary arbitrary (subProp)
+                        ; map2 (curry Label) arbitrary (subProp)
+                        ; map2 (curry And) (subProp) (subProp)
+                        ; map2 (curry Or) (subProp) (subProp)
+                        ; map Lazy subProp
+                        ; map2 (curry Tuple2) subProp subProp
+                        ; map3 (curry2 Tuple3) subProp subProp subProp
+                        ; map List (resize 3 <| nonEmptyListOf subProp)
                         ]
             | _ -> failwith "symPropGen: size must be positive"
         sized recGen
@@ -294,31 +292,31 @@ module Property =
         let addStamp stamp res = { res with Stamp = stamp :: res.Stamp }
         let addArgument arg res = { res with Arguments = arg :: res.Arguments }
         let addLabel label (res:Result) = { res with Labels = Set.add label res.Labels }
-        let andCombine prop1 prop2 = let (r1:Result,r2) = determineResult prop1, determineResult prop2 in r1.And(r2)
+        let andCombine prop1 prop2 :Result = let (r1:Result,r2) = determineResult prop1, determineResult prop2 in r1 &&& r2
         match prop with
-        | Unit -> succeeded
-        | Bool true -> succeeded
-        | Bool false -> failed
-        | Exception  -> exc <| InvalidOperationException()
+        | Unit -> Res.succeeded
+        | Bool true -> Res.succeeded
+        | Bool false -> Res.failed
+        | Exception  -> Res.exc <| InvalidOperationException()
         | ForAll (i,prop) -> determineResult prop |> addArgument i
         | Implies (true,prop) -> determineResult prop
-        | Implies (false,_) -> rejected
+        | Implies (false,_) -> Res.rejected
         | Classify (true,stamp,prop) -> determineResult prop |> addStamp stamp
         | Classify (false,_,prop) -> determineResult prop
         | Collect (i,prop) -> determineResult prop |> addStamp (sprintf "%A" i)
         | Label (l,prop) -> determineResult prop |> addLabel l
         | And (prop1, prop2) -> andCombine prop1 prop2
-        | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in r1.Or(r2)
+        | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in r1 ||| r2
         | Lazy prop -> determineResult prop
         | Tuple2 (prop1,prop2) -> andCombine prop1 prop2
-        | Tuple3 (prop1,prop2,prop3) -> (andCombine prop1 prop2).And(determineResult prop3)
-        | List props -> List.fold (fun st p -> st.And(determineResult p)) (List.head props |> determineResult) (List.tail props)
+        | Tuple3 (prop1,prop2,prop3) -> (andCombine prop1 prop2) &&& (determineResult prop3)
+        | List props -> List.fold (fun st p -> st &&& determineResult p) (List.head props |> determineResult) (List.tail props)
         
     let rec private toProperty prop =
         match prop with
-        | Unit -> property ()
-        | Bool b -> property b
-        | Exception -> property (lazy (raise <| InvalidOperationException()))
+        | Unit -> Testable.property ()
+        | Bool b -> Testable.property b
+        | Exception -> Testable.property (lazy (raise <| InvalidOperationException()))
         | ForAll (i,prop) -> forAll (constant i) (fun i -> toProperty prop)
         | Implies (b,prop) -> b ==> (toProperty prop)
         | Classify (b,stamp,prop) -> classify b stamp (toProperty prop)
@@ -335,8 +333,8 @@ module Property =
         match r0.Outcome,r1.Outcome with
         | Timeout i,Timeout j when i = j -> true
         | Outcome.Exception _, Outcome.Exception _ -> true
-        | False,False -> true 
-        | True,True -> true
+        | Outcome.False,Outcome.False -> true 
+        | Outcome.True,Outcome.True -> true
         | Rejected,Rejected -> true
         | _ -> false
         && List.forall2 (fun s0 s1 -> s0 = s1) r0.Stamp r1.Stamp

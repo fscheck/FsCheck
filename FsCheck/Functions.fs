@@ -12,7 +12,7 @@
 namespace FsCheck
 
 [<AutoOpen>]
-module public Functions =
+module Functions =
 
     [<StructuredFormatDisplay("{StructuredDisplayAsTable}")>]
     type Function<'a,'b when 'a : comparison> = 
@@ -20,15 +20,13 @@ module public Functions =
         member x.Value = match x with Function (_,f) -> f
         member x.Table = match x with Function (table,_) -> !table
         member x.StructuredDisplayAsTable =
-            let layoutTuple (x,y) = sprintf "%A->%A" x y  //objL (box x) ++ sepL "->" ++ objL (box y)
+            let layoutTuple (x,y) = sprintf "%A->%A" x y
             x.Table 
             |> Seq.distinctBy fst 
             |> Seq.sortBy fst 
             |> Seq.map layoutTuple 
             |> String.concat "; "
             |> sprintf "{ %s }"
-//            |> semiListL |> braceL
-//            |> Display.layout_to_string FormatOptions.Default
            
     let toFunction f = 
         let table = ref []

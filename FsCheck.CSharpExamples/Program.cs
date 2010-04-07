@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FsCheck;
+using FsCheck.Fluent;
 
 namespace FsCheck.CSharpExamples
 {
@@ -115,7 +115,7 @@ namespace FsCheck.CSharpExamples
 
             //-------Test data generators-----------
             //can't be made generic, only in separate method?
-            Func<int[],Generator.Gen<int>> chooseFromList = xs =>
+            Func<int[],Gen<int>> chooseFromList = xs =>
                 from i in Any.IntBetween(0,xs.Length-1)
                 select xs[i];
             
@@ -150,14 +150,14 @@ namespace FsCheck.CSharpExamples
             Console.ReadKey();
         }
 
-        public static Generator.Gen<T> Matrix<T>(Generator.Gen<T> gen)
+        public static FsCheck.Gen<T> Matrix<T>(Gen<T> gen)
         {
             return gen.Resize(s => Convert.ToInt32(Math.Sqrt(s)));
         }
 
-        public class ArbitraryLong : Generator.Arbitrary<long>
+        public class ArbitraryLong : Arbitrary<long>
         {
-            public override Generator.Gen<long> Arbitrary
+            public override Gen<long> Arbitrary
             {
 	            get { 
                     return Any.OfSize( s => Any.IntBetween(-s,s))
@@ -169,7 +169,7 @@ namespace FsCheck.CSharpExamples
 
         public class MyArbitraries
         {
-            public static Generator.Arbitrary<long> Long() { return new ArbitraryLong(); }
+            public static Arbitrary<long> Long() { return new ArbitraryLong(); }
         }
         
     }

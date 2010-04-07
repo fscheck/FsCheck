@@ -9,15 +9,18 @@
 
 #light
 
-namespace FsCheck
-
-//module public Fluent //don't add a module - otherwise every class needs to be qualified
+namespace FsCheck.Fluent
 
 open System
 open System.Linq
 open System.ComponentModel
 open System.Collections.Generic
+open FsCheck
 open Common
+open Gen
+open Testable
+open Prop
+open Runner
 
 //TODO:
 //Within -> rely on testing frameworks?
@@ -35,7 +38,7 @@ type Any =
     static member private OneOfSeqValue vs = 
         vs |> Seq.toList |> elements
     static member private SequenceSeq<'a> gs = 
-        gs |> Seq.toList |> sequence |> fmapGen (fun list -> new List<'a>(list))
+        gs |> Seq.toList |> sequence |> map (fun list -> new List<'a>(list))
     static member OfType<'a>() = 
         arbitrary<'a>
     static member Value (value) = 
@@ -75,32 +78,35 @@ type Shrink =
 
 //mutable counterpart of the Config type
 type Configuration() =
-    let mutable maxTest = Runner.quick.MaxTest
-    let mutable maxFail = Runner.quick.MaxFail
-    let mutable name = Runner.quick.Name
-    let mutable every = Runner.quick.Every
-    let mutable everyShrink = Runner.quick.EveryShrink
-    let mutable size = Runner.quick.Size
-    let mutable runner = Runner.quick.Runner
-    let mutable replay = Runner.quick.Replay
+    let mutable maxTest = Config.Quick.MaxTest
+    let mutable maxFail = Config.Quick.MaxFail
+    let mutable name = Config.Quick.Name
+    let mutable every = Config.Quick.Every
+    let mutable everyShrink = Config.Quick.EveryShrink
+    let mutable startSize = Config.Quick.StartSize
+    let mutable endSize = Config.Quick.EndSize
+    let mutable runner = Config.Quick.Runner
+    let mutable replay = Config.Quick.Replay
     member x.MaxNbOfTest with get() = maxTest and set(v) = maxTest <- v
     member x.MaxNbOfFailedTests with get() = maxFail and set(v) = maxFail <- v
     member x.Name with get() = name and set(v) = name <- v
     member x.Every with get() = every and set(v:Func<int,obj array,string>) = every <- fun i os -> v.Invoke(i,List.toArray os)
     member x.EveryShrink with get() = everyShrink and set(v:Func<obj array,string>) = everyShrink <- fun os -> v.Invoke(List.toArray os)
-    member x.Size with get() = size and set(v:Func<double,double>) = size <- v.Invoke
+    member x.StartSize with get() = startSize and set(v) = startSize <- v
+    member x.EndSize with get() = endSize and set(v) = endSize <- v
     member x.Runner with get() = runner and set(v) = runner <- v
     //TODO: figure out how to deal with null values
     //member x.Replay with get() = (match replay with None -> null | Some s -> s) and set(v) = replay = Some v
     member internal x.ToConfig() =
         { MaxTest = maxTest
-        ; MaxFail = maxFail 
-        ; Name = name
-        ; Every = every
-        ; EveryShrink = everyShrink
-        ; Size= size
-        ; Runner = runner
-        ; Replay = None
+          MaxFail = maxFail 
+          Name = name
+          Every = every
+          EveryShrink = everyShrink
+          StartSize = startSize
+          EndSize = endSize
+          Runner = runner
+          Replay = None
         }
 
 [<AbstractClass>]
@@ -116,11 +122,11 @@ type UnbrowsableObject() =
     override x.ToString() = base.ToString()
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     abstract Build : unit -> Property
-    member x.QuickCheck() = quickCheck <| x.Build()
-    member x.VerboseCheck() = verboseCheck <| x.Build()
-    member x.QuickCheck(name:string) = quickCheckN name <| x.Build()
-    member x.VerboseCheck(name:string) = verboseCheckN name <| x.Build()
-    member x.Check(configuration:Configuration) = check (configuration.ToConfig()) <| x.Build()
+    member x.QuickCheck() = Check.Quick(x.Build())
+    member x.VerboseCheck() = Check.Verbose(x.Build())
+    member x.QuickCheck(name:string) = Check.Quick(name,x.Build())
+    member x.VerboseCheck(name:string) = Check.Verbose(name,x.Build())
+    member x.Check(configuration:Configuration) = Check.One(configuration.ToConfig(),x.Build())
 
 and SpecBuilder<'a> internal   ( generator0:'a Gen
                                , shrinker0: 'a -> 'a seq
@@ -254,7 +260,7 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
       
                 
 type Spec() =
-    static do init.Value
+    static let _ = Runner.init.Value
     static member ForAny(assertion:Func<'a,bool>) =
         Spec.For(Any.OfType<'a>(),assertion)
     static member ForAny(assertion:Action<'a>) =
@@ -273,7 +279,7 @@ type Spec() =
     static member For(generator1:'a Gen,generator2:'b Gen, assertion:Action<'a,'b>) =
         SpecBuilder<'a,'b>(generator1, shrink, generator2, shrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
 
-open Generator
+open Gen
 
 [<System.Runtime.CompilerServices.Extension>]
 type GeneratorExtensions = 
@@ -295,13 +301,13 @@ type GeneratorExtensions =
               return select.Invoke(a,b) }
     
     [<System.Runtime.CompilerServices.Extension>]
-    static member MakeList<'a> (generator) = listOf generator |> fmapGen (fun list -> new List<'a>(list))
+    static member MakeList<'a> (generator) = listOf generator |> map (fun list -> new List<'a>(list))
     
     [<System.Runtime.CompilerServices.Extension>]
-    static member MakeNonEmptyList<'a> (generator) = nonEmptyListOf generator |> fmapGen (fun list -> new List<'a>(list))
+    static member MakeNonEmptyList<'a> (generator) = nonEmptyListOf generator |> map (fun list -> new List<'a>(list))
     
     [<System.Runtime.CompilerServices.Extension>]
-    static member MakeListOfLength<'a> (generator, count) = vectorOf count generator |> fmapGen (fun list -> new List<'a>(list))
+    static member MakeListOfLength<'a> (generator, count) = vectorOf count generator |> map (fun list -> new List<'a>(list))
     
     [<System.Runtime.CompilerServices.Extension>]
     static member Resize (generator, sizeTransform : Func<int,int>) =
@@ -309,7 +315,7 @@ type GeneratorExtensions =
         
     
 type DefaultArbitraries =
-    static member Add<'t>() = registerGenerators<'t>()
-    static member Overwrite<'t>() = overwriteGenerators<'t>()
+    static member Add<'t>() = Gen.register<'t>()
+    //static member Overwrite<'t>() = Gen.overwrite<'t>()
   
 //do init.Value
