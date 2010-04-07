@@ -261,28 +261,33 @@ module Runner =
         else
             FSharpType.MakeTupleType(arr)
 
-    let private tupleToArray t = 
-        if t = null then
-            Array.empty
-        elif FSharpType.IsTuple (t.GetType()) then
-            FSharpValue.GetTupleFields(t)
-        else
-            [|t|]
+    let private tupleToArray types tvalue  =
+        match types with
+        | [||] -> Array.empty
+        | [|t|] -> [|tvalue|]
+        | _ -> FSharpValue.GetTupleFields(tvalue) 
+//        if t = null then
+//            Array.empty
+//        elif FSharpType.IsTuple (t.GetType()) then
+//            
+//        else
+//            [|t|]
+
+    let checkMethod config (m:MethodInfo) =
+        let fromTypes = m.GetParameters() |> Array.map (fun p -> p.ParameterType) 
+        let fromP = fromTypes |> arrayToTupleType
+        let toP = m.ReturnType
+        let funType = FSharpType.MakeFunctionType(fromP, toP) 
+        let funValue = FSharpValue.MakeFunction(funType, (tupleToArray fromTypes) >> Reflect.invokeMethod m None)
+        let genericM = checkMethodInfo.MakeGenericMethod([|funType(*fromP;toP*)|])
+        genericM.Invoke(null, [|box config; funValue|]) |> ignore
 
     ///Check all public static methods on the given type that have a Testable return type(this includes let-bound functions in a module)
     let checkAll config (t:Type) = 
         printfn "--- Checking %s ---" t.Name
         t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
         Array.filter hasTestableReturnType |>
-        Array.iter(fun m -> 
-            let fromP = m.GetParameters() |> Array.map (fun p -> p.ParameterType) |> arrayToTupleType
-            let toP = m.ReturnType
-            let funType = FSharpType.MakeFunctionType(fromP, toP) 
-            let funValue = FSharpValue.MakeFunction(funType, tupleToArray >> Reflect.invokeMethod m None)
-            let c = {config with Name = t.Name+"."+m.Name}
-            let genericM = checkMethodInfo.MakeGenericMethod([|funType(*fromP;toP*)|])
-            genericM.Invoke(null, [|box c; funValue|]) |> ignore
-            )
+        Array.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m)
         printf "\n"
 
 
