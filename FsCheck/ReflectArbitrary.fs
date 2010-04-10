@@ -75,7 +75,7 @@ module internal ReflectArbitrary =
             elif isTupleType t then
                 let g = [ for pi in FSharpType.GetTupleElements t -> getGenerator pi ]
                 let create = fun tuple -> FSharpValue.MakeTuple(tuple,t)
-                let result = g |> sequence |> fmapGen (List.toArray >> create)
+                let result = g |> sequence |> Gen.map (List.toArray >> create)
                 box result
                 
             elif t.IsEnum then

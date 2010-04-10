@@ -281,9 +281,9 @@ module Gen =
 
     ///Register the generators that are static members of the given type.
     let registerByType t = 
-        let newTypeClass = (!Arbitrary).Register(onlyPublic=true,instancesType=t)
+        let newTypeClass = (!Arbitrary).Discover(onlyPublic=true,instancesType=t)
         let result = (!Arbitrary).Compare newTypeClass
-        Arbitrary := newTypeClass
+        Arbitrary := (!Arbitrary).Merge newTypeClass
         result
 
     ///Register the generators that are static members of the type argument.

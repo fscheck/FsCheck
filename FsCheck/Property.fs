@@ -130,7 +130,7 @@ module internal Testable =
     let internal TestableTC = 
         (lazy
             let empty = TypeClass<Testable<obj>>.New()
-            empty.Register(onlyPublic=false,instancesType=typeof<Testables>)).Force()
+            empty.DiscoverAndMerge(onlyPublic=false,instancesType=typeof<Testables>)).Force()
         
     let property<'a> p = TestableTC.InstanceFor<'a,Testable<'a>>().Property p
 
