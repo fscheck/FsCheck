@@ -53,9 +53,7 @@
     <Compile Include="Reflect.fs" />
     <Compile Include="TypeClass.fs" />
     <Compile Include="Gen.fs" />
-    <Compile Include="Functions.fs" />
     <Compile Include="ReflectArbitrary.fs" />
-    <Compile Include="GeneratorUtils.fs" />
     <Compile Include="Arbitrary.fs" />
     <Compile Include="Property.fs" />
     <Compile Include="Commands.fs" />

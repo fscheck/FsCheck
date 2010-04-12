@@ -25,44 +25,6 @@ module Helpers =
 
     let sample1 gn = sample 1 gn |> List.head
     
-    type Interval = Interval of int * int
-    type NonNegativeInt = NonNegative of int
-    type NonZeroInt = NonZero of int
-    type PositiveInt = Positive of int
-    let unPositive (Positive i) = i
-    type IntWithMax = IntWithMax of int
-    
-    type Arbitraries =
-        //generates an interval between two positive ints
-        static member Interval() =
-            { new Arbitrary<Interval>() with
-                override  x.Arbitrary = 
-                    gen { 
-                        let! start,offset = two arbitrary
-                        return Interval (abs start,abs start+abs offset)
-                    }
-             }
-        static member NonNegativeInt() =
-            { new Arbitrary<NonNegativeInt>() with
-                override x.Arbitrary = arbitrary |> map (NonNegative << abs)
-                override x.CoArbitrary (NonNegative i) = coarbitrary i
-                override x.Shrink (NonNegative i) = shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative }
-        static member NonZeroInt() =
-            { new Arbitrary<NonZeroInt>() with
-                override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> map NonZero 
-                override x.CoArbitrary (NonZero i) = coarbitrary i
-                override x.Shrink (NonZero i) = shrink i |> Seq.filter ((=) 0) |> Seq.map NonZero }
-        static member PositiveInt() =
-            { new Arbitrary<PositiveInt>() with
-                override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> map (Positive << abs) 
-                override x.CoArbitrary (Positive i) = coarbitrary i
-                override x.Shrink (Positive i) = shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
-        static member IntWithMax() =
-            { new Arbitrary<IntWithMax>() with
-                override x.Arbitrary = frequency    [ (1,elements [IntWithMax Int32.MaxValue; IntWithMax Int32.MinValue])
-                                                    ; (10,arbitrary |> map IntWithMax) ] 
-                override x.CoArbitrary (IntWithMax i) = coarbitrary i
-                override x.Shrink (IntWithMax i) = shrink i |> Seq.map IntWithMax }
 
 module Common = 
 
@@ -80,7 +42,7 @@ module Random =
     let DivMod (x:int) (y:int) = 
         y <> 0 ==> lazy (let (d,m) = divMod x y in d*y + m = x)
         
-    let MkStdGen (IntWithMax seed) =
+    let MkStdGen (IntWithMinMax seed) =
         within 1000 <| lazy (let (StdGen (s1,s2)) = mkStdGen (int64 seed) in s1 > 0 && s2 > 0 (*todo:add check*) ) //check for bug: hangs when seed = min_int
         //|> collect seed
 
@@ -113,11 +75,12 @@ module Generator =
                 |> sample 50
                 |> List.forall (isIn l))
     
-    let Frequency (l:list<NonNegativeInt*string>) =
-        let generatedValues = l |> List.filter (fst >> (fun (NonNegative p) -> p) >> (<>) 0) |> List.map snd
+    let Frequency (frequencies:list<PositiveInt*string>) =
+        let generatedValues = frequencies |> List.filter (fst >> (fun p -> p.Get) >> (<>) 0) |> List.map snd
         (sprintf "%A" generatedValues) @|
         (not generatedValues.IsEmpty ==>
-         lazy ( List.map (fun (NonNegative freq,s) -> (freq,constant s)) l
+         lazy ( frequencies
+                |> List.map (fun (freq,s) -> (freq.Get,constant s))
                 |> frequency
                 |> sample 100
                 |> List.forall (isIn generatedValues)))
@@ -173,8 +136,8 @@ module Generator =
         |> sample1
         |> ((=) l)
         
-    let VectorOf (v:char) (Positive length) =
-        vectorOf length (constant v)
+    let ListOfLength (v:char) (PositiveInt length) =
+        listOfLength length (constant v)
         |> sample1
         |> ((=) (List.init length (fun _ -> v)))
     
@@ -191,34 +154,33 @@ module Generator =
         |> sample1
         |> ((=) (abs v))
     
-    let ListOf (NonNegative size) (v:char) =
+    let ListOf (NonNegativeInt size) (v:char) =
         resize size (listOf <| constant v)
         |> sample 10
-        |> List.forall (fun l -> l.Length <= size && List.forall ((=) v) l)
+        |> List.forall (fun l -> l.Length <= size+1 && List.forall ((=) v) l)
     
-    let NonEmptyListOf (NonNegative size) (v:string) =
+    let NonEmptyListOf (NonNegativeInt size) (v:string) =
         let actual = resize size (nonEmptyListOf <| constant v) |> sample 10
         actual
         |> List.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && List.forall ((=) v) l) 
         |> label (sprintf "Actual: %A" actual)
     
+    let SubListOf (l:list<int>) =
+        subListOf l
+        |> sample 10
+        |> List.forall (fun sublist -> 
+            List.length sublist <= List.length l
+            && List.forall (fun e -> List.exists ((=) e) l) sublist)
+
+    //TODO: array generators
+
     //variant generators should be independent...this is not a good check for that.
-    let Variant (NonNegative var) (v:char) =
+    let Variant (NonNegativeInt var) (v:char) =
         variant var (constant v) |> sample1 |>  ((=) v)
-    
- 
- module Functions =
- 
-    open FsCheck.Functions
-    
-    let Function (f:int->char) (vs:list<int>) =
-        let tabledF = toFunction f
-        (List.map tabledF.Value vs) = (List.map f vs)
-        && List.forall (fun v -> List.tryFind (fst >> (=) v) tabledF.Table = Some (v,f v)) vs
-        
+          
 module Arbitrary =
     
-    open FsCheck.Arbitrary
+    open FsCheck
     open System
     open Helpers
     
@@ -234,11 +196,11 @@ module Arbitrary =
         ,    shrink<bool> b |> Seq.isEmpty)
         |> addLabels
     
-    let Int32 (NonNegative size) (v:int) =
+    let Int32 (NonNegativeInt size) (v:int) =
         (   arbitrary<int> |> resize size |> sample 10 |> List.forall (fun v -> -size <= v && v <= size)
         ,   shrink<int> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v))
             
-    let Double (NonNegative size) (value:float) =
+    let Double (NonNegativeInt size) (value:float) =
         (   arbitrary<float> |> resize size |> sample 10
             |> List.forall (fun v -> 
                 (-2.0 * float size <= v && v <= 2.0 * float size )
@@ -248,6 +210,11 @@ module Arbitrary =
             |> Seq.forall (fun shrunkv -> shrunkv = 0.0 || shrunkv <= abs value))
         |> addLabels
     //String.
+
+    let Function (f:int->char) (vs:list<int>) =
+        let tabledF = Function<_,_>.from f
+        (List.map tabledF.Value vs) = (List.map f vs)
+        && List.forall (fun v -> List.tryFind (fst >> (=) v) tabledF.Table = Some (v,f v)) vs
         
 module Property =
     open FsCheck.Prop

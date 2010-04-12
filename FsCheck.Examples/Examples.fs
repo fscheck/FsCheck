@@ -288,7 +288,7 @@ let prop_Assoc (x:Tree) (f:Tree->float,g:float->char,h:char->int) = ((f >> g) >>
 Check.Quick prop_Assoc
 
 //Function printing and shrinking
-let propMap (Function (_,f)) (l:list<int>) =
+let propMap (F (_,f)) (l:list<int>) =
     not l.IsEmpty ==>
     lazy (List.map f l = ((*f*)(List.head l)) :: (List.map f (List.tail l)))
 Check.Quick propMap

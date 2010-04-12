@@ -307,7 +307,7 @@ type GeneratorExtensions =
     static member MakeNonEmptyList<'a> (generator) = nonEmptyListOf generator |> map (fun list -> new List<'a>(list))
     
     [<System.Runtime.CompilerServices.Extension>]
-    static member MakeListOfLength<'a> (generator, count) = vectorOf count generator |> map (fun list -> new List<'a>(list))
+    static member MakeListOfLength<'a> (generator, count) = listOfLength count generator |> map (fun list -> new List<'a>(list))
     
     [<System.Runtime.CompilerServices.Extension>]
     static member Resize (generator, sizeTransform : Func<int,int>) =

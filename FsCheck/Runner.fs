@@ -220,7 +220,7 @@ module Runner =
 
     ///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
     ///In any case, it can be forced any number of times without problem.
-    let init = lazy Gen.register<Arbitrary.Arbitrary>()
+    let init = lazy Gen.register<Default>()
 
     let private hasTestableReturnType (m:MethodInfo) =
         ignore init.Value
@@ -286,7 +286,7 @@ type Config with
               MaxFail       = 1000
               Replay        = None
               Name          = ""
-              StartSize     = 0
+              StartSize     = 1
               EndSize       = 100
               Every         = fun ntest args -> String.Empty
               EveryShrink   = fun args -> String.Empty
