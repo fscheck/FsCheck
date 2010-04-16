@@ -72,7 +72,7 @@ module Generator =
         not l.IsEmpty ==> 
         lazy (  List.map constant l
                 |> oneof
-                |> sample 50
+                |> sample 10
                 |> List.forall (isIn l))
     
     let Frequency (frequencies:list<PositiveInt*string>) =
@@ -146,8 +146,8 @@ module Generator =
         suchThatOption predicate (constant v)
         |> sample1
         |> ((=) expected)
-        |> classify expected.IsNone "None"
-        |> classify expected.IsSome "Some"
+//        |> classify expected.IsNone "None"
+//        |> classify expected.IsSome "Some"
         
     let SuchThat (v:int) =
         suchThat ((<=) 0) (elements [v;abs v])
@@ -163,7 +163,7 @@ module Generator =
         let actual = resize size (nonEmptyListOf <| constant v) |> sample 10
         actual
         |> List.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && List.forall ((=) v) l) 
-        |> label (sprintf "Actual: %A" actual)
+        //|> label (sprintf "Actual: %A" actual)
     
     let SubListOf (l:list<int>) =
         subListOf l
@@ -172,7 +172,30 @@ module Generator =
             List.length sublist <= List.length l
             && List.forall (fun e -> List.exists ((=) e) l) sublist)
 
-    //TODO: array generators
+    let ArrayOf (NonNegativeInt size) (v:int) =
+        resize size (arrayOf <| constant v)
+        |> sample 10
+        |> List.forall (fun l -> l.Length <= size+1 && Array.forall ((=) v) l)
+    
+    let ArrayOfLength (v:char) (PositiveInt length) =
+        arrayOfLength length (constant v)
+        |> sample1
+        |> ((=) (Array.init length (fun _ -> v)))
+    
+    let Array2DOf (NonNegativeInt size) (v:int) =
+        resize size (array2DOf (constant v))
+        |> sample1
+        |> fun arr ->
+            (arr.Length <= size+1) 
+            && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
+    
+    let Array2DOfDim (NonNegativeInt rows,NonNegativeInt cols) (v:int) =
+        (array2DOfDim (rows,cols) (constant v))
+        |> sample1
+        |> fun arr ->
+            (Array2D.length1 arr <= rows) 
+            && (Array2D.length2 arr <= cols) 
+            && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
 
     //variant generators should be independent...this is not a good check for that.
     let Variant (NonNegativeInt var) (v:char) =

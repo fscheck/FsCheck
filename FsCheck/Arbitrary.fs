@@ -93,17 +93,17 @@ open ReflectArbitrary
 open System
 
 
-module internal Numeric =
-    open System.Numerics
-
-    let inline zero<'a when 'a : (static member Zero : 'a)> =
-        match typeof<'a> with
-        | t when t = typeof<int> -> box 0 :?> 'a
-        | t when t = typeof<int64> -> box 0L :?> 'a
-        | t when t = typeof<float> -> box 0. :?> 'a
-        | t when t = typeof<float32> -> box 0.f :?> 'a
-        | t when t = typeof<bigint> ->box bigint.Zero :?> 'a
-        | _ -> failwithf "Zero value for %A not found." typeof<'a>
+//module internal Numeric =
+//    open System.Numerics
+//
+//    let inline zero<'a when 'a : (static member Zero : 'a)> =
+//        match typeof<'a> with
+//        | t when t = typeof<int> -> box 0 :?> 'a
+//        | t when t = typeof<int64> -> box 0L :?> 'a
+//        | t when t = typeof<float> -> box 0. :?> 'a
+//        | t when t = typeof<float32> -> box 0.f :?> 'a
+//        | t when t = typeof<bigint> ->box bigint.Zero :?> 'a
+//        | _ -> failwithf "Zero value for %A not found." typeof<'a>
 
 type NonNegativeInt = NonNegativeInt of int with
     member x.Get = match x with NonNegativeInt r -> r

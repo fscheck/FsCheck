@@ -252,28 +252,27 @@ module Runner =
         | [||] -> Array.empty
         | [|t|] -> [|tvalue|]
         | _ -> FSharpValue.GetTupleFields(tvalue) 
-//        if t = null then
-//            Array.empty
-//        elif FSharpType.IsTuple (t.GetType()) then
-//            
-//        else
-//            [|t|]
 
     let checkMethod config (m:MethodInfo) =
         let fromTypes = m.GetParameters() |> Array.map (fun p -> p.ParameterType) 
         let fromP = fromTypes |> arrayToTupleType
         let toP = m.ReturnType
-        let funType = FSharpType.MakeFunctionType(fromP, toP) 
-        let funValue = FSharpValue.MakeFunction(funType, (tupleToArray fromTypes) >> Reflect.invokeMethod m None)
+        let funType = FSharpType.MakeFunctionType(fromP, toP)
+        let invokeAndThrowInner (m:MethodInfo) o = 
+            try
+                Reflect.invokeMethod m None o
+             with :? TargetInvocationException as e -> //this is just to avoid huge non-interesting stacktraces in the output
+                raise (Reflect.preserveStackTrace  e.InnerException)
+        let funValue = FSharpValue.MakeFunction(funType, (tupleToArray fromTypes) >> invokeAndThrowInner m)
         let genericM = checkMethodInfo.MakeGenericMethod([|funType(*fromP;toP*)|])
         genericM.Invoke(null, [|box config; funValue|]) |> ignore
+        
 
     let internal checkAll config (t:Type) = 
         printfn "--- Checking %s ---" t.Name
         t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
         Array.filter hasTestableReturnType |>
         Array.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m)
-           // let genericM = checkMethodInfo.MakeGenericMethod( [|funType|] )
         printf "\n"
 
 open Runner

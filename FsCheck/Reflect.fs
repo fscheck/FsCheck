@@ -81,3 +81,13 @@ module internal Reflect =
                 else 
                     m
         match target with None -> m.Invoke(null, args) | Some t -> m.Invoke(t,args)
+
+    let private _preserveInternalException =
+        let preserveStackTrace = typeof<Exception>.GetMethod( "InternalPreserveStackTrace", BindingFlags.Instance ||| BindingFlags.NonPublic );
+        Delegate.CreateDelegate( typeof<Action<Exception>>, preserveStackTrace ) :?> Action<Exception>
+    
+    let preserveStackTrace (ex:Exception) =
+        _preserveInternalException.Invoke(ex)
+        ex
+
+
