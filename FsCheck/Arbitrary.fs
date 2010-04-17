@@ -20,14 +20,13 @@ module Arb =
     let from<'Value> = Gen.arbitraryInstance<'Value>
 
     /// Construct an Arbitrary instance from a generator.
-    /// Shrink and coarbritrary are not supported for this type.
+    /// Shrink is not supported for this type.
     let fromGen (gen: Gen<'Value>) : Arbitrary<'Value> =
        { new Arbitrary<'Value>() with
            override x.Generator = gen
        }
 
-    /// Shortcut for constructing an Arbitrary instance from a generator and shrinker.
-    /// coarbitrary is not supported for this type.
+    /// Construct an Arbitrary instance from a generator and shrinker.
     let fromGenShrink (gen: Gen<'Value>, shrinker: 'Value -> seq<'Value>): Arbitrary<'Value> =
        { new Arbitrary<'Value>() with
            override x.Generator = gen
@@ -39,7 +38,6 @@ module Arb =
     let convert convertTo convertFrom (a:Arbitrary<'a>) =
         { new Arbitrary<'b>() with
            override x.Generator = a.Generator |> Gen.map convertTo
-           override x.CoGenerator b = b |> convertFrom |> a.CoGenerator
            override x.Shrinker b = b |> convertFrom |> a.Shrinker |> Seq.map convertTo
        }
 
@@ -48,7 +46,6 @@ module Arb =
     let filter pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
            override x.Generator = a.Generator |> Gen.suchThat pred
-           override x.CoGenerator b = b |> a.CoGenerator
            override x.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
 
@@ -60,7 +57,6 @@ module Arb =
     let mapFilter mapper pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
            override x.Generator = a.Generator |> Gen.map mapper |> Gen.suchThat pred
-           override x.CoGenerator b = b |> a.CoGenerator
            override x.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
 //TODO
@@ -159,13 +155,11 @@ type Default =
     static member Unit() = 
         { new Arbitrary<unit>() with
             override x.Generator = gen { return () } 
-            override x.CoGenerator g = variant 0
         }
     ///Generates arbitrary bools.
     static member Bool() = 
         { new Arbitrary<bool>() with
             override x.Generator = elements [true; false] 
-            override x.CoGenerator b = if b then variant 0 else variant 1
         }
     //byte generator contributed by Steve Gilham.
     ///Generates an arbitrary byte.
@@ -173,14 +167,12 @@ type Default =
         { new Arbitrary<byte>() with  
             override x.Generator = 
                 Gen.choose (0,255) |> Gen.map byte //this is now size independent - 255 is not enough to not cover them all anyway 
-            override x.CoGenerator n = n |> int |> variant
             override x.Shrinker n = n |> int |> shrink |> Seq.map byte
         }  
     ///Generate arbitrary int that is between -size and size.
     static member Int() = 
         { new Arbitrary<int>() with
             override x.Generator = sized <| fun n -> choose (-n,n) 
-            override x.CoGenerator n = variant (if n >= 0 then 2*n else 2*(-n) + 1)
             override x.Shrinker n = 
                 let (|>|) x y = abs x > abs y 
                 seq {   if n < 0 then yield -n
@@ -196,12 +188,6 @@ type Default =
                 frequency   [(6, map3 Default.fraction arbitrary arbitrary arbitrary)
                             ;(1, elements [ Double.NaN; Double.NegativeInfinity; Double.PositiveInfinity])
                             ;(1, elements [ Double.MaxValue; Double.MinValue; Double.Epsilon])]
-            override x.CoGenerator fl = 
-                let d1 = sprintf "%g" fl
-                let spl = d1.Split([|'.'|])
-                let m = if (spl.Length > 1) then spl.[1].Length else 0
-                let decodeFloat = (fl * float m |> int, m )
-                coarbitrary <| decodeFloat
             override x.Shrinker fl =
                 let (|<|) x y = abs x < abs y
                 seq {   if Double.IsInfinity fl || Double.IsNaN fl then 
@@ -216,7 +202,6 @@ type Default =
     static member Char() = 
         { new Arbitrary<char>() with
             override x.Generator = choose (int Char.MinValue, 127) |> Gen.map char
-            override x.CoGenerator c = coarbitrary (int c)
             override x.Shrinker c =
                 seq { for c' in ['a';'b';'c'] do if c' < c || not (Char.IsLower c) then yield c' }
         }
@@ -224,76 +209,12 @@ type Default =
     static member String() = 
         { new Arbitrary<string>() with
             override x.Generator = Gen.map (fun chars -> new String(List.toArray chars)) arbitrary
-            override x.CoGenerator s = s.ToCharArray() |> Array.toList |> coarbitrary
             override x.Shrinker s = s.ToCharArray() |> Array.toList |> shrink |> Seq.map (fun chars -> new String(List.toArray chars))
-        }
-    ///Genereate a 2-tuple.
-    static member Tuple2() = 
-        { new Arbitrary<'a*'b>() with
-            override x.Generator = map2 (fun x y -> (x,y)) arbitrary arbitrary
-            //extra paranthesis are needed here, otherwise F# gets confused about the number of arguments
-            //and doesn't see that this really overriddes the right method
-            override x.CoGenerator ((a,b)) = coarbitrary a >> coarbitrary b
-            override x.Shrinker ((x,y)) = 
-                seq {   for x' in shrink x -> (x',y ) 
-                        for y' in shrink y -> (x ,y') }
-        }
-    ///Genereate a 3-tuple.
-    static member Tuple3() = 
-        { new Arbitrary<'a*'b*'c>() with
-            override x.Generator = map3 (fun x y z -> (x,y,z)) arbitrary arbitrary arbitrary
-            override x.CoGenerator ((a,b,c)) = coarbitrary a >> coarbitrary b >> coarbitrary c
-            override x.Shrinker ((x,y,z)) = 
-                seq {   for x' in shrink x -> (x',y ,z ) 
-                        for y' in shrink y -> (x ,y',z ) 
-                        for z' in shrink z -> (x ,y ,z') }
-        }
-    ///Genereate a 4-tuple.
-    static member Tuple4() = 
-        { new Arbitrary<'a*'b*'c*'d>() with
-            override x.Generator = map4 (fun x y z u-> (x,y,z,u)) arbitrary arbitrary arbitrary arbitrary
-            override x.CoGenerator ((a,b,c,d)) = coarbitrary a >> coarbitrary b >> coarbitrary c >> coarbitrary d
-            override x.Shrinker ((x,y,z,u)) = 
-                seq {   for x' in shrink x -> (x',y ,z ,u ) 
-                        for y' in shrink y -> (x ,y',z ,u ) 
-                        for z' in shrink z -> (x ,y ,z',u ) 
-                        for u' in shrink u -> (x ,y ,z ,u')}
-        }
-    ///Genereate a 5-tuple.
-    static member Tuple5() = 
-        { new Arbitrary<'a*'b*'c*'d*'e>() with
-            override x.Generator = map5 (fun x y z u v-> (x,y,z,u,v)) arbitrary arbitrary arbitrary arbitrary arbitrary
-            override x.CoGenerator ((a,b,c,d,e)) = coarbitrary a >> coarbitrary b >> coarbitrary c >> coarbitrary d >> coarbitrary e
-            override x.Shrinker ((x,y,z,u,v)) = 
-                seq {   for x' in shrink x -> (x',y ,z ,u ,v ) 
-                        for y' in shrink y -> (x ,y',z ,u ,v ) 
-                        for z' in shrink z -> (x ,y ,z',u ,v ) 
-                        for u' in shrink u -> (x ,y ,z ,u',v )
-                        for v' in shrink v -> (x ,y ,z ,u ,v') }
-        }
-    ///Genereate a 6-tuple.
-    static member Tuple6() = 
-        { new Arbitrary<'a*'b*'c*'d*'e*'f>() with
-            override x.Generator = 
-                map6 (fun x y z u v w-> (x,y,z,u,v,w)) arbitrary arbitrary arbitrary arbitrary arbitrary arbitrary
-            override x.CoGenerator ((a,b,c,d,e,f)) = 
-                coarbitrary a >> coarbitrary b >> coarbitrary c >> coarbitrary d >> coarbitrary e >> coarbitrary f
-            override x.Shrinker ((x,y,z,u,v,w)) = 
-                seq {   for x' in shrink x -> (x',y ,z ,u ,v ,w ) 
-                        for y' in shrink y -> (x ,y',z ,u ,v ,w ) 
-                        for z' in shrink z -> (x ,y ,z',u ,v ,w ) 
-                        for u' in shrink u -> (x ,y ,z ,u',v ,w )
-                        for v' in shrink v -> (x ,y ,z ,u ,v',w )
-                        for w' in shrink w -> (x ,y ,z ,u ,v ,w') }
         }
     ///Generate an option value that is 'None' 1/8 of the time.
     static member Option() = 
         { new Arbitrary<option<'a>>() with
             override x.Generator = frequency [(1, gen { return None }); (7, Gen.map Some arbitrary)]
-            override x.CoGenerator o = 
-                match o with 
-                | None -> variant 0
-                | Some y -> variant 1 >> coarbitrary y
             override x.Shrinker o =
                 match o with
                 | Some x -> seq { yield None; for x' in shrink x -> Some x' }
@@ -303,10 +224,6 @@ type Default =
     static member FsList() = 
         { new Arbitrary<list<'a>>() with
             override x.Generator = listOf arbitrary
-            override x.CoGenerator l = 
-                match l with
-                | [] -> variant 0
-                | x::xs -> coarbitrary x << variant 1 << coarbitrary xs
             override x.Shrinker l =
                 match l with
                 | [] ->         Seq.empty
@@ -319,12 +236,6 @@ type Default =
         { new Arbitrary<obj>() with
             override x.Generator = 
                 oneof [ Gen.map box <| arbitrary<char> ; Gen.map box <| arbitrary<string>; Gen.map box <| arbitrary<bool> ]
-            override x.CoGenerator o = 
-                match o with
-                | :? char as c -> variant 0 >> coarbitrary c
-                | :? string as s -> variant 1 >> coarbitrary s
-                | :? bool as b -> variant 2 >> coarbitrary b
-                | _ -> failwith "Unknown domain type in coarbitrary of obj"
             override x.Shrinker o =
                 seq {
                     match o with
@@ -338,7 +249,6 @@ type Default =
     static member Array() =
         { new Arbitrary<'a[]>() with
             override x.Generator = arrayOf arbitrary
-            override x.CoGenerator a = a |> Array.toList |> coarbitrary
             override x.Shrinker a = a |> Array.toList |> shrink |> Seq.map List.toArray
         }
 
@@ -350,10 +260,7 @@ type Default =
      ///value and 'b has an Arbitrary value.
     static member Arrow() = 
         { new Arbitrary<'a->'b>() with
-            override x.Generator = promote (fun a -> coarbitrary a arbitrary)
-            override x.CoGenerator f = 
-                (fun gn -> gen {let x = arbitrary
-                                return! coarbitrary (Gen.map f x) gn }) 
+            override x.Generator = promote (fun a -> variant a arbitrary) //coarbitrary a arbitrary)
         }
 
     ///Generate a Function value that can be printed and shrunk. Function values can be generated for types 'a->'b where 'a has a CoArbitrary
@@ -397,10 +304,9 @@ type Default =
             override x.Generator = frequency    [ (1 ,elements [Int32.MaxValue; Int32.MinValue])
                                                   (10,arbitrary) ] 
                                    |> Gen.map IntWithMinMax
-            override x.CoGenerator (IntWithMinMax i) = coarbitrary i
             override x.Shrinker (IntWithMinMax i) = shrink i |> Seq.map IntWithMinMax }
 
-    ///Generates an interval between two nonnegative integers.
+    ///Generates an interval between two non-negative integers.
     static member Interval() =
         { new Arbitrary<Interval>() with
             override  x.Generator = 
@@ -440,7 +346,6 @@ type Default =
     static member FixedLengthArray() =
         { new Arbitrary<'a[]>() with
             override x.Generator = arbitrary
-            override x.CoGenerator a = coarbitrary a
             override x.Shrinker a = a |> Seq.mapi (fun i x -> Gen.shrink x |> Seq.map (fun x' ->
                                                        let data' = Array.copy a
                                                        data'.[i] <- x'

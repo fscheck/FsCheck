@@ -215,13 +215,6 @@ let private tree =
             | _ -> raise(ArgumentException"Only positive arguments are allowed")
     Gen.sized tree'
 
-//Generating functions
-let rec private cotree t = 
-    match t with
-       | (Leaf n) -> Gen.variant 0 << Gen.coarbitrary n
-       | (Branch (t1,t2)) -> Gen.variant 1 << cotree t1 << cotree t2
-
-
 //Default generators by type
 type Box<'a> = Whitebox of 'a | Blackbox of 'a
 
@@ -233,7 +226,6 @@ type MyGenerators =
     static member Tree() =
         {new Arbitrary<Tree>() with
             override x.Generator = tree
-            override x.CoGenerator t = cotree t
             override x.Shrinker t = Seq.empty }
     static member Box() = 
         {new Arbitrary<Box<'a>>() with

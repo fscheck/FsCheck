@@ -199,8 +199,8 @@ module Generator =
             && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
 
     //variant generators should be independent...this is not a good check for that.
-    let Variant (NonNegativeInt var) (v:char) =
-        variant var (constant v) |> sample1 |>  ((=) v)
+    let Variant (v:char) =
+        variant v (constant v) |> sample1 |>  ((=) v)
           
 module Arbitrary =
     
@@ -271,6 +271,12 @@ module Arbitrary =
         let tabledF = Function<_,_>.from f
         (List.map tabledF.Value vs) = (List.map f vs)
         && List.forall (fun v -> List.tryFind (fst >> (=) v) tabledF.Table = Some (v,f v)) vs
+    
+    //checks that a generated function is pure by applying it twice to the same values and checking that the results are the same.
+    let FunctionIsPure (f:int->char->bool) (vs:list<int*char>) =
+        List.forall2 (=)
+            (List.map (Common.uncurry f) vs)
+            (List.map (Common.uncurry f) vs)
         
 module Property =
     open FsCheck.Prop

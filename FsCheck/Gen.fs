@@ -33,14 +33,14 @@ type internal IArbitrary =
 type Arbitrary<'a>() =
     ///Returns a generator for 'a.
     abstract Generator      : Gen<'a>
-    ///Returns a generator transformer for 'a. Necessary to generate functions with 'a as domain. Fails by
-    ///default if it is not overridden.
-    abstract CoGenerator    : 'a -> (Gen<'c> -> Gen<'c>) 
+//    ///Returns a generator transformer for 'a. Necessary to generate functions with 'a as domain. Fails by
+//    ///default if it is not overridden.
+//    abstract CoGenerator    : 'a -> (Gen<'c> -> Gen<'c>) 
     ///Returns a sequence of the immediate shrinks of the given value. The immediate shrinks should not include
     ///doubles or the given value itself. The default implementation returns the empty sequence (i.e. no shrinking).
     abstract Shrinker       : 'a -> seq<'a>
-    default x.CoGenerator (_:'a) = 
-        failwithf "CoGenerator for %A is not implemented" (typeof<'a>)
+//    default x.CoGenerator (_:'a) = 
+//        failwithf "CoGenerator for %A is not implemented" (typeof<'a>)
     default x.Shrinker a = 
         Seq.empty
     interface IArbitrary with
@@ -264,13 +264,24 @@ module Gen =
     ///Always generate v.          
     let constant v = gen { return v }
 
-    ///Promote the given function f to a function generator.
-    let promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)
+    ///Promote the given function f to a function generator. Only used for generating arbitrary functions.
+    let internal promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)
 
     ///Basic co-arbitrary generator transformer, which is dependent on an int.
-    let variant v (Gen m) =
+    ///Only used for generating arbitrary functions.
+    let internal variant (v:'a) (Gen m) =
+        let counter = ref 0
+        let toCounter = new Dictionary<'a,int>()
+        let mapToInt (value:'a) =
+            let (found,result) = toCounter.TryGetValue value
+            if found then 
+                result
+            else
+                toCounter.Add(value,!counter)
+                counter := !counter + 1
+                !counter - 1   
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
-        Gen (fun n r -> m n (Seq.nth (v+1) (rands r)))
+        Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
 
     let private Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
 
@@ -278,9 +289,6 @@ module Gen =
 
     ///Returns a Gen<'a>
     let arbitrary<'a> = arbitraryInstance<'a>.Generator
-
-    ///Returns a generator transformer for the given value, aka a coarbitrary function.
-    let coarbitrary<'a,'b> (a:'a) : (Gen<'b> -> Gen<'b>) = arbitraryInstance.CoGenerator a
 
     ///Returns the immediate shrinks for the given value.
     let shrink<'a> (a:'a) = arbitraryInstance.Shrinker a
@@ -297,9 +305,7 @@ module Gen =
         result
 
     ///Register the generators that are static members of the type argument.
-    let register<'t>() = 
-        //initArbitraryTypeClass.Value
-        registerByType typeof<'t>
+    let register<'t>() = registerByType typeof<'t>
 
 
     //---obsoleted functions-----
