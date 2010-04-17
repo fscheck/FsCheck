@@ -48,6 +48,7 @@
     <DocumentationFile>bin\Release\FsCheck.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Common.fs" />
     <Compile Include="Random.fs" />
     <Compile Include="Reflect.fs" />
