@@ -53,12 +53,24 @@ module TypeClass =
 
     type TypeFullName = string
 
+    [<StructuredFormatDisplay("{ToStructuredDisplay}")>]
     type TypeClassComparison =
         { NewInstances : Set<TypeFullName>
           OverriddenInstances : Set<TypeFullName>
           NewCatchAll : bool
           OverriddenCatchAll : bool
-        }
+        } with
+        member x.ToStructuredDisplay = x.ToString()
+        override x.ToString() =
+            let setToString pre s = 
+                if Set.isEmpty s then
+                    ""
+                else
+                    (Set.fold (sprintf "%s, %s") pre s) + "\n"
+            let instances = sprintf "%s%s" (setToString "New: " x.NewInstances) (setToString "Overridde: " x.OverriddenInstances)
+            let catchAll = if x.NewCatchAll then "New catch all" elif x.OverriddenCatchAll then "Overrides catch all" else ""
+            instances + catchAll
+        
 
     type TypeClass<'TypeClass> internal(?catchAll:MethodInfo,?instances:Map<TypeFullName,MethodInfo>,?arrayInstances:Map<int,MethodInfo>) =
         let instances = defaultArg instances Map.empty

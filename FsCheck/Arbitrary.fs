@@ -134,6 +134,8 @@ type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) 
     member x.Value = match x with F (_,f) -> f
     member x.Table = match x with F (table,_) -> !table
     member x.StructuredDisplayAsTable =
+        x.ToString()
+    override x.ToString() =
         let layoutTuple (x,y) = sprintf "%A->%A" x y
         x.Table 
         |> Seq.distinctBy fst 
