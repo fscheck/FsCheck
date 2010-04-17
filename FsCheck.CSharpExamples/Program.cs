@@ -157,7 +157,7 @@ namespace FsCheck.CSharpExamples
 
         public class ArbitraryLong : Arbitrary<long>
         {
-            public override Gen<long> Arbitrary
+            public override Gen<long> Generator
             {
 	            get { 
                     return Any.OfSize( s => Any.IntBetween(-s,s))

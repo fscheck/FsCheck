@@ -4,6 +4,9 @@ open System
 
 printfn "%A" Runner.init.Value
 
+//Gen.shrink (Some 0) |> printfn "%A"
+//(Gen.shrink "hb") |> Seq.iter (printfn "%A")
+
 Check.QuickAll <| Type.GetType( "FsCheck.Checks.Random, FsCheck", true)
 
 Check.QuickAll <| Type.GetType( "FsCheck.Checks.Common, FsCheck", true)

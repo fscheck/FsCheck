@@ -25,6 +25,7 @@ module Helpers =
 
     let sample1 gn = sample 1 gn |> List.head
     
+    let isIn l elem = List.exists ((=) elem) l
 
 module Common = 
 
@@ -55,7 +56,7 @@ module Generator =
         |> sample 10
         |> List.forall (fun v -> l <= v && v <= h)
      
-    let private isIn l elem = List.exists ((=) elem) l
+
        
     let Elements (l:list<char>) =
         not l.IsEmpty ==> 
@@ -215,7 +216,7 @@ module Arbitrary =
         |> addLabels
     
     let Boolean (b:bool) =
-        (   arbitrary<bool> |> sample 10 |> List.forall (fun v -> v  || true)
+        (   arbitrary<bool> |> sample 10 |> List.forall (fun _ -> true)
         ,    shrink<bool> b |> Seq.isEmpty)
         |> addLabels
     
@@ -232,8 +233,40 @@ module Arbitrary =
         ,   shrink<float> value 
             |> Seq.forall (fun shrunkv -> shrunkv = 0.0 || shrunkv <= abs value))
         |> addLabels
-    //String.
+        
+    let Byte (value:byte) =
+        (   arbitrary<byte> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate bytes
+        ,   shrink<byte> value |> Seq.forall (fun shrunkv -> (int shrunkv) <= abs (int value)))
 
+    let Char (value:char) =
+        (   arbitrary<char> |> sample 10 |> List.forall (fun v -> v >= Char.MinValue && (int v) <= 127)
+        ,   shrink<char> value |> Seq.forall (fun shrunkv -> isIn  ['a';'b';'c'] shrunkv ))
+
+    let String (value:string) =
+        (   arbitrary<string> |> sample 10 |> List.forall (fun _ -> true)
+            //or the lenght of the string is shorter, or one of its values have been shrunk
+        ,   shrink<string> value |> Seq.forall (fun s -> String.length s < String.length value || (String.exists (isIn ['a';'b';'c']) s)) )
+        |> addLabels
+      
+    let ``2-Tuple``((valuei:int,valuec:char) as value) =
+        (   arbitrary<int*char> |> sample 10 |> List.forall (fun _ -> true)
+            //or the first value is shrunk, or the second
+        ,   shrink value |> Seq.forall (fun (i,c) -> shrink valuei |> Seq.exists ((=) i) || shrink valuec |> Seq.exists ((=) c))  )
+    
+    let ``3-Tuple``((valuei:int,valuec:char,valueb:bool) as value) =
+        (   arbitrary<int*char*bool> |> sample 10 |> List.forall (fun _ -> true)
+            //or the first value is shrunk, or the second
+        ,   shrink value |> Seq.forall (fun (i,c,b) -> shrink valuei |> Seq.exists ((=) i) 
+                                                    || shrink valuec |> Seq.exists ((=) c)  
+                                                    || shrink valueb |> Seq.exists ((=) b))   )
+     
+    let Option (value:option<int>) =
+        (   arbitrary<option<int>> |> sample 10 |> List.forall (fun _ -> true)
+        ,   shrink value 
+            |> (fun shrinks -> match value with 
+                                | None -> shrinks = Seq.empty 
+                                | Some v ->  Seq.forall2 (=) shrinks (seq { yield None; for x' in shrink v -> Some x' }) ))
+      
     let Function (f:int->char) (vs:list<int>) =
         let tabledF = Function<_,_>.from f
         (List.map tabledF.Value vs) = (List.map f vs)

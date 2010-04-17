@@ -26,26 +26,26 @@ and Gen<'a> =
 
 //private interface for reflection
 type internal IArbitrary =
-    abstract ArbitraryObj : Gen<obj>
-    abstract ShrinkObj : obj -> seq<obj>   
+    abstract GeneratorObj : Gen<obj>
+    abstract ShrinkerObj : obj -> seq<obj>   
 
 [<AbstractClass>]
 type Arbitrary<'a>() =
     ///Returns a generator for 'a.
-    abstract Arbitrary      : Gen<'a>
+    abstract Generator      : Gen<'a>
     ///Returns a generator transformer for 'a. Necessary to generate functions with 'a as domain. Fails by
     ///default if it is not overridden.
-    abstract CoArbitrary    : 'a -> (Gen<'c> -> Gen<'c>) 
+    abstract CoGenerator    : 'a -> (Gen<'c> -> Gen<'c>) 
     ///Returns a sequence of the immediate shrinks of the given value. The immediate shrinks should not include
     ///doubles or the given value itself. The default implementation returns the empty sequence (i.e. no shrinking).
-    abstract Shrink         : 'a -> seq<'a>
-    default x.CoArbitrary (_:'a) = 
-        failwithf "CoArbitrary for %A is not implemented" (typeof<'a>)
-    default x.Shrink a = 
+    abstract Shrinker       : 'a -> seq<'a>
+    default x.CoGenerator (_:'a) = 
+        failwithf "CoGenerator for %A is not implemented" (typeof<'a>)
+    default x.Shrinker a = 
         Seq.empty
     interface IArbitrary with
-        member x.ArbitraryObj = (x.Arbitrary :> IGen).AsGenObject
-        member x.ShrinkObj o = (x.Shrink (unbox o)) |> Seq.map box
+        member x.GeneratorObj = (x.Generator :> IGen).AsGenObject
+        member x.ShrinkerObj o = (x.Shrinker (unbox o)) |> Seq.map box
 
 
 
@@ -277,17 +277,17 @@ module Gen =
     let internal arbitraryInstance<'a> = (!Arbitrary).InstanceFor<'a,Arbitrary<'a>>()
 
     ///Returns a Gen<'a>
-    let arbitrary<'a> = arbitraryInstance<'a>.Arbitrary
+    let arbitrary<'a> = arbitraryInstance<'a>.Generator
 
     ///Returns a generator transformer for the given value, aka a coarbitrary function.
-    let coarbitrary<'a,'b> (a:'a) : (Gen<'b> -> Gen<'b>) = arbitraryInstance.CoArbitrary a
+    let coarbitrary<'a,'b> (a:'a) : (Gen<'b> -> Gen<'b>) = arbitraryInstance.CoGenerator a
 
     ///Returns the immediate shrinks for the given value.
-    let shrink<'a> (a:'a) = arbitraryInstance.Shrink a
+    let shrink<'a> (a:'a) = arbitraryInstance.Shrinker a
 
-    let internal getGenerator t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ArbitraryObj)
+    let internal getGenerator t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
 
-    let internal getShrink t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkObj)
+    let internal getShrink t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
 
     ///Register the generators that are static members of the given type.
     let registerByType t = 
@@ -331,5 +331,6 @@ module Gen =
    
     [<Obsolete("This function has been renamed to register, and will be removed in the following version of FsCheck.")>]
     let registerGenerators<'t> = register<'t>
+    
 
 

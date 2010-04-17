@@ -17,7 +17,7 @@ open Prop
 type Generators =
   static member Int64() =
     { new Arbitrary<int64>() with
-        override x.Arbitrary = Gen.arbitrary |> Gen.map int64 }
+        override x.Generator = Gen.arbitrary |> Gen.map int64 }
 Gen.register<Generators>()
 
 //check that registering typeclass instances with a class that does not define any no longer fails silently
@@ -232,12 +232,12 @@ let boxgen() =
 type MyGenerators =
     static member Tree() =
         {new Arbitrary<Tree>() with
-            override x.Arbitrary = tree
-            override x.CoArbitrary t = cotree t
-            override x.Shrink t = Seq.empty }
+            override x.Generator = tree
+            override x.CoGenerator t = cotree t
+            override x.Shrinker t = Seq.empty }
     static member Box() = 
         {new Arbitrary<Box<'a>>() with
-            override x.Arbitrary = boxgen() }
+            override x.Generator = boxgen() }
 
 Gen.register<MyGenerators>()
 
@@ -294,37 +294,19 @@ let propMap (F (_,f)) (l:list<int>) =
 Check.Quick propMap
 
 //alternative to using forAll
-type NonNegativeInt = NonNegative of int
-type NonZeroInt = NonZero of int
-type PositiveInt = Positive of int
+type EvenInt = EvenInt of int with
+    static member op_Explicit(EvenInt i) = i
 
 type ArbitraryModifiers =
-    static member NonNegativeInt() =
-        { new Arbitrary<NonNegativeInt>() with
-            override x.Arbitrary = Gen.arbitrary |> Gen.map (NonNegative << abs)
-            override x.CoArbitrary (NonNegative i) = Gen.coarbitrary i
-            override x.Shrink (NonNegative i) = Gen.shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative }
-    static member NonZeroInt() =
-        { new Arbitrary<NonZeroInt>() with
-            override x.Arbitrary = Gen.arbitrary |> Gen.suchThat ((<>) 0) |> Gen.map NonZero 
-            override x.CoArbitrary (NonZero i) = Gen.coarbitrary i
-            override x.Shrink (NonZero i) = Gen.shrink i |> Seq.filter ((=) 0) |> Seq.map NonZero }
-    static member PositiveInt() =
-        { new Arbitrary<PositiveInt>() with
-            override x.Arbitrary = Gen.arbitrary |> Gen.suchThat ((<>) 0) |> Gen.map (Positive << abs) 
-            override x.CoArbitrary (Positive i) = Gen.coarbitrary i
-            override x.Shrink (Positive i) = Gen.shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
-
+    static member EvenInt() = 
+        Arb.from<int> 
+        |> Arb.filter (fun i -> i % 2 = 0) 
+        |> Arb.convert EvenInt int
+        
 Gen.register<ArbitraryModifiers>()
 
-let prop_NonNeg (NonNegative i) = i >= 0
-Check.Quick("NonNeg",prop_NonNeg)
-
-let prop_NonZero (NonZero i) = i <> 0
-Check.Quick("NonZero",prop_NonZero)
-
-let prop_Positive (Positive i) = i > 0
-Check.Quick("Pos",prop_Positive)
+let ``generated even ints should be even`` (EvenInt i) = i % 2 = 0
+Check.Quick("NonNeg",``generated even ints should be even``)
 
 type Foo = Foo of int
 type Bar = Bar of string
@@ -369,8 +351,8 @@ type Smart<'a> =
 type SmartShrinker =
     static member Smart() =
         { new Arbitrary<Smart<'a>>() with
-            override x.Arbitrary = Gen.arbitrary |> Gen.map (fun arb -> Smart (0,arb))
-            override x.Shrink (Smart (i,x)) = //shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative 
+            override x.Generator = Gen.arbitrary |> Gen.map (fun arb -> Smart (0,arb))
+            override x.Shrinker (Smart (i,x)) = //shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative 
                 let ys = Seq.zip {0..Int32.MaxValue} (Gen.shrink x) |> Seq.map Smart 
                 let i' = Math.Max(0,i-2)
                 let rec interleave left right =
