@@ -40,7 +40,7 @@ type Any =
     static member private SequenceSeq<'a> gs = 
         gs |> Seq.toList |> sequence |> map (fun list -> new List<'a>(list))
     static member OfType<'a>() = 
-        arbitrary<'a>
+        arbitrary<'a>.Generator
     static member Value (value) = 
         constant value
     static member ValueIn (values : seq<_>) = 
@@ -139,7 +139,7 @@ and SpecBuilder<'a> internal   ( generator0:'a Gen
             let conditions' a = conditions |> List.fold (fun s f -> s && f a) true
             let collects' a prop = collects |> List.fold (fun prop f -> prop |> collect (f a)) prop
             let classifies' a prop = classifies |> List.fold (fun prop (f,name) -> prop |> classify (f a) name) prop  
-            forAllShrink generator0 shrinker0 (fun a -> (conditions' a) ==> lazy (assertion0 a) |> collects' a |> classifies' a)
+            forAll (Arb.fromGenShrink(generator0,shrinker0)) (fun a -> (conditions' a) ==> lazy (assertion0 a) |> collects' a |> classifies' a)
     member x.When( condition:Func<'a,bool> ) = 
         SpecBuilder<'a>(generator0, shrinker0, assertion0, (fun a -> condition.Invoke(a))::conditions, collects, classifies)
     member x.Collect(collectedValue:Func<'a,string>)=
@@ -183,7 +183,7 @@ and SpecBuilder<'a,'b> internal   ( generator0:'a Gen
             let conditions' a b = conditions |> List.fold (fun s f -> s && f a b) true
             let collects' a b prop = collects |> List.fold (fun prop f -> prop |> collect (f a b)) prop
             let classifies' a b prop = classifies |> List.fold (fun prop (f,name) -> prop |> classify (f a b) name) prop  
-            forAll generator0 (fun a -> forAll generator1 (fun b -> (conditions' a b) ==> lazy (assertion0 a b) |> collects' a b |> classifies' a b))
+            forAll (Arb.fromGen generator0) (fun a -> forAll (Arb.fromGen generator1) (fun b -> (conditions' a b) ==> lazy (assertion0 a b) |> collects' a b |> classifies' a b))
     member x.When( condition:Func<'a,'b,bool> ) = 
         SpecBuilder<'a,'b>(generator0, shrinker0, generator1, shrinker1, assertion0, (fun a b -> condition.Invoke(a,b))::conditions, collects, classifies)
     member x.Collect(collectedValue:Func<'a,'b,string>)=
@@ -231,9 +231,9 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
             let conditions' a b c = conditions |> List.fold (fun s f -> s && f a b c) true
             let collects' a b c prop = collects |> List.fold (fun prop f -> prop |> collect (f a b c)) prop
             let classifies' a b c prop = classifies |> List.fold (fun prop (f,name) -> prop |> classify (f a b c) name) prop  
-            forAll generator0 (fun a -> 
-            forAll generator1 (fun b -> 
-            forAll generator2 (fun c ->
+            forAll (Arb.fromGen generator0) (fun a -> 
+            forAll (Arb.fromGen generator1) (fun b -> 
+            forAll (Arb.fromGen generator2) (fun c ->
                 (conditions' a b c) ==> lazy (assertion0 a b c) |> collects' a b c |> classifies' a b c))) 
     member x.When( condition:Func<'a,'b,'c,bool> ) = 
         SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, assertion0, (fun a b c -> condition.Invoke(a,b,c))::conditions, collects, classifies)

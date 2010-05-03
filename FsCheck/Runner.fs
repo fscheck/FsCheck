@@ -97,7 +97,7 @@ module Runner =
               let newSize = resize initSize
               //printfn "Before generate"
               //result forced here!
-              let (MkRose (Lazy result,shrinks)) = generate (newSize |> round |> int) rnd2 gen
+              let (MkRose (Lazy result,shrinks)) = Gen.eval (newSize |> round |> int) rnd2 gen
               //printfn "After generate"
               //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
               yield Generated result.Arguments

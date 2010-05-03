@@ -169,13 +169,13 @@ module internal Testable =
             Prop.ofResult (Res.exc e)
         |> Gen.map (Rose.map (argument a))
 
-    let forAll gn body : Property = 
-        gen{ let! a = gn
-             return! evaluate body a }
+//    let forAll gn body : Property = 
+//        gen{ let! a = gn
+//             return! evaluate body a }
 
-    let forAllShrink gn shrink body : Property =
-        gen{let! a = gn
-            return! shrinking shrink a (fun a' -> evaluate body a')}
+    let forAll (arb:Arbitrary<_>) body : Property =
+        gen{let! a = arb.Generator
+            return! shrinking arb.Shrinker a (fun a' -> evaluate body a')}
 
     type Testables with
         static member Unit() =
@@ -204,7 +204,7 @@ module internal Testable =
                 member x.Property rosea = gen { return rosea } } 
         static member Arrow() =
             { new Testable<('a->'b)> with
-                member x.Property f = forAllShrink Gen.arbitrary Gen.shrink f }
+                member x.Property f = forAll Arb.from f }
 
     let private combine f a b:Property = 
         let pa = property a
@@ -241,11 +241,11 @@ module Prop =
     open System
 
     ///Quantified property combinator. Provide a custom test data generator to a property.
-    let forAll (generator:Gen<'Value>) (body:'Value -> 'Testable) = forAll generator body
+    let forAll (arb:Arbitrary<'Value>) (body:'Value -> 'Testable) = forAll arb body
 
-    ///Quantified property combinator. Provide a custom test data generator to a property. 
-    ///Shrink failing test cases using the given shrink function.
-    let forAllShrink (generator:Gen<'Value>) (shrinker:'Value->#seq<'Value>) (body:'Value -> 'Testable)= forAllShrink generator shrinker body
+//    ///Quantified property combinator. Provide a custom test data generator to a property. 
+//    ///Shrink failing test cases using the given shrink function.
+//    let forAllShrink (generator:Gen<'Value>) (shrinker:'Value->#seq<'Value>) (body:'Value -> 'Testable)= forAllShrink generator shrinker body
 
     ///Property combinator to shrink a given value using the shrinking function shrink:'a -> #seq<'a>, and the testable
     ///function pf. 

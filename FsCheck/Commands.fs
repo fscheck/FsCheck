@@ -62,5 +62,5 @@ module Commands =
                     let newActual = c.RunActual actual
                     let newModel = c.RunModel model
                     c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs
-        forAllShrink (genCommands spec) shrink (fun l -> l |> applyCommands (spec.Initial()))
+        forAll (Arb.fromGenShrink(genCommands spec,shrink)) (fun l -> l |> applyCommands (spec.Initial()))
         

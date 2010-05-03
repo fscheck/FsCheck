@@ -33,14 +33,9 @@ type internal IArbitrary =
 type Arbitrary<'a>() =
     ///Returns a generator for 'a.
     abstract Generator      : Gen<'a>
-//    ///Returns a generator transformer for 'a. Necessary to generate functions with 'a as domain. Fails by
-//    ///default if it is not overridden.
-//    abstract CoGenerator    : 'a -> (Gen<'c> -> Gen<'c>) 
     ///Returns a sequence of the immediate shrinks of the given value. The immediate shrinks should not include
     ///doubles or the given value itself. The default implementation returns the empty sequence (i.e. no shrinking).
     abstract Shrinker       : 'a -> seq<'a>
-//    default x.CoGenerator (_:'a) = 
-//        failwithf "CoGenerator for %A is not implemented" (typeof<'a>)
     default x.Shrinker a = 
         Seq.empty
     interface IArbitrary with
@@ -98,7 +93,7 @@ module Gen =
     let internal rand = Gen (fun n r -> r)
 
     ///Generates a value out of the generator with maximum size n.
-    let generate n rnd (Gen m) = 
+    let eval n rnd (Gen m) = 
         let size,rnd' = range (0,n) rnd
         m size rnd'
 
@@ -179,7 +174,6 @@ module Gen =
     ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
     ///if the given original generator did not generate any values that satisfied the predicate, after trying to
     ///get values from by increasing its size.
-    ///Note to QuickCheck users: order of arguments wrt QuickCheck is reversed, to make piping easier.
     let suchThatOption p gn =
         let rec tryValue k n =
             match (k,n) with 
@@ -192,7 +186,6 @@ module Gen =
     ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
     ///the predicate is satisfied.
-    ///Note to QuickCheck users: order of arguments wrt QuickCheck is reversed, to make piping easier.
     let rec suchThat p gn =
         gen {   let! mx = suchThatOption p gn
                 match mx with
@@ -285,13 +278,16 @@ module Gen =
 
     let private Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
 
-    let internal arbitraryInstance<'a> = (!Arbitrary).InstanceFor<'a,Arbitrary<'a>>()
+    //let internal arbitraryInstance<'a> = (!Arbitrary).InstanceFor<'a,Arbitrary<'a>>()
+
+    ///Returns an arbitrary instance for 'a.
+    let arbitrary<'a> = (!Arbitrary).InstanceFor<'a,Arbitrary<'a>>()
 
     ///Returns a Gen<'a>
-    let arbitrary<'a> = arbitraryInstance<'a>.Generator
+    let generate<'a> = arbitrary<'a>.Generator
 
-    ///Returns the immediate shrinks for the given value.
-    let shrink<'a> (a:'a) = arbitraryInstance.Shrinker a
+    ///Returns the immediate shrinks for the given value based on its type.
+    let shrink<'a> (a:'a) = arbitrary<'a>.Shrinker a
 
     let internal getGenerator t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
 
@@ -308,7 +304,7 @@ module Gen =
     let register<'t>() = registerByType typeof<'t>
 
 
-    //---obsoleted functions-----
+    //---obsolete functions-----
 
     [<Obsolete("This function has been replaced by listOfLength for consistency, and will be removed in the following version of FsCheck.")>]
     let vector arb n = listOfLength n arb

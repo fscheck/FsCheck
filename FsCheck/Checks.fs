@@ -20,7 +20,7 @@ module Helpers =
     let sample n gn  = 
         let rec sample i seed samples =
             if i = 0 then samples
-            else sample (i-1) (Random.stdSplit seed |> snd) (generate 1000 seed gn :: samples)
+            else sample (i-1) (Random.stdSplit seed |> snd) (eval 1000 seed gn :: samples)
         sample n (Random.newSeed()) []
 
     let sample1 gn = sample 1 gn |> List.head
@@ -211,21 +211,21 @@ module Arbitrary =
     let private addLabels (generator,shrinker) = ( generator |@ "Generator", shrinker |@ "Shrinker")
     
     let Unit() = 
-        (   arbitrary<unit> |> sample 10 |> List.forall ((=) ())
+        (   generate<unit> |> sample 10 |> List.forall ((=) ())
         ,   shrink<unit>() |> Seq.isEmpty)
         |> addLabels
     
     let Boolean (b:bool) =
-        (   arbitrary<bool> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<bool> |> sample 10 |> List.forall (fun _ -> true)
         ,    shrink<bool> b |> Seq.isEmpty)
         |> addLabels
     
     let Int32 (NonNegativeInt size) (v:int) =
-        (   arbitrary<int> |> resize size |> sample 10 |> List.forall (fun v -> -size <= v && v <= size)
+        (   generate<int> |> resize size |> sample 10 |> List.forall (fun v -> -size <= v && v <= size)
         ,   shrink<int> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v))
             
     let Double (NonNegativeInt size) (value:float) =
-        (   arbitrary<float> |> resize size |> sample 10
+        (   generate<float> |> resize size |> sample 10
             |> List.forall (fun v -> 
                 (-2.0 * float size <= v && v <= 2.0 * float size )
                 || Double.IsNaN(v) || Double.IsInfinity(v)
@@ -235,33 +235,33 @@ module Arbitrary =
         |> addLabels
         
     let Byte (value:byte) =
-        (   arbitrary<byte> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate bytes
+        (   generate<byte> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate bytes
         ,   shrink<byte> value |> Seq.forall (fun shrunkv -> (int shrunkv) <= abs (int value)))
 
     let Char (value:char) =
-        (   arbitrary<char> |> sample 10 |> List.forall (fun v -> v >= Char.MinValue && (int v) <= 127)
+        (   generate<char> |> sample 10 |> List.forall (fun v -> v >= Char.MinValue && (int v) <= 127)
         ,   shrink<char> value |> Seq.forall (fun shrunkv -> isIn  ['a';'b';'c'] shrunkv ))
 
     let String (value:string) =
-        (   arbitrary<string> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<string> |> sample 10 |> List.forall (fun _ -> true)
             //or the lenght of the string is shorter, or one of its values have been shrunk
         ,   shrink<string> value |> Seq.forall (fun s -> String.length s < String.length value || (String.exists (isIn ['a';'b';'c']) s)) )
         |> addLabels
       
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
-        (   arbitrary<int*char> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<int*char> |> sample 10 |> List.forall (fun _ -> true)
             //or the first value is shrunk, or the second
         ,   shrink value |> Seq.forall (fun (i,c) -> shrink valuei |> Seq.exists ((=) i) || shrink valuec |> Seq.exists ((=) c))  )
     
     let ``3-Tuple``((valuei:int,valuec:char,valueb:bool) as value) =
-        (   arbitrary<int*char*bool> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<int*char*bool> |> sample 10 |> List.forall (fun _ -> true)
             //or the first value is shrunk, or the second
         ,   shrink value |> Seq.forall (fun (i,c,b) -> shrink valuei |> Seq.exists ((=) i) 
                                                     || shrink valuec |> Seq.exists ((=) c)  
                                                     || shrink valueb |> Seq.exists ((=) b))   )
      
     let Option (value:option<int>) =
-        (   arbitrary<option<int>> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<option<int>> |> sample 10 |> List.forall (fun _ -> true)
         ,   shrink value 
             |> (fun shrinks -> match value with 
                                 | None -> shrinks = Seq.empty 
@@ -277,6 +277,15 @@ module Arbitrary =
         List.forall2 (=)
             (List.map (Common.uncurry f) vs)
             (List.map (Common.uncurry f) vs)
+            
+    let DateTime(value:DateTime) =
+        let goodDateTime (d:DateTime) =
+            1900 <= d.Year && d.Year <= 2100
+        ( goodDateTime value
+        , shrink value
+          |> Seq.forall (fun v -> v.Second = 0 
+                                 || (v.Second = 0 && v.Minute = 0) 
+                                 || (v.Second = 0 && v.Minute = 0 && v.Hour = 0) ))
         
 module Property =
     open FsCheck.Prop
@@ -299,14 +308,14 @@ module Property =
     let rec private symPropGen =
         let rec recGen size =
             match size with
-            | 0 -> oneof [constant Unit; map (Bool) arbitrary; constant Exception]
+            | 0 -> oneof [constant Unit; map (Bool) generate; constant Exception]
             | n when n>0 ->
                 let subProp = recGen (size/2)
-                oneof   [ map2 (curry ForAll) arbitrary (subProp)
-                        ; map2 (curry Implies) arbitrary (subProp)
-                        ; map2 (curry Collect) arbitrary (subProp)
-                        ; map3 (curry2 Classify) arbitrary arbitrary (subProp)
-                        ; map2 (curry Label) arbitrary (subProp)
+                oneof   [ map2 (curry ForAll) generate (subProp)
+                        ; map2 (curry Implies) generate (subProp)
+                        ; map2 (curry Collect) generate (subProp)
+                        ; map3 (curry2 Classify) generate generate (subProp)
+                        ; map2 (curry Label) generate (subProp)
                         ; map2 (curry And) (subProp) (subProp)
                         ; map2 (curry Or) (subProp) (subProp)
                         ; map Lazy subProp
@@ -346,7 +355,7 @@ module Property =
         | Unit -> Testable.property ()
         | Bool b -> Testable.property b
         | Exception -> Testable.property (lazy (raise <| InvalidOperationException()))
-        | ForAll (i,prop) -> forAll (constant i) (fun i -> toProperty prop)
+        | ForAll (i,prop) -> forAll (constant i |> Arb.fromGen) (fun i -> toProperty prop)
         | Implies (b,prop) -> b ==> (toProperty prop)
         | Classify (b,stamp,prop) -> classify b stamp (toProperty prop)
         | Collect (i,prop) -> collect i (toProperty prop)
@@ -388,9 +397,9 @@ module Property =
         | List props -> 1 + List.fold (fun a b -> Math.Max(a, depth b)) 0 props
     
     let DSL() = 
-        forAllShrink symPropGen shrink (fun symprop ->
+        forAll (Arb.fromGenShrink(symPropGen,shrink)) (fun symprop ->
             let expected = determineResult symprop
-            let (MkRose (Common.Lazy actual,_)) = generate 1 (Random.newSeed()) (toProperty symprop) 
+            let (MkRose (Common.Lazy actual,_)) = eval 1 (Random.newSeed()) (toProperty symprop) 
             areSame expected actual
             |> label (sprintf "expected = %A - actual = %A" expected actual)
             |> collect (depth symprop)

@@ -17,7 +17,7 @@ open Prop
 type Generators =
   static member Int64() =
     { new Arbitrary<int64>() with
-        override x.Generator = Gen.arbitrary |> Gen.map int64 }
+        override x.Generator = Gen.generate<int64> |> Gen.map int64 }
 Gen.register<Generators>()
 
 //check that registering typeclass instances with a class that does not define any no longer fails silently
@@ -201,16 +201,16 @@ let matrix gen = Gen.sized <| fun s -> Gen.resize (s|>float|>sqrt|>int) gen
 type Tree = Leaf of int | Branch of Tree * Tree
 
 let rec private unsafeTree() = 
-    Gen.oneof [ Gen.map Leaf Gen.arbitrary; 
+    Gen.oneof [ Gen.map Leaf Gen.generate; 
                 Gen.map2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
 
 let private tree =
     let rec tree' s = 
         match s with
-            | 0 -> Gen.map Leaf Gen.arbitrary
+            | 0 -> Gen.map Leaf Gen.generate
             | n when n>0 -> 
             let subtree() = tree' (n/2)
-            Gen.oneof [ Gen.map Leaf Gen.arbitrary; 
+            Gen.oneof [ Gen.map Leaf Gen.generate; 
                         Gen.map2 (fun x y -> Branch (x,y)) (subtree()) (subtree())]
             | _ -> raise(ArgumentException"Only positive arguments are allowed")
     Gen.sized tree'
@@ -219,7 +219,7 @@ let private tree =
 type Box<'a> = Whitebox of 'a | Blackbox of 'a
 
 let boxgen() = 
-    gen {   let! a = Gen.arbitrary
+    gen {   let! a = Gen.generate
             return! Gen.elements [ Whitebox a; Blackbox a] }
 
 type MyGenerators =
@@ -343,7 +343,7 @@ type Smart<'a> =
 type SmartShrinker =
     static member Smart() =
         { new Arbitrary<Smart<'a>>() with
-            override x.Generator = Gen.arbitrary |> Gen.map (fun arb -> Smart (0,arb))
+            override x.Generator = Gen.generate |> Gen.map (fun arb -> Smart (0,arb))
             override x.Shrinker (Smart (i,x)) = //shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative 
                 let ys = Seq.zip {0..Int32.MaxValue} (Gen.shrink x) |> Seq.map Smart 
                 let i' = Math.Max(0,i-2)
@@ -459,11 +459,11 @@ Check.Quick testProp2
 
 let blah (s:string) = if s = "" then raise (new System.Exception("foo")) else s.Length > 3
 
-let private withNonEmptyString (p : string -> 'a) = forAll (Gen.oneof (List.map gen.Return [ "A"; "AA"; "AAA" ])) p
+let private withNonEmptyString (p : string -> 'a) = forAll (Gen.oneof (List.map gen.Return [ "A"; "AA"; "AAA" ]) |> Arb.fromGen) p
 
 Check.Quick (withNonEmptyString blah)
 
-let prop_Exc = forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun (s:string) -> failwith "error")
+let prop_Exc = forAll (Arb.fromGenShrink(Gen.resize 100 Gen.generate,Gen.shrink)) (fun (s:string) -> failwith "error")
 Check.Quick("prop_Exc",prop_Exc)
 
 
@@ -471,29 +471,23 @@ Check.Quick("prop_Exc",prop_Exc)
 
 type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }
 
-Check.Quick <| 
-    forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun (s:RecordStuff<string>) -> s.Yes)
+let bigSize = { Config.Quick with StartSize = 100; EndSize = 100 }
+
+Check.One(bigSize,fun (s:RecordStuff<string>) -> s.Yes)
 
 type Recursive<'a> = Void | Leaf of 'a | Branch of Recursive<'a> * 'a * Recursive<'a>
 
-Check.Quick <| 
-    forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun (s:Recursive<string>) -> 
-    match s with  Branch _ -> false | _ -> true)
+Check.One(bigSize,fun (s:Recursive<string>) -> match s with  Branch _ -> false | _ -> true)
 
 type Simple = Void | Void2 | Void3 | Leaf of int | Leaf2 of string * int *char * float
 
 //should yield a simplified Leaf2
-Check.Quick <| 
-    forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun (s:Simple) -> 
-    match s with Leaf2 _ -> false |  _ -> true)
+Check.One(bigSize,fun (s:Simple) -> match s with Leaf2 _ -> false |  _ -> true)
 
 //should yield a Void3
-Check.Quick <| 
-    forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun (s:Simple) -> 
-    match s with Leaf2 _ -> false | Void3 -> false |  _ -> true) 
+Check.One(bigSize,fun (s:Simple) -> match s with Leaf2 _ -> false | Void3 -> false |  _ -> true)
 
-
-Check.Quick <| forAllShrink (Gen.resize 100 Gen.arbitrary) Gen.shrink (fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 ))
+Check.One(bigSize,fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 ))
 Check.Quick (fun opt -> match opt with None -> false | Some b  -> b  )
 Check.Quick (fun opt -> match opt with Some n when n<0 -> false | Some n when n >= 0 -> true | _ -> true )
 
