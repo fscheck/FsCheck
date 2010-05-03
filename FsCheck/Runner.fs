@@ -301,10 +301,10 @@ type Config with
 
 type Check =
 
-    //Check the given property using the given config.
+    ///Check the given property using the given config.
     static member One (config,property:'Testable) = check config property
 
-    //Check the given property using the given config, and the given test name.
+    ///Check the given property using the given config, and the given test name.
     static member One (name,config,property:'Testable) = check { config with Name = name } property
 
     ///Check one property with the quick configuration.  

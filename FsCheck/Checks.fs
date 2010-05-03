@@ -285,22 +285,46 @@ module Arbitrary =
             | :? char | :? bool | :? string -> true
             | _ -> false
         let goodShrinks (o:obj) shrinks = Seq.forall2 (=) (shrink (unbox o)) (shrinks |> Seq.map unbox)
-//            match o with
-//            | :? char -> Seq.forall2 (=) (shrink (unbox o)) (shrinks |> Seq.map unbox)
-//            | :? bool -> Seq.forall2 (=) (shrink (unbox o)) (shrinks |> Seq.map unbox)
-//            | :? string -> Seq.forall2 (=) (shrink (unbox o)) (shrinks |> Seq.map unbox)
-//            | _ -> false
         ( goodObject o
         , shrink o |> goodShrinks o)
             
-    let DateTime(value:DateTime) =
-        let goodDateTime (d:DateTime) =
-            1900 <= d.Year && d.Year <= 2100
-        ( goodDateTime value
-        , shrink value
-          |> Seq.forall (fun v -> v.Second = 0 
+    let ``DateTime generates year between 1900 and 2100``(value:DateTime) =
+        1900 <= value.Year && value.Year <= 2100
+
+    let ``DateTime shrinks seconds, minutes and hours`` (value:DateTime) =
+        shrink value
+        |> Seq.forall (fun v -> v.Second = 0 
                                  || (v.Second = 0 && v.Minute = 0) 
-                                 || (v.Second = 0 && v.Minute = 0 && v.Hour = 0) ))
+                                 || (v.Second = 0 && v.Minute = 0 && v.Hour = 0) )
+                                 
+    let ``Array shrinks to shorter array or smaller elements`` (value:int[]) =
+        shrink value 
+        |> Seq.forall (fun v -> v.Length < value.Length || Array.exists2 (fun e1 e2 -> abs e1 <= abs e2) v value)
+        |> Prop.label (sprintf "%A" <| shrink value)
+        
+    let ``Array2D shrinks to smaller array or smaller elements`` (value:int[,]) =
+        let existsSmallerElement arr v = 
+            let result = ref false
+            Array2D.iteri (fun i j elem -> result := (!result || abs elem <= abs value.[i,j])) v
+            !result
+        shrink value 
+        |> Seq.forall (fun v -> 
+                Array2D.length1 v < Array2D.length1 value
+                || Array2D.length2 v < Array2D.length2 value
+                || existsSmallerElement value v)
+                
+    let ``NonNegativeInt generates non negative ints`` (NonNegativeInt value) =
+        value >= 0
+        
+    let ``NonNegativeInt shrinks non negative ints`` (value:NonNegativeInt) =
+        shrink value |> Seq.forall (fun (NonNegativeInt v) -> v >= 0)
+        
+    let ``PositiveInt generates positive ints`` (PositiveInt value) =
+        value > 0
+        
+    let ``PositiveInt shrinks positive ints`` (value:PositiveInt ) =
+        shrink value |> Seq.forall (fun (PositiveInt v) -> v > 0)
+    
         
 module Property =
     open FsCheck.Prop

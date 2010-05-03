@@ -9,15 +9,11 @@ open System.Collections.Generic
 
 open Prop
 
-//Check.One ({Config.Verbose with MaxTest = 10},fun (i:int) -> true)
-//
-//Console.ReadKey()
-
 //---too early initialization bug (put this first): fixed---
 type Generators =
   static member Int64() =
     { new Arbitrary<int64>() with
-        override x.Generator = Arb.generate<int64> |> Gen.map int64 }
+        override x.Generator = Arb.generate<int> |> Gen.map int64 }
 Arb.register<Generators>()
 
 //check that registering typeclass instances with a class that does not define any no longer fails silently

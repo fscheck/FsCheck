@@ -170,7 +170,8 @@ type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) 
         let table = ref []
         F (table,fun x -> let y = f x in table := (x,y)::(!table); y)    
 
-
+///Use the generator for 'a, but don't shrink.
+type DontShrink<'a> = DontShrink of 'a
 
 ///A collection of default generators.
 type Default =
@@ -270,16 +271,31 @@ type Default =
                     | _ -> failwith "Unknown type in shrink of obj"
                 }
         }
-    //Generate a rank 1 array.
+    ///Generate a rank 1 array.
     static member Array() =
         { new Arbitrary<'a[]>() with
             override x.Generator = arrayOf generate
             override x.Shrinker a = a |> Array.toList |> shrink |> Seq.map List.toArray
         }
 
-
+    ///Generate a rank 2, zero based array.
     static member Array2D() = 
-        Arb.fromGen <| array2DOf generate
+        let shrinkArray2D (arr:_[,]) =
+            let removeRow r (arr:_[,]) =
+                Array2D.init (Array2D.length1 arr-1) (Array2D.length2 arr) (fun i j -> if i < r then arr.[i,j] else arr.[i+1,j])
+            let removeCol c (arr:_[,]) =
+                Array2D.init (Array2D.length1 arr) (Array2D.length2 arr-1) (fun i j -> if j < c then arr.[i,j] else arr.[i,j+1])
+            seq { for r in 1..Array2D.length1 arr do yield removeRow r arr
+                  for c in 1..Array2D.length2 arr do yield removeCol c arr
+                  for i in 0..Array2D.length1 arr-1 do //hopefully the matrix is shrunk considerably before we get here...
+                    for j in 0..Array2D.length2 arr-1 do
+                        for elem in shrink arr.[i,j] do
+                            let shrunk = Array2D.copy arr
+                            shrunk.[i,j] <- elem
+                            yield shrunk
+                }
+                        
+        Arb.fromGenShrink (array2DOf generate,shrinkArray2D)
 
      ///Generate a function value. Function values can be generated for types 'a->'b where 'a has a CoArbitrary
      ///value and 'b has an Arbitrary value.
@@ -390,6 +406,10 @@ type Default =
         }
         |> Arb.convert FixedLengthArray (fun (FixedLengthArray a) -> a)
 
+    ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
+    static member DontShrink() =
+        Arb.generate |> Gen.map DontShrink |> Arb.fromGen
+        
     ///Try to derive an arbitrary instance for the given type reflectively. Works
     ///for record, union, tuple and enum types.
     static member Derive() =

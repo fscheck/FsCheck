@@ -169,9 +169,6 @@ module internal Testable =
             Prop.ofResult (Res.exc e)
         |> Gen.map (Rose.map (argument a))
 
-//    let forAll gn body : Property = 
-//        gen{ let! a = gn
-//             return! evaluate body a }
 
     let forAll (arb:Arbitrary<_>) body : Property =
         gen{let! a = arb.Generator
@@ -242,14 +239,6 @@ module Prop =
 
     ///Quantified property combinator. Provide a custom test data generator to a property.
     let forAll (arb:Arbitrary<'Value>) (body:'Value -> 'Testable) = forAll arb body
-
-//    ///Quantified property combinator. Provide a custom test data generator to a property. 
-//    ///Shrink failing test cases using the given shrink function.
-//    let forAllShrink (generator:Gen<'Value>) (shrinker:'Value->#seq<'Value>) (body:'Value -> 'Testable)= forAllShrink generator shrinker body
-
-    ///Property combinator to shrink a given value using the shrinking function shrink:'a -> #seq<'a>, and the testable
-    ///function pf. 
-    //let private shrinking (shrinker:'Value->#seq<'Value>) (value:'Value) (body:'Value -> 'Testable) = shrinking shrinker value body
 
     ///Depending on the condition, return the first testable if true and the second if false.
     let given condition (iftrue:'TestableIfTrue,ifFalse:'TestableIfFalse) = 

@@ -42,8 +42,6 @@ type Arbitrary<'a>() =
         member x.GeneratorObj = (x.Generator :> IGen).AsGenObject
         member x.ShrinkerObj o = (x.Shrinker (unbox o)) |> Seq.map box
 
-
-
 [<AutoOpen>]
 module GenBuilder =
 
@@ -223,7 +221,7 @@ module Gen =
             gen {   let! k = choose (1,max 1 n)
                     return! listOfLength k gn }
 
-     /// Generates sublists of the given sequence.
+    /// Generates sublists of the given sequence.
     let subListOf l =
         let elems = Array.ofSeq l
         gen {// Generate indices into the array (up to the number of elements)
@@ -276,8 +274,6 @@ module Gen =
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
         Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
 
-    
-
     //---obsolete functions-----
 
     [<Obsolete("This function has been replaced by listOfLength for consistency, and will be removed in the following version of FsCheck.")>]
@@ -301,12 +297,3 @@ module Gen =
     let liftGen5 = map5
     [<Obsolete("This function has been renamed to map6, and will be removed in the following version of FsCheck.")>]
     let liftGen6 = map6
-
-    //[<Obsolete("This function has been renamed to registerByType, and will be removed in the following version of FsCheck.")>]
-    //let registerGeneratorsByType = registerByType
-   
-    //[<Obsolete("This function has been renamed to register, and will be removed in the following version of FsCheck.")>]
-    //let registerGenerators<'t> = register<'t>
-    
-
-
