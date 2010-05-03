@@ -17,6 +17,7 @@ open System.ComponentModel
 open System.Collections.Generic
 open FsCheck
 open Common
+open Arb
 open Gen
 open Testable
 open Prop
@@ -40,7 +41,7 @@ type Any =
     static member private SequenceSeq<'a> gs = 
         gs |> Seq.toList |> sequence |> map (fun list -> new List<'a>(list))
     static member OfType<'a>() = 
-        arbitrary<'a>.Generator
+        from<'a>.Generator
     static member Value (value) = 
         constant value
     static member ValueIn (values : seq<_>) = 
@@ -315,7 +316,7 @@ type GeneratorExtensions =
         
     
 type DefaultArbitraries =
-    static member Add<'t>() = Gen.register<'t>()
+    static member Add<'t>() = Arb.register<'t>()
     //static member Overwrite<'t>() = Gen.overwrite<'t>()
   
 //do init.Value

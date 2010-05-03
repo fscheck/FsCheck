@@ -16,8 +16,30 @@ module Arb =
     open TypeClass
     open System
 
+    let private Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
+
     ///Get the Arbitrary instance for the given type.
-    let from<'Value> = Gen.arbitrary<'Value>
+    let from<'Value> = (!Arbitrary).InstanceFor<'Value,Arbitrary<'Value>>()
+
+    ///Returns a Gen<'Value>
+    let generate<'Value> = from<'Value>.Generator
+
+    ///Returns the immediate shrinks for the given value based on its type.
+    let shrink<'Value> (a:'Value) = from<'Value>.Shrinker a
+
+    let internal getGenerator t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
+
+    let internal getShrink t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
+
+    ///Register the generators that are static members of the given type.
+    let registerByType t = 
+        let newTypeClass = (!Arbitrary).Discover(onlyPublic=true,instancesType=t)
+        let result = (!Arbitrary).Compare newTypeClass
+        Arbitrary := (!Arbitrary).Merge newTypeClass
+        result
+
+    ///Register the generators that are static members of the type argument.
+    let register<'t>() = registerByType typeof<'t>
 
     /// Construct an Arbitrary instance from a generator.
     /// Shrink is not supported for this type.
@@ -85,6 +107,7 @@ module Arb =
 //             return Set.ofArray arr }
   
 open Gen
+open Arb
 open ReflectArbitrary
 open System
 
@@ -359,7 +382,7 @@ type Default =
     static member FixedLengthArray() =
         { new Arbitrary<'a[]>() with
             override x.Generator = generate
-            override x.Shrinker a = a |> Seq.mapi (fun i x -> Gen.shrink x |> Seq.map (fun x' ->
+            override x.Shrinker a = a |> Seq.mapi (fun i x -> Arb.shrink x |> Seq.map (fun x' ->
                                                        let data' = Array.copy a
                                                        data'.[i] <- x'
                                                        data')
@@ -371,8 +394,8 @@ type Default =
     ///for record, union, tuple and enum types.
     static member Derive() =
         { new Arbitrary<'a>() with
-            override x.Generator = reflectGen
-            override x.Shrinker a = reflectShrink a
+            override x.Generator = reflectGen getGenerator
+            override x.Shrinker a = reflectShrink getShrink a
         }
         
     //TODO: consider adding sbyte, float32, int16, int64, BigInteger, decimal, Generic.Collections types, TimeSpan

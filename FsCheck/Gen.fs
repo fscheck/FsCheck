@@ -276,33 +276,7 @@ module Gen =
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
         Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
 
-    let private Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
-
-    //let internal arbitraryInstance<'a> = (!Arbitrary).InstanceFor<'a,Arbitrary<'a>>()
-
-    ///Returns an arbitrary instance for 'a.
-    let arbitrary<'a> = (!Arbitrary).InstanceFor<'a,Arbitrary<'a>>()
-
-    ///Returns a Gen<'a>
-    let generate<'a> = arbitrary<'a>.Generator
-
-    ///Returns the immediate shrinks for the given value based on its type.
-    let shrink<'a> (a:'a) = arbitrary<'a>.Shrinker a
-
-    let internal getGenerator t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
-
-    let internal getShrink t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
-
-    ///Register the generators that are static members of the given type.
-    let registerByType t = 
-        let newTypeClass = (!Arbitrary).Discover(onlyPublic=true,instancesType=t)
-        let result = (!Arbitrary).Compare newTypeClass
-        Arbitrary := (!Arbitrary).Merge newTypeClass
-        result
-
-    ///Register the generators that are static members of the type argument.
-    let register<'t>() = registerByType typeof<'t>
-
+    
 
     //---obsolete functions-----
 
@@ -328,11 +302,11 @@ module Gen =
     [<Obsolete("This function has been renamed to map6, and will be removed in the following version of FsCheck.")>]
     let liftGen6 = map6
 
-    [<Obsolete("This function has been renamed to registerByType, and will be removed in the following version of FsCheck.")>]
-    let registerGeneratorsByType = registerByType
+    //[<Obsolete("This function has been renamed to registerByType, and will be removed in the following version of FsCheck.")>]
+    //let registerGeneratorsByType = registerByType
    
-    [<Obsolete("This function has been renamed to register, and will be removed in the following version of FsCheck.")>]
-    let registerGenerators<'t> = register<'t>
+    //[<Obsolete("This function has been renamed to register, and will be removed in the following version of FsCheck.")>]
+    //let registerGenerators<'t> = register<'t>
     
 
 

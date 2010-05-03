@@ -17,8 +17,8 @@ open Prop
 type Generators =
   static member Int64() =
     { new Arbitrary<int64>() with
-        override x.Generator = Gen.generate<int64> |> Gen.map int64 }
-Gen.register<Generators>()
+        override x.Generator = Arb.generate<int64> |> Gen.map int64 }
+Arb.register<Generators>()
 
 //check that registering typeclass instances with a class that does not define any no longer fails silently
 //type internal NoInstancesFails() =
@@ -201,16 +201,16 @@ let matrix gen = Gen.sized <| fun s -> Gen.resize (s|>float|>sqrt|>int) gen
 type Tree = Leaf of int | Branch of Tree * Tree
 
 let rec private unsafeTree() = 
-    Gen.oneof [ Gen.map Leaf Gen.generate; 
+    Gen.oneof [ Gen.map Leaf Arb.generate; 
                 Gen.map2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
 
 let private tree =
     let rec tree' s = 
         match s with
-            | 0 -> Gen.map Leaf Gen.generate
+            | 0 -> Gen.map Leaf Arb.generate
             | n when n>0 -> 
             let subtree() = tree' (n/2)
-            Gen.oneof [ Gen.map Leaf Gen.generate; 
+            Gen.oneof [ Gen.map Leaf Arb.generate; 
                         Gen.map2 (fun x y -> Branch (x,y)) (subtree()) (subtree())]
             | _ -> raise(ArgumentException"Only positive arguments are allowed")
     Gen.sized tree'
@@ -219,7 +219,7 @@ let private tree =
 type Box<'a> = Whitebox of 'a | Blackbox of 'a
 
 let boxgen() = 
-    gen {   let! a = Gen.generate
+    gen {   let! a = Arb.generate
             return! Gen.elements [ Whitebox a; Blackbox a] }
 
 type MyGenerators =
@@ -231,7 +231,7 @@ type MyGenerators =
         {new Arbitrary<Box<'a>>() with
             override x.Generator = boxgen() }
 
-Gen.register<MyGenerators>()
+Arb.register<MyGenerators>()
 
 let prop_RevRevTree (xs:list<Tree>) = List.rev(List.rev xs) = xs
 Check.Quick prop_RevRevTree
@@ -295,7 +295,7 @@ type ArbitraryModifiers =
         |> Arb.filter (fun i -> i % 2 = 0) 
         |> Arb.convert EvenInt int
         
-Gen.register<ArbitraryModifiers>()
+Arb.register<ArbitraryModifiers>()
 
 let ``generated even ints should be even`` (EvenInt i) = i % 2 = 0
 Check.Quick("NonNeg",``generated even ints should be even``)
@@ -343,9 +343,9 @@ type Smart<'a> =
 type SmartShrinker =
     static member Smart() =
         { new Arbitrary<Smart<'a>>() with
-            override x.Generator = Gen.generate |> Gen.map (fun arb -> Smart (0,arb))
+            override x.Generator = Arb.generate |> Gen.map (fun arb -> Smart (0,arb))
             override x.Shrinker (Smart (i,x)) = //shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative 
-                let ys = Seq.zip {0..Int32.MaxValue} (Gen.shrink x) |> Seq.map Smart 
+                let ys = Seq.zip {0..Int32.MaxValue} (Arb.shrink x) |> Seq.map Smart 
                 let i' = Math.Max(0,i-2)
                 let rec interleave left right =
                     match (left,right) with
@@ -355,7 +355,7 @@ type SmartShrinker =
                 interleave (Seq.take i' ys |> Seq.toList) (Seq.skip i' ys |> Seq.toList) |> List.toSeq
         }
 
-Gen.register<SmartShrinker>()
+Arb.register<SmartShrinker>()
 
 let smartShrink (Smart (_,i)) = i < 20
 Check.Quick smartShrink
@@ -463,7 +463,7 @@ let private withNonEmptyString (p : string -> 'a) = forAll (Gen.oneof (List.map 
 
 Check.Quick (withNonEmptyString blah)
 
-let prop_Exc = forAll (Arb.fromGenShrink(Gen.resize 100 Gen.generate,Gen.shrink)) (fun (s:string) -> failwith "error")
+let prop_Exc = forAll (Arb.fromGenShrink(Gen.resize 100 Arb.generate,Arb.shrink)) (fun (s:string) -> failwith "error")
 Check.Quick("prop_Exc",prop_Exc)
 
 

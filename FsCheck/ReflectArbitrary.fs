@@ -24,7 +24,7 @@ module internal ReflectArbitrary =
        let vals: Array = System.Enum.GetValues(t)
        elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> Enum ]
 
-    let private reflectObj  =
+    let private reflectObj getGenerator =
         // Compute which types are possible children of this type
         // Helps make union generation terminate quicker
         let containedTypes (t : Type) : list<Type> = [] // TODO
@@ -84,10 +84,10 @@ module internal ReflectArbitrary =
             else
                 failwithf "Geneflect: type not handled %A" t)
 
-    let private reflectGenObj (t:Type) = (reflectObj t |> unbox<IGen>).AsGenObject
+    let private reflectGenObj getGenerator (t:Type) = (reflectObj getGenerator t |> unbox<IGen>).AsGenObject
 
     ///Builds a generator for the given type based on reflection. Currently works for record and union types.
-    let reflectGen<'a> = map (unbox<'a>) (reflectGenObj (typeof<'a>))
+    let reflectGen<'a> getGenerator = map unbox<'a> (reflectGenObj getGenerator typeof<'a>)
 
     let rec private children0 (seen : Set<string>) (tFind : Type) (t : Type) : (obj -> list<obj>) =
                 if tFind = t then
@@ -121,7 +121,7 @@ module internal ReflectArbitrary =
         else
             fun _ -> []
 
-    let private reflectShrinkObj o (t:Type) = 
+    let private reflectShrinkObj getShrink o (t:Type) = 
         //assumes that l contains at least one element. 
         let split3 l =
             let rec split3' front m back =
@@ -173,4 +173,4 @@ module internal ReflectArbitrary =
         else
             Seq.empty
 
-    let reflectShrink (a:'a) = reflectShrinkObj a (typeof<'a>) |> Seq.map (unbox<'a>)
+    let reflectShrink getShrink (a:'a) = reflectShrinkObj getShrink a (typeof<'a>) |> Seq.map (unbox<'a>)

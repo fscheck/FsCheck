@@ -207,6 +207,7 @@ module Arbitrary =
     open FsCheck
     open System
     open Helpers
+    open Arb
     
     let private addLabels (generator,shrinker) = ( generator |@ "Generator", shrinker |@ "Shrinker")
     
@@ -255,7 +256,7 @@ module Arbitrary =
     
     let ``3-Tuple``((valuei:int,valuec:char,valueb:bool) as value) =
         (   generate<int*char*bool> |> sample 10 |> List.forall (fun _ -> true)
-            //or the first value is shrunk, or the second
+            //or the first value is shrunk, or the second, or the third
         ,   shrink value |> Seq.forall (fun (i,c,b) -> shrink valuei |> Seq.exists ((=) i) 
                                                     || shrink valuec |> Seq.exists ((=) c)  
                                                     || shrink valueb |> Seq.exists ((=) b))   )
@@ -277,6 +278,20 @@ module Arbitrary =
         List.forall2 (=)
             (List.map (Common.uncurry f) vs)
             (List.map (Common.uncurry f) vs)
+    
+    let Object (o:Object) =
+        let goodObject (o:obj) = 
+            match o with
+            | :? char | :? bool | :? string -> true
+            | _ -> false
+        let goodShrinks (o:obj) shrinks = Seq.forall2 (=) (shrink (unbox o)) (shrinks |> Seq.map unbox)
+//            match o with
+//            | :? char -> Seq.forall2 (=) (shrink (unbox o)) (shrinks |> Seq.map unbox)
+//            | :? bool -> Seq.forall2 (=) (shrink (unbox o)) (shrinks |> Seq.map unbox)
+//            | :? string -> Seq.forall2 (=) (shrink (unbox o)) (shrinks |> Seq.map unbox)
+//            | _ -> false
+        ( goodObject o
+        , shrink o |> goodShrinks o)
             
     let DateTime(value:DateTime) =
         let goodDateTime (d:DateTime) =
@@ -291,6 +306,7 @@ module Property =
     open FsCheck.Prop
     open FsCheck.Common
     open System
+    open Arb
     
     type SymProp =  | Unit | Bool of bool | Exception
                     | ForAll of int * SymProp

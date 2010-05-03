@@ -249,7 +249,7 @@ module Prop =
 
     ///Property combinator to shrink a given value using the shrinking function shrink:'a -> #seq<'a>, and the testable
     ///function pf. 
-    let shrinking (shrinker:'Value->#seq<'Value>) (value:'Value) (body:'Value -> 'Testable) = shrinking shrinker value body
+    //let private shrinking (shrinker:'Value->#seq<'Value>) (value:'Value) (body:'Value -> 'Testable) = shrinking shrinker value body
 
     ///Depending on the condition, return the first testable if true and the second if false.
     let given condition (iftrue:'TestableIfTrue,ifFalse:'TestableIfFalse) = 

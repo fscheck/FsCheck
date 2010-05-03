@@ -220,7 +220,7 @@ module Runner =
 
     ///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
     ///In any case, it can be forced any number of times without problem.
-    let init = lazy Gen.register<Default>()
+    let init = lazy Arb.register<Default>()
 
     let private hasTestableReturnType (m:MethodInfo) =
         ignore init.Value

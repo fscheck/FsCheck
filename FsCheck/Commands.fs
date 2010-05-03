@@ -13,7 +13,7 @@ namespace FsCheck
 
 module Commands =
 
-    open Gen
+    open Arb
     open Prop
 
     ///A single command describes pre and post conditions and the model for a single method under test.
@@ -43,14 +43,14 @@ module Commands =
         let rec genCommandsS state size =
             gen {
                 if size > 0 then
-                    let! command = (spec.GenCommand state) |> suchThat (fun command -> command.Pre state)
+                    let! command = (spec.GenCommand state) |> Gen.suchThat (fun command -> command.Pre state)
                     let! commands = genCommandsS (command.RunModel state) (size-1)
                     return (command :: commands)
                 else
                     return []
             }
-            |> map List.rev
-        sized <| genCommandsS (spec.Initial() |> snd)      
+            |> Gen.map List.rev
+        Gen.sized <| genCommandsS (spec.Initial() |> snd)      
      
     ///Turn a specification into a property.
     let asProperty (spec:ISpecification<_,_>) =
