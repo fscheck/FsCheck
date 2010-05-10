@@ -80,7 +80,8 @@ module Arb =
         { new Arbitrary<'a>() with
            override x.Generator = a.Generator |> Gen.map mapper |> Gen.suchThat pred
            override x.Shrinker b = b |> a.Shrinker |> Seq.filter pred
-       }
+       }     
+    
 //TODO
 //    /// Generate a subset of an existing set
 //    let subsetOf (s: Set<'a>) : Gen<Set<'a>> =
