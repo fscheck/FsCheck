@@ -1,0 +1,183 @@
+*Properties of Functions*
+
+Since FsCheck can generate random function values, it can check properties of functions. For example, we can check associativity of function composition as follows:
+
+{{
+let rec cotree t = 
+    match t with
+       | (Leaf n) -> variant 0 << coarbitrary n
+       | (Branch (t1,t2)) -> variant 1 << cotree t1 << cotree t2
+
+let prop_Assoc (x:Tree) (f:Tree->float,g:float->char,h:char->int) = ((f >> g) >> h) x = (f >> (g >> h)) x
+}}
+where we assume the generator and cogenerator for trees are registered; we thus generate functions Tree -> 'a. If a counter-example is found, function values will be displayed as "<func>".
+
+However, FsCheck can show you the generated function in more detail, by using the Function datatype. For example:
+
+{{
+let propMap (Function (_,f)) (l:list<int>) =
+    not l.IsEmpty ==>
+    lazy (List.map f l = ((*f*)(List.hd l)) :: (List.map f (List.tl l)))
+>quickCheck propMap;;
+Falsifiable, after 2 tests (3 shrinks):
+{-1->0; 0->0; 1->0}
+[1]
+}}
+The  type Function<'a,'b> =  Function of ref<list<('a*'b)>> * ('a ->'b) keeps a map internally of all the arguments it was called with, and the result it produced. In your properties, you can extract the actual function by pattern matching as in the example. Function is used to print the function, and is also to shrink it.
+
+*Use pattern matching instead of forAll to define custom generators*
+
+For example:
+
+{{
+type NonNegativeInt = NonNegative of int
+type NonZeroInt = NonZero of int
+type PositiveInt = Positive of int
+
+type ArbitraryModifiers =
+    static member NonNegativeInt() =
+        { new Arbitrary<NonNegativeInt>() with
+            override x.Arbitrary = arbitrary |> fmapGen (NonNegative << abs)
+            override x.CoArbitrary (NonNegative i) = coarbitrary i
+            override x.Shrink (NonNegative i) = shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative }
+    static member NonZeroInt() =
+        { new Arbitrary<NonZeroInt>() with
+            override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen NonZero 
+            override x.CoArbitrary (NonZero i) = coarbitrary i
+            override x.Shrink (NonZero i) = shrink i |> Seq.filter ((=) 0) |> Seq.map NonZero }
+    static member PositiveInt() =
+        { new Arbitrary<PositiveInt>() with
+            override x.Arbitrary = arbitrary |> suchThat ((<>) 0) |> fmapGen (Positive << abs) 
+            override x.CoArbitrary (Positive i) = coarbitrary i
+            override x.Shrink (Positive i) = shrink i |> Seq.filter ((<=) 0) |> Seq.map Positive }
+
+registerGenerators<ArbitraryModifiers>()
+
+let prop_NonNeg (NonNegative i) = i >= 0
+quickCheckN "NonNeg" prop_NonNeg
+
+let prop_NonZero (NonZero i) = i <> 0
+quickCheckN "NonZero" prop_NonZero
+
+let prop_Positive (Positive i) = i > 0
+quickCheckN "Pos" prop_Positive
+}}
+This make properties much more readable, especially since you can define custom shrink functions as well.
+
+*Register generators and test, without classes (almost)*
+
+Since generators are given as static members of classes, and properties can be grouped together as static members of classes, and since top level let functions are compiled as static member of their enclosing module (which is compiled as a class), you can simply define your properties and generators as top level let-bound functions, and then register all generators and and all properties at once using the following trick:
+
+{{
+let myprop =....
+let mygen =...
+let helper = "returns a string"
+let private helper' = true
+
+type Marker = member x.Null = ()
+registerGenerators (typeof<Marker>.DeclaringType)
+quickCheckAll (typeof<Marker>.DeclaringType)
+}}
+The Marker type is just any type defined in the module, to be able to get to the module's Type. As far as I know, F# offer no way to get to a module Type directly.
+
+FsCheck determines the intent of the function based on its return type:
+* Properties: return bool, Lazy<bool> or Property
+* Generators: return Gen<_>
+All other functions are respectfully ignored. If you have top level functions that return type Gen<_> but do not want them checked or registered, just make them private. FsCheck will ignore those functions.
+
+*Implementing IRunner to integrate FsCheck with mb|x|N|cs|...Unit*
+
+The Config type that can be passed to the {{check}} function takes an IRunner as argument. This interface has two methods:
+* OnArguments is called after every test, passing the implementation the test number, the arguments and the every function. 
+* OnShrink is called at every succesful shrink.
+* OnFinished: is called with the name of the test and the outcome of the overall test run. This is used in the example below to call Assert statements from an outside unit testing framework and allows easy integration with a number of unit testing frameworks. You can leverage another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.
+
+Also, there is a function testFinishedToString which produces the standard string that FsCheck uses to print counter-examples, i.e. with labels, nicely formatted and with anything else that might be added in the future.
+
+{{
+let xUnitRunner = 
+    { new IRunner with 
+        member x.OnArguments(_,_,_) = ()  
+        member x.OnShrink(_,_) = ()
+        member x.OnFinished(name, result) = 
+            match result with 
+                | True data -> Assert.True(true)
+                | _ -> Assert.True(false, testFinishedToString name result) 
+        } 
+        
+let config = {quick with Runner = xUnitRunner}
+}}
+*Implementing IRunner to customize printing of generated arguments*
+
+By default, FsCheck prints generated arguments using sprintf "%A", or so called structured formatting. This usually does what you expect, i.e. for primitive types the value, for objects the ToString override and so on. Occasionally it happens that this is not what you want. (An interesting motivating case that was reported, is testing with COM objects - overriding ToString is not an option and structured formatting does not do anything useful with it). On one hand you can use the label combinator to solve this on a per property basis, but a more structured solution can be achieved by implementing IRunner. For example:
+
+{{
+type Foo = Foo of int
+type Bar = Bar of string
+
+let formatter (o:obj) =
+    match o with
+    | :? Foo as foo -> box "it's a foo"
+    | :? Bar as bar -> box "it's a bar"
+    | _ -> o
+
+//customizing output of counter-examples etc
+let formatterRunner =
+    { new IRunner with
+        member x.OnArguments (ntest,args, every) =
+            printf "%s" (every ntest (args |> List.map formatter))
+        member x.OnShrink(args, everyShrink) =
+            printf "%s" (everyShrink (args |> List.map formatter))
+        member x.OnFinished(name,testResult) = 
+            let testResult' = match testResult with 
+                                | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
+                                    TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
+                                | t -> t
+            printf "%s" (testFinishedToString name testResult') 
+    }
+
+let formatter_prop (foo:Foo) (bar:Bar) (i:int) = i < 10 //so it takes a while before the fail
+check { verbose with Runner = formatterRunner} formatter_prop
+}}
+which outputs:
+
+{{
+0:
+"it's a foo"
+"it's a bar"
+0
+1:
+"it's a foo"
+"it's a bar"
+1
+(etc)
+Falsifiable, after 40 tests (6 shrinks) (StdGen (1013864023,295132170)):
+"it's a foo"
+"it's a bar"
+10
+}}
+*An equality comparison that prints the left and right sides of the equality*
+
+A common property is checking for equality. If a test case fails, FsCheck prints the counterexample, but sometimes it is useful to print the left and right side of the comparison as well, especially if you do some complicated calculations with the generated arguments first. Easiest thing is to define your own printing equality combinator:
+
+{{
+let (.=.) left right = left = right |@ sprintf "%A = %A" left right
+
+et compare (i:int) (j:int) = 2*i+1  .=. 2*j-1
+quickCheck compare
+}}
+which prints:
+
+{{
+Falsifiable, after 1 test (0 shrinks) (StdGen (231038195,295132764)):
+Label of failing property: 1 = -1
+0
+0
+}}
+OF course, you can do this for any operator or function that you often use.
+
+*Some ways to use FsCheck*
+
+# By adding properties and generators to an fsx file in your assembly. It's easy to execute, just press ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls that are built in your solution; F# Interactive will lock those for the remainder of the session, and you won't be able to build unitl you quit the session. One solution is to include the source files instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug, as far as I know.
+# By making a separate console application. Easy to debug, no annoying locks on assemblies. Your best option if you only use FsCheck for testing and your properties span multiple assemblies
+# By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach (some things are easier to check using unit tests, and vice versa), and you like a graphical runner. Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. See also above for ways to customize FsCheck for this scenario.

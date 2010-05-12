@@ -15,7 +15,6 @@ which makes a random choice of a value from an interval, with a uniform distribu
 let chooseFromList xs = gen { let! i = choose (0, List.length xs-1) 
                               return (List.nth xs i) }
 }}
-
 *Choosing Between Alternatives*
 
 A generator may take the form 
@@ -38,7 +37,6 @@ instead. Frequency chooses a generator from the list randomly, but weights the p
 {{
 frequency [ (2, gen { return true }); (1, gen { return false })]
 }}
-
 generates true two thirds of the time. 
 
 *The Size of Test Data*
@@ -65,10 +63,9 @@ val resize : (int -> 'a Gen -> 'a Gen)
 {{
 let matrix gn = sized <| fun s -> resize (s|>float|>sqrt|>int) gn
 }}
-
 *Generating Recursive Data Types*
 
-Generators for recursive data types are easy to express using oneof or frequency to choose between constructors, and F#'s standard computation expression syntax to form a generator for each case. There are also liftGen functions for arity up to 4 to lift constructors and functions into the Gen type. For example, if the type of trees is defined by
+Generators for recursive data types are easy to express using oneof or frequency to choose between constructors, and F#'s standard computation expression syntax to form a generator for each case. There are also liftGen functions for arity up to 6 to lift constructors and functions into the Gen type. For example, if the type of trees is defined by
 
 {{
 type Tree = Leaf of int | Branch of Tree * Tree
@@ -77,20 +74,21 @@ then a generator for trees might be defined by
 
 {{
 let rec unsafeTree() = 
-    oneof [ liftGen (Leaf) Gen.Int; 
-                  liftGen2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
+    oneof [ liftGen (Leaf) arbitrary; 
+            liftGen2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
 }}
-However, a recursive generator like this may fail to terminate, or produce very large results. To avoid this, recursive generators should always use the size control mechanism. For example, 
+However, a recursive generator like this may fail to terminate with a StackOverflowException, or produce very large results. To avoid this, recursive generators should always use the size control mechanism. For example, 
 
 {{
-let tree =
+let private tree =
     let rec tree' s = 
         match s with
-          | 0 -> liftGen (Leaf) Gen.Int
-          | n when n>0 -> 
-            let subtree = tree' (n/2) in
-            oneof [ liftGen (Leaf) Gen.Int; 
-                          liftGen2 (fun x y -> Branch (x,y)) subtree subtree]
+            | 0 -> liftGen (Leaf) arbitrary
+            | n when n>0 -> 
+            let subtree() = tree' (n/2)
+            oneof [ liftGen (Leaf) arbitrary; 
+                    liftGen2 (fun x y -> Branch (x,y)) (subtree()) (subtree())]
+            | _ -> raise(ArgumentException"Only positive arguments are allowed")
     sized tree'
 }}
 Note that 
@@ -104,12 +102,17 @@ If g is a generator for type t, then
 {{two g}} generates a pair of t's, 
 {{three g}} generates a triple of t's, 
 {{four g}} generates a quadruple of t's, 
-{{vector n g}} generates a list of n t's. 
 If xs is a list, then {{elements xs}} generates an arbitrary element of xs.
+{{vectorOf n g}} generates a list of exactly n t's. 
+{{listOf g}} generates a lis of t's whose length is determined by the size parameter
+{{nonEmptyListOf g}} generates a non-empty list of t's.
+{{constant v}} generates the value v.
+{{suchThat p g}} generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
+{{suchThatOption p g}} generates Some t's that satisfy the predicate p, and None if none are found. (After "trying hard")
 
-*Default Generators*
+*Generating random function values*
 
-FsCheck uses static members of the type Gen to define default test data generators for some types. FsCheck defines instances for the types (), bool, int, float, char, string, pairs, triples, quadruples, lists, and functions. You can define new ones by making new instances of 'a Gen.
+Perhaps surprisingly, FsCheck can generate random functions.
 
 To generate random functions of type 'a->'b, you need to provide an instance of type 'a-> 'b Gen -> 'b Gen, which we'll call the cogenerator. The implementation of ('a->'b) Gen uses a cogenerator for type a. If you only want to generate random values of a type, you need only to define a generator for that type, while if you want to generate random functions over the type also, then you should define a cogenerator as well. 
 
@@ -120,22 +123,115 @@ val variant : (int -> 'a Gen -> 'a Gen)
 }}
 For different natural numbers i and j, variant i g and variant j g are independent generator transformers. The argument of variant must be non-negative, and, for efficiency, should be small. Cogenerators can be defined by composing together generator transformers constructed with variant. 
 
+An intuitive way to think about this, is that a generator can generate a value of a certain type based on a random int (provided maybe by choose), while a cogenerator maps the value back onto that int. 
+
 For example,for the type Tree defined above, a suitable instance of a cogenerator, allowing you to define functions Tree -> 'a, can be defined as follows
 
 {{
-let rec cotree t = 
+let rec private cotree t = 
     match t with
-       | (Leaf n) -> variant 0 << Co.Int n
+       | (Leaf n) -> variant 0 << coarbitrary n
        | (Branch (t1,t2)) -> variant 1 << cotree t1 << cotree t2
 }}
+*Default Generators based on type*
 
-*Properties of Functions*
+FsCheck defines default test data generators for some often used types: unit, bool, int, float, char, string, tuples up to length 6, lists, arrays, objects and functions. Furthermore, by using reflection, FsCheck can derive default implementations of record types, discriminated unions and arrays in terms of any primitive types that are defined (either in FsCheck or by you).
 
-Since FsCheck can generate random function values, it can check properties of functions. For example, we can check associativity of function composition as follows:
+You do not need to define these generators explicity for every property: FsCheck can provide a property with appropriate generators for all of the property's arguments, if it knows them or can derive them. Usually you can let type inference do the job of finding out these types based on your properties. However if you want to coerce FsCheck to use a particular generator, you can do so by providing the appropriate type annotations.
+
+You can tell FsCheck about generators for your own types, by defining static members of a class, each of which should return an instance of a subclass of the class Arbitrary<'a>:
 
 {{
-let treegen = (Gen.Tuple(tree,three (Gen.Arrow(cotree,tree))))
-let prop_Assoc gen = forAll gen (fun (x,(f,g,h)) -> 
-    propl ( ((f >> g) >> h) x = (f >> ( g >> h)) x ))
+type MyGenerators =
+    static member Tree() =
+        {new Arbitrary<Tree>() with
+            override x.Arbitrary = tree
+            override x.CoArbitrary t = cotree t }
 }}
-where we use the generator and cogenerator for trees defined above; we thus generate functions Tree -> Tree. If a counter-example is found, function values will be displayed as "<func>".
+Replace the 'a by the particular type you are defiing a generator for. Only the Arbitrary method needs to be defined; CoArbitrary will fail by default if a function is generated with the type as domain, and Shrink by default returns the empty sequence (i.e. no shrinking will occur for this type).
+
+Now, to register all generators in this class:
+
+{{
+registerGenerators<MyGenerators>()
+}}
+FsCheck now knows about Tree types, and can not only generate Tree values, but also lists, tuples and option values containing Trees:
+
+{{
+let prop_RevRevTree (xs:list<Tree>) = List.rev(List.rev xs) = xs
+> quickCheck prop_RevRevTree;;
+-Ok, passed 100 tests.
+}}
+To generate types with a generic type argument, e.g.:
+
+{{
+type Box<'a> = Whitebox of 'a | Blackbox of 'a
+}}
+you can use the same principle. So the class MyGenerators can be writtten as follows:
+
+{{
+let boxgen() = 
+    gen {   let! a = arbitrary
+            return! elements [ Whitebox a; Blackbox a] }
+
+type MyGenerators =
+    static member Tree() =
+        {new Arbitrary<Tree>() with
+            override x.Arbitrary = tree
+            override x.CoArbitrary t = cotree t }
+    static member Box() = 
+        {new Arbitrary<Box<'a>>() with
+            override x.Arbitrary = boxgen() }
+}}
+Notice that we use the function 'val arbitrary<'a> : Gen<'a>' to get the generator for the type argument of Box. This allows you to define generators recursively. Similarly, there is a function coarbitrary and shrink. Look at the FsCheck source for examples of default Arbitrary implementations to get a feeling of how to write such generators.
+
+Now, the following property can be checked (a collect is added to view some of the generated values):
+
+{{
+let prop_RevRevBox (xs:list<Box<int>>) = List.rev(List.rev xs) = xs |> collect xs
+quickCheck prop_RevRevBox;;
+-Ok, passed 100 tests.
+15% [].
+3% [Whitebox 0].
+3% [Blackbox -1].
+2% [Whitebox -2].
+2% [Blackbox 0].
+2% [Blackbox -2].
+1% [Whitebox 7; Blackbox 12].
+1% [Whitebox 6; Whitebox -3; Whitebox 1; Whitebox 8; Whitebox 13; Whitebox 14;
+ Blackbox 4; Whitebox -15; Whitebox -12; Whitebox -14; Blackbox 15; Whitebox 10;
+ Whitebox 0; Whitebox -10].
+...
+}}
+Note that the class needs not be tagged with attributes in any way. FsCheck determines the type of the generator by the return type of each static member,
+
+You cannot register the same type multiple times; FsCheck throws an exception if you try. There is however an overwriteGenerators function that does allow this.
+
+*Polymorphic properties*
+
+It was shown already that FsCheck can handle polymorphic properties, like:
+
+{{
+let prop_RevRev xs = List.rev(List.rev xs) = xs
+}}
+FsCheck handles these by interpreting the type argument as if of type obj. The generator for object currently generates random values of type unit, bool, char and string. So, checking the property above:
+
+{{
+> verboseCheck prop_RevRev;;
+0:
+[|[]|]
+1:
+[|["oY"]|]
+2:
+[|['N'; '\012']|]
+3:
+[|[null; "mP"; ""]|]
+4:
+[|[]|]
+5:
+[|[true; true; true; "\022?"]|]
+6:
+[|[';']|]
+...
+}}
+Note that each generated list is not monomorphic, as you might expect.

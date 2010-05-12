@@ -15,20 +15,23 @@ val it : unit = ()
 When a property fails, FsCheck displays a counter-example. For example, if we define 
 
 {{
-let prop_RevId xs = List.rev xs = xs
+let prop_RevId (xs:list<int>) = List.rev xs = xs
 }}
 then checking it results in
 
 {{
 > quickCheck prop_RevId;;
-Falsifiable, after 8 tests:
-["[-2; -4; -1]"]
+RevId-Falsifiable, after 3 tests (1 shrink):
+[0; 1]
 val it : unit = ()
 }}
+
+Since v0.4, FsCheck also shrinks the counter example, so that it is the minimal counter example that still fails the test case. In the example above, we see that the counter example is indeed minimal: the list must have at least two different elements. FsCheck also displays how many times it found a smaller (in some way) counter example and so proceeded to shrink further.
 
 *Using FsCheck*
 
 To use FsCheck, you download the latest FsCheck source or binary. Build and reference the assembly in any projects containing specifications or test data generators. You can then test properties by loading the module they are defined in into F# interactive, and calling 
+
 {{
 quickCheck <property_name>;; 
 }}
@@ -36,19 +39,20 @@ or by running and writing a small console application that calls the quickCheck 
 
 *Grouping properties*
 
-Usually, you'll write more than one property to test. It can be useful to check these at once with a single command. FsCheck allows you to group together properties as static members of a class:
+Usually, you'll write more than one property to test. FsCheck allows you to group together properties as static members of a class:
 
 {{
 type ListProperties =
     static member RevRev xs = prop_RevRev xs
     static member RevId xs = prop_RevId xs
 }}
-These can be check at once using the familiar quickCheck function:
+These can be checked at once using the quickCheckAll function:
 
 {{
-> quickCheck (typeof<ListProperties>);;
+> quickCheckAll (typeof<ListProperties>);;
 ListProperties.RevRev-Ok, passed 100 tests.
-ListProperties.RevId-Falsifiable, after 10 tests: [[|[true; false; false]|]]
+ListProperties.RevId-Falsifiable, after 2 tests (1 shrink):
+[1; 0]
 }}
 FsCheck now also prints the name of each test.
 
@@ -57,7 +61,8 @@ Since all top level functions of a a module are also compiled as static member o
 {{
 > quickCheck (typeof<ListProperties>.DeclaringType);;
 FSI_0016.prop_RevRev-Ok, passed 100 tests.
-FSI_0016.prop_RevId-Falsifiable, after 5 tests: [[|['\021'; '[']|]]
+FSI_0016.prop_RevId-Falsifiable, after 5 tests(1 shrink):
+[1; 0]
 }}
 
 *What do I do if a test loops or encounters an error?*
@@ -68,11 +73,12 @@ verboseCheck <property_name>
 
 which displays each test case before running the test: the last test case displayed is thus the one in which the loop or error arises. verboseCheck can also be used with types and modules to check entire groups of properties verbosely.
 
-*Word to the wise*
-The property above (the reverse of the reverse of a list is the list itself) is not always correct. Consider a list of floats that contains infinity, or nan (not a number). Since infinity <> infinity, and nan <> nan, the reverse of the reverse of {[nan,nan]} is not actually equal to {[nan,nan]}. FsCheck has a knack for finding this kind of specification problem. However, since this behavior is seldom what you want, FsCheck only generates values that are 'neatly' comparable when you leave the type polymorphic (currently, unit, bool, char and string values). To see this error in action, force FsCheck to generate lists of floats:
+*Caveat*
+The property above (the reverse of the reverse of a list is the list itself) is not always correct. Consider a list of floats that contains infinity, or nan (not a number). Since infinity <> infinity, and nan <> nan, the reverse of the reverse of {{[nan,nan]}} is not actually equal to {{[nan,nan]}} if you use straightforward element by element comparison. FsCheck has a knack for finding this kind of specification problem. However, since this behavior is seldom what you want, FsCheck only generates values that are 'neatly' comparable when you leave the type polymorphic (currently, unit, bool, char and string values). To see this error in action, force FsCheck to generate lists of floats:
 
 {{
 let prop_RevRevFloat (xs:list<float>) = List.rev(List.rev xs) = xs
 > quickCheck prop_RevRevFloat;;
--Falsifiable, after 15 tests: [[|[3.25; -2.833333333; nan]|]]
+Falsifiable, after 26 tests (3 shrinks):
+[nan]
 }}
