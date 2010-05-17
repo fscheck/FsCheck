@@ -32,6 +32,8 @@ type TestResult =
 
 ///For implementing your own test runner.
 type IRunner =
+    ///Called before a group of properties on a type are checked.
+    abstract member OnStartFixture: System.Type -> unit
     ///Called whenever arguments are generated and after the test is run.
     abstract member OnArguments: int * list<obj> * (int -> list<obj> -> string) -> unit
     ///Called on a succesful shrink.
@@ -166,8 +168,11 @@ module Runner =
 
     let printArgs = List.map (sprintf "%A") >> String.concat "\n"
 
+    let onStartFixtureToString (t:Type) =
+        sprintf "--- Checking %s ---\n" t.Name
+
     ///A function that returns the default string that is printed as a result of the test.
-    let testFinishedToString name testResult =
+    let onFinishedToString name testResult =
         let pluralize nb = if nb = 1 then String.Empty else "s"
         let display l = match l with
                         | []  -> ".\n"
@@ -206,15 +211,23 @@ module Runner =
             sprintf "%sArguments exhausted after %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
 
-    ///A runner that simply prints results to the console.
+    let onArgumentsToString n args = 
+        sprintf "%i:\n%s\n" n (printArgs args)
+    
+    let onShrinkToString args =
+        sprintf "shrink:\n%s\n" (printArgs args)
+
+    ///A runner that prints results to the console.
     let consoleRunner =
         { new IRunner with
+            member x.OnStartFixture t =
+                printf "%s" (onStartFixtureToString t)
             member x.OnArguments (ntest,args, every) =
                 printf "%s" (every ntest args)
             member x.OnShrink(args, everyShrink) =
                 printf "%s" (everyShrink args)
             member x.OnFinished(name,testResult) = 
-                printf "%s" (testFinishedToString name testResult)
+                printf "%s" (onFinishedToString name testResult)
         }
            
 
@@ -269,7 +282,7 @@ module Runner =
         
 
     let internal checkAll config (t:Type) = 
-        printfn "--- Checking %s ---" t.Name
+        config.Runner.OnStartFixture t  
         t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
         Array.filter hasTestableReturnType |>
         Array.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m)

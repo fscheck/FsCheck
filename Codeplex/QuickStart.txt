@@ -35,7 +35,7 @@ To use FsCheck, you download the latest FsCheck source or binary. Build and refe
 {{
 quickCheck <property_name>;; 
 }}
-or by running and writing a small console application that calls the quickCheck function.
+or by running and writing a small console application that calls the Check function.
 
 *Grouping properties*
 

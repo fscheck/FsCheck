@@ -66,12 +66,12 @@ type ListProperties =
     static member RevId xs = prop_RevId xs
 Check.QuickAll<ListProperties>()
 
-
+let prop_RevRevFloat (xs:list<float>) = List.rev(List.rev xs) = xs
+Check.Quick prop_RevRevFloat
 
 
 //-----Properties----------------
-let prop_RevRevFloat (xs:list<float>) = List.rev(List.rev xs) = xs
-Check.Quick prop_RevRevFloat
+
 
 //Conditional Properties
 let rec private ordered xs = match xs with
@@ -90,9 +90,13 @@ let prop_Lazy a = a <> 0 ==> (lazy (1/a = 1/a))
 Check.Quick prop_Eager
 Check.Quick prop_Lazy
 
+let orderedList = Arb.from<list<int>> |> Arb.mapFilter List.sort ordered
+let InsertWithArb x = forAll orderedList (fun xs -> ordered(insert x xs))
+Check.Quick InsertWithArb
+
 //throws combinator
-let prop_ExpectException() = throws<DivideByZeroException,_> (lazy (raise <| DivideByZeroException()))
-Check.Quick prop_ExpectException
+let ExpectException() = throws<DivideByZeroException,_> (lazy (raise <| DivideByZeroException()))
+Check.Quick ExpectException
 
 //within combinator
 let prop_timeout (a:int) = 
@@ -308,6 +312,8 @@ let formatter (o:obj) =
 //customizing output of counter-examples etc
 let formatterRunner =
     { new IRunner with
+        member x.OnStartFixture t =
+            printf "%s" (Runner.onStartFixtureToString t)
         member x.OnArguments (ntest,args, every) =
             printf "%s" (every ntest (args |> List.map formatter))
         member x.OnShrink(args, everyShrink) =
@@ -317,8 +323,9 @@ let formatterRunner =
                                 | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
                                     TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
                                 | t -> t
-            printf "%s" (Runner.testFinishedToString name testResult') 
+            printf "%s" (Runner.onFinishedToString name testResult') 
     }
+
 
 let formatter_prop (foo:Foo) (bar:Bar) (i:int) = i < 10 //so it takes a while before the fail
 Check.One({ Config.Quick with Runner = formatterRunner},formatter_prop)
