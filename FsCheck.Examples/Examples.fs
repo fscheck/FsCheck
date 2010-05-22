@@ -236,7 +236,9 @@ Arb.register<MyGenerators>()
 let prop_RevRevTree (xs:list<Tree>) = List.rev(List.rev xs) = xs
 Check.Quick prop_RevRevTree
 
-let prop_RevRevBox (xs:list<Box<int>>) = List.rev(List.rev xs) = xs
+let prop_RevRevBox (xs:list<Box<int>>) = 
+    List.rev(List.rev xs) = xs
+    |> Prop.collect xs
 Check.Quick prop_RevRevBox
 
 

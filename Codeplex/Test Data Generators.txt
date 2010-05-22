@@ -1,8 +1,18 @@
-!! Test Data Generators: The Type Gen
+!! Test Data: Generators, shrinkers and Arbitrary instances
 
 Test data is produced by test data generators. FsCheck defines default generators for some often used types, but you can use your own, and will need to define your own generators for any new types you introduce. 
 
-Generators have types of the form Gen<'a>; this is a generator for values of type a. For manipulating values of type Gen, a computation expression called gen is provided by FsCheck.
+Generators have types of the form Gen<'a>; this is a generator for values of type a. For manipulating values of type Gen, a computation expression called gen is provided by FsCheck, and all the functions in the Gen module are at your disposal.
+
+Shrinkers have types of the for 'a -> seq<'a>; given a value, a shrinker produces a sequence of values that are in some way smaller than the given value. If FsCheck finds a set of values that falsify a given property, it will try to make that value smaller than the original (random) value by getting the shrinks for the value and trying each one in turn to check that the property is still false. If it is, the smaller value becomes the new counter example and the shrinking process continues with that value.
+
+Shrinkers have no special support from FsCheck - this is not needed, since you have all that you need in seq computation expressions and the Seq module.
+
+Finally, an Arbitrary<'a> instance packages these two types to be used in properties. FsCheck also allows you to register Arbitrary instances in a Type to Arbitrary dictionary. This dictionary is used to find an arbitrary instance for properties that have arguments, based on the argument's type.
+
+Arbitrary instances have some helper functions in the Arb module.
+
+*Generators*
 
 Generators are built up on top of the function
 
@@ -32,7 +42,7 @@ We can control the distribution of results using the function
 {{
 val frequency: (int * 'a Gen) list -> 'a Gen 
 }}
-instead. Frequency chooses a generator from the list randomly, but weights the probability of choosing each alternative by the factor given. For example,
+instead. Frequency chooses a generator from the list randomly, but weighs the probability of choosing each alternative by the factor given. For example,
 
 {{
 frequency [ (2, gen { return true }); (1, gen { return false })]
@@ -65,7 +75,7 @@ let matrix gn = sized <| fun s -> resize (s|>float|>sqrt|>int) gn
 }}
 *Generating Recursive Data Types*
 
-Generators for recursive data types are easy to express using oneof or frequency to choose between constructors, and F#'s standard computation expression syntax to form a generator for each case. There are also liftGen functions for arity up to 6 to lift constructors and functions into the Gen type. For example, if the type of trees is defined by
+Generators for recursive data types are easy to express using oneof or frequency to choose between constructors, and F#'s standard computation expression syntax to form a generator for each case. There are also map functions for arity up to 6 to lift constructors and functions into the Gen type. For example, if the type of trees is defined by
 
 {{
 type Tree = Leaf of int | Branch of Tree * Tree
@@ -94,7 +104,7 @@ let private tree =
 Note that 
 * We guarantee termination by forcing the result to be a leaf when the size is zero. 
 * We halve the size at each recursion, so that the size gives an upper bound on the number of nodes in the tree. We are free to interpret the size as we will. 
-* The fact that we share the subtree generator between the two branches of a Branch does not, of course, mean that we generate the same tree in each case.
+* The fact that we share the subtree generator between the two branches of a Branch does not mean that we generate the same tree in each case.
 
 *Useful Generator Combinators*
 
@@ -103,43 +113,20 @@ If g is a generator for type t, then
 {{three g}} generates a triple of t's, 
 {{four g}} generates a quadruple of t's, 
 If xs is a list, then {{elements xs}} generates an arbitrary element of xs.
-{{vectorOf n g}} generates a list of exactly n t's. 
-{{listOf g}} generates a lis of t's whose length is determined by the size parameter
-{{nonEmptyListOf g}} generates a non-empty list of t's.
+{{listOfLength n g}} generates a list of exactly n t's. 
+{{listOf g}} generates a list of t's whose length is determined by the size parameter
+{{nonEmptyListOf g}} generates a non-empty list of t's whose length is determined by the size parameter.
 {{constant v}} generates the value v.
 {{suchThat p g}} generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
 {{suchThatOption p g}} generates Some t's that satisfy the predicate p, and None if none are found. (After "trying hard")
 
-*Generating random function values*
+*Default Generators and Shrinkers based on type*
 
-Perhaps surprisingly, FsCheck can generate random functions.
+FsCheck defines default test data generators  and shrinkers for some often used types: unit, bool, byte, int, float, char, string, DateTime, lists, array 1D and 2D, Set, Map, objects and functions from and to any of the above. Furthermore, by using reflection, FsCheck can derive default implementations of record types, discriminated unions, tuples and enums in terms of any primitive types that are defined (either in FsCheck or by you).
 
-To generate random functions of type 'a->'b, you need to provide an instance of type 'a-> 'b Gen -> 'b Gen, which we'll call the cogenerator. The implementation of ('a->'b) Gen uses a cogenerator for type a. If you only want to generate random values of a type, you need only to define a generator for that type, while if you want to generate random functions over the type also, then you should define a cogenerator as well. 
+You do not need to define these explicity for every property: FsCheck can provide a property with appropriate generators and shrinkers for all of the property's arguments, if it knows them or can derive them. Usually you can let type inference do the job of finding out these types based on your properties. However if you want to coerce FsCheck to use a particular generator and shrinker, you can do so by providing the appropriate type annotations.
 
-A cogenerator function interprets a value of type a as a generator transformer. It should be defined so that different values are interpreted as independent generator transformers. These can be programmed using the function
-
-{{
-val variant : (int -> 'a Gen -> 'a Gen)
-}}
-For different natural numbers i and j, variant i g and variant j g are independent generator transformers. The argument of variant must be non-negative, and, for efficiency, should be small. Cogenerators can be defined by composing together generator transformers constructed with variant. 
-
-An intuitive way to think about this, is that a generator can generate a value of a certain type based on a random int (provided maybe by choose), while a cogenerator maps the value back onto that int. 
-
-For example,for the type Tree defined above, a suitable instance of a cogenerator, allowing you to define functions Tree -> 'a, can be defined as follows
-
-{{
-let rec private cotree t = 
-    match t with
-       | (Leaf n) -> variant 0 << coarbitrary n
-       | (Branch (t1,t2)) -> variant 1 << cotree t1 << cotree t2
-}}
-*Default Generators based on type*
-
-FsCheck defines default test data generators for some often used types: unit, bool, int, float, char, string, tuples up to length 6, lists, arrays, objects and functions. Furthermore, by using reflection, FsCheck can derive default implementations of record types, discriminated unions and arrays in terms of any primitive types that are defined (either in FsCheck or by you).
-
-You do not need to define these generators explicity for every property: FsCheck can provide a property with appropriate generators for all of the property's arguments, if it knows them or can derive them. Usually you can let type inference do the job of finding out these types based on your properties. However if you want to coerce FsCheck to use a particular generator, you can do so by providing the appropriate type annotations.
-
-You can tell FsCheck about generators for your own types, by defining static members of a class, each of which should return an instance of a subclass of the class Arbitrary<'a>:
+As mentioned in the introduction, FsCheck packages a generator and shrinker for a particular type in an Arbitrary type. You can provide FsCheck with an Arbitrary instance for your own types, by defining static members of a class, each of which should return an instance of a subclass of the class Arbitrary<'a>:
 
 {{
 type MyGenerators =
@@ -148,14 +135,14 @@ type MyGenerators =
             override x.Arbitrary = tree
             override x.CoArbitrary t = cotree t }
 }}
-Replace the 'a by the particular type you are defiing a generator for. Only the Arbitrary method needs to be defined; CoArbitrary will fail by default if a function is generated with the type as domain, and Shrink by default returns the empty sequence (i.e. no shrinking will occur for this type).
+Replace the 'a by the particular type you are defiing an Arbitary instance for. Only the Generator method needs to be defined; Shrinker by default returns the empty sequence (i.e. no shrinking will occur for this type).
 
-Now, to register all generators in this class:
+Now, to register all Arbitrary instances in this class:
 
 {{
 registerGenerators<MyGenerators>()
 }}
-FsCheck now knows about Tree types, and can not only generate Tree values, but also lists, tuples and option values containing Trees:
+FsCheck now knows about Tree types, and can not only generate Tree values, but also e.g. lists, tuples and option values containing Trees:
 
 {{
 let prop_RevRevTree (xs:list<Tree>) = List.rev(List.rev xs) = xs
@@ -183,7 +170,7 @@ type MyGenerators =
         {new Arbitrary<Box<'a>>() with
             override x.Arbitrary = boxgen() }
 }}
-Notice that we use the function 'val arbitrary<'a> : Gen<'a>' to get the generator for the type argument of Box. This allows you to define generators recursively. Similarly, there is a function coarbitrary and shrink. Look at the FsCheck source for examples of default Arbitrary implementations to get a feeling of how to write such generators.
+Notice that we use the function 'val generate<'a> : Gen<'a>' from the Arb module to get the generator for the type argument of Box. This allows you to define generators recursively. Similarly, there is a function shrink<'a>. Look at the FsCheck source for examples of default Arbitrary implementations to get a feeling of how to write such Arbitrary instances. The Arb module should help you with this task as well.gg
 
 Now, the following property can be checked (a collect is added to view some of the generated values):
 
@@ -203,18 +190,16 @@ quickCheck prop_RevRevBox;;
  Whitebox 0; Whitebox -10].
 ...
 }}
-Note that the class needs not be tagged with attributes in any way. FsCheck determines the type of the generator by the return type of each static member,
-
-You cannot register the same type multiple times; FsCheck throws an exception if you try. There is however an overwriteGenerators function that does allow this.
+Note that the class needs not be tagged with attributes in any way. FsCheck determines the type of the generator by the return type of each static member.
 
 *Polymorphic properties*
 
-It was shown already that FsCheck can handle polymorphic properties, like:
+FsCheck can handle polymorphic properties, like:
 
 {{
 let prop_RevRev xs = List.rev(List.rev xs) = xs
 }}
-FsCheck handles these by interpreting the type argument as if of type obj. The generator for object currently generates random values of type unit, bool, char and string. So, checking the property above:
+FsCheck handles these by interpreting the type argument as if of type obj. The generator for object currently generates random values of type bool, char and string. So, checking the property above:
 
 {{
 > verboseCheck prop_RevRev;;
