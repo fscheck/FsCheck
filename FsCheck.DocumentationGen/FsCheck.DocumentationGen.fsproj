@@ -30,6 +30,11 @@
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="QuickStart.fs" />
+    <Compile Include="Properties.fs" />
+    <Compile Include="TestData.fs" />
+    <Compile Include="StatefulTesting.fs" />
+    <Compile Include="TipsAndTricks.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

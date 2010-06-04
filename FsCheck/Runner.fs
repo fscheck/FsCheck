@@ -166,7 +166,7 @@ module Runner =
             ) [] 
         |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed
 
-    let printArgs = List.map (sprintf "%A") >> String.concat "\n"
+    let argumentsToString = List.map (sprintf "%A") >> String.concat "\n"
 
     let onStartFixtureToString (t:Type) =
         sprintf "--- Checking %s ---\n" t.Name
@@ -195,27 +195,27 @@ module Runner =
             sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):\n" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed
             + maybePrintLabels data.Labels  
-            + sprintf "%s\n" (args |> printArgs)
+            + sprintf "%s\n" (args |> argumentsToString)
             + sprintf "with exception:\n%O\n" exc
         | False (data, origArgs, args, Timeout i, usedSeed) -> 
             sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):\n" 
                 name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed 
             + maybePrintLabels data.Labels 
-            + sprintf "%s\n" (args |> printArgs)
+            + sprintf "%s\n" (args |> argumentsToString)
         | False (data, origArgs, args, _, usedSeed) -> 
             sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):\n" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed
             + maybePrintLabels data.Labels  
-            + sprintf "%s\n" (args |> printArgs) 
+            + sprintf "%s\n" (args |> argumentsToString) 
         | Exhausted data -> 
             sprintf "%sArguments exhausted after %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
 
     let onArgumentsToString n args = 
-        sprintf "%i:\n%s\n" n (printArgs args)
+        sprintf "%i:\n%s\n" n (argumentsToString args)
     
     let onShrinkToString args =
-        sprintf "shrink:\n%s\n" (printArgs args)
+        sprintf "shrink:\n%s\n" (argumentsToString args)
 
     ///A runner that prints results to the console.
     let consoleRunner =
@@ -266,7 +266,7 @@ module Runner =
         | [|t|] -> [|tvalue|]
         | _ -> FSharpValue.GetTupleFields(tvalue) 
 
-    let checkMethod config (m:MethodInfo) =
+    let internal checkMethod (config:Config) (m:MethodInfo) =
         let fromTypes = m.GetParameters() |> Array.map (fun p -> p.ParameterType) 
         let fromP = fromTypes |> arrayToTupleType
         let toP = m.ReturnType
@@ -306,8 +306,8 @@ type Config with
     ///The verbose configuration prints each generated argument.
     static member Verbose = 
         { Config.Quick with 
-            Every       = fun n args -> sprintf "%i:\n%s\n" n (printArgs args)
-            EveryShrink = fun args -> sprintf "shrink:\n%s\n" (printArgs args)
+            Every       = fun n args -> sprintf "%i:\n%s\n" n (argumentsToString args)
+            EveryShrink = fun args -> sprintf "shrink:\n%s\n" (argumentsToString args)
         }
     ///The default configuration is the quick configuration.
     static member Default = Config.Quick
@@ -319,6 +319,9 @@ type Check =
 
     ///Check the given property using the given config, and the given test name.
     static member One (name,config,property:'Testable) = check { config with Name = name } property
+    
+    ///Check the given property identified by the given MethodInfo.
+    static member Method (config,methodInfo:Reflection.MethodInfo) = checkMethod config methodInfo
 
     ///Check one property with the quick configuration.  
     static member Quick (property:'Testable) = Check.One(Config.Quick,property)

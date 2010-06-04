@@ -300,7 +300,7 @@ type ArbitraryModifiers =
 Arb.register<ArbitraryModifiers>()
 
 let ``generated even ints should be even`` (EvenInt i) = i % 2 = 0
-Check.Quick("NonNeg",``generated even ints should be even``)
+Check.Quick ``generated even ints should be even``
 
 type Foo = Foo of int
 type Bar = Bar of string

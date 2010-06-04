@@ -12,7 +12,7 @@ let prop_Assoc (x:Tree) (f:Tree->float,g:float->char,h:char->int) = ((f >> g) >>
 }}
 where we assume the generator and cogenerator for trees are registered; we thus generate functions Tree -> 'a. If a counter-example is found, function values will be displayed as "<func>".
 
-However, FsCheck can show you the generated function in more detail, by using the Function datatype. For example:
+However, FsCheck can show you the generated function in more detail, by using the Function type. If you use that, FsCheck can even shrink your function. For example:
 
 {{
 let propMap (Function (_,f)) (l:list<int>) =
@@ -64,9 +64,9 @@ quickCheckN "Pos" prop_Positive
 }}
 This make properties much more readable, especially since you can define custom shrink functions as well.
 
-*Register generators and test, without classes (almost)*
+*Running tests using only modules*
 
-Since generators are given as static members of classes, and properties can be grouped together as static members of classes, and since top level let functions are compiled as static member of their enclosing module (which is compiled as a class), you can simply define your properties and generators as top level let-bound functions, and then register all generators and and all properties at once using the following trick:
+Since Arbitrary instances are given as static members of classes, and properties can be grouped together as static members of classes, and since top level let functions are compiled as static member of their enclosing module (which is compiled as a class), you can simply define your properties and generators as top level let-bound functions, and then register all generators and and all properties at once using the following trick:
 
 {{
 let myprop =....
@@ -81,18 +81,18 @@ quickCheckAll (typeof<Marker>.DeclaringType)
 The Marker type is just any type defined in the module, to be able to get to the module's Type. As far as I know, F# offer no way to get to a module Type directly.
 
 FsCheck determines the intent of the function based on its return type:
-* Properties: return bool, Lazy<bool> or Property
-* Generators: return Gen<_>
-All other functions are respectfully ignored. If you have top level functions that return type Gen<_> but do not want them checked or registered, just make them private. FsCheck will ignore those functions.
+* Properties: return unit, bool, Property or function of any arguments to those types or Lazy value of any of those types
+* Arbitrary instances: return Arbitrary<_>
+All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will do something with, but do not want them checked or registered, just make them private. FsCheck will ignore those functions.
 
 *Implementing IRunner to integrate FsCheck with mb|x|N|cs|...Unit*
 
-The Config type that can be passed to the {{check}} function takes an IRunner as argument. This interface has two methods:
+The Config type that can be passed to the {{check}} function takes an IRunner as argument. This interface has the following methods:
 * OnArguments is called after every test, passing the implementation the test number, the arguments and the every function. 
 * OnShrink is called at every succesful shrink.
-* OnFinished: is called with the name of the test and the outcome of the overall test run. This is used in the example below to call Assert statements from an outside unit testing framework and allows easy integration with a number of unit testing frameworks. You can leverage another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.
+* OnFinished: is called with the name of the test and the outcome of the overall test run. This is used in the example below to call Assert statements from an outside unit testing framework - allowing FsCheck to integrate with a number of unit testing frameworks. You can leverage another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.
 
-Also, there is a function testFinishedToString which produces the standard string that FsCheck uses to print counter-examples, i.e. with labels, nicely formatted and with anything else that might be added in the future.
+Also, there is a function Runner.onFinishedToString which produces the standard string that FsCheck uses to print counter-examples, i.e. with labels, nicely formatted and with anything else that might be added in the future. Check out the Runner module for other useful toString functions.
 
 {{
 let xUnitRunner = 
@@ -158,7 +158,7 @@ Falsifiable, after 40 tests (6 shrinks) (StdGen (1013864023,295132170)):
 }}
 *An equality comparison that prints the left and right sides of the equality*
 
-A common property is checking for equality. If a test case fails, FsCheck prints the counterexample, but sometimes it is useful to print the left and right side of the comparison as well, especially if you do some complicated calculations with the generated arguments first. Easiest thing is to define your own printing equality combinator:
+Properties commonly check for equality. If a test case fails, FsCheck prints the counterexample, but sometimes it is useful to print the left and right side of the comparison as well, especially if you do some complicated calculations with the generated arguments first. To make this easier, you can define your own labelling equality combinator:
 
 {{
 let (.=.) left right = left = right |@ sprintf "%A = %A" left right
@@ -174,10 +174,10 @@ Label of failing property: 1 = -1
 0
 0
 }}
-OF course, you can do this for any operator or function that you often use.
+Of course, you can do this for any operator or function that you often use.
 
 *Some ways to use FsCheck*
 
-# By adding properties and generators to an fsx file in your assembly. It's easy to execute, just press ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls that are built in your solution; F# Interactive will lock those for the remainder of the session, and you won't be able to build unitl you quit the session. One solution is to include the source files instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug, as far as I know.
-# By making a separate console application. Easy to debug, no annoying locks on assemblies. Your best option if you only use FsCheck for testing and your properties span multiple assemblies
-# By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach (some things are easier to check using unit tests, and vice versa), and you like a graphical runner. Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. See also above for ways to customize FsCheck for this scenario.
+# By adding properties and generators to an fsx file in your project. It's easy to execute, just press ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls that are built in your solution; F# Interactive will lock those for the remainder of the session, and you won't be able to build unitl you quit the session. One solution is to include the source files instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug, as far as I know.
+# By making a separate console application. Easy to debug, no annoying locks on assemblies. Your best option if you use only FsCheck for testing and your properties span multiple assemblies.
+# By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach (some things are easier to check using unit tests, and vice versa), and you like a graphical runner. Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. See above for ways to customize FsCheck for this scenario.
