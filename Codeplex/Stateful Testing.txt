@@ -1,16 +1,14 @@
 !! Stateful Testing
-
 FsCheck also allows you to test objects, which usually encapsulate internal state through a set of methods. FsCheck, through a very small extension, allows you to do model-based specification of a class under test. Consider the following class, with an artificial bug in it:
 
 {{
 type Counter() =
-  let mutable n = 0
-  member x.Inc() = n <- n + 1
-  member x.Dec() = if n > 2 then n <- n - 2 else n <- n - 1
-  member x.Get = n
-  member x.Reset() = n <- 0
-  override x.ToString() = n.ToString()
-}}
+    let mutable n = 0
+    member x.Inc() = n <- n + 1
+    member x.Dec() = if n > 2 then n <- n - 2 else n <- n - 1
+    member x.Get = n
+    member x.Reset() = n <- 0
+    override x.ToString() = n.ToString()}}
 The obvious model to test this class is just an int value which will serve as an abstraction of the object's internal state. With this idea in mind, you can write a specification as follows:
 
 {{
@@ -29,20 +27,15 @@ let spec =
             override x.ToString() = "dec"}
     { new ISpecification<Counter,int> with
         member x.Initial() = (new Counter(),0)
-        member x.GenCommand _ = elements [inc;dec] }
-}}
-A specification is an object that Implementents ISpecification<'typeUnderTest,'modelType>. It should return an initial object and an initial model of that object; and it should return a generator of ICommand objects. 
-
+        member x.GenCommand _ = Gen.elements [inc;dec] }}}
+A specification is an object that Implementents ISpecification<'typeUnderTest,'modelType>. It should return an initial object and an initial model of that object; and it should return a generator of ICommand objects.
 Each ICommand object typically represents one method to call on the object under test, and describes what happens to the model and the object when the command is executed. Also, it asserts preconditions that need to hold before executing the command: FsCheck will not execute that command if the precondittion doesn not hold. It asserts postconditions that should hold after a command is executed: FsCheck fails the test if a postcondition does not hold.
-
 Preferably also override ToString in each command so that counterexamples can be printed.
-
 A specification can be checked as follows:
 
 {{
-quickCheckN "Counter" (fun () -> asProperty spec)
-Counter-Falsifiable, after 26 tests (5 shrinks):
-null
+> Check.Quick (asProperty spec);;
+Falsifiable, after 4 tests (1 shrink) (StdGen (1906253113,295281725)):
 [inc; inc; inc; dec]
 }}
-Notice that not only has FsCheck found our "bug", it has also produced the minimal sequence that leads to it.
+Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.

@@ -1,3 +1,7 @@
+First of all credit should go to John Hughes and Koen Claessen for coming up with the fist version of Haskell's QuickCheck and many fundanmental improvements and ideas. All contributors to QuickCheck are contributors to FsCheck.
+
+The same is true, but to a lesser degree, for scalacheck (which is itself a port of QuickCheck to Scala).
+
 Contributors:
 Neil Mitchell (the first version of reflective generators and shrinker)
 Ganesh Sittampalam (various improvements and fixes in the property DSL)

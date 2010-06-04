@@ -8,7 +8,7 @@
     <ProjectGuid>{274871eb-2390-448a-a9bc-af252164222d}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>FsCheck.DocumentationGen</RootNamespace>
-    <AssemblyName>FsCheck.DocumentationGen</AssemblyName>
+    <AssemblyName>FsCheck.Documentation</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <Name>FsCheck.DocumentationGen</Name>
   </PropertyGroup>

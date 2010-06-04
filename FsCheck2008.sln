@@ -16,7 +16,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Checker", "FsCheck.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.CSharpExamples", "FsCheck.CSharpExamples\FsCheck.CSharpExamples.csproj", "{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.DocumentationGen", "FsCheck.DocumentationGen\FsCheck.DocumentationGen.fsproj", "{274871EB-2390-448A-A9BC-AF252164222D}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Documentation", "FsCheck.Documentation\FsCheck.Documentation.fsproj", "{274871EB-2390-448A-A9BC-AF252164222D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -14,7 +14,7 @@ type Generators =
   static member Int64() =
     { new Arbitrary<int64>() with
         override x.Generator = Arb.generate<int> |> Gen.map int64 }
-Arb.register<Generators>()
+Arb.register<Generators>() |> ignore
 
 //check that registering typeclass instances with a class that does not define any no longer fails silently
 //type internal NoInstancesFails() =
@@ -53,290 +53,6 @@ let prop_LabelBug (x:int) =
     |> label "bla"
 Check.Quick prop_LabelBug
 
-//-------A Simple Example----------
-let prop_RevRev (xs:list<int>) = List.rev(List.rev xs) = xs
-Check.Quick prop_RevRev
-
-let prop_RevId (xs:list<int>) = List.rev xs = xs
-Check.Quick("RevId",prop_RevId)
-
-//------Grouping properties--------
-type ListProperties =
-    static member RevRev xs = prop_RevRev xs
-    static member RevId xs = prop_RevId xs
-Check.QuickAll<ListProperties>()
-
-let prop_RevRevFloat (xs:list<float>) = List.rev(List.rev xs) = xs
-Check.Quick prop_RevRevFloat
-
-
-//-----Properties----------------
-
-
-//Conditional Properties
-let rec private ordered xs = match xs with
-                             | [] -> true
-                             | [x] -> true
-                             | x::y::ys ->  (x <= y) && ordered (y::ys)
-let rec insert x xs = match xs with
-                      | [] -> [x]
-                      | c::cs -> if x <= c then x::xs else c::(insert x cs)                      
-let prop_Insert (x:int) xs = ordered xs ==> ordered (insert x xs)
-Check.Quick prop_Insert
-
-//Lazy properties
-let prop_Eager a = a <> 0 ==> (1/a = 1/a)
-let prop_Lazy a = a <> 0 ==> (lazy (1/a = 1/a))
-Check.Quick prop_Eager
-Check.Quick prop_Lazy
-
-let orderedList = Arb.from<list<int>> |> Arb.mapFilter List.sort ordered
-let InsertWithArb x = forAll orderedList (fun xs -> ordered(insert x xs))
-Check.Quick InsertWithArb
-
-//throws combinator
-let ExpectException() = throws<DivideByZeroException,_> (lazy (raise <| DivideByZeroException()))
-Check.Quick ExpectException
-
-//within combinator
-let prop_timeout (a:int) = 
-    lazy
-        if a>10 then
-            while true do Thread.Sleep(1000)
-            true
-        else 
-            true
-    |> within 2000
-Check.Quick prop_timeout
-
-//Counting trivial cases
-let prop_InsertTrivial (x:int) xs = 
-    ordered xs ==> (ordered (insert x xs))
-    |> trivial (List.length xs = 0)
-Check.Quick prop_InsertTrivial
-
-//Classifying test cases
-let prop_InsertClassify (x:int) xs = 
-    ordered xs ==> (ordered (insert x xs))
-    |> classify (ordered (x::xs)) "at-head"
-    |> classify (ordered (xs @ [x])) "at-tail" 
-Check.Quick prop_InsertClassify
-    
-//Collecting data values
-let prop_InsertCollect (x:int) xs = 
-    ordered xs ==> (ordered (insert x xs))
-        |> collect (List.length xs)
-Check.Quick prop_InsertCollect
-
-//Combining observations
-let prop_InsertCombined (x:int) xs = 
-    ordered xs ==> (ordered (insert x xs))
-        |> classify (ordered (x::xs)) "at-head"
-        |> classify (ordered (xs @ [x])) "at-tail"
-        |> collect (List.length xs)
-Check.Quick prop_InsertCombined
-
-//-------labelling sub properties------
-let complexProp (m: int) (n: int) =
-  let res = n + m
-  (res >= m)    |@ "result > #1" .&.
-  (res >= n)    |@ "result > #2" .&.
-  (res < m + n) |@ "result not sum"
-Check.Quick complexProp
-
-let prop_Label (x:int) = 
-    "Always false" @| false
-    .&. "Always true" @| (x > 0 ==> (abs x - x = 0))
-Check.Quick prop_Label
-
-let propMul (n: int, m: int) =
-  let res = n*m
-  sprintf "evidence = %i" res @| (
-    "div1" @| (m <> 0 ==> lazy (res / m = n)),
-    "div2" @| (n <> 0 ==> lazy (res / n = m)),
-    "lt1"  @| (res > m),
-    "lt2"  @| (res > n))
-Check.Quick propMul
-
-let propMulList (n: int, m: int) =
-  let res = n*m
-  sprintf "evidence = %i" res @| [
-    "div1" @| (m <> 0 ==> lazy (res / m = n));
-    "div2" @| (n <> 0 ==> lazy (res / n = m));
-    "lt1"  @| (res > m);
-    "lt2"  @| (res > n)]
-Check.Quick propMul
-
-let propOr (n:int) (m:int) =
-    let res = n - m
-    "Positive"  @| (res > 0) .|.
-    "Negative"  @| (res < 0) .|.
-    "Zero"      @| (res = 0)
-    |> classify (res > 0) "Positive"
-    |> classify (res < 0) "Negative"   
-Check.Quick propOr
-
-
-
-//--------Test Data Generators----------
-let private chooseFromList xs = 
-    gen {   let! i = Gen.choose (0, List.length xs-1) 
-            return (List.nth xs i) }
-
-//to generate a value out of a generator:
-//generate <size> <seed> <generator>
-//generate 0 (Random.newSeed()) (chooseFromList [1;2;3])
-
-//Choosing between alternatives
-let private chooseBool = 
-    Gen.oneof [ gen { return true }; gen { return false } ]
-    
-let private chooseBool2 = 
-    Gen.frequency [ (2, gen { return true }); (1, gen { return false })]
-
-//The size of test data
-let matrix gen = Gen.sized <| fun s -> Gen.resize (s|>float|>sqrt|>int) gen
-
-//Generating Recusrive data types
-type Tree = Leaf of int | Branch of Tree * Tree
-
-let rec private unsafeTree() = 
-    Gen.oneof [ Gen.map Leaf Arb.generate; 
-                Gen.map2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
-
-let private tree =
-    let rec tree' s = 
-        match s with
-            | 0 -> Gen.map Leaf Arb.generate
-            | n when n>0 -> 
-            let subtree() = tree' (n/2)
-            Gen.oneof [ Gen.map Leaf Arb.generate; 
-                        Gen.map2 (fun x y -> Branch (x,y)) (subtree()) (subtree())]
-            | _ -> raise(ArgumentException"Only positive arguments are allowed")
-    Gen.sized tree'
-
-//Default generators by type
-type Box<'a> = Whitebox of 'a | Blackbox of 'a
-
-let boxgen() = 
-    gen {   let! a = Arb.generate
-            return! Gen.elements [ Whitebox a; Blackbox a] }
-
-type MyGenerators =
-    static member Tree() =
-        {new Arbitrary<Tree>() with
-            override x.Generator = tree
-            override x.Shrinker t = Seq.empty }
-    static member Box() = 
-        {new Arbitrary<Box<'a>>() with
-            override x.Generator = boxgen() }
-
-Arb.register<MyGenerators>()
-
-let prop_RevRevTree (xs:list<Tree>) = List.rev(List.rev xs) = xs
-Check.Quick prop_RevRevTree
-
-let prop_RevRevBox (xs:list<Box<int>>) = 
-    List.rev(List.rev xs) = xs
-    |> Prop.collect xs
-Check.Quick prop_RevRevBox
-
-
-//------Stateful Testing-----------
-open Commands
-
-type Counter() =
-  let mutable n = 0
-  member x.Inc() = n <- n + 1
-  member x.Dec() = if n > 2 then n <- n - 2 else n <- n - 1
-  member x.Get = n
-  member x.Reset() = n <- 0
-  override x.ToString() = n.ToString()
-
-let spec =
-    let inc = 
-        { new ICommand<Counter,int>() with
-            member x.RunActual c = c.Inc(); c
-            member x.RunModel m = m + 1
-            member x.Post (c,m) = m = c.Get 
-            override x.ToString() = "inc"}
-    let dec = 
-        { new ICommand<Counter,int>() with
-            member x.RunActual c = c.Dec(); c
-            member x.RunModel m = m - 1
-            member x.Post (c,m) = m = c.Get 
-            override x.ToString() = "dec"}
-    { new ISpecification<Counter,int> with
-        member x.Initial() = (new Counter(),0)
-        member x.GenCommand _ = Gen.elements [inc;dec] }
-
-Check.Quick("Counter",asProperty spec)
-
-//---------Replaying previous tests-----------
-
-Check.One({ Config.Quick with Name="Counter-replay"; Replay = Some <| Random.StdGen (395461793,1) },asProperty spec)
-
-//----------Tips and tricks-------
-//Testing functions
-let prop_Assoc (x:Tree) (f:Tree->float,g:float->char,h:char->int) = ((f >> g) >> h) x = (f >> (g >> h)) x
-Check.Quick prop_Assoc
-
-//Function printing and shrinking
-let propMap (F (_,f)) (l:list<int>) =
-    not l.IsEmpty ==>
-    lazy (List.map f l = ((*f*)(List.head l)) :: (List.map f (List.tail l)))
-Check.Quick propMap
-
-//alternative to using forAll
-type EvenInt = EvenInt of int with
-    static member op_Explicit(EvenInt i) = i
-
-type ArbitraryModifiers =
-    static member EvenInt() = 
-        Arb.from<int> 
-        |> Arb.filter (fun i -> i % 2 = 0) 
-        |> Arb.convert EvenInt int
-        
-Arb.register<ArbitraryModifiers>()
-
-let ``generated even ints should be even`` (EvenInt i) = i % 2 = 0
-Check.Quick ``generated even ints should be even``
-
-type Foo = Foo of int
-type Bar = Bar of string
-
-let formatter (o:obj) =
-    match o with
-    | :? Foo as foo -> box "it's a foo"
-    | :? Bar as bar -> box "it's a bar"
-    | _ -> o
-
-//customizing output of counter-examples etc
-let formatterRunner =
-    { new IRunner with
-        member x.OnStartFixture t =
-            printf "%s" (Runner.onStartFixtureToString t)
-        member x.OnArguments (ntest,args, every) =
-            printf "%s" (every ntest (args |> List.map formatter))
-        member x.OnShrink(args, everyShrink) =
-            printf "%s" (everyShrink (args |> List.map formatter))
-        member x.OnFinished(name,testResult) = 
-            let testResult' = match testResult with 
-                                | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
-                                    TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
-                                | t -> t
-            printf "%s" (Runner.onFinishedToString name testResult') 
-    }
-
-
-let formatter_prop (foo:Foo) (bar:Bar) (i:int) = i < 10 //so it takes a while before the fail
-Check.One({ Config.Quick with Runner = formatterRunner},formatter_prop)
-
-let private (.=.) left right = left = right |@ sprintf "%A = %A" left right
-
-let compare (i:int) (j:int) = 2*i+1  .=. 2*j-1
-Check.Quick compare
-
 //smart shrinking
 [<StructuredFormatDisplay("{Display}")>]
 type Smart<'a> = 
@@ -349,7 +65,7 @@ type SmartShrinker =
     static member Smart() =
         { new Arbitrary<Smart<'a>>() with
             override x.Generator = Arb.generate |> Gen.map (fun arb -> Smart (0,arb))
-            override x.Shrinker (Smart (i,x)) = //shrink i |> Seq.filter ((<) 0) |> Seq.map NonNegative 
+            override x.Shrinker (Smart (i,x)) = 
                 let ys = Seq.zip {0..Int32.MaxValue} (Arb.shrink x) |> Seq.map Smart 
                 let i' = Math.Max(0,i-2)
                 let rec interleave left right =
@@ -360,7 +76,7 @@ type SmartShrinker =
                 interleave (Seq.take i' ys |> Seq.toList) (Seq.skip i' ys |> Seq.toList) |> List.toSeq
         }
 
-Arb.register<SmartShrinker>()
+Arb.register<SmartShrinker>() |> ignore
 
 let smartShrink (Smart (_,i)) = i < 20
 Check.Quick smartShrink
@@ -377,7 +93,7 @@ let prop_MaxLe (x:float) y = (x <= y) ==> (lazy (max  x y = y))
 
 //----------various examples-------------------------------
 
-//convoluted, absurd property, but shows the power of the combinators: it's no problem to return
+//convoluted property, but shows the power of the combinators: it's no problem to return
 //functions that return properties.
 Check.Quick (fun b y (x:char,z) -> if b then (fun q -> y+1 = z + int q) else (fun q -> q =10.0)) 
 
@@ -422,7 +138,7 @@ type Properties =
 
 Check.QuickAll<Properties>()
 
-//-----------GenReflect tests------------------------
+//-----------ReflectArbitrary tests------------------------
 //a record type containing an array type
 type List<'a> = {list : 'a[]}
 
@@ -431,29 +147,27 @@ type Tree<'a> =
     | Leaf of string
     | Branch of List<Tree<'a>>
 
-let rec prop_xmlSafeTree (x : Tree<string>) =
+let rec xmlSafeTree (x : Tree<string>) =
     match x with
     | Leaf x -> not (x.StartsWith " " && x.EndsWith " ")
-    | Branch xs -> Array.forall prop_xmlSafeTree xs.list
+    | Branch xs -> Array.forall xmlSafeTree xs.list
 
-let prop_Product (x:int,y:int) = (x > 0 && y > 0) ==> (x*y > 0)
+let product (x:int,y:int) = (x > 0 && y > 0) ==> (x*y > 0)
 
-let RevString (x : string) =
+let revString (x : string) =
     let cs = x.ToCharArray()
     Array.Reverse cs
     new String(cs)
 
-let prop_revstr x = RevString (RevString x) = x
+let revRevString x = revString (revString x) = x
 
 let private idempotent f x = let y = f x in f y = y
 Check.Quick (idempotent (fun (x : string) -> x.ToUpper()))
 
-let propBigTuple (a:bool,b:float,c:string,d:char,e:byte,f:float,g:string,h:option<float>,i) = if i > 10 then false else true
-Check.Quick("propBigTuple",propBigTuple)
+let bigTuple (a:bool,b:float,c:string,d:char,e:byte,f:float,g:string,h:option<float>,i) = if i > 10 then false else true
+Check.Quick("bigTuple",bigTuple)
 
 //-----property combinators------------------
-
-
 let private withPositiveInteger (p : int -> 'a) = fun n -> n <> 0 ==> lazy (p (abs n))
 
 let testProp = withPositiveInteger ( fun x -> x > 0 |> classify true "bla"  )
@@ -464,7 +178,7 @@ Check.Quick testProp2
 
 let blah (s:string) = if s = "" then raise (new System.Exception("foo")) else s.Length > 3
 
-let private withNonEmptyString (p : string -> 'a) = forAll (Gen.oneof (List.map gen.Return [ "A"; "AA"; "AAA" ]) |> Arb.fromGen) p
+let private withNonEmptyString (p : string -> 'a) = forAll (Gen.elements [ "A"; "AA"; "AAA" ] |> Arb.fromGen) p
 
 Check.Quick (withNonEmptyString blah)
 
@@ -473,7 +187,6 @@ Check.Quick("prop_Exc",prop_Exc)
 
 
 //-----------------test reflective shrinking--------
-
 type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }
 
 let bigSize = { Config.Quick with StartSize = 100; EndSize = 100 }
@@ -502,9 +215,8 @@ Check.Quick prop_RevId'
 
 //----------Checking toplevel properties trick------------------
 Console.WriteLine("----------Check all toplevel properties----------------");
-type Marker = member x.Null = ()
-//if there are instances defined: (throws exception if not)
-//overwriteGeneratorsByType (typeof<Marker>.DeclaringType)
+type Marker = class end
+
 Check.QuickAll (typeof<Marker>.DeclaringType)
 
 Console.ReadKey() |> ignore

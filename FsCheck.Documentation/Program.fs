@@ -41,8 +41,9 @@ let fsCheckDocGen head title p code output =
         |> fun s -> s + "\n(etc)" 
         |> output
     let fsiOutputAll s t = output ((fsi s) + getOutputAll t)
+    let writeBaseDir = @"..\..\..\Codeplex"
     let write (filename:string) =
-        File.WriteAllText(filename, buffer.Value.ToString())
+        File.WriteAllText(Path.Combine(writeBaseDir,filename), buffer.Value.ToString())
         buffer := new StringBuilder()
     
     head "QuickStart"
