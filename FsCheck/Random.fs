@@ -85,7 +85,7 @@ module Random =
             let rec f n acc g = 
                 if n = 0 then (acc,g) 
                 else let (x,g') = stdNext g in f (n-1) (x + acc * b) g'
-            match (f n 1 rng) with (v, rng') -> (l + abs(v) % k, rng')
+            match (f n 1 rng) with (v, rng') -> (l + abs( v % k ), rng')
 
     let range = stdRange
     let split = stdSplit

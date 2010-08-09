@@ -40,6 +40,10 @@ module Random =
     open FsCheck.Random
     open Helpers
 
+    let ``abs(v) % k equals abs(v % k)`` v (NonZeroInt k) = 
+        (abs v) % k = abs(v % k)
+
+
     let DivMod (x:int) (y:int) = 
         y <> 0 ==> lazy (let (d,m) = divMod x y in d*y + m = x)
         
@@ -189,7 +193,8 @@ module Generator =
         |> fun arr ->
             (arr.Length <= size+1) 
             && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
-    
+
+//causes StackOverflowException   
     let Array2DOfDim (NonNegativeInt rows,NonNegativeInt cols) (v:int) =
         (array2DOfDim (rows,cols) (constant v))
         |> sample1
