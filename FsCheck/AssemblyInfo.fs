@@ -4,7 +4,7 @@ open System.Reflection
 
 module private Constant =
     [<Literal>] 
-    let version = "0.7.0.0"
+    let version = "0.7.1.0"
 
 [<assembly:AssemblyDescription("FsCheck.dll")>]
 [<assembly:AssemblyCompany("FsCheck CodePlex Project")>]
