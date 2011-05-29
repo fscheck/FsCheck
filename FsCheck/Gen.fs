@@ -45,24 +45,46 @@ type Arbitrary<'a>() =
 [<AutoOpen>]
 module GenBuilder =
 
+    let private ``return`` x = Gen (fun n r -> x)
+
+    let private bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
+        Gen (fun n r0 -> let r1,r2 = split r0
+                         let (Gen m') = k (m n r1) 
+                         m' n r2)
+
+    let private delay (f : unit -> Gen<_>) : Gen<_> = 
+        Gen (fun n r -> match f() with (Gen g) -> g n r)
+
+    let rec private doWhile p m =
+      if p() then
+        bind m (fun _ -> doWhile p m)
+      else
+        ``return`` ()
+
+    let private tryFinally (Gen m) handler = 
+        Gen (fun n r -> try m n r finally handler ())
+
+    let private dispose (x: #System.IDisposable) = x.Dispose()
+
+    let private using r f = tryFinally (f r) (fun () -> dispose r)
+
     ///The workflow type for generators.
     type GenBuilder internal() =
-        member b.Return(a) : Gen<_> = 
-            Gen (fun n r -> a)
-        member b.Bind((Gen m) : Gen<_>, k : _ -> Gen<_>) : Gen<_> = 
-            Gen (fun n r0 -> let r1,r2 = split r0
-                             let (Gen m') = k (m n r1) 
-                             m' n r2)                                      
-        member b.Delay(f : unit -> Gen<_>) : Gen<_> = 
-            Gen (fun n r -> match f() with (Gen g) -> g n r )
-        member b.TryFinally(Gen m,handler ) = 
-            Gen (fun n r -> try m n r finally handler)
+        member b.Return(a) : Gen<_> = ``return`` a
+        member b.Bind(m, k) : Gen<_> = bind m k                            
+        member b.Delay(f) : Gen<_> = delay f
+        member b.Combine(m1, m2) = bind m1 (fun () -> m2)
+        member b.TryFinally(m, handler) = tryFinally m handler
         member b.TryWith(Gen m, handler) = 
             Gen (fun n r -> try m n r with e -> handler e)
-        member b.Using (a, k) =  //'a * ('a -> Gen<'b>) -> Gen<'b> when 'a :> System.IDisposable
-            use disposea = a
-            k disposea
-        member b.ReturnFrom(a:Gen<_>) = a
+        member b.Using (a, k) =  using a k
+        member b.ReturnFrom (g:Gen<_>) = g
+        member b.While(p, m:Gen<_>) = doWhile p m
+        member b.For(s:#seq<_>, f:('a -> Gen<'b>)) =
+          using (s.GetEnumerator()) (fun ie ->
+            doWhile (fun () -> ie.MoveNext()) (delay (fun () -> f ie.Current))
+          )
+        member b.Zero() = ``return`` ()
 
     ///The workflow function for generators, e.g. gen { ... }
     let gen = GenBuilder()

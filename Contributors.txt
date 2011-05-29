@@ -10,6 +10,7 @@ Steve Gilham (byte arbitrary instance)
 David Crocker (first version of replay mechanism, bug fix)
 Howard Mansell (lots of generators and arbitrary instances)
 David Jones (tail recursive version of Gen.sequence, bug fixes)
+Matthew Peacock (gen workflow extensions)
 (my sincerest apologies to anyone I overlooked - feel free to protest!)
 
 Thanks to:
