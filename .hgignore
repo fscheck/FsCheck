@@ -5,3 +5,4 @@ syntax: glob
 *\bin\Release\*
 *.suo
 *.csproj.user
+glob:*.nupkg

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>FsCheck</id>
+    <version>0.7.1</version>
+    <authors>Kurt Schelfthout</authors>
+    <owners>Kurt Schelfthout</owners>
+    <licenseUrl>http://fscheck.codeplex.com/license</licenseUrl>
+    <projectUrl>http://fscheck.codeplex.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      FsCheck is a tool for testing .NET programs automatically. The programmer
+      provides a specification of the program, in the form of properties which functions,
+      methods or objects should satisfy, and FsCheck then tests that the properties hold in a
+      large number of randomly generated cases. While writing the properties, you are actually
+      writing a testable specification of your program. Specifications are expressed in F#, C# or VB,
+      using combinators defined in the FsCheck library. FsCheck provides combinators to define
+      properties, observe the distribution of test data, and define test data generators.
+      When a property fails, FsCheck automatically displays a minimal counter example.
+    </description>
+    <summary>FsCheck is a tool for testing .NET programs using randomly generated test cases.</summary>
+    <tags>test testing random fscheck quickcheck</tags>
+  </metadata>
+</package>
