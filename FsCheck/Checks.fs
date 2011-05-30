@@ -345,7 +345,7 @@ module Property =
                     | Label of string * SymProp
                     | And of SymProp * SymProp
                     | Or of SymProp * SymProp
-                    | Lazy of SymProp
+                    | LazyProp of SymProp
                     | Tuple2 of SymProp * SymProp
                     | Tuple3 of SymProp * SymProp * SymProp //and 4,5,6
                     | List of SymProp list
@@ -363,7 +363,7 @@ module Property =
                         ; map2 (curry Label) generate (subProp)
                         ; map2 (curry And) (subProp) (subProp)
                         ; map2 (curry Or) (subProp) (subProp)
-                        ; map Lazy subProp
+                        ; map LazyProp subProp
                         ; map2 (curry Tuple2) subProp subProp
                         ; map3 (curry2 Tuple3) subProp subProp subProp
                         ; map List (resize 3 <| nonEmptyListOf subProp)
@@ -390,7 +390,7 @@ module Property =
         | Label (l,prop) -> determineResult prop |> addLabel l
         | And (prop1, prop2) -> andCombine prop1 prop2
         | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in r1 ||| r2
-        | Lazy prop -> determineResult prop
+        | LazyProp prop -> determineResult prop
         | Tuple2 (prop1,prop2) -> andCombine prop1 prop2
         | Tuple3 (prop1,prop2,prop3) -> (andCombine prop1 prop2) &&& (determineResult prop3)
         | List props -> List.fold (fun st p -> st &&& determineResult p) (List.head props |> determineResult) (List.tail props)
@@ -407,7 +407,7 @@ module Property =
         | Label (l,prop) -> label l (toProperty prop)
         | And (prop1,prop2) -> (toProperty prop1) .&. (toProperty prop2)
         | Or (prop1,prop2) -> (toProperty prop1) .|. (toProperty prop2)
-        | Lazy prop -> toProperty prop
+        | LazyProp prop -> toProperty prop
         | Tuple2 (prop1,prop2) -> (toProperty prop1) .&. (toProperty prop2)
         | Tuple3 (prop1,prop2,prop3) -> (toProperty prop1) .&. (toProperty prop2) .&. (toProperty prop3)
         | List props -> List.fold (fun st p -> st .&. toProperty p) (List.head props |> toProperty) (List.tail props)
@@ -436,7 +436,7 @@ module Property =
         | Label (_,prop) -> 1 + (depth prop)
         | And (prop1,prop2) -> 1 + Math.Max(depth prop1, depth prop2)
         | Or (prop1,prop2) -> 1 + Math.Max(depth prop1, depth prop2)
-        | Lazy prop -> 1 + (depth prop)
+        | LazyProp prop -> 1 + (depth prop)
         | Tuple2 (prop1,prop2) -> 1 + Math.Max(depth prop1, depth prop2)
         | Tuple3 (prop1,prop2,prop3) -> 1 + Math.Max(Math.Max(depth prop1, depth prop2),depth prop3)
         | List props -> 1 + List.fold (fun a b -> Math.Max(a, depth b)) 0 props
@@ -444,7 +444,7 @@ module Property =
     let DSL() = 
         forAll (Arb.fromGenShrink(symPropGen,shrink)) (fun symprop ->
             let expected = determineResult symprop
-            let (MkRose (Common.Lazy actual,_)) = eval 1 (Random.newSeed()) (toProperty symprop) 
+            let (MkRose (Lazy actual,_)) = eval 1 (Random.newSeed()) (toProperty symprop) 
             areSame expected actual
             |> label (sprintf "expected = %A - actual = %A" expected actual)
             |> collect (depth symprop)

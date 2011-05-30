@@ -26,9 +26,6 @@ module internal Common =
         let t = new Dictionary<_,_>()
         memoizeWith t f
 
-    //used to be in FSharp libs
-    let (|Lazy|) (inp:Lazy<'a>) = inp.Force()
-
     let flip f x y = f y x
 
     let curry f = fun a b -> f (a,b)
