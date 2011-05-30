@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.CSharpExamples", "F
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Documentation", "FsCheck.Documentation\FsCheck.Documentation.fsproj", "{274871EB-2390-448A-A9BC-AF252164222D}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Xunit", "FsCheck.Xunit\FsCheck.Xunit.fsproj", "{26A87ED0-9836-45F6-A88E-603DA8FCD856}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Test", "FsCheck.Test\FsCheck.Test.fsproj", "{EB8B96DF-C654-410D-B590-FDBE3BC235FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +48,14 @@ Global
 		{274871EB-2390-448A-A9BC-AF252164222D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{274871EB-2390-448A-A9BC-AF252164222D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{274871EB-2390-448A-A9BC-AF252164222D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
