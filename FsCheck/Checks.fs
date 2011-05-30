@@ -193,8 +193,7 @@ module Generator =
         |> fun arr ->
             (arr.Length <= size+1) 
             && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
-
-//causes StackOverflowException   
+  
     let Array2DOfDim (NonNegativeInt rows,NonNegativeInt cols) (v:int) =
         (array2DOfDim (rows,cols) (constant v))
         |> sample1
