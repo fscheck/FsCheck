@@ -22,12 +22,12 @@ module Random =
     open FsCheck.Random
     open Helpers
 
-    [<Property>]
+    [<Property(Verbose=true)>]
     let ``abs(v) % k equals abs(v % k)`` v (NonZeroInt k) = 
         (abs v) % k = abs(v % k) + 1
 
 
-    [<Property>]
+    [<Property(MaxTest=10, Verbose=true)>]
     let DivMod (x:int) (y:int) = 
         y <> 0 ==> lazy (let (d,m) = divMod x y in d*y + m = x)
     
