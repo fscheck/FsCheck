@@ -166,24 +166,26 @@ module Runner =
             ) [] 
         |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed
 
-    let argumentsToString = List.map (sprintf "%A") >> String.concat "\n"
+    let private newline = Environment.NewLine
+
+    let argumentsToString = List.map (sprintf "%A") >> String.concat newline
 
     let onStartFixtureToString (t:Type) =
-        sprintf "--- Checking %s ---\n" t.Name
+        sprintf "--- Checking %s ---%s" t.Name newline
 
     ///A function that returns the default string that is printed as a result of the test.
     let onFinishedToString name testResult =
         let pluralize nb = if nb = 1 then String.Empty else "s"
         let display l = match l with
-                        | []  -> ".\n"
-                        | [x] -> " (" + x + ").\n"
-                        | xs  -> ".\n" + List.fold (fun acc x -> x + ".\n"+ acc) "" xs    
+                        | []  -> sprintf ".%s" newline
+                        | [x] -> sprintf " (%s).%s" x newline
+                        | xs  -> sprintf ".%s%s" newline (List.fold (fun acc x -> x + "." + newline + acc) "" xs)
         let entry (p,xs) = sprintf "%A%s %s" p "%" (String.concat ", " xs)
         let stamps_to_string s = s |> Seq.map entry |> Seq.toList |> display
         let labels_to_string l = String.concat ", " l
         let maybePrintLabels (l:Set<_>) = 
             if l.Count > 0 then
-                sprintf "Label%s of failing property: %s\n" (pluralize l.Count) (labels_to_string l)
+                sprintf "Label%s of failing property: %s%s" (pluralize l.Count) (labels_to_string l) newline
             else
                 String.Empty
         let name = if String.IsNullOrEmpty(name) then String.Empty else (name+"-")  
@@ -192,30 +194,30 @@ module Runner =
             sprintf "%sOk, passed %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
         | False (data, origArgs, args, Exception exc, usedSeed) -> 
-            sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):\n" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed
+            sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
+                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels  
-            + sprintf "%s\n" (args |> argumentsToString)
-            + sprintf "with exception:\n%O\n" exc
+            + sprintf "%s%s" (args |> argumentsToString) newline
+            + sprintf "with exception:%s%O%s" newline exc newline
         | False (data, origArgs, args, Timeout i, usedSeed) -> 
-            sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):\n" 
-                name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed 
+            sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):%s" 
+                name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels 
-            + sprintf "%s\n" (args |> argumentsToString)
+            + sprintf "%s%s" (args |> argumentsToString) newline
         | False (data, origArgs, args, _, usedSeed) -> 
-            sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):\n" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed
+            sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
+                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels  
-            + sprintf "%s\n" (args |> argumentsToString) 
+            + sprintf "%s%s" (args |> argumentsToString) newline
         | Exhausted data -> 
             sprintf "%sArguments exhausted after %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
 
     let onArgumentsToString n args = 
-        sprintf "%i:\n%s\n" n (argumentsToString args)
+        sprintf "%i:%s%s%s" n newline (argumentsToString args) newline
     
     let onShrinkToString args =
-        sprintf "shrink:\n%s\n" (argumentsToString args)
+        sprintf "shrink:%s%s%s" newline (argumentsToString args) newline
 
     ///A runner that prints results to the console.
     let consoleRunner =
@@ -286,7 +288,7 @@ module Runner =
         t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
         Array.filter hasTestableReturnType |>
         Array.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m)
-        printf "\n"
+        printf "%s" newline
 
 open Runner
 open System
@@ -306,8 +308,8 @@ type Config with
     ///The verbose configuration prints each generated argument.
     static member Verbose = 
         { Config.Quick with 
-            Every       = fun n args -> sprintf "%i:\n%s\n" n (argumentsToString args)
-            EveryShrink = fun args -> sprintf "shrink:\n%s\n" (argumentsToString args)
+            Every       = fun n args -> sprintf "%i:%s%s%s" n Environment.NewLine (argumentsToString args) Environment.NewLine
+            EveryShrink = fun args -> sprintf "shrink:%s%s%s" Environment.NewLine (argumentsToString args) Environment.NewLine
         }
     ///The default configuration is the quick configuration.
     static member Default = Config.Quick
