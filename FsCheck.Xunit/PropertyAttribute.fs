@@ -59,10 +59,11 @@ type PropertyAttribute() =
                 Check.Method(config, methodInfo.MethodInfo)
                 match xunitRunner.Result with
                 | TestResult.True _ -> 
+                    printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
                     upcast new PassedResult(methodInfo,this.DisplayName)
-                | Exhausted testdata as testResult -> 
-                    upcast new FailedResult(methodInfo,PropertyFailedException(testResult), this.DisplayName)
-                | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed) as testResult -> 
-                    upcast new FailedResult(methodInfo, PropertyFailedException(testResult), this.DisplayName)
+                | Exhausted testdata -> 
+                    upcast new FailedResult(methodInfo,PropertyFailedException(xunitRunner.Result), this.DisplayName)
+                | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  -> 
+                    upcast new FailedResult(methodInfo, PropertyFailedException(xunitRunner.Result), this.DisplayName)
         } :> ITestCommand
         |> Seq.singleton
