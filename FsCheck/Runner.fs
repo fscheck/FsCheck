@@ -356,29 +356,4 @@ type Check =
 
     /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration
     static member VerboseAll test = Check.All(Config.Verbose,test)
-
-
-// -- removed stuff
-//    [<Obsolete("Use Config.Quick instead.")>]
-//    let quick = Config.Quick
-//
-//    [<Obsolete("Use Config.Verbose instead.")>]
-//    let verbose = Config.Verbose
-
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Quick instead.")>]
-//    let quickCheck p = p |> check quick
-//
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Verbose instead.")>]
-//    let verboseCheck p = p |> check verbose 
-//
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Quick instead.")>]
-//    let quickCheckN name p = p |> checkName name quick
-//
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.Verbose instead.")>]
-//    let verboseCheckN name p = p |> checkName name verbose
-//
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.AllQuick instead.")>]
-//    let quickCheckAll t = t |> checkAll quick
-//
-//    [<Obsolete("This function will be removed in the following version of FsCheck. Use Check.AllVerbose instead.")>]
-//    let verboseCheckAll t = t |> checkAll verbose    
+    
