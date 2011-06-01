@@ -238,7 +238,7 @@ module Runner =
     let init = lazy Arb.register<Arb.Default>()
 
     let private hasTestableReturnType (m:MethodInfo) =
-        ignore init.Value
+        //ignore init.Value
         try
             TestableTC.GetInstance m.ReturnType |> ignore
             true
