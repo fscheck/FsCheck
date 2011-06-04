@@ -108,6 +108,7 @@ type Configuration() =
           EndSize = endSize
           Runner = runner
           Replay = None
+          Arbitrary = []
         }
 
 [<AbstractClass>]

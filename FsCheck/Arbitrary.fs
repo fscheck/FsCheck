@@ -81,7 +81,7 @@ module Arb =
     open TypeClass
     open System
 
-    let private Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
+    let internal Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
 
     ///Get the Arbitrary instance for the given type.
     let from<'Value> = (!Arbitrary).InstanceFor<'Value,Arbitrary<'Value>>()

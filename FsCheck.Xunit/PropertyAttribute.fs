@@ -35,25 +35,28 @@ type PropertyAttribute() =
     let mutable startSize = Config.Default.StartSize
     let mutable endSize = Config.Default.EndSize
     let mutable verbose = false
+    let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
 
     member x.MaxTest with get() = maxTest and set(v) = maxTest <- v
     member x.MaxFail with get() = maxFail and set(v) = maxFail <- v
     member x.StartSize with get() = startSize and set(v) = startSize <- v
     member x.EndSize with get() = endSize and set(v) = endSize <- v
     member x.Verbose with get() = verbose and set(v) = verbose <- v
+    member x.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v
 
-    override x.EnumerateTestCommands(methodInfo:IMethodInfo) :seq<ITestCommand> = 
+    override this.EnumerateTestCommands(methodInfo:IMethodInfo) :seq<ITestCommand> = 
         { new TestCommand(methodInfo, null, 0) with
-            override this.Execute(testClass:obj) : MethodResult = 
+            override x.Execute(testClass:obj) : MethodResult = 
                 let xunitRunner = XunitRunner()
                 let config = 
                     {Config.Default with
-                        MaxTest = maxTest
-                        MaxFail = maxFail
-                        StartSize = startSize
-                        EndSize = endSize
-                        Every = if verbose then Config.Verbose.Every else Config.Quick.Every
-                        EveryShrink = if verbose then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
+                        MaxTest = this.MaxTest
+                        MaxFail = this.MaxFail
+                        StartSize = this.StartSize
+                        EndSize = this.EndSize
+                        Every = if this.Verbose then Config.Verbose.Every else Config.Quick.Every
+                        EveryShrink = if this.Verbose then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
+                        Arbitrary = this.Arbitrary |> Array.toList
                         Runner = xunitRunner
                     }
                 Check.Method(config, methodInfo.MethodInfo)

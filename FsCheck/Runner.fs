@@ -12,6 +12,7 @@
 namespace FsCheck
 
 open Random
+open System
 
 type TestData = 
     { NumberOfTests: int
@@ -59,12 +60,15 @@ type Config =
       Every         : int -> list<obj> -> string
       ///What to print every time a counter-example is succesfully shrunk
       EveryShrink   : list<obj> -> string 
+      ///The Arbitrary instances on this class will be merged in back to front order, i.e. instances for the same generated type at the front
+      ///of the list will override those at the back. The instances on Arb.Default are always known, and are at the back (so they can always be
+      ///overridden)
+      Arbitrary     : list<Type>
       ///A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit. 
       Runner        : IRunner }
 
 module Runner =
 
-    open System
     open System.Collections.Generic
     open System.Reflection
 
@@ -248,7 +252,16 @@ module Runner =
     let internal check config p = 
         //every check, even the reflective one, passes through here. So:
         ignore init.Value // should always work
-        runner config (property p)
+
+        //save so we can restore after the run
+        let defaultArbitrary = !Arb.Arbitrary
+        let merge newT (existingTC:TypeClass<_>) = existingTC.DiscoverAndMerge(onlyPublic=true,instancesType=newT)
+        Arb.Arbitrary := List.foldBack merge config.Arbitrary defaultArbitrary
+        try
+            runner config (property p)
+        finally
+            Arb.Arbitrary := defaultArbitrary
+
 
     let internal checkName name config p = check { config with Name = name } p
 
@@ -304,6 +317,7 @@ type Config with
               EndSize       = 100
               Every         = fun ntest args -> String.Empty
               EveryShrink   = fun args -> String.Empty
+              Arbitrary     = []
               Runner        = consoleRunner } 
     ///The verbose configuration prints each generated argument.
     static member Verbose = 
