@@ -43,7 +43,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers.fs" />
     <Compile Include="Random.fs" />
+    <Compile Include="Runner.fs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
