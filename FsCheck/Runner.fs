@@ -284,7 +284,10 @@ module Runner =
     let internal checkMethod (config:Config) (m:MethodInfo) =
         let fromTypes = m.GetParameters() |> Array.map (fun p -> p.ParameterType) 
         let fromP = fromTypes |> arrayToTupleType
-        let toP = m.ReturnType
+        //we can check methods that return void or unit. We cannot add it to  to the Testable typeclass
+        //since F# won't let us define that - System.Void can only be used in typeof<> expressions.
+        //hence the translation here.
+        let toP = if m.ReturnType = typeof<System.Void> then typeof<unit> else m.ReturnType
         let funType = FSharpType.MakeFunctionType(fromP, toP)
         let invokeAndThrowInner (m:MethodInfo) o = 
             try

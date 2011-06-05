@@ -23,7 +23,7 @@ module TypeClass =
         if t.IsGenericType then
             let generic = t.GetGenericTypeDefinition() 
             if p.Equals(generic) then Some(t.GetGenericArguments()) else None
-        else None  
+        else None        
 
     //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank
     let private findInstances (typeClass:Type) bindingFlags instancesType = 
@@ -51,6 +51,23 @@ module TypeClass =
         else
             (generics, catchAll, array)
 
+    //useful for converting a list of generic or array instances to a map - used in TypeClass.Discover.
+    let private instancesToMap instances idToKey =
+        let instanceToKey id (methodInfo:MethodInfo) = 
+            let toTypeIfOk (arg:ParameterInfo) =
+                if typeof<Attribute>.IsAssignableFrom arg.ParameterType then
+                    arg.ParameterType
+                    else
+                    failwithf "All arguments of a type class instance method should be attributes. Method %s on %s has non-attribute parameter %s" methodInfo.Name methodInfo.DeclaringType.FullName arg.Name
+            let argTypes = 
+                methodInfo.GetParameters()
+                |> Seq.map toTypeIfOk
+            (id, argTypes |> Seq.map (fun t -> t.FullName) |> Set.ofSeq)
+
+        instances 
+        |> List.map (fun (k,v) -> (instanceToKey (idToKey k) v,v)) 
+        |> Map.ofList        
+
     type TypeFullName = string
 
     [<StructuredFormatDisplay("{ToStructuredDisplay}")>]
@@ -72,7 +89,11 @@ module TypeClass =
             instances + catchAll
         
 
-    type TypeClass<'TypeClass> internal(?catchAll:MethodInfo,?instances:Map<TypeFullName,MethodInfo>,?arrayInstances:Map<int,MethodInfo>) =
+    type TypeClass<'TypeClass> 
+        internal(?catchAll:MethodInfo,
+                 ?instances:Map<TypeFullName * Set<TypeFullName>,MethodInfo>,
+                 ?arrayInstances:Map<int * Set<TypeFullName>,MethodInfo>) =
+
         let instances = defaultArg instances Map.empty
         let arrayInstances = defaultArg arrayInstances Map.empty
         let keySet map = map |> Map.toSeq |> Seq.map fst |> Set.ofSeq
@@ -88,14 +109,13 @@ module TypeClass =
         member private x.CatchAll = catchAll
 
         ///Make a new TypeClass with only the instances registered on the given type.
-        ///Note that all instances of this TypeClass will not be registered on the new TypeClass. 
+        ///Note that the instances of this TypeClass will not be registered on the new TypeClass. 
         ///Use Merge in addition to achieve that, or use DiscoverAndMerge to do both.
         member x.Discover(onlyPublic,instancesType) =
             let (newInstances,catchAll,newArrayInstances) = 
                 findInstances x.Class (if onlyPublic then BindingFlags.Default else BindingFlags.NonPublic)  instancesType
-            let instances = 
-                newInstances |> List.map (fun (k,v) -> (k.FullName,v)) |> Map.ofList
-            let arrays = newArrayInstances |> Map.ofList
+            let instances = instancesToMap newInstances (fun k -> k.FullName)
+            let arrays = instancesToMap newArrayInstances id
             match catchAll with 
             | None -> TypeClass<'TypeClass>(instances=instances, arrayInstances=arrays)
             | Some ca -> TypeClass<'TypeClass>(catchAll=ca,instances=instances,arrayInstances=arrays)
@@ -119,9 +139,9 @@ module TypeClass =
         ///Compares this TypeClass with the given TypeClass. Returns, respectively, the new instances, overridden instances,
         ///new array instances, overridden array instances, new catch all or overridden catchall introduced by the other TypeClass.
         member x.Compare (other:TypeClass<'TypeClass>) =
-            let newInstances = other.Instances - x.Instances
-            let overriddenInstances = Set.intersect other.Instances x.Instances
-            let toArrayFullName rank : TypeFullName = sprintf "'T[%s]" (String.replicate (rank-1) ",")
+            let newInstances = other.Instances - x.Instances |> Set.map fst //FIXME removes info about arguments
+            let overriddenInstances = Set.intersect other.Instances x.Instances |> Set.map fst //FIXME removes info about arguments
+            let toArrayFullName rank : TypeFullName = sprintf "'T[%s]" (String.replicate (fst rank-1) ",") //FIXME removes info about arguments
             let newArrayInstances = other.ArrayInstances - x.ArrayInstances |> Set.map toArrayFullName
             let overriddenArrayInstances = Set.intersect other.ArrayInstances x.ArrayInstances |> Set.map toArrayFullName
             let hasNewCatchAll = (not x.HasCatchAll) && other.HasCatchAll
@@ -132,27 +152,44 @@ module TypeClass =
               OverriddenCatchAll = hasOverriddenCatchAll
             }
 
-        member x.GetInstance =
-            Common.memoizeWith memo (fun (instance:Type) ->
+        member x.GetInstance (instance:Type,?arguments) =
+            let arguments = defaultArg arguments Seq.empty
+            let argumentTypeNames =  arguments |> Seq.map (fun k -> k.GetType().FullName) |> Set.ofSeq
+
+            //returns the index of the argument of the given type in the parameters of the given method.
+            //Only works if each type occurs exactly once inthe parameters.
+            let argumentOrder (methodInfo:MethodInfo) (arg:obj) =
+                methodInfo.GetParameters()
+                |> Array.findIndex (fun param -> param.ParameterType = arg.GetType())
+                
+            Common.memoizeWith memo (fun (instance:Type, argumentTypeNames:Set<_>) -> 
                 let tryCatchAll instance =
                     match catchAll with
                     | Some mi   -> mi.MakeGenericMethod([|instance|])
                     | None      -> failwithf "No instances of class %A for type %A" x.Class instance
                 let mi =
-                    match Map.tryFind instance.FullName instances with
+                    match Map.tryFind (instance.FullName,argumentTypeNames) instances with
                     | Some res -> res
                     | _ when instance.IsGenericType -> //exact type is not known, try the generic type
-                        match Map.tryFind (instance.GetGenericTypeDefinition().FullName) instances with
+                        match Map.tryFind (instance.GetGenericTypeDefinition().FullName,argumentTypeNames) instances with
                         | Some mi' -> if mi'.ContainsGenericParameters then (mi'.MakeGenericMethod(instance.GetGenericArguments())) else mi'
                         | _ -> tryCatchAll instance
                     | _ when instance.IsArray ->
-                        match Map.tryFind (instance.GetArrayRank()) arrayInstances with
+                        match Map.tryFind (instance.GetArrayRank(),argumentTypeNames) arrayInstances with
                         | Some mi' -> if mi'.ContainsGenericParameters then mi'.MakeGenericMethod([|instance.GetElementType()|]) else mi'
                         | _ -> tryCatchAll instance
                     | _ -> tryCatchAll instance
-                mi.Invoke(null, Array.empty))
+                (fun arguments -> mi.Invoke(null, arguments |> Seq.sortBy (argumentOrder mi) |> Seq.toArray ))) (instance,argumentTypeNames) arguments
 
-        member x.InstanceFor<'T,'TypeClassT>() = x.GetInstance typeof<'T> |> unbox<'TypeClassT> //'TypeClassT = 'TypeClass<'T>
+        ///Get the instance registered on this TypeClass for the given type parameter 'T. The result will be cast
+        ///to TypeClassT, which should be 'TypeClass<'T> but that's impossible to express in .NET's type system.
+        member x.InstanceFor<'T,'TypeClassT>(?arguments:seq<_>) = 
+            x.GetInstance(typeof<'T>,defaultArg arguments Seq.empty) 
+            |> unbox<'TypeClassT> 
+
         static member New<'TypeClass>() =
             let t = (typedefof<'TypeClass>)
-            if t.IsGenericTypeDefinition then TypeClass<'TypeClass>() else failwith "'TypeClass type parameter must be a generic type definition."
+            if t.IsGenericTypeDefinition then 
+                TypeClass<'TypeClass>() 
+            else 
+                failwithf "Type parameter %s must be a generic type definition." typeof<'TypeClass>.FullName
