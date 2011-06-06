@@ -21,8 +21,16 @@ module internal ReflectArbitrary =
 
     /// Generate a random enum of the type specified by the System.Type
     let enumOfType (t: System.Type) : Gen<Enum> =
-       let vals: Array = System.Enum.GetValues(t)
-       elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> Enum ]
+       let isFlags = t.GetCustomAttributes(typeof<System.FlagsAttribute>,false).Length = 1 
+       let vals: Array = System.Enum.GetValues(t) 
+       let elems = elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> System.Enum] 
+       if isFlags then 
+           let orElems (els:Enum list) = 
+               let v:int = els |> List.map (box >> unbox) |> List.fold (|||) 0 
+               Enum.ToObject(t,v) :?> Enum 
+           listOf elems |> map orElems 
+       else 
+           elems
 
     let private reflectObj getGenerator =
         // Compute which types are possible children of this type
