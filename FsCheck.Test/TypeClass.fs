@@ -14,7 +14,6 @@ module TypeClass =
     let ``should be empty on initialization``() =
         let typeClassDef = TypeClass<ITypeClassUnderTest<_>>.New()
         Assert.Equal(typedefof<ITypeClassUnderTest<_>>,typeClassDef.Class)
-        Assert.Empty typeClassDef.ArrayInstances 
         Assert.Empty typeClassDef.Instances
         Assert.False typeClassDef.HasCatchAll
 
@@ -35,8 +34,7 @@ module TypeClass =
                 .New()
                 .Discover(true, typeof<PrimitiveInstance>)
         Assert.Equal(1, typeClass.Instances.Count)
-        Assert.Contains((typeof<int>.FullName, Set.empty), typeClass.Instances)
-        Assert.Empty typeClass.ArrayInstances 
+        Assert.Contains((Primitive typeof<int>, Set.empty), typeClass.Instances) 
         Assert.False typeClass.HasCatchAll
 
     type ArrayInstance() =
@@ -50,10 +48,8 @@ module TypeClass =
             TypeClass<ITypeClassUnderTest<_>>
                 .New()
                 .Discover(true, typeof<ArrayInstance>)
-        Assert.Equal(1, typeClass.ArrayInstances.Count)
-        Assert.Contains((2,Set.empty), typeClass.ArrayInstances)
-        Assert.Empty typeClass.Instances 
-        Assert.False typeClass.HasCatchAll
+        Assert.Equal(1, typeClass.Instances.Count)
+        Assert.Contains((Array typeof<'a[,]>,Set.empty), typeClass.Instances)
 
     type CatchAllInstance() =
         static member CatchAll() =
@@ -67,8 +63,7 @@ module TypeClass =
                 .New()
                 .Discover(true, typeof<CatchAllInstance>)
         Assert.True typeClass.HasCatchAll
-        Assert.Empty(typeClass.Instances)
-        Assert.Empty typeClass.ArrayInstances 
+        Assert.Equal(1,typeClass.Instances.Count)
 
 
     // Now test instances parametrized on attributes
@@ -99,14 +94,12 @@ module TypeClass =
                 .New()
                 .Discover(true, typeof<PrimitiveInstanceWithAttribute>)
         let expectedInstances =
-            [ (typeof<int>.FullName, typeof<GenParameterAttribute>.FullName  |> Set.singleton)
-              (typeof<int>.FullName, [ typeof<GenParameterAttribute>.FullName; typeof<AnotherGenParameterAttribute>.FullName]  |> Set.ofList)
+            [ (Primitive typeof<int>, Argument typeof<GenParameterAttribute> |> Set.singleton)
+              (Primitive typeof<int>, [ Argument typeof<GenParameterAttribute>; Argument typeof<AnotherGenParameterAttribute>]  |> Set.ofList)
             ] |> Set.ofList
 
         Assert.Equal(2, typeClass.Instances.Count)
         Assert.Equal(expectedInstances, typeClass.Instances)
-        Assert.Empty typeClass.ArrayInstances 
-        Assert.False typeClass.HasCatchAll
 
     type ArrayInstanceWithAttributes() =
         static member Array(attribute:GenParameterAttribute, attribute2:AnotherGenParameterAttribute) =
@@ -124,12 +117,10 @@ module TypeClass =
                 .Discover(true, typeof<ArrayInstanceWithAttributes>)
 
         let expectedInstances =
-            [ (1, typeof<GenParameterAttribute>.FullName  |> Set.singleton)
-              (1, [ typeof<GenParameterAttribute>.FullName; typeof<AnotherGenParameterAttribute>.FullName]  |> Set.ofList)
+            [ (Array typeof<'a[]>, Argument typeof<GenParameterAttribute> |> Set.singleton)
+              (Array typeof<'a[]>, [ Argument typeof<GenParameterAttribute>; Argument typeof<AnotherGenParameterAttribute>]  |> Set.ofList)
             ] |> Set.ofList
-        Assert.Equal(expectedInstances, typeClass.ArrayInstances)
-        Assert.Empty typeClass.Instances 
-        Assert.False typeClass.HasCatchAll
+        Assert.Equal(expectedInstances, typeClass.Instances)
 
     [<Fact>]
     let ``should instantiate primitive type``() =

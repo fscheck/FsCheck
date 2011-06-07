@@ -35,3 +35,22 @@ module internal Common =
     let uncurry f = fun (a,b) -> f a b
 
     let uncurry2 f = fun (a,b,c) -> f a b c
+
+
+    //the following three are from Don Syme's blog:
+    //http://blogs.msdn.com/b/dsyme/archive/2009/11/08/equality-and-comparison-constraints-in-f-1-9-7.aspx
+    let equalsOn f x (yobj:obj) =
+        match yobj with
+        | :? 'T as y -> (f x = f y)
+        | _ -> false
+ 
+    let hashOn f x =  hash (f x)
+ 
+    let compareOn f x (yobj: obj) =
+        match yobj with
+        | :? 'T as y -> compare (f x) (f y)
+        | _ -> invalidArg "yobj" "cannot compare values of different types"
+
+    let (|MapContains|_|) key value =
+        Map.tryFind key value
+        
