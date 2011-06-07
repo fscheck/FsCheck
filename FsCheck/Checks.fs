@@ -329,6 +329,22 @@ module Arbitrary =
     let ``PositiveInt shrinks positive ints`` (value:PositiveInt ) =
         shrink value |> Seq.forall (fun (PositiveInt v) -> v > 0)
     
+    type TestEnum =
+        | A = 0
+        | B = 3
+        | C = 4
+
+    let Enum  (value:TestEnum) =
+        List.exists (fun e -> e = int value) [0;3;4]
+
+    [<Flags>]
+    type TestFlags =
+        | A = 1
+        | B = 2
+        | C = 4
+
+    let Flags (value:TestFlags) =
+        List.exists (fun e -> e = int value) [0;1;2;3;4;5;6;7]
         
 module Property =
     open FsCheck.Prop
