@@ -322,7 +322,7 @@ module Arbitrary =
         
     let ``NonNegativeInt shrinks non negative ints`` (value:NonNegativeInt) =
         shrink value |> Seq.forall (fun (NonNegativeInt v) -> v >= 0)
-        
+
     let ``PositiveInt generates positive ints`` (PositiveInt value) =
         value > 0
         
@@ -347,7 +347,7 @@ module Arbitrary =
         List.exists (fun e -> e = int value) [0;1;2;3;4;5;6;7]
         
 module Property =
-    open FsCheck.Prop
+    open FsCheck
     open FsCheck.Common
     open System
     open Arb

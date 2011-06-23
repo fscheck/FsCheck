@@ -244,9 +244,6 @@ module Prop =
     let given condition (iftrue:'TestableIfTrue,ifFalse:'TestableIfFalse) = 
         if condition then property iftrue else property ifFalse
 
-    ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
-    let (==>) condition (assertion:'Testable) = given condition (assertion,property Res.rejected)
-
     ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
     ///and a failure otherwise.
     let throws<'Exception, 'Testable when 'Exception :> exn> (p : Lazy<'Testable>) = 
@@ -271,22 +268,6 @@ module Prop =
         let add res = { res with Labels = Set.add l res.Labels }
         Prop.mapResult add
 
-    ///Add the given label to the property. Property on the left hand side, label on the right.
-    let (|@) x = x |> Common.flip label 
-
-    ///Add the given label to the property. label on the left hand side, property on the right.
-    let (@|) = label
-
-    ///Construct a property that succeeds if both succeed. (cfr 'and')
-    let (.&.) (l:'LeftTestable) (r:'RightTestable) = 
-        let andProp = l .& r
-        andProp
-
-    ///Construct a property that fails if both fail. (cfr 'or')
-    let (.|.) (l:'LeftTestable) (r:'RightTestable) = 
-        let orProp = l .| r
-        orProp
-
     ///Fails the property if it does not complete within t milliseconds. Note that the called property gets a
     ///cancel signal, but whether it responds to that is up to the property; the execution may not actually stop.
     let within time (lazyProperty:Lazy<'Testable>) =
@@ -298,3 +279,28 @@ module Prop =
             :? TimeoutException -> 
                 Async.CancelDefaultToken()
                 property (Res.timeout time)
+
+[<AutoOpen>]
+module PropOperators =
+
+    open Testable
+
+    ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
+    let (==>) condition (assertion:'Testable) = Prop.given condition (assertion,property Res.rejected)
+
+
+    ///Add the given label to the property. Property on the left hand side, label on the right.
+    let (|@) x = x |> Common.flip Prop.label 
+
+    ///Add the given label to the property. label on the left hand side, property on the right.
+    let (@|) = Prop.label
+
+    ///Construct a property that succeeds if both succeed. (cfr 'and')
+    let (.&.) (l:'LeftTestable) (r:'RightTestable) = 
+        let andProp = l .& r
+        andProp
+
+    ///Construct a property that fails if both fail. (cfr 'or')
+    let (.|.) (l:'LeftTestable) (r:'RightTestable) = 
+        let orProp = l .| r
+        orProp
