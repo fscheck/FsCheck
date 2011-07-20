@@ -280,6 +280,12 @@ module Prop =
                 Async.CancelDefaultToken()
                 property (Res.timeout time)
 
+    /// Turns a testable type into a property. Testables are unit, boolean, Lazy testables, Gen testables, functions
+    /// from a type for which a generator is know to a testable, tuples up to 6 tuple containing testables, and lists
+    /// containing testables.
+    let ofTestable (testable:'Testable) =
+        property testable
+
 [<AutoOpen>]
 module PropOperators =
 
