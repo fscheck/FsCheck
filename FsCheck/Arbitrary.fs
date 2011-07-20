@@ -27,11 +27,11 @@ type NonZeroInt = NonZeroInt of int with
 
 type NonEmptyString = NonEmptyString of string with
     member x.Get = match x with NonEmptyString r -> r
-    static member op_Explicit(NonEmptyString i) = i
+    override x.ToString() = x.Get
 
 type StringNoNulls = StringNoNulls of string with
     member x.Get = match x with StringNoNulls r -> r
-    static member op_Explicit(StringNoNulls i) = i
+    override x.ToString() = x.Get
 
 type Interval = Interval of int * int with
     member x.Left = match x with Interval (l,_) -> l
