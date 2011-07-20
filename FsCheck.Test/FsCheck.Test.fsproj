@@ -46,6 +46,7 @@
     <Compile Include="Helpers.fs" />
     <Compile Include="Random.fs" />
     <Compile Include="TypeClass.fs" />
+    <Compile Include="Gen.fs" />
     <Compile Include="Runner.fs" />
     <None Include="Script.fsx" />
     <None Include="packages.config" />

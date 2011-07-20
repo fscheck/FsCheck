@@ -287,16 +287,18 @@ module Gen =
     ///Basic co-arbitrary generator transformer, which is dependent on an int.
     ///Only used for generating arbitrary functions.
     let internal variant (v:'a) (Gen m) =
-        let counter = ref 0
+        let counter = ref 1
         let toCounter = new Dictionary<'a,int>()
         let mapToInt (value:'a) =
-            let (found,result) = toCounter.TryGetValue value
-            if found then 
-                result
+            if (box value) = null then 0
             else
-                toCounter.Add(value,!counter)
-                counter := !counter + 1
-                !counter - 1   
+                let (found,result) = toCounter.TryGetValue value
+                if found then 
+                    result
+                else
+                    toCounter.Add(value,!counter)
+                    counter := !counter + 1
+                    !counter - 1   
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
         Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
 
