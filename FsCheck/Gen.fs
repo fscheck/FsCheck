@@ -281,6 +281,12 @@ module Gen =
     ///Always generate v.          
     let constant v = gen { return v }
 
+    ///Apply the given Gen function to the given generator, aka the applicative <*> operator.
+    let apply (f:Gen<'a -> 'b>) (gn:Gen<'a>) : Gen<'b> =
+        gen { let! f' = f
+              let! gn' = gn
+              return f' gn' }
+
     ///Promote the given function f to a function generator. Only used for generating arbitrary functions.
     let internal promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)
 
@@ -301,3 +307,10 @@ module Gen =
                     !counter - 1   
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
         Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
+
+[<AutoOpen>]
+module GenOperators =
+
+    let (<*>) f a = Gen.apply f a
+
+    let (<!>) f a = Gen.constant f <*> a

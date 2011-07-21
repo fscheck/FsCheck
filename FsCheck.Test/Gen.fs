@@ -193,3 +193,47 @@ module Gen =
 //    let Variant (v:char) =
 //        Gen.variant v (Gen.constant v) |> sample1 |>  ((=) v)
 
+    type FunctorLaws<'a,'b,'c when 'a:equality and 'b :equality and 'c:equality> =
+        static member identity (x :'a) =
+            let x' =  Gen.constant x
+            let a = sample 10 (id x')
+            let b = List.replicate 10 (id x)
+            a = b
+
+        static member distribution (x:'a) (f:'b ->'c) (g:'a->'b) =
+            let a = Gen.map (f << g) (Gen.constant x)
+            let b = (Gen.map f << Gen.map g) (Gen.constant x)
+            sample 10 a = sample 10 b
+
+    [<Fact>]
+    let ``should satisfy Functor laws``() =
+        Check.QuickAll<FunctorLaws<_,_,_>>() //FIXME this is never going to fail in Xunit
+
+    // Thank you mausch: http://bugsquash.blogspot.com/2010/12/zipping-with-applicative-functors-in-f.html
+    type ApplicativeLaws<'a,'b,'c when 'a:equality and 'b:equality>() =
+
+        static member identity (v: 'a) = 
+            let a = Gen.constant v
+            let x = Gen.constant id <*> a
+            sample 10 x |> List.forall ((=) v)
+
+        static member composition (u: 'a -> 'b) (v: 'c -> 'a) (w: 'c) = 
+            let u',v',w' = Gen.constant u, Gen.constant v, Gen.constant w
+            let a = Gen.constant (<<) <*> u' <*> v' <*> w'
+            let b = u' <*> (v' <*> w')
+            sample 10 a = sample 10 b
+
+        static member homomorphism (f: 'a -> 'b) x = 
+            let a = Gen.constant f <*> Gen.constant x
+            let b = Gen.constant (f x)
+            sample 10 a = sample 10 b
+
+        static member interchange (u: 'a -> 'b) (y: 'a) = 
+            let u' = Gen.constant u
+            let a = u' <*> Gen.constant y
+            let b = Gen.constant ((|>) y) <*> u'
+            sample 10 a = sample 10 b
+
+    [<Fact>]
+    let ``should satisfy Applicative Functor laws``() =
+        Check.QuickAll<ApplicativeLaws<_,_,_>>() //FIXME this is never going to fail in Xunit
