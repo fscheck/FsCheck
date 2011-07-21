@@ -417,4 +417,4 @@ module Arb =
                 override x.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
             
-        //TODO: consider adding sbyte, float32, int16, int64, BigInteger, decimal, Generic.Collections types, TimeSpan
+        //TODO: consider adding sbyte, float32, int16, int64, BigInteger, decimal, Generic.Collections types, TimeSpan, Map

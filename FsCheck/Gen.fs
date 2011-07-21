@@ -301,27 +301,3 @@ module Gen =
                     !counter - 1   
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
         Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
-
-    //---obsolete functions-----
-
-    [<Obsolete("This function has been replaced by listOfLength for consistency, and will be removed in the following version of FsCheck.")>]
-    let vector arb n = listOfLength n arb
-
-    [<Obsolete("This function has been replaced by listOfLength for consistency, and will be removed in the following version of FsCheck.")>]
-    let vectorOf n arb = listOfLength n arb
-
-    [<Obsolete("This function has been renamed to map, and will be removed in the following version of FsCheck.")>]
-    let fmapGen = map
-
-    [<Obsolete("This function has been renamed to map, and will be removed in the following version of FsCheck.")>]
-    let liftGen = map
-    [<Obsolete("This function has been renamed to map2, and will be removed in the following version of FsCheck.")>]
-    let liftGen2 = map2
-    [<Obsolete("This function has been renamed to map3, and will be removed in the following version of FsCheck.")>]
-    let liftGen3 = map3
-    [<Obsolete("This function has been renamed to map4, and will be removed in the following version of FsCheck.")>]
-    let liftGen4 = map4
-    [<Obsolete("This function has been renamed to map5, and will be removed in the following version of FsCheck.")>]
-    let liftGen5 = map5
-    [<Obsolete("This function has been renamed to map6, and will be removed in the following version of FsCheck.")>]
-    let liftGen6 = map6
