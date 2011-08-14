@@ -322,12 +322,39 @@ type Config with
               EveryShrink   = fun args -> String.Empty
               Arbitrary     = []
               Runner        = consoleRunner } 
+
     ///The verbose configuration prints each generated argument.
     static member Verbose = 
         { Config.Quick with 
             Every       = fun n args -> sprintf "%i:%s%s%s" n Environment.NewLine (argumentsToString args) Environment.NewLine
             EveryShrink = fun args -> sprintf "shrink:%s%s%s" Environment.NewLine (argumentsToString args) Environment.NewLine
         }
+
+    static member private throwingRunner =
+        { new IRunner with
+            member x.OnStartFixture t =
+                printf "%s" (onStartFixtureToString t)
+            member x.OnArguments (ntest,args, every) =
+                printf "%s" (every ntest args)
+            member x.OnShrink(args, everyShrink) =
+                printf "%s" (everyShrink args)
+            member x.OnFinished(name,testResult) = 
+                match testResult with
+                | True _ -> printf "%s" (onFinishedToString name testResult)
+                | _ -> failwithf "%s" (onFinishedToString name testResult)
+
+        }
+
+    ///Like the Quick configuration, only throws an exception with the error message if the test fails or is exhausted.
+    ///Useful for use within other unit testing frameworks that usually adopt this methodolgy to signal failure.
+    static member QuickThrowOnFailure =
+        { Config.Quick with Runner = Config.throwingRunner }
+
+    ///Like the Verbose configuration, only throws an exception with the error message if the test fails or is exhausted.
+    ///Useful for use within other unit testing frameworks that usually adopt this methodolgy to signal failure.
+    static member VerboseThrowOnFailure =
+        { Config.Verbose with Runner = Config.throwingRunner }
+
     ///The default configuration is the quick configuration.
     static member Default = Config.Quick
 
@@ -348,11 +375,17 @@ type Check =
     ///Check one property with the quick configuration, and using the given name.
     static member Quick(name,property:'Testable) = Check.One(name,Config.Quick,property)
 
+    ///Check one property with the quick configuration, and throw an exception if it fails or is exhausted.
+    static member QuickThrowOnFailure(property:'Testable) = Check.One(Config.QuickThrowOnFailure,property)
+
     ///Check one property with the verbose configuration.
     static member Verbose (property:'Testable) = Check.One(Config.Verbose,property)
 
     ///Check one property with the verbose configuration, and using the given name.
     static member Verbose(name,property:'Testable) = Check.One(name,Config.Verbose,property)
+
+    ///Check one property with the verbose configuration, and throw an exception if it fails or is exhausted.
+    static member VerboseThrowOnFailure(property:'Testable) = Check.One(Config.VerboseThrowOnFailure,property)
 
     ///Check all public static methods on the given type that have a testable return type with the given configuration.
     ///This includes let-bound functions in a module.
@@ -365,12 +398,29 @@ type Check =
     ///Check all public static methods on the given type that have a testable return type with quick configuration
     static member QuickAll test = Check.All(Config.Quick,test)
 
+    ///Check all public static methods on the given type that have a testable return type with quick configuration, 
+    ///and throw on failure or exhaustion.
+    static member QuickThrowOnFailureAll test = Check.All(Config.QuickThrowOnFailure,test)
+
     ///Check all public static methods on the given type that have a testable return type with quick configuration
     static member QuickAll<'Test>() = Check.All(Config.Quick,typeof<'Test>)
+
+    ///Check all public static methods on the given type that have a testable return type with quick configuration
+    static member QuickThrowOnFailureAll<'Test>() = Check.All(Config.QuickThrowOnFailure,typeof<'Test>)
+
+    /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration
+    static member VerboseAll test = Check.All(Config.Verbose,test)
 
     /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration
     static member VerboseAll<'Test>() = Check.All(Config.Verbose,typeof<'Test>)
 
-    /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration
-    static member VerboseAll test = Check.All(Config.Verbose,test)
+    /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration,
+    ///and throws on failure or exhaustion.
+    static member VerboseThrowOnFailureAll test = Check.All(Config.VerboseThrowOnFailure,test)
+
+    /// Check all public static methods on the given type that have a testable return type with the verbose configuration,
+    ///and throws on failure or exhaustion.
+    static member VerboseThrowOnFailureAll<'Test>() = Check.All(Config.VerboseThrowOnFailure,typeof<'Test>)
+
+
     

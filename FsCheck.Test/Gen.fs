@@ -207,7 +207,7 @@ module Gen =
 
     [<Fact>]
     let ``should satisfy Functor laws``() =
-        Check.QuickAll<FunctorLaws<_,_,_>>() //FIXME this is never going to fail in Xunit
+        Check.QuickThrowOnFailureAll<FunctorLaws<_,_,_>>()
 
     // Thank you mausch: http://bugsquash.blogspot.com/2010/12/zipping-with-applicative-functors-in-f.html
     type ApplicativeLaws<'a,'b,'c when 'a:equality and 'b:equality>() =
@@ -236,4 +236,4 @@ module Gen =
 
     [<Fact>]
     let ``should satisfy Applicative Functor laws``() =
-        Check.QuickAll<ApplicativeLaws<_,_,_>>() //FIXME this is never going to fail in Xunit
+        Check.QuickThrowOnFailureAll<ApplicativeLaws<_,_,_>>() 
