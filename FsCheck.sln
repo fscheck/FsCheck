@@ -12,8 +12,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck", "FsCheck\FsCheck.
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Examples", "FsCheck.Examples\FsCheck.Examples.fsproj", "{7662113E-E531-4223-99C4-62EFCDDD77FF}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Checker", "FsCheck.Checker\FsCheck.Checker.fsproj", "{5199B1A0-9F3D-4B19-A857-2D49257CC643}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.CSharpExamples", "FsCheck.CSharpExamples\FsCheck.CSharpExamples.csproj", "{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Documentation", "FsCheck.Documentation\FsCheck.Documentation.fsproj", "{274871EB-2390-448A-A9BC-AF252164222D}"
@@ -36,10 +34,6 @@ Global
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5199B1A0-9F3D-4B19-A857-2D49257CC643}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5199B1A0-9F3D-4B19-A857-2D49257CC643}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5199B1A0-9F3D-4B19-A857-2D49257CC643}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5199B1A0-9F3D-4B19-A857-2D49257CC643}.Release|Any CPU.Build.0 = Release|Any CPU
 		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Release|Any CPU.ActiveCfg = Release|Any CPU

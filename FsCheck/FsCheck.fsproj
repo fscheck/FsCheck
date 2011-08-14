@@ -63,7 +63,6 @@
     <Compile Include="Commands.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="Fluent.fs" />
-    <Compile Include="Checks.fs" />
     <None Include="FsCheck.nuspec" />
   </ItemGroup>
   <ItemGroup>

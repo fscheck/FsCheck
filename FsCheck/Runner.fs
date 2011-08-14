@@ -140,7 +140,6 @@ module Runner =
                 | EndShrink result -> False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
                 | _ -> failwith "Test ended prematurely"
         config.Runner.OnFinished(config.Name,testResult)
-        //Console.Write(message outcome + " " + any_to_string ntest + " tests" + table:string)
 
     let private runner config prop = 
         let testNb = ref 0
