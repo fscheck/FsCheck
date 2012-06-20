@@ -26,7 +26,12 @@ module Arbitrary =
     let Int32 (NonNegativeInt size) (v:int) =
         (   generate<int> |> Gen.resize size |> sample 10 |> List.forall (fun v -> -size <= v && v <= size)
         ,   shrink<int> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v))
-            
+
+    [<Property>]
+    let Int64 (value: int64) = 
+        (   generate<int64> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate int64
+        ,   shrink<int64> value |> Seq.forall (fun shrunkv -> (int shrunkv) <= abs (int value)))
+                
     [<Property>]
     let Double (NonNegativeInt size) (value:float) =
         (   generate<float> |> Gen.resize size |> sample 10

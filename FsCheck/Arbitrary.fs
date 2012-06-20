@@ -206,6 +206,20 @@ module Arb =
                                     |> Seq.takeWhile ((|>|) n) }
                     |> Seq.distinct
             }
+
+        static member Int64() =
+            { new Arbitrary<int64>() with
+                override x.Generator = 
+                    let inline uuint64 x = uint64 (uint32 x)
+                    Gen.two generate
+                    |> Gen.map (fun (h,l) -> int64 ((uuint64 h <<< 32) ||| uuint64 l))
+                override x.Shrinker n = 
+                    seq {
+                        if n < 0L then yield -n
+                        yield! n |> int |> shrink |> Seq.map int64
+                    }
+            }
+
         ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float() = 
             { new Arbitrary<float>() with
