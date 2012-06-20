@@ -349,6 +349,24 @@ module Arb =
                     Seq.empty
             fromGenShrink (genDate,shrinkDate)
 
+        static member TimeSpan() =
+            let genTimeSpan = generate |> Gen.map (fun ticks -> TimeSpan ticks)
+            let shrink (t: TimeSpan) = 
+                if t.Days > 0 then
+                    seq { yield TimeSpan(0, t.Hours, t.Minutes, t.Seconds, t.Milliseconds) }
+                elif t.Hours > 0 then
+                    seq { yield TimeSpan(0, 0, t.Minutes, t.Seconds, t.Milliseconds) }
+                elif t.Minutes > 0 then
+                    seq { yield TimeSpan(0, 0, 0, t.Seconds, t.Milliseconds) }
+                elif t.Seconds > 0 then
+                    seq { yield TimeSpan(0, 0, 0, 0, t.Milliseconds) }
+                elif t.Milliseconds > 0 then
+                    seq { yield TimeSpan(0L) }
+                else
+                    Seq.empty
+            fromGenShrink (genTimeSpan, shrink)
+            
+
         static member NonNegativeInt() =
            from<int> 
            |> mapFilter abs (fun i -> i >= 0)

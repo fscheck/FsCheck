@@ -116,6 +116,19 @@ module Arbitrary =
                                  || (v.Second = 0 && v.Minute = 0) 
                                  || (v.Second = 0 && v.Minute = 0 && v.Hour = 0) )
 
+    [<Property>]
+    let ``TimeSpan``() =
+        generate<TimeSpan> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``TimeSpan shrinks`` (value: TimeSpan) =
+        shrink value
+        |> Seq.forall (fun v -> v.Days = 0
+                                || (v.Days = 0 && v.Hours = 0)
+                                || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0)
+                                || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0)
+                                || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0 || v.Milliseconds = 0))
+
     [<Property>]                       
     let ``Array shrinks to shorter array or smaller elements`` (value:int[]) =
         shrink value 
