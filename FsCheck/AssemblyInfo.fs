@@ -15,5 +15,6 @@ module private Constant =
 
 [<assembly: System.Runtime.InteropServices.ComVisible(false)>]
 [<assembly: System.CLSCompliant(true)>]
+[<assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("FsCheck.Test")>]
 
 do()

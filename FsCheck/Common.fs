@@ -16,10 +16,14 @@ module internal Common =
     ///Memoize the given function using the given dictionary
     let memoizeWith (memo:IDictionary<'a,'b>) (f: 'a -> 'b) =
         fun n ->
-            if memo.ContainsKey(n) then memo.[n]
-            else let res = f n
-                 memo.Add(n,res)
-                 res
+            lock memo 
+                (fun _ -> 
+                    match memo.TryGetValue n with
+                    | true, res -> res
+                    | _ ->
+                        let res = f n
+                        memo.Add(n,res)
+                        res)
 
     ///Memoize the given function.
     let memoize f =
