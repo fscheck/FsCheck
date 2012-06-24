@@ -4,6 +4,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3162219D-7729-49C4-849A-9CCD889798DB}"
 	ProjectSection(SolutionItems) = preProject
 		Contributors.txt = Contributors.txt
+		fscheck.snk = fscheck.snk
 		License.txt = License.txt
 		Makefile = Makefile
 	EndProjectSection
