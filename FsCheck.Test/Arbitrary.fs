@@ -23,6 +23,17 @@ module Arbitrary =
         |> addLabels
     
     [<Property>]
+    let Int16 (NonNegativeInt size) (v:int16) =
+        (   generate<int16> |> Gen.resize size |> sample 10 |> List.forall (fun v -> -size <= int v && int v <= size)
+        ,   shrink<int16> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v))
+
+    [<Property>]
+    let DontSizeInt16 (DontSize v as dontSizeV) =
+        //could theoretically go wrong, if all the values do happen to be zero.
+        (   generate<DontSize<int16>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DontSize v) -> v > 0s)
+        ,   shrink<DontSize<int16>> dontSizeV |> Seq.forall (fun (DontSize shrunkv) -> shrunkv <= abs v))
+
+    [<Property>]
     let Int32 (NonNegativeInt size) (v:int) =
         (   generate<int> |> Gen.resize size |> sample 10 |> List.forall (fun v -> -size <= v && v <= size)
         ,   shrink<int> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v))

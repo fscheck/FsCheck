@@ -11,6 +11,8 @@
 
 namespace FsCheck
 
+open System
+
 //First some type we're going to make default generators for later
 
 type NonNegativeInt = NonNegativeInt of int with
@@ -74,12 +76,21 @@ type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) 
 ///Use the generator for 'a, but don't shrink.
 type DontShrink<'a> = DontShrink of 'a
 
-
+///Whereas most types are restricted by a size that grows
+///as the test gets further, by applying this type the underlying
+///type will ignore this size and always generate from the full range.
+///Note that this only makes a difference for types that have a range -
+///currently Int16, Int32, Int64 and Char have generators.
+///This is typically (and at least currently) only applicable for value types
+///that are comparable, hence the type constraints.
+type DontSize<'a when 'a : struct and 'a : comparison> = 
+    DontSize of 'a with
+    static member Unwrap(DontSize a) : 'a = a
 
 module Arb =
 
     open TypeClass
-    open System
+
 
     let internal Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
 
@@ -181,7 +192,7 @@ module Arb =
             { new Arbitrary<unit>() with
                 override x.Generator = gen { return () } 
             }
-        ///Generates arbitrary bools.
+        ///Generates an arbitrary bool.
         static member Bool() = 
             { new Arbitrary<bool>() with
                 override x.Generator = Gen.elements [true; false] 
@@ -193,9 +204,20 @@ module Arb =
                 override x.Generator = 
                     Gen.choose (0,255) |> Gen.map byte //this is now size independent - 255 is not enough to not cover them all anyway 
                 override x.Shrinker n = n |> int |> shrink |> Seq.map byte
-            }  
-        ///Generate arbitrary int that is between -size and size.
-        static member Int() = 
+            }
+        ///Generate arbitrary int16 that is between -size and size.
+        static member Int16() =
+            from<int>
+            |> convert int16 int
+
+        ///Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.
+        static member DontSizeInt16() =
+            let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (int16 >> DontSize) (DontSize.Unwrap >> int)
+             
+        ///Generate arbitrary int32 that is between -size and size.
+        static member Int32() = 
             { new Arbitrary<int>() with
                 override x.Generator = Gen.sized <| fun n -> Gen.choose (-n,n) 
                 override x.Shrinker n = 
@@ -449,4 +471,4 @@ module Arb =
                 override x.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
             
-        //TODO: consider adding sbyte, float32, int16, int64, BigInteger, decimal, Generic.Collections types, TimeSpan, Map
+        //TODO: add sbyte, float32, int16, BigInteger, decimal, Generic.Collections types, Map
