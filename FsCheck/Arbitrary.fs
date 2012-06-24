@@ -80,7 +80,7 @@ type DontShrink<'a> = DontShrink of 'a
 ///as the test gets further, by applying this type the underlying
 ///type will ignore this size and always generate from the full range.
 ///Note that this only makes a difference for types that have a range -
-///currently Int16, Int32, Int64 and Char have generators.
+///currently Int16, Int32, Int64 have DontSize Arbitrary instances.
 ///This is typically (and at least currently) only applicable for value types
 ///that are comparable, hence the type constraints.
 type DontSize<'a when 'a : struct and 'a : comparison> = 
@@ -215,18 +215,22 @@ module Arb =
             let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
             fromGenShrink(gen, shrink)
             |> convert (int16 >> DontSize) (DontSize.Unwrap >> int)
-             
+            
+         ///The generic shrinker should work for most value like types.
+        static member inline GenericValueShrinker n =
+            let (|>|) x y = abs x > abs y 
+            let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
+            seq {   if n < LanguagePrimitives.GenericZero then yield -n
+                    if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
+                    yield! Seq.unfold (fun st -> let st = st / two in Some (n-st, st)) n 
+                            |> Seq.takeWhile ((|>|) n) }
+            |> Seq.distinct
+
         ///Generate arbitrary int32 that is between -size and size.
         static member Int32() = 
             { new Arbitrary<int>() with
                 override x.Generator = Gen.sized <| fun n -> Gen.choose (-n,n) 
-                override x.Shrinker n = 
-                    let (|>|) x y = abs x > abs y 
-                    seq {   if n < 0 then yield -n
-                            if n <> 0 then yield 0 
-                            yield! Seq.unfold (fun st -> let st = st / 2 in Some (n-st, st)) n 
-                                    |> Seq.takeWhile ((|>|) n) }
-                    |> Seq.distinct
+                override x.Shrinker n = Default.GenericValueShrinker n
             }
 
         ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
@@ -239,19 +243,22 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert DontSize DontSize.Unwrap
 
+        ///Generate arbitrary int64 that is between -size and size.
+        ///Note that since the size is an int32, this does not actually cover the full
+        ///range of int64. See DontSize<int64> instead.
         static member Int64() =
-            { new Arbitrary<int64>() with
-                override x.Generator = 
-                    let inline uuint64 x = uint64 (uint32 x)
-                    Gen.two generate
-                    |> Gen.map (fun (h,l) -> int64 ((uuint64 h <<< 32) ||| uuint64 l))
-                override x.Shrinker n = 
-                    seq {
-                        if n < 0L then yield -n
-                        yield! n |> int |> shrink |> Seq.map int64
-                    }
-            }
+            //we can be relaxed here, for the above reasons.
+            from<int32>
+            |> convert int64 int32
 
+        ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        static member DontSizeInt64() =
+            let gen =
+                Gen.two generate<DontSize<int32>>
+                |> Gen.map (fun (DontSize h, DontSize l) -> (int64 h <<< 32) ||| int64 l)                
+            fromGenShrink (gen,Default.GenericValueShrinker)
+            |> convert DontSize DontSize.Unwrap
+        
         ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float() = 
             { new Arbitrary<float>() with
@@ -382,7 +389,7 @@ module Arb =
             fromGenShrink (genDate,shrinkDate)
 
         static member TimeSpan() =
-            let genTimeSpan = generate |> Gen.map (fun ticks -> TimeSpan ticks)
+            let genTimeSpan = generate |> Gen.map (fun (DontSize ticks) -> TimeSpan ticks)
             let shrink (t: TimeSpan) = 
                 if t.Days > 0 then
                     seq { yield TimeSpan(0, t.Hours, t.Minutes, t.Seconds, t.Milliseconds) }

@@ -30,7 +30,7 @@ module Arbitrary =
     [<Property>]
     let DontSizeInt16 (DontSize v as dontSizeV) =
         //could theoretically go wrong, if all the values do happen to be zero.
-        (   generate<DontSize<int16>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DontSize v) -> v > 0s)
+        (   generate<DontSize<int16>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DontSize v) -> v <> 0s)
         ,   shrink<DontSize<int16>> dontSizeV |> Seq.forall (fun (DontSize shrunkv) -> shrunkv <= abs v))
 
     [<Property>]
@@ -41,14 +41,20 @@ module Arbitrary =
     [<Property>]
     let DontSizeInt32 (DontSize v as dontSizeV) =
         //could theoretically go wrong, if all the values do happen to be zero.
-        (   generate<DontSize<int>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DontSize v) -> v > 0)
+        (   generate<DontSize<int>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DontSize v) -> v <> 0)
         ,   shrink<DontSize<int>> dontSizeV |> Seq.forall (fun (DontSize shrunkv) -> shrunkv <= abs v))
 
     [<Property>]
-    let Int64 (value: int64) = 
-        (   generate<int64> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate int64
+    let Int64 (NonNegativeInt size) (value: int64) = 
+        (   generate<int64> |> Gen.resize size |> sample 10 |> List.forall (fun v -> -(int64 size) <= v && v <= int64 size)
         ,   shrink<int64> value |> Seq.forall (fun shrunkv -> (int shrunkv) <= abs (int value)))
                 
+    [<Property>]
+    let DontSizeInt64 (DontSize v as dontSizeV) =
+        //could theoretically go wrong, if all the values do happen to be zero.
+        (   generate<DontSize<int64>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DontSize v) -> v <> 0L)
+        ,   shrink<DontSize<int64>> dontSizeV |> Seq.forall (fun (DontSize shrunkv) -> shrunkv <= abs v))
+
     [<Property>]
     let Double (NonNegativeInt size) (value:float) =
         (   generate<float> |> Gen.resize size |> sample 10
