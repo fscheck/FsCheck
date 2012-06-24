@@ -103,6 +103,16 @@ module Arb =
     ///Returns the immediate shrinks for the given value based on its type.
     let shrink<'Value> (a:'Value) = from<'Value>.Shrinker a
 
+    ///The generic shrinker should work for most number-like types.
+    let inline shrinkNumber n =
+        let (|>|) x y = abs x > abs y 
+        let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
+        seq {   if n < LanguagePrimitives.GenericZero then yield -n
+                if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
+                yield! Seq.unfold (fun st -> let st = st / two in Some (n-st, st)) n 
+                        |> Seq.takeWhile ((|>|) n) }
+        |> Seq.distinct
+
     let internal getGenerator t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
 
     let internal getShrink t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
@@ -216,21 +226,11 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert (int16 >> DontSize) (DontSize.Unwrap >> int)
             
-         ///The generic shrinker should work for most value like types.
-        static member inline GenericValueShrinker n =
-            let (|>|) x y = abs x > abs y 
-            let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
-            seq {   if n < LanguagePrimitives.GenericZero then yield -n
-                    if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
-                    yield! Seq.unfold (fun st -> let st = st / two in Some (n-st, st)) n 
-                            |> Seq.takeWhile ((|>|) n) }
-            |> Seq.distinct
-
         ///Generate arbitrary int32 that is between -size and size.
         static member Int32() = 
             { new Arbitrary<int>() with
                 override x.Generator = Gen.sized <| fun n -> Gen.choose (-n,n) 
-                override x.Shrinker n = Default.GenericValueShrinker n
+                override x.Shrinker n = shrinkNumber n
             }
 
         ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
@@ -256,7 +256,7 @@ module Arb =
             let gen =
                 Gen.two generate<DontSize<int32>>
                 |> Gen.map (fun (DontSize h, DontSize l) -> (int64 h <<< 32) ||| int64 l)                
-            fromGenShrink (gen,Default.GenericValueShrinker)
+            fromGenShrink (gen,shrinkNumber)
             |> convert DontSize DontSize.Unwrap
         
         ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
@@ -488,4 +488,4 @@ module Arb =
                 override x.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
             
-        //TODO: add sbyte, float32, int16, BigInteger, decimal, Generic.Collections types, Map
+        //TODO: add sbyte, float32, BigInteger, decimal, Generic.Collections
