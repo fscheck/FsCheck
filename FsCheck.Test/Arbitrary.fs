@@ -39,6 +39,12 @@ module Arbitrary =
         ,   shrink<int> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v))
 
     [<Property>]
+    let DontSizeInt32 (DontSize v as dontSizeV) =
+        //could theoretically go wrong, if all the values do happen to be zero.
+        (   generate<DontSize<int>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DontSize v) -> v > 0)
+        ,   shrink<DontSize<int>> dontSizeV |> Seq.forall (fun (DontSize shrunkv) -> shrunkv <= abs v))
+
+    [<Property>]
     let Int64 (value: int64) = 
         (   generate<int64> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate int64
         ,   shrink<int64> value |> Seq.forall (fun shrunkv -> (int shrunkv) <= abs (int value)))
