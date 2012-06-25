@@ -41,7 +41,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="xunit">
-      <HintPath>..\packages\xunit.1.8.0.1545\lib\xunit.dll</HintPath>
+      <HintPath>..\packages\xunit.1.9.0.1566\lib\xunit.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
