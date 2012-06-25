@@ -6,8 +6,8 @@ open System.Reflection
 [<assembly:AssemblyCompany("Kurt Schelfthout")>]
 [<assembly:AssemblyTitle("FsCheck")>]
 [<assembly:AssemblyProduct("FsCheck")>]
-[<assembly:AssemblyVersion("0.8.0.0")>]
-[<assembly:AssemblyFileVersion("0.8.0.0")>]
+[<assembly:AssemblyVersion("0.8.1.0")>]
+[<assembly:AssemblyFileVersion("0.8.1.0")>]
 
 [<assembly: System.Runtime.InteropServices.ComVisible(false)>]
 [<assembly: System.CLSCompliant(true)>]
