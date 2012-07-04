@@ -8,8 +8,8 @@ while ($choice -notmatch "[y|n]"){
     $choice = read-host "Sure? (Y/N)"
     }
 if ($choice -eq "y"){
-    NuGet Push FsCheck.0.8.1.0.nupkg
-    NuGet Push FsCheck.Xunit.0.1.0.0.nupkg
+    NuGet Push FsCheck.0.8.2.0.nupkg
+    NuGet Push FsCheck.Xunit.0.2.0.0.nupkg
     }
     
 else {write-host "Aborted."}

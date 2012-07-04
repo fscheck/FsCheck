@@ -25,4 +25,9 @@ let funcy ([<param:ParameterAttribute(1)>] test:int) = 1
 let func2 = (fun ([<param:GenParameterAttribute(1,"1")>] test:int) -> 1)
 let funcNonsense = (fun ([<ICanTypeWhateverIWantHereAndItStillCompiles>] test:int) -> 1)
 
-
+//applicative
+#r "bin\Debug\FsCheck.dll"
+open FsCheck
+let f = fun a b c -> a + b - c
+let ga,gb,gc = Gen.constant 3, Gen.constant 3, Gen.constant 3
+let g = f <!> ga <*> gb <*> gc
