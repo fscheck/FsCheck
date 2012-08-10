@@ -7,3 +7,4 @@ syntax: glob
 *.csproj.user
 glob:*.nupkg
 _ReSharper.FsCheck\*
+TestResults/*

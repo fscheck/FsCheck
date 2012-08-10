@@ -91,8 +91,10 @@ type Configuration() =
     member x.MaxNbOfTest with get() = maxTest and set(v) = maxTest <- v
     member x.MaxNbOfFailedTests with get() = maxFail and set(v) = maxFail <- v
     member x.Name with get() = name and set(v) = name <- v
-    member x.Every with get() = every and set(v:Func<int,obj array,string>) = every <- fun i os -> v.Invoke(i,List.toArray os)
-    member x.EveryShrink with get() = everyShrink and set(v:Func<obj array,string>) = everyShrink <- fun os -> v.Invoke(List.toArray os)
+    member x.Every with get() = new Func<int,obj array,string>(fun i arr -> every i (Array.toList arr)) 
+                   and set(v:Func<int,obj array,string>) = every <- fun i os -> v.Invoke(i,List.toArray os)
+    member x.EveryShrink with get() = new Func<obj array,string>(Array.toList >> everyShrink)
+                         and set(v:Func<obj array,string>) = everyShrink <- fun os -> v.Invoke(List.toArray os)
     member x.StartSize with get() = startSize and set(v) = startSize <- v
     member x.EndSize with get() = endSize and set(v) = endSize <- v
     member x.Runner with get() = runner and set(v) = runner <- v
