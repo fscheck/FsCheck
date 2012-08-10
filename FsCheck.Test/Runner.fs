@@ -23,3 +23,7 @@ module Runner =
         underTest <= 0.0
         
 
+    type TypeToInstantiate() =
+        [<Property>]
+        let ``should run a property on an instance``(random:int) =
+            Assert.True true

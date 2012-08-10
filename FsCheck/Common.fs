@@ -54,3 +54,8 @@ module internal Common =
     let (|MapContains|_|) key value =
         Map.tryFind key value
         
+    module Option =
+        let toObject(opt:_ option) = 
+            match opt with
+            | None -> null
+            | Some a -> a

@@ -59,7 +59,7 @@ type PropertyAttribute() =
                         Arbitrary = this.Arbitrary |> Array.toList
                         Runner = xunitRunner
                     }
-                Check.Method(config, methodInfo.MethodInfo)
+                Check.Method(config, methodInfo.MethodInfo,?target=if testClass <> null then Some testClass else None)
                 match xunitRunner.Result with
                 | TestResult.True _ -> 
                     printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)

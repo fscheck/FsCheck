@@ -281,7 +281,7 @@ module Runner =
         | [|t|] -> [|tvalue|]
         | _ -> FSharpValue.GetTupleFields(tvalue) 
 
-    let internal checkMethod (config:Config) (m:MethodInfo) =
+    let internal checkMethod (config:Config) (m:MethodInfo) (target:obj option) =
         let fromTypes = m.GetParameters() |> Array.map (fun p -> p.ParameterType) 
         let fromP = fromTypes |> arrayToTupleType
         //we can check methods that return void or unit. We cannot add it to  to the Testable typeclass
@@ -291,19 +291,19 @@ module Runner =
         let funType = FSharpType.MakeFunctionType(fromP, toP)
         let invokeAndThrowInner (m:MethodInfo) o = 
             try
-                Reflect.invokeMethod m None o
+                Reflect.invokeMethod m target o
              with :? TargetInvocationException as e -> //this is just to avoid huge non-interesting stacktraces in the output
                 raise (Reflect.preserveStackTrace  e.InnerException)
         let funValue = FSharpValue.MakeFunction(funType, (tupleToArray fromTypes) >> invokeAndThrowInner m)
-        let genericM = checkMethodInfo.MakeGenericMethod([|funType(*fromP;toP*)|])
+        let genericM = checkMethodInfo.MakeGenericMethod([|funType|])
         genericM.Invoke(null, [|box config; funValue|]) |> ignore
         
 
     let internal checkAll config (t:Type) = 
         config.Runner.OnStartFixture t  
-        t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) |>
-        Array.filter hasTestableReturnType |>
-        Array.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m)
+        t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) 
+        |> Array.filter hasTestableReturnType 
+        |> Array.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m None)
         printf "%s" newline
 
 open Runner
@@ -340,7 +340,7 @@ type Check =
     static member One (name,config,property:'Testable) = check { config with Name = name } property
     
     ///Check the given property identified by the given MethodInfo.
-    static member Method (config,methodInfo:Reflection.MethodInfo) = checkMethod config methodInfo
+    static member Method (config,methodInfo:Reflection.MethodInfo, ?target:obj) = checkMethod config methodInfo target
 
     ///Check one property with the quick configuration.  
     static member Quick (property:'Testable) = Check.One(Config.Quick,property)

@@ -119,6 +119,7 @@ type Property = Gen<Rose<Result>>
 module internal Testable =
 
     open System
+    open System.Reflection // for Testable<MethodInfo>
     open Common
     open TypeClass
                    
@@ -202,6 +203,25 @@ module internal Testable =
         static member Arrow() =
             { new Testable<('a->'b)> with
                 member x.Property f = forAll Arb.from f }
+//        static member MethodInfo() =
+//            { new Testable<MethodInfo> with
+//                member x.Property m =
+//                    let fromTypes = m.GetParameters() |> Array.map (fun p -> p.ParameterType) 
+////                    let fromP = fromTypes |> arrayToTupleType
+////                    //we can check methods that return void or unit. We cannot add it to  to the Testable typeclass
+////                    //since F# won't let us define that - System.Void can only be used in typeof<> expressions.
+////                    //hence the translation here.
+////                    let toP = if m.ReturnType = typeof<System.Void> then typeof<unit> else m.ReturnType
+////                    let funType = FSharpType.MakeFunctionType(fromP, toP)
+//                    TestableTC.GetInstance m.ReturnType
+//                    let invokeAndThrowInner (m:MethodInfo) o = 
+//                        try
+//                            Reflect.invokeMethod m None o
+//                         with :? TargetInvocationException as e -> //this is just to avoid huge non-interesting stacktraces in the output
+//                            raise (Reflect.preserveStackTrace  e.InnerException)
+//                    let funValue = Microsoft.FSharp.Reflection.FSharpValue.MakeFunction(funType, (tupleToArray fromTypes) >> invokeAndThrowInner m)
+//                    let genericM = checkMethodInfo.MakeGenericMethod([|funType|])
+//                    genericM.Invoke(null, [|box config; funValue|]) |> ignore }
 
     let private combine f a b:Property = 
         let pa = property a
@@ -231,6 +251,7 @@ module internal Testable =
         static member List() =
             { new Testable<list<'a>> with
                 member x.Property l = List.fold (.&) (property <| List.head l) (List.tail l) }
+
 
 
 module Prop =
