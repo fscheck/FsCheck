@@ -1,6 +1,6 @@
 comp  = fsc -a
 bin   = FsCheck.dll
-mods  = AssemblyInfo Common Random Reflect TypeClass Gen ReflectArbitrary Arbitrary Property Commands Runner Checks 
+mods  = AssemblyInfo Common Random Reflect TypeClass Gen ReflectArbitrary Arbitrary Property Commands Runner 
 files = $(addsuffix .fs,$(addprefix FsCheck/,$(mods)))
 
 $(bin): $(files)

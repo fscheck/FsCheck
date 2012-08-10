@@ -311,6 +311,8 @@ module Gen =
 [<AutoOpen>]
 module GenOperators =
 
+    /// Lifted function application = apply f to a, all in the Gen applicative functor.
     let (<*>) f a = Gen.apply f a
 
+    /// Like <*>, but puts f in a Gen first.
     let (<!>) f a = Gen.constant f <*> a

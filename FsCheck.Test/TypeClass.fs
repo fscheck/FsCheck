@@ -99,7 +99,7 @@ module TypeClass =
             ] |> Set.ofList
 
         Assert.Equal(2, typeClass.Instances.Count)
-        Assert.Equal(expectedInstances, typeClass.Instances)
+        Assert.Equal<_ * _>(expectedInstances, typeClass.Instances)
 
     type ArrayInstanceWithAttributes() =
         static member Array(attribute:GenParameterAttribute, attribute2:AnotherGenParameterAttribute) =
@@ -120,7 +120,7 @@ module TypeClass =
             [ (Array typeof<'a[]>, Argument typeof<GenParameterAttribute> |> Set.singleton)
               (Array typeof<'a[]>, [ Argument typeof<GenParameterAttribute>; Argument typeof<AnotherGenParameterAttribute>]  |> Set.ofList)
             ] |> Set.ofList
-        Assert.Equal(expectedInstances, typeClass.Instances)
+        Assert.Equal< _ * _ >(expectedInstances, typeClass.Instances)
 
     [<Fact>]
     let ``should instantiate primitive type``() =

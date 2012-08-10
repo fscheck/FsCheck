@@ -7,19 +7,12 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Architude.FsCheck</RootNamespace>
+    <RootNamespace>FsCheck</RootNamespace>
     <AssemblyName>FsCheck</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <Name>Architude.FsCheck</Name>
-    <SccProjectName>
-    </SccProjectName>
-    <SccProvider>
-    </SccProvider>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccLocalPath>
-    </SccLocalPath>
+    <Name>FsCheck</Name>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,6 +23,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
     <Tailcalls>true</Tailcalls>
+    <OtherFlags>
+    </OtherFlags>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,11 +34,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Release\FsCheck.XML</DocumentationFile>
+    <OtherFlags>
+    </OtherFlags>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DocumentationFile>bin\Debug\FsCheck.XML</DocumentationFile>
-    <OtherFlags>
-    </OtherFlags>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DocumentationFile>bin\Release\FsCheck.XML</DocumentationFile>
@@ -63,11 +58,10 @@
     <Compile Include="Commands.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="Fluent.fs" />
-    <Compile Include="Checks.fs" />
     <None Include="FsCheck.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="FSharp.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core">

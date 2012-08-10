@@ -9,9 +9,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Architude.FsCheck.Examples</RootNamespace>
     <AssemblyName>FsCheck.Examples</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Name>Architude.FsCheck.Examples</Name>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

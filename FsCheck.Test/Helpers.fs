@@ -14,3 +14,14 @@ module Helpers =
     let sample1 gn = sample 1 gn |> List.head
     
     let isIn l elem = List.exists ((=) elem) l
+
+    open Xunit
+    open System.Threading
+    open System.Threading.Tasks
+
+    [<Fact>]
+    let ``memoize is thread-safe``() =
+        let f (a: int) = Thread.Sleep 100; a
+        let memoized = Common.memoize f
+        Array.init 100 (fun _ -> Action(fun _ -> memoized 1 |> ignore))
+        |> Parallel.Invoke
