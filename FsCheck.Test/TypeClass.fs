@@ -49,7 +49,7 @@ module TypeClass =
                 .New()
                 .Discover(true, typeof<ArrayInstance>)
         Assert.Equal(1, typeClass.Instances.Count)
-        Assert.Contains((Array typeof<'a[,]>,Set.empty), typeClass.Instances)
+        Assert.Contains((Array typeof<_[,]>,Set.empty), typeClass.Instances)
 
     type CatchAllInstance() =
         static member CatchAll() =
@@ -117,8 +117,8 @@ module TypeClass =
                 .Discover(true, typeof<ArrayInstanceWithAttributes>)
 
         let expectedInstances =
-            [ (Array typeof<'a[]>, Argument typeof<GenParameterAttribute> |> Set.singleton)
-              (Array typeof<'a[]>, [ Argument typeof<GenParameterAttribute>; Argument typeof<AnotherGenParameterAttribute>]  |> Set.ofList)
+            [ (Array typeof<_[]>, Argument typeof<GenParameterAttribute> |> Set.singleton)
+              (Array typeof<_[]>, [ Argument typeof<GenParameterAttribute>; Argument typeof<AnotherGenParameterAttribute>]  |> Set.ofList)
             ] |> Set.ofList
         Assert.Equal< _ * _ >(expectedInstances, typeClass.Instances)
 
