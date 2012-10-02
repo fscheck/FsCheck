@@ -5,6 +5,7 @@ module Arbitrary =
     
     open FsCheck
     open System
+    open System.Collections.Generic
     open Helpers
     open Arb
     
@@ -151,6 +152,15 @@ module Arbitrary =
                                 || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0)
                                 || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0)
                                 || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0 || v.Milliseconds = 0))
+
+    [<Property>]
+    let KeyValuePair () =
+        generate<KeyValuePair<int,int>> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``KeyValuePair shrinks`` (value: KeyValuePair<int, int>) =
+        shrink value 
+        |> Seq.forall (fun (KeyValue(k,v)) -> shrink value.Key |> Seq.exists ((=) k) || shrink value.Value |> Seq.exists ((=) v))
 
     [<Property>]                       
     let ``Array shrinks to shorter array or smaller elements`` (value:int[]) =

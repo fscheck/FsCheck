@@ -89,6 +89,7 @@ type DontSize<'a when 'a : struct and 'a : comparison> =
 
 module Arb =
 
+    open System.Collections.Generic
     open TypeClass
 
 
@@ -404,7 +405,15 @@ module Arb =
                 else
                     Seq.empty
             fromGenShrink (genTimeSpan, shrink)
-            
+
+        static member KeyValuePair() =
+            let genKeyValuePair =
+                gen {
+                    let! key = generate
+                    let! value = generate
+                    return KeyValuePair(key, value)
+                }
+            fromGen genKeyValuePair
 
         static member NonNegativeInt() =
            from<int> 
