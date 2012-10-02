@@ -310,6 +310,7 @@ module Arb =
                                           for xs' in shrink xs -> x::xs'
                                           for x' in shrink x -> x'::xs }
             }
+
         ///Generate an object - a boxed char, string or boolean value.
         static member Object() =
             { new Arbitrary<obj>() with
@@ -484,6 +485,11 @@ module Arb =
                                                    ) |> Seq.concat
             }
             |> convert FixedLengthArray (fun (FixedLengthArray a) -> a)
+
+        /// Generate a System.Collections.Generic.List of values.
+        static member List() =
+            from<list<_>> 
+            |> convert System.Linq.Enumerable.ToList Seq.toList
 
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
         static member DontShrink() =

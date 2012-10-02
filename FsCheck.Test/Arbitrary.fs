@@ -215,3 +215,6 @@ module Arbitrary =
     let Flags (value:TestFlags) =
         List.exists (fun e -> e = int value) [0;1;2;3;4;5;6;7]
 
+    [<Property>]
+    let GenericList() =
+        generate<List<int>> |> sample 10 |> List.forall (fun _ -> true)
