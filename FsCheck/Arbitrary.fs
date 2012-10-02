@@ -491,6 +491,16 @@ module Arb =
             from<list<_>> 
             |> convert System.Linq.Enumerable.ToList Seq.toList
 
+        /// Generate a System.Collections.Generic.IList of values.
+        static member IList() =
+            Default.List()
+            |> convert (fun x -> x :> _ IList) (fun x -> x :?> _ List)
+
+        /// Generate a System.Collections.Generic.ICollection of values.
+        static member ICollection() =
+            Default.List()
+            |> convert (fun x -> x :> _ ICollection) (fun x -> x :?> _ List)
+
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
         static member DontShrink() =
             generate |> Gen.map DontShrink |> fromGen

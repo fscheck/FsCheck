@@ -216,5 +216,23 @@ module Arbitrary =
         List.exists (fun e -> e = int value) [0;1;2;3;4;5;6;7]
 
     [<Property>]
-    let GenericList() =
+    let ``Generic List``() =
         generate<List<int>> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``Generic IList``() =
+        generate<IList<int>> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``Generic IList shrinks`` (value: int IList) =
+        shrink value 
+        |> Seq.forall (fun l -> l.Count <= value.Count)
+
+    [<Property>]
+    let ``Generic ICollection``() =
+        generate<ICollection<int>> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``Generic ICollection shrinks`` (value: int ICollection) =
+        shrink value 
+        |> Seq.forall (fun l -> l.Count <= value.Count)
