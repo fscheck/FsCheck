@@ -12,7 +12,7 @@ namespace FsCheck.NUnit.CSharpExamples
     public class Examples
     {
         //Simple boolean property
-        [FsCheckProperty]
+        [FsCheck.NUnit.Property]
         public bool RevRev(int[] xs)
         {
             return xs.Reverse().Reverse().SequenceEqual(xs);
@@ -20,14 +20,14 @@ namespace FsCheck.NUnit.CSharpExamples
 
         //Using Spec fluent interface
         //TODO: UnbrowsableObject return types look ugly. Rename to smth like Spec or ISpec?
-        [FsCheckProperty(Verbose = true)]
+        [FsCheck.NUnit.Property(Verbose = true)]
         public UnbrowsableObject RevId()
         {
             return Spec.ForAny<int[]>(xs => xs.Reverse().SequenceEqual(xs));
         }
 
         //TODO: do not call Commands.asProperty. Implement check for ISpecification directly
-        [FsCheckProperty]
+        [FsCheck.NUnit.Property]
         public Gen<Rose<Result>> Counter()
         {
             return Commands.asProperty(new CounterSpec());

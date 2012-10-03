@@ -5,7 +5,7 @@ open NUnit.Framework
 open FsCheck
 
 [<AttributeUsage(AttributeTargets.Method, AllowMultiple = false)>]
-type FsCheckPropertyAttribute() =
+type PropertyAttribute() =
     inherit TestAttribute()
 
     let mutable maxTest = Config.Default.MaxTest

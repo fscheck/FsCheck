@@ -4,6 +4,7 @@ namespace FsCheck.Test
 module Property =
 
     open FsCheck
+    open FsCheck.Xunit
     open System
     open Arb
     

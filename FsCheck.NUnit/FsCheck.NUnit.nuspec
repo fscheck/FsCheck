@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$id$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>http://fscheck.codeplex.com/license</licenseUrl>
+    <projectUrl>http://fscheck.codeplex.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Integrates FsCheck with NUnit by adding an FsCheckPropertyAttribute that runs FsCheck tests.</description>
+    <summary>Integrates FsCheck with NUnit</summary>
+    <tags>nunit fscheck</tags>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <dependencies>
+      <dependency id="FsCheck" version="0.8.3" />
+      <dependency id="NUnit" version="2.6.1"/>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="install.ps1" target="tools" /> 
+  </files>
+</package>

@@ -4,6 +4,7 @@ module Gen =
 
     open Xunit
     open FsCheck
+    open FsCheck.Xunit
     open Helpers
 
     [<Property>]

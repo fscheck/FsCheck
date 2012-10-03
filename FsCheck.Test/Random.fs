@@ -5,6 +5,7 @@ module Random =
     open System
     open Xunit
     open FsCheck
+    open FsCheck.Xunit
     open FsCheck.Random
     open Helpers
 

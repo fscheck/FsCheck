@@ -5,6 +5,7 @@ module TypeClass =
     open System
     open Xunit
     open FsCheck
+    open FsCheck.Xunit
     open FsCheck.TypeClass
 
     type ITypeClassUnderTest<'a> =

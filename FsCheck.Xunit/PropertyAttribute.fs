@@ -1,10 +1,11 @@
 ﻿
-namespace FsCheck
+namespace FsCheck.Xunit
 
 open System
+
 open Xunit
 open Xunit.Sdk
-
+open FsCheck
 
 type PropertyFailedException(testResult:FsCheck.TestResult) = 
     inherit AssertException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult))

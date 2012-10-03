@@ -3,12 +3,14 @@
 open System
 open System.Reflection
 open System.Threading
-open FsCheck
-open FsCheck.Fluent
-open FsCheck.NUnit
+
 open NUnit.Core
 open NUnit.Core.Extensibility
 open NUnit.Framework
+
+open FsCheck
+open FsCheck.NUnit
+open FsCheck.Fluent
 
 type FsCheckTestMethod(mi : MethodInfo) =
     inherit TestMethod(mi)
@@ -57,8 +59,8 @@ type FsCheckTestMethod(mi : MethodInfo) =
             | ex -> x.handleException ex testResult FailureSite.Test
 
     member private x.getFsCheckPropertyAttribute() =
-        let attr = x.Method.GetCustomAttributes(typeof<FsCheckPropertyAttribute>, false) |> Seq.head
-        attr :?> FsCheckPropertyAttribute
+        let attr = x.Method.GetCustomAttributes(typeof<PropertyAttribute>, false) |> Seq.head
+        attr :?> PropertyAttribute
         
     member private x.runTestMethod testResult =
         let testRunner = { new IRunner with
@@ -106,7 +108,7 @@ type FsCheckAddin() =
 
     interface ITestCaseBuilder with
         override x.CanBuildFrom mi = 
-            Reflect.HasAttribute(mi, typeof<FsCheckPropertyAttribute>.FullName, false)
+            Reflect.HasAttribute(mi, typeof<PropertyAttribute>.FullName, false)
         override x.BuildFrom mi =                         
             FsCheckTestMethod(mi) :> Test
 

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$id$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>http://fscheck.codeplex.com/license</licenseUrl>
+    <projectUrl>http://fscheck.codeplex.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Integrates FsCheck with MSTest.</description>
+    <summary>Integrates FsCheck with MSTest</summary>
+    <tags>mstest fscheck</tags>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <dependencies>
+      <dependency id="FsCheck" version="0.8.3" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="install.ps1" target="tools" /> 
+  </files>
+</package>

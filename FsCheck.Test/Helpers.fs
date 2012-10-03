@@ -15,7 +15,7 @@ module Helpers =
     
     let isIn l elem = List.exists ((=) elem) l
 
-    open Xunit
+    open global.Xunit
     open System.Threading
     open System.Threading.Tasks
 

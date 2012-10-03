@@ -4,6 +4,7 @@ namespace FsCheck.Test
 module Arbitrary =
     
     open FsCheck
+    open FsCheck.Xunit
     open System
     open Helpers
     open Arb

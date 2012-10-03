@@ -16,14 +16,14 @@ namespace FsCheck.MsTest.Examples
                 Assert();
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(AssertFailedException))]
         public void RevId()
         {
             Spec.ForAny<int[]>(xs => xs.Reverse().SequenceEqual(xs))
                 .AssertVerbose();
-        }       
+        }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(AssertFailedException))]
         public void Insert()
         {            
              Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -39,7 +39,7 @@ namespace FsCheck.MsTest.Examples
                 .Assert();
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(AssertFailedException))]
         public void InsertTrivial()
         {
             Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -48,7 +48,7 @@ namespace FsCheck.MsTest.Examples
                 .Assert();            
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(AssertFailedException))]
         public void InsertClassify()
         {
             Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -58,7 +58,7 @@ namespace FsCheck.MsTest.Examples
                 .Assert();            
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(AssertFailedException))]
         public void InsertCollect()
         {
             Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -67,7 +67,7 @@ namespace FsCheck.MsTest.Examples
                 .Assert();
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(AssertFailedException))]
         public void InsertCombined()
         {            
             Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -78,7 +78,7 @@ namespace FsCheck.MsTest.Examples
                 .Assert();
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(AssertFailedException))]
         public void ComplexProp()
         {
             Spec.ForAny<int, int>((m, n) => m + n >= m).Label("result > #1")
@@ -87,7 +87,7 @@ namespace FsCheck.MsTest.Examples
                 .Assert();
         }
 
-        [TestMethod]
+        [TestMethod, ExpectedException(typeof(AssertFailedException))]
         public void Label()
         {
             Spec.ForAny<int>(x => false).Label("Always false")
