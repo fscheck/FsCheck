@@ -89,6 +89,7 @@ type DontSize<'a when 'a : struct and 'a : comparison> =
 
 module Arb =
 
+    open System.Collections.Generic
     open TypeClass
 
 
@@ -309,6 +310,7 @@ module Arb =
                                           for xs' in shrink xs -> x::xs'
                                           for x' in shrink x -> x'::xs }
             }
+
         ///Generate an object - a boxed char, string or boolean value.
         static member Object() =
             { new Arbitrary<obj>() with
@@ -404,7 +406,19 @@ module Arb =
                 else
                     Seq.empty
             fromGenShrink (genTimeSpan, shrink)
-            
+
+        static member KeyValuePair() =
+            let genKeyValuePair =
+                gen {
+                    let! key = generate
+                    let! value = generate
+                    return KeyValuePair(key, value)
+                }
+            let shrinkKeyValuePair (kvp:KeyValuePair<_,_>) = 
+                seq { for key in shrink kvp.Key do
+                        for value in shrink kvp.Value do
+                            yield new KeyValuePair<_,_>(key, value) }
+            fromGenShrink(genKeyValuePair,shrinkKeyValuePair)
 
         static member NonNegativeInt() =
            from<int> 
@@ -475,6 +489,21 @@ module Arb =
                                                    ) |> Seq.concat
             }
             |> convert FixedLengthArray (fun (FixedLengthArray a) -> a)
+
+        /// Generate a System.Collections.Generic.List of values.
+        static member List() =
+            from<list<_>> 
+            |> convert System.Linq.Enumerable.ToList Seq.toList
+
+        /// Generate a System.Collections.Generic.IList of values.
+        static member IList() =
+            Default.List()
+            |> convert (fun x -> x :> _ IList) (fun x -> x :?> _ List)
+
+        /// Generate a System.Collections.Generic.ICollection of values.
+        static member ICollection() =
+            Default.List()
+            |> convert (fun x -> x :> _ ICollection) (fun x -> x :?> _ List)
 
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
         static member DontShrink() =

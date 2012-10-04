@@ -6,6 +6,7 @@ module Arbitrary =
     open FsCheck
     open FsCheck.Xunit
     open System
+    open System.Collections.Generic
     open Helpers
     open Arb
     
@@ -153,6 +154,15 @@ module Arbitrary =
                                 || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0)
                                 || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0 || v.Milliseconds = 0))
 
+    [<Property>]
+    let KeyValuePair () =
+        generate<KeyValuePair<int,int>> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``KeyValuePair shrinks`` (value: KeyValuePair<int, int>) =
+        shrink value 
+        |> Seq.forall (fun (KeyValue(k,v)) -> shrink value.Key |> Seq.exists ((=) k) || shrink value.Value |> Seq.exists ((=) v))
+
     [<Property>]                       
     let ``Array shrinks to shorter array or smaller elements`` (value:int[]) =
         shrink value 
@@ -206,3 +216,24 @@ module Arbitrary =
     let Flags (value:TestFlags) =
         List.exists (fun e -> e = int value) [0;1;2;3;4;5;6;7]
 
+    [<Property>]
+    let ``Generic List``() =
+        generate<List<int>> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``Generic IList``() =
+        generate<IList<int>> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``Generic IList shrinks`` (value: int IList) =
+        shrink value 
+        |> Seq.forall (fun l -> l.Count <= value.Count)
+
+    [<Property>]
+    let ``Generic ICollection``() =
+        generate<ICollection<int>> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``Generic ICollection shrinks`` (value: int ICollection) =
+        shrink value 
+        |> Seq.forall (fun l -> l.Count <= value.Count)
