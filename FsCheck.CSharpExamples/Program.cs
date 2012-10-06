@@ -130,7 +130,12 @@ namespace FsCheck.CSharpExamples
 
             //generating recursive data types: not so common in C#?
 
-            //generating functions: idem? Add Func/Action generators?
+            // generating functions:
+            Spec.ForAny((Func<int, int> f, Func<int, int> g, ICollection<int> a) => {
+                            var l1 = a.Select(x => f(g(x)));
+                            var l2 = a.Select(g).Select(f);
+                            return l1.SequenceEqual(l2);
+                        }).QuickCheck();
 
             //generators support select, selectmany and where
             var gen = from x in Any.OfType<int>()

@@ -271,6 +271,8 @@ type Spec() =
         Spec.For(Any.OfType<'a>(),assertion)
     static member ForAny(assertion:Func<'a,'b,bool>) =
         Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),assertion)
+    static member ForAny(assertion:Func<'a,'b,'c,bool>) =
+        Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),Any.OfType<'c>(),assertion)
     static member ForAny(assertion:Action<'a,'b>) =
         Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),assertion)
         
@@ -280,6 +282,8 @@ type Spec() =
         SpecBuilder<'a>(generator, shrink, property << assertion.Invoke, [], [], [])
     static member For(generator1:'a Gen,generator2:'b Gen, assertion:Func<'a,'b,bool>) =
         SpecBuilder<'a,'b>(generator1, shrink, generator2, shrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+    static member For(generator1:'a Gen,generator2:'b Gen,generator3:'c Gen, assertion:Func<'a,'b,'c,bool>) =
+        SpecBuilder<'a,'b,'c>(generator1, shrink, generator2, shrink, generator3, shrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
     static member For(generator1:'a Gen,generator2:'b Gen, assertion:Action<'a,'b>) =
         SpecBuilder<'a,'b>(generator1, shrink, generator2, shrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
 

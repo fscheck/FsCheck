@@ -106,12 +106,15 @@ module Arbitrary =
             |> (fun shrinks -> match value with 
                                 | None -> shrinks = Seq.empty 
                                 | Some v ->  Seq.forall2 (=) shrinks (seq { yield None; for x' in shrink v -> Some x' }) ))
-    
-    [<Property>]  
-    let Function (f:int->char) (vs:list<int>) =
+
+    let testFunction (f: _ -> _) (vs: _ list) =
         let tabledF = Function<_,_>.from f
         (List.map tabledF.Value vs) = (List.map f vs)
         && List.forall (fun v -> List.tryFind (fst >> (=) v) tabledF.Table = Some (v,f v)) vs
+        
+    [<Property>]  
+    let Function (f:int->char) (vs:list<int>) =
+        testFunction f vs
     
     [<Property>]
     //checks that a generated function is pure by applying it twice to the same values and checking that the results are the same.
@@ -119,7 +122,23 @@ module Arbitrary =
         List.forall2 (=)
             (List.map (fun (a,b) -> f a b) vs)
             (List.map (fun (a,b) -> f a b) vs)
-    
+
+    [<Property>]
+    let SystemFunc (f: Func<int>) (vs: list<unit>) =
+        testFunction f.Invoke vs
+
+    [<Property>]
+    let SystemFunc1 (f: Func<int, string>) (vs: list<int>) =
+        testFunction f.Invoke vs
+
+    [<Property>]
+    let SystemFunc2 (f: Func<int, string, string>) (vs: list<int * string>) =
+        testFunction f.Invoke vs
+
+    [<Property>]
+    let SystemAction2 (f: Action<int, string>) (vs: list<int * string>) =
+        testFunction f.Invoke vs
+            
     [<Property>]
     let Object (o:Object) =
         let goodObject (o:obj) = 

@@ -370,6 +370,38 @@ module Arb =
                                 yield Function<'a,'b>.from (update x y' f.Value) }
             }
 
+        static member SystemFunc() =
+            Default.Arrow()
+            |> convert (fun f -> Func<_>(f)) (fun f -> f.Invoke)
+
+        static member SystemFunc1() =
+            Default.Arrow()
+            |> convert (fun f -> Func<_,_>(f)) (fun f -> f.Invoke)
+
+        static member SystemFunc2() =
+            Default.Arrow()
+            |> convert (fun f -> Func<_,_,_>(f)) (fun f a b -> f.Invoke(a,b))
+
+        static member SystemFunc3() =
+            Default.Arrow()
+            |> convert (fun f -> Func<_,_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
+
+        static member SystemAction() =
+            Default.Arrow()
+            |> convert (fun f -> Action(f)) (fun f -> f.Invoke)
+
+        static member SystemAction1() =
+            Default.Arrow()
+            |> convert (fun f -> Action<_>(f)) (fun f -> f.Invoke)
+
+        static member SystemAction2() =
+            Default.Arrow()
+            |> convert (fun f -> Action<_,_>(f)) (fun f a b -> f.Invoke(a,b))
+
+        static member SystemAction3() =
+            Default.Arrow()
+            |> convert (fun f -> Action<_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
+
         ///Generates an arbitrary DateTime between 1900 and 2100. A DateTime is shrunk by removing its second, minute and hour compoonents.
         static member DateTime() = 
             let genDate = gen {  let! y = Gen.choose(1900,2100)
