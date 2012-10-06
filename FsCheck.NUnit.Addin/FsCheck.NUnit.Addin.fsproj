@@ -45,10 +45,10 @@
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core" />
     <Reference Include="nunit.core">
-      <HintPath>..\..\nunit\packages\NUnit.Runners.2.6.1\tools\lib\nunit.core.dll</HintPath>
+      <HintPath>..\packages\NUnit.Runners.2.6.1\tools\lib\nunit.core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core.interfaces">
-      <HintPath>..\..\nunit\packages\NUnit.Runners.2.6.1\tools\lib\nunit.core.interfaces.dll</HintPath>
+      <HintPath>..\packages\NUnit.Runners.2.6.1\tools\lib\nunit.core.interfaces.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
