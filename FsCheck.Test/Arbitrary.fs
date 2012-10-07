@@ -256,3 +256,16 @@ module Arbitrary =
     let ``Generic ICollection shrinks`` (value: int ICollection) =
         shrink value 
         |> Seq.forall (fun l -> l.Count <= value.Count)
+
+    [<Property>]
+    let ``Generic Dictionary``() =
+        generate<Dictionary<int, string>> |> sample 1 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``Generic Dictionary shrinks`` (value: Dictionary<int, string>) =
+        shrink value 
+        |> Seq.forall (fun l -> l.Count < value.Count)
+
+    [<Property>]
+    let ``Generic IDictionary``() =
+        generate<IDictionary<int, string>> |> sample 1 |> List.forall (fun _ -> true)

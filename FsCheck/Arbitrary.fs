@@ -90,8 +90,8 @@ type DontSize<'a when 'a : struct and 'a : comparison> =
 module Arb =
 
     open System.Collections.Generic
+    open System.Linq
     open TypeClass
-
 
     let internal Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
 
@@ -525,7 +525,7 @@ module Arb =
         /// Generate a System.Collections.Generic.List of values.
         static member List() =
             from<list<_>> 
-            |> convert System.Linq.Enumerable.ToList Seq.toList
+            |> convert Enumerable.ToList Seq.toList
 
         /// Generate a System.Collections.Generic.IList of values.
         static member IList() =
@@ -536,6 +536,31 @@ module Arb =
         static member ICollection() =
             Default.List()
             |> convert (fun x -> x :> _ ICollection) (fun x -> x :?> _ List)
+
+        /// Generate a System.Collections.Generic.ICollection of values.
+        /// Shrinks by reducing the number of elements
+        static member Dictionary() =
+            let genDictionary = 
+                gen {
+                    let! keys = Gen.listOf generate |> Gen.map (Seq.distinct >> Seq.toList)
+                    let! values = Gen.arrayOfLength keys.Length generate
+                    return (Seq.zip keys values).ToDictionary(fst, snd)
+                }
+            let shrinkDictionary (d: Dictionary<_,_>) = 
+                let keys = Seq.toArray d.Keys
+                seq {
+                    for c in keys.Length-2 .. -1 .. 0 ->
+                        let k = keys.[0..c]
+                        let values = Seq.truncate k.Length d.Values
+                        (Seq.zip k values).ToDictionary(fst, snd)
+                }
+            fromGenShrink (genDictionary, shrinkDictionary)
+
+        /// Generate a System.Collections.Generic.ICollection of values.
+        /// Shrinks by reducing the number of elements
+        static member IDictionary() =
+            Default.Dictionary()
+            |> convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
 
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
         static member DontShrink() =
@@ -549,4 +574,4 @@ module Arb =
                 override x.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
             
-        //TODO: add sbyte, float32, BigInteger, decimal, Generic.Collections
+        //TODO: add sbyte, float32, BigInteger, decimal
