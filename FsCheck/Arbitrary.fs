@@ -277,6 +277,26 @@ module Arb =
                                 if truncated |<| fl then yield truncated }
                     |> Seq.distinct
             }
+
+        static member Decimal() =
+            let genDecimal = 
+                gen {
+                    let! lo = generate
+                    let! mid = generate
+                    let! hi = generate
+                    let! isNegative = generate
+                    let! scale = Gen.choose(0, 28) |> Gen.map byte
+                    return System.Decimal(lo, mid, hi, isNegative, scale)
+                }
+            let shrinkDecimal d =
+                let (|<|) x y = abs x < abs y
+                seq {
+                    if d < 0m then yield -d
+                    let truncated = truncate d
+                    if truncated |<| d then yield truncated
+                }
+            fromGenShrink (genDecimal, shrinkDecimal)
+            
         ///Generates arbitrary chars, between ASCII codes Char.MinValue and 127.
         static member Char() = 
             { new Arbitrary<char>() with
@@ -574,4 +594,4 @@ module Arb =
                 override x.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
             
-        //TODO: add sbyte, float32, BigInteger, decimal
+        //TODO: add sbyte, float32, BigInteger

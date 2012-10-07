@@ -269,3 +269,12 @@ module Arbitrary =
     [<Property>]
     let ``Generic IDictionary``() =
         generate<IDictionary<int, string>> |> sample 1 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let Decimal() =
+        generate<decimal> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``Decimal shrinks`` (value: decimal) =
+        shrink<decimal> value 
+        |> Seq.forall (fun shrunkv -> shrunkv = 0m || shrunkv <= abs value)
