@@ -5,6 +5,7 @@ module Arbitrary =
     
     open FsCheck
     open FsCheck.Xunit
+    open global.Xunit
     open System
     open System.Collections.Generic
     open Helpers
@@ -160,7 +161,7 @@ module Arbitrary =
                                  || (v.Second = 0 && v.Minute = 0) 
                                  || (v.Second = 0 && v.Minute = 0 && v.Hour = 0) )
 
-    [<Property>]
+    [<Fact>]
     let ``TimeSpan``() =
         generate<TimeSpan> |> sample 10 |> List.forall (fun _ -> true)
 
@@ -173,7 +174,7 @@ module Arbitrary =
                                 || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0)
                                 || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0 || v.Milliseconds = 0))
 
-    [<Property>]
+    [<Fact>]
     let KeyValuePair () =
         generate<KeyValuePair<int,int>> |> sample 10 |> List.forall (fun _ -> true)
 
@@ -235,11 +236,11 @@ module Arbitrary =
     let Flags (value:TestFlags) =
         List.exists (fun e -> e = int value) [0;1;2;3;4;5;6;7]
 
-    [<Property>]
+    [<Fact>]
     let ``Generic List``() =
         generate<List<int>> |> sample 10 |> List.forall (fun _ -> true)
 
-    [<Property>]
+    [<Fact>]
     let ``Generic IList``() =
         generate<IList<int>> |> sample 10 |> List.forall (fun _ -> true)
 
@@ -248,7 +249,7 @@ module Arbitrary =
         shrink value 
         |> Seq.forall (fun l -> l.Count <= value.Count)
 
-    [<Property>]
+    [<Fact>]
     let ``Generic ICollection``() =
         generate<ICollection<int>> |> sample 10 |> List.forall (fun _ -> true)
 
@@ -257,18 +258,18 @@ module Arbitrary =
         shrink value 
         |> Seq.forall (fun l -> l.Count <= value.Count)
 
-    [<Property>]
+    [<Fact>]
     let ``Generic Dictionary``() =
-        generate<Dictionary<int, string>> |> sample 1 |> List.forall (fun _ -> true)
+        generate<Dictionary<int, char>> |> sample 10 |> List.forall (fun _ -> true)
 
     [<Property>]
     let ``Generic Dictionary shrinks`` (value: Dictionary<int, string>) =
         shrink value 
         |> Seq.forall (fun l -> l.Count < value.Count)
 
-    [<Property>]
+    [<Fact>]
     let ``Generic IDictionary``() =
-        generate<IDictionary<int, string>> |> sample 1 |> List.forall (fun _ -> true)
+        generate<IDictionary<int, char>> |> sample 10 |> List.forall (fun _ -> true)
 
     [<Property>]
     let Decimal() =
