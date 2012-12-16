@@ -216,6 +216,13 @@ module Arb =
                     Gen.choose (0,255) |> Gen.map byte //this is now size independent - 255 is not enough to not cover them all anyway 
                 override x.Shrinker n = n |> int |> shrink |> Seq.map byte
             }
+        ///Generates an arbitrary signed byte.
+        static member SByte() =   
+            { new Arbitrary<sbyte>() with  
+                override x.Generator = 
+                    Gen.choose (-128,127) |> Gen.map sbyte 
+                override x.Shrinker n = n |> int |> shrink |> Seq.map sbyte
+            }
         ///Generate arbitrary int16 that is between -size and size.
         static member Int16() =
             from<int>
@@ -594,4 +601,4 @@ module Arb =
                 override x.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
             
-        //TODO: add sbyte, float32, BigInteger
+        //TODO: add float32, BigInteger

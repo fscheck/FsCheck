@@ -73,6 +73,11 @@ module Arbitrary =
     let Byte (value:byte) =
         (   generate<byte> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate bytes
         ,   shrink<byte> value |> Seq.forall (fun shrunkv -> (int shrunkv) <= abs (int value)))
+        
+    [<Property>]
+    let SByte (value:sbyte) =
+        (   generate<sbyte> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate sbytes
+        ,   shrink<sbyte> value |> Seq.forall (fun shrunkv -> shrunkv <= abs value ))
 
     [<Property>]
     let Char (value:char) =
