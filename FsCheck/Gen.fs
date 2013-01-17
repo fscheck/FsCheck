@@ -108,14 +108,21 @@ module Gen =
     ///Override the current size of the test. resize n g invokes generator g with size parameter n.
     let resize n (Gen m) = Gen (fun _ r -> m n r)
 
-    ///Default generator that generates a random number generator. Useful for starting off the process
+    ///Generates a random number generator. Useful for starting off the process
     ///of generating a random value.
     let internal rand = Gen (fun n r -> r)
 
-    ///Generates a value out of the generator with maximum size n.
+    ///Generates a value with maximum size n.
     let eval n rnd (Gen m) = 
         let size,rnd' = range (0,n) rnd
         m size rnd'
+
+    ///Generates n values of the given size.
+    let sample size n gn  = 
+        let rec sample i seed samples =
+            if i = 0 then samples
+            else sample (i-1) (Random.stdSplit seed |> snd) (eval size seed gn :: samples)
+        sample n (Random.newSeed()) []
 
     ///Generates an integer between l and h, inclusive.
     let choose (l, h) = rand |> map (range (l,h) >> fst) 
