@@ -23,6 +23,12 @@ type private XunitRunner() =
         override x.OnFinished(name,testResult) = 
             result <- Some testResult
 
+[<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
+type ArbitraryAttribute(types:Type[]) = 
+    inherit Attribute()
+    new(typ:Type) = ArbitraryAttribute([|typ|])
+    member x.Arbitrary = types
+
 [<AttributeUsage(AttributeTargets.Method ||| AttributeTargets.Property, AllowMultiple = false)>]
 type PropertyAttribute() =
     inherit FactAttribute()
@@ -49,6 +55,14 @@ type PropertyAttribute() =
         { new TestCommand(methodInfo, null, 0) with
             override x.Execute(testClass:obj) : MethodResult = 
                 let xunitRunner = XunitRunner()
+                let arbitraries = 
+                    methodInfo.Class.Type 
+                    |> Seq.unfold (fun t -> if t <> null then Some(t,t.DeclaringType) else None)
+                    |> Seq.map (fun t -> t.GetCustomAttributes(typeof<ArbitraryAttribute>, true))
+                    |> Seq.filter (fun attr -> attr.Length = 1)
+                    |> Seq.collect (fun attr -> (attr.[0] :?> ArbitraryAttribute).Arbitrary)
+                    |> Seq.append this.Arbitrary
+                    |> Seq.toList
                 let config = 
                     {Config.Default with
                         MaxTest = this.MaxTest
@@ -57,7 +71,7 @@ type PropertyAttribute() =
                         EndSize = this.EndSize
                         Every = if this.Verbose then Config.Verbose.Every else Config.Quick.Every
                         EveryShrink = if this.Verbose then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
-                        Arbitrary = this.Arbitrary |> Array.toList
+                        Arbitrary = arbitraries
                         Runner = xunitRunner
                     }
                 Check.Method(config, methodInfo.MethodInfo,?target=if testClass <> null then Some testClass else None)

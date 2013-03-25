@@ -8,3 +8,4 @@ syntax: glob
 glob:*.nupkg
 _ReSharper.FsCheck\*
 TestResults/*
+FsCheck.sln.DotSettings.user

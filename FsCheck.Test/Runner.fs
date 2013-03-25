@@ -28,3 +28,16 @@ module Runner =
         [<Property>]
         let ``should run a property on an instance``(random:int) =
             Assert.True true
+
+    [<Arbitrary(typeof<TestArbitrary2>)>]
+    module ModuleWithArbitrary =
+
+        [<Property>]
+        let ``should use Arb instances from enclosing module``(underTest:float) =
+            underTest <= 0.0
+
+        [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
+        let ``should use Arb instance on method preferentially``(underTest:float) =
+            underTest >= 0.0
+
+        
