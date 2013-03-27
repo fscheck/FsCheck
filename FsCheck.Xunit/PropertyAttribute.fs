@@ -33,17 +33,21 @@ type ArbitraryAttribute(types:Type[]) =
 type PropertyAttribute() =
     inherit FactAttribute()
     let mutable maxTest = Config.Default.MaxTest
-    let mutable maxFail = Config.Default.MaxFail
-    //StdGen won't work as argument to attribute. First do away with Random then, so we have just one seed?
-//    let mutable replay = 
-//        match Config.Default.Replay with
-//        | None -> null
-//        | Some stdgen ->   
+    let mutable maxFail = Config.Default.MaxFail 
+    let mutable replay = Config.Default.Replay
     let mutable startSize = Config.Default.StartSize
     let mutable endSize = Config.Default.EndSize
     let mutable verbose = false
     let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
 
+    member x.Replay with get() = match replay with None -> String.Empty | Some (Random.StdGen (x,y)) -> sprintf "%A" (x,y)
+                    and set(v:string) = 
+                        //if someone sets this, we want it to throw if it fails
+                        let split = v.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
+                        let elem1 = Int32.Parse(split.[0])
+                        let elem2 = Int32.Parse(split.[1])
+                        replay <- Some <| Random.StdGen (elem1,elem2)
+    member internal x.ReplayStdGen = replay
     member x.MaxTest with get() = maxTest and set(v) = maxTest <- v
     member x.MaxFail with get() = maxFail and set(v) = maxFail <- v
     member x.StartSize with get() = startSize and set(v) = startSize <- v
@@ -65,6 +69,7 @@ type PropertyAttribute() =
                     |> Seq.toList
                 let config = 
                     {Config.Default with
+                        Replay = this.ReplayStdGen
                         MaxTest = this.MaxTest
                         MaxFail = this.MaxFail
                         StartSize = this.StartSize

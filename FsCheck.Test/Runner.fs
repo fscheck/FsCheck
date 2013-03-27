@@ -23,6 +23,49 @@ module Runner =
     let ``should register Arbitrary instances from Config in last to first order``(underTest:float) =
         underTest <= 0.0
         
+    [<Fact>]
+    let ``should replay property with one generator``() =
+        let doOne(s1,s2) =
+            try
+                Check.One( {Config.QuickThrowOnFailure with Replay = Some <| Random.StdGen (s1,s2) }, fun a -> a < 5)
+                "should have failed"
+            with e ->
+                e.Message
+        let same =
+            Seq.initInfinite (fun i -> doOne(123,654321))
+            |> Seq.take(5)
+            |> Seq.distinct
+        Assert.Equal(1,Seq.length same)
+        Assert.NotEqual<string>("should have failed", Seq.head same)
+
+    [<Fact>]
+    let ``should replay property with complex set of generators``() =
+        let doOne(s1,s2) =
+            try
+                Check.One( {Config.QuickThrowOnFailure with Replay = Some <| Random.StdGen (s1,s2) }, fun a (b:list<char>, c:array<int*double>) (d:DateTime) -> a < 10)
+                "should have failed"
+            with e ->
+                e.Message
+        let same =
+            Seq.initInfinite (fun i -> doOne(123,654321))
+            |> Seq.take(5)
+            |> Seq.distinct
+        Assert.Equal(1,Seq.length same)
+        Assert.NotEqual<string>("should have failed", Seq.head same)
+
+    [<Property(Replay="54321,67584")>]
+    let ``should pick up replay seeds from PropertyAttribute without parens``(a:int, b:string) =
+        //testing the replay separately in other tests - this just checks we can run
+        //this test
+        Assert.True true
+        |> Prop.collect (a,b)
+
+    [<Property(Replay="(54321,67584)")>]
+    let ``should pick up replay seeds from PropertyAttribute with parens``(a:int, b:string) =
+        //testing the replay separately in other tests - this just checks we can run
+        //this test
+        Assert.True true
+        |> Prop.collect (a,b)
 
     type TypeToInstantiate() =
         [<Property>]
