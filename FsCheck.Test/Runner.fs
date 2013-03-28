@@ -37,6 +37,7 @@ module Runner =
             |> Seq.distinct
         Assert.Equal(1,Seq.length same)
         Assert.NotEqual<string>("should have failed", Seq.head same)
+        Assert.Contains("(123,654321)", Seq.head same);
 
     [<Fact>]
     let ``should replay property with complex set of generators``() =
@@ -52,6 +53,7 @@ module Runner =
             |> Seq.distinct
         Assert.Equal(1,Seq.length same)
         Assert.NotEqual<string>("should have failed", Seq.head same)
+        Assert.Contains("(123,654321)", Seq.head same);
 
     [<Property(Replay="54321,67584")>]
     let ``should pick up replay seeds from PropertyAttribute without parens``(a:int, b:string) =
@@ -66,6 +68,7 @@ module Runner =
         //this test
         Assert.True true
         |> Prop.collect (a,b)
+        
 
     type TypeToInstantiate() =
         [<Property>]
