@@ -127,8 +127,10 @@ type UnbrowsableObject() =
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     abstract Build : unit -> Property
     member x.QuickCheck() = Check.Quick(x.Build())
+    member x.QuickCheckThrowOnFailure() = Check.QuickThrowOnFailure(x.Build())
     member x.VerboseCheck() = Check.Verbose(x.Build())
     member x.QuickCheck(name:string) = Check.Quick(name,x.Build())
+    member x.QuickCheckThrowOnFailure(name:string) = Check.QuickThrowOnFailure(name,x.Build())
     member x.VerboseCheck(name:string) = Check.Verbose(name,x.Build())
     member x.Check(configuration:Configuration) = Check.One(configuration.ToConfig(),x.Build())
 

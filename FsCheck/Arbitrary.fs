@@ -27,6 +27,11 @@ type NonZeroInt = NonZeroInt of int with
     member x.Get = match x with NonZeroInt r -> r
     static member op_Explicit(NonZeroInt i) = i
 
+type NormalFloat = NormalFloat of float with
+    member x.Get = match x with NormalFloat f -> f
+    static member op_Explicit(NormalFloat f) = f
+    static member get (NormalFloat f) = f
+
 type NonEmptyString = NonEmptyString of string with
     member x.Get = match x with NonEmptyString r -> r
     override x.ToString() = x.Get
@@ -198,6 +203,7 @@ module Arb =
     type Default =
         static member private fraction (a:int) (b:int) (c:int) = 
             double a + double b / (abs (double c) + 1.0) 
+        
         ///Generates (), of the unit type.
         static member Unit() = 
             { new Arbitrary<unit>() with
@@ -493,6 +499,13 @@ module Arb =
            from<int>
             |> filter ((<>) 0)
             |> convert NonZeroInt int
+
+        /// Generates an Float (without NaN, Infinity)
+        static member NormalFloat() =
+            from<float>
+            |> filter (fun f -> not <| System.Double.IsNaN(f) &&
+                                not <| System.Double.IsInfinity(f))
+            |> convert NormalFloat float
 
         static member IntWithMinMax() =
             { new Arbitrary<IntWithMinMax>() with
