@@ -3,6 +3,9 @@ First of all credit should go to John Hughes and Koen Claessen for coming up wit
 The same is true, but to a lesser degree, for scalacheck (which is itself a port of QuickCheck to Scala).
 
 Contributors:
+Carsten Koenig
+Mausch
+Alex Bogomaz
 Neil Mitchell (the first version of reflective generators and shrinker)
 Ganesh Sittampalam (various improvements and fixes in the property DSL)
 toyvo (Makefile for mono users)
