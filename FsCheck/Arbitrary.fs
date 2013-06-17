@@ -7,8 +7,6 @@
 **  See the file License.txt for the full text.                             **
 \*--------------------------------------------------------------------------*)
 
-#light
-
 namespace FsCheck
 
 open System
@@ -550,7 +548,7 @@ module Arb =
             |> filter (not << Set.isEmpty) 
             |> convert NonEmptySet (fun (NonEmptySet s) -> s)
 
-        //Arrays whose length does not change when shrinking.
+        ///Arrays whose length does not change when shrinking.
         static member FixedLengthArray() =
             { new Arbitrary<'a[]>() with
                 override x.Generator = generate

@@ -33,15 +33,21 @@ let fsCheckDocGen head title p code output =
     let code = code buffer
     let fsi s = "> " + s + ";;\n"
     let output = output buffer
-    let fsiOutput s prop = output ((fsi s) + getOutput prop)
+    let fsiOutput s prop = 
+        ((fsi s) + getOutput prop).Split('\n') 
+        |> String.concat "\n    "
+        |> output
     let fsiOutputTruncate s prop keepNbOfLines = 
         ((fsi s) + getOutput prop).Split('\n') 
         |> Seq.take keepNbOfLines 
-        |> String.concat "\n"
+        |> String.concat "\n    "
         |> fun s -> s + "\n(etc)" 
         |> output
-    let fsiOutputAll s t = output ((fsi s) + getOutputAll t)
-    let writeBaseDir = @"..\..\..\Codeplex"
+    let fsiOutputAll s t = 
+        ((fsi s) + getOutputAll t).Split('\n')
+        |> String.concat "\n    "
+        |> output
+    let writeBaseDir = @"..\..\..\Docs"
     let write (filename:string) =
         File.WriteAllText(Path.Combine(writeBaseDir,filename), buffer.Value.ToString())
         buffer := new StringBuilder()
@@ -85,7 +91,7 @@ let fsCheckDocGen head title p code output =
     code "let revRevIsOrigFloat (xs:list<float>) = List.rev(List.rev xs) = xs"
     fsiOutput "Check.Quick revRevIsOrigFloat" QuickStart.revRevIsOrigFloat
     
-    write "QuickStart.txt"
+    //write "QuickStart.txt"
     
     head "Properties"
     p "Properties are expressed as F# function definitions. Properties are universally quantified over their parameters, so"
@@ -243,7 +249,7 @@ let Insert (x:int) xs = ordered xs ==> ordered (insert x xs)"
     ""lt2""  @| (res > n)]"
     p "Produces the same result."
     
-    write "Properties.txt"
+    //write "Properties.txt"
     
     head "Test data: generators, shrinkers and Arbitrary instances"
     p "Test data is produced by test data generators. FsCheck defines default generators for some often used types, but you can use your own, and will need to define your own generators for any new types you introduce."
@@ -371,7 +377,7 @@ type MyGenerators =
 {{Arb.mapFilter}} maps the generator and filter the shrinkers for a given Arbitrary instance. Mapping the generator is sometimes faster, e.g. for a PositiveInt it is faster to take the absolute value than to filter the negative values.
 {{Arb.Default}} is a type that contains all the default Arbitrary instances as they are shipped and registerd by FsCheck by default. This is useful when you override a default generator - typically this is because you want to filter certain values from it, and then you need to be able to refer to the default generator in your overriding generator."
     
-    write "Test Data.txt"
+    //write "Test Data.txt"
     
     head "Stateful Testing"
     p "FsCheck also allows you to test objects, which usually encapsulate internal state through a set of methods. FsCheck, through a very small extension, allows you to do model-based specification of a class under test. Consider the following class, with an artificial bug in it:"
@@ -406,7 +412,7 @@ type MyGenerators =
     fsiOutput @"Check.Quick (asProperty spec)" (Commands.asProperty StatefulTesting.spec)
     p "Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it."
     
-    write @"Stateful Testing.txt"
+    //write @"Stateful Testing.txt"
     
     head "Usage tips"
     
@@ -497,27 +503,28 @@ let withxUnitConfig = { Config.Default with Runner = xUnitRunner }"
     
     title "An equality comparison that prints the left and right sides of the equality"
     p "Properties commonly check for equality. If a test case fails, FsCheck prints the counterexample, but sometimes it is useful to print the left and right side of the comparison as well, especially if you do some complicated calculations with the generated arguments first. To make this easier, you can define your own labelling equality combinator:"
-    code @" let (.=.) left right = left = right |@ sprintf ""%A = %A"" left right
+    code @"let (.=.) left right = left = right |@ sprintf ""%A = %A"" left right"
 
-let testCompare (i:int) (j:int) = 2*i+1  .=. 2*j-1"
+    code @"let testCompare (i:int) (j:int) = 2*i+1  .=. 2*j-1"
     fsiOutput "Check.Quick testCompare" TipsAndTricks.testCompare
     p "Of course, you can do this for any operator or function that you often use."
     
     title "Some ways to use FsCheck"
-    p @"# By adding properties and generators to an fsx file in your project. It's easy to execute, just press ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls that are built in your solution; F# Interactive will lock those for the remainder of the session, and you won't be able to build unitl you quit the session. One solution is to include the source files instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug, as far as I know.
-# By making a separate console application. Easy to debug, no annoying locks on assemblies. Your best option if you use only FsCheck for testing and your properties span multiple assemblies.
-# By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach (some things are easier to check using unit tests, and vice versa), and you like a graphical runner. Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. See above for ways to customize FsCheck for this scenario."
+    p @"* By adding properties and generators to an fsx file in your project. It's easy to execute, just press ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls that are built in your solution; F# Interactive will lock those for the remainder of the session, and you won't be able to build unitl you quit the session. One solution is to include the source files instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug, as far as I know.
+* By making a separate console application. Easy to debug, no annoying locks on assemblies. Your best option if you use only FsCheck for testing and your properties span multiple assemblies.
+* By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach (some things are easier to check using unit tests, and vice versa), and you like a graphical runner. Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. See above for ways to customize FsCheck for this scenario."
 
-    write @"Usage Tips.txt"
+    write @"Documentation.md"
     
     
 [<EntryPoint>]
 let main args =
     fsCheckDocGen 
-        (fun buf txt -> buf.Value.AppendFormat("!! {0}\n",txt) |> ignore)
-        (fun buf txt -> buf.Value.AppendFormat("\n*{0}*\n\n",txt) |> ignore)
+        (fun buf txt -> buf.Value.AppendFormat("## {0}\n",txt) |> ignore)
+        (fun buf txt -> buf.Value.AppendFormat("#### {0}\n",txt) |> ignore)
         (fun buf txt -> buf.Value.AppendFormat("{0}\n",txt) |> ignore)
-        (fun buf txt -> buf.Value.AppendFormat("\n{{{{\n{0}}}}}\n",txt) |> ignore)
-        (fun buf txt -> buf.Value.AppendFormat("\n{{{{\n{0}}}}}\n",txt) |> ignore)
+        (fun buf txt -> buf.Value.AppendFormat("\n    {0}\n",txt) |> ignore)
+        (fun buf txt -> buf.Value.AppendFormat("\n    {0}\n",txt) |> ignore)
+    printf "Documentation generated."
     System.Console.ReadKey() |> ignore
     0
