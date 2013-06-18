@@ -14,7 +14,7 @@ When a property fails, FsCheck displays a counter-example. For example, if we de
 then checking it results in
 
     > Check.Quick revIsOrig;;
-    Falsifiable, after 5 tests (6 shrinks) (StdGen (1064354252,295727616)):
+    Falsifiable, after 4 tests (1 shrink) (StdGen (1853436805,295727996)):
     [1; 0]
     
 FsCheck also shrinks the counter example, so that it is the minimal counter example that still fails the test case. In the example above, we see that the counter example is indeed minimal: the list must have at least two different elements. FsCheck also displays how many times it found a smaller (in some way) counter example and so proceeded to shrink further.
@@ -34,7 +34,7 @@ These can be checked at once using the Check.QuickAll function:
     > Check.QuickAll<ListProperties>();;
     --- Checking ListProperties ---
     ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-    ListProperties.reverse is original-Falsifiable, after 3 tests (3 shrinks) (StdGen (1065414313,295727616)):
+    ListProperties.reverse is original-Falsifiable, after 4 tests (3 shrinks) (StdGen (1855246909,295727996)):
     [1; 0]
     
 FsCheck now also prints the name of each test.
@@ -43,9 +43,9 @@ Since all top level functions of a a module are also compiled as static member o
     > Check.QuickAll typeof<ListProperties>.DeclaringType;;
     --- Checking QuickStart ---
     QuickStart.revRevIsOrig-Ok, passed 100 tests.
-    QuickStart.revIsOrig-Falsifiable, after 2 tests (3 shrinks) (StdGen (1065544320,295727616)):
+    QuickStart.revIsOrig-Falsifiable, after 4 tests (4 shrinks) (StdGen (1855696935,295727996)):
     [1; 0]
-    QuickStart.revRevIsOrigFloat-Falsifiable, after 19 tests (13 shrinks) (StdGen (1065584322,295727616)):
+    QuickStart.revRevIsOrigFloat-Falsifiable, after 9 tests (5 shrinks) (StdGen (1855776939,295727996)):
     [nan]
     
 #### What do I do if a test loops or encounters an error?
@@ -59,7 +59,7 @@ The property above (the reverse of the reverse of a list is the list itself) is 
     let revRevIsOrigFloat (xs:list<float>) = List.rev(List.rev xs) = xs
 
     > Check.Quick revRevIsOrigFloat;;
-    Falsifiable, after 4 tests (0 shrinks) (StdGen (1066554378,295727616)):
+    Falsifiable, after 9 tests (3 shrinks) (StdGen (1856947006,295727996)):
     [nan]
     
 ## Properties
@@ -84,14 +84,13 @@ For example,
     | [] -> true
     | [x] -> true
     | x::y::ys ->  (x <= y) && ordered (y::ys)
-let rec private insert x xs = 
+
+    let rec private insert x xs = 
     match xs with
     | [] -> [x]
     | c::cs -> if x <= c then x::xs else c::(insert x cs)
- 
-open Prop 
-                     
-let Insert (x:int) xs = ordered xs ==> ordered (insert x xs)
+
+    let Insert (x:int) xs = ordered xs ==> ordered (insert x xs)
 Such a property holds if the property after ==> holds whenever the condition does.
 Testing discards test cases which do not satisfy the condition. Test case generation continues until 100 cases which do satisfy the condition have been found, or until an overall limit on the number of test cases is reached (to avoid looping if the condition never holds). In this case a message such as
 
@@ -104,12 +103,12 @@ Since F# has eager evaluation by default, the above property does more work than
     let Eager a = a <> 0 ==> (1/a = 1/a)
 
     > Check.Quick Eager;;
-    Falsifiable, after 4 tests (0 shrinks) (StdGen (1066614381,295727616)):
+    Falsifiable, after 5 tests (0 shrinks) (StdGen (1857047012,295727996)):
     0
     with exception:
     System.DivideByZeroException: Attempted to divide by zero.
        at Properties.Eager(Int32 a) in C:\Users\Kurt\Projects\FsCheck\FsCheck\FsCheck.Documentation\Properties.fs:line 24
-       at DocumentationGen.fsCheckDocGen@133-3.Invoke(Int32 a) in C:\Users\Kurt\Projects\FsCheck\FsCheck\FsCheck.Documentation\Program.fs:line 133
+       at DocumentationGen.fsCheckDocGen@130-3.Invoke(Int32 a) in C:\Users\Kurt\Projects\FsCheck\FsCheck\FsCheck.Documentation\Program.fs:line 130
        at FsCheck.Testable.evaluate[a,b](FSharpFunc`2 body, a a) in C:\Users\Kurt\Projects\FsCheck\FsCheck\FsCheck\Property.fs:line 168
     
 Lazy evaluation is needed here to make sure the propery is checked correctly:
@@ -154,8 +153,8 @@ For example,
     |> within 2000
 
     > Check.Quick timesOut;;
-    Timeout of 2000 milliseconds exceeded, after 22 tests (0 shrinks) (StdGen (1067514433,295727616)):
-    12
+    Timeout of 2000 milliseconds exceeded, after 24 tests (0 shrinks) (StdGen (1919600590,295727996)):
+    21
     
 The first argument is the maximal time the lazy property given may run. If it runs longer, FsCheck considers the test as failed. Otherwise, the outcome of the lazy property is the outcome of within. Note that, although within attempts to cancel the thread in which the property is executed, that may not succeed, and so the thread may actually continue to run until the process ends.
 #### Observing Test Case Distribution
@@ -173,7 +172,7 @@ For example,
 Test cases for which the condition is true are classified as trivial, and the proportion of trivial test cases in the total is reported. In this example, testing produces
 
     > Check.Quick insertTrivial;;
-    Arguments exhausted after 40 tests (35% trivial).
+    Arguments exhausted after 73 tests (39% trivial).
     
 #### Classifying Test Cases
 A property may take the form
@@ -187,10 +186,10 @@ For example,
 Test cases satisfying the condition are assigned the classification given, and the distribution of classifications is reported after testing. In this case the result is
 
     > Check.Quick insertClassify;;
-    Arguments exhausted after 60 tests.
-    40% at-tail, at-head.
-    21% at-tail.
-    21% at-head.
+    Arguments exhausted after 51 tests.
+    49% at-tail, at-head.
+    23% at-tail.
+    17% at-head.
     
 Note that a test case may fall into more than one classification.
 #### Collecting Data Values
@@ -205,12 +204,11 @@ For example,
 The argument of collect is evaluated in each test case, and the distribution of values is reported. The type of this argument is printed using sprintf "%A". In the example above, the output is
 
     > Check.Quick insertCollect;;
-    Arguments exhausted after 64 tests.
-    43% 1.
-    34% 0.
-    17% 2.
+    Arguments exhausted after 53 tests.
+    39% 1.
+    28% 2.
+    28% 0.
     3% 3.
-    1% 4.
     
 #### Combining Observations
 The observations described here may be combined in any way. All the observations of each test case are combined, and the distribution of these combinations is reported. For example, testing the property
@@ -223,16 +221,16 @@ The observations described here may be combined in any way. All the observations
 produces
 
     > Check.Quick insertCombined;;
-    Arguments exhausted after 63 tests.
-    28% 0, at-tail, at-head.
+    Arguments exhausted after 44 tests.
+    34% 0, at-tail, at-head.
+    20% 1, at-head.
     15% 1, at-tail.
-    15% 1, at-head.
-    12% 2, at-tail.
-    7% 3, at-head.
-    7% 1, at-tail, at-head.
-    6% 2, at-head.
-    3% 2.
-    1% 2, at-tail, at-head.
+    11% 1, at-tail, at-head.
+    9% 2, at-head.
+    2% 4, at-head.
+    2% 3.
+    2% 2, at-tail, at-head.
+    2% 2, at-tail.
     
 #### And, Or and Labelling Subproperties
 Properties may take the form
@@ -257,7 +255,7 @@ For example,
 produces:
 
     > Check.Quick complex;;
-    Falsifiable, after 1 test (0 shrinks) (StdGen (1104436545,295727616)):
+    Falsifiable, after 1 test (2 shrinks) (StdGen (1974733743,295727996)):
     Label of failing property: result not sum
     0
     0
@@ -265,15 +263,15 @@ produces:
 It's perfectly fine to apply more than one label to a property; FsCheck displays all the applicable labels. This is useful for displaying intermediate results, for example:
 
     let multiply (n: int, m: int) =
-  let res = n*m
-  sprintf "evidence = %i" res @| (
-    "div1" @| (m <> 0 ==> lazy (res / m = n)),
-    "div2" @| (n <> 0 ==> lazy (res / n = m)),
-    "lt1"  @| (res > m),
-    "lt2"  @| (res > n))
+        let res = n*m
+        sprintf "evidence = %i" res @| (
+        "div1" @| (m <> 0 ==> lazy (res / m = n)),
+        "div2" @| (n <> 0 ==> lazy (res / n = m)),
+        "lt1"  @| (res > m),
+        "lt2"  @| (res > n))
 
     > Check.Quick multiply;;
-    Falsifiable, after 1 test (0 shrinks) (StdGen (1104786565,295727616)):
+    Falsifiable, after 2 tests (0 shrinks) (StdGen (1975133766,295727996)):
     Labels of failing property: evidence = 0, lt1
     (0, 0)
     
@@ -285,12 +283,12 @@ Notice that the above property combines subproperties by tupling them. This work
 The example written as a list:
 
      let multiplyAsList (n: int, m: int) =
-  let res = n*m
-  sprintf "evidence = %i" res @| [
-    "div1" @| (m <> 0 ==> lazy (res / m = n));
-    "div2" @| (n <> 0 ==> lazy (res / n = m));
-    "lt1"  @| (res > m);
-    "lt2"  @| (res > n)]
+        let res = n*m
+        sprintf "evidence = %i" res @| [
+        "div1" @| (m <> 0 ==> lazy (res / m = n));
+        "div2" @| (n <> 0 ==> lazy (res / n = m));
+        "lt1"  @| (res > m);
+        "lt2"  @| (res > n)]
 Produces the same result.
 ## Test data: generators, shrinkers and Arbitrary instances
 Test data is produced by test data generators. FsCheck defines default generators for some often used types, but you can use your own, and will need to define your own generators for any new types you introduce.
@@ -361,18 +359,19 @@ Note that
 * We guarantee termination by forcing the result to be a leaf when the size is zero. 
 * We halve the size at each recursion, so that the size gives an upper bound on the number of nodes in the tree. We are free to interpret the size as we will. 
 * The fact that we share the subtree generator between the two branches of a Branch does not mean that we generate the same tree in each case.
+
 #### Useful Generator Combinators
 If g is a generator for type t, then 
-{{two g}} generates a pair of t's, 
-{{three g}} generates a triple of t's, 
-{{four g}} generates a quadruple of t's, 
-If xs is a list, then {{elements xs}} generates an arbitrary element of xs.
-{{listOfLength n g}} generates a list of exactly n t's. 
-{{listOf g}} generates a list of t's whose length is determined by the size parameter
-{{nonEmptyListOf g}} generates a non-empty list of t's whose length is determined by the size parameter.
-{{constant v}} generates the value v.
-{{suchThat p g}} generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
-{{suchThatOption p g}} generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')
+- `two g` generates a pair of t's, 
+- `three g` generates a triple of t's, 
+- `four g` generates a quadruple of t's, 
+- If xs is a list, then `elements xs` generates an arbitrary element of xs.
+- `listOfLength n g` generates a list of exactly n t's. 
+- `listOf g` generates a list of t's whose length is determined by the size parameter
+- `nonEmptyListOf g` generates a non-empty list of t's whose length is determined by the size parameter.
+- `constant v` generates the value v.
+- `suchThat p g` generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
+- `suchThatOption p g` generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')
 All the generator combinators are functions on the Gen module.
 #### Default Generators and Shrinkers based on type
 FsCheck defines default test data generators  and shrinkers for some often used types: unit, bool, byte, int, float, char, string, DateTime, lists, array 1D and 2D, Set, Map, objects and functions from and to any of the above. Furthermore, by using reflection, FsCheck can derive default implementations of record types, discriminated unions, tuples and enums in terms of any primitive types that are defined (either in FsCheck or by you).
@@ -402,15 +401,15 @@ To generate types with a generic type argument, e.g.:
 you can use the same principle. So the class MyGenerators can be writtten as follows:
 
     let boxGen<'a> : Gen<Box<'a>> = 
-gen { let! a = Arb.generate<'a>
-      return! Gen.elements [ Whitebox a; Blackbox a] }
+        gen { let! a = Arb.generate<'a>
+              return! Gen.elements [ Whitebox a; Blackbox a] }
 
-type MyGenerators =
-    static member Tree() =
-        {new Arbitrary<Tree>() with
-            override x.Generator = tree
-            override x.Shrinker t = Seq.empty }
-    static member Box() = Arb.fromGen boxGen
+        type MyGenerators =
+            static member Tree() =
+                {new Arbitrary<Tree>() with
+                    override x.Generator = tree
+                    override x.Shrinker t = Seq.empty }
+            static member Box() = Arb.fromGen boxGen
 Notice that we use the function 'val generate<'a> : Gen<'a>' from the Arb module to get the generator for the type argument of Box. This allows you to define generators recursively. Similarly, there is a function shrink<'a>. Look at the FsCheck source for examples of default Arbitrary implementations to get a feeling of how to write such Arbitrary instances. The Arb module should help you with this task as well.
 Now, the following property can be checked:
 
@@ -420,22 +419,23 @@ Now, the following property can be checked:
 
     > Check.Quick RevRevBox;;
     Ok, passed 100 tests.
-    12% [].
-    2% [Whitebox 0; Blackbox 0].
-    2% [Blackbox -1].
+    8% [].
+    2% [Whitebox 0].
+    1% [Whitebox 8; Whitebox 3; Whitebox 2].
 (etc)
 Note that the class needs not be tagged with attributes in any way. FsCheck determines the type of the generator by the return type of each static member.
 Also note that in this case we actually didn't need to write a generator or shrinker: FsCheck can derive suitable generators using reflection for discriminated unions, record types and enums.
 #### Some useful methods on the Arb module
-{{Arb.from<'a>}} returns the registered Arbitrary instance for the given type 'a
-{{Arb.fromGen}} makes a new Arbitrary instance from just a given generator - the shrinker return the empty sequence
-{{Arb.fromGenShrink}} make a new Arbitrary instance from a given generator and shrinker. This is equivalent to implementing Arbitrary yourself, but may be shorter.
-{{Arb.generate<'a>}} returns the generator of the registered Arbitrary instance for the given type 'a
-{{Arb.shrink}} return the immediate shrinks of the registered Arbitrary instance for the given value
-{{Arb.convert}} given conversion functions to ('a ->'b) and from ('b ->'a), converts an Arbitrary<'a> instance to an Arbitrary<'b>
-{{Arb.filter}} filters the generator and shrinker for a given Arbitrary instance to contain only those values that match with the given filter function
-{{Arb.mapFilter}} maps the generator and filter the shrinkers for a given Arbitrary instance. Mapping the generator is sometimes faster, e.g. for a PositiveInt it is faster to take the absolute value than to filter the negative values.
-{{Arb.Default}} is a type that contains all the default Arbitrary instances as they are shipped and registerd by FsCheck by default. This is useful when you override a default generator - typically this is because you want to filter certain values from it, and then you need to be able to refer to the default generator in your overriding generator.
+- `Arb.from<'a>` returns the registered Arbitrary instance for the given type 'a
+- `Arb.fromGen` makes a new Arbitrary instance from just a given generator - the shrinker return the empty sequence
+- `Arb.fromGenShrink` make a new Arbitrary instance from a given generator and shrinker. This is equivalent to implementing Arbitrary yourself, but may be shorter.
+- `Arb.generate<'a>` returns the generator of the registered Arbitrary instance for the given type 'a
+- `Arb.shrink` return the immediate shrinks of the registered Arbitrary instance for the given value
+- `Arb.convert` given conversion functions to ('a ->'b) and from ('b ->'a), converts an Arbitrary<'a> instance to an Arbitrary<'b>
+- `Arb.filter` filters the generator and shrinker for a given Arbitrary instance to contain only those values that match with the given filter function
+- `Arb.mapFilter` maps the generator and filter the shrinkers for a given Arbitrary instance. Mapping the generator is sometimes faster, e.g. for a PositiveInt it is faster to take the absolute value than to filter the negative values.
+- `Arb.Default` is a type that contains all the default Arbitrary instances as they are shipped and registerd by FsCheck by default. This is useful when you override a default generator - typically this is because you want to filter certain values from it, and then you need to be able to refer to the default generator in your overriding generator.
+
 ## Stateful Testing
 FsCheck also allows you to test objects, which usually encapsulate internal state through a set of methods. FsCheck, through a very small extension, allows you to do model-based specification of a class under test. Consider the following class, with an artificial bug in it:
 
@@ -470,7 +470,7 @@ Preferably also override ToString in each command so that counterexamples can be
 A specification can be checked as follows:
 
     > Check.Quick (asProperty spec);;
-    Falsifiable, after 10 tests (7 shrinks) (StdGen (1130228020,295727616)):
+    Falsifiable, after 12 tests (4 shrinks) (StdGen (2003635396,295727996)):
     [inc; inc; inc; dec]
     
 Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.
@@ -483,7 +483,7 @@ Since FsCheck can generate random function values, it can check properties of fu
     > Check.Quick associativity;;
     Ok, passed 100 tests.
     
-We can generate functions Tree -> <anything>. If a counter-example is found, function values will be displayed as "<func>".
+We can generate functions Tree -> _anything_. If a counter-example is found, function values will be displayed as "\<func\>".
 However, FsCheck can show you the generated function in more detail, by using the Function type. If you use that, FsCheck can even shrink your function. For example:
 
     let mapRec (F (_,f)) (l:list<int>) =
@@ -491,8 +491,8 @@ However, FsCheck can show you the generated function in more detail, by using th
         lazy (List.map f l = ((*f <|*) List.head l) :: List.map f (List.tail l))
 
     > Check.Quick mapRec;;
-    Falsifiable, after 1 test (4 shrinks) (StdGen (1137218420,295727616)):
-    { -1->0; 0->2; 2->0 }
+    Falsifiable, after 1 test (2 shrinks) (StdGen (2011885868,295727996)):
+    { 0->1 }
     [0]
     
 The  type Function<'a,'b> =  F of ref<list<('a*'b)>> * ('a ->'b) records a map of all the arguments it was called with, and the result it produced. In your properties, you can extract the actual function by pattern matching as in the example. Function is used to print the function, and also to shrink it.
@@ -501,16 +501,16 @@ The  type Function<'a,'b> =  F of ref<list<('a*'b)>> * ('a ->'b) records a map o
     type EvenInt = EvenInt of int with
     static member op_Explicit(EvenInt i) = i
 
-type ArbitraryModifiers =
-    static member EvenInt() = 
-        Arb.from<int> 
-        |> Arb.filter (fun i -> i % 2 = 0) 
-        |> Arb.convert EvenInt int
+    type ArbitraryModifiers =
+        static member EvenInt() = 
+            Arb.from<int> 
+            |> Arb.filter (fun i -> i % 2 = 0) 
+            |> Arb.convert EvenInt int
         
-Arb.register<ArbitraryModifiers>()
+    Arb.register<ArbitraryModifiers>()
 
-let ``generated even ints should be even`` (EvenInt i) = i % 2 = 0
-Check.Quick ``generated even ints should be even``
+    let ``generated even ints should be even`` (EvenInt i) = i % 2 = 0
+    Check.Quick ``generated even ints should be even``
 This make properties much more readable, especially since you can define custom shrink functions as well.
 FsCheck has quite a few of these, e.g. NonNegativeInt, PositiveInt, StringWithoutNullChars etc. Have a look at the default Arbitrary instances on the Arb.Default type.
 Also, if you want to define your own, the Arb.filter, Arb.convert and Arb.mapFilter functions will come in handy.
@@ -518,18 +518,20 @@ Also, if you want to define your own, the Arb.filter, Arb.convert and Arb.mapFil
 Since Arbitrary instances are given as static members of classes, and properties can be grouped together as static members of classes, and since top level let functions are compiled as static member of their enclosing module (which is compiled as a class), you can simply define your properties and generators as top level let-bound functions, and then register all generators and and all properties at once using the following trick:
 
     let myprop =....
-let mygen =...
-let helper = "a string"
-let private helper' = true
+        let mygen =...
+        let helper = "a string"
+        let private helper' = true
 
-type Marker = class end
-Arb.register (typeof<Marker>.DeclaringType)
-Check.All (typeof<Marker>.DeclaringType)
+        type Marker = class end
+        Arb.register (typeof<Marker>.DeclaringType)
+        Check.All (typeof<Marker>.DeclaringType)
 The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way to get to a module's Type directly.
 FsCheck determines the intent of the function based on its return type:
 * Properties: return unit, bool, Property or function of any arguments to those types or Lazy value of any of those types
 * Arbitrary instances: return Arbitrary<_>
+
 All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will do something with, but do not want them checked or registered, just make them private. FsCheck will ignore those functions.
+
 #### Implementing IRunner to integrate FsCheck with mb|x|N|cs|Unit
 The Config type that can be passed to the Check.One or Check.All methods takes an IRunner as argument. This interface has the following methods:
 * OnStartFixture is called when FsCheck is testing all the methods on a type, before starting any tests.
@@ -548,25 +550,25 @@ The Config type that can be passed to the Check.One or Check.All methods takes a
             | _ -> Assert.True(false, Runner.onFinishedToString name result) 
     }
    
-let withxUnitConfig = { Config.Default with Runner = xUnitRunner }
+    let withxUnitConfig = { Config.Default with Runner = xUnitRunner }
 #### Implementing IRunner to customize printing of generated arguments
 By default, FsCheck prints generated arguments using sprintf "%A", or structured formatting. This usually does what you expect, i.e. for primitive types the value, for objects the ToString override and so on. If it does not (A motivating case is testing with COM objects - overriding ToString is not an option and structured formatting does not do anything useful with it), you can use the label combinator to solve this on a per property basis, but a more structured solution can be achieved by implementing IRunner. For example:
 
     let formatterRunner =
-{ new IRunner with
-    member x.OnStartFixture t =
-        printf "%s" (Runner.onStartFixtureToString t)
-    member x.OnArguments (ntest,args, every) =
-        printf "%s" (every ntest (args |> List.map formatter))
-    member x.OnShrink(args, everyShrink) =
-        printf "%s" (everyShrink (args |> List.map formatter))
-    member x.OnFinished(name,testResult) = 
-        let testResult' = match testResult with 
-                            | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
-                                TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
-                            | t -> t
-        printf "%s" (Runner.onFinishedToString name testResult') 
-}
+    { new IRunner with
+        member x.OnStartFixture t =
+            printf "%s" (Runner.onStartFixtureToString t)
+        member x.OnArguments (ntest,args, every) =
+            printf "%s" (every ntest (args |> List.map formatter))
+        member x.OnShrink(args, everyShrink) =
+            printf "%s" (everyShrink (args |> List.map formatter))
+        member x.OnFinished(name,testResult) = 
+            let testResult' = match testResult with 
+                                | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
+                                    TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
+                                | t -> t
+            printf "%s" (Runner.onFinishedToString name testResult') 
+    }
 #### An equality comparison that prints the left and right sides of the equality
 Properties commonly check for equality. If a test case fails, FsCheck prints the counterexample, but sometimes it is useful to print the left and right side of the comparison as well, especially if you do some complicated calculations with the generated arguments first. To make this easier, you can define your own labelling equality combinator:
 
@@ -575,7 +577,7 @@ Properties commonly check for equality. If a test case fails, FsCheck prints the
     let testCompare (i:int) (j:int) = 2*i+1  .=. 2*j-1
 
     > Check.Quick testCompare;;
-    Falsifiable, after 1 test (0 shrinks) (StdGen (1137818454,295727616)):
+    Falsifiable, after 1 test (0 shrinks) (StdGen (2013125939,295727996)):
     Label of failing property: 1 = -1
     0
     0

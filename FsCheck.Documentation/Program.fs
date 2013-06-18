@@ -112,15 +112,12 @@ let fsCheckDocGen head title p code output =
     match xs with
     | [] -> true
     | [x] -> true
-    | x::y::ys ->  (x <= y) && ordered (y::ys)
-let rec private insert x xs = 
+    | x::y::ys ->  (x <= y) && ordered (y::ys)"
+    code @"let rec private insert x xs = 
     match xs with
     | [] -> [x]
-    | c::cs -> if x <= c then x::xs else c::(insert x cs)
- 
-open Prop 
-                     
-let Insert (x:int) xs = ordered xs ==> ordered (insert x xs)"
+    | c::cs -> if x <= c then x::xs else c::(insert x cs)"
+    code @"let Insert (x:int) xs = ordered xs ==> ordered (insert x xs)"
     p @"Such a property holds if the property after ==> holds whenever the condition does."
     p @"Testing discards test cases which do not satisfy the condition. Test case generation continues until 100 cases which do satisfy the condition have been found, or until an overall limit on the number of test cases is reached (to avoid looping if the condition never holds). In this case a message such as"
     code "Arguments exhausted after 97 tests."
@@ -229,24 +226,24 @@ let Insert (x:int) xs = ordered xs ==> ordered (insert x xs)"
     fsiOutput "Check.Quick complex" Properties.complex
     p "It's perfectly fine to apply more than one label to a property; FsCheck displays all the applicable labels. This is useful for displaying intermediate results, for example:"   
     code @"let multiply (n: int, m: int) =
-  let res = n*m
-  sprintf ""evidence = %i"" res @| (
-    ""div1"" @| (m <> 0 ==> lazy (res / m = n)),
-    ""div2"" @| (n <> 0 ==> lazy (res / n = m)),
-    ""lt1""  @| (res > m),
-    ""lt2""  @| (res > n))"
+        let res = n*m
+        sprintf ""evidence = %i"" res @| (
+        ""div1"" @| (m <> 0 ==> lazy (res / m = n)),
+        ""div2"" @| (n <> 0 ==> lazy (res / n = m)),
+        ""lt1""  @| (res > m),
+        ""lt2""  @| (res > n))"
     fsiOutput "Check.Quick multiply" Properties.multiply
     p "Notice that the above property combines subproperties by tupling them. This works for tuples up to length 6. It also works for lists. In general form"
     code "(<property1>,<property2>,...,<property6>) means <property1> .&. <property2> .&.... .&.<property6>"
     code "[property1;property2,...,propertyN] means <property1> .&. <property2> .&.... .&.<propertyN>"
     p "The example written as a list:"
     code @" let multiplyAsList (n: int, m: int) =
-  let res = n*m
-  sprintf ""evidence = %i"" res @| [
-    ""div1"" @| (m <> 0 ==> lazy (res / m = n));
-    ""div2"" @| (n <> 0 ==> lazy (res / n = m));
-    ""lt1""  @| (res > m);
-    ""lt2""  @| (res > n)]"
+        let res = n*m
+        sprintf ""evidence = %i"" res @| [
+        ""div1"" @| (m <> 0 ==> lazy (res / m = n));
+        ""div2"" @| (n <> 0 ==> lazy (res / n = m));
+        ""lt1""  @| (res > m);
+        ""lt2""  @| (res > n)]"
     p "Produces the same result."
     
     //write "Properties.txt"
@@ -311,20 +308,22 @@ let Insert (x:int) xs = ordered xs ==> ordered (insert x xs)"
     p @"Note that 
 * We guarantee termination by forcing the result to be a leaf when the size is zero. 
 * We halve the size at each recursion, so that the size gives an upper bound on the number of nodes in the tree. We are free to interpret the size as we will. 
-* The fact that we share the subtree generator between the two branches of a Branch does not mean that we generate the same tree in each case."
+* The fact that we share the subtree generator between the two branches of a Branch does not mean that we generate the same tree in each case.
+"
     
     title "Useful Generator Combinators"
     p @"If g is a generator for type t, then 
-{{two g}} generates a pair of t's, 
-{{three g}} generates a triple of t's, 
-{{four g}} generates a quadruple of t's, 
-If xs is a list, then {{elements xs}} generates an arbitrary element of xs.
-{{listOfLength n g}} generates a list of exactly n t's. 
-{{listOf g}} generates a list of t's whose length is determined by the size parameter
-{{nonEmptyListOf g}} generates a non-empty list of t's whose length is determined by the size parameter.
-{{constant v}} generates the value v.
-{{suchThat p g}} generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
-{{suchThatOption p g}} generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')"
+- `two g` generates a pair of t's, 
+- `three g` generates a triple of t's, 
+- `four g` generates a quadruple of t's, 
+- If xs is a list, then `elements xs` generates an arbitrary element of xs.
+- `listOfLength n g` generates a list of exactly n t's. 
+- `listOf g` generates a list of t's whose length is determined by the size parameter
+- `nonEmptyListOf g` generates a non-empty list of t's whose length is determined by the size parameter.
+- `constant v` generates the value v.
+- `suchThat p g` generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
+- `suchThatOption p g` generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')
+"
 
     p "All the generator combinators are functions on the Gen module."
     
@@ -348,15 +347,15 @@ If xs is a list, then {{elements xs}} generates an arbitrary element of xs.
     code "type Box<'a> = Whitebox of 'a | Blackbox of 'a"
     p "you can use the same principle. So the class MyGenerators can be writtten as follows:"
     code @"let boxGen<'a> : Gen<Box<'a>> = 
-gen { let! a = Arb.generate<'a>
-      return! Gen.elements [ Whitebox a; Blackbox a] }
+        gen { let! a = Arb.generate<'a>
+              return! Gen.elements [ Whitebox a; Blackbox a] }
 
-type MyGenerators =
-    static member Tree() =
-        {new Arbitrary<Tree>() with
-            override x.Generator = tree
-            override x.Shrinker t = Seq.empty }
-    static member Box() = Arb.fromGen boxGen"
+    type MyGenerators =
+        static member Tree() =
+            {new Arbitrary<Tree>() with
+                override x.Generator = tree
+                override x.Shrinker t = Seq.empty }
+        static member Box() = Arb.fromGen boxGen"
     p "Notice that we use the function 'val generate<'a> : Gen<'a>' from the Arb module to get the generator for the type argument of Box. This allows you to define generators recursively. Similarly, there is a function shrink<'a>. Look at the FsCheck source for examples of default Arbitrary implementations to get a feeling of how to write such Arbitrary instances. The Arb module should help you with this task as well."
     p "Now, the following property can be checked:"
     code @"let RevRevBox (xs:list<Box<int>>) = 
@@ -367,15 +366,16 @@ type MyGenerators =
     p "Also note that in this case we actually didn't need to write a generator or shrinker: FsCheck can derive suitable generators using reflection for discriminated unions, record types and enums."
     
     title "Some useful methods on the Arb module"
-    p @"{{Arb.from<'a>}} returns the registered Arbitrary instance for the given type 'a
-{{Arb.fromGen}} makes a new Arbitrary instance from just a given generator - the shrinker return the empty sequence
-{{Arb.fromGenShrink}} make a new Arbitrary instance from a given generator and shrinker. This is equivalent to implementing Arbitrary yourself, but may be shorter.
-{{Arb.generate<'a>}} returns the generator of the registered Arbitrary instance for the given type 'a
-{{Arb.shrink}} return the immediate shrinks of the registered Arbitrary instance for the given value
-{{Arb.convert}} given conversion functions to ('a ->'b) and from ('b ->'a), converts an Arbitrary<'a> instance to an Arbitrary<'b>
-{{Arb.filter}} filters the generator and shrinker for a given Arbitrary instance to contain only those values that match with the given filter function
-{{Arb.mapFilter}} maps the generator and filter the shrinkers for a given Arbitrary instance. Mapping the generator is sometimes faster, e.g. for a PositiveInt it is faster to take the absolute value than to filter the negative values.
-{{Arb.Default}} is a type that contains all the default Arbitrary instances as they are shipped and registerd by FsCheck by default. This is useful when you override a default generator - typically this is because you want to filter certain values from it, and then you need to be able to refer to the default generator in your overriding generator."
+    p @"- `Arb.from<'a>` returns the registered Arbitrary instance for the given type 'a
+- `Arb.fromGen` makes a new Arbitrary instance from just a given generator - the shrinker return the empty sequence
+- `Arb.fromGenShrink` make a new Arbitrary instance from a given generator and shrinker. This is equivalent to implementing Arbitrary yourself, but may be shorter.
+- `Arb.generate<'a>` returns the generator of the registered Arbitrary instance for the given type 'a
+- `Arb.shrink` return the immediate shrinks of the registered Arbitrary instance for the given value
+- `Arb.convert` given conversion functions to ('a ->'b) and from ('b ->'a), converts an Arbitrary<'a> instance to an Arbitrary<'b>
+- `Arb.filter` filters the generator and shrinker for a given Arbitrary instance to contain only those values that match with the given filter function
+- `Arb.mapFilter` maps the generator and filter the shrinkers for a given Arbitrary instance. Mapping the generator is sometimes faster, e.g. for a PositiveInt it is faster to take the absolute value than to filter the negative values.
+- `Arb.Default` is a type that contains all the default Arbitrary instances as they are shipped and registerd by FsCheck by default. This is useful when you override a default generator - typically this is because you want to filter certain values from it, and then you need to be able to refer to the default generator in your overriding generator.
+"
     
     //write "Test Data.txt"
     
@@ -390,21 +390,21 @@ type MyGenerators =
     override x.ToString() = n.ToString()"
     p "The obvious model to test this class is just an int value which will serve as an abstraction of the object's internal state. With this idea in mind, you can write a specification as follows:"
     code @"let spec =
-    let inc = 
-        { new ICommand<Counter,int>() with
-            member x.RunActual c = c.Inc(); c
-            member x.RunModel m = m + 1
-            member x.Post (c,m) = m = c.Get 
-            override x.ToString() = ""inc""}
-    let dec = 
-        { new ICommand<Counter,int>() with
-            member x.RunActual c = c.Dec(); c
-            member x.RunModel m = m - 1
-            member x.Post (c,m) = m = c.Get 
-            override x.ToString() = ""dec""}
-    { new ISpecification<Counter,int> with
-        member x.Initial() = (new Counter(),0)
-        member x.GenCommand _ = Gen.elements [inc;dec] }"
+        let inc = 
+            { new ICommand<Counter,int>() with
+                member x.RunActual c = c.Inc(); c
+                member x.RunModel m = m + 1
+                member x.Post (c,m) = m = c.Get 
+                override x.ToString() = ""inc""}
+        let dec = 
+            { new ICommand<Counter,int>() with
+                member x.RunActual c = c.Dec(); c
+                member x.RunModel m = m - 1
+                member x.Post (c,m) = m = c.Get 
+                override x.ToString() = ""dec""}
+        { new ISpecification<Counter,int> with
+            member x.Initial() = (new Counter(),0)
+            member x.GenCommand _ = Gen.elements [inc;dec] }"
     p "A specification is an object that Implementents ISpecification<'typeUnderTest,'modelType>. It should return an initial object and an initial model of that object; and it should return a generator of ICommand objects."
     p "Each ICommand object typically represents one method to call on the object under test, and describes what happens to the model and the object when the command is executed. Also, it asserts preconditions that need to hold before executing the command: FsCheck will not execute that command if the precondittion doesn not hold. It asserts postconditions that should hold after a command is executed: FsCheck fails the test if a postcondition does not hold."
     p "Preferably also override ToString in each command so that counterexamples can be printed."
@@ -420,7 +420,7 @@ type MyGenerators =
     p "Since FsCheck can generate random function values, it can check properties of functions. For example, we can check associativity of function composition as follows:"
     code "let associativity (x:Tree) (f:Tree->float,g:float->char,h:char->int) = ((f >> g) >> h) x = (f >> (g >> h)) x"
     fsiOutput "Check.Quick associativity" TipsAndTricks.associativity
-    p @"We can generate functions Tree -> <anything>. If a counter-example is found, function values will be displayed as ""<func>""."
+    p @"We can generate functions Tree -> _anything_. If a counter-example is found, function values will be displayed as ""\<func\>""."
     p "However, FsCheck can show you the generated function in more detail, by using the Function type. If you use that, FsCheck can even shrink your function. For example:"
     code @"let mapRec (F (_,f)) (l:list<int>) =
     not l.IsEmpty ==>
@@ -432,16 +432,16 @@ type MyGenerators =
     code @"type EvenInt = EvenInt of int with
     static member op_Explicit(EvenInt i) = i
 
-type ArbitraryModifiers =
-    static member EvenInt() = 
-        Arb.from<int> 
-        |> Arb.filter (fun i -> i % 2 = 0) 
-        |> Arb.convert EvenInt int
+    type ArbitraryModifiers =
+        static member EvenInt() = 
+            Arb.from<int> 
+            |> Arb.filter (fun i -> i % 2 = 0) 
+            |> Arb.convert EvenInt int
         
-Arb.register<ArbitraryModifiers>()
+    Arb.register<ArbitraryModifiers>()
 
-let ``generated even ints should be even`` (EvenInt i) = i % 2 = 0
-Check.Quick ``generated even ints should be even``"
+    let ``generated even ints should be even`` (EvenInt i) = i % 2 = 0
+    Check.Quick ``generated even ints should be even``"
     p @"This make properties much more readable, especially since you can define custom shrink functions as well."
     p "FsCheck has quite a few of these, e.g. NonNegativeInt, PositiveInt, StringWithoutNullChars etc. Have a look at the default Arbitrary instances on the Arb.Default type."
     p "Also, if you want to define your own, the Arb.filter, Arb.convert and Arb.mapFilter functions will come in handy."
@@ -449,18 +449,20 @@ Check.Quick ``generated even ints should be even``"
     title "Running tests using only modules"
     p "Since Arbitrary instances are given as static members of classes, and properties can be grouped together as static members of classes, and since top level let functions are compiled as static member of their enclosing module (which is compiled as a class), you can simply define your properties and generators as top level let-bound functions, and then register all generators and and all properties at once using the following trick:"
     code @"let myprop =....
-let mygen =...
-let helper = ""a string""
-let private helper' = true
+        let mygen =...
+        let helper = ""a string""
+        let private helper' = true
 
-type Marker = class end
-Arb.register (typeof<Marker>.DeclaringType)
-Check.All (typeof<Marker>.DeclaringType)"
+        type Marker = class end
+        Arb.register (typeof<Marker>.DeclaringType)
+        Check.All (typeof<Marker>.DeclaringType)"
     p "The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way to get to a module's Type directly."
     p @"FsCheck determines the intent of the function based on its return type:
 * Properties: return unit, bool, Property or function of any arguments to those types or Lazy value of any of those types
 * Arbitrary instances: return Arbitrary<_>
-All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will do something with, but do not want them checked or registered, just make them private. FsCheck will ignore those functions."
+
+All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will do something with, but do not want them checked or registered, just make them private. FsCheck will ignore those functions.
+"
 
     title "Implementing IRunner to integrate FsCheck with mb|x|N|cs|Unit"
     p @"The Config type that can be passed to the Check.One or Check.All methods takes an IRunner as argument. This interface has the following methods:
@@ -479,26 +481,26 @@ All other functions are respectfully ignored. If you have top level functions th
             | _ -> Assert.True(false, Runner.onFinishedToString name result) 
     }
    
-let withxUnitConfig = { Config.Default with Runner = xUnitRunner }"
+    let withxUnitConfig = { Config.Default with Runner = xUnitRunner }"
 
     title "Implementing IRunner to customize printing of generated arguments"
     p @"By default, FsCheck prints generated arguments using sprintf ""%A"", or structured formatting. This usually does what you expect, i.e. for primitive types the value, for objects the ToString override and so on. If it does not (A motivating case is testing with COM objects - overriding ToString is not an option and structured formatting does not do anything useful with it), you can use the label combinator to solve this on a per property basis, but a more structured solution can be achieved by implementing IRunner. For example:"
     
     code @"let formatterRunner =
-{ new IRunner with
-    member x.OnStartFixture t =
-        printf ""%s"" (Runner.onStartFixtureToString t)
-    member x.OnArguments (ntest,args, every) =
-        printf ""%s"" (every ntest (args |> List.map formatter))
-    member x.OnShrink(args, everyShrink) =
-        printf ""%s"" (everyShrink (args |> List.map formatter))
-    member x.OnFinished(name,testResult) = 
-        let testResult' = match testResult with 
-                            | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
-                                TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
-                            | t -> t
-        printf ""%s"" (Runner.onFinishedToString name testResult') 
-}"
+    { new IRunner with
+        member x.OnStartFixture t =
+            printf ""%s"" (Runner.onStartFixtureToString t)
+        member x.OnArguments (ntest,args, every) =
+            printf ""%s"" (every ntest (args |> List.map formatter))
+        member x.OnShrink(args, everyShrink) =
+            printf ""%s"" (everyShrink (args |> List.map formatter))
+        member x.OnFinished(name,testResult) = 
+            let testResult' = match testResult with 
+                                | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
+                                    TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
+                                | t -> t
+            printf ""%s"" (Runner.onFinishedToString name testResult') 
+    }"
 
     
     title "An equality comparison that prints the left and right sides of the equality"
