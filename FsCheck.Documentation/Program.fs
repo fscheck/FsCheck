@@ -453,7 +453,7 @@ let fsCheckDocGen head title p code output =
         let helper = ""a string""
         let private helper' = true
 
-        type Marker = class end
+    type Marker = class end
         Arb.register (typeof<Marker>.DeclaringType)
         Check.All (typeof<Marker>.DeclaringType)"
     p "The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way to get to a module's Type directly."
@@ -469,7 +469,8 @@ All other functions are respectfully ignored. If you have top level functions th
 * OnStartFixture is called when FsCheck is testing all the methods on a type, before starting any tests.
 * OnArguments is called after every test, passing the implementation the test number, the arguments and the every function. 
 * OnShrink is called at every succesful shrink.
-* OnFinished: is called with the name of the test and the outcome of the overall test run. This is used in the example below to call Assert statements from an outside unit testing framework - allowing FsCheck to integrate with a number of unit testing frameworks. You can leverage another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc."
+* OnFinished: is called with the name of the test and the outcome of the overall test run. This is used in the example below to call Assert statements from an outside unit testing framework - allowing FsCheck to integrate with a number of unit testing frameworks. You can leverage another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.
+"
     code @"let xUnitRunner =
     { new IRunner with
         member x.OnStartFixture t = ()

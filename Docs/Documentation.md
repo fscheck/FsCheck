@@ -14,7 +14,7 @@ When a property fails, FsCheck displays a counter-example. For example, if we de
 then checking it results in
 
     > Check.Quick revIsOrig;;
-    Falsifiable, after 4 tests (1 shrink) (StdGen (1853436805,295727996)):
+    Falsifiable, after 2 tests (2 shrinks) (StdGen (884019159,295727999)):
     [1; 0]
     
 FsCheck also shrinks the counter example, so that it is the minimal counter example that still fails the test case. In the example above, we see that the counter example is indeed minimal: the list must have at least two different elements. FsCheck also displays how many times it found a smaller (in some way) counter example and so proceeded to shrink further.
@@ -34,7 +34,7 @@ These can be checked at once using the Check.QuickAll function:
     > Check.QuickAll<ListProperties>();;
     --- Checking ListProperties ---
     ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-    ListProperties.reverse is original-Falsifiable, after 4 tests (3 shrinks) (StdGen (1855246909,295727996)):
+    ListProperties.reverse is original-Falsifiable, after 3 tests (3 shrinks) (StdGen (885249229,295727999)):
     [1; 0]
     
 FsCheck now also prints the name of each test.
@@ -43,9 +43,9 @@ Since all top level functions of a a module are also compiled as static member o
     > Check.QuickAll typeof<ListProperties>.DeclaringType;;
     --- Checking QuickStart ---
     QuickStart.revRevIsOrig-Ok, passed 100 tests.
-    QuickStart.revIsOrig-Falsifiable, after 4 tests (4 shrinks) (StdGen (1855696935,295727996)):
+    QuickStart.revIsOrig-Falsifiable, after 6 tests (7 shrinks) (StdGen (885549247,295727999)):
     [1; 0]
-    QuickStart.revRevIsOrigFloat-Falsifiable, after 9 tests (5 shrinks) (StdGen (1855776939,295727996)):
+    QuickStart.revRevIsOrigFloat-Falsifiable, after 10 tests (4 shrinks) (StdGen (885679254,295727999)):
     [nan]
     
 #### What do I do if a test loops or encounters an error?
@@ -59,7 +59,7 @@ The property above (the reverse of the reverse of a list is the list itself) is 
     let revRevIsOrigFloat (xs:list<float>) = List.rev(List.rev xs) = xs
 
     > Check.Quick revRevIsOrigFloat;;
-    Falsifiable, after 9 tests (3 shrinks) (StdGen (1856947006,295727996)):
+    Falsifiable, after 19 tests (12 shrinks) (StdGen (886719313,295727999)):
     [nan]
     
 ## Properties
@@ -103,7 +103,7 @@ Since F# has eager evaluation by default, the above property does more work than
     let Eager a = a <> 0 ==> (1/a = 1/a)
 
     > Check.Quick Eager;;
-    Falsifiable, after 5 tests (0 shrinks) (StdGen (1857047012,295727996)):
+    Falsifiable, after 1 test (0 shrinks) (StdGen (886889323,295727999)):
     0
     with exception:
     System.DivideByZeroException: Attempted to divide by zero.
@@ -153,8 +153,8 @@ For example,
     |> within 2000
 
     > Check.Quick timesOut;;
-    Timeout of 2000 milliseconds exceeded, after 24 tests (0 shrinks) (StdGen (1919600590,295727996)):
-    21
+    Timeout of 2000 milliseconds exceeded, after 37 tests (0 shrinks) (StdGen (945192658,295727999)):
+    11
     
 The first argument is the maximal time the lazy property given may run. If it runs longer, FsCheck considers the test as failed. Otherwise, the outcome of the lazy property is the outcome of within. Note that, although within attempts to cancel the thread in which the property is executed, that may not succeed, and so the thread may actually continue to run until the process ends.
 #### Observing Test Case Distribution
@@ -172,7 +172,7 @@ For example,
 Test cases for which the condition is true are classified as trivial, and the proportion of trivial test cases in the total is reported. In this example, testing produces
 
     > Check.Quick insertTrivial;;
-    Arguments exhausted after 73 tests (39% trivial).
+    Arguments exhausted after 55 tests (36% trivial).
     
 #### Classifying Test Cases
 A property may take the form
@@ -186,10 +186,10 @@ For example,
 Test cases satisfying the condition are assigned the classification given, and the distribution of classifications is reported after testing. In this case the result is
 
     > Check.Quick insertClassify;;
-    Arguments exhausted after 51 tests.
-    49% at-tail, at-head.
-    23% at-tail.
-    17% at-head.
+    Arguments exhausted after 54 tests.
+    44% at-tail, at-head.
+    24% at-head.
+    22% at-tail.
     
 Note that a test case may fall into more than one classification.
 #### Collecting Data Values
@@ -204,11 +204,12 @@ For example,
 The argument of collect is evaluated in each test case, and the distribution of values is reported. The type of this argument is printed using sprintf "%A". In the example above, the output is
 
     > Check.Quick insertCollect;;
-    Arguments exhausted after 53 tests.
-    39% 1.
-    28% 2.
-    28% 0.
-    3% 3.
+    Arguments exhausted after 70 tests.
+    50% 0.
+    32% 1.
+    11% 2.
+    4% 3.
+    1% 4.
     
 #### Combining Observations
 The observations described here may be combined in any way. All the observations of each test case are combined, and the distribution of these combinations is reported. For example, testing the property
@@ -221,16 +222,16 @@ The observations described here may be combined in any way. All the observations
 produces
 
     > Check.Quick insertCombined;;
-    Arguments exhausted after 44 tests.
-    34% 0, at-tail, at-head.
-    20% 1, at-head.
-    15% 1, at-tail.
-    11% 1, at-tail, at-head.
-    9% 2, at-head.
-    2% 4, at-head.
-    2% 3.
-    2% 2, at-tail, at-head.
-    2% 2, at-tail.
+    Arguments exhausted after 53 tests.
+    24% 0, at-tail, at-head.
+    18% 1, at-tail, at-head.
+    18% 1, at-head.
+    16% 1, at-tail.
+    7% 2, at-head.
+    5% 2, at-tail.
+    3% 2.
+    1% 5, at-tail.
+    1% 4.
     
 #### And, Or and Labelling Subproperties
 Properties may take the form
@@ -255,7 +256,7 @@ For example,
 produces:
 
     > Check.Quick complex;;
-    Falsifiable, after 1 test (2 shrinks) (StdGen (1974733743,295727996)):
+    Falsifiable, after 1 test (0 shrinks) (StdGen (995775551,295727999)):
     Label of failing property: result not sum
     0
     0
@@ -271,7 +272,7 @@ It's perfectly fine to apply more than one label to a property; FsCheck displays
         "lt2"  @| (res > n))
 
     > Check.Quick multiply;;
-    Falsifiable, after 2 tests (0 shrinks) (StdGen (1975133766,295727996)):
+    Falsifiable, after 1 test (0 shrinks) (StdGen (996145572,295727999)):
     Labels of failing property: evidence = 0, lt1
     (0, 0)
     
@@ -372,6 +373,7 @@ If g is a generator for type t, then
 - `constant v` generates the value v.
 - `suchThat p g` generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
 - `suchThatOption p g` generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')
+
 All the generator combinators are functions on the Gen module.
 #### Default Generators and Shrinkers based on type
 FsCheck defines default test data generators  and shrinkers for some often used types: unit, bool, byte, int, float, char, string, DateTime, lists, array 1D and 2D, Set, Map, objects and functions from and to any of the above. Furthermore, by using reflection, FsCheck can derive default implementations of record types, discriminated unions, tuples and enums in terms of any primitive types that are defined (either in FsCheck or by you).
@@ -404,12 +406,12 @@ you can use the same principle. So the class MyGenerators can be writtten as fol
         gen { let! a = Arb.generate<'a>
               return! Gen.elements [ Whitebox a; Blackbox a] }
 
-        type MyGenerators =
-            static member Tree() =
-                {new Arbitrary<Tree>() with
-                    override x.Generator = tree
-                    override x.Shrinker t = Seq.empty }
-            static member Box() = Arb.fromGen boxGen
+    type MyGenerators =
+        static member Tree() =
+            {new Arbitrary<Tree>() with
+                override x.Generator = tree
+                override x.Shrinker t = Seq.empty }
+        static member Box() = Arb.fromGen boxGen
 Notice that we use the function 'val generate<'a> : Gen<'a>' from the Arb module to get the generator for the type argument of Box. This allows you to define generators recursively. Similarly, there is a function shrink<'a>. Look at the FsCheck source for examples of default Arbitrary implementations to get a feeling of how to write such Arbitrary instances. The Arb module should help you with this task as well.
 Now, the following property can be checked:
 
@@ -419,9 +421,9 @@ Now, the following property can be checked:
 
     > Check.Quick RevRevBox;;
     Ok, passed 100 tests.
-    8% [].
-    2% [Whitebox 0].
-    1% [Whitebox 8; Whitebox 3; Whitebox 2].
+    11% [].
+    2% [Blackbox 0].
+    1% [Whitebox 9; Blackbox 3; Whitebox -2; Blackbox -8; Whitebox -13; Blackbox -19;
 (etc)
 Note that the class needs not be tagged with attributes in any way. FsCheck determines the type of the generator by the return type of each static member.
 Also note that in this case we actually didn't need to write a generator or shrinker: FsCheck can derive suitable generators using reflection for discriminated unions, record types and enums.
@@ -449,28 +451,28 @@ FsCheck also allows you to test objects, which usually encapsulate internal stat
 The obvious model to test this class is just an int value which will serve as an abstraction of the object's internal state. With this idea in mind, you can write a specification as follows:
 
     let spec =
-    let inc = 
-        { new ICommand<Counter,int>() with
-            member x.RunActual c = c.Inc(); c
-            member x.RunModel m = m + 1
-            member x.Post (c,m) = m = c.Get 
-            override x.ToString() = "inc"}
-    let dec = 
-        { new ICommand<Counter,int>() with
-            member x.RunActual c = c.Dec(); c
-            member x.RunModel m = m - 1
-            member x.Post (c,m) = m = c.Get 
-            override x.ToString() = "dec"}
-    { new ISpecification<Counter,int> with
-        member x.Initial() = (new Counter(),0)
-        member x.GenCommand _ = Gen.elements [inc;dec] }
+        let inc = 
+            { new ICommand<Counter,int>() with
+                member x.RunActual c = c.Inc(); c
+                member x.RunModel m = m + 1
+                member x.Post (c,m) = m = c.Get 
+                override x.ToString() = "inc"}
+        let dec = 
+            { new ICommand<Counter,int>() with
+                member x.RunActual c = c.Dec(); c
+                member x.RunModel m = m - 1
+                member x.Post (c,m) = m = c.Get 
+                override x.ToString() = "dec"}
+        { new ISpecification<Counter,int> with
+            member x.Initial() = (new Counter(),0)
+            member x.GenCommand _ = Gen.elements [inc;dec] }
 A specification is an object that Implementents ISpecification<'typeUnderTest,'modelType>. It should return an initial object and an initial model of that object; and it should return a generator of ICommand objects.
 Each ICommand object typically represents one method to call on the object under test, and describes what happens to the model and the object when the command is executed. Also, it asserts preconditions that need to hold before executing the command: FsCheck will not execute that command if the precondittion doesn not hold. It asserts postconditions that should hold after a command is executed: FsCheck fails the test if a postcondition does not hold.
 Preferably also override ToString in each command so that counterexamples can be printed.
 A specification can be checked as follows:
 
     > Check.Quick (asProperty spec);;
-    Falsifiable, after 12 tests (4 shrinks) (StdGen (2003635396,295727996)):
+    Falsifiable, after 6 tests (2 shrinks) (StdGen (1020916989,295727999)):
     [inc; inc; inc; dec]
     
 Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.
@@ -491,9 +493,9 @@ However, FsCheck can show you the generated function in more detail, by using th
         lazy (List.map f l = ((*f <|*) List.head l) :: List.map f (List.tail l))
 
     > Check.Quick mapRec;;
-    Falsifiable, after 1 test (2 shrinks) (StdGen (2011885868,295727996)):
-    { 0->1 }
-    [0]
+    Falsifiable, after 1 test (1 shrink) (StdGen (1028557426,295727999)):
+    { 0->0; 1->0; 2->0 }
+    [1]
     
 The  type Function<'a,'b> =  F of ref<list<('a*'b)>> * ('a ->'b) records a map of all the arguments it was called with, and the result it produced. In your properties, you can extract the actual function by pattern matching as in the example. Function is used to print the function, and also to shrink it.
 #### Use pattern matching instead of forAll to use custom generators
@@ -522,7 +524,7 @@ Since Arbitrary instances are given as static members of classes, and properties
         let helper = "a string"
         let private helper' = true
 
-        type Marker = class end
+    type Marker = class end
         Arb.register (typeof<Marker>.DeclaringType)
         Check.All (typeof<Marker>.DeclaringType)
 The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way to get to a module's Type directly.
@@ -538,6 +540,7 @@ The Config type that can be passed to the Check.One or Check.All methods takes a
 * OnArguments is called after every test, passing the implementation the test number, the arguments and the every function. 
 * OnShrink is called at every succesful shrink.
 * OnFinished: is called with the name of the test and the outcome of the overall test run. This is used in the example below to call Assert statements from an outside unit testing framework - allowing FsCheck to integrate with a number of unit testing frameworks. You can leverage another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.
+
 
     let xUnitRunner =
     { new IRunner with
@@ -577,7 +580,7 @@ Properties commonly check for equality. If a test case fails, FsCheck prints the
     let testCompare (i:int) (j:int) = 2*i+1  .=. 2*j-1
 
     > Check.Quick testCompare;;
-    Falsifiable, after 1 test (0 shrinks) (StdGen (2013125939,295727996)):
+    Falsifiable, after 1 test (0 shrinks) (StdGen (1029127459,295727999)):
     Label of failing property: 1 = -1
     0
     0
