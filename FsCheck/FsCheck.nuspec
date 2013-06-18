@@ -13,7 +13,4 @@
     <summary>FsCheck is a tool for testing .NET programs using randomly generated test cases.</summary>
     <tags>test testing random fscheck quickcheck</tags>
   </metadata>
-  <files>
-    <file src="install.ps1" target="tools" /> 
-  </files>
 </package>
