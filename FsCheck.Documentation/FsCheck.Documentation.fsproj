@@ -43,7 +43,6 @@
     <Compile Include="StatefulTesting.fs" />
     <Compile Include="TipsAndTricks.fs" />
     <Compile Include="Program.fs" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.CodeFormat">
