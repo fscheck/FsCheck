@@ -6,8 +6,8 @@
     <title>$id$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>http://fscheck.codeplex.com/license</licenseUrl>
-    <projectUrl>http://fscheck.codeplex.com</projectUrl>
+    <licenseUrl>https://github.com/fsharp/FsCheck/blob/master/License.txt</licenseUrl>
+    <projectUrl>https://github.com/fsharp/FsCheck</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests.</description>
     <summary>Integrates FsCheck with NUnit</summary>

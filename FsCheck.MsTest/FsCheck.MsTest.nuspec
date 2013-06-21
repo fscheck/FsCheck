@@ -6,8 +6,8 @@
     <title>$id$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>http://fscheck.codeplex.com/license</licenseUrl>
-    <projectUrl>http://fscheck.codeplex.com</projectUrl>
+    <licenseUrl>https://github.com/fsharp/FsCheck/blob/master/License.txt</licenseUrl>
+    <projectUrl>https://github.com/fsharp/FsCheck</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Integrates FsCheck with MSTest.</description>
     <summary>Integrates FsCheck with MSTest</summary>
