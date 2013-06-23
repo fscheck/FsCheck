@@ -18,8 +18,9 @@
     let maxLe (x:float) y = 
         (x <= y) ==> (lazy (max  x y = y))
 
+    // Note: should fail
     [<Property( Verbose = true )>]
-    let revIdVerbose (xs:int[]) = 
+    let revIdVerbose_shouldFail (xs:int[]) = 
         Array.rev xs = xs
 
     [<Property>]

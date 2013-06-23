@@ -32,6 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.core">
+      <HintPath>..\packages\NUnit.Runners.2.6.2\tools\lib\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core.interfaces">
+      <HintPath>..\packages\NUnit.Runners.2.6.2\tools\lib\nunit.core.interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -47,8 +53,13 @@
     <Compile Include="ClassesToTest\Counter.cs" />
     <Compile Include="ClassesToTest\CounterSpec.cs" />
     <Compile Include="Examples.cs" />
+    <Compile Include="FsCheckNunitAddin.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj">
+      <Project>{bf24de38-c529-4638-be50-a937ea3e6876}</Project>
+      <Name>FsCheck.NUnit.Addin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FsCheck.NUnit\FsCheck.NUnit.fsproj">
       <Project>{6B1B9FF5-8E6D-4461-9D77-CD1619403684}</Project>
       <Name>FsCheck.NUnit</Name>
