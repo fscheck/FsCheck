@@ -39,6 +39,7 @@
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition="(!Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')) And (Exists('$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets'))" />
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="(!Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')) And (!Exists('$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets')) And (Exists('$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets'))" />
   <ItemGroup>
+    <Compile Include="FsCheckAddin.fs" />
     <Compile Include="PropertyExamples.fs" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -47,6 +48,12 @@
     <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
+    <Reference Include="nunit.core">
+      <HintPath>..\packages\NUnit.Runners.2.6.2\tools\lib\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core.interfaces">
+      <HintPath>..\packages\NUnit.Runners.2.6.2\tools\lib\nunit.core.interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
@@ -54,6 +61,11 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <ProjectReference Include="..\FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj">
+      <Name>FsCheck.NUnit.Addin</Name>
+      <Project>{bf24de38-c529-4638-be50-a937ea3e6876}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\FsCheck.NUnit\FsCheck.NUnit.fsproj">
       <Name>FsCheck.NUnit</Name>
       <Project>{6b1b9ff5-8e6d-4461-9d77-cd1619403684}</Project>
