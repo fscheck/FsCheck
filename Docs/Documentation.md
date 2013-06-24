@@ -534,6 +534,51 @@ FsCheck determines the intent of the function based on its return type:
 
 All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will do something with, but do not want them checked or registered, just make them private. FsCheck will ignore those functions.
 
+#### Temporary fix to get the NUnit Addin working for your test:
+
+In the project containing your tests (methods marked with [Property] from FsCheck.Nunit):
+* Add a Reference to FsCheck.Nunit and FsCheck.NUnit.Addin
+* Add a public class to your project that implements the addin
+
+Here is one for F#:
+
+    open NUnit.Core.Extensibility
+    open FsCheck.NUnit
+    open FsCheck.NUnit.Addin
+    [<NUnitAddin(Description = "FsCheck addin")>]
+    type FsCheckAddin() =        
+        interface IAddin with
+            override x.Install host = 
+                let tcBuilder = new FsCheckTestCaseBuider()
+                host.GetExtensionPoint("TestCaseBuilders").Install(tcBuilder)
+                true
+                
+and this one will enable C# projects:
+
+    using FsCheck.NUnit.Addin;
+    using NUnit.Core.Extensibility;
+    namespace FsCheck.NUnit.CSharpExamples
+    {
+        [NUnitAddin(Description = "FsCheck addin")]
+        public class FsCheckNunitAddin : IAddin
+        {
+            public bool Install(IExtensionHost host)
+            {
+                var tcBuilder = new FsCheckTestCaseBuider();
+                host.GetExtensionPoint("TestCaseBuilders").Install(tcBuilder);
+                return true;
+            }
+        }
+    }
+    
+After this you can declare flag your test with [Property] instead of [Test] like this:
+
+    [<Property>]
+    let maxLe (x:float) y = 
+        (x <= y) ==> (lazy (max  x y = y))
+
+The addin will run this using Check.One and Assert.Fail to flag failed tests.
+
 #### Implementing IRunner to integrate FsCheck with mb|x|N|cs|Unit
 The Config type that can be passed to the Check.One or Check.All methods takes an IRunner as argument. This interface has the following methods:
 * OnStartFixture is called when FsCheck is testing all the methods on a type, before starting any tests.
