@@ -33,44 +33,64 @@ type WeightAndValue<'a>(weight:int,value:'a) =
     member x.Weight = weight
     member x.Value = value
     
-type Any = 
+type Any =
+    
     static member private OneOfSeqGen gs = 
+        Runner.forceInit()
         gs |> Seq.toList |> oneof
     static member private OneOfSeqValue vs = 
+        Runner.forceInit()
         vs |> Seq.toList |> elements
     static member private SequenceSeq<'a> gs = 
+        Runner.forceInit()
         gs |> Seq.toList |> sequence |> map (fun list -> new List<'a>(list))
     static member OfType<'a>() = 
+        Runner.forceInit()
         from<'a>.Generator
     static member Value (value) = 
+        Runner.forceInit()
         constant value
     static member ValueIn (values : seq<_>) = 
+        Runner.forceInit()
         values |> Any.OneOfSeqValue
     static member ValueIn ([<ParamArrayAttribute>] values : array<_>) = 
+        Runner.forceInit()
         values |> Any.OneOfSeqValue
     static member IntBetween (l,h) = 
+        Runner.forceInit()
         choose (l,h)
     static member WeighedValueIn ( weighedValues : seq<WeightAndValue<'a>> ) =
+        Runner.forceInit()
         weighedValues |> Any.OneOfWeighedSeqValue
     static member WeighedValueIn ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<'a>> ) =
+        Runner.forceInit()
         weighedValues |> Any.OneOfWeighedSeqValue
     static member private OneOfWeighedSeqValue ws = 
+        Runner.forceInit()
         ws |> Seq.map (fun wv -> (wv.Weight, constant wv.Value)) |> Seq.toList |> frequency
     static member GeneratorIn (generators : seq<Gen<_>>) = 
+        Runner.forceInit()
         generators |> Any.OneOfSeqGen
     static member GeneratorIn ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
+        Runner.forceInit()
         generators |> Any.OneOfSeqGen
     static member WeighedGeneratorIn ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
+        Runner.forceInit()
         weighedValues |> Any.OneOfWeighedSeq
     static member WeighedGeneratorIn ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<Gen<'a>>> ) =
+        Runner.forceInit()
         weighedValues |> Any.OneOfWeighedSeq
     static member private OneOfWeighedSeq ws = 
+        Runner.forceInit()
         ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> Seq.toList |> frequency
     static member SequenceOf<'a> (generators:seq<Gen<'a>>) = 
+        Runner.forceInit()
         generators |> Any.SequenceSeq
     static member SequenceOf<'a> ([<ParamArrayAttribute>]generators:array<Gen<'a>>) = 
+        Runner.forceInit()
         generators |> Any.SequenceSeq
     static member OfSize (sizedGen : Func<int,Gen<_>>) =
+        Runner.forceInit()
         sized <| fun s -> (sizedGen.Invoke(s))
 
 
