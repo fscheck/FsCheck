@@ -1,20 +1,17 @@
 ﻿namespace FsCheck.Test
 
-module Fluent_Tests =
+module Fluent =
 
     open System
     open Xunit
     open FsCheck
-
+    open FsCheck.Fluent
     open FsCheck.Xunit
     open Helpers
         
     [<Fact>]
-    let ``Any_OfType should be able to create an generator without previous runs``() =
-        // remarks: the problem is that Runner.init is never called
-        // I think we should do this in Fluent.Any.OfType should do
-        let filter z = z % 3 = 0
-        let filterFunc = new Func<_,_>(filter)
-        let gen = Fluent.Any.OfType<int>()
-        true
+    let ``Any_OfType should create a generator without previous runs``() =
+        //bug fix - initialization issue
+        Any.OfType<int>() |> ignore
+        
         
