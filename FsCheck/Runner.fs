@@ -240,6 +240,10 @@ module Runner =
     ///In any case, it can be forced any number of times without problem.
     let init = lazy Arb.register<Arb.Default>()
 
+    let forceInit() = 
+        if init.IsValueCreated |> not then
+            init.Force() |> ignore
+
     let private hasTestableReturnType (m:MethodInfo) =
         //ignore init.Value
         try
