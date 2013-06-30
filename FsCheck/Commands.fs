@@ -62,5 +62,10 @@ module Commands =
                     lazy (let newActual = c.RunActual actual
                           let newModel = c.RunModel model
                           c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs)
-        forAll (Arb.fromGenShrink(genCommands spec,shrink)) (fun l -> l |> applyCommands (spec.Initial()))
+                
+        forAll (Arb.fromGenShrink(genCommands spec,shrink)) 
+                (fun l -> l |> applyCommands (spec.Initial()) 
+                            |> Prop.trivial (l.Length=0)
+                            |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
+                            |> Prop.classify (l.Length > 6) "long sequnecs (>6 commands)" )
         
