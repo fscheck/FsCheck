@@ -59,8 +59,8 @@ module Commands =
             | [] -> Testable.property true
             | (c::cs) -> 
                 c.Pre model ==> 
-                    let newActual = c.RunActual actual
-                    let newModel = c.RunModel model
-                    c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs
+                    lazy (let newActual = c.RunActual actual
+                          let newModel = c.RunModel model
+                          c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs)
         forAll (Arb.fromGenShrink(genCommands spec,shrink)) (fun l -> l |> applyCommands (spec.Initial()))
         
