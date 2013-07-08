@@ -587,42 +587,44 @@ The Config type that can be passed to the Check.One or Check.All methods takes a
 * OnFinished: is called with the name of the test and the outcome of the overall test run. This is used in the example below to call Assert statements from an outside unit testing framework - allowing FsCheck to integrate with a number of unit testing frameworks. You can leverage another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.
 
 
-    let xUnitRunner =
-    { new IRunner with
-        member x.OnStartFixture t = ()
-        member x.OnArguments (ntest,args, every) = ()
-        member x.OnShrink(args, everyShrink) = ()
-        member x.OnFinished(name,testResult) = 
-            match testResult with 
-            | TestResult.True _ -> Assert.True(true)
-            | _ -> Assert.True(false, Runner.onFinishedToString name result) 
-    }
+        let xUnitRunner =
+            { new IRunner with
+                member x.OnStartFixture t = ()
+                member x.OnArguments (ntest,args, every) = ()
+                member x.OnShrink(args, everyShrink) = ()
+                member x.OnFinished(name,testResult) = 
+                    match testResult with 
+                    | TestResult.True _ -> Assert.True(true)
+                    | _ -> Assert.True(false, Runner.onFinishedToString name result) 
+            }
    
-    let withxUnitConfig = { Config.Default with Runner = xUnitRunner }
+        let withxUnitConfig = { Config.Default with Runner = xUnitRunner }
+        
 #### Implementing IRunner to customize printing of generated arguments
 By default, FsCheck prints generated arguments using sprintf "%A", or structured formatting. This usually does what you expect, i.e. for primitive types the value, for objects the ToString override and so on. If it does not (A motivating case is testing with COM objects - overriding ToString is not an option and structured formatting does not do anything useful with it), you can use the label combinator to solve this on a per property basis, but a more structured solution can be achieved by implementing IRunner. For example:
 
-    let formatterRunner =
-    { new IRunner with
-        member x.OnStartFixture t =
-            printf "%s" (Runner.onStartFixtureToString t)
-        member x.OnArguments (ntest,args, every) =
-            printf "%s" (every ntest (args |> List.map formatter))
-        member x.OnShrink(args, everyShrink) =
-            printf "%s" (everyShrink (args |> List.map formatter))
-        member x.OnFinished(name,testResult) = 
-            let testResult' = match testResult with 
-                                | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
-                                    TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
-                                | t -> t
-            printf "%s" (Runner.onFinishedToString name testResult') 
-    }
+        let formatterRunner =
+            { new IRunner with
+                member x.OnStartFixture t =
+                    printf "%s" (Runner.onStartFixtureToString t)
+                member x.OnArguments (ntest,args, every) =
+                    printf "%s" (every ntest (args |> List.map formatter))
+                member x.OnShrink(args, everyShrink) =
+                    printf "%s" (everyShrink (args |> List.map formatter))
+                member x.OnFinished(name,testResult) = 
+                    let testResult' = match testResult with 
+                                        | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
+                                            TestResult.False (testData,origArgs |> List.map formatter, 
+                                                              shrunkArgs |> List.map formatter,outCome,seed)
+                                        | t -> t
+                    printf "%s" (Runner.onFinishedToString name testResult') 
+            }
 #### An equality comparison that prints the left and right sides of the equality
 Properties commonly check for equality. If a test case fails, FsCheck prints the counterexample, but sometimes it is useful to print the left and right side of the comparison as well, especially if you do some complicated calculations with the generated arguments first. To make this easier, you can define your own labelling equality combinator:
 
-    let (.=.) left right = left = right |@ sprintf "%A = %A" left right
-
-    let testCompare (i:int) (j:int) = 2*i+1  .=. 2*j-1
+        let (.=.) left right = left = right |@ sprintf "%A = %A" left right
+    
+        let testCompare (i:int) (j:int) = 2*i+1  .=. 2*j-1
 
     > Check.Quick testCompare;;
     Falsifiable, after 1 test (0 shrinks) (StdGen (1029127459,295727999)):
