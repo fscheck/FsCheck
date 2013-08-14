@@ -61,7 +61,7 @@ Check.Verbose <property_name>
 ```
 which displays each test case before running the test: the last test case displayed is thus the one in which the loop or error arises. Check.VerboseAll can be used with types and modules to check groups of properties verbosely.
 #### Caveat
-The property above (the reverse of the reverse of a list is the list itself) is not always correct. Consider a list of floats that contains infinity, or nan (not a number). Since infinity <> infinity, and nan <> nan, the reverse of the reverse of {{[nan,nan]}} is not actually equal to {{[nan,nan]}} if you use straightforward element by element comparison. FsCheck has a knack for finding this kind of specification problem. However, since this behavior is seldom what you want, FsCheck only generates values that are 'neatly' comparable when you leave the type polymorphic (currently, unit, bool, char and string values). To see this error in action, force FsCheck to generate lists of floats:
+The property above (the reverse of the reverse of a list is the list itself) is not always correct. Consider a list of floats that contains nan (not a number). Since nan <> nan, the reverse of the reverse of {{[nan,nan]}} is not actually equal to {{[nan,nan]}} if you use straightforward element by element comparison. FsCheck has a knack for finding this kind of specification problem. However, since this behavior is seldom what you want, FsCheck only generates values that are 'neatly' comparable when you leave the type polymorphic (currently, unit, bool, char and string values). To see this error in action, force FsCheck to generate lists of floats:
 ```fsharp
 let revRevIsOrigFloat (xs:list<float>) = List.rev(List.rev xs) = xs
 
