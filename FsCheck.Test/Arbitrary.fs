@@ -180,6 +180,19 @@ module Arbitrary =
                                 || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0 || v.Milliseconds = 0))
 
     [<Fact>]
+    let DateTimeOffset() =
+        generate<DateTimeOffset> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``DateTimeOffset shrinks`` (t: DateTimeOffset) =
+        shrink t
+        |> Seq.forall (fun v -> ((v.Offset.Hours = 0 || v.Offset.Minutes = 0) && v.DateTime = t.DateTime)
+                                || (v.Offset.Hours = 0 && v.Offset.Minutes = 0 
+                                        && (v.Second = 0 
+                                            || (v.Second = 0 && v.Minute = 0) 
+                                            || (v.Second = 0 && v.Minute = 0 && v.Hour = 0))))
+
+    [<Fact>]
     let KeyValuePair () =
         generate<KeyValuePair<int,int>> |> sample 10 |> List.forall (fun _ -> true)
 
