@@ -433,7 +433,7 @@ module Arb =
             Default.Arrow()
             |> convert (fun f -> Action<_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
 
-        ///Generates an arbitrary DateTime between 1900 and 2100. A DateTime is shrunk by removing its second, minute and hour compoonents.
+        ///Generates an arbitrary DateTime between 1900 and 2100. A DateTime is shrunk by removing its second, minute and hour components.
         static member DateTime() = 
             let genDate = gen {  let! y = Gen.choose(1900,2100)
                                  let! m = Gen.choose(1, 12)
@@ -469,6 +469,32 @@ module Arb =
                 else
                     Seq.empty
             fromGenShrink (genTimeSpan, shrink)
+
+        ///Generates an arbitrary DateTimeOffset between 1900 and 2100. 
+        /// A DateTimeOffset is shrunk first by shrinking its offset, then by removing its second, minute and hour components.
+        static member DateTimeOffset() =
+            let genTimeZone = gen {
+                                let! hours = Gen.choose(-14, 14)
+                                let! minutes = 
+                                    if abs hours = 14 then 
+                                        Gen.constant 0
+                                    else 
+                                        Gen.choose(0, 59)
+                                return TimeSpan(hours, minutes, 0) }
+            let shrinkTimeZone (t: TimeSpan) =
+                shrink t |> Seq.where (fun z -> z.Hours > 0 || z.Minutes > 0)
+            let genDate = gen { 
+                            let! t = generate<DateTime>
+                            let! tz = genTimeZone
+                            return DateTimeOffset(t, tz) }
+            let shrink (d: DateTimeOffset) =
+                seq {
+                    for ts in shrinkTimeZone d.Offset ->
+                        DateTimeOffset(d.DateTime, ts)
+                    yield DateTimeOffset(d.DateTime, TimeSpan.Zero)
+                    for dt in shrink d.DateTime ->
+                        DateTimeOffset(dt, TimeSpan.Zero) }
+            fromGenShrink (genDate, shrink)
 
         static member KeyValuePair() =
             let genKeyValuePair =
