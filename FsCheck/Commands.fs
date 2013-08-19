@@ -18,26 +18,26 @@ module Commands =
 
     ///A single command describes pre and post conditions and the model for a single method under test.
     [<AbstractClass>]
-    type ICommand<'o,'s>() =
+    type ICommand<'Actual,'Model>() =
         ///Excecutes the command on the actual object under test.
-        abstract RunActual : 'o -> 'o
+        abstract RunActual : 'Actual -> 'Actual
         ///Executes the command on the model of the object.
-        abstract RunModel : 's -> 's
+        abstract RunModel : 'Model -> 'Model
         ///Precondition for execution of the command.
-        abstract Pre : 's -> bool
+        abstract Pre : 'Model -> bool
         ///Postcondition that must hold after execution of the command.
-        abstract Post : 'o * 's ->  Property    //bool //(*Testable 'a*)
+        abstract Post : 'Actual * 'Model ->  Property    //bool //(*Testable 'a*)
         default x.Pre _ = true
         default x.Post (_,_) = (true = true).&.(true=true) //true
 
     ///A specification for an object under test, based on an abstract model of the
     ///object's behavior.
-    type ISpecification<'o,'s> =
+    type ISpecification<'Actual,'Model> =
         ///Initial state of both object and model.
-        abstract Initial : unit -> 'o * 's
+        abstract Initial : unit -> 'Actual * 'Model
         ///Generate a number of possible commands based on the current state of the model. The commands
         ///are just hints to speed up execution; preconditions are still checked.
-        abstract GenCommand : 's -> Gen<ICommand<'o,'s>>
+        abstract GenCommand : 'Model -> Gen<ICommand<'Actual,'Model>>
 
     let private genCommands (spec:ISpecification<_,_>) = 
         let rec genCommandsS state size =
