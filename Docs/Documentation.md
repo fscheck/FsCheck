@@ -564,14 +564,14 @@ Also, if you want to define your own, the Arb.filter, Arb.convert and Arb.mapFil
 #### Running tests using only modules
 Since Arbitrary instances are given as static members of classes, and properties can be grouped together as static members of classes, and since top level let functions are compiled as static member of their enclosing module (which is compiled as a class), you can simply define your properties and generators as top level let-bound functions, and then register all generators and and all properties at once using the following trick:
 ```fsharp
-    let myprop =....
-        let mygen =...
-        let helper = "a string"
-        let private helper' = true
+let myprop =....
+    let mygen =...
+    let helper = "a string"
+    let private helper' = true
 
-    type Marker = class end
-        Arb.register (typeof<Marker>.DeclaringType)
-        Check.All (typeof<Marker>.DeclaringType)
+type Marker = class end
+Arb.register (typeof<Marker>.DeclaringType)
+Check.All (typeof<Marker>.DeclaringType)
 ```
 The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way to get to a module's Type directly.
 FsCheck determines the intent of the function based on its return type:
