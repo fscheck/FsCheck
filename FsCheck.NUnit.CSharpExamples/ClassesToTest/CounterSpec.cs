@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FsCheck;
 using FsCheck.Fluent;
 
 namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
@@ -48,9 +49,9 @@ namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
 
         private abstract class BaseCommand : Commands.ICommand<Counter, int>
         {
-            public override bool Post(Counter c, int m)
+            public override Gen<FsCheck.Rose<FsCheck.Result>> Post(Counter c, int m)
             {
-                return m == c.Get();
+                return Prop.ofTestable(m == c.Get());
             }
 
             public override string ToString()
