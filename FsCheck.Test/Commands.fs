@@ -21,7 +21,7 @@ module Commands =
             { new ICommand<Counter,int>() with
                 member x.RunActual c = c.Inc(); c
                 member x.RunModel m = m + 1
-                member x.Post (c,m) = m = c.Get 
+                member x.Post (c,m) = m = c.Get |@ sprintf "m = %i, c = %i" m c.Get
                 override x.ToString() = "inc"}
         let dec = 
             Gen.constant <|
@@ -29,7 +29,7 @@ module Commands =
                 member x.RunActual c = c.Dec(); c
                 member x.RunModel m = m - 1
                 member x.Pre m = m > 0
-                member x.Post (c,m) = m = c.Get 
+                member x.Post (c,m) = m = c.Get |@ sprintf "m = %i, c = %i" m c.Get
                 override x.ToString() = "dec"}
         { new ISpecification<Counter,int> with
             member x.Initial() = (new Counter(),0)
