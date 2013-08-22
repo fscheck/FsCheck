@@ -48,9 +48,9 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
 
         private abstract class BaseCommand : Commands.ICommand<Counter, int>
         {
-            public override bool Post(Counter c, int m)
+            public override Gen<FsCheck.Rose<FsCheck.Result>> Post(Counter c, int m)
             {
-                return m == c.Get();
+                return Prop.ofTestable(m == c.Get());
             }
 
             public override string ToString()
