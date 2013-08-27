@@ -185,12 +185,12 @@ module Runner =
                         | xs  -> sprintf ".%s%s" newline (List.fold (fun acc x -> x + "." + newline + acc) "" xs)
         let entry (p,xs) = sprintf "%A%s %s" p "%" (String.concat ", " xs)
         let stamps_to_string s = s |> Seq.map entry |> Seq.toList |> display
-        let labels_to_string l = String.concat ", " l
+        let labels_to_string l = String.concat newline l
         let maybePrintLabels (l:Set<_>) = 
-            if l.Count > 0 then
-                sprintf "Label%s of failing property: %s%s" (pluralize l.Count) (labels_to_string l) newline
-            else
-                String.Empty
+            match l.Count with
+            | 0 -> String.Empty
+            | 1 -> sprintf "Label of failing property: %s%s" (labels_to_string l) newline
+            | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labels_to_string l) newline
         let name = if String.IsNullOrEmpty(name) then String.Empty else (name+"-")  
         match testResult with
         | True data -> 
