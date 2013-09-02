@@ -565,9 +565,9 @@ Also, if you want to define your own, the Arb.filter, Arb.convert and Arb.mapFil
 Since Arbitrary instances are given as static members of classes, and properties can be grouped together as static members of classes, and since top level let functions are compiled as static member of their enclosing module (which is compiled as a class), you can simply define your properties and generators as top level let-bound functions, and then register all generators and and all properties at once using the following trick:
 ```fsharp
 let myprop =....
-    let mygen =...
-    let helper = "a string"
-    let private helper' = true
+let mygen =...
+let helper = "a string"
+let private helper' = true
 
 type Marker = class end
 Arb.register (typeof<Marker>.DeclaringType)

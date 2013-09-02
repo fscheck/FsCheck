@@ -543,13 +543,13 @@ Check.Quick ``generated even ints should be even``
 Arbitrary インスタンスはクラスの静的メンバとして与えられ、性質はクラスの静的メンバとして一緒にグループ化することができるので、また、トップレベルの let 関数はそれらを囲むモジュール(クラスとしてコンパイルされる)の静的メンバとしてコンパイルされるので、単に性質やジェネレータをトップレベルの let-束縛関数として定義でき、次のトリックを使用してすべてのジェネレータと性質を登録することができます。
 ```fsharp
 let myprop =....
-    let mygen =...
-    let helper = "a string"
-    let private helper' = true
+let mygen =...
+let helper = "a string"
+let private helper' = true
 
 type Marker = class end
-    Arb.register (typeof<Marker>.DeclaringType)
-    Check.All (typeof<Marker>.DeclaringType)
+Arb.register (typeof<Marker>.DeclaringType)
+Check.All (typeof<Marker>.DeclaringType)
 ```
 Marker 型は、モジュールの Type が取得できるように、モジュール内に定義されているだけの任意の型です。 F# は直接モジュールの型を取得する方法を提供していません。 FsCheck は、戻り値の型に基づいて関数の意図を決定しています。すなわち、
 * 性質： unit、bool、Property、これらの型への任意の引数の関数、もしくはこれらの型のいずれかの Lazy 値を返します
