@@ -510,7 +510,7 @@ let associativity (x:Tree) (f:Tree->float,g:float->char,h:char->int) = ((f >> g)
 > Check.Quick associativity;;
 Ok, passed 100 tests.
 ```
-Tree -> 任意の型 の関数を生成できます。反例が見つかった場合は、関数値が "func" として表示されます。しかしながら、 FsCheck は Function 型を使用することで、より詳細に生成された関数を表示することができます。もしそれを使えば、 FsCheck は関数をシュリンクことさえ可能です。例は以下の通りです。
+Tree -> 任意の型 の関数を生成できます。反例が見つかった場合は、関数値が "func" として表示されます。しかしながら、 FsCheck は Function 型を使用することで、より詳細に生成された関数を表示することができます。もしそれを使えば、 FsCheck は関数をシュリンクすることさえ可能です。例は以下の通りです。
 ```fsharp
 let mapRec (F (_,f)) (l:list<int>) =
     not l.IsEmpty ==>
