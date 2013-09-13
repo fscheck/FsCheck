@@ -297,3 +297,24 @@ module Arbitrary =
     let ``Decimal shrinks`` (value: decimal) =
         shrink<decimal> value 
         |> Seq.forall (fun shrunkv -> shrunkv = 0m || shrunkv <= abs value)
+
+    type Empty() = class end
+
+    [<Fact>]
+    let ``Derive generator for concrete class with one constructor with no parameters``() =
+        generate<Empty> |> sample 10 |> List.forall (fun _ -> true)
+
+    type IntWrapper(a: int) = class end
+
+    [<Fact>]
+    let ``Derive generator for concrete class with one constructor with one parameter``() =
+        generate<IntWrapper> |> sample 10 |> List.forall (fun _ -> true)
+
+    type FakeRecord(a: int, b: string) =
+        member this.A = a
+        member this.B = b
+
+    [<Fact>]
+    let ``Derive generator for concrete class with one constructor with two parameters``() =
+        generate<FakeRecord> |> sample 10 |> List.forall (fun _ -> true)
+
