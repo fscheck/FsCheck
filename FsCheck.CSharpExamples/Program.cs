@@ -182,6 +182,10 @@ namespace FsCheck.CSharpExamples
             public static Arbitrary<IEnumerable<T>> Enumerable<T>() {
                 return Arb.Default.Array<T>().Convert(x => (IEnumerable<T>)x, x => (T[])x);
             }
+
+            public static Arbitrary<StringBuilder> StringBuilder() {
+                return Any.OfType<string>().Select(x => new StringBuilder(x)).ToArbitrary();
+            }
         }
         
     }
