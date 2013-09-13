@@ -630,8 +630,10 @@ module Arb =
         static member DontShrink() =
             generate |> Gen.map DontShrink |> fromGen
             
-        ///Try to derive an arbitrary instance for the given type reflectively. Works
-        ///for record, union, tuple and enum types.
+        ///Try to derive an arbitrary instance for the given type reflectively. 
+        ///Generates and shrinks values for record, union, tuple and enum types.
+        ///Also generates (but doesn't shrink) values for immutable classes 
+        ///(i.e. single constructor, no mutable properties or fields).
         static member Derive() =
             { new Arbitrary<'a>() with
                 override x.Generator = ReflectArbitrary.reflectGen getGenerator
