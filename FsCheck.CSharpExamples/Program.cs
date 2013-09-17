@@ -152,6 +152,9 @@ namespace FsCheck.CSharpExamples
             Spec.ForAny<string>(s => true)
                 .Check(new Configuration { Name = "Configuration Demo", MaxNbOfTest = 500 });
 
+            Spec.ForAny((IEnumerable<int> a, IEnumerable<int> b) => 
+                            a.Except(b).Count() <= a.Count());
+
             Console.ReadKey();
         }
 
@@ -175,6 +178,14 @@ namespace FsCheck.CSharpExamples
         public class MyArbitraries
         {
             public static Arbitrary<long> Long() { return new ArbitraryLong(); }
+
+            public static Arbitrary<IEnumerable<T>> Enumerable<T>() {
+                return Arb.Default.Array<T>().Convert(x => (IEnumerable<T>)x, x => (T[])x);
+            }
+
+            public static Arbitrary<StringBuilder> StringBuilder() {
+                return Any.OfType<string>().Select(x => new StringBuilder(x)).ToArbitrary();
+            }
         }
         
     }

@@ -88,7 +88,16 @@ module internal ReflectArbitrary =
                 
             elif t.IsEnum then
                     enumOfType t |> box
-                     
+
+            elif isCSharpRecordType t then
+                let g = [ for ft in getCSharpRecordFields t do 
+                            if ft = t then
+                                failwithf "Recursive record types cannot be generated automatically: %A" t 
+                            else yield getGenerator ft ]
+                let create = getCSharpRecordConstructor t
+                let result = g |> sequence |> map (List.toArray >> create)
+                box result
+
             else
                 failwithf "Geneflect: type not handled %A" t)
 

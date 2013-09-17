@@ -23,6 +23,13 @@ module internal Reflect =
     let isRecordType (ty : Type) = FSharpType.IsRecord(ty, recordFieldBindingFlags)
     let isUnionType ty = FSharpType.IsUnion ty
     let isTupleType ty = FSharpType.IsTuple ty
+    let getPublicCtors (ty: Type) = ty.GetConstructors() |> Array.filter (fun c -> c.IsPublic)
+    let isCSharpRecordType (ty: Type) = 
+        ty.IsClass && not ty.IsAbstract
+        && not ty.ContainsGenericParameters
+        && (getPublicCtors ty).Length = 1
+        && not (ty.GetProperties(BindingFlags.Public ||| BindingFlags.Instance) |> Seq.exists (fun p -> p.CanWrite))
+        && ty.GetFields(BindingFlags.Public ||| BindingFlags.Instance) |> Seq.forall (fun f -> f.IsInitOnly)
 
     /// Get information on the fields of a record type
     let getRecordFields (recordType: System.Type) = 
@@ -38,7 +45,17 @@ module internal Reflect =
     /// Get reader for record type
     let getRecordReader recordType = 
         FSharpValue.PreComputeRecordReader(recordType, recordFieldBindingFlags)
+
+    let getCSharpRecordFields (recordType: Type) =
+        if isCSharpRecordType recordType then
+            let ctor = (getPublicCtors recordType).[0]
+            ctor.GetParameters() |> Seq.map (fun p -> p.ParameterType)
+        else
+            failwith "The input type must be an immutable class with a single constructor. Got %A" recordType
         
+    let getCSharpRecordConstructor (recordType: Type) =
+        let ctor = (getPublicCtors recordType).[0]
+        ctor.Invoke
 
     /// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
     let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list = 

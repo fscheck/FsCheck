@@ -323,7 +323,20 @@ type GeneratorExtensions =
     [<System.Runtime.CompilerServices.Extension>]
     static member Resize (generator, sizeTransform : Func<int,int>) =
         sized <| fun s -> resize (sizeTransform.Invoke(s)) generator
-        
+
+    /// Construct an Arbitrary instance from a generator.
+    /// Shrink is not supported for this type.
+    [<System.Runtime.CompilerServices.Extension>]
+    static member ToArbitrary generator =
+        Arb.fromGen generator
+
+[<System.Runtime.CompilerServices.Extension>]
+type ArbitraryExtensions =
+    ///Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
+    ///based on a Arbitrary instance for the source type and two mapping functions. 
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Convert (arb, convertTo: Func<_,_>, convertFrom: Func<_,_>) =
+        Arb.convert convertTo.Invoke convertFrom.Invoke arb
     
 type DefaultArbitraries =
     static member Add<'t>() = Arb.register<'t>()
