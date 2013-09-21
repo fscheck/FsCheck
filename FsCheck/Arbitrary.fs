@@ -92,6 +92,7 @@ type DontSize<'a when 'a : struct and 'a : comparison> =
 
 module Arb =
 
+    open System.Globalization
     open System.Collections.Generic
     open System.Linq
     open TypeClass
@@ -625,6 +626,14 @@ module Arb =
         static member IDictionary() =
             Default.Dictionary()
             |> convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
+
+        static member Culture() =
+            let genCulture = Gen.elements (CultureInfo.GetCultures CultureTypes.AllCultures)
+            let shrinkCulture =
+                Seq.unfold <| fun c -> if c = CultureInfo.InvariantCulture
+                                            then None
+                                            else Some (c.Parent, c.Parent)
+            fromGenShrink (genCulture, shrinkCulture)
 
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
         static member DontShrink() =
