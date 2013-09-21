@@ -601,7 +601,7 @@ module Arb =
             Default.List()
             |> convert (fun x -> x :> _ ICollection) (fun x -> x :?> _ List)
 
-        /// Generate a System.Collections.Generic.ICollection of values.
+        /// Generate a System.Collections.Generic.Dictionary of values.
         /// Shrinks by reducing the number of elements
         static member Dictionary() =
             let genDictionary = 
@@ -620,7 +620,7 @@ module Arb =
                 }
             fromGenShrink (genDictionary, shrinkDictionary)
 
-        /// Generate a System.Collections.Generic.ICollection of values.
+        /// Generate a System.Collections.Generic.IDictionary of values.
         /// Shrinks by reducing the number of elements
         static member IDictionary() =
             Default.Dictionary()
