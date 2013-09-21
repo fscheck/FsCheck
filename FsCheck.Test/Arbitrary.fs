@@ -7,6 +7,7 @@ module Arbitrary =
     open FsCheck.Xunit
     open global.Xunit
     open System
+    open System.Globalization
     open System.Collections.Generic
     open Helpers
     open Arb
@@ -297,6 +298,15 @@ module Arbitrary =
     let ``Decimal shrinks`` (value: decimal) =
         shrink<decimal> value 
         |> Seq.forall (fun shrunkv -> shrunkv = 0m || shrunkv <= abs value)
+
+    [<Property>]
+    let Culture() =
+        generate<CultureInfo> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Property>]
+    let ``Culture shrinks`` (value: CultureInfo) =
+        shrink<CultureInfo> value
+        |> Seq.forall (fun c -> c.IsNeutralCulture || c = CultureInfo.InvariantCulture)
 
     type Empty() = class end
 
