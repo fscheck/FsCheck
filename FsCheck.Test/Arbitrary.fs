@@ -308,6 +308,10 @@ module Arbitrary =
         shrink<CultureInfo> value
         |> Seq.forall (fun c -> c.IsNeutralCulture || c = CultureInfo.InvariantCulture)
 
+    [<Property>]
+    let Guid (value: Guid) =
+        generate<Guid> |> sample 10 |> List.forall (fun _ -> true)
+
     type Empty() = class end
 
     [<Fact>]
