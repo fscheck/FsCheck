@@ -15,7 +15,8 @@ FsCheck's generator combinators can be used in any testing framework to easily g
 
 ### Documentation ###
 
-[Yes, please](Docs/Documentation.md)
+* [English](Docs/Documentation.md)
+* [Japanese] (Docs/Documentation_jp.md)
 
 ### More reading ###
 * [Blog](http://fortysix-and-two.blogspot.com) for announcements, change logs and other posts more or less related to FsCheck. 
