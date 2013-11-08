@@ -15,7 +15,7 @@
     <copyright>Copyright 2012</copyright>
     <dependencies>
       <dependency id="FsCheck"/>
-      <dependency id="xunit" version="[1.9.1,2)"/>
+      <dependency id="xunit" version="[1.9.2,3)"/>
     </dependencies>
   </metadata>
 </package>
