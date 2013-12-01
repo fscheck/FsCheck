@@ -520,6 +520,16 @@ Falsifiable, after 6 tests (2 shrinks) (StdGen (1020916989,295727999)):
 [inc; inc; inc; dec]
 ```    
 Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.
+## Using Configurations
+It is sometimes useful to check more than 100 cases. The following example checks 50000 cases:
+```fsharp
+> Check.One({Config.Quick with MaxTest = 50000}, f)
+```
+Larger case sizes might also be more suitable. The following makes the size of the cases range from 1000 to 10000 in length:
+```fsharp
+Check.One({Config.Quick with StartSize = 1000
+                             EndSize = 10000} f)
+```
 ## Usage tips
 #### Properties of functions
 Since FsCheck can generate random function values, it can check properties of functions. For example, we can check associativity of function composition as follows:
