@@ -546,7 +546,8 @@ module Arb =
                 seq {
                     for ts in shrinkTimeZone d.Offset ->
                         DateTimeOffset(d.DateTime, ts)
-                    yield DateTimeOffset(d.DateTime, TimeSpan.Zero)
+                    if d.Offset <> TimeSpan.Zero then
+                        yield DateTimeOffset(d.DateTime, TimeSpan.Zero)
                     for dt in shrink d.DateTime ->
                         DateTimeOffset(dt, TimeSpan.Zero) }
             fromGenShrink (genDate, shrink)
