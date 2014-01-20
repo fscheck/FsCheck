@@ -238,6 +238,17 @@ module Arb =
             let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
             fromGenShrink(gen, shrink)
             |> convert (int16 >> DontSize) (DontSize.Unwrap >> int)
+
+        ///Generate arbitrary uint16 that is between 0 and size.
+        static member UInt16() =
+            from<int>
+            |> convert (abs >> uint16) int
+
+        ///Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
+        static member DontSizeUInt16() =
+            let gen = Gen.choose(0, int UInt16.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (uint16 >> DontSize) (DontSize.Unwrap >> int)
             
         ///Generate arbitrary int32 that is between -size and size.
         static member Int32() = 
@@ -256,6 +267,17 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert DontSize DontSize.Unwrap
 
+        ///Generate arbitrary uint32 that is between 0 and size.
+        static member UInt32() =
+            from<int>
+            |> convert (abs >> uint32) int
+
+        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        static member DontSizeUInt32() =
+            let gen = Gen.choose(0, int UInt32.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (uint32 >> DontSize) (DontSize.Unwrap >> int)
+
         ///Generate arbitrary int64 that is between -size and size.
         ///Note that since the size is an int32, this does not actually cover the full
         ///range of int64. See DontSize<int64> instead.
@@ -272,6 +294,19 @@ module Arb =
             fromGenShrink (gen,shrinkNumber)
             |> convert DontSize DontSize.Unwrap
         
+        ///Generate arbitrary uint64 that is between 0 and size.
+        static member UInt64() =
+            from<int>
+            |> convert (abs >> uint64) int
+
+        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        static member DontSizeUInt64() =
+            let gen =
+                Gen.two generate<DontSize<uint32>>
+                |> Gen.map (fun (DontSize h, DontSize l) -> (uint64 h <<< 32) ||| uint64 l)                
+            fromGenShrink (gen,shrink)
+            |> convert DontSize DontSize.Unwrap
+
         ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float() = 
             { new Arbitrary<float>() with
@@ -285,6 +320,25 @@ module Arb =
                                 yield 0.0
                             else
                                 if fl < 0.0 then yield -fl
+                                let truncated = truncate fl
+                                if truncated |<| fl then yield truncated }
+                    |> Seq.distinct
+            }
+
+        ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
+        static member Float32() = 
+            { new Arbitrary<float32>() with
+                override x.Generator = 
+                    let fraction a b c = float32 (Default.fraction a b c)
+                    Gen.frequency   [(6, Gen.map3 fraction generate generate generate)
+                                    ;(1, Gen.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity])
+                                    ;(1, Gen.elements [ Single.MaxValue; Single.MinValue; Single.Epsilon])]
+                override x.Shrinker fl =
+                    let (|<|) x y = abs x < abs y
+                    seq {   if Single.IsInfinity fl || Single.IsNaN fl then 
+                                yield 0.0f
+                            else
+                                if fl < 0.0f then yield -fl
                                 let truncated = truncate fl
                                 if truncated |<| fl then yield truncated }
                     |> Seq.distinct
