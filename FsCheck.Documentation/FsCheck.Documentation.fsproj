@@ -49,17 +49,40 @@
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <ItemGroup>
     <Compile Include="QuickStart.fs" />
+    <None Include="QuickStart.fsx" />
     <Compile Include="Properties.fs" />
+    <None Include="Properties.fsx" />
     <Compile Include="TestData.fs" />
     <Compile Include="StatefulTesting.fs" />
     <Compile Include="TipsAndTricks.fs" />
     <Compile Include="Program.fs" />
+    <None Include="packages.config" />
+    <None Include="generate.fsx" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FSharp.CodeFormat">
+      <HintPath>..\packages\FSharp.Formatting-alpha\FSharp.CodeFormat.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.Compiler.Service">
+      <HintPath>..\packages\FSharp.Formatting-alpha\FSharp.Compiler.Service.dll</HintPath>
+    </Reference>
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
+    <Reference Include="FSharp.Literate">
+      <HintPath>..\packages\FSharp.Formatting-alpha\FSharp.Literate.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.Markdown">
+      <HintPath>..\packages\FSharp.Formatting-alpha\FSharp.Markdown.dll</HintPath>
+    </Reference>
+    <Reference Include="FSharp.MetadataFormat">
+      <HintPath>..\packages\FSharp.Formatting-alpha\FSharp.MetadataFormat.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="RazorEngine">
+      <HintPath>..\packages\RazorEngine.3.3.0\lib\net40\RazorEngine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -70,6 +93,10 @@
       <Private>True</Private>
     </ProjectReference>
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Web.Razor">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 	     Other similar extension points exist, see Microsoft.Common.targets.

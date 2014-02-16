@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>RazorEngine</id>
+    <version>3.3.0</version>
+    <title>RazorEngine</title>
+    <authors>Matthew Abbott, Ben Dornis</authors>
+    <owners>Matthew Abbott, Ben Dornis</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Simple templating using Razor syntax.</description>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.Razor" version="2.0.30506.0" />
+    </dependencies>
+  </metadata>
+</package>
