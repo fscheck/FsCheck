@@ -158,6 +158,14 @@ module Arbitrary =
                                 | None -> shrinks = Seq.empty 
                                 | Some v ->  Seq.forall2 (=) shrinks (seq { yield None; for x' in shrink v -> Some x' }) ))
 
+    [<Property>]
+    let Nullable (value:Nullable<int>) =
+        (   generate<Nullable<int>> |> sample 10 |> List.forall (fun _ -> true)
+        ,   shrink value 
+            |> (fun shrinks -> if value.HasValue
+                                  then Seq.forall2 (=) shrinks (seq { yield Nullable(); for x' in shrink value.Value -> Nullable x' })
+                                  else shrinks = Seq.empty))
+
     let testFunction (f: _ -> _) (vs: _ list) =
         let tabledF = Function<_,_>.from f
         (List.map tabledF.Value vs) = (List.map f vs)
