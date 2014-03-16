@@ -502,7 +502,7 @@ module Arb =
                     seq { yield DateTime(d.Year,d.Month,d.Day,d.Hour,d.Minute,0) }
                 elif d.Minute <> 0 then
                     seq { yield DateTime(d.Year,d.Month,d.Day,d.Hour,0,0) }
-                elif d.Second <> 0 then
+                elif d.Hour <> 0 then
                     seq { yield DateTime(d.Year,d.Month,d.Day) }
                 else
                     Seq.empty
