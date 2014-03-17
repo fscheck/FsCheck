@@ -385,6 +385,17 @@ module Arb =
                     | Some x -> seq { yield None; for x' in shrink x -> Some x' }
                     | None  -> Seq.empty
             }
+
+        ///Generate a nullable value that is null 1/8 of the time.
+        static member Nullable() = 
+            { new Arbitrary<Nullable<'a>>() with
+                override x.Generator = Gen.frequency [(1, gen { return Nullable() }); (7, Gen.map (fun x -> Nullable x) generate)]
+                override x.Shrinker o =
+                    if o.HasValue
+                        then seq { yield Nullable(); for x' in shrink o.Value -> Nullable x' }
+                        else Seq.empty
+            }
+
         ///Generate a list of values. The size of the list is between 0 and the test size + 1.
         static member FsList() = 
             { new Arbitrary<list<'a>>() with
