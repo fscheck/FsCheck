@@ -133,7 +133,7 @@ module Arbitrary =
     let String (value:string) =
         (   generate<string> |> sample 10 |> List.forall (fun _ -> true)
             //or the lenght of the string is shorter, or one of its values have been shrunk
-        ,   shrink<string> value |> Seq.forall (fun s -> String.length s < String.length value || (String.exists (isIn ['a';'b';'c']) s)) )
+        ,   shrink<string> value |> Seq.forall (fun s -> s = null || String.length s < String.length value || (String.exists (isIn ['a';'b';'c']) s)) )
         |> addLabels
       
     [<Property>]
@@ -202,7 +202,7 @@ module Arbitrary =
     let Object (o:Object) =
         let goodObject (o:obj) = 
             match o with
-            | :? char | :? bool | :? string -> true
+            | null | :? char | :? bool | :? string -> true
             | _ -> false
         let goodShrinks (o:obj) shrinks = Seq.forall2 (=) (shrink (unbox o)) (shrinks |> Seq.map unbox)
         ( goodObject o
