@@ -135,6 +135,9 @@ module Arbitrary =
             //or the lenght of the string is shorter, or one of its values have been shrunk
         ,   shrink<string> value |> Seq.forall (fun s -> s = null || String.length s < String.length value || (String.exists (isIn ['a';'b';'c']) s)) )
         |> addLabels
+
+    [<Property>]
+    let ``Non-empty string`` (NonEmptyString v) = not (System.String.IsNullOrEmpty v)
       
     [<Property>]
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
@@ -333,6 +336,10 @@ module Arbitrary =
     let ``Generic Dictionary``() =
         generate<Dictionary<int, char>> |> sample 10 |> List.forall (fun _ -> true)
 
+    [<Fact>]
+    let ``Generic Dictionary with string key``() =
+        generate<Dictionary<string, char>> |> sample 10 |> List.forall (fun _ -> true)
+
     [<Property>]
     let ``Generic Dictionary shrinks`` (value: Dictionary<int, string>) =
         shrink value 
@@ -341,6 +348,10 @@ module Arbitrary =
     [<Fact>]
     let ``Generic IDictionary``() =
         generate<IDictionary<int, char>> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Fact>]
+    let ``Map with string key``() =
+        generate<Map<string, char>> |> sample 10 |> List.exists (fun x -> not x.IsEmpty)
 
     [<Property>]
     let Decimal() =
