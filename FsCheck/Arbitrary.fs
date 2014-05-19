@@ -625,7 +625,7 @@ module Arb =
 
         static member NonEmptyString() =
             from<string>
-            |> filter (fun s -> s <> "" && not (String.exists ((=) '\000') s))
+            |> filter (fun s -> not (String.IsNullOrEmpty s) && not (String.exists ((=) '\000') s))
             |> convert NonEmptyString string
 
         static member Set() = 

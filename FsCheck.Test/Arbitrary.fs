@@ -135,6 +135,9 @@ module Arbitrary =
             //or the lenght of the string is shorter, or one of its values have been shrunk
         ,   shrink<string> value |> Seq.forall (fun s -> s = null || String.length s < String.length value || (String.exists (isIn ['a';'b';'c']) s)) )
         |> addLabels
+
+    [<Property>]
+    let ``Non-empty string`` (NonEmptyString v) = not (System.String.IsNullOrEmpty v)
       
     [<Property>]
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
