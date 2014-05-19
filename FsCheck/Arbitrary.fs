@@ -678,7 +678,7 @@ module Arb =
         static member Dictionary() =
             let genDictionary = 
                 gen {
-                    let! keys = Gen.listOf generate |> Gen.map (Seq.distinct >> Seq.toList)
+                    let! keys = Gen.listOf generate |> Gen.map (Seq.where (fun x -> not (obj.Equals(x, null))) >> Seq.distinct >> Seq.toList)
                     let! values = Gen.arrayOfLength keys.Length generate
                     return (Seq.zip keys values).ToDictionary(fst, snd)
                 }

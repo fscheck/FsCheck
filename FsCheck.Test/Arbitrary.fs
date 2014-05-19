@@ -333,6 +333,10 @@ module Arbitrary =
     let ``Generic Dictionary``() =
         generate<Dictionary<int, char>> |> sample 10 |> List.forall (fun _ -> true)
 
+    [<Fact>]
+    let ``Generic Dictionary with string key``() =
+        generate<Dictionary<string, char>> |> sample 10 |> List.forall (fun _ -> true)
+
     [<Property>]
     let ``Generic Dictionary shrinks`` (value: Dictionary<int, string>) =
         shrink value 
@@ -341,6 +345,10 @@ module Arbitrary =
     [<Fact>]
     let ``Generic IDictionary``() =
         generate<IDictionary<int, char>> |> sample 10 |> List.forall (fun _ -> true)
+
+    [<Fact>]
+    let ``Map with string key``() =
+        generate<Map<string, char>> |> sample 10 |> List.exists (fun x -> not x.IsEmpty)
 
     [<Property>]
     let Decimal() =
