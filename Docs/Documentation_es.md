@@ -1,41 +1,49 @@
-## QuickStart
-#### A Simple Example
-A simple example of a property definition is
+## Primeros pasos
+#### Un simple ejemplo
+Un simple ejemplo de una definicion de propiedad (property definition) es:
+
 ```fsharp
 let revRevIsOrig (xs:list<int>) = List.rev(List.rev xs) = xs
 ```
-This property asserts that the reverse of the reverse of a list is the list itself. To check the property, we load this definition in F# interactive and then invoke
+Esta propiedad asegura que el reverso del reverso de una lista es la lista original. Para comprobar la propiedad, cargamos esta definición en F# interactiva y luego invocamos
 
 ```fsharp
 > Check.Quick revRevIsOrig;;
 Ok, passed 100 tests.
 ```
 
-When a property fails, FsCheck displays a counter-example. For example, if we define 
+Cuando una propiedad falla, FsCheck muestra un contra ejemplo. Por ejemplo, si definimos
 ```fsharp
 let revIsOrig (xs:list<int>) = List.rev xs = xs
 ```
-then checking it results in
+entonces cuando checkeamos esto resulta en
+
 ```fsharp
 > Check.Quick revIsOrig;;
 Falsifiable, after 2 tests (2 shrinks) (StdGen (884019159,295727999)):
 [1; 0]
 ```    
-FsCheck also shrinks the counter example, so that it is the minimal counter example that still fails the test case. In the example above, we see that the counter example is indeed minimal: the list must have at least two different elements. FsCheck also displays how many times it found a smaller (in some way) counter example and so proceeded to shrink further.
-#### Using FsCheck
-To use FsCheck, you download the latest FsCheck source or binary. Build and reference the assembly in any projects containing specifications or test data generators. You can then test properties by loading the module they are defined in into F# interactive, and calling 
+FsCheck también reduce (shrinks) el ejemplo contrario, por lo que es el mínimo contra ejemplo que sigue fallando el caso de prueba. En el ejemplo anterior, vemos que el ejemplo contrario es de hecho mínimo: la lista debe tener por lo menos dos elementos diferentes. FsCheck también muestra cuántas veces encuentro una contraejemplo más pequeño (de alguna manera) y procedió a reducir aún más.
+
+#### Usando FsCheck
+
+Para utilizar FsCheck, descargue el codigo fuente o binario mas reciente de FsCheck o binario. Compile y referencie el binario (assembly)  en los proyectos que contienen las especificaciones o los generadores de datos de prueba. Puede entonces testear las propiedades cargando el modulo donde estan definida en F # interactiva, y llamando
+
 ```fsharp
 Check.Quick <propertyName>
 ```
-or by running and writing a small console application that calls the Check function. Integration with unit test runners such as xUnit and NUnit is possible as well - see Usage Tips for an example.
-#### Grouping properties
-Usually, you'll write more than one property to test. FsCheck allows you to group together properties as static members of a class:
+o ejecutando y escribir una pequeña aplicación de consola que llama a la función Check. La integración con los corredores de pruebas unitarias tales como xUnit y NUnit es posible también - vea Sugerencias de uso para un ejemplo.
+
+#### Agrupando propiedades
+
+
+Generalmente, uno escribe mas de una propiedad a testear. FsCheck te permite agrupar propiedades como miembros estaticos de una clase:
 ```fsharp
 type ListProperties =
     static member ``reverse of reverse is original`` xs = RevRevIsOrig xs
     static member ``reverse is original`` xs = RevIsOrig xs
 ```
-These can be checked at once using the Check.QuickAll function:
+Estas propiedades pueden ser checkeadas al mismo tiempo usando la función Check.QuickAll:
 ```fsharp
 > Check.QuickAll<ListProperties>();;
 --- Checking ListProperties ---
@@ -43,8 +51,9 @@ ListProperties.reverse of reverse is original-Ok, passed 100 tests.
 ListProperties.reverse is original-Falsifiable, after 3 tests (3 shrinks) (StdGen (885249229,295727999)):
 [1; 0]
 ```    
-FsCheck now also prints the name of each test.
-Since all top level functions of a a module are also compiled as static member of a class with the name of the module, you can also use Check.QuickAll to test all the top level functions in a certain module. However, the type of a module is not directly accessible via F#, so you can use the following trick:
+
+FsCheck ahora también imprime el nombre de cada prueba. 
+Puesto que todas las funciones de nivel superior de aa módulo también se compilan como miembro estático de una clase con el nombre del módulo, también se puede utilizar Check.QuickAll para probar todas las funciones de nivel superior en un determinado módulo. Sin embargo, el tipo de un módulo no se puede acceder directamente a través de F#, así que usted puede utilizar el siguiente truco:
 ```fsharp
 > Check.QuickAll typeof<ListProperties>.DeclaringType;;
 --- Checking QuickStart ---
@@ -54,14 +63,18 @@ QuickStart.revIsOrig-Falsifiable, after 6 tests (7 shrinks) (StdGen (885549247,2
 QuickStart.revRevIsOrigFloat-Falsifiable, after 10 tests (4 shrinks) (StdGen (885679254,295727999)):
 [nan]
 ```    
-#### What do I do if a test loops or encounters an error?
+#### ¿Qué hago si una prueba loop  o encuentra un error?
 In this case we know that the property does not hold, but Check.Quick does not display the counter-example. There is another testing function provided for this situation. Repeat the test using 
+En este caso sabemos que la propiedad no se sostiene, pero Check.Quick no muestra el ejemplo contrario. Hay otra función de prueba prevista para esta situación. Repita la prueba con
+
 ```fsharp
 Check.Verbose <property_name>
 ```
-which displays each test case before running the test: the last test case displayed is thus the one in which the loop or error arises. Check.VerboseAll can be used with types and modules to check groups of properties verbosely.
-#### Caveat
-The property above (the reverse of the reverse of a list is the list itself) is not always correct. Consider a list of floats that contains nan (not a number). Since nan <> nan, the reverse of the reverse of {{[nan,nan]}} is not actually equal to {{[nan,nan]}} if you use straightforward element by element comparison. FsCheck has a knack for finding this kind of specification problem. However, since this behavior is seldom what you want, FsCheck only generates values that are 'neatly' comparable when you leave the type polymorphic (currently, unit, bool, char and string values). To see this error in action, force FsCheck to generate lists of floats:
+esto muestra cada caso de prueba antes de ejecutar la prueba: el último caso de prueba que se muestra es por lo tanto el que causa el loop o error. Check.VerboseAll se puede utilizar con los tipos y módulos para comprobar los grupos de propiedades más detallados.
+
+#### Advertencia
+
+La propiedad más arriba (el reverso del reverso de una lista es la lista en sí) no siempre es correcta. Considere la posibilidad de una lista de float que contiene NaN (no un número). Dado que nan <> nan, el reverso del reverso de {{[nan, nan]}} no es en realidad igual a {{[nan, nan]}} si utiliza una simple comparación por elemento. FsCheck tiene una habilidad especial para encontrar este tipo de problema de especificación. Sin embargo, puesto que este comportamiento es rara vez lo que quieres, FsCheck sólo genera valores que son 'claramente' comparable cuando salga del tipo polimórfico (actualmente, unit, bool, char y valores string). Para ver este error en acción, fuerze FsCheck agenerar listas de float:
 ```fsharp
 let revRevIsOrigFloat (xs:list<float>) = List.rev(List.rev xs) = xs
 
@@ -69,24 +82,28 @@ let revRevIsOrigFloat (xs:list<float>) = List.rev(List.rev xs) = xs
 Falsifiable, after 19 tests (12 shrinks) (StdGen (886719313,295727999)):
 [nan]
 ```    
-## Properties
-Properties are expressed as F# function definitions. Properties are universally quantified over their parameters, so
+## Propiedades
+
+Las propiedades se expresan como la definición de funciones F#. Estas son universalmente cuantificadas sobre sus parámetros, entonces:
 ```fsharp
 let revRevIsOrig xs = List.rev(List.rev xs) = xs
 ```
-means that the equality holds for all lists xs.
-Properties must not necessarily have monomorphic types.
-'Polymorphic' properties, such as the one above will be tested by FsCheck as if the generic arguments are of type object; this means, that values of various simple types (bool, char, string,...) are generated. It may even be the case that one generated list contains more than one type, e.g. {['r', "1a", true]} would be a list that can be used to check the property above.
-The generated values are based on the type however, so you may change this behavior simply by giving xs a different inferred or explicit type:
+
+esto significa que la igualdad se cumple para todas las listas de xs.
+Las propiedades no deben necesariamente tener tipos monomórficos. Propiedades "polimórficas", tales como la de arriba serán probados por FsCheck como si los argumentos genéricos son del tipo de *object*; esto quiere decir, que los valores de diversos tipos simples (bool, char, string, ...) se generan. Incluso puede ser el caso que una lista generada contiene más de un tipo, por ejemplo, {["r", "1 bis", true]} sería una lista que se puede utilizar para comprobar la propiedad anterior.
+Los valores generados son basados en los tipos, entonces es possible cambiar este comportamiento simplemente dandole a xs un tipo distinto, ya sea inferido o explicitamente :
+
 ```fsharp
 let revRevIsOrigInt (xs:list<int>) = List.rev(List.rev xs) = xs
 ```
-is only checked with lists of int.
-FsCheck can check properties of various forms - these forms are called testable, and are indicated in the API by a generic type called 'Testable. A 'Testable may be a function of any number of parameters that returns bool or unit. In the latter case, a test passes if it does not throw.
-#### Conditional Properties
-Properties may take the form
+
+es testeado solamente con listas de int.
+FsCheck puede comprobar las propiedades de varias formas - estas formas se llaman testable, y se indica en el API por un tipo genérico denominado 'Testable. Un 'Testable puede ser una función con cualquier número de parámetros que devuelve bool o unit. En este último caso, una prueba pasa si no tira una excepcion.
+
+#### Propiedades condicionales
+Las propiedades pueden tomar la forma
 <condition> ==> <property>
-For example, 
+Por ejemplo, 
 ```fsharp
 let rec private ordered xs = 
    match xs with
@@ -103,13 +120,27 @@ let Insert (x:int) xs = ordered xs ==> ordered (insert x xs)
 ```
 Such a property holds if the property after ==> holds whenever the condition does.
 Testing discards test cases which do not satisfy the condition. Test case generation continues until 100 cases which do satisfy the condition have been found, or until an overall limit on the number of test cases is reached (to avoid looping if the condition never holds). In this case a message such as
+
+Esta propiedad se mantiene si la propiedad después de ==> se sostiene cuando sea que la condicion se sostiene. 
+Al testear se descartan escenarios de prueba que no cumplan la condición. La generación de casos de prueba continúa hasta que se han encontrado 100 casos que cumplen la condición, o hasta un límite global del número de casos de prueba es alcanzado (para evitar un bucle si la condición no tiene). En este caso, un mensaje como
+
 ```fsharp
 Arguments exhausted after 97 tests.
 ```
+indica que hay 97 casos que satisfacen la condicion encontrada,
+======>>>>>  ## properly translated till here
+
 indicates that 97 test cases satisfying the condition were found, and that the property held in those 97 cases. 
 Notice that in this case the generated values had to be restricted to int. This is because the generated values need to be comparable, but this is not reflected in the types. Therefore, without the explicit restriction, FsCheck could generate lists containing different types (subtypes of objects), and these are not mutually comparable.
-#### Lazy Properties
+
+indica que se encontraron 97 casos de prueba que satisfacen la condición, y que la propiedad que tuvo lugar en esos 97 casos. 
+Nótese que en este caso los valores generados tuvieron que ser restringido a int. Esto se debe a los valores generados deben ser comparables, pero esto no se refleja en los tipos. Por lo tanto, sin la limitación explícita, FsCheck podría generar listas que contienen diferentes tipos (subtipos de objetos), y estos no son comparables entre sí.
+
+#### Propiedades Lazy 
 Since F# has eager evaluation by default, the above property does more work than necessary: it evaluates the property at the right of the condition no matter what the outcome of the condition on the left. While only a performance consideration in the above example, this may limit the expressiveness of properties - consider:
+
+Desde F # tiene Evaluación ansiosos por defecto, la propiedad anterior hace más trabajo de lo necesario: se evalúa la propiedad en el derecho de la condición, no importa cuál sea el resultado de la condición de la izquierda. Mientras que sólo una consideración de rendimiento en el ejemplo anterior, esto puede limitar la expresividad de propiedades - tener en cuenta:
+
 ```fsharp
 let Eager a = a <> 0 ==> (1/a = 1/a)
 
@@ -123,40 +154,48 @@ System.DivideByZeroException: Attempted to divide by zero.
    at FsCheck.Testable.evaluate[a,b](FSharpFunc`2 body, a a) in C:\Users\Kurt\Projects\FsCheck\FsCheck\FsCheck\Property.fs:line 168
 ```    
 Lazy evaluation is needed here to make sure the propery is checked correctly:
+Es necesaria una evaluación Lazy aquí para asegurarse de que la estructura está marcada correctamente:
+
 ```fsharp
 let Lazy a = a <> 0 ==> (lazy (1/a = 1/a))
 
 > Check.Quick Lazy;;
 Ok, passed 100 tests.
 ```    
-#### Quantified Properties
-Properties may take the form
+#### Propiedades cuantificadas
+
+Ciertas propiedades pueden tomar la forma
 ```fsharp
 forAll <arbitrary>  (fun <args> -> <property>)
 ```
-For example,
+Por ejemplo
 ```fsharp
 let InsertWithArb x = forAll orderedList (fun xs -> ordered(insert x xs))
 ```
 The first argument of forAll is an IArbitrary instance. Such an instance encapsulates a test data generator and a shrinker (more on the latter later). By supplying a custom generator, instead of using the default generator for that type, it is possible to control the distribution of test data. In the example, by supplying a custom generator for ordered lists, rather than filtering out test cases which are not ordered, we guarantee that 100 test cases can be generated without reaching the overall limit on test cases. Combinators for defining generators are described later.
-#### Expecting exceptions
+
+El primer argumento de FORALL es una instancia IArbitrary. Dicha instancia encapsula un generador de datos de prueba y un psiquiatra (más sobre este último más adelante). Mediante el suministro de un generador personalizado, en lugar de utilizar el generador predeterminado para ese tipo, es posible controlar la distribución de datos de prueba. En el ejemplo, mediante el suministro de un generador personalizado para las listas ordenadas, en lugar de la eliminación de casos de prueba que no se piden, te garantizamos que 100 casos de prueba se pueden generar sin alcanzar el límite global de casos de prueba. Los combinadores para definir generadores se describen más adelante. 
+
+#### Excepciones esperadas 
+Es posible que desee probar que una función o método produce una excepción en determinadas circunstancias. La siguiente combinador ayuda:
 You may want to test that a function or method throws an exception under certain circumstances. The following combinator helps:
 ```fsharp
 throws<'e :> exn,'a> Lazy<'a>
 ```
-An example:
+Un ejemplo:
 ```fsharp
 let ExpectDivideByZero() = throws<DivideByZeroException,_> (lazy (raise <| DivideByZeroException()))
 
 > Check.Quick ExpectDivideByZero;;
 Ok, passed 100 tests.
 ```    
-#### Timed Properties
+#### Propiedades basadas en tiempo
 Properties may take the form
+Ciertas propiedades pueden tomar la forma
 ```fsharp
 within <timeout in ms> <Lazy<property>>
 ```
-For example,
+Por ejemplo,
 ```fsharp
 let timesOut (a:int) = 
     lazy
@@ -172,29 +211,39 @@ Timeout of 2000 milliseconds exceeded, after 37 tests (0 shrinks) (StdGen (94519
 11
 ```   
 The first argument is the maximal time the lazy property given may run. If it runs longer, FsCheck considers the test as failed. Otherwise, the outcome of the lazy property is the outcome of within. Note that, although within attempts to cancel the thread in which the property is executed, that may not succeed, and so the thread may actually continue to run until the process ends.
-#### Observing Test Case Distribution
+
+El primer argumento es el tiempo máximo de la propiedad perezoso dado puede ejecutar. Si se queda más tiempo, FsCheck considera la prueba como fallida. De lo contrario, el resultado de la propiedad perezoso es el resultado de dentro. Tenga en cuenta que, aunque dentro de los intentos de cancelar el hilo en el que se ejecuta la propiedad, que no puede tener éxito, por lo que el hilo se puede en realidad continuará funcionando hasta que termina el proceso.
+
+#### Observando la distribucion de los casos de pruebas
 It is important to be aware of the distribution of test cases: if test data is not well distributed then conclusions drawn from the test results may be invalid. In particular, the ==> operator can skew the distribution of test data badly, since only test data which satisfies the given condition is used.
 FsCheck provides several ways to observe the distribution of test data. Code for making observations is incorporated into the statement of properties, each time the property is actually tested the observation is made, and the collected observations are then summarized when testing is complete.
-#### Counting Trivial Cases
-A property may take the form
+
+Es importante tener en cuenta la distribución de los casos de prueba: si los datos de prueba no está bien distribuida y luego las conclusiones extraídas de los resultados de las pruebas pueden no ser válidas. En particular, el ==> operador puede sesgar la distribución de los datos de prueba mal, ya que sólo los datos de prueba que se utiliza satisface la condición dada. 
+FsCheck proporciona varias maneras de observar la distribución de los datos de prueba. Código para la realización de observaciones se incorpora a la declaración de propiedades, se hace cada vez que la propiedad se practicaron pruebas de la observación, y las observaciones recogidas se resumió cuando finalice la prueba.
+
+#### Contando casos triviales
+Una propiedad puede tomar la forma
 ```fsharp
 trivial <condition> <property>
 ```
-For example,
+Por ejemplo
 ```fsharp
 let insertTrivial (x:int) xs = 
     ordered xs ==> (ordered (insert x xs))
     |> trivial (List.length xs = 0)
 ```
 Test cases for which the condition is true are classified as trivial, and the proportion of trivial test cases in the total is reported. In this example, testing produces
+
+Los casos de prueba para la que la condición es verdadera se clasifican como trivial, y la proporción de casos de prueba triviales en el total se reporta. En este ejemplo, la prueba produce
+
 ```fsharp
 > Check.Quick insertTrivial;;
 Arguments exhausted after 55 tests (36% trivial).
 ```    
-#### Classifying Test Cases
-A property may take the form
+#### Clasificando casos de prueba
+Una propiedad puede tomar la fomra
 classify <condition> <string> <property>
-For example,
+Por ejemplo,
 ```fsharp
 let insertClassify (x:int) xs = 
    ordered xs ==> (ordered (insert x xs))
@@ -202,6 +251,9 @@ let insertClassify (x:int) xs =
    |> classify (ordered (xs @ [x])) "at-tail" 
 ```
 Test cases satisfying the condition are assigned the classification given, and the distribution of classifications is reported after testing. In this case the result is
+
+Los casos de prueba que satisfacen la condición se les asigna la clasificación dada, y la distribución de las clasificaciones se informa después de la prueba. En este caso el resultado es
+
 ```fsharp
 > Check.Quick insertClassify;;
 Arguments exhausted after 54 tests.
