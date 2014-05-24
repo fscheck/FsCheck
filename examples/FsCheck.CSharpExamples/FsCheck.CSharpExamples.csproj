@@ -64,7 +64,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FsCheck\FsCheck.fsproj">
+    <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj">
       <Project>{32AA3276-BBA1-41CE-B78A-706B8454EC8D}</Project>
       <Name>FsCheck</Name>
     </ProjectReference>

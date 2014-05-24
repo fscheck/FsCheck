@@ -22,29 +22,29 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A4EEA1
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck", "FsCheck\FsCheck.fsproj", "{32AA3276-BBA1-41CE-B78A-706B8454EC8D}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck", "src\FsCheck\FsCheck.fsproj", "{32AA3276-BBA1-41CE-B78A-706B8454EC8D}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Examples", "FsCheck.Examples\FsCheck.Examples.fsproj", "{7662113E-E531-4223-99C4-62EFCDDD77FF}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Examples", "examples\FsCheck.Examples\FsCheck.Examples.fsproj", "{7662113E-E531-4223-99C4-62EFCDDD77FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.CSharpExamples", "FsCheck.CSharpExamples\FsCheck.CSharpExamples.csproj", "{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.CSharpExamples", "examples\FsCheck.CSharpExamples\FsCheck.CSharpExamples.csproj", "{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Documentation", "FsCheck.Documentation\FsCheck.Documentation.fsproj", "{274871EB-2390-448A-A9BC-AF252164222D}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Documentation", "src\FsCheck.Documentation\FsCheck.Documentation.fsproj", "{274871EB-2390-448A-A9BC-AF252164222D}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Xunit", "FsCheck.Xunit\FsCheck.Xunit.fsproj", "{26A87ED0-9836-45F6-A88E-603DA8FCD856}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Xunit", "src\FsCheck.Xunit\FsCheck.Xunit.fsproj", "{26A87ED0-9836-45F6-A88E-603DA8FCD856}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Test", "FsCheck.Test\FsCheck.Test.fsproj", "{EB8B96DF-C654-410D-B590-FDBE3BC235FE}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Test", "tests\FsCheck.Test\FsCheck.Test.fsproj", "{EB8B96DF-C654-410D-B590-FDBE3BC235FE}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.NUnit", "FsCheck.NUnit\FsCheck.NUnit.fsproj", "{6B1B9FF5-8E6D-4461-9D77-CD1619403684}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.NUnit", "src\FsCheck.NUnit\FsCheck.NUnit.fsproj", "{6B1B9FF5-8E6D-4461-9D77-CD1619403684}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.NUnit.Addin", "FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj", "{BF24DE38-C529-4638-BE50-A937EA3E6876}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.NUnit.Addin", "src\FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj", "{BF24DE38-C529-4638-BE50-A937EA3E6876}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.NUnit.Examples", "FsCheck.NUnit.Examples\FsCheck.NUnit.Examples.fsproj", "{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.NUnit.Examples", "examples\FsCheck.NUnit.Examples\FsCheck.NUnit.Examples.fsproj", "{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.NUnit.CSharpExamples", "FsCheck.NUnit.CSharpExamples\FsCheck.NUnit.CSharpExamples.csproj", "{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.NUnit.CSharpExamples", "examples\FsCheck.NUnit.CSharpExamples\FsCheck.NUnit.CSharpExamples.csproj", "{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.MsTest", "FsCheck.MsTest\FsCheck.MsTest.fsproj", "{7CFAEC49-7DCD-4419-9E55-764123E2CD46}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.MsTest", "src\FsCheck.MsTest\FsCheck.MsTest.fsproj", "{7CFAEC49-7DCD-4419-9E55-764123E2CD46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.MsTest.Examples", "FsCheck.MsTest.Examples\FsCheck.MsTest.Examples.csproj", "{CB41BAC5-272F-4562-9494-E3DC1D0B4139}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.MsTest.Examples", "examples\FsCheck.MsTest.Examples\FsCheck.MsTest.Examples.csproj", "{CB41BAC5-272F-4562-9494-E3DC1D0B4139}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

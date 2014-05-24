@@ -5,12 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{26a87ed0-9836-45f6-a88e-603da8fcd856}</ProjectGuid>
+    <ProjectGuid>{eb8b96df-c654-410d-b590-fdbe3bc235fe}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>FsCheck.Xunit</RootNamespace>
-    <AssemblyName>FsCheck.Xunit</AssemblyName>
+    <RootNamespace>FsCheck.Test</RootNamespace>
+    <AssemblyName>FsCheck.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <Name>FsCheck.Xunit</Name>
+    <Name>FsCheck.Test</Name>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -24,7 +24,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\FsCheck.Xunit.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\FsCheck.Test.XML</DocumentationFile>
     <OtherFlags>
     </OtherFlags>
   </PropertyGroup>
@@ -35,10 +35,47 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\FsCheck.Xunit.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\FsCheck.Test.XML</DocumentationFile>
     <OtherFlags>
     </OtherFlags>
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="xunit">
+      <HintPath>..\..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helpers.fs" />
+    <Compile Include="Random.fs" />
+    <Compile Include="TypeClass.fs" />
+    <Compile Include="Gen.fs" />
+    <Compile Include="Arbitrary.fs" />
+    <Compile Include="Property.fs" />
+    <Compile Include="Commands.fs" />
+    <Compile Include="Runner.fs" />
+    <Compile Include="Fluent.fs" />
+    <None Include="Script.fsx" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FsCheck.Xunit\FsCheck.Xunit.fsproj">
+      <Name>FsCheck.Xunit</Name>
+      <Project>{26a87ed0-9836-45f6-a88e-603da8fcd856}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj">
+      <Name>FsCheck</Name>
+      <Project>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>
@@ -55,33 +92,6 @@
     </Otherwise>
   </Choose>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="PropertyAttribute.fs" />
-    <None Include="FsCheck.Xunit.nuspec" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Xml" />
-    <Reference Include="xunit">
-      <HintPath>..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FsCheck\FsCheck.fsproj">
-      <Name>FsCheck</Name>
-      <Project>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

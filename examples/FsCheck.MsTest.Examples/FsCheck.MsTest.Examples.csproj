@@ -51,11 +51,11 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FsCheck.MsTest\FsCheck.MsTest.fsproj">
+    <ProjectReference Include="..\..\src\FsCheck.MsTest\FsCheck.MsTest.fsproj">
       <Project>{7cfaec49-7dcd-4419-9e55-764123e2cd46}</Project>
       <Name>FsCheck.MsTest</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FsCheck\FsCheck.fsproj">
+    <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj">
       <Project>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</Project>
       <Name>FsCheck</Name>
     </ProjectReference>
