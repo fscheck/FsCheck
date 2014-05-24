@@ -150,5 +150,3 @@ $RECYCLE.BIN/
 
 # Mac crap
 .DS_Store
-src/FsCheck.Xunit/AssemblyInfo.fs
-src/FsCheck/AssemblyInfo.fs
