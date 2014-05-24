@@ -3,10 +3,15 @@
 // --------------------------------------------------------------------------------------
 
 #r @"packages/FAKE/tools/FakeLib.dll"
+#load "packages/SourceLink.Fake/tools/SourceLink.fsx"
+
 open Fake 
 open Fake.Git
 open Fake.AssemblyInfoFile
 open Fake.ReleaseNotesHelper
+
+open SourceLink
+
 open System
 
 // Information about each project is used
@@ -46,12 +51,16 @@ let testAssemblies = "tests/**/bin/Release/*.Test.dll"
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted 
 let gitHome = "https://github.com/fsharp"
+// gitraw location - used for source linking
+let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/fsharp"
 // The name of the project on GitHub
 let gitName = "FsCheck"
 
 // Read additional information from the release notes document
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
 let release = parseReleaseNotes (IO.File.ReadAllLines releaseNotes)
+
+
 
 let packages =
   [
@@ -139,6 +148,23 @@ Target "RunTests" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
+// Source linking
+
+Target "SourceLink" (fun _ ->
+    use repo = new GitRepo(__SOURCE_DIRECTORY__)
+    packages 
+    |> Seq.iter (fun f ->
+        let proj = VsProj.LoadRelease f.ProjectFile
+        logfn "source linking %s" proj.OutputFilePdb
+        let files = proj.Compiles -- "**/AssemblyInfo.fs"
+        repo.VerifyChecksums files
+        proj.VerifyPdbChecksums files
+        proj.CreateSrcSrv (sprintf "%s/%s/{0}/%%var2%%" gitRaw gitName) repo.Revision (repo.Paths files)
+        Pdbstr.exec proj.OutputFilePdb proj.OutputFilePdbSrcSrv
+    )
+)
+
+// --------------------------------------------------------------------------------------
 // Build a NuGet package
 
 Target "NuGet" (fun _ ->
@@ -157,9 +183,8 @@ Target "NuGet" (fun _ ->
             Publish = hasBuildParam "nugetkey"
             //ProjectFile = package.ProjectFile //if we add this, it produces a symbols package
             Dependencies = package.Dependencies 
-            Files = [(sprintf @"..\src\%s\bin\Release\%s.dll" package.Name package.Name, Some @"lib\net40-Client", None)
-                     (sprintf @"..\src\%s\bin\Release\%s.XML" package.Name package.Name, Some @"lib\net40-Client", None)
-                    ]
+            Files = [ "dll";"pdb";"XML"]
+                    |> List.map (fun ext -> (sprintf @"..\src\%s\bin\Release\%s.%s" package.Name package.Name ext, Some @"lib\net40-Client", None))
         })
         ("nuget/" + package.Name + ".nuspec")
    )
@@ -202,6 +227,7 @@ Target "All" DoNothing
   ==> "All"
 
 "All" 
+  //=?> ("SourceLink", isLocalBuild && not isLinux)
   //==> "CleanDocs"
   //==> "GenerateDocs"
   //==> "ReleaseDocs"
