@@ -122,7 +122,7 @@ module Arbitrary =
     [<Property>]
     let SByte (value:sbyte) =
         (   generate<sbyte> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate sbytes
-        ,   shrink<sbyte> value |> Seq.forall (fun shrunkv -> shrunkv <= abs value ))
+        ,   shrink<sbyte> value |> Seq.forall (fun shrunkv -> int shrunkv <= abs (int value) ))
 
     [<Property>]
     let Char (value:char) =

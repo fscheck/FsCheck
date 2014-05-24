@@ -226,7 +226,10 @@ module Arb =
             { new Arbitrary<sbyte>() with  
                 override x.Generator = 
                     Gen.choose (-128,127) |> Gen.map sbyte 
-                override x.Shrinker n = n |> int |> shrink |> Seq.map sbyte
+                override x.Shrinker n = 
+                  n |> int |> shrink 
+                  |> Seq.filter (fun e -> -128 <= e && e <= 127) //the int shrinker shrinks -128 to 128 which overflows
+                  |> Seq.map sbyte
             }
         ///Generate arbitrary int16 that is between -size and size.
         static member Int16() =
