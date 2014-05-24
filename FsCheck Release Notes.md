@@ -5,3 +5,9 @@
 * Update to F# 3.1
 * Hardened other generators against the new null-generating string generator.
 
+#### 1.0.0 - sometime soon
+* Start using FAKE to automate releases
+* Start using semantic versioning, hence the jump to 1.0.0
+* Start releasing all NuGet packages simultaneously and with the same version.
+* Fixed sbyte overflow bug in shrinker.
+

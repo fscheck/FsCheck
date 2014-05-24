@@ -1,21 +1,20 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$id$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <id>@project@</id>
+    <version>@build.number@</version>
+    <title>@project@</title>
+    <authors>@authors@</authors>
+    <owners>@authors@</owners>
     <licenseUrl>https://github.com/fsharp/FsCheck/blob/master/License.txt</licenseUrl>
     <projectUrl>https://github.com/fsharp/FsCheck</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Integrates FsCheck with xUnit.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.NET's FactAttribute.</description>
-    <summary>Integrates FsCheck with xUnit.NET</summary>
-    <tags>xunit fscheck xunit.net</tags>
-    <copyright>Copyright 2012</copyright>
-    <dependencies>
-      <dependency id="FsCheck"/>
-      <dependency id="xunit" version="[1.9.2,3)"/>
-    </dependencies>
+    <summary>@summary@</summary>
+    <description>@description@</description>
+    <releaseNotes>@releaseNotes@</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>@tags@</tags>
+    @dependencies@
   </metadata>
+  @files@
 </package>

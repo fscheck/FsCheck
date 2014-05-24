@@ -1,16 +1,12 @@
-﻿namespace FsCheck
-
+﻿namespace System
 open System.Reflection
 
-[<assembly:AssemblyDescription("FsCheck.Xunit")>]
-[<assembly:AssemblyCompany("Kurt Schelfthout and contributors")>]
-[<assembly:AssemblyTitle("FsCheck.Xunit")>]
-[<assembly:AssemblyProduct("FsCheck.Xunit")>]
-[<assembly:AssemblyVersion("0.4.1")>]
-[<assembly:AssemblyFileVersion("0.4.1")>]
+[<assembly: AssemblyTitleAttribute("FsCheck.Xunit")>]
+[<assembly: AssemblyProductAttribute("FsCheck.Xunit")>]
+[<assembly: AssemblyDescriptionAttribute("Integrates FsCheck with xUnit.NET")>]
+[<assembly: AssemblyVersionAttribute("1.0.0")>]
+[<assembly: AssemblyFileVersionAttribute("1.0.0")>]
+do ()
 
-[<assembly: System.Runtime.InteropServices.ComVisible(false)>]
-[<assembly: System.CLSCompliant(true)>]
-
-do()
-
+module internal AssemblyVersionInformation =
+    let [<Literal>] Version = "1.0.0"

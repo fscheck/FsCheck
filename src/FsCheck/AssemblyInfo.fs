@@ -1,12 +1,14 @@
 ﻿namespace System
 open System.Reflection
+open System.Runtime.CompilerServices
 
 [<assembly: AssemblyTitleAttribute("FsCheck")>]
 [<assembly: AssemblyProductAttribute("FsCheck")>]
 [<assembly: AssemblyDescriptionAttribute("FsCheck is a tool for testing .NET programs automatically using randomly generated test cases.")>]
-[<assembly: AssemblyVersionAttribute("0.9.4")>]
-[<assembly: AssemblyFileVersionAttribute("0.9.4")>]
+[<assembly: AssemblyVersionAttribute("1.0.0")>]
+[<assembly: AssemblyFileVersionAttribute("1.0.0")>]
+[<assembly: InternalsVisibleToAttribute("FsCheck.Test")>]
 do ()
 
 module internal AssemblyVersionInformation =
-    let [<Literal>] Version = "0.9.4"
+    let [<Literal>] Version = "1.0.0"

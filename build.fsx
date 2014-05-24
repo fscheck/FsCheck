@@ -29,35 +29,19 @@ type ProjectInfo =
     Authors : string list
     /// Tags for your project (for NuGet package)
     Tags : string
-    ///File that contains the release notes.
-    ReleaseNotes : string
-    /// Solution or project files to be built during the building process
-    FileToBuild : string
-    /// Pattern specifying assemblies to be tested
-    TestAssemblies : string
+    ///The projectfile (csproj or fsproj)
+    ProjectFile : string
+    Dependencies : list<string * string>
   }
 
-let FsCheck =
-  { Name = "FsCheck"
-    Summary = "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
-    Description = """
- FsCheck is a tool for testing .NET programs automatically. The programmer provides 
- a specification of the program, in the form of properties which functions, methods 
- or objects should satisfy, and FsCheck then tests that the properties hold in a 
- large number of randomly generated cases. 
- 
- While writing the properties, you are actually writing a testable specification of your program. 
- 
- Specifications are expressed in F#, C# or VB, using combinators defined 
- in the FsCheck library. FsCheck provides combinators to define properties, 
- observe the distribution of test data, and define test data generators. 
- When a property fails, FsCheck automatically displays a minimal counter example."""
-    Authors = [ "Kurt Schelfthout and contributors" ]
-    Tags = "test testing random fscheck quickcheck"
-    ReleaseNotes = "FsCheck Release Notes.md"
-    FileToBuild  = "src/FsCheck/FsCheck.fsproj"
-    TestAssemblies = "tests/**/bin/Release/*.Test.dll"
- }
+//File that contains the release notes.
+let releaseNotes = "FsCheck Release Notes.md"
+
+/// Solution or project files to be built during the building process
+let solution = "FsCheck.sln"
+
+/// Pattern specifying assemblies to be tested
+let testAssemblies = "tests/**/bin/Release/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted 
@@ -67,17 +51,56 @@ let gitName = "FsCheck"
 
 // Read additional information from the release notes document
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-let release = parseReleaseNotes (IO.File.ReadAllLines FsCheck.ReleaseNotes)
+let release = parseReleaseNotes (IO.File.ReadAllLines releaseNotes)
+
+let packages =
+  [
+    { Name = "FsCheck"
+      Summary = "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
+      Description = """
+FsCheck is a tool for testing .NET programs automatically. The programmer provides 
+a specification of the program, in the form of properties which functions, methods 
+or objects should satisfy, and FsCheck then tests that the properties hold in a 
+large number of randomly generated cases. 
+ 
+While writing the properties, you are actually writing a testable specification of your program. 
+ 
+Specifications are expressed in F#, C# or VB, using combinators defined 
+in the FsCheck library. FsCheck provides combinators to define properties, 
+observe the distribution of test data, and define test data generators. 
+When a property fails, FsCheck automatically displays a minimal counter example."""
+      Authors = [ "Kurt Schelfthout and contributors" ]
+      Tags = "test testing random fscheck quickcheck"
+      ProjectFile = "src/FsCheck/FsCheck.fsproj"
+      Dependencies = []
+    }
+    { Name = "FsCheck.Xunit"
+      Summary = "Integrates FsCheck with xUnit.NET"
+      Description = """
+FsCheck.Xunit integrates FsCheck with xUnit.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.NET's FactAttribute.
+ 
+All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
+      Authors = [ "Kurt Schelfthout and contributors" ]
+      Tags = "test testing random fscheck quickcheck xunit xunit.net"
+      ProjectFile = "src/FsCheck.Xunit/FsCheck.Xunit.fsproj"
+      Dependencies = [ "xunit",    GetPackageVersion "./packages/" "xunit"
+                       "FsCheck",  release.AssemblyVersion
+                     ]
+   }
+  ]
 
 // Generate assembly info files with the right version & up-to-date information
 Target "AssemblyInfo" (fun _ ->
-  let fileName = "src/" + FsCheck.Name + "/AssemblyInfo.fs"
+  packages |> Seq.iter (fun package ->
+  let fileName = "src/" + package.Name + "/AssemblyInfo.fs"
   CreateFSharpAssemblyInfo fileName
-      [ Attribute.Title FsCheck.Name
-        Attribute.Product FsCheck.Name
-        Attribute.Description FsCheck.Summary
+      ([Attribute.Title package.Name
+        Attribute.Product package.Name
+        Attribute.Description package.Summary
         Attribute.Version release.AssemblyVersion
-        Attribute.FileVersion release.AssemblyVersion ] 
+        Attribute.FileVersion release.AssemblyVersion
+       ] @ (if package.Name = "FsCheck" then [Attribute.InternalsVisibleTo("FsCheck.Test")] else []))
+  )
 )
 
 // --------------------------------------------------------------------------------------
@@ -97,7 +120,7 @@ Target "CleanDocs" (fun _ ->
 // Build library & test project
 
 Target "Build" (fun _ ->
-    !! (FsCheck.FileToBuild)
+    !! solution
     |> MSBuildRelease "" "Rebuild"
     |> ignore
 )
@@ -106,7 +129,7 @@ Target "Build" (fun _ ->
 // Run the unit tests using test runner
 
 Target "RunTests" (fun _ ->
-    !! FsCheck.TestAssemblies
+    !! testAssemblies
     |> xUnit (fun p -> 
             {p with 
                 ShadowCopy = false;
@@ -119,24 +142,27 @@ Target "RunTests" (fun _ ->
 // Build a NuGet package
 
 Target "NuGet" (fun _ ->
+    packages |> Seq.iter (fun package ->
     NuGet (fun p -> 
         { p with   
-            Authors = FsCheck.Authors
-            Project = FsCheck.Name
-            Summary = FsCheck.Summary
-            Description = FsCheck.Description
+            Authors = package.Authors
+            Project = package.Name
+            Summary = package.Summary
+            Description = package.Description
             Version = release.NugetVersion
             ReleaseNotes = String.Join(Environment.NewLine, release.Notes)
-            Tags = FsCheck.Tags
+            Tags = package.Tags
             OutputPath = "bin"
-            //AccessKey = getBuildParamOrDefault "nugetkey" ""
-            //Publish = hasBuildParam "nugetkey"
-            Dependencies = [] 
-            Files = [(sprintf @"..\src\%s\bin\Release\%s.dll" FsCheck.Name FsCheck.Name, Some @"lib\net40-Client", None)
-                     (sprintf @"..\src\%s\bin\Release\%s.XML" FsCheck.Name FsCheck.Name, Some @"lib\net40-Client", None)
+            AccessKey = getBuildParamOrDefault "nugetkey" ""
+            Publish = hasBuildParam "nugetkey"
+            //ProjectFile = package.ProjectFile //if we add this, it produces a symbols package
+            Dependencies = package.Dependencies 
+            Files = [(sprintf @"..\src\%s\bin\Release\%s.dll" package.Name package.Name, Some @"lib\net40-Client", None)
+                     (sprintf @"..\src\%s\bin\Release\%s.XML" package.Name package.Name, Some @"lib\net40-Client", None)
                     ]
         })
-        ("nuget/" + FsCheck.Name + ".nuspec")
+        ("nuget/" + package.Name + ".nuspec")
+   )
 )
 
 // --------------------------------------------------------------------------------------
