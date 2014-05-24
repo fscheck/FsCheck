@@ -1,16 +1,12 @@
-﻿namespace FsCheck
-
+﻿namespace System
 open System.Reflection
 
-[<assembly:AssemblyDescription("FsCheck")>]
-[<assembly:AssemblyCompany("Kurt Schelfthout and contributors")>]
-[<assembly:AssemblyTitle("FsCheck")>]
-[<assembly:AssemblyProduct("FsCheck")>]
-[<assembly:AssemblyVersion("0.9.4.0")>]
-[<assembly:AssemblyFileVersion("0.9.4.0")>]
+[<assembly: AssemblyTitleAttribute("FsCheck")>]
+[<assembly: AssemblyProductAttribute("FsCheck")>]
+[<assembly: AssemblyDescriptionAttribute("FsCheck is a tool for testing .NET programs automatically using randomly generated test cases.")>]
+[<assembly: AssemblyVersionAttribute("0.9.4")>]
+[<assembly: AssemblyFileVersionAttribute("0.9.4")>]
+do ()
 
-[<assembly: System.Runtime.InteropServices.ComVisible(false)>]
-[<assembly: System.CLSCompliant(true)>]
-[<assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("FsCheck.Test")>]
-
-do()
+module internal AssemblyVersionInformation =
+    let [<Literal>] Version = "0.9.4"

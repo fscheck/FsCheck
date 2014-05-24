@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="MsTestExtensions.fs" />
-    <None Include="FsCheck.MsTest.nuspec" />
     <None Include="install.ps1" />
   </ItemGroup>
   <ItemGroup>

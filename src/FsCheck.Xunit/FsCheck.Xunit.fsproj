@@ -58,7 +58,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="PropertyAttribute.fs" />
-    <None Include="FsCheck.Xunit.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
