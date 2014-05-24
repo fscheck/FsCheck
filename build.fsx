@@ -227,7 +227,7 @@ Target "All" DoNothing
   ==> "All"
 
 "All" 
-  //=?> ("SourceLink", isLocalBuild && not isLinux)
+  =?> ("SourceLink", isLocalBuild && not isLinux)
   //==> "CleanDocs"
   //==> "GenerateDocs"
   //==> "ReleaseDocs"
