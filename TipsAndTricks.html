@@ -59,9 +59,9 @@ If you use that, FsCheck can even shrink your function. For example:</p>
 <span onmouseout="hideTip(event, 'fs9', 46)" onmouseover="showTip(event, 'fs9', 46)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 47)" onmouseover="showTip(event, 'fs10', 47)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 48)" onmouseover="showTip(event, 'fs11', 48)" class="i">mapRec</span></pre>
 
 
-<pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1001540216,295865626)):
-{ 0-&gt;1 }
-[0]
+<pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1024991295,295865640)):
+{ -1-&gt;0; 0-&gt;0; 1-&gt;0 }
+[1]
 </code></pre>
 
 <p>The type <code>Function&lt;'a,'b&gt;</code> records a map of all the arguments it was called with, and the result it produced. 
@@ -200,7 +200,7 @@ define your own labelling equality combinator:</p>
 <span onmouseout="hideTip(event, 'fs9', 220)" onmouseover="showTip(event, 'fs9', 220)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 221)" onmouseover="showTip(event, 'fs10', 221)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs85', 222)" onmouseover="showTip(event, 'fs85', 222)" class="i">testCompare</span></pre>
 
 
-<pre><code>Falsifiable, after 2 tests (1 shrink) (StdGen (1010960754,295865626)):
+<pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1028941521,295865640)):
 Label of failing property: 1 = -1
 0
 0
