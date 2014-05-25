@@ -235,8 +235,8 @@ Target "Docs" DoNothing
   ==> "All"
 
 "All" 
+  ==> "ReleaseDocs"
   =?> ("SourceLink", isLocalBuild && not isLinux)
-  ==> "ReleaseDocs" 
   ==> "NuGet"
   ==> "Release"
 
