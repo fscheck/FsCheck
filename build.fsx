@@ -219,6 +219,8 @@ Target "Release" DoNothing
 
 Target "All" DoNothing
 
+Target "Docs" DoNothing
+
 "Clean"
   ==> "RestorePackages"
   ==> "AssemblyInfo"
@@ -226,11 +228,15 @@ Target "All" DoNothing
   ==> "RunTests"
   ==> "All"
 
+"Build"
+  ==> "CleanDocs"
+  ==> "GenerateDocs"
+  ==> "Docs"
+  ==> "All"
+
 "All" 
   =?> ("SourceLink", isLocalBuild && not isLinux)
-  //==> "CleanDocs"
-  //==> "GenerateDocs"
-  //==> "ReleaseDocs"
+  ==> "ReleaseDocs" 
   ==> "NuGet"
   ==> "Release"
 

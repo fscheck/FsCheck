@@ -1,5 +1,5 @@
 ﻿(*** hide ***)
-#I "../FsCheck/bin/Debug"
+#I "../../src/FsCheck/bin/Release"
 #r "FsCheck"
 
 open FsCheck
