@@ -33,7 +33,7 @@
           @RenderBody()
         </div>
         <div class="span3">
-          <img src="/@Properties["project-name"]/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <img src="@Root/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
             <li class="nav-header">@Properties["project-name"]</li>
             <li><a href="@Root/index.html">Home page</a></li>
@@ -47,6 +47,18 @@
             <li><a href="@Root/QuickStart.html">Quick Start</a></li>
 
             <li class="nav-header">Documentation</li>
+            <li>
+              <a href="@Root/Properties.html">Properties</a>
+            </li>
+            <li>
+              <a href="@Root/TestData.html">Generating test data</a>
+            </li>
+            <li>
+              <a href="@Root/StatefulTesting.html">Model-based testing</a>
+            </li>
+            <li>
+              <a href="@Root/TipsAndTricks.html">Tips and Tricks</a>
+            </li>
             <li><a href="@Root/reference/index.html">API Reference</a></li>
           </ul>
         </div>

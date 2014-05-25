@@ -19,12 +19,28 @@ PM> Install-Package FsCheck.Xunit</pre>
   <div class="span1"></div>
 </div>
 
-Samples & documentation
+Documentation
 -----------------------
 
-FsCheck comes with comprehensive documentation. 
+The documentation is also available in [Japanse](https://github.com/fsharp/FsCheck/blob/master/docs/Documentation_ja.md)
 
- * [QuickStart](QuickStart.html) to get started. 
+ * [QuickStart](QuickStart.html) to get started.
+
+ * [Properties](Properties.html) descibes FsCheck's language to express tests - 
+   in other frameworks these are often called parametrized tests or
+   generative tests. FsCheck calls them properties.
+
+ * [Generating test data](TestData.html) describes how to guide FsCheck to
+   generate better data or to stop it from generating data that doesn't make
+   sense for what you're trying to test. FsCheck has a flexible language to describe test 
+   value generators and shrinkers, and apply them to your properties.
+
+ * [Model based testing](StatefulTesting.html) is a particular testing approach
+   where FsCheck generates a large number of random operations on an object or data
+   structure, and the results of each operation are compared with a (much simpler)
+   model.
+
+ * [Tips and tricks](TipsAndTricks.html) 
 
  * [API Reference](reference/index.html) contains automatically generated documentation for all types, modules
    and functions.
