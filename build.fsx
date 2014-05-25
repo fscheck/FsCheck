@@ -50,7 +50,7 @@ let testAssemblies = "tests/**/bin/Release/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted 
-let gitHome = "https://github.com/fsharp"
+let gitHome = "git@github.com:fsharp"
 // gitraw location - used for source linking
 let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/fsharp"
 // The name of the project on GitHub
