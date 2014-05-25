@@ -36,7 +36,7 @@ type ProjectInfo =
     Tags : string
     ///The projectfile (csproj or fsproj)
     ProjectFile : string
-    Dependencies : list<string * string>
+    Dependencies : list<string * Lazy<string>>
   }
 
 //File that contains the release notes.
@@ -92,8 +92,8 @@ All the options normally available in vanilla FsCheck via configuration can be c
       Authors = [ "Kurt Schelfthout and contributors" ]
       Tags = "test testing random fscheck quickcheck xunit xunit.net"
       ProjectFile = "src/FsCheck.Xunit/FsCheck.Xunit.fsproj"
-      Dependencies = [ "xunit",    GetPackageVersion "./packages/" "xunit"
-                       "FsCheck",  release.AssemblyVersion
+      Dependencies = [ "xunit",    lazy GetPackageVersion "./packages/" "xunit"  //delayed so only runs after package restore step
+                       "FsCheck",  lazy release.AssemblyVersion
                      ]
    }
   ]
@@ -182,7 +182,7 @@ Target "NuGet" (fun _ ->
             AccessKey = getBuildParamOrDefault "nugetkey" ""
             Publish = hasBuildParam "nugetkey"
             //ProjectFile = package.ProjectFile //if we add this, it produces a symbols package
-            Dependencies = package.Dependencies 
+            Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
             Files = [ "dll";"pdb";"XML"]
                     |> List.map (fun ext -> (sprintf @"..\src\%s\bin\Release\%s.%s" package.Name package.Name ext, Some @"lib\net40-Client", None))
         })
