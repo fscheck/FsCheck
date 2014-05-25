@@ -116,9 +116,7 @@ Combinators for defining generators are described later.
     
 ## Expecting exceptions
 
-You may want to test that a function or method throws an exception under certain circumstances. Use `throws<'e :> exn,'a> Lazy<'a>` to achieve this.
-
-An example:*)
+You may want to test that a function or method throws an exception under certain circumstances. Use `throws<'e :> exn,'a> Lazy<'a>` to achieve this. For example:*)
 
 (***define-output: expectDivideByZero***)
 let expectDivideByZero() = Prop.throws<DivideByZeroException,_> (lazy (raise <| DivideByZeroException()))
@@ -133,18 +131,26 @@ Properties may take the form `within <timeout in ms> <Lazy<property>>`
 
 For example,*)
 
-(***define-output:timesOut***)
+(***hide***)
+//TODO: figure out why this does not exit cleanly. If I eval, 
+//FSharp.Formatting formats this file nicely, but hangs on any
+//subsequent file. I suspect this has to do with some thread
+//not closing cleanly...
+//(***define-output:timesOut***)
+
+(***do-not-eval***)
 let timesOut (a:int) = 
     lazy
         if a>10 then
-            while true do System.Threading.Thread.Sleep(1000)
+            do System.Threading.Thread.Sleep(3000)
             true
         else 
             true
-    |> Prop.within 2000
+    |> Prop.within 1000
 Check.Quick timesOut
 
-(***include-output:timesOut***)
+(***hide***)
+//(***include-output:timesOut***)
 
 (**
 The first argument is the maximal time the lazy property given may run. If it runs longer, 

@@ -26,9 +26,9 @@ module Commands =
         ///Precondition for execution of the command.
         abstract Pre : 'Model -> bool
         ///Postcondition that must hold after execution of the command.
-        abstract Post : 'Actual * 'Model ->  Property    //bool //(*Testable 'a*)
+        abstract Post : 'Actual * 'Model -> Property
         default x.Pre _ = true
-        default x.Post (_,_) = (true = true).&.(true=true) //true
+        default x.Post (_,_) = Prop.ofTestable true
 
     ///A specification for an object under test, based on an abstract model of the
     ///object's behavior.

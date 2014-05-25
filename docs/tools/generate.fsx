@@ -4,7 +4,7 @@
 // --------------------------------------------------------------------------------------
 
 // Binaries that have XML documentation (in a corresponding generated XML file)
-let referenceBinaries = [ "FsCheck.dll"; "FsCheck.Xunit.dll" ]
+let referenceBinaries = [ "FsCheck.dll" ]
 // Web site location for the generated documentation
 let website = "/FsCheck"
 
@@ -47,7 +47,7 @@ let root = "file://" + (__SOURCE_DIRECTORY__ @@ "../output")
 #endif
 
 // Paths with template/source/output locations
-let bin        = __SOURCE_DIRECTORY__ @@ "../../FsCheck.Xunit/bin/Release" //might not work in the future
+let bin        = __SOURCE_DIRECTORY__ @@ "../../src/FsCheck.Xunit/bin/Release" //might not work in the future
 let content    = __SOURCE_DIRECTORY__ @@ "../content"
 let output     = __SOURCE_DIRECTORY__ @@ "../output"
 let files      = __SOURCE_DIRECTORY__ @@ "../files"
@@ -83,13 +83,6 @@ let buildDocumentation () =
   let subdirs = Directory.EnumerateDirectories(content, "*", SearchOption.AllDirectories)
   for dir in Seq.append [content] subdirs do
     let sub = if dir.Length > content.Length then dir.Substring(content.Length + 1) else "."
-//    Directory.EnumerateFiles(content, "*.fsx", SearchOption.TopDirectoryOnly)
-//    |> Seq.iter (fun file ->
-//      let input = file
-//      let output = sprintf "%s/%s.html" (output @@ sub) (Path.GetFileNameWithoutExtension file)
-//      printfn "Generating %s to %s" input output
-//      Literate.ProcessScriptFile(input, docTemplate, output, replacements = ("root", root)::info,
-//                                 fsiEvaluator=FsiEvaluator(), lineNumbers=false, layoutRoots = layoutRoots))
     Literate.ProcessDirectory
       ( dir, docTemplate, output @@ sub, replacements = ("root", root)::info,
         layoutRoots = layoutRoots, fsiEvaluator = new FsiEvaluator(), lineNumbers=false )
@@ -97,4 +90,4 @@ let buildDocumentation () =
 // Generate
 copyFiles()
 buildDocumentation()
-//buildReference()
+buildReference()
