@@ -6,19 +6,20 @@
 </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="FsCheck is a tool for testing .NET programs automatically using randomly generated test cases.">
-    <meta name="author" content="Kurt Schelfthout and contributors">
+      <meta name="author" content="Kurt Schelfthout and contributors">
 
-    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
-    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+        <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
 
-    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
-    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
+        <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
+        <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+      </meta>
   </head>
   <body>
     <div class="container">
@@ -59,9 +60,9 @@ If you use that, FsCheck can even shrink your function. For example:</p>
 <span onmouseout="hideTip(event, 'fs9', 46)" onmouseover="showTip(event, 'fs9', 46)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 47)" onmouseover="showTip(event, 'fs10', 47)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 48)" onmouseover="showTip(event, 'fs11', 48)" class="i">mapRec</span></pre>
 
 
-<pre><code>Falsifiable, after 1 test (10 shrinks) (StdGen (1154680972,295865551)):
-{ -2-&gt;0; 0-&gt;1; 2-&gt;0 }
-[0]
+<pre><code>Falsifiable, after 2 tests (14 shrinks) (StdGen (1975765004,295865555)):
+{ -4-&gt;0; -3-&gt;0; 0-&gt;0; 1-&gt;-2; 2-&gt;-2; 3-&gt;0 }
+[1]
 </code></pre>
 
 <p>The type <code>Function&lt;'a,'b&gt;</code> records a map of all the arguments it was called with, and the result it produced. 
@@ -200,9 +201,9 @@ define your own labelling equality combinator:</p>
 <span onmouseout="hideTip(event, 'fs9', 220)" onmouseover="showTip(event, 'fs9', 220)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 221)" onmouseover="showTip(event, 'fs10', 221)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs85', 222)" onmouseover="showTip(event, 'fs85', 222)" class="i">testCompare</span></pre>
 
 
-<pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1159421243,295865551)):
-Label of failing property: 1 = -1
-0
+<pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1985535563,295865555)):
+Label of failing property: 3 = -1
+1
 0
 </code></pre>
 

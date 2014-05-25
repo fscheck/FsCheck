@@ -6,19 +6,20 @@
 </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="FsCheck is a tool for testing .NET programs automatically using randomly generated test cases.">
-    <meta name="author" content="Kurt Schelfthout and contributors">
+      <meta name="author" content="Kurt Schelfthout and contributors">
 
-    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
-    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+        <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
 
-    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
-    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
+        <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
+        <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+      </meta>
   </head>
   <body>
     <div class="container">
@@ -64,7 +65,7 @@ To check the property, we load this definition in F# interactive and then invoke
 <span onmouseout="hideTip(event, 'fs7', 22)" onmouseover="showTip(event, 'fs7', 22)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 23)" onmouseover="showTip(event, 'fs8', 23)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 24)" onmouseover="showTip(event, 'fs9', 24)" class="i">revIsOrig</span></pre>
 
 
-<pre><code>Falsifiable, after 4 tests (5 shrinks) (StdGen (1022243397,295865551)):
+<pre><code>Falsifiable, after 2 tests (4 shrinks) (StdGen (1717840251,295865555)):
 [1; 0]
 </code></pre>
 
@@ -102,7 +103,7 @@ with unit test runners such as xUnit and NUnit is possible as well - see Usage T
 
 <pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 1 test (0 shrinks) (StdGen (1023933494,295865551)):
+ListProperties.reverse is original-Falsifiable, after 2 tests (4 shrinks) (StdGen (1719370339,295865555)):
 [1; 0]
 </code></pre>
 
@@ -144,7 +145,7 @@ FsCheck to generate lists of floats:</p>
 <span onmouseout="hideTip(event, 'fs7', 51)" onmouseover="showTip(event, 'fs7', 51)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 52)" onmouseover="showTip(event, 'fs8', 52)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs15', 53)" onmouseover="showTip(event, 'fs15', 53)" class="i">revRevIsOrigFloat</span></pre>
 
 
-<pre><code>Falsifiable, after 7 tests (1 shrink) (StdGen (1024893549,295865551)):
+<pre><code>Falsifiable, after 6 tests (3 shrinks) (StdGen (1720240389,295865555)):
 [nan]
 </code></pre>
 

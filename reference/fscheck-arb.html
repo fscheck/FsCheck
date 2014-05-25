@@ -5,19 +5,20 @@
     <title>Arb - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="Kurt Schelfthout and contributors">
+      <meta name="author" content="Kurt Schelfthout and contributors">
 
-    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
-    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+        <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+        <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
 
-    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
-    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
+        <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
+        <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+      </meta>
   </head>
   <body>
     <div class="container">
@@ -67,10 +68,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
+          <code onmouseout="hideTip(event, '74', 74)" onmouseover="showTip(event, '74', 74)">
             convert convertTo convertFrom a
           </code>
-          <div class="tip" id="75">
+          <div class="tip" id="74">
             <strong>Signature:</strong> convertTo:(&#39;a -&gt; &#39;b) -&gt; convertFrom:(&#39;b -&gt; &#39;a) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -87,10 +88,10 @@ based on a Arbitrary instance for the source type and two mapping functions.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
+          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
             filter pred a
           </code>
-          <div class="tip" id="76">
+          <div class="tip" id="75">
             <strong>Signature:</strong> pred:(&#39;a -&gt; bool) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -107,10 +108,10 @@ The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter w
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
+          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
             from 
           </code>
-          <div class="tip" id="77">
+          <div class="tip" id="76">
             <strong>Signature:</strong> Arbitrary&lt;&#39;Value&gt;<br />
                           <strong>Type parameters:</strong> 'Value          </div>
         </td>
@@ -126,10 +127,10 @@ The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter w
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '78', 78)" onmouseover="showTip(event, '78', 78)">
+          <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
             fromGen gen
           </code>
-          <div class="tip" id="78">
+          <div class="tip" id="77">
             <strong>Signature:</strong> gen:Gen&lt;&#39;Value&gt; -&gt; Arbitrary&lt;&#39;Value&gt;<br />
                           <strong>Type parameters:</strong> 'Value          </div>
         </td>
@@ -146,10 +147,10 @@ Shrink is not supported for this type.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '79', 79)" onmouseover="showTip(event, '79', 79)">
+          <code onmouseout="hideTip(event, '78', 78)" onmouseover="showTip(event, '78', 78)">
             fromGenShrink (gen, shrinker)
           </code>
-          <div class="tip" id="79">
+          <div class="tip" id="78">
             <strong>Signature:</strong> (gen:Gen&lt;&#39;Value&gt; * shrinker:(&#39;Value -&gt; seq&lt;&#39;Value&gt;)) -&gt; Arbitrary&lt;&#39;Value&gt;<br />
                           <strong>Type parameters:</strong> 'Value          </div>
         </td>
@@ -165,10 +166,10 @@ Shrink is not supported for this type.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '80', 80)" onmouseover="showTip(event, '80', 80)">
+          <code onmouseout="hideTip(event, '79', 79)" onmouseover="showTip(event, '79', 79)">
             generate 
           </code>
-          <div class="tip" id="80">
+          <div class="tip" id="79">
             <strong>Signature:</strong> Gen&lt;&#39;Value&gt;<br />
                           <strong>Type parameters:</strong> 'Value          </div>
         </td>
@@ -184,10 +185,10 @@ Shrink is not supported for this type.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '81', 81)" onmouseover="showTip(event, '81', 81)">
+          <code onmouseout="hideTip(event, '80', 80)" onmouseover="showTip(event, '80', 80)">
             mapFilter mapper pred a
           </code>
-          <div class="tip" id="81">
+          <div class="tip" id="80">
             <strong>Signature:</strong> mapper:(&#39;a -&gt; &#39;a) -&gt; pred:(&#39;a -&gt; bool) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -207,10 +208,10 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '82', 82)" onmouseover="showTip(event, '82', 82)">
+          <code onmouseout="hideTip(event, '81', 81)" onmouseover="showTip(event, '81', 81)">
             register ()
           </code>
-          <div class="tip" id="82">
+          <div class="tip" id="81">
             <strong>Signature:</strong> unit -&gt; TypeClassComparison<br />
                           <strong>Type parameters:</strong> 't          </div>
         </td>
@@ -226,10 +227,10 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '83', 83)" onmouseover="showTip(event, '83', 83)">
+          <code onmouseout="hideTip(event, '82', 82)" onmouseover="showTip(event, '82', 82)">
             registerByType t
           </code>
-          <div class="tip" id="83">
+          <div class="tip" id="82">
             <strong>Signature:</strong> t:Type -&gt; TypeClassComparison<br />
                       </div>
         </td>
@@ -245,10 +246,10 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '84', 84)" onmouseover="showTip(event, '84', 84)">
+          <code onmouseout="hideTip(event, '83', 83)" onmouseover="showTip(event, '83', 83)">
             shrink a
           </code>
-          <div class="tip" id="84">
+          <div class="tip" id="83">
             <strong>Signature:</strong> a:&#39;Value -&gt; seq&lt;&#39;Value&gt;<br />
                           <strong>Type parameters:</strong> 'Value          </div>
         </td>
@@ -264,10 +265,10 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '85', 85)" onmouseover="showTip(event, '85', 85)">
+          <code onmouseout="hideTip(event, '84', 84)" onmouseover="showTip(event, '84', 84)">
             shrinkNumber n
           </code>
-          <div class="tip" id="85">
+          <div class="tip" id="84">
             <strong>Signature:</strong> n:^?77039 -&gt; seq&lt;^?77039&gt;<br />
                           <strong>Type parameters:</strong> ^?77039, ^?77040, ^?77041, ^?77042          </div>
         </td>
