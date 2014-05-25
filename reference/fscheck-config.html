@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Config - FsCheck</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Kurt Schelfthout and contributors">
+
+    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
+    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+        </ul>
+        <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>Config</h1>
+<div class="xmldoc">
+<p>For configuring a run.</p>
+</div>
+  <h3>Record Fields</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Record Field</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '197', 197)" onmouseover="showTip(event, '197', 197)">
+            Arbitrary
+          </code>
+          <div class="tip" id="197">
+            <strong>Signature:</strong> Type list<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L66-66" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The Arbitrary instances on this class will be merged in back to front order, i.e. instances for the same generated type at the front
+of the list will override those at the back. The instances on Arb.Default are always known, and are at the back (so they can always be
+overridden)</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '198', 198)" onmouseover="showTip(event, '198', 198)">
+            EndSize
+          </code>
+          <div class="tip" id="198">
+            <strong>Signature:</strong> int<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L58-58" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '199', 199)" onmouseover="showTip(event, '199', 199)">
+            Every
+          </code>
+          <div class="tip" id="199">
+            <strong>Signature:</strong> int -&gt; obj list -&gt; string<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L60-60" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>What to print when new arguments args are generated in test n</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '200', 200)" onmouseover="showTip(event, '200', 200)">
+            EveryShrink
+          </code>
+          <div class="tip" id="200">
+            <strong>Signature:</strong> obj list -&gt; string<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L62-62" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>What to print every time a counter-example is succesfully shrunk</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '201', 201)" onmouseover="showTip(event, '201', 201)">
+            MaxFail
+          </code>
+          <div class="tip" id="201">
+            <strong>Signature:</strong> int<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L50-50" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The maximum number of tests where values are rejected, e.g. as the result of ==></p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '202', 202)" onmouseover="showTip(event, '202', 202)">
+            MaxTest
+          </code>
+          <div class="tip" id="202">
+            <strong>Signature:</strong> int<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L48-48" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The maximum number of tests that are run.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '203', 203)" onmouseover="showTip(event, '203', 203)">
+            Name
+          </code>
+          <div class="tip" id="203">
+            <strong>Signature:</strong> string<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L54-54" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Name of the test.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '204', 204)" onmouseover="showTip(event, '204', 204)">
+            Replay
+          </code>
+          <div class="tip" id="204">
+            <strong>Signature:</strong> StdGen option<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L52-52" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>If set, the seed to use to start testing. Allows reproduction of previous runs.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '205', 205)" onmouseover="showTip(event, '205', 205)">
+            Runner
+          </code>
+          <div class="tip" id="205">
+            <strong>Signature:</strong> IRunner<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L68-68" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '206', 206)" onmouseover="showTip(event, '206', 206)">
+            StartSize
+          </code>
+          <div class="tip" id="206">
+            <strong>Signature:</strong> int<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L56-56" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The size to use for the first test.</p>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Static members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Static member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '246', 246)" onmouseover="showTip(event, '246', 246)">
+            Default
+          </code>
+          <div class="tip" id="246">
+            <strong>Signature:</strong> Config<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L358-358" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The default configuration is the quick configuration.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '247', 247)" onmouseover="showTip(event, '247', 247)">
+            Quick
+          </code>
+          <div class="tip" id="247">
+            <strong>Signature:</strong> Config<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L313-313" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The quick configuration only prints a summary result at the end of the test.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '248', 248)" onmouseover="showTip(event, '248', 248)">
+            QuickThrowOnFailure
+          </code>
+          <div class="tip" id="248">
+            <strong>Signature:</strong> Config<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L349-349" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Like the Quick configuration, only throws an exception with the error message if the test fails or is exhausted.
+Useful for use within other unit testing frameworks that usually adopt this methodolgy to signal failure.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '249', 249)" onmouseover="showTip(event, '249', 249)">
+            Verbose
+          </code>
+          <div class="tip" id="249">
+            <strong>Signature:</strong> Config<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L326-326" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The verbose configuration prints each generated argument.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '250', 250)" onmouseover="showTip(event, '250', 250)">
+            VerboseThrowOnFailure
+          </code>
+          <div class="tip" id="250">
+            <strong>Signature:</strong> Config<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Runner.fs#L354-354" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Like the Verbose configuration, only throws an exception with the error message if the test fails or is exhausted.
+Useful for use within other unit testing frameworks that usually adopt this methodolgy to signal failure.</p>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/FsCheck/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">FsCheck</li>
+            <li><a href="/FsCheck/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.com/packages/FsCheck">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/fsharp/FsCheck">
+      <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
+    </a>
+  </body>
+  </html>

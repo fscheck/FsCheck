@@ -2,10 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>FsCheck
-</title>
+    <title>GenOperators - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="FsCheck is a tool for testing .NET programs automatically using randomly generated test cases.">
+    <meta name="description" content="">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
     <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
@@ -32,40 +31,61 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h1>FsCheck</h1>
 
-<div class="row">
-  <div class="span1"></div>
-  <div class="span6">
-    <div class="well well-small" id="nuget">
-      FsCheck and xUnit.NET plugin can be <a href="https://nuget.org/packages/FsCheck">installed from NuGet</a>:
-      <pre>PM> Install-Package FsCheck
-PM> Install-Package FsCheck.Xunit</pre>
-    </div>
-  </div> 
-  <div class="span1"></div>
+
+
+<h1>GenOperators</h1>
+<div class="xmldoc">
 </div>
 
-<h2>Samples &amp; documentation</h2>
+<!-- Render nested types and modules, if there are any -->
 
-<p>FsCheck comes with comprehensive documentation.</p>
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
 
-<ul>
-<li><p><a href="QuickStart.html">QuickStart</a> to get started.</p></li>
-<li><p><a href="reference/index.html">API Reference</a> contains automatically generated documentation for all types, modules
-and functions.</p></li>
-</ul>
+          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
+            ( &lt;!&gt; ) f a
+          </code>
+          <div class="tip" id="40">
+            <strong>Signature:</strong> f:(&#39;?76303 -&gt; &#39;?76304) -&gt; a:Gen&lt;&#39;?76303&gt; -&gt; Gen&lt;&#39;?76304&gt;<br />
+                          <strong>Type parameters:</strong> '?76303, '?76304          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L325-325" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Like <*>, but puts f in a Gen first.</p>
 
-<h2>Contributing and copyright</h2>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
 
-<p>The project is hosted on <a href="https://github.com/fsharp/FsCheck">GitHub</a> where you can <a href="https://github.com/fsharp/FsCheck/issues">report issues</a>, fork 
-the project and submit pull requests. If you're adding new public API, please also 
-consider adding <a href="https://github.com/fsharp/FsCheck/tree/master/docs/content">samples</a> that can be turned into documentation.</p>
+          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
+            ( &lt;*&gt; ) f a
+          </code>
+          <div class="tip" id="42">
+            <strong>Signature:</strong> f:Gen&lt;(&#39;?76300 -&gt; &#39;?76301)&gt; -&gt; a:Gen&lt;&#39;?76300&gt; -&gt; Gen&lt;&#39;?76301&gt;<br />
+                          <strong>Type parameters:</strong> '?76300, '?76301          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L322-322" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Lifted function application = apply f to a, all in the Gen applicative functor.</p>
 
-<p>The library is available under the BSD license, which allows modification and 
-redistribution for both commercial and non-commercial purposes. For more information see the 
-<a href="https://github.com/fsharp/FsCheck/blob/master/License.txt">License file</a> in the GitHub repository.</p>
-
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
         </div>
         <div class="span3">

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Arb - FsCheck</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Kurt Schelfthout and contributors">
+
+    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
+    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+        </ul>
+        <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>Arb</h1>
+<div class="xmldoc">
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+  <h2>Nested types and modules</h2>
+  <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="fscheck-arb-default.html">Default</a>
+          </td>
+          <td class="xmldoc"><p>A collection of default generators.</p>
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
+            convert convertTo convertFrom a
+          </code>
+          <div class="tip" id="75">
+            <strong>Signature:</strong> convertTo:(&#39;a -&gt; &#39;b) -&gt; convertFrom:(&#39;b -&gt; &#39;a) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L151-151" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
+based on a Arbitrary instance for the source type and two mapping functions.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
+            filter pred a
+          </code>
+          <div class="tip" id="76">
+            <strong>Signature:</strong> pred:(&#39;a -&gt; bool) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L159-159" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Return an Arbitrary instance that is a filtered version of an existing arbitrary instance.
+The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter with the given predicate.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
+            from 
+          </code>
+          <div class="tip" id="77">
+            <strong>Signature:</strong> Arbitrary&lt;&#39;Value&gt;<br />
+                          <strong>Type parameters:</strong> 'Value          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L103-103" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Get the Arbitrary instance for the given type.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '78', 78)" onmouseover="showTip(event, '78', 78)">
+            fromGen gen
+          </code>
+          <div class="tip" id="78">
+            <strong>Signature:</strong> gen:Gen&lt;&#39;Value&gt; -&gt; Arbitrary&lt;&#39;Value&gt;<br />
+                          <strong>Type parameters:</strong> 'Value          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L137-137" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Construct an Arbitrary instance from a generator.
+Shrink is not supported for this type.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '79', 79)" onmouseover="showTip(event, '79', 79)">
+            fromGenShrink (gen, shrinker)
+          </code>
+          <div class="tip" id="79">
+            <strong>Signature:</strong> (gen:Gen&lt;&#39;Value&gt; * shrinker:(&#39;Value -&gt; seq&lt;&#39;Value&gt;)) -&gt; Arbitrary&lt;&#39;Value&gt;<br />
+                          <strong>Type parameters:</strong> 'Value          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L143-143" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Construct an Arbitrary instance from a generator and shrinker.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '80', 80)" onmouseover="showTip(event, '80', 80)">
+            generate 
+          </code>
+          <div class="tip" id="80">
+            <strong>Signature:</strong> Gen&lt;&#39;Value&gt;<br />
+                          <strong>Type parameters:</strong> 'Value          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L106-106" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Returns a Gen<'Value></p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '81', 81)" onmouseover="showTip(event, '81', 81)">
+            mapFilter mapper pred a
+          </code>
+          <div class="tip" id="81">
+            <strong>Signature:</strong> mapper:(&#39;a -&gt; &#39;a) -&gt; pred:(&#39;a -&gt; bool) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L170-170" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Return an Arbitrary instance that is a mapped and filtered version of an existing arbitrary instance.
+ The generator uses Gen.map with the given mapper and then Gen.suchThat with the given predicate, 
+ and the shrinks are filtered using Seq.filter with the given predicate.
+This is sometimes useful if using just a filter would reduce the chance of getting a good value
+from the generator - and you can map the value instead. E.g. PositiveInt.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '82', 82)" onmouseover="showTip(event, '82', 82)">
+            register ()
+          </code>
+          <div class="tip" id="82">
+            <strong>Signature:</strong> unit -&gt; TypeClassComparison<br />
+                          <strong>Type parameters:</strong> 't          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L133-133" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Register the generators that are static members of the type argument.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '83', 83)" onmouseover="showTip(event, '83', 83)">
+            registerByType t
+          </code>
+          <div class="tip" id="83">
+            <strong>Signature:</strong> t:Type -&gt; TypeClassComparison<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L126-126" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Register the generators that are static members of the given type.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '84', 84)" onmouseover="showTip(event, '84', 84)">
+            shrink a
+          </code>
+          <div class="tip" id="84">
+            <strong>Signature:</strong> a:&#39;Value -&gt; seq&lt;&#39;Value&gt;<br />
+                          <strong>Type parameters:</strong> 'Value          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L109-109" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Returns the immediate shrinks for the given value based on its type.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '85', 85)" onmouseover="showTip(event, '85', 85)">
+            shrinkNumber n
+          </code>
+          <div class="tip" id="85">
+            <strong>Signature:</strong> n:^?77039 -&gt; seq&lt;^?77039&gt;<br />
+                          <strong>Type parameters:</strong> ^?77039, ^?77040, ^?77041, ^?77042          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L112-112" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The generic shrinker should work for most number-like types.</p>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/FsCheck/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">FsCheck</li>
+            <li><a href="/FsCheck/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.com/packages/FsCheck">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/fsharp/FsCheck">
+      <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
+    </a>
+  </body>
+  </html>

@@ -2,10 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>FsCheck
-</title>
+    <title>DontSize<'a> - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="FsCheck is a tool for testing .NET programs automatically using randomly generated test cases.">
+    <meta name="description" content="">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
     <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
@@ -32,40 +31,71 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h1>FsCheck</h1>
 
-<div class="row">
-  <div class="span1"></div>
-  <div class="span6">
-    <div class="well well-small" id="nuget">
-      FsCheck and xUnit.NET plugin can be <a href="https://nuget.org/packages/FsCheck">installed from NuGet</a>:
-      <pre>PM> Install-Package FsCheck
-PM> Install-Package FsCheck.Xunit</pre>
-    </div>
-  </div> 
-  <div class="span1"></div>
+
+
+<h1>DontSize<'a></h1>
+<div class="xmldoc">
+<p>Whereas most types are restricted by a size that grows
+as the test gets further, by applying this type the underlying
+type will ignore this size and always generate from the full range.
+Note that this only makes a difference for types that have a range -
+currently Int16, Int32, Int64 have DontSize Arbitrary instances.
+This is typically (and at least currently) only applicable for value types
+that are comparable, hence the type constraints.</p>
 </div>
+  <h3>Union Cases</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Union Case</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
 
-<h2>Samples &amp; documentation</h2>
+          <code onmouseout="hideTip(event, '196', 196)" onmouseover="showTip(event, '196', 196)">
+            DontSize(&#39;a)
+          </code>
+          <div class="tip" id="196">
+            <strong>Signature:</strong> &#39;a<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L90-90" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Static members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Static member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
 
-<p>FsCheck comes with comprehensive documentation.</p>
-
-<ul>
-<li><p><a href="QuickStart.html">QuickStart</a> to get started.</p></li>
-<li><p><a href="reference/index.html">API Reference</a> contains automatically generated documentation for all types, modules
-and functions.</p></li>
-</ul>
-
-<h2>Contributing and copyright</h2>
-
-<p>The project is hosted on <a href="https://github.com/fsharp/FsCheck">GitHub</a> where you can <a href="https://github.com/fsharp/FsCheck/issues">report issues</a>, fork 
-the project and submit pull requests. If you're adding new public API, please also 
-consider adding <a href="https://github.com/fsharp/FsCheck/tree/master/docs/content">samples</a> that can be turned into documentation.</p>
-
-<p>The library is available under the BSD license, which allows modification and 
-redistribution for both commercial and non-commercial purposes. For more information see the 
-<a href="https://github.com/fsharp/FsCheck/blob/master/License.txt">License file</a> in the GitHub repository.</p>
-
+          <code onmouseout="hideTip(event, '252', 252)" onmouseover="showTip(event, '252', 252)">
+            Unwrap(arg1)
+          </code>
+          <div class="tip" id="252">
+            <strong>Signature:</strong> DontSize&lt;&#39;a&gt; -&gt; &#39;a<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L91-91" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
         </div>
         <div class="span3">

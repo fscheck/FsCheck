@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GeneratorExtensions - FsCheck</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Kurt Schelfthout and contributors">
+
+    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
+    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+        </ul>
+        <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>GeneratorExtensions</h1>
+<div class="xmldoc">
+</div>
+  <h3>Static members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Static member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '369', 369)" onmouseover="showTip(event, '369', 369)">
+            MakeList(generator)
+          </code>
+          <div class="tip" id="369">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;a&gt; -&gt; Gen&lt;List&lt;&#39;a&gt;&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L315-315" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '370', 370)" onmouseover="showTip(event, '370', 370)">
+            MakeListOfLength(generator, count)
+          </code>
+          <div class="tip" id="370">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;a&gt; * count:int) -&gt; Gen&lt;List&lt;&#39;a&gt;&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L321-321" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '371', 371)" onmouseover="showTip(event, '371', 371)">
+            MakeNonEmptyList(generator)
+          </code>
+          <div class="tip" id="371">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;a&gt; -&gt; Gen&lt;List&lt;&#39;a&gt;&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L318-318" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '372', 372)" onmouseover="showTip(event, '372', 372)">
+            Resize(generator, sizeTransform)
+          </code>
+          <div class="tip" id="372">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?76701&gt; * sizeTransform:Func&lt;int,int&gt;) -&gt; Gen&lt;&#39;?76701&gt;<br />
+                          <strong>Type parameters:</strong> '?76701          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L324-324" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '373', 373)" onmouseover="showTip(event, '373', 373)">
+            Select(g, selector)
+          </code>
+          <div class="tip" id="373">
+            <strong>Signature:</strong> (g:Gen&lt;&#39;?76683&gt; * selector:Func&lt;&#39;?76683,&#39;?76684&gt;) -&gt; Gen&lt;&#39;?76684&gt;<br />
+                          <strong>Type parameters:</strong> '?76683, '?76684          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L298-298" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '374', 374)" onmouseover="showTip(event, '374', 374)">
+            SelectMany(source, f, select)
+          </code>
+          <div class="tip" id="374">
+            <strong>Signature:</strong> (source:Gen&lt;&#39;?76691&gt; * f:Func&lt;&#39;?76691,Gen&lt;&#39;?76692&gt;&gt; * select:Func&lt;&#39;?76691,&#39;?76692,&#39;?76693&gt;) -&gt; Gen&lt;&#39;?76693&gt;<br />
+                          <strong>Type parameters:</strong> '?76691, '?76692, '?76693          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L309-309" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '375', 375)" onmouseover="showTip(event, '375', 375)">
+            SelectMany(source, f)
+          </code>
+          <div class="tip" id="375">
+            <strong>Signature:</strong> (source:Gen&lt;&#39;?76688&gt; * f:Func&lt;&#39;?76688,Gen&lt;&#39;?76689&gt;&gt;) -&gt; Gen&lt;&#39;?76689&gt;<br />
+                          <strong>Type parameters:</strong> '?76688, '?76689          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L304-304" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '376', 376)" onmouseover="showTip(event, '376', 376)">
+            ToArbitrary(generator)
+          </code>
+          <div class="tip" id="376">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?76703&gt; -&gt; Arbitrary&lt;&#39;?76703&gt;<br />
+                          <strong>Type parameters:</strong> '?76703          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L330-330" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Construct an Arbitrary instance from a generator.
+Shrink is not supported for this type.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '377', 377)" onmouseover="showTip(event, '377', 377)">
+            Where(g, predicate)
+          </code>
+          <div class="tip" id="377">
+            <strong>Signature:</strong> (g:Gen&lt;&#39;?76686&gt; * predicate:Func&lt;&#39;?76686,bool&gt;) -&gt; Gen&lt;&#39;?76686&gt;<br />
+                          <strong>Type parameters:</strong> '?76686          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L301-301" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/FsCheck/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">FsCheck</li>
+            <li><a href="/FsCheck/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.com/packages/FsCheck">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/fsharp/FsCheck">
+      <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
+    </a>
+  </body>
+  </html>

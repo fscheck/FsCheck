@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Gen - FsCheck</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Kurt Schelfthout and contributors">
+
+    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
+    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+        </ul>
+        <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>Gen</h1>
+<div class="xmldoc">
+</div>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Function or value</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
+            apply f gn
+          </code>
+          <div class="tip" id="10">
+            <strong>Signature:</strong> f:Gen&lt;(&#39;a -&gt; &#39;b)&gt; -&gt; gn:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L292-292" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Apply the given Gen function to the given generator, aka the applicative <*> operator.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
+            array2DOf g
+          </code>
+          <div class="tip" id="11">
+            <strong>Signature:</strong> g:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a [,]&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L281-281" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a 2D array. The square root of the size is the maximum number of rows and columns.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
+            array2DOfDim (rows, cols) g
+          </code>
+          <div class="tip" id="12">
+            <strong>Signature:</strong> (rows:int * cols:int) -&gt; g:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a [,]&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L276-276" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a 2D array of the given dimensions.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
+            arrayOf g
+          </code>
+          <div class="tip" id="13">
+            <strong>Signature:</strong> g:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a []&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L270-270" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates an array using the specified generator. The maximum length is the size+1.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+            arrayOfLength n g
+          </code>
+          <div class="tip" id="14">
+            <strong>Signature:</strong> n:int -&gt; g:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a []&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L267-267" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates an array of a specified length.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
+            choose (l, h)
+          </code>
+          <div class="tip" id="15">
+            <strong>Signature:</strong> (l:int * h:int) -&gt; Gen&lt;int&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L128-128" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates an integer between l and h, inclusive.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
+            constant v
+          </code>
+          <div class="tip" id="16">
+            <strong>Signature:</strong> v:&#39;?76443 -&gt; Gen&lt;&#39;?76443&gt;<br />
+                          <strong>Type parameters:</strong> '?76443          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L289-289" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Always generate v.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
+            elements xs
+          </code>
+          <div class="tip" id="17">
+            <strong>Signature:</strong> xs:seq&lt;&#39;?76379&gt; -&gt; Gen&lt;&#39;?76379&gt;<br />
+                          <strong>Type parameters:</strong> '?76379          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L131-131" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that randomly generates one of the values in the given non-empty seq.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
+            eval n rnd arg3
+          </code>
+          <div class="tip" id="18">
+            <strong>Signature:</strong> n:int -&gt; rnd:StdGen -&gt; Gen&lt;&#39;?76374&gt; -&gt; &#39;?76374<br />
+                          <strong>Type parameters:</strong> '?76374          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L116-116" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a value with maximum size n.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+            four g
+          </code>
+          <div class="tip" id="19">
+            <strong>Signature:</strong> g:Gen&lt;&#39;?76404&gt; -&gt; Gen&lt;&#39;?76404 * &#39;?76404 * &#39;?76404 * &#39;?76404&gt;<br />
+                          <strong>Type parameters:</strong> '?76404          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L172-172" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that generates a 4-tuple of the values generated by the given generator.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+            frequency xs
+          </code>
+          <div class="tip" id="20">
+            <strong>Signature:</strong> xs:seq&lt;int * Gen&lt;&#39;?76383&gt;&gt; -&gt; Gen&lt;&#39;?76383&gt;<br />
+                          <strong>Type parameters:</strong> '?76383          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L140-140" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that generates a value from one of the generators in the given non-empty seq, with
+given probabilities. The sum of the probabilities must be larger than zero.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
+            listOf gn
+          </code>
+          <div class="tip" id="21">
+            <strong>Signature:</strong> gn:Gen&lt;&#39;?76429&gt; -&gt; Gen&lt;&#39;?76429 list&gt;<br />
+                          <strong>Type parameters:</strong> '?76429          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L245-245" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a list of random length. The maximum length depends on the
+size parameter.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+            listOfLength n arb
+          </code>
+          <div class="tip" id="22">
+            <strong>Signature:</strong> n:int -&gt; arb:Gen&lt;&#39;?76423&gt; -&gt; Gen&lt;&#39;?76423 list&gt;<br />
+                          <strong>Type parameters:</strong> '?76423          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L203-203" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a list of given length, containing values generated by the given generator.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
+            map f gen
+          </code>
+          <div class="tip" id="23">
+            <strong>Signature:</strong> f:(&#39;?76366 -&gt; &#39;?76367) -&gt; gen:Gen&lt;&#39;?76366&gt; -&gt; Gen&lt;&#39;?76367&gt;<br />
+                          <strong>Type parameters:</strong> '?76366, '?76367          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L103-103" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Apply ('map') the function f on the value in the generator, yielding a new generator.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
+            map2 f a b
+          </code>
+          <div class="tip" id="24">
+            <strong>Signature:</strong> f:(&#39;?76385 -&gt; &#39;?76386 -&gt; &#39;?76387) -&gt; a:Gen&lt;&#39;?76385&gt; -&gt; b:Gen&lt;&#39;?76386&gt; -&gt; Gen&lt;&#39;?76387&gt;<br />
+                          <strong>Type parameters:</strong> '?76385, '?76386, '?76387          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L148-148" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Map the given function over values to a function over generators of those values.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
+            map3 f a b c
+          </code>
+          <div class="tip" id="25">
+            <strong>Signature:</strong> f:(&#39;?76391 -&gt; &#39;?76392 -&gt; &#39;?76393 -&gt; &#39;?76394) -&gt; a:Gen&lt;&#39;?76391&gt; -&gt; b:Gen&lt;&#39;?76392&gt; -&gt; c:Gen&lt;&#39;?76393&gt; -&gt; Gen&lt;&#39;?76394&gt;<br />
+                          <strong>Type parameters:</strong> '?76391, '?76392, '?76393, '?76394          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L156-156" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Map the given function over values to a function over generators of those values.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
+            map4 f a b c d
+          </code>
+          <div class="tip" id="26">
+            <strong>Signature:</strong> f:(&#39;?76398 -&gt; &#39;?76399 -&gt; &#39;?76400 -&gt; &#39;?76401 -&gt; &#39;?76402) -&gt; a:Gen&lt;&#39;?76398&gt; -&gt; b:Gen&lt;&#39;?76399&gt; -&gt; c:Gen&lt;&#39;?76400&gt; -&gt; d:Gen&lt;&#39;?76401&gt; -&gt; Gen&lt;&#39;?76402&gt;<br />
+                          <strong>Type parameters:</strong> '?76398, '?76399, '?76400, '?76401, '?76402          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L165-165" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Map the given function over values to a function over generators of those values.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
+            map5 f a b c d e
+          </code>
+          <div class="tip" id="27">
+            <strong>Signature:</strong> f:(&#39;?76406 -&gt; &#39;?76407 -&gt; &#39;?76408 -&gt; &#39;?76409 -&gt; &#39;?76410 -&gt; &#39;?76411) -&gt; a:Gen&lt;&#39;?76406&gt; -&gt; b:Gen&lt;&#39;?76407&gt; -&gt; c:Gen&lt;&#39;?76408&gt; -&gt; d:Gen&lt;&#39;?76409&gt; -&gt; e:Gen&lt;&#39;?76410&gt; -&gt; Gen&lt;&#39;?76411&gt;<br />
+                          <strong>Type parameters:</strong> '?76406, '?76407, '?76408, '?76409, '?76410, '?76411          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L175-175" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Map the given function over values to a function over generators of those values.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
+            map6 f a b c d e g
+          </code>
+          <div class="tip" id="28">
+            <strong>Signature:</strong> f:(&#39;?76413 -&gt; &#39;?76414 -&gt; &#39;?76415 -&gt; &#39;?76416 -&gt; &#39;?76417 -&gt; &#39;?76418 -&gt; &#39;?76419) -&gt; a:Gen&lt;&#39;?76413&gt; -&gt; b:Gen&lt;&#39;?76414&gt; -&gt; c:Gen&lt;&#39;?76415&gt; -&gt; d:Gen&lt;&#39;?76416&gt; -&gt; e:Gen&lt;&#39;?76417&gt; -&gt; g:Gen&lt;&#39;?76418&gt; -&gt; Gen&lt;&#39;?76419&gt;<br />
+                          <strong>Type parameters:</strong> '?76413, '?76414, '?76415, '?76416, '?76417, '?76418, '?76419          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L183-183" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Map the given function over values to a function over generators of those values.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '29', 29)" onmouseover="showTip(event, '29', 29)">
+            nonEmptyListOf gn
+          </code>
+          <div class="tip" id="29">
+            <strong>Signature:</strong> gn:Gen&lt;&#39;?76431&gt; -&gt; Gen&lt;&#39;?76431 list&gt;<br />
+                          <strong>Type parameters:</strong> '?76431          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L252-252" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a non-empty list of random length. The maximum length 
+depends on the size parameter.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
+            oneof gens
+          </code>
+          <div class="tip" id="30">
+            <strong>Signature:</strong> gens:seq&lt;Gen&lt;&#39;?76381&gt;&gt; -&gt; Gen&lt;&#39;?76381&gt;<br />
+                          <strong>Type parameters:</strong> '?76381          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L136-136" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that generates a value from one of the generators in the given non-empty seq, with
+equal probability.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '31', 31)" onmouseover="showTip(event, '31', 31)">
+            resize n arg2
+          </code>
+          <div class="tip" id="31">
+            <strong>Signature:</strong> n:int -&gt; Gen&lt;&#39;?76371&gt; -&gt; Gen&lt;&#39;?76371&gt;<br />
+                          <strong>Type parameters:</strong> '?76371          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L109-109" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Override the current size of the test. resize n g invokes generator g with size parameter n.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
+            sample size n gn
+          </code>
+          <div class="tip" id="32">
+            <strong>Signature:</strong> size:int -&gt; n:int -&gt; gn:Gen&lt;&#39;?76376&gt; -&gt; &#39;?76376 list<br />
+                          <strong>Type parameters:</strong> '?76376          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L121-121" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates n values of the given size.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
+            sequence l
+          </code>
+          <div class="tip" id="33">
+            <strong>Signature:</strong> l:Gen&lt;&#39;?76421&gt; list -&gt; Gen&lt;&#39;?76421 list&gt;<br />
+                          <strong>Type parameters:</strong> '?76421          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L192-192" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Sequence the given list of generators into a generator of a list.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
+            sized fgen
+          </code>
+          <div class="tip" id="34">
+            <strong>Signature:</strong> fgen:(int -&gt; Gen&lt;&#39;?76369&gt;) -&gt; Gen&lt;&#39;?76369&gt;<br />
+                          <strong>Type parameters:</strong> '?76369          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L106-106" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Obtain the current size. sized g calls g, passing it the current size as a parameter.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
+            subListOf l
+          </code>
+          <div class="tip" id="35">
+            <strong>Signature:</strong> l:seq&lt;&#39;?76433&gt; -&gt; Gen&lt;&#39;?76433 list&gt;<br />
+                          <strong>Type parameters:</strong> '?76433          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L258-258" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates sublists of the given sequence.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
+            suchThat p gn
+          </code>
+          <div class="tip" id="36">
+            <strong>Signature:</strong> p:(&#39;?76427 -&gt; bool) -&gt; gn:Gen&lt;&#39;?76427&gt; -&gt; Gen&lt;&#39;?76427&gt;<br />
+                          <strong>Type parameters:</strong> '?76427          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L220-220" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
+by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
+the predicate is satisfied.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
+            suchThatOption p gn
+          </code>
+          <div class="tip" id="37">
+            <strong>Signature:</strong> p:(&#39;?76425 -&gt; bool) -&gt; gn:Gen&lt;&#39;?76425&gt; -&gt; Gen&lt;&#39;?76425 option&gt;<br />
+                          <strong>Type parameters:</strong> '?76425          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L208-208" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
+if the given original generator did not generate any values that satisfied the predicate, after trying to
+get values from by increasing its size.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
+            three g
+          </code>
+          <div class="tip" id="38">
+            <strong>Signature:</strong> g:Gen&lt;&#39;?76396&gt; -&gt; Gen&lt;&#39;?76396 * &#39;?76396 * &#39;?76396&gt;<br />
+                          <strong>Type parameters:</strong> '?76396          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L162-162" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that generates a 3-tuple of the values generated by the given generator.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
+            two g
+          </code>
+          <div class="tip" id="39">
+            <strong>Signature:</strong> g:Gen&lt;&#39;?76389&gt; -&gt; Gen&lt;&#39;?76389 * &#39;?76389&gt;<br />
+                          <strong>Type parameters:</strong> '?76389          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L153-153" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that generates a 2-tuple of the values generated by the given generator.</p>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/FsCheck/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">FsCheck</li>
+            <li><a href="/FsCheck/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.com/packages/FsCheck">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/fsharp/FsCheck">
+      <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
+    </a>
+  </body>
+  </html>

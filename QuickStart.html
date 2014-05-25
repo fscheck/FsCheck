@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>QuickStart
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FsCheck is a tool for testing .NET programs automatically using randomly generated test cases.">
+    <meta name="author" content="Kurt Schelfthout and contributors">
+
+    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
+    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+        </ul>
+        <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h1>QuickStart</h1>
+
+<h2>A Simple Example</h2>
+
+<p>A simple example of a property definition is</p>
+
+<pre class="fssnip">
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">revRevIsOrig</span> (<span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="i">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="i">rev</span>(<span onmouseout="hideTip(event, 'fs5', 7)" onmouseover="showTip(event, 'fs5', 7)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 8)" onmouseover="showTip(event, 'fs6', 8)" class="i">rev</span> <span onmouseout="hideTip(event, 'fs2', 9)" onmouseover="showTip(event, 'fs2', 9)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs2', 10)" onmouseover="showTip(event, 'fs2', 10)" class="i">xs</span></pre>
+
+
+<p>This property asserts that the reverse of the reverse of a list is the list itself. 
+To check the property, we load this definition in F# interactive and then invoke</p>
+
+<pre class="fssnip">
+<span onmouseout="hideTip(event, 'fs7', 11)" onmouseover="showTip(event, 'fs7', 11)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 12)" onmouseover="showTip(event, 'fs8', 12)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs1', 13)" onmouseover="showTip(event, 'fs1', 13)" class="i">revRevIsOrig</span></pre>
+
+
+<pre><code>Ok, passed 100 tests.
+</code></pre>
+
+<p>When a property fails, FsCheck displays a counter-example. For example, if we define</p>
+
+<pre class="fssnip">
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 14)" onmouseover="showTip(event, 'fs9', 14)" class="i">revIsOrig</span> (<span onmouseout="hideTip(event, 'fs2', 15)" onmouseover="showTip(event, 'fs2', 15)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs3', 16)" onmouseover="showTip(event, 'fs3', 16)" class="i">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs4', 17)" onmouseover="showTip(event, 'fs4', 17)" class="i">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 18)" onmouseover="showTip(event, 'fs5', 18)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="i">rev</span> <span onmouseout="hideTip(event, 'fs2', 20)" onmouseover="showTip(event, 'fs2', 20)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs2', 21)" onmouseover="showTip(event, 'fs2', 21)" class="i">xs</span></pre>
+
+
+<p>then checking it results in</p>
+
+<pre class="fssnip">
+<span onmouseout="hideTip(event, 'fs7', 22)" onmouseover="showTip(event, 'fs7', 22)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 23)" onmouseover="showTip(event, 'fs8', 23)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 24)" onmouseover="showTip(event, 'fs9', 24)" class="i">revIsOrig</span></pre>
+
+
+<pre><code>Falsifiable, after 4 tests (5 shrinks) (StdGen (1022243397,295865551)):
+[1; 0]
+</code></pre>
+
+<p>FsCheck also shrinks the counter example, so that it is the minimal counter example that 
+still fails the test case. In the example above, we see that the counter example is indeed minimal: 
+the list must have at least two different elements. FsCheck also displays how many times it 
+found a smaller (in some way) counter example and so proceeded to shrink further.</p>
+
+<h2>Using FsCheck</h2>
+
+<p>To use FsCheck, you download the latest FsCheck source or binary, or use NuGet. Build and reference the assembly 
+in any projects containing specifications or test data generators. You can then test 
+properties by loading the module they are defined in into F# interactive, and calling 
+<pre>Check.Quick <propertyName></pre>
+or by running and writing a small console application that calls the Check function. Integration 
+with unit test runners such as xUnit and NUnit is possible as well - see Usage Tips for an example.</p>
+
+<h2>Grouping properties</h2>
+
+<p>Usually, you'll write more than one property to test. FsCheck allows you to group together properties as static members of a class:</p>
+
+<pre class="fssnip">
+<span class="k">type</span> <span onmouseout="hideTip(event, 'fs10', 25)" onmouseover="showTip(event, 'fs10', 25)" class="i">ListProperties</span> <span class="o">=</span>
+  <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs11', 26)" onmouseover="showTip(event, 'fs11', 26)" class="i">``reverse of reverse is original``</span> <span onmouseout="hideTip(event, 'fs2', 27)" onmouseover="showTip(event, 'fs2', 27)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs1', 28)" onmouseover="showTip(event, 'fs1', 28)" class="i">revRevIsOrig</span> <span onmouseout="hideTip(event, 'fs2', 29)" onmouseover="showTip(event, 'fs2', 29)" class="i">xs</span>
+  <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs12', 30)" onmouseover="showTip(event, 'fs12', 30)" class="i">``reverse is original``</span> <span onmouseout="hideTip(event, 'fs2', 31)" onmouseover="showTip(event, 'fs2', 31)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revIsOrig</span> <span onmouseout="hideTip(event, 'fs2', 33)" onmouseover="showTip(event, 'fs2', 33)" class="i">xs</span></pre>
+
+
+<p>These can be checked at once using:</p>
+
+<pre class="fssnip">
+<span onmouseout="hideTip(event, 'fs7', 34)" onmouseover="showTip(event, 'fs7', 34)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 35)" onmouseover="showTip(event, 'fs13', 35)" class="i">QuickAll</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 36)" onmouseover="showTip(event, 'fs10', 36)" class="i">ListProperties</span><span class="o">&gt;</span>()</pre>
+
+
+<p>FsCheck now also prints the name of each test:</p>
+
+<pre><code>--- Checking ListProperties ---
+ListProperties.reverse of reverse is original-Ok, passed 100 tests.
+ListProperties.reverse is original-Falsifiable, after 1 test (0 shrinks) (StdGen (1023933494,295865551)):
+[1; 0]
+</code></pre>
+
+<p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module, 
+you can also use Check.QuickAll to test all the top level functions in a certain module. 
+However, the type of a module is not directly accessible via F#, so you can use the following trick:</p>
+
+<pre class="fssnip">
+<span onmouseout="hideTip(event, 'fs7', 37)" onmouseover="showTip(event, 'fs7', 37)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 38)" onmouseover="showTip(event, 'fs13', 38)" class="i">QuickAll</span> <span onmouseout="hideTip(event, 'fs14', 39)" onmouseover="showTip(event, 'fs14', 39)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 40)" onmouseover="showTip(event, 'fs10', 40)" class="i">ListProperties</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span></pre>
+
+
+<pre><code>--- Checking FSI_0073 ---
+</code></pre>
+
+<h2>What do I do if a test loops or encounters an error?</h2>
+
+<p>In this case we know that the property does not hold, but Check.Quick does not display the counter-example. 
+There is another testing function provided for this situation. Repeat the test using 
+<pre>Check.Verbose <property_name></pre>
+which displays each test case before running the test: the last test case displayed is thus
+the one in which the loop or error arises. Check.VerboseAll can be used with types and modules
+to check groups of properties verbosely.</p>
+
+<h2>Caveat</h2>
+
+<p>The property above (the reverse of the reverse of a list is the list itself) is not always correct. 
+Consider a list of floats that contains infinity, or nan (not a number). Since nan <> nan, the reverse of 
+the reverse of {{[nan,nan]}} is not actually equal to {{[nan,nan]}} if you use straightforward element by element 
+comparison. FsCheck has a knack for finding this kind of specification problem. However, since this 
+behavior is seldom what you want, FsCheck only generates values that are 'neatly' comparable when you leave 
+the type polymorphic (currently, unit, bool, char and string values). To see this error in action, force 
+FsCheck to generate lists of floats:</p>
+
+<pre class="fssnip">
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 41)" onmouseover="showTip(event, 'fs15', 41)" class="i">revRevIsOrigFloat</span> (<span onmouseout="hideTip(event, 'fs16', 42)" onmouseover="showTip(event, 'fs16', 42)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs3', 43)" onmouseover="showTip(event, 'fs3', 43)" class="i">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs17', 44)" onmouseover="showTip(event, 'fs17', 44)" class="i">float</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 45)" onmouseover="showTip(event, 'fs5', 45)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 46)" onmouseover="showTip(event, 'fs6', 46)" class="i">rev</span>(<span onmouseout="hideTip(event, 'fs5', 47)" onmouseover="showTip(event, 'fs5', 47)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 48)" onmouseover="showTip(event, 'fs6', 48)" class="i">rev</span> <span onmouseout="hideTip(event, 'fs16', 49)" onmouseover="showTip(event, 'fs16', 49)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs16', 50)" onmouseover="showTip(event, 'fs16', 50)" class="i">xs</span></pre>
+
+
+<pre class="fssnip">
+<span onmouseout="hideTip(event, 'fs7', 51)" onmouseover="showTip(event, 'fs7', 51)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 52)" onmouseover="showTip(event, 'fs8', 52)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs15', 53)" onmouseover="showTip(event, 'fs15', 53)" class="i">revRevIsOrigFloat</span></pre>
+
+
+<pre><code>Falsifiable, after 7 tests (1 shrink) (StdGen (1024893549,295865551)):
+[nan]
+</code></pre>
+
+<div class="tip" id="fs1">val revRevIsOrig : xs:int list -&gt; bool<br /><br />Full name: QuickStart.revRevIsOrig</div>
+<div class="tip" id="fs2">val xs : int list</div>
+<div class="tip" id="fs3">type &#39;T list = List&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Collections.list&lt;_&gt;</div>
+<div class="tip" id="fs4">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
+<div class="tip" id="fs5">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
+<div class="tip" id="fs6">val rev : list:&#39;T list -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.rev</div>
+<div class="tip" id="fs7">type Check =<br />&#160;&#160;static member All : config:Config -&gt; unit<br />&#160;&#160;static member All : config:Config * test:Type -&gt; unit<br />&#160;&#160;static member Method : config:Config * methodInfo:MethodInfo * ?target:obj -&gt; unit<br />&#160;&#160;static member One : config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member One : name:string * config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : name:string * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member QuickAll : unit -&gt; unit<br />&#160;&#160;static member QuickAll : test:Type -&gt; unit<br />&#160;&#160;static member QuickThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;...<br /><br />Full name: FsCheck.Check</div>
+<div class="tip" id="fs8">static member Check.Quick : property:&#39;Testable -&gt; unit<br />static member Check.Quick : name:string * property:&#39;Testable -&gt; unit</div>
+<div class="tip" id="fs9">val revIsOrig : xs:int list -&gt; bool<br /><br />Full name: QuickStart.revIsOrig</div>
+<div class="tip" id="fs10">type ListProperties =<br />&#160;&#160;static member ( reverse is original ) : xs:int list -&gt; bool<br />&#160;&#160;static member ( reverse of reverse is original ) : xs:int list -&gt; bool<br /><br />Full name: QuickStart.ListProperties</div>
+<div class="tip" id="fs11">static member ListProperties.( reverse of reverse is original ) : xs:int list -&gt; bool<br /><br />Full name: QuickStart.ListProperties.( reverse of reverse is original )</div>
+<div class="tip" id="fs12">static member ListProperties.( reverse is original ) : xs:int list -&gt; bool<br /><br />Full name: QuickStart.ListProperties.( reverse is original )</div>
+<div class="tip" id="fs13">static member Check.QuickAll : unit -&gt; unit<br />static member Check.QuickAll : test:System.Type -&gt; unit</div>
+<div class="tip" id="fs14">val typeof&lt;&#39;T&gt; : System.Type<br /><br />Full name: Microsoft.FSharp.Core.Operators.typeof</div>
+<div class="tip" id="fs15">val revRevIsOrigFloat : xs:float list -&gt; bool<br /><br />Full name: QuickStart.revRevIsOrigFloat</div>
+<div class="tip" id="fs16">val xs : float list</div>
+<div class="tip" id="fs17">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.float<br /><br />--------------------<br />type float = System.Double<br /><br />Full name: Microsoft.FSharp.Core.float<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; = float<br /><br />Full name: Microsoft.FSharp.Core.float&lt;_&gt;</div>
+
+        </div>
+        <div class="span3">
+          <img src="/FsCheck/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">FsCheck</li>
+            <li><a href="/FsCheck/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.com/packages/FsCheck">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/fsharp/FsCheck">
+      <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
+    </a>
+  </body>
+  </html>
