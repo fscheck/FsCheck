@@ -27,6 +27,8 @@
     <DocumentationFile>bin\Debug\FsCheck.Xunit.XML</DocumentationFile>
     <OtherFlags>
     </OtherFlags>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

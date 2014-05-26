@@ -59,6 +59,7 @@ type FixedLengthArray<'a> = FixedLengthArray of 'a[] with
     static member toArray(FixedLengthArray a) = a
 
 [<StructuredFormatDisplay("{StructuredDisplayAsTable}")>]
+[<NoEquality;NoComparison>]
 type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) with
     member x.Value = match x with F (_,f) -> f
     member x.Table = match x with F (table,_) -> !table

@@ -14,6 +14,7 @@ namespace FsCheck
 open Random
 open System
 
+[<NoEquality;NoComparison>]
 type TestData = 
     { NumberOfTests: int
       NumberOfShrinks: int
@@ -21,6 +22,7 @@ type TestData =
       Labels: Set<string>
     }
 
+[<NoEquality;NoComparison>]
 type TestResult = 
     | True of TestData
     | False of TestData 
@@ -43,6 +45,7 @@ type IRunner =
     abstract member OnFinished: string * TestResult -> unit
 
 ///For configuring a run.
+[<NoEquality;NoComparison>]
 type Config = 
     { ///The maximum number of tests that are run.
       MaxTest       : int
@@ -78,6 +81,7 @@ module Runner =
     open TypeClass
     open Common
    
+    [<NoEquality;NoComparison>]
     type private TestStep = 
         | Generated of list<obj>    //generated arguments (test not yet executed)
         | Passed of Result          //one test passed

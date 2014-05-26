@@ -11,6 +11,7 @@
 
 namespace FsCheck
 
+[<NoComparison>]
 type Outcome = 
     | Timeout of int
     | Exception of exn
@@ -22,6 +23,7 @@ type Outcome =
 
 
 ///The result of one execution of a property.
+[<NoComparison>]
 type Result = 
     {   Outcome     : Outcome
         Stamp       : list<string>
@@ -80,6 +82,7 @@ module internal Res =
 //A Rose<Result> is used to keep, in a lazy way, a Result and the possible shrinks for the value in the node.
 //The fst value is the current Result, and the list contains the properties yielding possibly shrunk results.
 //Each of those can in turn have their own shrinks. 
+[<NoEquality;NoComparison>]
 type Rose<'a> = internal MkRose of Lazy<'a> * seq<Rose<'a>>
 
 module internal Rose =
