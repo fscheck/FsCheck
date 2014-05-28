@@ -21,3 +21,16 @@ FsCheck's generator combinators can be used in any testing framework to easily g
 ### More reading ###
 * [Blog](http://fortysix-and-two.blogspot.com) for announcements, change logs and other posts more or less related to FsCheck. 
 * An interesting read about QuickCheck is in [Chapter 11](http://book.realworldhaskell.org/read/testing-and-quality-assurance.html) of the excellent [Real world Haskell](http://book.realworldhaskell.org) book. The book is freely available online, but do the authors a favor and buy it, it's really worth it  also for F# programmers.
+
+### Contributing ###
+
+Pull requests very welcome! Check out the issues marked up-for-grabs if you need any inspiration.
+
+Checkout the project and run build.ps1. That should pull in all the dependencies, build, run the tests and generate the documentation.
+
+Then, open FsCheck.sln in Visual Studio and start coding or writing documentation. Building and testing from Visual Studio also works, to re-generate documentation quickly, execute docs/tools/generate.fsx in FSI.
+
+[![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
+
+
+
