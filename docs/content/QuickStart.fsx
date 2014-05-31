@@ -4,7 +4,7 @@
 #r "../../packages/xunit.1.9.2/lib/net20/xunit.dll"
 
 (**
-# Getting Started
+# Quick Start
 
 The fastest way to understand how FsCheck works is by writing some *properties* - FsCheck's terminology for a parametrized
 test, or a generative test - and run them using the built-in test runner. Later on, we'll describe how they can be integrated

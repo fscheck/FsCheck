@@ -3,9 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7cfaec49-7dcd-4419-9e55-764123e2cd46}</ProjectGuid>
+    <ProjectGuid>{7CFAEC49-7DCD-4419-9E55-764123E2CD46}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>FsCheck.MsTest</RootNamespace>
     <AssemblyName>FsCheck.MsTest</AssemblyName>
@@ -64,8 +62,7 @@
     <Reference Include="System.Numerics" />
     <ProjectReference Include="..\FsCheck\FsCheck.fsproj">
       <Name>FsCheck</Name>
-      <Project>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</Project>
-      <Private>True</Private>
+      <Project>{32AA3276-BBA1-41CE-B78A-706B8454EC8D}</Project>
     </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

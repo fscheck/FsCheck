@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -59,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj">
-      <Project>{bf24de38-c529-4638-be50-a937ea3e6876}</Project>
+      <Project>{BF24DE38-C529-4638-BE50-A937EA3E6876}</Project>
       <Name>FsCheck.NUnit.Addin</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\FsCheck.NUnit\FsCheck.NUnit.fsproj">

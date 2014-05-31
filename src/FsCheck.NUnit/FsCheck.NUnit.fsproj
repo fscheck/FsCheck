@@ -3,9 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6b1b9ff5-8e6d-4461-9d77-cd1619403684}</ProjectGuid>
+    <ProjectGuid>{6B1B9FF5-8E6D-4461-9D77-CD1619403684}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>FsCheck.NUnit</RootNamespace>
     <AssemblyName>FsCheck.NUnit</AssemblyName>
@@ -70,15 +68,13 @@
     <Reference Include="mscorlib" />
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <ProjectReference Include="..\FsCheck\FsCheck.fsproj">
       <Name>FsCheck</Name>
-      <Project>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</Project>
-      <Private>True</Private>
+      <Project>{32AA3276-BBA1-41CE-B78A-706B8454EC8D}</Project>
     </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

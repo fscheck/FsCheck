@@ -3,9 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{eb8b96df-c654-410d-b590-fdbe3bc235fe}</ProjectGuid>
+    <ProjectGuid>{EB8B96DF-C654-410D-B590-FDBE3BC235FE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>FsCheck.Test</RootNamespace>
     <AssemblyName>FsCheck.Test</AssemblyName>
@@ -67,13 +65,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\FsCheck.Xunit\FsCheck.Xunit.fsproj">
       <Name>FsCheck.Xunit</Name>
-      <Project>{26a87ed0-9836-45f6-a88e-603da8fcd856}</Project>
-      <Private>True</Private>
+      <Project>{26A87ED0-9836-45F6-A88E-603DA8FCD856}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj">
       <Name>FsCheck</Name>
-      <Project>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</Project>
-      <Private>True</Private>
+      <Project>{32AA3276-BBA1-41CE-B78A-706B8454EC8D}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

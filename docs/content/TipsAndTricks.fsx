@@ -6,7 +6,7 @@ open FsCheck
 open System
 
 (**
-# Usage tips
+# Tips and Tricks
     
 ## Properties of functions
 
@@ -23,7 +23,7 @@ Check.Quick associativity
 We can generate functions Tree -> _anything_. If a counter-example is found, function values will be displayed as <func>.
 
 However, FsCheck can show you the generated function in more detail, with the Function type. 
-If you use that, FsCheck can even shrink your function. For example:*)
+Then FsCheck can even shrink your function. For example:*)
 
 (***define-output:mapRec***)
 let mapRec (F (_,f)) (l:list<int>) =
@@ -38,7 +38,12 @@ The type `Function<'a,'b>` records a map of all the arguments it was called with
 In your properties, you can extract the actual function by pattern matching as in the example. 
 Function is used to print the function, and also to shrink it.
     
-## Use pattern matching instead of forAll to use custom generators*)
+## Use pattern matching instead of forAll to use custom generators
+
+To define a generator that generates a subset of the normal range of values for an existing type,
+say all the even ints, it makes properties more readable if you define a single-case union
+case, and register a generator for the new type:
+*)
 
 (***define-output:EvenInt***)
 type EvenInt = EvenInt of int with
@@ -58,12 +63,12 @@ Check.Quick ``generated even ints should be even``
 (***include-output:EvenInt***)
 
 (**
-This make properties much more readable, especially since you can define custom shrink functions as well.
+It's now also easy to define custom shrink functions as well.
 
-FsCheck has quite a few of these, e.g. `NonNegativeInt`, `PositiveInt`, `StringWithoutNullChars` etc. Have a look at the 
+FsCheck uses this pattern also, e.g. `NonNegativeInt`, `PositiveInt`, `StringWithoutNullChars` etc. See the
 default Arbitrary instances on the `Arb.Default` type.
 
-Also, if you want to define your own, the `Arb.filter`, `Arb.convert` and `Arb.mapFilter` functions will come in handy.
+Also, for these kinds of generators, the `Arb.filter`, `Arb.convert` and `Arb.mapFilter` functions will come in handy.
     
 ## Running tests using only modules
 

@@ -3,9 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</ProjectGuid>
+    <ProjectGuid>{32AA3276-BBA1-41CE-B78A-706B8454EC8D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>FsCheck</RootNamespace>
     <AssemblyName>FsCheck</AssemblyName>
@@ -27,7 +25,9 @@
     <OtherFlags>
     </OtherFlags>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
+    <WarningsAsErrors>
+    </WarningsAsErrors>
+    <DocumentationFile>bin\Debug\FsCheck.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -82,9 +82,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

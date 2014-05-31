@@ -70,6 +70,7 @@ values need to be comparable, but this is not reflected in the types. Therefore,
 restriction, FsCheck could generate lists containing different types (subtypes of objects), and these are not mutually comparable.
     
 ## Lazy Properties
+
 Since F# has eager evaluation by default, the above property does more work than necessary: 
 it evaluates the property at the right of the condition no matter what the 
 outcome of the condition on the left. While only a performance consideration in the above 
@@ -106,17 +107,18 @@ Check.Quick insertWithArb
 
 (**
 The first argument of forAll is an IArbitrary instance. Such an instance 
-encapsulates a test data generator and a shrinker (more on the latter later).
+encapsulates a test data generator and a shrinker (more on that in [Test Data](TestData.html)).
 By supplying a custom generator, instead of using the default generator 
 for that type, it is possible to control the distribution of test data. In 
 the example, by supplying a custom generator for ordered lists, rather than 
 filtering out test cases which are not ordered, we guarantee that 100 test 
 cases can be generated without reaching the overall limit on test cases. 
-Combinators for defining generators are described later.
+Combinators for defining generators are described in [Test Data](TestData.html).
     
 ## Expecting exceptions
 
-You may want to test that a function or method throws an exception under certain circumstances. Use `throws<'e :> exn,'a> Lazy<'a>` to achieve this. For example:*)
+You may want to test that a function or method throws an exception under certain circumstances. 
+Use `throws<'e :> exn,'a> Lazy<'a>` to achieve this. For example:*)
 
 (***define-output: expectDivideByZero***)
 let expectDivideByZero() = Prop.throws<DivideByZeroException,_> (lazy (raise <| DivideByZeroException()))
@@ -153,7 +155,7 @@ Check.Quick timesOut
 //(***include-output:timesOut***)
 
 (**
-The first argument is the maximal time the lazy property given may run. If it runs longer, 
+The first argument is the time the lazy property may run. If it runs longer, 
 FsCheck considers the test as failed. Otherwise, the outcome of the lazy property is 
 the outcome of within. Note that, although within attempts to cancel the thread in which 
 the property is executed, that may not succeed, and so the thread may actually continue to run until the process ends.
@@ -247,7 +249,7 @@ Check.Quick insertCombined
 (***include-output:insertCombined***)
 
 (**
-## And, Or and Labelling Subproperties
+## And, Or and Labels
 
 Properties may take the form
 
@@ -255,7 +257,7 @@ Properties may take the form
 * `<property> .|. <property>`succeeds if either property succeeds, fails if both properties fail, and is rejected when both are rejected.
 
 The `.&.` combinator is most commonly used to write complex properties which share a generator. 
-In that case, it might be difficult upon failure to know excatly which sub-property has caused the failure. 
+In that case, it might be difficult upon failure to know excactly which sub-property has caused the failure. 
 That's why you can label sub-properties, and FsCheck shows the labels of the failed subproperties when 
 it finds a counter-example. This takes the form: `<string> @| <property>` or `<property> |@ <string>`.
 

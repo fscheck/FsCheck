@@ -5,7 +5,7 @@ open FsCheck
 open System
 
 (**
-# Stateful Testing
+# Model-based Testing
 
 FsCheck also allows you to test objects, which usually encapsulate internal 
 state through a set of methods. FsCheck, through a very small extension, 

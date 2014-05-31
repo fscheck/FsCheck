@@ -3,9 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{26a87ed0-9836-45f6-a88e-603da8fcd856}</ProjectGuid>
+    <ProjectGuid>{26A87ED0-9836-45F6-A88E-603DA8FCD856}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>FsCheck.Xunit</RootNamespace>
     <AssemblyName>FsCheck.Xunit</AssemblyName>
@@ -28,7 +26,8 @@
     <OtherFlags>
     </OtherFlags>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
+    <WarningsAsErrors>
+    </WarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -78,8 +77,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FsCheck\FsCheck.fsproj">
       <Name>FsCheck</Name>
-      <Project>{32aa3276-bba1-41ce-b78a-706b8454ec8d}</Project>
-      <Private>True</Private>
+      <Project>{32AA3276-BBA1-41CE-B78A-706B8454EC8D}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

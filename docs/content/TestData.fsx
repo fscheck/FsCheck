@@ -6,6 +6,7 @@ open System
 
 (**
 # Test data: generators, shrinkers and Arbitrary instances
+
 Test data is produced by test data generators. FsCheck defines default 
 generators for some often used types, but you can use your own, and 
 will need to define your own generators for any new types you introduce.
