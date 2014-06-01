@@ -1,6 +1,5 @@
 (*** hide ***)
 #I @"../../src/FsCheck/bin/Release"
-#r @"../../packages/xunit.1.9.2/lib/net20/xunit.dll"
 #r @"FsCheck"
 open FsCheck
 open System
@@ -69,89 +68,7 @@ FsCheck uses this pattern also, e.g. `NonNegativeInt`, `PositiveInt`, `StringWit
 default Arbitrary instances on the `Arb.Default` type.
 
 Also, for these kinds of generators, the `Arb.filter`, `Arb.convert` and `Arb.mapFilter` functions will come in handy.
-    
-## Running tests using only modules
-
-Since Arbitrary instances are given as static members of classes, and properties can be grouped together 
-as static members of classes, and since top level let functions are compiled as static member of their 
-enclosing module (which is compiled as a class), you can simply define your properties and generators as 
-top level let-bound functions, and then register all generators and and all properties at once using the following trick:*)
-
-(***define-output:Marker***)
-let myprop (i:int) = i >= 0
-let mygen = Arb.Default.Int32() |> Arb.mapFilter (fun i -> Math.Abs i) (fun i -> i >= 0)
-let helper = "a string"
-let private helper' = true
-
-type Marker = class end
-Arb.registerByType (typeof<Marker>.DeclaringType)
-Check.QuickAll (typeof<Marker>.DeclaringType)
-
-(***include-output:Marker***)
-
-(**
-The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way to get to a module's Type directly.
-
-FsCheck determines the intent of the function based on its return type:
-
-* Properties: public functions that return unit, bool, Property or function of any arguments to those types 
-or Lazy value of any of those types. So `myprop` is the only property that is run; `helper'` also returns bool but is private.
-* Arbitrary instances: return Arbitrary<_>
-
-All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will 
-do something with, but do not want them checked or registered, just make them private. FsCheck will ignore those functions.
-
-
-## Implementing IRunner to integrate FsCheck with mb|x|N|cs|Unit
-
-The `Config` type that can be passed to the `Check.One` or `Check.All` methods takes an `IRunner` as argument. This interface has the following methods:
-
-* `OnStartFixture` is called when FsCheck is testing all the methods on a type, before starting any tests.
-* `OnArguments` is called after every test, passing the implementation the test number, the arguments and the every function. 
-* `OnShrink` is called at every succesful shrink.
-* `OnFinished` is called with the name of the test and the outcome of the overall test run. This is used in the example below to call Assert statements from an outside unit testing framework - allowing FsCheck to integrate with a number of unit testing frameworks. You can leverage another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.*)
-
-open Xunit
-
-let xUnitRunner =
-  { new IRunner with
-      member x.OnStartFixture t = ()
-      member x.OnArguments (ntest,args, every) = ()
-      member x.OnShrink(args, everyShrink) = ()
-      member x.OnFinished(name,testResult) = 
-          match testResult with 
-          | TestResult.True _ -> Assert.True(true)
-          | _ -> Assert.True(false, Runner.onFinishedToString name testResult) 
-  }
-   
-let withxUnitConfig = { Config.Default with Runner = xUnitRunner }
-
-(**
-## Implementing IRunner to customize printing of generated arguments
-
-By default, FsCheck prints generated arguments using `sprintf "%A"`, or structured formatting. This usually does what you expect, 
-i.e. for primitive types the value, for objects the ToString override and so on. If it does not (A motivating case is 
-testing with COM objects - overriding ToString is not an option and structured formatting does not do anything useful with it), 
-you can use the `label` combinator to solve this on a per property basis, but a more structured solution can be achieved by 
-implementing `IRunner`. For example:*)
-    
-let formatterRunner formatter =
-  { new IRunner with
-      member x.OnStartFixture t =
-          printf "%s" (Runner.onStartFixtureToString t)
-      member x.OnArguments (ntest,args, every) =
-          printf "%s" (every ntest (args |> List.map formatter))
-      member x.OnShrink(args, everyShrink) =
-          printf "%s" (everyShrink (args |> List.map formatter))
-      member x.OnFinished(name,testResult) = 
-          let testResult' = match testResult with 
-                              | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
-                                  TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
-                              | t -> t
-          printf "%s" (Runner.onFinishedToString name testResult') 
-  }
-
-(**    
+  
 ## An equality comparison that prints the left and right sides of the equality
 
 Properties commonly check for equality. If a test case fails, FsCheck prints the counterexample, but 
