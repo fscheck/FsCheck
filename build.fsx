@@ -231,10 +231,9 @@ Target "Docs" DoNothing
 "Build"
   ==> "CleanDocs"
   ==> "GenerateDocs"
-  ==> "Docs"
-  ==> "All"
+  ==> "ReleaseDocs"
 
-"All" 
+"All"
   ==> "ReleaseDocs"
   =?> ("SourceLink", isLocalBuild && not isLinux)
   ==> "NuGet"
