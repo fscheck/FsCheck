@@ -218,8 +218,7 @@ Target "Release" DoNothing
 // Run all targets by default. Invoke 'build <Target>' to override
 
 Target "All" DoNothing
-
-Target "Docs" DoNothing
+Target "CI" DoNothing
 
 "Clean"
   ==> "RestorePackages"
@@ -232,6 +231,10 @@ Target "Docs" DoNothing
   ==> "CleanDocs"
   ==> "GenerateDocs"
   ==> "ReleaseDocs"
+
+"All"
+  ==> "GenerateDocs"
+  ==> "CI"
 
 "All"
   ==> "ReleaseDocs"
