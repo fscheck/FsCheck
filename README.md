@@ -26,7 +26,7 @@ FsCheck's generator combinators can be used in any testing framework to easily g
 
 Pull requests very welcome! Check out the issues marked up-for-grabs if you need any inspiration.
 
-Checkout the project and run build.ps1. That should pull in all the dependencies, build, run the tests and generate the documentation.
+Checkout the project and run build.cmd. That should pull in all the dependencies, build, run the tests and generate the documentation.
 
 Then, open FsCheck.sln in Visual Studio and start coding or writing documentation. Building and testing from Visual Studio also works, to re-generate documentation quickly, execute docs/tools/generate.fsx in FSI.
 
