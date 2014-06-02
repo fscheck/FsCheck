@@ -40,6 +40,9 @@ The documentation is also available in [Japanese](https://github.com/fsharp/FsCh
    structure, and the results of each operation are compared with a (much simpler)
    model.
 
+ * [Running Tests](RunningTests.html) explains various ways to run FsCheck tests and how to
+   integrate with unit testing frameworks.
+
  * [Tips and tricks](TipsAndTricks.html) 
 
  * [API Reference](reference/index.html) contains automatically generated documentation for all types, modules

@@ -42,7 +42,7 @@ through another test framework's unit tests. They'll call the FsCheck runner dir
 in all frameworks I'm aware of this signals that the test has failed and so is an easy way to integrate FsCheck tests with unit tests 
 you may already have.
 
-### Testing grouped properties with `Check.All`
+### Testing grouped properties with Check.All
 
 Usually, you'll write more than one property to test. FsCheck allows you to group together properties as static members of a class: *)
 type ListProperties =
