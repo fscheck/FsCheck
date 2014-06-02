@@ -703,7 +703,7 @@ module Arb =
             |> convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
 
         static member Culture() =
-            let genCulture = Gen.elements (CultureInfo.GetCultures CultureTypes.AllCultures)
+            let genCulture = Gen.elements (CultureInfo.GetCultures (CultureTypes.NeutralCultures ||| CultureTypes.SpecificCultures))
             let shrinkCulture =
                 Seq.unfold <| fun c -> if c = CultureInfo.InvariantCulture
                                             then None
