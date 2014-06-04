@@ -10,5 +10,6 @@
 * Start using semantic versioning, hence the jump to 1.0.0
 * Start releasing all NuGet packages simultaneously and with the same version.
 * Start using FSharp.Formatting and publish documentation to github.io
-* Fixed sbyte overflow bug in shrinker.
+* Fix: sbyte overflow bug in shrinker.
+* Fix: don't generate custom CultureInfo.
 
