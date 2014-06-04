@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Stateful Testing
+    <title>Model-based Testing
 </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."/>
@@ -32,7 +32,7 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h1>Stateful Testing</h1>
+<h1>Model-based Testing</h1>
 
 <p>FsCheck also allows you to test objects, which usually encapsulate internal 
 state through a set of methods. FsCheck, through a very small extension, 
@@ -90,7 +90,7 @@ fails the test if a postcondition does not hold.</p>
 <span onmouseout="hideTip(event, 'fs35', 89)" onmouseover="showTip(event, 'fs35', 89)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 90)" onmouseover="showTip(event, 'fs36', 90)" class="i">Quick</span> (<span onmouseout="hideTip(event, 'fs37', 91)" onmouseover="showTip(event, 'fs37', 91)" class="i">asProperty</span> <span onmouseout="hideTip(event, 'fs12', 92)" onmouseover="showTip(event, 'fs12', 92)" class="i">spec</span>)</pre>
 
 
-<pre><code>Falsifiable, after 22 tests (9 shrinks) (StdGen (923005462,295865640)):
+<pre><code>Falsifiable, after 21 tests (2 shrinks) (StdGen (644106399,295869640)):
 [inc; inc; inc; dec]
 </code></pre>
 
@@ -158,6 +158,9 @@ fails the test if a postcondition does not hold.</p>
             </li>
             <li>
               <a href="/FsCheck/StatefulTesting.html">Model-based testing</a>
+            </li>
+            <li>
+              <a href="/FsCheck/RunningTests.html">Running tests</a>
             </li>
             <li>
               <a href="/FsCheck/TipsAndTricks.html">Tips and Tricks</a>
