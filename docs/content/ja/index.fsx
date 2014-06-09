@@ -1,7 +1,7 @@
 (*** hide ***)
-// This block of code is omitted in the generated HTML documentation. Use 
-// it to define helpers that you do not want to show in the documentation.
-#I "../../../src/FsCheck/bin/Release"
+// このコードブロックは生成された HTML ドキュメントでは省略されます。ドキュメントで
+// 見せたくない補助的なものを定義するために使います。
+#I "../../src/FsCheck/bin/Release"
 
 (**
 FsCheck
@@ -11,7 +11,7 @@ FsCheck
   <div class="span1"></div>
   <div class="span6">
     <div class="well well-small" id="nuget">
-      FsCheck and xUnit.NET plugin can be <a href="https://nuget.org/packages/FsCheck">installed from NuGet</a>:
+      FsCheck と xUnit.NET プラグインは <a href="https://nuget.org/packages/FsCheck">NuGet からインストール</a> 出来ます:
       <pre>PM> Install-Package FsCheck
 PM> Install-Package FsCheck.Xunit</pre>
     </div>
@@ -19,45 +19,40 @@ PM> Install-Package FsCheck.Xunit</pre>
   <div class="span1"></div>
 </div>
 
-Documentation
------------------------
+ドキュメント
+-------------
 
-The documentation is also available in [Japanese](https://github.com/fsharp/FsCheck/blob/master/docs/Documentation_ja.md)
+ * [クイックスタート](QuickStart.html)から始めましょう。
 
- * [QuickStart](QuickStart.html) to get started.
+ * [性質](Properties.html)はテストを表現する FsCheck の言語を説明します —
+   別のフレームワークでは、パラメタライズドテストや生成的テストと呼ばれることもあります。
+   FsCheck はこれらを性質と呼びます。
 
- * [Properties](Properties.html) descibes FsCheck's language to express tests - 
-   in other frameworks these are often called parametrized tests or
-   generative tests. FsCheck calls them properties.
+ * [テストデータの生成](TestData.html)は FsCheck により良いデータを生成させたり、
+   テストしようとしている対象に対して意味のないデータの生成をやめさせたりする方法を説明します。
+   FsCheck はテスト値の生成器(ジェネレーター)や収縮器(シュリンカー)を表現し、
+   それらをあなたの書いた性質に適用するための柔軟な言語を備えています。
 
- * [Generating test data](TestData.html) describes how to guide FsCheck to
-   generate better data or to stop it from generating data that doesn't make
-   sense for what you're trying to test. FsCheck has a flexible language to describe test 
-   value generators and shrinkers, and apply them to your properties.
+ * [モデルベースのテスト](StatefulTesting.html)は FsCheck がオブジェクトやデータに対する
+   大量のランダムな操作を生成し、各操作の結果は(ずっと単純な)モデルを用いて比較されるという、
+   特徴的なテストのアプローチです。
 
- * [Model based testing](StatefulTesting.html) is a particular testing approach
-   where FsCheck generates a large number of random operations on an object or data
-   structure, and the results of each operation are compared with a (much simpler)
-   model.
+ * [テストの実行](RunningTests.html)は FsCheck を実行するための様々な方法や
+   ユニットテストフレームワークとの統合のしかたを説明します。
 
- * [Running Tests](RunningTests.html) explains various ways to run FsCheck tests and how to
-   integrate with unit testing frameworks.
+ * [使いかたのヒント](TipsAndTricks.html) 
 
- * [Tips and tricks](TipsAndTricks.html) 
-
- * [API Reference](reference/index.html) contains automatically generated documentation for all types, modules
-   and functions.
+ * [API リファレンス](reference/index.html)は全ての型、モジュール、関数に対する自動生成されたドキュメントを含みます。
  
-Contributing and copyright
---------------------------
+貢献と著作権
+------------
 
-The project is hosted on [GitHub][gh] where you can [report issues][issues], fork 
-the project and submit pull requests. If you're adding new public API, please also 
-consider adding [samples][content] that can be turned into documentation.
+本プロジェクトは[issue の報告][issues]、プロジェクトのフォーク、そしてプルリクエストの送信を行うことが
+出来る [GitHub][gh] にホストされています。もし新しいパプリックな API を追加しようとしているなら、
+ドキュメントになる[サンプル][content]を追加することも考慮に入れておいてください。
 
-The library is available under the BSD license, which allows modification and 
-redistribution for both commercial and non-commercial purposes. For more information see the 
-[License file][license] in the GitHub repository. 
+本ライブラリは BSD ライセンスの下で利用可能であり、変更および営利・非営利目的両方の再頒布が許可されます。
+詳細については、GitHub のリポジトリにある[ライセンスファイル][license]を確認して下さい。
 
   [content]: https://github.com/fsharp/FsCheck/tree/master/docs/content
   [gh]: https://github.com/fsharp/FsCheck
