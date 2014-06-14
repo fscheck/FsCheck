@@ -2,8 +2,8 @@
 // FAKE build script 
 // --------------------------------------------------------------------------------------
 
-#r @"./packages/FAKE/tools/FakeLib.dll"
-#load "./packages/SourceLink.Fake/tools/SourceLink.fsx"
+#r @"packages/FAKE/tools/FakeLib.dll"
+#load "packages/SourceLink.Fake/tools/SourceLink.fsx"
 
 open Fake 
 open Fake.Git
