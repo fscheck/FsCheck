@@ -143,8 +143,8 @@ Target "RunTests" (fun _ ->
     |> xUnit (fun p -> 
             {p with 
                 ShadowCopy = false;
-                HtmlOutput = true;
-                XmlOutput = true;
+                HtmlOutput = false;
+                XmlOutput = false;
                 OutputDir = "temp" }) 
 )
 
