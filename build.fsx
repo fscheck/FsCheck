@@ -2,7 +2,6 @@
 // FAKE build script 
 // --------------------------------------------------------------------------------------
 
-#r @"./packages/FAKE/tools/NuGet.Core.dll"
 #r @"./packages/FAKE/tools/FakeLib.dll"
 #load "./packages/SourceLink.Fake/tools/SourceLink.fsx"
 
@@ -143,8 +142,8 @@ Target "RunTests" (fun _ ->
     |> xUnit (fun p -> 
             {p with 
                 ShadowCopy = false;
-                HtmlOutput = false;
-                XmlOutput = false;
+                HtmlOutput = true;
+                XmlOutput = true;
                 OutputDir = "temp" }) 
 )
 
