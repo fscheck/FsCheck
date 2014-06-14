@@ -1,3 +1,0 @@
-nuget pack -sym FsCheck\FsCheck.fsproj -Prop Configuration=Release -Build -Symbols
-nuget pack -sym FsCheck.Xunit\FsCheck.Xunit.fsproj -Prop Configuration=Release -Build -Symbols
-nuget pack -sym FsCheck.NUnit\FsCheck.NUnit.fsproj -Prop Configuration=Release -Build -Symbols
