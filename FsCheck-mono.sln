@@ -25,8 +25,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.NUnit.Examples", "e
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.NUnit.CSharpExamples", "examples\FsCheck.NUnit.CSharpExamples\FsCheck.NUnit.CSharpExamples.csproj", "{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.MsTest.Examples", "examples\FsCheck.MsTest.Examples\FsCheck.MsTest.Examples.csproj", "{CB41BAC5-272F-4562-9494-E3DC1D0B4139}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A4EEA11D-B36E-44DD-9962-68BA3331264E}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -39,12 +37,9 @@ EndProject
 Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.Xunit", "src\FsCheck.Xunit\FsCheck.Xunit.fsproj", "{26A87ED0-9836-45F6-A88E-603DA8FCD856}"
 EndProject
 Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.Test", "tests\FsCheck.Test\FsCheck.Test.fsproj", "{EB8B96DF-C654-410D-B590-FDBE3BC235FE}"
-EndProject
-Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.NUnit", "src\FsCheck.NUnit\FsCheck.NUnit.fsproj", "{6B1B9FF5-8E6D-4461-9D77-CD1619403684}"
+EndProjectProject("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.NUnit", "src\FsCheck.NUnit\FsCheck.NUnit.fsproj", "{6B1B9FF5-8E6D-4461-9D77-CD1619403684}"
 EndProject
 Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.NUnit.Addin", "src\FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj", "{BF24DE38-C529-4638-BE50-A937EA3E6876}"
-EndProject
-Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.MsTest", "src\FsCheck.MsTest\FsCheck.MsTest.fsproj", "{7CFAEC49-7DCD-4419-9E55-764123E2CD46}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D4E0-4CF4-840D-3F3016653F85}"
 	ProjectSection(SolutionItems) = preProject

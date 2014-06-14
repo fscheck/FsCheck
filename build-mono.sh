@@ -5,4 +5,4 @@ mono --runtime=v4.0 .nuget/NuGet.exe install SourceLink.Fake -OutputDirectory pa
 mono --runtime=v4.0 .nuget/NuGet.exe install FSharp.Formatting -OutputDirectory packages -ExcludeVersion
 mono --runtime=v4.0 .nuget/NuGet.exe install xunit -OutputDirectory packages -ExcludeVersion
 
-mono --runtime=v4.0 packages/FAKE/tools/FAKE.exe build.fsx $@
+mono --runtime=v4.0 packages/FAKE/tools/FAKE.exe build-mono.fsx $@
