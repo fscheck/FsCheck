@@ -12,4 +12,4 @@ before_script:
  - chmod +x build.sh
 
 script: 
-  - ./build.sh Default
+  - ./build.sh RunTests
