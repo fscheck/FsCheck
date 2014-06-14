@@ -705,7 +705,7 @@ module Arb =
         static member Culture() =
             let genCulture = Gen.elements (CultureInfo.GetCultures (CultureTypes.NeutralCultures ||| CultureTypes.SpecificCultures))
             let shrinkCulture =
-                Seq.unfold <| fun c -> if c = CultureInfo.InvariantCulture
+                Seq.unfold <| fun c -> if c = null || c = CultureInfo.InvariantCulture
                                             then None
                                             else Some (c.Parent, c.Parent)
             fromGenShrink (genCulture, shrinkCulture)
