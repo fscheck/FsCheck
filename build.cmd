@@ -2,7 +2,7 @@
 
 cls
 
-.nuget\nuget.exe install FAKE -OutputDirectory packages -ExcludeVersion
+.nuget\nuget.exe install FAKE -OutputDirectory packages -ExcludeVersion -Version 2.17.9
 .nuget\nuget.exe install SourceLink.Fake -OutputDirectory packages -ExcludeVersion
 .nuget\nuget.exe install FSharp.Formatting -OutputDirectory packages -ExcludeVersion
 
