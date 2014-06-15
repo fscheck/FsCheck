@@ -2,8 +2,9 @@
 // FAKE build script 
 // --------------------------------------------------------------------------------------
 
-#r @"packages/FAKE/tools/FakeLib.dll"
-#load "packages/SourceLink.Fake/tools/SourceLink.fsx"
+#r @"./packages/FAKE/tools/NuGet.Core.dll"
+#r @"./packages/FAKE/tools/FakeLib.dll"
+#load "./packages/SourceLink.Fake/tools/SourceLink.fsx"
 
 open Fake 
 open Fake.Git
@@ -43,7 +44,7 @@ type ProjectInfo =
 let releaseNotes = "FsCheck Release Notes.md"
 
 /// Solution or project files to be built during the building process
-let solution = "FsCheck.sln"
+let solution = if isMono then "FsCheck-mono.sln" else "FsCheck.sln"
 
 /// Pattern specifying assemblies to be tested
 let testAssemblies = "tests/**/bin/Release/*.Test.dll"
@@ -142,8 +143,8 @@ Target "RunTests" (fun _ ->
     |> xUnit (fun p -> 
             {p with 
                 ShadowCopy = false;
-                HtmlOutput = true;
-                XmlOutput = true;
+                HtmlOutput = not (isLinux || isMacOS);
+                XmlOutput = false;
                 OutputDir = "temp" }) 
 )
 
