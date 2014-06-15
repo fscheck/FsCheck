@@ -10,6 +10,9 @@
 * Start using semantic versioning, hence the jump to 1.0.0
 * Start releasing all NuGet packages simultaneously and with the same version.
 * Start using FSharp.Formatting and publish documentation to github.io
+* Start building for mono on non-windows platforms.
+* Start using CI (appveyor for windows, Travis CI for MacOS).
+* Update to .NET4.5 to take advantage of ExceptionDispatchInfo.
 * Fix: sbyte overflow bug in shrinker.
-* Fix: don't generate custom CultureInfo.
+* Fix: CultureInfo generator and shrinker.
 
