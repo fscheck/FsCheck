@@ -296,7 +296,9 @@ module Runner =
             try
                 Reflect.invokeMethod m target o
              with :? TargetInvocationException as e -> //this is just to avoid huge non-interesting stacktraces in the output
-                raise (Reflect.preserveStackTrace  e.InnerException)
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(e.InnerException).Throw()
+                failwithf "Should not get here - please report a bug"
+                //raise (Reflect.preserveStackTrace  e.InnerException)
         let funValue = FSharpValue.MakeFunction(funType, (tupleToArray fromTypes) >> invokeAndThrowInner m)
         let genericM = checkMethodInfo.MakeGenericMethod([|funType|])
         genericM.Invoke(null, [|box config; funValue|]) |> ignore

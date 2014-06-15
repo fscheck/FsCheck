@@ -184,7 +184,7 @@ Target "NuGet" (fun _ ->
             //ProjectFile = package.ProjectFile //if we add this, it produces a symbols package
             Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
             Files = [ "dll";"pdb";"XML"]
-                    |> List.map (fun ext -> (sprintf @"..\src\%s\bin\Release\%s.%s" package.Name package.Name ext, Some @"lib\net40-Client", None))
+                    |> List.map (fun ext -> (sprintf @"..\src\%s\bin\Release\%s.%s" package.Name package.Name ext, Some @"lib\net45", None))
         })
         ("nuget/" + package.Name + ".nuspec")
    )
