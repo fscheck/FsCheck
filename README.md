@@ -26,11 +26,14 @@ FsCheck's generator combinators can be used in any testing framework to easily g
 
 Pull requests very welcome! Check out the issues marked up-for-grabs if you need any inspiration.
 
-Checkout the project and run build.cmd. That should pull in all the dependencies, build, run the tests and generate the documentation.
+Checkout the project and run build.cmd on Windows or build.sh on Linux/OSX. That should pull in all the dependencies, build, run the tests and generate the documentation.
 
-Then, open FsCheck.sln in Visual Studio and start coding or writing documentation. Building and testing from Visual Studio also works, to re-generate documentation quickly, execute docs/tools/generate.fsx in FSI.
+Then, open FsCheck.sln in Visual Studio on Windows or FsCheck-mono.sln on Linux/OSX in and start coding or writing documentation. 
 
-[![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
+Building and testing from Visual Studio also works, to re-generate documentation quickly, execute docs/tools/generate.fsx in FSI. This should also work in Monodevelop and Xamarin, though I have not tested.
+
+- Windows on .NET:[![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
+- OSX on Mono: [![Build Status](https://travis-ci.org/fsharp/FsCheck.svg?branch=master)](https://travis-ci.org/fsharp/FsCheck)
 
 
 
