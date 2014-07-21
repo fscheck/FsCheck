@@ -176,7 +176,7 @@ type MyGenerators =
           override x.Shrinker t = Seq.empty }
 
 (**
-Replace the `'a` by the particular type you are defiing an Arbitary instance for. 
+Replace the `'a` by the particular type you are defining an Arbitary instance for. 
 Only the `Generator` method needs to be defined; `Shrinker` by default returns the empty 
 sequence (i.e. no shrinking will occur for this type).
 
