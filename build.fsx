@@ -191,21 +191,14 @@ Target "SourceLink" (fun _ ->
 type OptionalString = string option
 
 open System
-Target "NuGet" (fun _ ->    
-    //No idea why this doesn't work
-    let createFilesList2 (fileNames: string list) = 
-        let extensions = [ "dll";"pdb";"XML"]    
-        let result = List.empty<(string * string option * string option)>                
-        for filename in fileNames do
-            for ext in extensions do
-                let a = [sprintf @"..\src\%s\bin\Release\%s.%s" filename filename ext, Some @"lib\net45", OptionalString.None] 
-                result = result@ a
-        result
-
+Target "NuGet" (fun _ ->        
     let createFilesList (fileNames: string list) = 
-        let ext = "dll"
-        List.map (fun filename -> sprintf @"..\src\%s\bin\Release\%s.%s" filename filename ext, Some @"lib\net45", OptionalString.None) fileNames 
-        
+        let extensions = [ "dll";"pdb";"XML"]            
+        [for filename in fileNames do
+            for ext in extensions do
+                yield (sprintf @"..\src\%s\bin\Release\%s.%s" filename filename ext, Some @"lib\net45", OptionalString.None)]
+              
+   
     packages |> Seq.iter (fun package ->
     NuGet (fun p -> 
         { p with   
@@ -221,8 +214,7 @@ Target "NuGet" (fun _ ->
             Publish = hasBuildParam "nugetkey"
             //ProjectFile = package.ProjectFile //if we add this, it produces a symbols package
             Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
-            Files = createFilesList package.Files
-            
+            Files = createFilesList package.Files            
         })
         ("nuget/" + package.Name + ".nuspec")
    )
