@@ -1,16 +1,12 @@
-﻿namespace FsCheck.NUnit
-
+﻿namespace System
 open System.Reflection
 
-[<assembly:AssemblyDescription("FsCheck.NUnit")>]
-[<assembly:AssemblyCompany("Kurt Schelfthout")>]
-[<assembly:AssemblyTitle("FsCheck.NUnit")>]
-[<assembly:AssemblyProduct("FsCheck.NUnit")>]
-[<assembly:AssemblyVersion("0.1")>]
-[<assembly:AssemblyFileVersion("0.1")>]
+[<assembly: AssemblyTitleAttribute("FsCheck.Nunit")>]
+[<assembly: AssemblyProductAttribute("FsCheck.Nunit")>]
+[<assembly: AssemblyDescriptionAttribute("Integrates FsCheck with NUnit")>]
+[<assembly: AssemblyVersionAttribute("1.0.0")>]
+[<assembly: AssemblyFileVersionAttribute("1.0.0")>]
+do ()
 
-[<assembly: System.Runtime.InteropServices.ComVisible(false)>]
-[<assembly: System.CLSCompliant(true)>]
-
-do()
-
+module internal AssemblyVersionInformation =
+    let [<Literal>] Version = "1.0.0"

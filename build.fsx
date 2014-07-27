@@ -36,8 +36,9 @@ type ProjectInfo =
     /// Tags for your project (for NuGet package)
     Tags : string
     ///The projectfile (csproj or fsproj)
-    ProjectFile : string
+    ProjectFile : list<string>
     Dependencies : list<string * Lazy<string>>
+    Files: list<string>
   }
 
 //File that contains the release notes.
@@ -61,11 +62,9 @@ let gitName = "FsCheck"
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
 let release = parseReleaseNotes (IO.File.ReadAllLines releaseNotes)
 
-
-
 let packages =
   [
-    { Name = "FsCheck"
+    { Name = "FsCheck"     
       Summary = "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
       Description = """
 FsCheck is a tool for testing .NET programs automatically. The programmer provides 
@@ -81,20 +80,39 @@ observe the distribution of test data, and define test data generators.
 When a property fails, FsCheck automatically displays a minimal counter example."""
       Authors = [ "Kurt Schelfthout and contributors" ]
       Tags = "test testing random fscheck quickcheck"
-      ProjectFile = "src/FsCheck/FsCheck.fsproj"
+      ProjectFile = ["src/FsCheck/FsCheck.fsproj" ]
       Dependencies = []
+      Files = ["FsCheck"]
     }
-    { Name = "FsCheck.Xunit"
-      Summary = "Integrates FsCheck with xUnit.NET"
-      Description = """
+    { 
+    Name = "FsCheck.Nunit"
+    Files = ["FsCheck.Nunit"; "FsCheck.Nunit.Addin"]
+    Summary = "Integrates FsCheck with NUnit"
+    Description = """FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute. 
+    All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
+    Authors = [ "Kurt Schelfthout and contributors" ]
+    Tags = "test testing random fscheck quickcheck nunit"
+    ProjectFile = ["src/FsCheck.NUnit/FsCheck.NUnit.fsproj";"src/FsCheck.NUnit.Addin/FsCheck.NUnit.Addin.fsproj"]
+    Dependencies = [ 
+                    "NUnit",    lazy GetPackageVersion "./packages/" "NUnit"  //delayed so only runs after package restore step
+                    "NUnit.Runners",    lazy GetPackageVersion "./packages/" "NUnit.Runners"
+                    "FsCheck",  lazy release.AssemblyVersion
+                    ]     
+    }
+    { 
+    Name = "FsCheck.Xunit"
+    Files = ["FsCheck.Xunit"]
+    Summary = "Integrates FsCheck with xUnit.NET"
+    Description = """
 FsCheck.Xunit integrates FsCheck with xUnit.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.NET's FactAttribute.
  
 All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
-      Authors = [ "Kurt Schelfthout and contributors" ]
-      Tags = "test testing random fscheck quickcheck xunit xunit.net"
-      ProjectFile = "src/FsCheck.Xunit/FsCheck.Xunit.fsproj"
-      Dependencies = [ "xunit",    lazy GetPackageVersion "./packages/" "xunit"  //delayed so only runs after package restore step
-                       "FsCheck",  lazy release.AssemblyVersion
+    Authors = [ "Kurt Schelfthout and contributors" ]
+    Tags = "test testing random fscheck quickcheck xunit xunit.net"
+    ProjectFile = ["src/FsCheck.Xunit/FsCheck.Xunit.fsproj"]
+    Dependencies = [ 
+                    "xunit", lazy GetPackageVersion "./packages/" "xunit"  //delayed so only runs after package restore step
+                    "FsCheck",  lazy release.AssemblyVersion
                      ]
    }
   ]
@@ -153,22 +171,41 @@ Target "RunTests" (fun _ ->
 
 Target "SourceLink" (fun _ ->
     use repo = new GitRepo(__SOURCE_DIRECTORY__)
-    packages 
-    |> Seq.iter (fun f ->
-        let proj = VsProj.LoadRelease f.ProjectFile
+    let LogAndVerify (proj: Microsoft.Build.Evaluation.Project) =
         logfn "source linking %s" proj.OutputFilePdb
         let files = proj.Compiles -- "**/AssemblyInfo.fs"
         repo.VerifyChecksums files
         proj.VerifyPdbChecksums files
         proj.CreateSrcSrv (sprintf "%s/%s/{0}/%%var2%%" gitRaw gitName) repo.Revision (repo.Paths files)
         Pdbstr.exec proj.OutputFilePdb proj.OutputFilePdbSrcSrv
+    packages 
+    |> Seq.iter (fun f ->
+        let proj = List.map VsProj.LoadRelease f.ProjectFile
+        List.iter (fun p-> LogAndVerify p) proj
+        
     )
 )
 
 // --------------------------------------------------------------------------------------
 // Build a NuGet package
+type OptionalString = string option
 
-Target "NuGet" (fun _ ->
+open System
+Target "NuGet" (fun _ ->    
+    //No idea why this doesn't work
+    let createFilesList2 (fileNames: string list) = 
+        let extensions = [ "dll";"pdb";"XML"]    
+        let result = List.empty<(string * string option * string option)>                
+        for filename in fileNames do
+            for ext in extensions do
+                let a = [sprintf @"..\src\%s\bin\Release\%s.%s" filename filename ext, Some @"lib\net45", OptionalString.None] 
+                result = result@ a
+        result
+
+    let createFilesList (fileNames: string list) = 
+        let ext = "dll"
+        List.map (fun filename -> sprintf @"..\src\%s\bin\Release\%s.%s" filename filename ext, Some @"lib\net45", OptionalString.None) fileNames 
+        
     packages |> Seq.iter (fun package ->
     NuGet (fun p -> 
         { p with   
@@ -184,8 +221,8 @@ Target "NuGet" (fun _ ->
             Publish = hasBuildParam "nugetkey"
             //ProjectFile = package.ProjectFile //if we add this, it produces a symbols package
             Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
-            Files = [ "dll";"pdb";"XML"]
-                    |> List.map (fun ext -> (sprintf @"..\src\%s\bin\Release\%s.%s" package.Name package.Name ext, Some @"lib\net45", None))
+            Files = createFilesList package.Files
+            
         })
         ("nuget/" + package.Name + ".nuspec")
    )
@@ -222,10 +259,12 @@ Target "All" DoNothing
 Target "CI" DoNothing
 
 "Clean"
-  ==> "RestorePackages"
+(*  ==> "RestorePackages"
   ==> "AssemblyInfo"
   ==> "Build"
   ==> "RunTests"
+*)
+  ==> "NuGet"
   ==> "All"
 
 "Build"
@@ -240,7 +279,7 @@ Target "CI" DoNothing
 "All"
   ==> "ReleaseDocs"
   =?> ("SourceLink", isLocalBuild && not isLinux)
-  ==> "NuGet"
+//  ==> "NuGet"
   ==> "Release"
 
 RunTargetOrDefault "All"

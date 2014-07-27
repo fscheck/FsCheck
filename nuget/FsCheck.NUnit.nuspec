@@ -1,22 +1,20 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$id$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <id>@project@</id>
+    <version>@build.number@</version>
+    <title>@project@</title>
+    <authors>@authors@</authors>
+    <owners>@authors@</owners>
     <licenseUrl>https://github.com/fsharp/FsCheck/blob/master/License.txt</licenseUrl>
     <projectUrl>https://github.com/fsharp/FsCheck</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests.</description>
-    <summary>Integrates FsCheck with NUnit</summary>
-    <tags>nunit fscheck</tags>
-    <releaseNotes>Initial release.</releaseNotes>
-    <copyright>Copyright 2012</copyright>
-    <dependencies>
-      <dependency id="FsCheck" version="0.9" />
-      <dependency id="NUnit" version="2.6.1"/>
-    </dependencies>
+    <summary>Integrates FsCheck with NUnit</summary>        
+    <copyright>Copyright 2012</copyright>    
+    <releaseNotes>@releaseNotes@</releaseNotes>    
+    <tags>@tags@</tags>
+    @dependencies@
   </metadata>
+  @files@
 </package>
