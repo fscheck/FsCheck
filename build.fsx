@@ -269,8 +269,6 @@ Target "CI" DoNothing
   ==> "AssemblyInfo"
   ==> "Build"
   ==> "RunTests"
-
-  ==> "NuGet"
   ==> "All"
 
 "Build"
