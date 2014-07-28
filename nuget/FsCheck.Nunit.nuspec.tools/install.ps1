@@ -1,13 +1,34 @@
 param($installPath, $toolsPath, $package, $project)
 
-write-host "Install path" $installPath
+write-host "Adding a reference to nunit.core and nunit.core.interfaeces to the project"
 $packagesFolder = Split-Path -Path $installPath -Parent
-write-host "packages folder" $packagesFolder
-write-host $toolsPath
-write-host $package
-write-host $project
-$NunitRunners = join-path -path $packagesFolder -childpath "NUnit.Runners.2.6.3"
+$version = ""
 
-$project.Object.References.Add($NunitRunners+"\nunit.core")
-$project.Object.References.Add($NunitRunners+"\nunit.core.interfaces")
+# Get-Package -Filter NUnit.Runners also returns packages with NUnit.Runners in the description (e.g. NUnit or SpecFlow.NUnit.Runners)
+# we need to find the one, that we are looking for
+$nunitPackages = Get-Package -Filter NUnit.Runners
+foreach ($nunitPackage in $nunitPackages)
+{
+	# there is a bug in NuGet: the package id for all returned packages is "NUnit.Runners", so filtering that is not enough
+	if ($nunitPackage.Id = "NUnit.Runners" -and $nunitPackage.ProjectUrl.ToString().Contains("nunit")) 
+	{ 
+		$version = $nunitPackage.Version.ToString() 
+	}
+}
+
+if ($version -ne "") 
+{ 
+	$nunitPackageToolsLibFolder = $packagesFolder + "\NUnit.Runners." + $version + "\tools\lib\"
+    
+    write-host "The nuint address is: " + $nunitPackageToolsLibFolder
+    
+	$nunitCoreInterfacesRef = $project.Object.References.Item("nunit.core.interfaces")
+	if ($nunitCoreInterfacesRef) { $nunitCoreInterfacesRef.Remove() }
+	$project.Object.References.Add($nunitPackageToolsLibFolder + "nunit.core.interfaces.dll")
+    
+    $nunitCoreRef = $project.Object.References.Item("nunit.core")
+	if ($nunitCoreRef) { $nunitCoreRef.Remove() }
+	$project.Object.References.Add($nunitPackageToolsLibFolder + "nunit.core.dll")
+}
+
 
