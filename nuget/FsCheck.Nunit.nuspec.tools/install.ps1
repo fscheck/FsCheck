@@ -1,6 +1,6 @@
 param($installPath, $toolsPath, $package, $project)
 
-write-host "Adding a reference to nunit.core and nunit.core.interfaeces to the project"
+write-host "Adding a reference to nunit.core and nunit.core.interfaces to the project"
 $packagesFolder = Split-Path -Path $installPath -Parent
 $version = ""
 
@@ -20,7 +20,7 @@ if ($version -ne "")
 { 
 	$nunitPackageToolsLibFolder = $packagesFolder + "\NUnit.Runners." + $version + "\tools\lib\"
     
-    write-host "The nuint address is: " + $nunitPackageToolsLibFolder
+    write-host "The nunit location is: " + $nunitPackageToolsLibFolder
     
 	$nunitCoreInterfacesRef = $project.Object.References.Item("nunit.core.interfaces")
 	if ($nunitCoreInterfacesRef) { $nunitCoreInterfacesRef.Remove() }
