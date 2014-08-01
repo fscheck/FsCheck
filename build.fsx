@@ -92,7 +92,7 @@ When a property fails, FsCheck automatically displays a minimal counter example.
     { 
     Name = "FsCheck.Nunit"
     Files = ["FsCheck.Nunit"; "FsCheck.Nunit.Addin"]
-    FilesExtra = [("FsCheck.Nunit.nuspec.tools\install.ps1", "tools\install.ps1")]
+    FilesExtra = [("FsCheck.Nunit.nuspec.tools\install.ps1", "tools\install.ps1");(@"FsCheck.Nunit.nuspec.tools\FsCheckAddin.fs","content\FsCheckAddin.fs")]
     Summary = "Integrates FsCheck with NUnit"
     Description = """FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute. 
     All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
