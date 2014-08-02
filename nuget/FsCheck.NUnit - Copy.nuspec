@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>FsCheckNunit-test</id>
+        <version>0.1.2.8</version>
+        <title>FsCheck.Nunit test</title>
+        <authors>Bka</authors>
+        <owners>Bla</owners>
+        <licenseUrl>https://github.com/fsharp/FsCheck/blob/master/License.txt</licenseUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests.</description>
+        <summary>Integrates FsCheck with NUnit</summary>
+        <releaseNotes />
+        <copyright>Copyright 2012</copyright>
+        <dependencies>
+            <dependency id="NUnit.Runners" version="2.6.3" />
+            <dependency id="FsCheck" version="0.9.4" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="FsCheck.Nunit.nuspec.tools\FsCheckAddin.fs" target="content\FsCheckAddin.fs" />
+        <file src="..\src\FsCheck.NUnit.Addin\bin\Release\FsCheck.NUnit.Addin.dll" target="lib\net45\FsCheck.NUnit.Addin.dll" />
+        <file src="..\src\FsCheck.NUnit.Addin\bin\Release\FsCheck.NUnit.Addin.pdb" target="lib\net45\FsCheck.NUnit.Addin.pdb" />
+        <file src="..\src\FsCheck.NUnit.Addin\bin\Release\FsCheck.NUnit.Addin.XML" target="lib\net45\FsCheck.NUnit.Addin.XML" />
+        <file src="..\src\FsCheck.NUnit\bin\Release\FsCheck.NUnit.dll" target="lib\net45\FsCheck.NUnit.dll" />
+        <file src="..\src\FsCheck.NUnit\bin\Release\FsCheck.NUnit.pdb" target="lib\net45\FsCheck.NUnit.pdb" />
+        <file src="..\src\FsCheck.NUnit\bin\Release\FsCheck.NUnit.XML" target="lib\net45\FsCheck.NUnit.XML" />
+        <file src="FsCheck.Nunit.nuspec.tools\install.ps1" target="tools\install.ps1" />
+    </files>
+</package>
