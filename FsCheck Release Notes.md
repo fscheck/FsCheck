@@ -5,7 +5,7 @@
 * Update to F# 3.1
 * Hardened other generators against the new null-generating string generator.
 
-#### 1.0.0 - sometime soon
+#### 1.0.0 - 03.08.2014
 * Start using FAKE to automate releases
 * Release NUnit addin
 * Start using semantic versioning, hence the jump to 1.0.0
