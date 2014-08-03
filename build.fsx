@@ -54,7 +54,7 @@ let testAssemblies = "tests/**/bin/Release/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted 
-let gitHome = "git@github.com:fsharp"
+let gitHome = "https://github.com/fsharp"
 // gitraw location - used for source linking
 let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/fsharp"
 // The name of the project on GitHub
@@ -256,7 +256,14 @@ Target "ReleaseDocs" (fun _ ->
     Branches.push tempDocsDir
 )
 
-Target "Release" DoNothing
+Target "Release" (fun _ ->
+    StageAll ""
+    Commit "" (sprintf "Bump version to %s" release.NugetVersion)
+    Branches.push ""
+
+    Branches.tag "" release.NugetVersion
+    Branches.pushTag "" "origin" release.NugetVersion
+)
 
 // --------------------------------------------------------------------------------------
 // Run all targets by default. Invoke 'build <Target>' to override
