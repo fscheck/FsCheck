@@ -115,15 +115,15 @@ StackOverflowException, or produce very large results. To avoid this,
 recursive generators should always use the size control mechanism. For example,*)
 
 let tree =
-let rec tree' s = 
-    match s with
-    | 0 -> Gen.map Leaf Arb.generate<int>
-    | n when n>0 -> 
-        let subtree = tree' (n/2)
-        Gen.oneof [ Gen.map Leaf Arb.generate<int> 
-                    Gen.map2 (fun x y -> Branch (x,y)) subtree subtree]
-    | _ -> invalidArg "s" "Only positive arguments are allowed"
-Gen.sized tree
+    let rec tree' s = 
+        match s with
+        | 0 -> Gen.map Leaf Arb.generate<int>
+        | n when n>0 -> 
+            let subtree = tree' (n/2)
+            Gen.oneof [ Gen.map Leaf Arb.generate<int> 
+                        Gen.map2 (fun x y -> Branch (x,y)) subtree subtree]
+        | _ -> invalidArg "s" "Only positive arguments are allowed"
+    Gen.sized tree'
 
 (**
 Note that
