@@ -11,8 +11,9 @@ FsCheck
   <div class="span1"></div>
   <div class="span6">
     <div class="well well-small" id="nuget">
-      FsCheck and xUnit.NET plugin can be <a href="https://nuget.org/packages/FsCheck">installed from NuGet</a>:
+      FsCheck, NUnit and xUnit.NET plugin can be <a href="https://www.nuget.org/packages?q=fscheck">installed from NuGet</a>:
       <pre>PM> Install-Package FsCheck
+PM> Install-Package FsCheck.Nunit
 PM> Install-Package FsCheck.Xunit</pre>
     </div>
   </div> 
