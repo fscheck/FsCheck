@@ -167,9 +167,10 @@ Target "RunTests" (fun _ ->
     !! testAssemblies
     |> xUnit (fun p -> 
             {p with 
-                ShadowCopy = false;
-                HtmlOutput = not (isLinux || isMacOS);
-                XmlOutput = false;
+                ToolPath = "packages/xunit.runners.1.9.2/tools/xunit.console.clr4.exe"
+                ShadowCopy = false
+                HtmlOutput = not (isLinux || isMacOS)
+                XmlOutput = false
                 OutputDir = "temp" }) 
 )
 
@@ -288,7 +289,6 @@ Target "CI" DoNothing
   ==> "ReleaseDocs"
 
 "All"
-  ==> "GenerateDocsJa"
   ==> "GenerateDocs"
   ==> "CI"
 
