@@ -22,7 +22,7 @@ PM> Install-Package FsCheck.Xunit</pre>
 Documentation
 -----------------------
 
-The documentation is also available in [Japanese](https://github.com/fsharp/FsCheck/blob/master/docs/Documentation_ja.md)
+The documentation is also available in [Japanese](ja/index.html)
 
  * [QuickStart](QuickStart.html) to get started.
 

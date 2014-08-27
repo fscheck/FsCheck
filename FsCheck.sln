@@ -54,6 +54,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D
 		Docs\content\TipsAndTricks.fsx = Docs\content\TipsAndTricks.fsx
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ja", "ja", "{34021B41-3EED-409A-AF7C-6EC2BD4371B2}"
+	ProjectSection(SolutionItems) = preProject
+		docs\content\ja\index.fsx = docs\content\ja\index.fsx
+		docs\content\ja\Properties.fsx = docs\content\ja\Properties.fsx
+		docs\content\ja\QuickStart.fsx = docs\content\ja\QuickStart.fsx
+		docs\content\ja\RunningTests.fsx = docs\content\ja\RunningTests.fsx
+		docs\content\ja\StatefulTesting.fsx = docs\content\ja\StatefulTesting.fsx
+		docs\content\ja\TestData.fsx = docs\content\ja\TestData.fsx
+		docs\content\ja\TipsAndTricks.fsx = docs\content\ja\TipsAndTricks.fsx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,6 +125,7 @@ Global
 		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 		{CB41BAC5-272F-4562-9494-E3DC1D0B4139} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
+		{34021B41-3EED-409A-AF7C-6EC2BD4371B2} = {6B36173B-D4E0-4CF4-840D-3F3016653F85}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = examples\FsCheck.Examples\FsCheck.Examples.fsproj

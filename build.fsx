@@ -240,6 +240,9 @@ Target "NuGet" (fun _ ->
 Target "GenerateDocs" (fun _ ->
     executeFSIWithArgs "docs/tools" "generate.fsx" ["--define:RELEASE"] [] |> ignore
 )
+Target "GenerateDocsJa" (fun _ ->
+    executeFSIWithArgs "docs/tools" "generate.ja.fsx" ["--define:RELEASE"] [] |> ignore
+)
 
 // --------------------------------------------------------------------------------------
 // Release Scripts
@@ -280,10 +283,12 @@ Target "CI" DoNothing
 
 "Build"
   ==> "CleanDocs"
+  ==> "GenerateDocsJa"
   ==> "GenerateDocs"
   ==> "ReleaseDocs"
 
 "All"
+  ==> "GenerateDocsJa"
   ==> "GenerateDocs"
   ==> "CI"
 
