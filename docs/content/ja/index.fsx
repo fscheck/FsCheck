@@ -43,7 +43,7 @@ PM> Install-Package FsCheck.Xunit</pre>
 
  * [使いかたのヒント](TipsAndTricks.html) 
 
- * [API リファレンス](reference/index.html)は全ての型、モジュール、関数に対する自動生成されたドキュメントを含みます。
+ * [API リファレンス](../reference/index.html)は全ての型、モジュール、関数に対する自動生成されたドキュメントを含みます。
  
 貢献と著作権
 ------------
