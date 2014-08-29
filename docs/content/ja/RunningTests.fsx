@@ -1,6 +1,6 @@
 ﻿(*** hide ***)
-#I "../../src/FsCheck/bin/Release"
-#r @"../../packages/xunit.1.9.2/lib/net20/xunit.dll"
+#I "../../../src/FsCheck/bin/Release"
+#r @"../../../packages/xunit.1.9.2/lib/net20/xunit.dll"
 #r "FsCheck"
 
 open FsCheck
