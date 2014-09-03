@@ -100,7 +100,7 @@ example, this may limit the expressiveness of properties - consider:</p>
 <span onmouseout="hideTip(event, 'fs21', 66)" onmouseover="showTip(event, 'fs21', 66)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 67)" onmouseover="showTip(event, 'fs22', 67)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs23', 68)" onmouseover="showTip(event, 'fs23', 68)" class="i">tooEager</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (0 shrinks) (StdGen (1337145439,295904199)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1064914909,295906233)):
 0
 with exception:
 System.DivideByZeroException: Attempted to divide by zero.
@@ -210,7 +210,7 @@ are then summarized when testing is complete.</p>
 <p>Test cases for which the condition is true are classified as trivial, and the proportion of 
 trivial test cases in the total is reported:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 54 tests (44% trivial).
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 67 tests (35% trivial).
 </code></pre></td></tr></table>
 
 <h3>Classifying Test Cases</h3>
@@ -230,10 +230,10 @@ trivial test cases in the total is reported:</p>
 <p>Test cases satisfying the condition are assigned the classification given, and the distribution of 
 classifications is reported after testing:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 55 tests.
-40% at-tail, at-head.
-38% at-head.
-18% at-tail.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 65 tests.
+41% at-tail, at-head.
+27% at-tail.
+21% at-head.
 </code></pre></td></tr></table>
 
 <p>Note that a test case may fall into more than one classification.</p>
@@ -254,12 +254,12 @@ classifications is reported after testing:</p>
 <p>The argument of collect is evaluated in each test case, and the distribution of 
 values is reported. The type of this argument is printed using <code>sprintf "%A"</code>:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 57 tests.
-56% 1.
-31% 0.
-8% 2.
-1% 4.
-1% 3.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 61 tests.
+44% 1.
+32% 0.
+14% 2.
+4% 4.
+3% 3.
 </code></pre></td></tr></table>
 
 <h3>Combining Observations</h3>
@@ -277,16 +277,16 @@ reported. For example:</p>
 <span onmouseout="hideTip(event, 'fs21', 206)" onmouseover="showTip(event, 'fs21', 206)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 207)" onmouseover="showTip(event, 'fs22', 207)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs50', 208)" onmouseover="showTip(event, 'fs50', 208)" class="i">insertCombined</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 53 tests.
-28% 1, at-tail.
-18% 0, at-tail, at-head.
-16% 1, at-head.
-11% 2, at-tail.
-9% 1, at-tail, at-head.
-7% 2, at-head.
-3% 3, at-head.
-1% 7.
-1% 2.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 68 tests.
+44% 0, at-tail, at-head.
+14% 1, at-head.
+13% 1, at-tail.
+7% 1, at-tail, at-head.
+5% 2, at-tail.
+5% 2, at-head.
+5% 2.
+1% 4, at-head.
+1% 3, at-head.
 </code></pre></td></tr></table>
 
 <h2>And, Or and Labels</h2>
@@ -314,7 +314,7 @@ it finds a counter-example. This takes the form: <code>&lt;string&gt; @| &lt;pro
 <span onmouseout="hideTip(event, 'fs21', 224)" onmouseover="showTip(event, 'fs21', 224)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 225)" onmouseover="showTip(event, 'fs22', 225)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs51', 226)" onmouseover="showTip(event, 'fs51', 226)" class="i">complex</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1377147727,295904199)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (1097546776,295906233)):
 Label of failing property: result not sum
 0
 0
@@ -334,7 +334,7 @@ This is useful for displaying intermediate results, for example:</p>
 <span onmouseout="hideTip(event, 'fs21', 249)" onmouseover="showTip(event, 'fs21', 249)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 250)" onmouseover="showTip(event, 'fs22', 250)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs55', 251)" onmouseover="showTip(event, 'fs55', 251)" class="i">multiply</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1379157842,295904199)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1099196870,295906233)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
@@ -431,6 +431,7 @@ lt1
             <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
             <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
             <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
             
             <li class="nav-header">Getting started</li>
             <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>

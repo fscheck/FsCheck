@@ -59,9 +59,9 @@ Then FsCheck can even shrink your function. For example:</p>
 <span onmouseout="hideTip(event, 'fs11', 48)" onmouseover="showTip(event, 'fs11', 48)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 49)" onmouseover="showTip(event, 'fs12', 49)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs13', 50)" onmouseover="showTip(event, 'fs13', 50)" class="i">mapRec</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (1637422614,295904199)):
-{ 0-&gt;1 }
-[0]
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (7 shrinks) (StdGen (1378122824,295906233)):
+{ 0-&gt;0; 1-&gt;3; 2-&gt;0; 3-&gt;0 }
+[1]
 </code></pre></td></tr></table>
 
 <p>The type <code>Function&lt;'a,'b&gt;</code> records a map of all the arguments it was called with, and the result it produced. 
@@ -114,7 +114,7 @@ define your own labelling equality combinator:</p>
 <span onmouseout="hideTip(event, 'fs11', 95)" onmouseover="showTip(event, 'fs11', 95)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 96)" onmouseover="showTip(event, 'fs12', 96)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs38', 97)" onmouseover="showTip(event, 'fs38', 97)" class="i">testCompare</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1640042764,295904199)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (1 shrink) (StdGen (1381553020,295906233)):
 Label of failing property: 3 = -1
 1
 0
@@ -181,6 +181,7 @@ Label of failing property: 3 = -1
             <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
             <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
             <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
             
             <li class="nav-header">Getting started</li>
             <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
