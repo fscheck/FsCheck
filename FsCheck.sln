@@ -51,8 +51,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D
 		Docs\content\QuickStart.fsx = Docs\content\QuickStart.fsx
 		Docs\content\RunningTests.fsx = Docs\content\RunningTests.fsx
 		Docs\content\StatefulTesting.fsx = Docs\content\StatefulTesting.fsx
+		docs\tools\templates\template.cshtml = docs\tools\templates\template.cshtml
 		Docs\content\TestData.fsx = Docs\content\TestData.fsx
 		Docs\content\TipsAndTricks.fsx = Docs\content\TipsAndTricks.fsx
+		docs\content\users.md = docs\content\users.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ja", "ja", "{34021B41-3EED-409A-AF7C-6EC2BD4371B2}"
