@@ -59,9 +59,9 @@ Then FsCheck can even shrink your function. For example:</p>
 <span onmouseout="hideTip(event, 'fs11', 48)" onmouseover="showTip(event, 'fs11', 48)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 49)" onmouseover="showTip(event, 'fs12', 49)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs13', 50)" onmouseover="showTip(event, 'fs13', 50)" class="i">mapRec</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (7 shrinks) (StdGen (1378122824,295906233)):
-{ 0-&gt;0; 1-&gt;3; 2-&gt;0; 3-&gt;0 }
-[1]
+<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (7 shrinks) (StdGen (563896623,295918283)):
+{ 0-&gt;7; 2-&gt;0; 4-&gt;0 }
+[0]
 </code></pre></td></tr></table>
 
 <p>The type <code>Function&lt;'a,'b&gt;</code> records a map of all the arguments it was called with, and the result it produced. 
@@ -114,7 +114,7 @@ define your own labelling equality combinator:</p>
 <span onmouseout="hideTip(event, 'fs11', 95)" onmouseover="showTip(event, 'fs11', 95)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 96)" onmouseover="showTip(event, 'fs12', 96)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs38', 97)" onmouseover="showTip(event, 'fs38', 97)" class="i">testCompare</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (1 shrink) (StdGen (1381553020,295906233)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (566076747,295918283)):
 Label of failing property: 3 = -1
 1
 0
