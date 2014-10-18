@@ -13,7 +13,7 @@ FsCheck's generator combinators can be used in any testing framework to easily g
 * [FsCheck](http://nuget.org/List/Packages/FsCheck)
 * [FsCheck with xUnit.NET integration](http://nuget.org/List/Packages/FsCheck.Xunit)
 * [FsCheck with NUnit integration](http://www.nuget.org/packages/FsCheck.Nunit/)
-* 
+ 
 ### Documentation ###
 
 * [English](https://fsharp.github.io/FsCheck/)
