@@ -59,8 +59,8 @@ Then FsCheck can even shrink your function. For example:</p>
 <span onmouseout="hideTip(event, 'fs11', 48)" onmouseover="showTip(event, 'fs11', 48)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 49)" onmouseover="showTip(event, 'fs12', 49)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs13', 50)" onmouseover="showTip(event, 'fs13', 50)" class="i">mapRec</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (7 shrinks) (StdGen (563896623,295918283)):
-{ 0-&gt;7; 2-&gt;0; 4-&gt;0 }
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (3 shrinks) (StdGen (669772511,295924355)):
+{ 0-&gt;1; 1-&gt;0 }
 [0]
 </code></pre></td></tr></table>
 
@@ -93,9 +93,9 @@ case, and register a generator for the new type:</p>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.
 </code></pre></td></tr></table>
 
-<p>It's now also easy to define custom shrink functions as well.</p>
+<p>It's now easy to define custom shrink functions as well.</p>
 
-<p>FsCheck uses this pattern also, e.g. <code>NonNegativeInt</code>, <code>PositiveInt</code>, <code>StringWithoutNullChars</code> etc. See the
+<p>FsCheck uses this pattern frequently, e.g. <code>NonNegativeInt</code>, <code>PositiveInt</code>, <code>StringWithoutNullChars</code> etc. See the
 default Arbitrary instances on the <code>Arb.Default</code> type.</p>
 
 <p>Also, for these kinds of generators, the <code>Arb.filter</code>, <code>Arb.convert</code> and <code>Arb.mapFilter</code> functions will come in handy.</p>
@@ -103,7 +103,7 @@ default Arbitrary instances on the <code>Arb.Default</code> type.</p>
 <h2>An equality comparison that prints the left and right sides of the equality</h2>
 
 <p>Properties commonly check for equality. If a test case fails, FsCheck prints the counterexample, but 
-sometimes it is useful to print the left and right side of the comparison as well, especially if you 
+sometimes it is useful to print the left and right side of the comparison, especially if you 
 do some complicated calculations with the generated arguments first. To make this easier, you can 
 define your own labelling equality combinator:</p>
 
@@ -114,7 +114,7 @@ define your own labelling equality combinator:</p>
 <span onmouseout="hideTip(event, 'fs11', 95)" onmouseover="showTip(event, 'fs11', 95)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 96)" onmouseover="showTip(event, 'fs12', 96)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs38', 97)" onmouseover="showTip(event, 'fs38', 97)" class="i">testCompare</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (566076747,295918283)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (671912634,295924355)):
 Label of failing property: 3 = -1
 1
 0
@@ -125,9 +125,17 @@ Label of failing property: 3 = -1
 <h2>Some ways to run FsCheck tests</h2>
 
 <ul>
-<li>By adding properties and generators to an fsx file in your project. It's easy to execute, just press ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls that are built in your solution; F# Interactive will lock those for the remainder of the session, and you won't be able to build unitl you quit the session. One solution is to include the source files instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug though.</li>
-<li>By making a separate console application. Easy to debug, no annoying locks on assemblies. Your best option if you use only FsCheck for testing and your properties span multiple assemblies.</li>
-<li>By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach (some things are easier to check using unit tests, and vice versa), and you like a graphical runner. Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. See above for ways to customize FsCheck for this scenario.</li>
+<li>By adding properties and generators to an fsx file in your project. It's easy to execute, just press 
+ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls
+that are built in your solution; Versions of F# Interactive earlier than 3.1.2 will lock those for the remainder of the session,
+and you won't be able to build unitl you quit the session. One solution is to include the source files
+instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug though.</li>
+<li>By making a separate console application. Easy to debug, and no annoying locks on assemblies. Your best option 
+if you use only FsCheck for testing and your properties span multiple assemblies.</li>
+<li>By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach 
+(some things are easier to check using unit tests, and vice versa), and you like a graphical runner.
+Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. Also have a look
+at some of the existing integrations with test runners like Xunit.NET, NUnit, Fuchu.</li>
 </ul>
 
 <div class="tip" id="fs1">namespace FsCheck</div>
