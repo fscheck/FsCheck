@@ -35,47 +35,94 @@ type WeightAndValue<'a>(weight:int,value:'a) =
     
 type Any private() =
     static let regs = Runner.init.Force()
+
+    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///equal probability.
     static member private OneOfSeqGen gs = 
         gs |> Seq.toList |> oneof
+
+    ///Build a generator that randomly generates one of the values in the given non-empty seq.
     static member private OneOfSeqValue vs = 
         vs |> Seq.toList |> elements
+
+    ///Sequence the given list of generators into a generator of a list.
     static member private SequenceSeq<'a> gs = 
         gs |> Seq.toList |> sequence |> map (fun list -> new List<'a>(list))
+
+    /// Returns a generator for the type argument
     static member OfType<'a>() = 
         from<'a>.Generator
+
+    /// Generate a constant value
     static member Value (value) = 
         constant value
+
+    ///Build a generator that randomly generates one of the values in the given non-empty seq.
     static member ValueIn (values : seq<_>) = 
         values |> Any.OneOfSeqValue
+
+    ///Build a generator that randomly generates one of the values in the given non-empty seq.
     static member ValueIn ([<ParamArrayAttribute>] values : array<_>) = 
         values |> Any.OneOfSeqValue
+
+    ///Generates an integer between l and h, inclusive.
     static member IntBetween (l,h) = 
         choose (l,h)
+
+    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///given probabilities. The sum of the probabilities must be larger than zero.
     static member WeighedValueIn ( weighedValues : seq<WeightAndValue<'a>> ) =
         weighedValues |> Any.OneOfWeighedSeqValue
+
+    ///Build a generator that generates a value from one of the constants in the given non-empty seq, with
+    ///given probabilities. The sum of the probabilities must be larger than zero.
     static member WeighedValueIn ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<'a>> ) =
         weighedValues |> Any.OneOfWeighedSeqValue
+
+    ///Build a generator that generates a value from one of the constants in the given non-empty seq, with
+    ///given probabilities. The sum of the probabilities must be larger than zero.
     static member private OneOfWeighedSeqValue ws = 
         ws |> Seq.map (fun wv -> (wv.Weight, constant wv.Value)) |> Seq.toList |> frequency
+
+    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///equal probability.
     static member GeneratorIn (generators : seq<Gen<_>>) = 
         generators |> Any.OneOfSeqGen
+
+    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///equal probability.
     static member GeneratorIn ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
         generators |> Any.OneOfSeqGen
+
+    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///given probabilities. The sum of the probabilities must be larger than zero.
     static member WeighedGeneratorIn ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
         weighedValues |> Any.OneOfWeighedSeq
+
+    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///given probabilities. The sum of the probabilities must be larger than zero.
     static member WeighedGeneratorIn ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<Gen<'a>>> ) =
         weighedValues |> Any.OneOfWeighedSeq
+
+    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///given probabilities. The sum of the probabilities must be larger than zero.
     static member private OneOfWeighedSeq ws = 
         ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> Seq.toList |> frequency
+
+    ///Sequence the given list of generators into a generator of a list.
     static member SequenceOf<'a> (generators:seq<Gen<'a>>) = 
         generators |> Any.SequenceSeq
+
+    ///Sequence the given list of generators into a generator of a list.
     static member SequenceOf<'a> ([<ParamArrayAttribute>]generators:array<Gen<'a>>) = 
         generators |> Any.SequenceSeq
+
     static member OfSize (sizedGen : Func<int,Gen<_>>) =
         sized <| fun s -> (sizedGen.Invoke(s))
 
 
 type Shrink =
+    ///Returns the immediate shrinks for the given value based on its type.
     static member Type<'a>() = shrink<'a>
 
 //mutable counterpart of the Config type
@@ -89,16 +136,33 @@ type Configuration() =
     let mutable endSize = Config.Quick.EndSize
     let mutable runner = Config.Quick.Runner
     let mutable replay = Config.Quick.Replay
+
+    ///The maximum number of tests that are run.
     member x.MaxNbOfTest with get() = maxTest and set(v) = maxTest <- v
+
+    ///The maximum number of tests where values are rejected
     member x.MaxNbOfFailedTests with get() = maxFail and set(v) = maxFail <- v
+
+    ///Name of the test.
     member x.Name with get() = name and set(v) = name <- v
+
+    ///What to print when new arguments args are generated in test n
     member x.Every with get() = new Func<int,obj array,string>(fun i arr -> every i (Array.toList arr)) 
                    and set(v:Func<int,obj array,string>) = every <- fun i os -> v.Invoke(i,List.toArray os)
+
+    ///What to print every time a counter-example is succesfully shrunk
     member x.EveryShrink with get() = new Func<obj array,string>(Array.toList >> everyShrink)
                          and set(v:Func<obj array,string>) = everyShrink <- fun os -> v.Invoke(List.toArray os)
+
+    ///The size to use for the first test.
     member x.StartSize with get() = startSize and set(v) = startSize <- v
+
+    ///The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.
     member x.EndSize with get() = endSize and set(v) = endSize <- v
+
+    ///A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit. 
     member x.Runner with get() = runner and set(v) = runner <- v
+
     //TODO: figure out how to deal with null values
     //member x.Replay with get() = (match replay with None -> null | Some s -> s) and set(v) = replay = Some v
     member internal x.ToConfig() =
@@ -127,12 +191,26 @@ type UnbrowsableObject() =
     override x.ToString() = base.ToString()
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     abstract Build : unit -> Property
+
+    /// Check one property with the quick configuration
     member x.QuickCheck() = Check.Quick(x.Build())
+
+    /// Check one property with the quick configuration, and throw an exception if it fails or is exhausted.
     member x.QuickCheckThrowOnFailure() = Check.QuickThrowOnFailure(x.Build())
+
+    /// Check one property with the verbose configuration.
     member x.VerboseCheck() = Check.Verbose(x.Build())
+
+    /// Check one property with the quick configuration, and using the given name.
     member x.QuickCheck(name:string) = Check.Quick(name,x.Build())
+
+    /// Check one property with the quick configuration, and throw an exception if it fails or is exhausted.
     member x.QuickCheckThrowOnFailure(name:string) = Check.QuickThrowOnFailure(name,x.Build())
+
+    ///Check one property with the verbose configuration, and using the given name.
     member x.VerboseCheck(name:string) = Check.Verbose(name,x.Build())
+
+    ///Check the given property using the given config.
     member x.Check(configuration:Configuration) = Check.One(configuration.ToConfig(),x.Build())
 
 and SpecBuilder<'a> internal   ( generator0:'a Gen
@@ -149,20 +227,32 @@ and SpecBuilder<'a> internal   ( generator0:'a Gen
             forAll (Arb.fromGenShrink(generator0,shrinker0)) (fun a -> (conditions' a) ==> lazy (assertion0 a) |> collects' a |> classifies' a)
     member x.When( condition:Func<'a,bool> ) = 
         SpecBuilder<'a>(generator0, shrinker0, assertion0, (fun a -> condition.Invoke(a))::conditions, collects, classifies)
+
+    ///Collect data values. The argument of collect is evaluated in each test case, 
+    ///and the distribution of values is reported.
     member x.Collect(collectedValue:Func<'a,string>)=
         SpecBuilder<'a>(generator0, shrinker0,assertion0,conditions,(fun a -> collectedValue.Invoke(a))::collects,classifies)
+
     member x.Classify(filter:Func<'a,bool>,name:string) =
         SpecBuilder<'a>(generator0, shrinker0,assertion0,conditions,collects,((fun a -> filter.Invoke(a)),name)::classifies)
     member x.Shrink(shrinker:Func<'a,'a seq>) =
         SpecBuilder<'a>( generator0, shrinker.Invoke, assertion0, conditions, collects, classifies)
     member x.Label( name:string ) =
         SpecBuilder<'a>(generator0, shrinker0, label name << assertion0,conditions, collects, classifies)
+
+    ///Construct a property that succeeds if both succeed.
     member x.And(assertion : Func<'a,bool>) =
         SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (assertion.Invoke(a))), conditions, collects, classifies)
+
+    ///Construct a property that succeeds if both succeed.
     member x.And(assertion : Func<'a,bool>, name:string ) =
         SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
+
+    ///Construct a property that fails if both fail.
     member x.Or(assertion : Func<'a,bool>) =
         SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (assertion.Invoke(a))), conditions, collects, classifies)
+
+    ///Construct a property that fails if both fail.
     member x.Or(assertion : Func<'a,bool>, name:string ) =
         SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
     member x.AndFor<'b>(generator:'b Gen, assertion:Func<'b,bool>) =
@@ -294,9 +384,13 @@ open Gen
 
 [<System.Runtime.CompilerServices.Extension>]
 type GeneratorExtensions = 
+    ///Map the given function to the value in the generator, yielding a new generator of the result type.  
     [<System.Runtime.CompilerServices.Extension>]
     static member Select(g:Gen<_>, selector : Func<_,_>) = g.Map(fun a -> selector.Invoke(a))
-    
+
+    ///Generates a value that satisfies a predicate. This function keeps re-trying
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
+    ///the predicate is satisfied.
     [<System.Runtime.CompilerServices.Extension>]
     static member Where(g:Gen<_>, predicate : Func<_,_>) = suchThat (fun a -> predicate.Invoke(a)) g
     
@@ -310,16 +404,22 @@ type GeneratorExtensions =
         gen { let! a = source
               let! b = f.Invoke(a)
               return select.Invoke(a,b) }
-    
+
+    /// Generates a list of random length. The maximum length depends on the
+    /// size parameter.
     [<System.Runtime.CompilerServices.Extension>]
     static member MakeList<'a> (generator) = listOf generator |> map (fun list -> new List<'a>(list))
-    
+
+    /// Generates a non-empty list of random length. The maximum length 
+    /// depends on the size parameter.
     [<System.Runtime.CompilerServices.Extension>]
     static member MakeNonEmptyList<'a> (generator) = nonEmptyListOf generator |> map (fun list -> new List<'a>(list))
     
+    ///Generates a list of given length, containing values generated by the given generator.
     [<System.Runtime.CompilerServices.Extension>]
     static member MakeListOfLength<'a> (generator, count) = listOfLength count generator |> map (fun list -> new List<'a>(list))
     
+    ///Override the current size of the test. resize n g invokes generator g with size parameter n.
     [<System.Runtime.CompilerServices.Extension>]
     static member Resize (generator, sizeTransform : Func<int,int>) =
         sized <| fun s -> resize (sizeTransform.Invoke(s)) generator
@@ -339,6 +439,7 @@ type ArbitraryExtensions =
         Arb.convert convertTo.Invoke convertFrom.Invoke arb
     
 type DefaultArbitraries =
+    ///Register the generators that are static members of the type argument.
     static member Add<'t>() = Arb.register<'t>()
     //static member Overwrite<'t>() = Gen.overwrite<'t>()
   
