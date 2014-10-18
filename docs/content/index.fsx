@@ -20,10 +20,14 @@ PM> Install-Package FsCheck.Xunit</pre>
   <div class="span1"></div>
 </div>
 
-Documentation
------------------------
+Users have also created integrations with [Fuchu](https://github.com/mausch/Fuchu) and 
+[AutoFixture](https://github.com/AutoFixture/AutoFixture) that 
+you can [find on NuGet](https://www.nuget.org/packages?q=fscheck).
 
-The documentation is also available in [Japanese](ja/index.html)
+Documentation
+-------------
+
+The documentation is also available in [Japanese](ja/index.html).
 
  * [QuickStart](QuickStart.html) to get started.
 

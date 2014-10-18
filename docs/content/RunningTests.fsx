@@ -2,6 +2,7 @@
 #I "../../src/FsCheck/bin/Release"
 #r @"../../packages/xunit.1.9.2/lib/net20/xunit.dll"
 #r "FsCheck"
+#r "FsCheck.Xunit"
 
 open FsCheck
 open System
@@ -14,8 +15,11 @@ This section describes the various ways in which you can run FsCheck tests:
 * FsCheck has a built-in test runner that is easy to invoke from F# Interactive, commandline program or any test framework. 
 It writes the result of tests to standard output, and you can configure the FsCheck runner to throw an exception on test failure.
 
-* FsCheck.Xunit is a tight integration with xUnit.NET that allows you to specify properties and generators in a terse way. Tests written
-this way look like native xUnit.NET tests.
+* FsCheck.Xunit integrates FsCheck with xUnit.NET to allow you to specify properties in a terse way. Tests written
+this way look like native xUnit.NET tests, except they can take arguments.
+
+* FsCheck.NUnit integrates FsCheck with NUnit to allow you to specify properties in a terse way. Tests written
+this way look like native NUnit tests, except they can take arguments.
 
 * FsCheck allows you to register an IRunner implementation that it calls on each outcome and each individual test it runs. This allows
 a tighter integration with a specific test framework, and offers more control over printing of results.
@@ -101,7 +105,59 @@ do something with, but do not want them checked or registered, just make them pr
 
 ## Using FsCheck.Xunit
 
-TODO
+To use the integration install the FsCheck.Xunit nuget package. Then: *)
+
+open FsCheck
+open FsCheck.Xunit
+
+(**
+You can now attribute tests with `PropertyAttribute` (a subclass of xUnit.NET's `FactAttribute`). Unlike xUnit.NET's facts, these 
+methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
+type and the currently registered generators. Also, the `PropertyAttribute` allows you to customize how FsCheck will run for that
+method, similar to how you would use the `Config` type otherwise. For example:*)
+
+[<Property>]
+let ``abs(v) % k equals abs(v % k)`` v (NonZeroInt k) = 
+    (abs v) % k = abs(v % k)
+
+(**
+Likely on of the most useful configuration options of `PropertyAttribute` is the ability to register or override an `Arbitrary`
+instance just for that test method. You can also use the `ArbitraryAttribute` to register or override `Abritrary` instances on 
+a per class or per module basis. For example:*)
+
+type Positive =
+    static member Double() =
+        Arb.Default.Float()
+        |> Arb.mapFilter abs (fun t -> t >= 0.0)
+
+type Negative =
+    static member Double() =
+        Arb.Default.Float()
+        |> Arb.mapFilter (abs >> ((-) 0.0)) (fun t -> t <= 0.0)
+
+[<Arbitrary(typeof<Negative>)>]
+module ModuleWithArbitrary =
+
+    [<Property>]
+    let ``should use Arb instances from enclosing module``(underTest:float) =
+        underTest <= 0.0
+
+    [<Property( Arbitrary=[| typeof<Positive> |] )>]
+    let ``should use Arb instance on method``(underTest:float) =
+        underTest >= 0.0
+
+(**
+## Using FsCheck.NUnit
+
+To use the integration install the FsCheck.Xunit nuget package. Then open FsCheck.NUnit.
+
+You can now attribute tests with `PropertyAttribute` (a subclass of NUnit's `TestAttribute`). Unlike NUnit tests, these 
+methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
+type and the currently registered generators. Also, the `PropertyAttribute` allows you to customize how FsCheck will run for that
+method, similar to how you would use the `Config` type otherwise.
+
+Note: the NUnit integration doesn't have the ability, like FsCheck.Xunit, to override `Arbitrary` instances on a per class
+or per module basis. Otherwise, it is very similar.
 
 ## Implementing IRunner 
 

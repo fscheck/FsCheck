@@ -62,9 +62,9 @@ Check.Quick ``generated even ints should be even``
 (***include-output:EvenInt***)
 
 (**
-It's now also easy to define custom shrink functions as well.
+It's now easy to define custom shrink functions as well.
 
-FsCheck uses this pattern also, e.g. `NonNegativeInt`, `PositiveInt`, `StringWithoutNullChars` etc. See the
+FsCheck uses this pattern frequently, e.g. `NonNegativeInt`, `PositiveInt`, `StringWithoutNullChars` etc. See the
 default Arbitrary instances on the `Arb.Default` type.
 
 Also, for these kinds of generators, the `Arb.filter`, `Arb.convert` and `Arb.mapFilter` functions will come in handy.
@@ -72,7 +72,7 @@ Also, for these kinds of generators, the `Arb.filter`, `Arb.convert` and `Arb.ma
 ## An equality comparison that prints the left and right sides of the equality
 
 Properties commonly check for equality. If a test case fails, FsCheck prints the counterexample, but 
-sometimes it is useful to print the left and right side of the comparison as well, especially if you 
+sometimes it is useful to print the left and right side of the comparison, especially if you 
 do some complicated calculations with the generated arguments first. To make this easier, you can 
 define your own labelling equality combinator:*)
 
@@ -89,7 +89,15 @@ Of course, you can do this for any operator or function that you often use.
     
 ## Some ways to run FsCheck tests
 
-* By adding properties and generators to an fsx file in your project. It's easy to execute, just press ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls that are built in your solution; F# Interactive will lock those for the remainder of the session, and you won't be able to build unitl you quit the session. One solution is to include the source files instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug though.
-* By making a separate console application. Easy to debug, no annoying locks on assemblies. Your best option if you use only FsCheck for testing and your properties span multiple assemblies.
-* By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach (some things are easier to check using unit tests, and vice versa), and you like a graphical runner. Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. See above for ways to customize FsCheck for this scenario.
+* By adding properties and generators to an fsx file in your project. It's easy to execute, just press 
+ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls 
+that are built in your solution; Versions of F# Interactive earlier than 3.1.2 will lock those for the remainder of the session, 
+and you won't be able to build unitl you quit the session. One solution is to include the source files 
+instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug though.
+* By making a separate console application. Easy to debug, and no annoying locks on assemblies. Your best option 
+if you use only FsCheck for testing and your properties span multiple assemblies.
+* By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach 
+(some things are easier to check using unit tests, and vice versa), and you like a graphical runner. 
+Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. Also have a look
+at some of the existing integrations with test runners like Xunit.NET, NUnit, Fuchu.
 *)
