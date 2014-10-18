@@ -7,10 +7,9 @@
 **  See the file License.txt for the full text.                             **
 \*--------------------------------------------------------------------------*)
 
-#light
-
 namespace FsCheck
 
+///For model-based random testing.
 module Commands =
 
     open Arb

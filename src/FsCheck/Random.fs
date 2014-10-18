@@ -9,7 +9,7 @@
 
 namespace FsCheck
 
-//based Hugs' Random implementation
+///Generate random numbers based on splitting seeds. Based Hugs' Random implementation.
 module Random =
 
     open System

@@ -256,7 +256,8 @@ module internal Testable =
                 member x.Property l = List.fold (.&) (property <| List.head l) (List.tail l) }
 
 
-
+///Combinators to build properties, which define the property to be tested, with some
+///convenience methods to investigate the generated arguments and any found counter-examples.
 module Prop =
     open Testable
     open System
@@ -310,6 +311,8 @@ module Prop =
     let ofTestable (testable:'Testable) =
         property testable
 
+
+///Operators for Prop.
 [<AutoOpen>]
 module PropOperators =
 

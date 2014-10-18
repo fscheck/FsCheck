@@ -42,6 +42,7 @@ type Arbitrary<'a>() =
         member x.GeneratorObj = (x.Generator :> IGen).AsGenObject
         member x.ShrinkerObj o = (x.Shrinker (unbox o)) |> Seq.map box
 
+///Computation expression builder for Gen.
 [<AutoOpen>]
 module GenBuilder =
 
@@ -89,6 +90,7 @@ module GenBuilder =
     ///The workflow function for generators, e.g. gen { ... }
     let gen = GenBuilder()
 
+///Combinators to build custom random generators for any type.
 module Gen =
 
     open Common
@@ -315,6 +317,7 @@ module Gen =
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
         Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
 
+///Operators for Gen.
 [<AutoOpen>]
 module GenOperators =
 

@@ -9,6 +9,7 @@
 
 namespace FsCheck
 
+///Haskell typeclass concept simulation. For internal use.
 module TypeClass =
 
     open System
