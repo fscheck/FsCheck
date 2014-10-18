@@ -153,7 +153,8 @@ namespace FsCheck.CSharpExamples
                 .Check(new Configuration { Name = "Configuration Demo", MaxNbOfTest = 500 });
 
             Spec.ForAny((IEnumerable<int> a, IEnumerable<int> b) => 
-                            a.Except(b).Count() <= a.Count());
+                            a.Except(b).Count() <= a.Count())
+                .QuickCheck();
 
             Console.ReadKey();
         }
