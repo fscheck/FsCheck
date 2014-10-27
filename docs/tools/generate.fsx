@@ -16,7 +16,7 @@ let info =
     "project-author", "Kurt Schelfthout and contributors"
     "project-summary", "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
     "project-github", githubLink
-    "project-nuget", "http://nuget.com/packages/FsCheck" ]
+    "project-nuget", "http://nuget.org/packages/FsCheck" ]
 
 // --------------------------------------------------------------------------------------
 // For typical project, no changes are needed below
