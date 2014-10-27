@@ -79,12 +79,6 @@ module internal ReflectArbitrary =
                     |> oneof 
                     |> resize (size - 1) 
                 sized getgs |> box
-            
-//            elif isTupleType t then
-//                let g = [ for pi in FSharpType.GetTupleElements t -> getGenerator pi ]
-//                let create = fun tuple -> FSharpValue.MakeTuple(tuple,t)
-//                let result = g |> sequence |> Gen.map (List.toArray >> create)
-//                box result
                 
             elif t.IsEnum then
                     enumOfType t |> box
@@ -107,10 +101,8 @@ module internal ReflectArbitrary =
     let reflectGen<'a> getGenerator = map unbox<'a> (reflectGenObj getGenerator typeof<'a>)
 
     let rec private children0 (seen : Set<string>) (tFind : Type) (t : Type) : (obj -> list<obj>) =
-                if tFind = t then
-                    fun o -> [o]
-                else
-                    children1 seen tFind t
+        if tFind = t then fun o -> [o]
+        else children1 seen tFind t
 
     and private children1 (seen : Set<string>) (tFind : Type) (t : Type) =
         let ts = t.ToString();
@@ -148,8 +140,8 @@ module internal ReflectArbitrary =
             split3' [] (List.head l) (List.tail l)
         let shrinkChildren read make o childrenTypes =
             seq{ for (front,(childVal,childType),back) in Seq.zip (read o) childrenTypes |> Seq.toList |> split3 do
-                            for childShrink in getShrink childType childVal do
-                                yield make ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.toArray)}
+                    for childShrink in getShrink childType childVal do
+                        yield make ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.toArray)}
         if isUnionType t then
             let unionSize (t:Type) children =
                 if Seq.isEmpty children then 0 
