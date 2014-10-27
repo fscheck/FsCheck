@@ -28,6 +28,16 @@ let funcNonsense = (fun ([<ICanTypeWhateverIWantHereAndItStillCompiles>] test:in
 //applicative
 #r "bin\Debug\FsCheck.dll"
 open FsCheck
+
+//how to generate float between 0 and 5
+let f = 
+    Arb.generate<NormalFloat>
+    |> Gen.map float
+    |> Gen.resize 5
+    |> Gen.map abs
+    |> Gen.suchThat (fun f -> f < 5.)
+    |> Gen.sample 100 10
+
 let f = fun a b c -> a + b - c
 let ga,gb,gc = Gen.constant 3, Gen.constant 3, Gen.constant 3
 let g = f <!> ga <*> gb <*> gc
