@@ -741,3 +741,7 @@ module Arb =
             }
             
         //TODO: add float32, BigInteger
+
+
+    let internal init = lazy register<Default>()
+    let private forceInit = init.Force()

@@ -1,3 +1,7 @@
+#### 1.0.2 - 27 October 2014
+  * Moved default Arb registration to Arb module. This should fix issues 
+  folks have been having with the default generators not being registered in time.
+
 #### 1.0.1 - 18 October 2014
  * Add XML docs, mostly in C# API and xUnit integration attributes.
  * Document FsCheck.Xunit and FsCheck.NUnit properly.
