@@ -41,6 +41,7 @@ type PropertyAttribute() =
     let mutable startSize = Config.Default.StartSize
     let mutable endSize = Config.Default.EndSize
     let mutable verbose = false
+    let mutable quietOnSuccess = false
     let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
@@ -65,7 +66,14 @@ type PropertyAttribute() =
     ///The Arbitrary instances to use for this test method. The Arbitrary instances 
     ///are merged in back to front order i.e. instances for the same generated type 
     //at the front of the array will override those at the back.
-    member x.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v
+    member x.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v    
+    ///If set, suppresses the output from the test if the test is successful. This can be useful when running tests
+    ///with TestDriven.net, because TestDriven.net pops up the Output window in Visual Studio if a test fails; thus,
+    ///when conditioned to that behaviour, it's always a bit jarring to receive output from passing tests.
+    ///The default is false, which means that FsCheck will also output test results on success, but if set to true,
+    ///FsCheck will suppress output in the case of a passing test. This setting doesn't affect the behaviour in case of
+    ///test failures.
+    member x.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
 
     override this.EnumerateTestCommands(methodInfo:IMethodInfo) :seq<ITestCommand> = 
         { new TestCommand(methodInfo, null, 0) with
@@ -93,8 +101,9 @@ type PropertyAttribute() =
                     }
                 Check.Method(config, methodInfo.MethodInfo,?target=if testClass <> null then Some testClass else None)
                 match xunitRunner.Result with
-                | TestResult.True _ -> 
-                    printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
+                | TestResult.True _ ->
+                    if not quietOnSuccess then
+                        printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
                     upcast new PassedResult(methodInfo,this.DisplayName)
                 | Exhausted testdata -> 
                     upcast new FailedResult(methodInfo,PropertyFailedException(xunitRunner.Result), this.DisplayName)
