@@ -63,6 +63,7 @@ type FsCheckTestMethod(mi : MethodInfo) =
         attr :?> PropertyAttribute
         
     member private x.runTestMethod testResult =
+        let attr = x.getFsCheckPropertyAttribute()
         let testRunner = { new IRunner with
                 member x.OnStartFixture t = ()
                 member x.OnArguments (ntest, args, every) = Console.Write(every ntest args)
@@ -77,7 +78,6 @@ type FsCheckTestMethod(mi : MethodInfo) =
                         Assert.Fail(message) //TODO: find better way to tell NUnit about error. Now AssertionException is wrapped into TargetInvocationException
                         
             }
-        let attr = x.getFsCheckPropertyAttribute()
         let config = { Config.Default with         
                         MaxTest = attr.MaxTest
                         MaxFail = attr.MaxFail
