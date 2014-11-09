@@ -69,10 +69,12 @@ type FsCheckTestMethod(mi : MethodInfo) =
                 member x.OnShrink(args, everyShrink) = Console.Write(everyShrink args)
                 member x.OnFinished(name, fsCheckResult) = 
                     let message = Runner.onFinishedToString name fsCheckResult
-                    Console.WriteLine(message)
                     match fsCheckResult with
-                    | TestResult.True _ -> ()
-                    | _ -> Assert.Fail(message) //TODO: find better way to tell NUnit about error. Now AssertionException is wrapped into TargetInvocationException
+                    | TestResult.True _ ->                        
+                        Console.WriteLine(message)
+                    | _ ->                        
+                        Console.WriteLine(message)
+                        Assert.Fail(message) //TODO: find better way to tell NUnit about error. Now AssertionException is wrapped into TargetInvocationException
                         
             }
         let attr = x.getFsCheckPropertyAttribute()
