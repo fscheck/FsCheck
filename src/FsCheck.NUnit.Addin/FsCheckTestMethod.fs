@@ -63,19 +63,30 @@ type FsCheckTestMethod(mi : MethodInfo) =
         attr :?> PropertyAttribute
         
     member private x.runTestMethod testResult =
+        let attr = x.getFsCheckPropertyAttribute()
         let testRunner = { new IRunner with
                 member x.OnStartFixture t = ()
-                member x.OnArguments (ntest, args, every) = Console.Write(every ntest args)
+                member x.OnArguments (ntest, args, every) =
+                    let argsForOutput = every ntest args
+                    // Only write the args if there's something to write.
+                    // Although it may seem harmless to write an empty string, writing anything at this stage seems to
+                    // trigger NUnit's formatting system, so that it adds a 'header' for the test in the output. That
+                    // doesn't look pretty in the cases where it turns out that there's truly nothing to write (e.g.
+                    // when QuietOnSuccess is true, and the Property passed.
+                    if not (String.IsNullOrWhiteSpace argsForOutput) then
+                        Console.Write(argsForOutput)
                 member x.OnShrink(args, everyShrink) = Console.Write(everyShrink args)
                 member x.OnFinished(name, fsCheckResult) = 
                     let message = Runner.onFinishedToString name fsCheckResult
-                    Console.WriteLine(message)
                     match fsCheckResult with
-                    | TestResult.True _ -> ()
-                    | _ -> Assert.Fail(message) //TODO: find better way to tell NUnit about error. Now AssertionException is wrapped into TargetInvocationException
+                    | TestResult.True _ ->                        
+                        if not attr.QuietOnSuccess then
+                            Console.WriteLine(message)
+                    | _ ->                        
+                        Console.WriteLine(message)
+                        Assert.Fail(message) //TODO: find better way to tell NUnit about error. Now AssertionException is wrapped into TargetInvocationException
                         
             }
-        let attr = x.getFsCheckPropertyAttribute()
         let config = { Config.Default with         
                         MaxTest = attr.MaxTest
                         MaxFail = attr.MaxFail

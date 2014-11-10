@@ -14,6 +14,7 @@ type PropertyAttribute() =
     let mutable startSize = Config.Default.StartSize
     let mutable endSize = Config.Default.EndSize
     let mutable verbose = false
+    let mutable quietOnSuccess = false
     let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
 
     ///The maximum number of tests that are run.
@@ -30,4 +31,11 @@ type PropertyAttribute() =
     ///are merged in back to front order i.e. instances for the same generated type 
     //at the front of the array will override those at the back.
     member x.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v
+    ///If set, suppresses the output from the test if the test is successful. This can be useful when running tests
+    ///with TestDriven.net, because TestDriven.net pops up the Output window in Visual Studio if a test fails; thus,
+    ///when conditioned to that behaviour, it's always a bit jarring to receive output from passing tests.
+    ///The default is false, which means that FsCheck will also output test results on success, but if set to true,
+    ///FsCheck will suppress output in the case of a passing test. This setting doesn't affect the behaviour in case of
+    ///test failures.
+    member x.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
 
