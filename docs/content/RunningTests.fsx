@@ -147,6 +147,33 @@ module ModuleWithArbitrary =
         underTest >= 0.0
 
 (**
+### Using FsCheck.Xunit with TestDriven.Net
+
+[TestDriven.Net](http://testdriven.net) is a Visual Studio add-in that enables you to easily run a variety of tests
+while working with code in the IDE. Out of the box, TestDriven.Net can run tests written with FsCheck.Xunit.
+
+However, the user experience may, by default, be slightly less than optimal. TestDriven.Net outputs the state of the
+test run in an unobtrusive manner, but if test failures occur, it outputs the result of the failing tests to Visual
+Studio's Output window. If you have Visual Studio configured in such a way that the Output window only appears if there
+actually *is* any output, you may be used to interpret the appearance of the Output window as a test failure.
+
+Since the Output window also appears if anything is written to the console in general, this can produce false
+positives. If you're accustomed to interpret the appearance of the Output window as a sign of a test failure, it can be
+a little jarring that FsCheck by default always reports a bit of output on success.
+
+If, for that, or other reasons, you want to disable output on success, you can do so:
+*)
+
+[<Property(QuietOnSuccess = true)>]
+let ``abs(v) % k equals abs(v % k)`` v (NonZeroInt k) = 
+    (abs v) % k = abs(v % k)
+
+(**
+Setting `QuietOnSuccess = true` only suppresses the output in case of success; in the case of test failures, output
+appears as normal.
+*)
+
+(**
 ## Using FsCheck.NUnit
 
 To use the integration install the FsCheck.Xunit nuget package. Then open FsCheck.NUnit.
@@ -212,3 +239,30 @@ let formatterRunner formatter =
                               | t -> t
           printf "%s" (Runner.onFinishedToString name testResult') 
   }
+
+(**
+### Using FsCheck.NUnit with TestDriven.Net
+
+[TestDriven.Net](http://testdriven.net) is a Visual Studio add-in that enables you to easily run a variety of tests
+while working with code in the IDE. Out of the box, TestDriven.Net can run tests written with FsCheck.NUnit.
+
+However, the user experience may, by default, be slightly less than optimal. TestDriven.Net outputs the state of the
+test run in an unobtrusive manner, but if test failures occur, it outputs the result of the failing tests to Visual
+Studio's Output window. If you have Visual Studio configured in such a way that the Output window only appears if there
+actually *is* any output, you may be used to interpret the appearance of the Output window as a test failure.
+
+Since the Output window also appears if anything is written to the console in general, this can produce false
+positives. If you're accustomed to interpret the appearance of the Output window as a sign of a test failure, it can be
+a little jarring that FsCheck by default always reports a bit of output on success.
+
+If, for that, or other reasons, you want to disable output on success, you can do so:
+*)
+
+[<Property(QuietOnSuccess = true)>]
+let revUnit (x:char) = 
+    List.rev [x] = [x]
+
+(**
+Setting `QuietOnSuccess = true` only suppresses the output in case of success; in the case of test failures, output
+appears as normal.
+*)
