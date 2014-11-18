@@ -251,7 +251,7 @@ Target "GenerateDocsJa" (fun _ ->
 Target "ReleaseDocs" (fun _ ->
     let tempDocsDir = "temp/gh-pages"
     CleanDir tempDocsDir
-    Repository.cloneSingleBranch "" (gitHome + "/" + gitName + ".git") "gh-pages" tempDocsDir
+    Repository.cloneSingleBranch "" ("git@github.com:fsharp/FsCheck.git") "gh-pages" tempDocsDir
 
     fullclean tempDocsDir
     CopyRecursive "docs/output" tempDocsDir true |> tracefn "%A"
