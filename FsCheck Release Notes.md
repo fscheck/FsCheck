@@ -1,3 +1,6 @@
+### 1.0.3
+  * Add option to FsCheck.Xunit and FsCheck.Nunit to suppress output on success.
+
 #### 1.0.2 - 27 October 2014
   * Moved default Arb registration to Arb module. This should fix issues 
   folks have been having with the default generators not being registered in time.
