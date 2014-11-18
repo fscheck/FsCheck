@@ -76,7 +76,7 @@ To check the property, we load this definition in F# interactive and then invoke
 <span onmouseout="hideTip(event, 'fs8', 23)" onmouseover="showTip(event, 'fs8', 23)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 24)" onmouseover="showTip(event, 'fs9', 24)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs10', 25)" onmouseover="showTip(event, 'fs10', 25)" class="i">revIsOrig</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (1 shrink) (StdGen (2017230158,295927962)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (4 shrinks) (StdGen (1061678825,295936819)):
 [1; 0]
 </code></pre></td></tr></table>
 
@@ -115,7 +115,7 @@ FsCheck to generate lists of floats:</p>
 <span onmouseout="hideTip(event, 'fs8', 36)" onmouseover="showTip(event, 'fs8', 36)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 37)" onmouseover="showTip(event, 'fs9', 37)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 38)" onmouseover="showTip(event, 'fs11', 38)" class="i">revRevIsOrigFloat</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 6 tests (1 shrink) (StdGen (2018350222,295927962)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (3 shrinks) (StdGen (1061969221,295936819)):
 [nan]
 </code></pre></td></tr></table>
 
@@ -180,7 +180,7 @@ be written more tersely as follows:</p>
 <div class="tip" id="fs17">val revRevIsOrig : (int list -&gt; bool)</div>
 <div class="tip" id="fs18">static member Check.QuickThrowOnFailure : property:&#39;Testable -&gt; unit</div>
 <div class="tip" id="fs19">namespace FsCheck.Xunit</div>
-<div class="tip" id="fs20">Multiple items<br />type Property = Gen&lt;Rose&lt;Result&gt;&gt;<br /><br />Full name: FsCheck.Property<br /><br />--------------------<br />type PropertyAttribute =<br />&#160;&#160;inherit FactAttribute<br />&#160;&#160;new : unit -&gt; PropertyAttribute<br />&#160;&#160;override EnumerateTestCommands : methodInfo:IMethodInfo -&gt; IEnumerable&lt;ITestCommand&gt;<br />&#160;&#160;member Arbitrary : Type []<br />&#160;&#160;member EndSize : int<br />&#160;&#160;member MaxFail : int<br />&#160;&#160;member MaxTest : int<br />&#160;&#160;member Replay : string<br />&#160;&#160;member private ReplayStdGen : StdGen option<br />&#160;&#160;member StartSize : int<br />&#160;&#160;...<br /><br />Full name: FsCheck.Xunit.PropertyAttribute<br /><br />--------------------<br />new : unit -&gt; PropertyAttribute</div>
+<div class="tip" id="fs20">Multiple items<br />type Property = Gen&lt;Rose&lt;Result&gt;&gt;<br /><br />Full name: FsCheck.Property<br /><br />--------------------<br />type PropertyAttribute =<br />&#160;&#160;inherit FactAttribute<br />&#160;&#160;new : unit -&gt; PropertyAttribute<br />&#160;&#160;override EnumerateTestCommands : methodInfo:IMethodInfo -&gt; IEnumerable&lt;ITestCommand&gt;<br />&#160;&#160;member Arbitrary : Type []<br />&#160;&#160;member EndSize : int<br />&#160;&#160;member MaxFail : int<br />&#160;&#160;member MaxTest : int<br />&#160;&#160;member QuietOnSuccess : bool<br />&#160;&#160;member Replay : string<br />&#160;&#160;member private ReplayStdGen : StdGen option<br />&#160;&#160;...<br /><br />Full name: FsCheck.Xunit.PropertyAttribute<br /><br />--------------------<br />new : unit -&gt; PropertyAttribute</div>
 <div class="tip" id="fs21">val ( Reverse of reverse of a list is the original list  ) : xs:int list -&gt; bool<br /><br />Full name: QuickStart.( Reverse of reverse of a list is the original list  )</div>
 
         </div>
@@ -190,7 +190,7 @@ be written more tersely as follows:</p>
             <li class="nav-header">FsCheck</li>
             <li><a href="/FsCheck/index.html">Home page</a></li>
             <li class="divider"></li>
-            <li><a href="http://nuget.com/packages/FsCheck">Get Library via NuGet</a></li>
+            <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
             <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
             <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
             <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>

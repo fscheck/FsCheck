@@ -59,8 +59,8 @@ Then FsCheck can even shrink your function. For example:</p>
 <span onmouseout="hideTip(event, 'fs11', 48)" onmouseover="showTip(event, 'fs11', 48)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 49)" onmouseover="showTip(event, 'fs12', 49)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs13', 50)" onmouseover="showTip(event, 'fs13', 50)" class="i">mapRec</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (114370588,295927963)):
-{ 0-&gt;0; 1-&gt;0 }
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (8 shrinks) (StdGen (1123166577,295936819)):
+{ 0-&gt;0; 1-&gt;4; 2-&gt;0; 3-&gt;0 }
 [1]
 </code></pre></td></tr></table>
 
@@ -114,9 +114,9 @@ define your own labelling equality combinator:</p>
 <span onmouseout="hideTip(event, 'fs11', 95)" onmouseover="showTip(event, 'fs11', 95)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 96)" onmouseover="showTip(event, 'fs12', 96)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs38', 97)" onmouseover="showTip(event, 'fs38', 97)" class="i">testCompare</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (118350816,295927963)):
-Label of failing property: 1 = -1
-0
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1124187307,295936819)):
+Label of failing property: 3 = -1
+1
 0
 </code></pre></td></tr></table>
 
@@ -185,7 +185,7 @@ at some of the existing integrations with test runners like Xunit.NET, NUnit, Fu
             <li class="nav-header">FsCheck</li>
             <li><a href="/FsCheck/index.html">Home page</a></li>
             <li class="divider"></li>
-            <li><a href="http://nuget.com/packages/FsCheck">Get Library via NuGet</a></li>
+            <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
             <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
             <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
             <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
