@@ -162,6 +162,11 @@ module Arbitrary =
                                 | Some v ->  Seq.forall2 (=) shrinks (seq { yield None; for x' in shrink v -> Some x' }) ))
 
     [<Property>]
+    let NonNull (value:NonNull<string>) = 
+        (   generate<NonNull<string>> |> sample 10 |> List.forall (fun (NonNull x) -> x <> null)
+        ,   Seq.forall (fun (NonNull x) -> x <> null) (shrink value))
+
+    [<Property>]
     let Nullable (value:Nullable<int>) =
         (   generate<Nullable<int>> |> sample 10 |> List.forall (fun _ -> true)
         ,   shrink value 

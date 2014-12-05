@@ -58,6 +58,9 @@ type FixedLengthArray<'a> = FixedLengthArray of 'a[] with
     member x.Get = match x with FixedLengthArray r -> r
     static member toArray(FixedLengthArray a) = a
 
+type NonNull<'a when 'a : null> = NonNull of 'a with
+    member x.Get = match x with NonNull r -> r
+
 [<StructuredFormatDisplay("{StructuredDisplayAsTable}")>]
 [<NoEquality;NoComparison>]
 type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) with
@@ -391,6 +394,15 @@ module Arb =
                     match o with
                     | Some x -> seq { yield None; for x' in shrink x -> Some x' }
                     | None  -> Seq.empty
+            }
+
+        static member NonNull() =
+            let inline notNull x = not (LanguagePrimitives.PhysicalEquality null x)
+            { new Arbitrary<NonNull<'a>>() with
+                override x.Generator = 
+                    generate |> Gen.suchThat notNull |> Gen.map NonNull
+                override x.Shrinker (NonNull o) = 
+                    shrink o |> Seq.where notNull |> Seq.map NonNull
             }
 
         ///Generate a nullable value that is null 1/8 of the time.
