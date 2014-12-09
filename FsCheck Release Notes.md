@@ -1,3 +1,6 @@
+### 1.0.4 - 9 December 2014
+  * Add NonNull<T>.
+
 ### 1.0.3
   * Add option to FsCheck.Xunit and FsCheck.Nunit to suppress output on success.
 
