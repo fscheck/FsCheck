@@ -72,7 +72,7 @@ bool または unit を返す任意個のパラメータを取る関数となる
 <span onmouseout="hideTip(event, 'fs21', 58)" onmouseover="showTip(event, 'fs21', 58)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 59)" onmouseover="showTip(event, 'fs22', 59)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs19', 60)" onmouseover="showTip(event, 'fs19', 60)" class="i">insertKeepsOrder</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 59 tests.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 77 tests.
 </code></pre></td></tr></table>
 
 <p>条件が成り立つときはいつでも <code>==&gt;</code> の後の性質が成り立つのなら、このような性質は成り立ちます。</p>
@@ -97,7 +97,7 @@ FsCheck は異なる型(object の派生型)を含むリストを生成したか
 <span onmouseout="hideTip(event, 'fs21', 66)" onmouseover="showTip(event, 'fs21', 66)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 67)" onmouseover="showTip(event, 'fs22', 67)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs23', 68)" onmouseover="showTip(event, 'fs23', 68)" class="i">tooEager</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1046462037,295936825)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (0 shrinks) (StdGen (257719234,295945252)):
 0
 with exception:
 System.DivideByZeroException: Attempted to divide by zero.
@@ -202,7 +202,7 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 
 <p>この条件が真になるテストケースは自明であると分類され、全体における自明なテストケースの比率が報告されます:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 51 tests (33% trivial).
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 56 tests (30% trivial).
 </code></pre></td></tr></table>
 
 <h3>テストケースの分類</h3>
@@ -221,10 +221,10 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 
 <p>条件を満足するテストケースは与えられた分類に割り当てられ、分類の分布はテスト後に報告されます:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 60 tests.
-35% at-tail, at-head.
-30% at-tail.
-26% at-head.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 64 tests.
+31% at-tail, at-head.
+31% at-head.
+21% at-tail.
 </code></pre></td></tr></table>
 
 <p>1つのテストケースは複数の分類に当てはまる場合があることに注意してください。</p>
@@ -245,13 +245,12 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <p>collect の引数はテストケースごとに評価され、値の分布が報告されます。
 この引数の型は <code>sprintf "%A"</code> を用いて出力されます:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 67 tests.
-40% 1.
-37% 0.
-16% 2.
-2% 3.
-1% 5.
-1% 4.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 60 tests.
+45% 1.
+23% 0.
+21% 2.
+6% 3.
+3% 4.
 </code></pre></td></tr></table>
 
 <h3>観測の連結</h3>
@@ -268,14 +267,17 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <span onmouseout="hideTip(event, 'fs21', 206)" onmouseover="showTip(event, 'fs21', 206)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 207)" onmouseover="showTip(event, 'fs22', 207)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs50', 208)" onmouseover="showTip(event, 'fs50', 208)" class="i">insertCombined</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 48 tests.
-56% 0, at-tail, at-head.
-14% 1, at-tail.
-14% 1, at-head.
-8% 1, at-tail, at-head.
-2% 3, at-tail, at-head.
-2% 3, at-head.
-2% 2, at-head.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 66 tests.
+43% 0, at-tail, at-head.
+15% 1, at-head.
+10% 2, at-head.
+10% 1, at-tail.
+4% 2, at-tail.
+4% 2.
+4% 1, at-tail, at-head.
+3% 3, at-head.
+1% 5, at-tail.
+1% 3, at-tail.
 </code></pre></td></tr></table>
 
 <h2>And, Or およびラベル</h2>
@@ -303,7 +305,7 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <span onmouseout="hideTip(event, 'fs21', 224)" onmouseover="showTip(event, 'fs21', 224)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 225)" onmouseover="showTip(event, 'fs22', 225)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs51', 226)" onmouseover="showTip(event, 'fs51', 226)" class="i">complex</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1054887844,295936825)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (265004598,295945252)):
 Label of failing property: result not sum
 0
 0
@@ -323,7 +325,7 @@ Label of failing property: result not sum
 <span onmouseout="hideTip(event, 'fs21', 249)" onmouseover="showTip(event, 'fs21', 249)" class="i">Check</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 250)" onmouseover="showTip(event, 'fs22', 250)" class="i">Quick</span> <span onmouseout="hideTip(event, 'fs55', 251)" onmouseover="showTip(event, 'fs55', 251)" class="i">multiply</span></pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1055398389,295936825)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (265504958,295945252)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
