@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq;
-using NUnit.Framework;
+﻿using System.Linq;
 using FsCheck.Fluent;
 using FsCheck.NUnit.CSharpExamples.ClassesToTest;
+using NUnit.Framework;
 
 namespace FsCheck.NUnit.CSharpExamples
 {
@@ -31,6 +30,6 @@ namespace FsCheck.NUnit.CSharpExamples
         public Gen<Rose<Result>> Counter_shouldFail()
         {
             return Commands.asProperty(new CounterSpec());
-        }        
+        }
     }
 }

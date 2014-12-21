@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using FsCheck;
 using FsCheck.Fluent;
 
 namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
@@ -11,7 +7,7 @@ namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
     {
         public Gen<Commands.ICommand<Counter, int>> GenCommand(int value)
         {
-            return Any.ValueIn(new Commands.ICommand<Counter, int>[] { new Inc(), new Dec() });
+            return Any.ValueIn(new Commands.ICommand<Counter, int>[] {new Inc(), new Dec()});
         }
 
         public Tuple<Counter, int> Initial()
@@ -49,7 +45,7 @@ namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
 
         private abstract class BaseCommand : Commands.ICommand<Counter, int>
         {
-            public override Gen<FsCheck.Rose<FsCheck.Result>> Post(Counter c, int m)
+            public override Gen<Rose<Result>> Post(Counter c, int m)
             {
                 return Prop.ofTestable(m == c.Get());
             }

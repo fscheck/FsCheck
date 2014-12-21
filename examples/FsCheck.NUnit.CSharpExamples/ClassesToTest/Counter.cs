@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
+﻿namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
 {
     public class Counter
     {
-        private int n = 0;
+        private int n;
 
         public void Inc()
         {
