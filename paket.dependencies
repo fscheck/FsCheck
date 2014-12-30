@@ -1,0 +1,10 @@
+source https://www.myget.org/F/6416d9912a7c4d46bc983870fb440d25
+source https://www.nuget.org/api/v2
+source D:\BatCat\Nuget
+
+nuget NUnit 2.6.3
+nuget NUnit.Runners 2.6.3
+nuget xunit 1.9.2
+nuget xunit.runners 1.9.2
+nuget NuGet.CommandLine
+nuget fake

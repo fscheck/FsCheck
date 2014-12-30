@@ -2,10 +2,15 @@
 
 cls
 
-.nuget\nuget.exe install FAKE -OutputDirectory packages -ExcludeVersion
-.nuget\nuget.exe install SourceLink.Fake -OutputDirectory packages -ExcludeVersion
-.nuget\nuget.exe install FSharp.Formatting -OutputDirectory packages -ExcludeVersion
-
+cls
+.paket\paket.bootstrapper.exe
+if errorlevel 1 (
+exit /b %errorlevel%
+)
+.paket\paket.exe restore
+if errorlevel 1 (
+exit /b %errorlevel%
+)
 SET TARGET="All"
 
 IF NOT [%1]==[] (set TARGET="%1")
