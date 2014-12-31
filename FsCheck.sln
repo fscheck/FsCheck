@@ -1,8 +1,13 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{0B883240-C311-4AA9-92EF-0E3C471B0077}"
+	ProjectSection(SolutionItems) = preProject
+		paket.dependencies = paket.dependencies
+		paket.lock = paket.lock
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3162219D-7729-49C4-849A-9CCD889798DB}"
 	ProjectSection(SolutionItems) = preProject
 		build.fsx = build.fsx
@@ -24,13 +29,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.NUnit.CSharpExamples", "examples\FsCheck.NUnit.CSharpExamples\FsCheck.NUnit.CSharpExamples.csproj", "{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.MsTest.Examples", "examples\FsCheck.MsTest.Examples\FsCheck.MsTest.Examples.csproj", "{CB41BAC5-272F-4562-9494-E3DC1D0B4139}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A4EEA11D-B36E-44DD-9962-68BA3331264E}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck", "src\FsCheck\FsCheck.fsproj", "{32AA3276-BBA1-41CE-B78A-706B8454EC8D}"
 EndProject

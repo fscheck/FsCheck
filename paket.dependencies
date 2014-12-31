@@ -1,0 +1,10 @@
+source https://www.nuget.org/api/v2
+
+nuget FAKE
+nuget NUnit
+nuget NUnit.Runners
+nuget xunit
+nuget xunit.runners
+nuget NuGet.CommandLine
+nuget SourceLink.Fake
+nuget FSharp.Formatting
