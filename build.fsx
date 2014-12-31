@@ -167,7 +167,7 @@ Target "RunTests" (fun _ ->
     !! testAssemblies
     |> xUnit (fun p -> 
             {p with 
-                ToolPath = "packages/xunit.runners.1.9.2/tools/xunit.console.clr4.exe"
+                ToolPath = "packages/xunit.runners/tools/xunit.console.clr4.exe"
                 ShadowCopy = false
                 HtmlOutput = not (isLinux || isMacOS)
                 XmlOutput = false
