@@ -1,12 +1,10 @@
 NUGET
   remote: https://www.nuget.org/api/v2
   specs:
-    FAKE (3.7.1)
+    FAKE (3.12.2)
+    NuGet.CommandLine (2.8.3)
+    NUnit (2.6.4)
+    NUnit.Runners (2.6.4)
     SourceLink.Fake (0.4.2)
     xunit (1.9.2)
     xunit.runners (1.9.2)
-  remote: https://www.myget.org/F/6416d9912a7c4d46bc983870fb440d25
-  specs:
-    NuGet.CommandLine (2.8.3)
-    NUnit (2.6.3)
-    NUnit.Runners (2.6.3)

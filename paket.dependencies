@@ -1,9 +1,9 @@
 source https://www.nuget.org/api/v2
 
-nuget FAKE 3.7.1
-nuget NUnit 2.6.3
-nuget NUnit.Runners 2.6.3
-nuget xunit 1.9.2
-nuget xunit.runners 1.9.2
+nuget FAKE
+nuget NUnit
+nuget NUnit.Runners
+nuget xunit
+nuget xunit.runners
 nuget NuGet.CommandLine
 nuget SourceLink.Fake
