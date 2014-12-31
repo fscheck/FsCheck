@@ -1,8 +1,33 @@
 #!/bin/bash
+if test "$OS" = "Windows_NT"
+then
+  # use .Net
 
-mono --runtime=v4.0 .nuget/NuGet.exe install FAKE -OutputDirectory packages -ExcludeVersion
-mono --runtime=v4.0 .nuget/NuGet.exe install SourceLink.Fake -OutputDirectory packages -ExcludeVersion
-mono --runtime=v4.0 .nuget/NuGet.exe install FSharp.Formatting -OutputDirectory packages -ExcludeVersion
-mono --runtime=v4.0 .nuget/NuGet.exe install xunit -OutputDirectory packages -ExcludeVersion
+  .paket/paket.bootstrapper.exe prerelease
+  exit_code=$?
+  if [ $exit_code -ne 0 ]; then
+  	exit $exit_code
+  fi
 
-mono --runtime=v4.0 packages/FAKE/tools/FAKE.exe build.fsx $@
+  .paket/paket.exe install --hard
+  exit_code=$?
+  if [ $exit_code -ne 0 ]; then
+  	exit $exit_code
+  fi
+
+  packages/FAKE/tools/FAKE.exe $@ --fsiargs -d:MONO build.fsx 
+else
+  # use mono
+  mono .paket/paket.bootstrapper.exe prerelease
+  exit_code=$?
+  if [ $exit_code -ne 0 ]; then
+  	exit $exit_code
+  fi
+
+  mono .paket/paket.exe install --hard
+  exit_code=$?
+  if [ $exit_code -ne 0 ]; then
+  	exit $exit_code
+  fi
+  mono packages/FAKE/tools/FAKE.exe $@ --fsiargs -d:MONO build.fsx 
+fi
