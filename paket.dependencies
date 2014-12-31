@@ -7,3 +7,4 @@ nuget xunit
 nuget xunit.runners
 nuget NuGet.CommandLine
 nuget SourceLink.Fake
+nuget FSharp.Formatting
