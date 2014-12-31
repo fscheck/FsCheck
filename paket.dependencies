@@ -8,3 +8,4 @@ nuget NUnit.Runners 2.6.3
 nuget xunit 1.9.2
 nuget xunit.runners 1.9.2
 nuget NuGet.CommandLine
+nuget SourceLink.Fake

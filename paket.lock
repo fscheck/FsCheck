@@ -2,6 +2,7 @@ NUGET
   remote: https://www.nuget.org/api/v2
   specs:
     FAKE (3.7.1)
+    SourceLink.Fake (0.4.2)
     xunit (1.9.2)
     xunit.runners (1.9.2)
   remote: https://www.myget.org/F/6416d9912a7c4d46bc983870fb440d25
