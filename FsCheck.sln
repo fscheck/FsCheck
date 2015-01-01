@@ -66,7 +66,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ja", "ja", "{34021B41-3EED-
 		docs\content\ja\TipsAndTricks.fsx = docs\content\ja\TipsAndTricks.fsx
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.XUnit.CSharpExamples", "examples\FsCheck.NUnit.CSharpExamples\FsCheck.XUnit.CSharpExamples\FsCheck.XUnit.CSharpExamples.csproj", "{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.XUnit.CSharpExamples", "examples\FsCheck.XUnit.CSharpExamples\FsCheck.XUnit.CSharpExamples.csproj", "{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
