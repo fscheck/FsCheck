@@ -15,4 +15,5 @@ NUGET
       Microsoft.AspNet.Razor (>= 2.0.30506.0)
     SourceLink.Fake (0.4.2)
     xunit (1.9.2)
+    xunit.runner.visualstudio (0.99.8)
     xunit.runners (1.9.2)
