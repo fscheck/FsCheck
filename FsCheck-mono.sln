@@ -35,7 +35,7 @@ Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "FsCheck.Xunit", "src\FsChec
 EndProject
 Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "FsCheck.Test", "tests\FsCheck.Test\FsCheck.Test.fsproj", "{EB8B96DF-C654-410D-B590-FDBE3BC235FE}"
 EndProject
-Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.NUnit", "src\FsCheck.NUnit\FsCheck.NUnit.fsproj", "{6B1B9FF5-8E6D-4461-9D77-CD1619403684}"
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "FsCheck.NUnit", "src\FsCheck.NUnit\FsCheck.NUnit.fsproj", "{6B1B9FF5-8E6D-4461-9D77-CD1619403684}"
 EndProject
 Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "FsCheck.NUnit.Addin", "src\FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj", "{BF24DE38-C529-4638-BE50-A937EA3E6876}"
 EndProject
