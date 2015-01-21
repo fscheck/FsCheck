@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -51,7 +51,7 @@
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
     <Compile Include="FsCheckTestMethod.fs" />
-    <Compile Include="FsCheckTestCaseBuider.fs" />
+    <Compile Include="FsCheckTestCaseBuilder.fs" />
     <Compile Include="FsCheckAddin.fs" />
     <None Include="paket.references" />
   </ItemGroup>

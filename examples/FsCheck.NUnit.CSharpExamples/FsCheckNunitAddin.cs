@@ -8,7 +8,7 @@ namespace FsCheck.NUnit.CSharpExamples
     {
         public bool Install(IExtensionHost host)
         {
-            var tcBuilder = new FsCheckTestCaseBuider();
+            var tcBuilder = new FsCheckTestCaseBuilder();
             host.GetExtensionPoint("TestCaseBuilders").Install(tcBuilder);
             return true;
         }

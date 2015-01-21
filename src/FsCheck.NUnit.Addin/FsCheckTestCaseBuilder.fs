@@ -5,7 +5,7 @@ open NUnit.Core.Extensibility
 
 open FsCheck.NUnit
 
-type FsCheckTestCaseBuider() =        
+type FsCheckTestCaseBuilder() =        
     interface ITestCaseBuilder with
         override x.CanBuildFrom mi = 
             Reflect.HasAttribute(mi, typeof<PropertyAttribute>.FullName, false)
