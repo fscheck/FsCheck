@@ -105,7 +105,7 @@ type PropertyAttribute() =
                     if not quietOnSuccess then
                         printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
                     upcast new PassedResult(methodInfo,this.DisplayName)
-                | Exhausted testdata -> 
+                | TestResult.Exhausted testdata -> 
                     upcast new FailedResult(methodInfo,PropertyFailedException(xunitRunner.Result), this.DisplayName)
                 | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  -> 
                     upcast new FailedResult(methodInfo, PropertyFailedException(xunitRunner.Result), this.DisplayName)

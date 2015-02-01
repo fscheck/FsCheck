@@ -22,7 +22,7 @@ type TestData =
       Labels: Set<string>
     }
 
-[<NoEquality;NoComparison>]
+[<NoEquality;NoComparison;RequireQualifiedAccess>]
 type TestResult = 
     | True of TestData
     | False of TestData 
@@ -112,7 +112,7 @@ module Runner =
               //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
               yield Generated result.Arguments
               match result.Outcome with
-                | Rejected -> 
+                | Outcome.Rejected -> 
                     yield Failed result 
                 | Outcome.True -> 
                     yield Passed result
@@ -138,10 +138,10 @@ module Runner =
         let testResult =
             let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
             match outcome with
-                | Passed _ -> True testData
-                | Falsified result -> False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
-                | Failed _ -> Exhausted testData
-                | EndShrink result -> False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
+                | Passed _ -> TestResult.True testData
+                | Falsified result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
+                | Failed _ -> TestResult.Exhausted testData
+                | EndShrink result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
                 | _ -> failwith "Test ended prematurely"
         config.Runner.OnFinished(config.Name,testResult)
 
@@ -197,26 +197,26 @@ module Runner =
             | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labels_to_string l) newline
         let name = if String.IsNullOrEmpty(name) then String.Empty else (name+"-")  
         match testResult with
-        | True data -> 
+        | TestResult.True data -> 
             sprintf "%sOk, passed %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
-        | False (data, origArgs, args, Exception exc, usedSeed) -> 
+        | TestResult.False (data, origArgs, args, Outcome.Exception exc, usedSeed) -> 
             sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels  
             + sprintf "%s%s" (args |> argumentsToString) newline
             + sprintf "with exception:%s%O%s" newline exc newline
-        | False (data, origArgs, args, Timeout i, usedSeed) -> 
+        | TestResult.False (data, origArgs, args, Outcome.Timeout i, usedSeed) -> 
             sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):%s" 
                 name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels 
             + sprintf "%s%s" (args |> argumentsToString) newline
-        | False (data, origArgs, args, _, usedSeed) -> 
+        | TestResult.False (data, origArgs, args, _, usedSeed) -> 
             sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels  
             + sprintf "%s%s" (args |> argumentsToString) newline
-        | Exhausted data -> 
+        | TestResult.Exhausted data -> 
             sprintf "%sArguments exhausted after %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
 
@@ -345,7 +345,7 @@ type Config with
                 printf "%s" (everyShrink args)
             member x.OnFinished(name,testResult) = 
                 match testResult with
-                | True _ -> printf "%s" (onFinishedToString name testResult)
+                | TestResult.True _ -> printf "%s" (onFinishedToString name testResult)
                 | _ -> failwithf "%s" (onFinishedToString name testResult)
 
         }

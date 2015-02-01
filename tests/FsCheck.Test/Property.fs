@@ -49,7 +49,7 @@ module Property =
                   
     let rec private determineResult prop =
         let result =
-          { Outcome     = Rejected
+          { Outcome     = Outcome.Rejected
             Stamp       = []
             Labels       = Set.empty
             Arguments   = []
@@ -102,11 +102,11 @@ module Property =
             | TestResult.Exhausted td -> td
 
         match r0.Outcome, r1 with
-        | Timeout i, TestResult.False(_,_,_,Timeout j,_) when i = j -> true && r0.Labels = testData.Labels
+        | Outcome.Timeout i, TestResult.False(_,_,_,Outcome.Timeout j,_) when i = j -> true && r0.Labels = testData.Labels
         | Outcome.Exception _, TestResult.False(_,_,_,Outcome.Exception _,_) -> true && r0.Labels = testData.Labels
         | Outcome.False, TestResult.False(_,_,_,Outcome.False,_) -> true && r0.Labels = testData.Labels
         | Outcome.True, TestResult.True _ -> true && (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
-        | Rejected,TestResult.Exhausted _ -> true //&& (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
+        | Outcome.Rejected,TestResult.Exhausted _ -> true //&& (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
         | _ -> false
         //&& (r0.Stamp |> Seq.filter ((<>) "") |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
         //&& r0.Labels = testData.Labels

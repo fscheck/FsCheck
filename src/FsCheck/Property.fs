@@ -11,7 +11,7 @@
 
 namespace FsCheck
 
-[<NoComparison>]
+[<NoComparison; RequireQualifiedAccess>]
 type Outcome = 
     | Timeout of int
     | Exception of exn
@@ -34,45 +34,45 @@ type Result =
     static member (&&&) (l,r) = 
         //printfn "And of l %A and r %A" l.Outcome r.Outcome
         match (l.Outcome,r.Outcome) with
-        | (Exception _,_) -> l //here a potential exception in r is thrown away...
-        | (_,Exception _) -> r
-        | (Timeout _,_) -> l
-        | (_,Timeout _) -> r
-        | (False,_) -> l
-        | (_,False) -> r
-        | (_,True) -> l
-        | (True,_) -> r
-        | (Rejected,Rejected) -> l //or r, whatever
+        | (Outcome.Exception _,_) -> l //here a potential exception in r is thrown away...
+        | (_,Outcome.Exception _) -> r
+        | (Outcome.Timeout _,_) -> l
+        | (_,Outcome.Timeout _) -> r
+        | (Outcome.False,_) -> l
+        | (_,Outcome.False) -> r
+        | (_,Outcome.True) -> l
+        | (Outcome.True,_) -> r
+        | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
     static member (|||) (l,r) =
         match (l.Outcome, r.Outcome) with
-        | (Exception _,_) -> l //here a potential exception in r is thrown away...
-        | (_,Exception _) -> r
-        | (Timeout _,_) -> l
-        | (_,Timeout _) -> r
-        | (_,False) -> l
-        | (False,_) -> r
-        | (True,_) -> l
-        | (_,True) -> r
-        | (Rejected,Rejected) -> l //or r, whatever  
+        | (Outcome.Exception _,_) -> l //here a potential exception in r is thrown away...
+        | (_,Outcome.Exception _) -> r
+        | (Outcome.Timeout _,_) -> l
+        | (_,Outcome.Timeout _) -> r
+        | (_,Outcome.False) -> l
+        | (Outcome.False,_) -> r
+        | (Outcome.True,_) -> l
+        | (_,Outcome.True) -> r
+        | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever  
 
 module internal Res =
 
     let private result =
-      { Outcome     = Rejected
+      { Outcome     = Outcome.Rejected
         Stamp       = []
         Labels       = Set.empty
         Arguments   = []
       }
 
-    let failed = { result with Outcome = False }
+    let failed = { result with Outcome = Outcome.False }
 
-    let exc e = { result with Outcome = Exception e }
+    let exc e = { result with Outcome = Outcome.Exception e }
 
-    let timeout i = { result with Outcome = Timeout i }
+    let timeout i = { result with Outcome = Outcome.Timeout i }
 
-    let succeeded = { result with Outcome = True }
+    let succeeded = { result with Outcome = Outcome.True }
 
-    let rejected = { result with Outcome = Rejected }
+    let rejected = { result with Outcome = Outcome.Rejected }
 
      
 
