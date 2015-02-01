@@ -1,3 +1,7 @@
+### 2.0.0 - To be released
+  * Rename FsCheckTestCaseBuider to Builder. (potentially breaking change)
+  * Add RequireQualifiedAccess to TestResult and Outcome. (breaking change for IRunner implementations and test framework integrations)
+
 ### 1.0.4 - 9 December 2014
   * Add NonNull<T>.
 
