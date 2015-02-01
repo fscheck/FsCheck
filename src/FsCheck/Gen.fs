@@ -1,13 +1,12 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2013 Kurt Schelfthout. All rights reserved.          **
+**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
+**  All rights reserved.                                                    **
 **  https://github.com/kurtschelfthout/FsCheck                              **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
 \*--------------------------------------------------------------------------*)
-
-#light
 
 namespace FsCheck
 
