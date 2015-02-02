@@ -1,6 +1,9 @@
 ### 2.0.0 - To be released
   * Rename FsCheckTestCaseBuider to Builder. (potentially breaking change)
   * Add RequireQualifiedAccess to TestResult and Outcome. (breaking change for IRunner implementations and test framework integrations)
+  * Rename UnbrowsableObject to Specification (breaking change)
+  * In the fluent interface, if a Generator but no shrinker is given, don't use the shrinker derived from the type (breaking change)
+  * Add methods to Fluent interface to allow working with Arbitrary. Add missing arity of Spec.For. Add overloads that take Arbitrary.
 
 ### 1.0.4 - 9 December 2014
   * Add NonNull<T>.

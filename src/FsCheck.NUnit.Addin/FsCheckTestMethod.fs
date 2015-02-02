@@ -97,8 +97,8 @@ type FsCheckTestMethod(mi : MethodInfo) =
                         Arbitrary = attr.Arbitrary |> Array.toList
                         Runner = testRunner }
 
-        if x.Method.ReturnType = typeof<UnbrowsableObject> then        
-            let spec = x.invokeMethod x.Method :?> UnbrowsableObject
+        if x.Method.ReturnType = typeof<Specification> then        
+            let spec = x.invokeMethod x.Method :?> Specification
             Check.One(config, spec.Build())
         else
             Check.Method(config, x.Method, ?target = if x.Fixture <> null then Some x.Fixture else None)        

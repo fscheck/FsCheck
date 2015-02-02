@@ -35,12 +35,12 @@ type WeightAndValue<'a>(weight:int,value:'a) =
 type Any private() =
     static let regs = Runner.init.Force()
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///Build a generator that generates a value from one of the generators in the given non-empty IEnumerable, with
     ///equal probability.
     static member private OneOfSeqGen gs = 
         gs |> Seq.toList |> oneof
 
-    ///Build a generator that randomly generates one of the values in the given non-empty seq.
+    ///Build a generator that randomly generates one of the values in the given non-empty IEnumerable.
     static member private OneOfSeqValue vs = 
         vs |> Seq.toList |> elements
 
@@ -178,7 +178,7 @@ type Configuration() =
         }
 
 [<AbstractClass>]
-type UnbrowsableObject() =
+type Specification() =
     inherit obj()
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     override x.Equals(other) = base.Equals(other)
@@ -218,7 +218,7 @@ and SpecBuilder<'a> internal   ( generator0:'a Gen
                                , conditions:('a -> bool) list
                                , collects:('a -> string) list
                                , classifies:(('a -> bool) * string) list) =
-    inherit UnbrowsableObject()
+    inherit Specification()
     override x.Build() =
             let conditions' a = conditions |> List.fold (fun s f -> s && f a) true
             let collects' a prop = collects |> List.fold (fun prop f -> prop |> collect (f a)) prop
@@ -274,7 +274,7 @@ and SpecBuilder<'a,'b> internal   ( generator0:'a Gen
                                   , conditions:('a -> 'b -> bool) list
                                   , collects:('a -> 'b -> string) list
                                   , classifies:(('a -> 'b -> bool) * string) list) = 
-    inherit UnbrowsableObject()
+    inherit Specification()
     override x.Build() =
             let conditions' a b = conditions |> List.fold (fun s f -> s && f a b) true
             let collects' a b prop = collects |> List.fold (fun prop f -> prop |> collect (f a b)) prop
@@ -322,7 +322,7 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
                                     , conditions:('a -> 'b -> 'c -> bool) list
                                     , collects:('a -> 'b -> 'c -> string) list
                                     , classifies:(('a -> 'b -> 'c -> bool) * string) list) = 
-    inherit UnbrowsableObject()
+    inherit Specification()
     override x.Build() =
             let conditions' a b c = conditions |> List.fold (fun s f -> s && f a b c) true
             let collects' a b c prop = collects |> List.fold (fun prop f -> prop |> collect (f a b c)) prop
@@ -357,6 +357,7 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
                 
 type Spec() =
     static let _ = Runner.init.Value
+    static let noshrink = fun _ -> Seq.empty
     static member ForAny(assertion:Func<'a,bool>) =
         Spec.For(Any.OfType<'a>(),assertion)
     static member ForAny(assertion:Action<'a>) =
@@ -369,15 +370,35 @@ type Spec() =
         Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),assertion)
         
     static member For(generator:'a Gen, assertion:Func<'a,bool>) =
-        SpecBuilder<'a>(generator, shrink, property << assertion.Invoke, [], [], [])
+        SpecBuilder<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
+    static member For(arbitrary:'a Arbitrary, assertion:Func<'a,bool>) =
+        SpecBuilder<'a>(arbitrary.Generator, arbitrary.Shrinker, property << assertion.Invoke, [], [], [])
+
     static member For(generator:'a Gen, assertion:Action<'a>) =
-        SpecBuilder<'a>(generator, shrink, property << assertion.Invoke, [], [], [])
+        SpecBuilder<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
+    static member For(arbitrary:'a Arbitrary, assertion:Action<'a>) =
+        SpecBuilder<'a>(arbitrary.Generator, arbitrary.Shrinker, property << assertion.Invoke, [], [], [])
+
     static member For(generator1:'a Gen,generator2:'b Gen, assertion:Func<'a,'b,bool>) =
-        SpecBuilder<'a,'b>(generator1, shrink, generator2, shrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
-    static member For(generator1:'a Gen,generator2:'b Gen,generator3:'c Gen, assertion:Func<'a,'b,'c,bool>) =
-        SpecBuilder<'a,'b,'c>(generator1, shrink, generator2, shrink, generator3, shrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+        SpecBuilder<'a,'b>(generator1, noshrink, generator2, noshrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+    static member For(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary, assertion:Func<'a,'b,bool>) =
+        SpecBuilder<'a,'b>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+
     static member For(generator1:'a Gen,generator2:'b Gen, assertion:Action<'a,'b>) =
-        SpecBuilder<'a,'b>(generator1, shrink, generator2, shrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+        SpecBuilder<'a,'b>(generator1, noshrink, generator2, noshrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+    static member For(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary, assertion:Action<'a,'b>) =
+        SpecBuilder<'a,'b>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+
+    static member For(generator1:'a Gen,generator2:'b Gen,generator3:'c Gen, assertion:Func<'a,'b,'c,bool>) =
+        SpecBuilder<'a,'b,'c>(generator1, noshrink, generator2, noshrink, generator3, noshrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+    static member For(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary,arbitrary3:'c Arbitrary, assertion:Func<'a,'b,'c,bool>) =
+        SpecBuilder<'a,'b,'c>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, arbitrary3.Generator, arbitrary3.Shrinker, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+
+    static member For(generator1:'a Gen,generator2:'b Gen,generator3:'c Gen, assertion:Action<'a,'b,'c>) =
+        SpecBuilder<'a,'b,'c>(generator1, noshrink, generator2, noshrink, generator3, noshrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+    static member For(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary,arbitrary3:'c Arbitrary, assertion:Action<'a,'b,'c>) =
+        SpecBuilder<'a,'b,'c>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, arbitrary3.Generator, arbitrary3.Shrinker, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+
 
 open Gen
 
@@ -429,6 +450,11 @@ type GeneratorExtensions =
     static member ToArbitrary generator =
         Arb.fromGen generator
 
+    /// Construct an Arbitrary instance from a generator and a shrinker.
+    [<System.Runtime.CompilerServices.Extension>]
+    static member ToArbitrary (generator,shrinker) =
+        Arb.fromGenShrink (generator,shrinker)
+
 [<System.Runtime.CompilerServices.Extension>]
 type ArbitraryExtensions =
     ///Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
@@ -436,10 +462,23 @@ type ArbitraryExtensions =
     [<System.Runtime.CompilerServices.Extension>]
     static member Convert (arb, convertTo: Func<_,_>, convertFrom: Func<_,_>) =
         Arb.convert convertTo.Invoke convertFrom.Invoke arb
+
+    /// Return an Arbitrary instance that is a filtered version of an existing arbitrary instance.
+    /// The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter with the given predicate.
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Filter (arb, filter: Func<_,_>) =
+        Arb.filter filter.Invoke arb
+
+    /// Return an Arbitrary instance that is a mapped and filtered version of an existing arbitrary instance.
+    /// The generator uses Gen.map with the given mapper and then Gen.suchThat with the given predicate, 
+    /// and the shrinks are filtered using Seq.filter with the given predicate.
+    ///This is sometimes useful if using just a filter would reduce the chance of getting a good value
+    ///from the generator - and you can map the value instead. E.g. PositiveInt.
+    [<System.Runtime.CompilerServices.Extension>]
+    static member MapFilter (arb, map: Func<_,_>, filter: Func<_,_>) =
+        Arb.mapFilter map.Invoke filter.Invoke arb
+
     
 type DefaultArbitraries =
     ///Register the generators that are static members of the type argument.
     static member Add<'t>() = Arb.register<'t>()
-    //static member Overwrite<'t>() = Gen.overwrite<'t>()
-  
-//do init.Value

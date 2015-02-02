@@ -16,10 +16,9 @@ namespace FsCheck.NUnit.CSharpExamples
         }
 
         //Using Spec fluent interface
-        //TODO: UnbrowsableObject return types look ugly. Rename to smth like Spec or ISpec?
         // Note: should fail
         [Property(Verbose = true)]
-        public UnbrowsableObject RevId_shouldFail()
+        public Specification RevId_shouldFail()
         {
             return Spec.ForAny<int[]>(xs => xs.Reverse().SequenceEqual(xs));
         }

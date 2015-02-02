@@ -24,11 +24,11 @@ type MsTestExtensions =
     static member private msTestConfigVerbose() = { Config.Verbose with Runner = MsTestExtensions.msTestRunner() }
 
     [<Extension>]
-    static member Assert (spec : UnbrowsableObject) =
+    static member Assert (spec : Specification) =
         Check.One(MsTestExtensions.msTestConfig(), spec.Build())
 
     [<Extension>]
-    static member AssertVerbose (spec : UnbrowsableObject) =
+    static member AssertVerbose (spec : Specification) =
         Check.One(MsTestExtensions.msTestConfigVerbose(), spec.Build())
     
     [<Extension>]
