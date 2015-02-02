@@ -28,10 +28,13 @@ open Runner
 //"And" and "Or" should start a new property, with own classifies and labels etc (see prop_Label)
 //label: maybe add some overloads, should be able to nest (see propMul)
 
+///2-tuple containing a weight and a value, used in some Any methods to weigh
+///the probability of a value.
 type WeightAndValue<'a>(weight:int,value:'a) =
     member x.Weight = weight
     member x.Value = value
-    
+ 
+///Methods to build random value generators.   
 type Any private() =
     static let regs = Runner.init.Force()
 
@@ -119,12 +122,12 @@ type Any private() =
     static member OfSize (sizedGen : Func<int,Gen<_>>) =
         sized <| fun s -> (sizedGen.Invoke(s))
 
-
+///Methods to build shrinkers.
 type Shrink =
     ///Returns the immediate shrinks for the given value based on its type.
     static member Type<'a>() = shrink<'a>
 
-//mutable counterpart of the Config type
+///Configure the test run.
 type Configuration() =
     let mutable maxTest = Config.Quick.MaxTest
     let mutable maxFail = Config.Quick.MaxFail
@@ -177,6 +180,7 @@ type Configuration() =
           Arbitrary = []
         }
 
+///Specify a property to test.
 [<AbstractClass>]
 type Specification() =
     inherit obj()
@@ -354,8 +358,8 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
         SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1,generator2, shrinker2, 
             (fun a b c -> (assertion0 a b c) .|. (label name (assertion.Invoke(a,b,c)))), conditions, collects, classifies)  
       
-                
-type Spec() =
+///Entry point to specifying a property.
+type Spec private() =
     static let _ = Runner.init.Value
     static let noshrink = fun _ -> Seq.empty
     static member ForAny(assertion:Func<'a,bool>) =
@@ -402,6 +406,7 @@ type Spec() =
 
 open Gen
 
+///Extension methods to build generators - contains among other the Linq methods.
 [<System.Runtime.CompilerServices.Extension>]
 type GeneratorExtensions = 
     ///Map the given function to the value in the generator, yielding a new generator of the result type.  
@@ -455,6 +460,7 @@ type GeneratorExtensions =
     static member ToArbitrary (generator,shrinker) =
         Arb.fromGenShrink (generator,shrinker)
 
+///Extensons to transform Arbitrary instances into other Arbitrary instances.
 [<System.Runtime.CompilerServices.Extension>]
 type ArbitraryExtensions =
     ///Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
@@ -478,7 +484,8 @@ type ArbitraryExtensions =
     static member MapFilter (arb, map: Func<_,_>, filter: Func<_,_>) =
         Arb.mapFilter map.Invoke filter.Invoke arb
 
-    
+  
+///Register a number of Arbitrary instances so they are available implicitly.  
 type DefaultArbitraries =
     ///Register the generators that are static members of the type argument.
     static member Add<'t>() = Arb.register<'t>()
