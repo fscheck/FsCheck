@@ -281,18 +281,10 @@ Target "CI" DoNothing
   ==> "Build"
   ==> "RunTests"
   ==> "All"
-
-"Build"
   ==> "CleanDocs"
   ==> "GenerateDocsJa"
   ==> "GenerateDocs"
-  ==> "ReleaseDocs"
-
-"All"
-  ==> "GenerateDocs"
   ==> "CI"
-
-"All"
   ==> "ReleaseDocs"
   =?> ("SourceLink", isLocalBuild && not isLinux)
   ==> "NuGet"
