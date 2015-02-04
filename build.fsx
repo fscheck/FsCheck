@@ -86,7 +86,7 @@ When a property fails, FsCheck automatically displays a minimal counter example.
     Authors = [ "Kurt Schelfthout and contributors" ]
     Tags = "test testing random fscheck quickcheck"
     ProjectFile = ["src/FsCheck/FsCheck.fsproj" ]
-    Dependencies = []
+    Dependencies = ["FSharp.Core", lazy "3.1.2.1" ]
     
     }
     { 
