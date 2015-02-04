@@ -8,5 +8,4 @@ nuget xunit.runners
 nuget xunit.runner.visualstudio
 nuget NuGet.CommandLine
 nuget SourceLink.Fake
-nuget FSharp.Formatting
-nuget xunit.runner.visualstudio
+nuget FSharp.Formatting ~> 2.6.3

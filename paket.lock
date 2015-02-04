@@ -3,10 +3,7 @@ NUGET
   specs:
     FAKE (3.14.9)
     FSharp.Compiler.Service (0.0.82)
-    FSharp.Formatting (2.7.1)
-      FSharp.Compiler.Service (>= 0.0.82)
-      FSharpVSPowerTools.Core (>= 1.7.0)
-    FSharpVSPowerTools.Core (1.7.0)
+    FSharp.Formatting (2.6.3)
       FSharp.Compiler.Service (>= 0.0.81)
     NuGet.CommandLine (2.8.3)
     NUnit (2.6.4)
