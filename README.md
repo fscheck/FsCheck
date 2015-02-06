@@ -1,3 +1,13 @@
+### Don't install or downgrade Nuget package 2.0.0 ###
+
+I made a mistake and pushed a version 2.0.0 to nuget by mistake on 4 Feb (I guess one of the downsides of having a very automated release process...). This version is not yet ready for prime time. If you are one of the 62 people who have installed it, please downgrade.
+
+It is now unlisted but this can take a while to filter through nuget's system apparently.
+
+Currently v1.0.4 is what you should use, unless you really want the bleeding edge.
+
+Sorry!
+
 ### What is FsCheck? ###
 
 FsCheck is a tool for testing .NET programs automatically. The programmer provides a specification of the program, in the form of properties which functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. While writing the properties, you are actually writing a testable specification of your program. Specifications are expressed in F#, C# or VB, using combinators defined in the FsCheck library. FsCheck provides combinators to define properties, observe the distribution of test data, and define test data generators. When a property fails, FsCheck automatically displays a minimal counter example.
