@@ -5,7 +5,7 @@ nuget NUnit
 nuget NUnit.Runners
 nuget xunit
 nuget xunit.runners
-nuget xunit.runner.visualstudio
+nuget xunit.runner.visualstudio prerelease
 nuget NuGet.CommandLine
 nuget SourceLink.Fake
 nuget FSharp.Formatting
