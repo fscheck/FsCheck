@@ -101,7 +101,7 @@ module Gen =
     open TypeClass
 
     ///Apply the function f to the value in the generator, yielding a new generator.
-    ///[category: Building generators out of existing generators]
+    ///[category: Creating generators from generators]
     [<CompiledName("Map")>]
     let map f (gen:Gen<_>) = gen.Map f
 
