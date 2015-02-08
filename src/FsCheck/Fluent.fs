@@ -38,15 +38,6 @@ type WeightAndValue<'a>(weight:int,value:'a) =
 type Any private() =
     static let regs = Runner.init.Force()
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty IEnumerable, with
-    ///equal probability.
-    static member private OneOfSeqGen gs = 
-        gs |> Seq.toList |> oneof
-
-    ///Build a generator that randomly generates one of the values in the given non-empty IEnumerable.
-    static member private OneOfSeqValue vs = 
-        vs |> Seq.toList |> elements
-
     ///Sequence the given list of generators into a generator of a list.
     static member private SequenceSeq<'a> gs = 
         gs |> Seq.toList |> sequence |> map (fun list -> new List<'a>(list))
@@ -61,11 +52,11 @@ type Any private() =
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     static member ValueIn (values : seq<_>) = 
-        values |> Any.OneOfSeqValue
+        values |> elements
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     static member ValueIn ([<ParamArrayAttribute>] values : array<_>) = 
-        values |> Any.OneOfSeqValue
+        values |> elements
 
     ///Generates an integer between l and h, inclusive.
     static member IntBetween (l,h) = 
@@ -84,17 +75,17 @@ type Any private() =
     ///Build a generator that generates a value from one of the constants in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
     static member private OneOfWeighedSeqValue ws = 
-        ws |> Seq.map (fun wv -> (wv.Weight, constant wv.Value)) |> Seq.toList |> frequency
+        ws |> Seq.map (fun wv -> (wv.Weight, constant wv.Value)) |> frequency
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///equal probability.
     static member GeneratorIn (generators : seq<Gen<_>>) = 
-        generators |> Any.OneOfSeqGen
+        generators |> oneof
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///equal probability.
     static member GeneratorIn ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
-        generators |> Any.OneOfSeqGen
+        generators |> oneof
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
