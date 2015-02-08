@@ -40,7 +40,7 @@ type Any private() =
 
     ///Sequence the given list of generators into a generator of a list.
     static member private SequenceSeq<'a> gs = 
-        gs |> Seq.toList |> sequence |> map (fun list -> new List<'a>(list))
+        gs |> sequence |> map (fun list -> new List<'a>(list))
 
     /// Returns a generator for the type argument
     static member OfType<'a>() = 
