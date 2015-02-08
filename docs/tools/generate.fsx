@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------
 // Builds the documentation from `.fsx` and `.md` files in the 'docs/content' directory
 // (the generated documentation is stored in the 'docs/output' directory)
 // --------------------------------------------------------------------------------------
@@ -22,16 +22,9 @@ let info =
 // For typical project, no changes are needed below
 // --------------------------------------------------------------------------------------
 
-#I "../../packages/FSharpVSPowerTools.Core/lib/net45"
-#I "../../packages/FSharp.Formatting/lib/net40"
-#I "../../packages/FSharp.Compiler.Service/lib/net40"
+#load "../../packages/FSharp.Formatting/FSharp.Formatting.fsx"
+#r "../../packages/FAKE/tools/NuGet.Core.dll"
 #r "../../packages/FAKE/tools/FakeLib.dll"
-#r "FSharpVSPowerTools.Core.dll"
-#r "RazorEngine.dll"
-#r "FSharp.Literate.dll"
-#r "FSharp.CodeFormat.dll"
-#r "FSharp.MetadataFormat.dll"
-#r "FSharp.MarkDown.dll"
 open Fake
 open System.IO
 open Fake.FileHelper
