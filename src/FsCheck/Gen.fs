@@ -113,7 +113,7 @@ module Gen =
     ///Override the current size of the test. resize n g invokes generator g with size parameter n.
     ///[category: Managing size]
     [<CompiledName("Resize")>]
-    let resize n (Gen m) = Gen (fun _ r -> m n r)
+    let resize newSize (Gen m) = Gen (fun _ r -> m newSize r)
 
     ///Generates a random number generator. Useful for starting off the process
     ///of generating a random value.
