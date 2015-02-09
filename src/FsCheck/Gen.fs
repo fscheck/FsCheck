@@ -17,7 +17,7 @@ type internal IGen =
     
 ///Generator of a random value, based on a size parameter and a randomly generated int.
 and [<NoEquality;NoComparison>] Gen<'a> = 
-    internal Gen of (int -> StdGen -> 'a)
+    private Gen of (int -> StdGen -> 'a)
         ///map the given function to the value in the generator, yielding a new generator of the result type.  
         member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> f <| g n r)
     interface IGen with
