@@ -179,8 +179,6 @@ type Specification() =
     override x.Equals(other) = base.Equals(other)
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     override x.GetHashCode() = base.GetHashCode()
-//    [<EditorBrowsable(EditorBrowsableState.Never)>]
-//    override x.GetType() = base.GetType() //GetType cannot be overridden
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     override x.ToString() = base.ToString()
     [<EditorBrowsable(EditorBrowsableState.Never)>]
@@ -353,16 +351,22 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
 type Spec private() =
     static let _ = Runner.init.Value
     static let noshrink = fun _ -> Seq.empty
-    static member ForAny(assertion:Func<'a,bool>) =
-        Spec.For(Any.OfType<'a>(),assertion)
+
     static member ForAny(assertion:Action<'a>) =
-        Spec.For(Any.OfType<'a>(),assertion)
-    static member ForAny(assertion:Func<'a,'b,bool>) =
-        Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),assertion)
-    static member ForAny(assertion:Func<'a,'b,'c,bool>) =
-        Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),Any.OfType<'c>(),assertion)
+        Spec.For(Arb.from, assertion)
+    static member ForAny(assertion:Func<'a,bool>) =
+        Spec.For(Arb.from, assertion)
+    
     static member ForAny(assertion:Action<'a,'b>) =
-        Spec.For(Any.OfType<'a>(),Any.OfType<'b>(),assertion)
+        Spec.For(Arb.from, Arb.from, assertion)
+    static member ForAny(assertion:Func<'a,'b,bool>) =
+        Spec.For(Arb.from, Arb.from, assertion)
+
+    static member ForAny(assertion:Action<'a,'b,'c>) =
+        Spec.For(Arb.from, Arb.from, Arb.from, assertion)
+    static member ForAny(assertion:Func<'a,'b,'c,bool>) =
+        Spec.For(Arb.from, Arb.from, Arb.from, assertion)
+    
         
     static member For(generator:'a Gen, assertion:Func<'a,bool>) =
         SpecBuilder<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
