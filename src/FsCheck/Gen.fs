@@ -157,6 +157,7 @@ module Gen =
     ///[category: Creating generators from generators]
     [<CompiledName("Frequency")>]
     let frequency xs = 
+        let xs = Seq.cache xs
         let tot = Seq.sumBy fst xs
         let rec pick n ys = 
             let (k,x),xs = Seq.head ys,Seq.skip 1 ys
