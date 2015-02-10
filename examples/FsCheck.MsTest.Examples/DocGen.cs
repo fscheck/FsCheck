@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using FsCheck;
-using FsCheck.Fluent;
 using FsCheck.MsTest.Examples.ClassesToTest;
 
 namespace FsCheck.MsTest.Examples
@@ -12,9 +11,9 @@ namespace FsCheck.MsTest.Examples
         public static Gen<Doc> Generator(int depth)
         {
             if (depth == 0)
-                return Any.GeneratorIn(NonRecursiveDocGenerators());
+                return Gen.OneOf(NonRecursiveDocGenerators());
 
-            return Any.GeneratorIn(AllDocGenerators(depth / 2));
+            return Gen.OneOf(AllDocGenerators(depth / 2));
         }
 
         private static IEnumerable<Gen<Doc>> NonRecursiveDocGenerators()
@@ -23,15 +22,15 @@ namespace FsCheck.MsTest.Examples
             {
                 Constant<Doc.Empty>(),
                 Constant<Doc.Line>(),
-                from x in Any.OfType<char>() select new Doc.Char(x) as Doc,
-                from s in Any.OfType<string>() select new Doc.Text(s) as Doc,
+                from x in Arb.generate<char>() select new Doc.Char(x) as Doc,
+                from s in Arb.generate<string>() select new Doc.Text(s) as Doc,
             };
         }
 
         private static Gen<Doc> Constant<T>()
             where T : Doc, new()
         {
-            return Any.Value(new T() as Doc);
+            return Gen.Constant(new T() as Doc);
         }
        
         private static IEnumerable<Gen<Doc>> RecursiveDocGenerators(int depth)

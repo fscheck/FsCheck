@@ -8,7 +8,7 @@
 **  See the file License.txt for the full text.                             **
 \*--------------------------------------------------------------------------*)
 
-namespace FsCheck.Fluent
+namespace FsCheck
 
 open System
 open System.Linq
@@ -28,89 +28,91 @@ open Runner
 //"And" and "Or" should start a new property, with own classifies and labels etc (see prop_Label)
 //label: maybe add some overloads, should be able to nest (see propMul)
 
-///2-tuple containing a weight and a value, used in some Any methods to weigh
+///2-tuple containing a weight and a value, used in some Gen methods to indicate
 ///the probability of a value.
-type WeightAndValue<'a>(weight:int,value:'a) =
-    member x.Weight = weight
-    member x.Value = value
+[<NoComparison>]
+type WeightAndValue<'a> =
+    { Weight: int
+      Value : 'a  
+    }
  
-///Methods to build random value generators.   
-type Any private() =
+///Methods to build random value generators.
+[<AbstractClass; Sealed>]
+type Gen private() =
     static let regs = Runner.init.Force()
 
-    ///Sequence the given list of generators into a generator of a list.
-    static member private SequenceSeq<'a> gs = 
-        gs |> sequence |> map (fun list -> new List<'a>(list))
-
-    /// Returns a generator for the type argument
-    static member OfType<'a>() = 
-        from<'a>.Generator
-
-    /// Generate a constant value
-    static member Value (value) = 
+    ///Always generate value.
+    ///[category: Creating generators] 
+    static member Constant (value) = 
         constant value
 
-    ///Build a generator that randomly generates one of the values in the given non-empty seq.
-    static member ValueIn (values : seq<_>) = 
+    ///Build a generator that randomly generates one of the values in the given non-empty IEnumerable.
+    ///[category: Creating generators]
+    static member Elements (values : seq<_>) = 
         values |> elements
 
-    ///Build a generator that randomly generates one of the values in the given non-empty seq.
-    static member ValueIn ([<ParamArrayAttribute>] values : array<_>) = 
+    ///Build a generator that randomly generates one of the given values.
+    ///[category: Creating generators]
+    static member Elements ([<ParamArrayAttribute>] values : array<_>) = 
         values |> elements
 
     ///Generates an integer between l and h, inclusive.
-    static member IntBetween (l,h) = 
+    ///[category: Creating generators]
+    static member Choose (l,h) = 
         choose (l,h)
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
-    static member WeighedValueIn ( weighedValues : seq<WeightAndValue<'a>> ) =
-        weighedValues |> Any.OneOfWeighedSeqValue
-
-    ///Build a generator that generates a value from one of the constants in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
-    static member WeighedValueIn ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<'a>> ) =
-        weighedValues |> Any.OneOfWeighedSeqValue
-
-    ///Build a generator that generates a value from one of the constants in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
-    static member private OneOfWeighedSeqValue ws = 
-        ws |> Seq.map (fun wv -> (wv.Weight, constant wv.Value)) |> frequency
-
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///Build a generator that generates a value from one of the given generators, with
     ///equal probability.
-    static member GeneratorIn (generators : seq<Gen<_>>) = 
+    ///[category: Creating generators from generators]
+    static member OneOf (generators : seq<Gen<_>>) = 
         generators |> oneof
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///Build a generator that generates a value from one of the given generators, with
     ///equal probability.
-    static member GeneratorIn ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
+    ///[category: Creating generators from generators]
+    static member OneOf ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
         generators |> oneof
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
-    static member WeighedGeneratorIn ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
-        weighedValues |> Any.OneOfWeighedSeq
+    ///[category: Creating generators from generators]
+    static member Frequency ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
+        weighedValues |> Gen.FrequencyOfWeighedSeq
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
-    static member WeighedGeneratorIn ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<Gen<'a>>> ) =
-        weighedValues |> Any.OneOfWeighedSeq
+    ///[category: Creating generators from generators]
+    static member Frequency ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<Gen<'a>>> ) =
+        weighedValues |> Gen.FrequencyOfWeighedSeq
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
-    static member private OneOfWeighedSeq ws = 
-        ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> Seq.toList |> frequency
-
-    ///Sequence the given list of generators into a generator of a list.
-    static member SequenceOf<'a> (generators:seq<Gen<'a>>) = 
-        generators |> Any.SequenceSeq
+    static member private FrequencyOfWeighedSeq ws = 
+        ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> frequency
 
     ///Sequence the given list of generators into a generator of a list.
-    static member SequenceOf<'a> ([<ParamArrayAttribute>]generators:array<Gen<'a>>) = 
-        generators |> Any.SequenceSeq
+    ///[category: Creating generators from generators]
+    static member Sequence<'a> (generators:seq<Gen<'a>>) = 
+        generators |> sequence |> map (fun list -> list :> IEnumerable<'a>)
 
-    static member OfSize (sizedGen : Func<int,Gen<_>>) =
+    ///Sequence the given list of generators into a generator of a list.
+    ///[category: Creating generators from generators]
+    static member Sequence<'a> ([<ParamArrayAttribute>]generators:array<Gen<'a>>) = 
+        generators |> sequence |> map (fun list -> list.ToArray())
+
+    /// Generates sublists of the given IEnumerable.
+    ///[category: Creating generators]
+    static member SubListOf s = 
+        subListOf s
+        |> map (fun l -> new List<_>(l) :> IList<_>)
+
+    /// Generates sublists of the given arguments.
+    ///[category: Creating generators]
+    static member SubListOf ([<ParamArrayAttribute>] s:_ array) = 
+        subListOf s
+        |> map (fun l -> new List<_>(l) :> IList<_>)
+
+    ///Obtain the current size. sized g calls g, passing it the current size as a parameter.
+    ///[category: Managing size]
+    static member Sized (sizedGen : Func<int,Gen<_>>) =
         sized <| fun s -> (sizedGen.Invoke(s))
 
 ///Methods to build shrinkers.
@@ -438,24 +440,65 @@ type GeneratorExtensions =
               let! b = f.Invoke(a)
               return select.Invoke(a,b) }
 
+    ///Generates a list of given length, containing values generated by the given generator.
+    ///[category: Creating generators from generators]
+    [<System.Runtime.CompilerServices.Extension>]
+    static member ListOf (generator, nbOfElements) =
+        listOfLength nbOfElements generator
+        |> map (fun l -> new List<_>(l) :> IList<_>)
+
     /// Generates a list of random length. The maximum length depends on the
     /// size parameter.
+    ///[category: Creating generators from generators]
     [<System.Runtime.CompilerServices.Extension>]
-    static member MakeList<'a> (generator) = listOf generator |> map (fun list -> new List<'a>(list))
+    static member ListOf (generator) =
+        listOf generator
+        |> map (fun l -> new List<_>(l) :> IList<_>)
 
     /// Generates a non-empty list of random length. The maximum length 
     /// depends on the size parameter.
+    ///[category: Creating generators from generators]
     [<System.Runtime.CompilerServices.Extension>]
-    static member MakeNonEmptyList<'a> (generator) = nonEmptyListOf generator |> map (fun list -> new List<'a>(list))
+    static member NonEmptyListOf<'a> (generator) = 
+        nonEmptyListOf generator 
+        |> map (fun list -> new List<'a>(list) :> IList<_>)
     
-    ///Generates a list of given length, containing values generated by the given generator.
+    /// Generates an array of a specified length.
+    ///[category: Creating generators from generators]
     [<System.Runtime.CompilerServices.Extension>]
-    static member MakeListOfLength<'a> (generator, count) = listOfLength count generator |> map (fun list -> new List<'a>(list))
-    
-    ///Override the current size of the test. resize n g invokes generator g with size parameter n.
+    static member ArrayOf (generator, length) =
+        arrayOfLength length generator
+
+    /// Generates an array using the specified generator. 
+    /// The maximum length is size+1.
+    ///[category: Creating generators from generators]
     [<System.Runtime.CompilerServices.Extension>]
-    static member Resize (generator, sizeTransform : Func<int,int>) =
-        sized <| fun s -> resize (sizeTransform.Invoke(s)) generator
+    static member ArrayOf (generator) =
+        arrayOf generator
+
+    /// Generates a 2D array of the given dimensions.
+    ///[category: Creating generators from generators]
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Array2DOf (generator, rows, cols) =
+        array2DOfDim (rows,cols) generator
+
+    /// Generates a 2D array. The square root of the size is the maximum number of rows and columns.
+    ///[category: Creating generators from generators]
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Array2DOf (generator) =
+        array2DOf generator
+
+    ///Apply the given Gen function to this generator, aka the applicative <*> operator.
+    ///[category: Creating generators from generators]
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Apply (generator, f:Gen<Func<_,_>>) =
+        apply (f |> map (fun f -> f.Invoke)) generator
+
+    ///Override the current size of the test.
+    ///[category: Managing size]
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Resize (generator, newSize) =
+        resize newSize generator
 
     /// Construct an Arbitrary instance from a generator.
     /// Shrink is not supported for this type.
@@ -485,6 +528,8 @@ type GeneratorExtensions =
     [<System.Runtime.CompilerServices.Extension>]
     static member Four (generator) =
         four generator
+
+
 
 ///Extensons to transform Arbitrary instances into other Arbitrary instances.
 [<System.Runtime.CompilerServices.Extension>]

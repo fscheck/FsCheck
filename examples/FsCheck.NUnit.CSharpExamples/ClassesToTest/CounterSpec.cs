@@ -1,5 +1,4 @@
 ﻿using System;
-using FsCheck.Fluent;
 
 namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
 {
@@ -7,7 +6,7 @@ namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
     {
         public Gen<Commands.ICommand<Counter, int>> GenCommand(int value)
         {
-            return Any.ValueIn(new Commands.ICommand<Counter, int>[] {new Inc(), new Dec()});
+            return Gen.Elements(new Commands.ICommand<Counter, int>[] {new Inc(), new Dec()});
         }
 
         public Tuple<Counter, int> Initial()

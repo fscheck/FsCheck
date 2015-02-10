@@ -3,7 +3,6 @@
 open System
 open System.Runtime.CompilerServices
 open FsCheck
-open FsCheck.Fluent
 open Microsoft.VisualStudio.TestTools.UnitTesting 
 
 [<Extension>]

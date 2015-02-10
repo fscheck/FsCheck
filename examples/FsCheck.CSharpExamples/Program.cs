@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FsCheck.Fluent;
 
 namespace FsCheck.CSharpExamples
 {
@@ -116,15 +115,15 @@ namespace FsCheck.CSharpExamples
             //-------Test data generators-----------
             //can't be made generic, only in separate method?
             Func<int[],Gen<int>> chooseFromList = xs =>
-                from i in Any.IntBetween(0,xs.Length-1)
+                from i in Gen.Choose(0,xs.Length-1)
                 select xs[i];
             
-            var chooseBool = Any.GeneratorIn( Any.Value( true), Any.Value(false));
+            var chooseBool = Gen.OneOf( Gen.Constant( true), Gen.Constant(false));
 
             //no tuples in C# until BCL 4.0...can we do better now?
-            var chooseBool2 = Any.WeighedValueIn(
-                new WeightAndValue<bool>(2, true),
-                new WeightAndValue<bool>(1, false));
+            var chooseBool2 = Gen.Frequency(
+                new WeightAndValue<Gen<bool>>(2, Gen.Constant(true)),
+                new WeightAndValue<Gen<bool>>(1, Gen.Constant(false)));
 
             //the size of test data : see matrix method
 
@@ -138,8 +137,8 @@ namespace FsCheck.CSharpExamples
                         }).QuickCheck();
 
             //generators support select, selectmany and where
-            var gen = from x in Any.OfType<int>()
-                      from y in Any.IntBetween(5, 10)
+            var gen = from x in Arb.generate<int>()
+                      from y in Gen.Choose(5, 10)
                       where x > 5
                       select new { Fst = x, Snd = y };
 
@@ -161,16 +160,16 @@ namespace FsCheck.CSharpExamples
 
         public static FsCheck.Gen<T> Matrix<T>(Gen<T> gen)
         {
-            return gen.Resize(s => Convert.ToInt32(Math.Sqrt(s)));
+            return Gen.Sized(s => gen.Resize(Convert.ToInt32(Math.Sqrt(s))));
         }
 
         public class ArbitraryLong : Arbitrary<long>
         {
             public override Gen<long> Generator
             {
-	            get { 
-                    return Any.OfSize( s => Any.IntBetween(-s,s))
-                        .Select( i => Convert.ToInt64(i)); 
+	            get {
+                    return Gen.Sized(s => Gen.Choose(-s, s))
+                        .Select(i => Convert.ToInt64(i));
                 }
             }
         }
@@ -185,7 +184,7 @@ namespace FsCheck.CSharpExamples
             }
 
             public static Arbitrary<StringBuilder> StringBuilder() {
-                return Any.OfType<string>().Select(x => new StringBuilder(x)).ToArbitrary();
+                return Arb.generate<string>().Select(x => new StringBuilder(x)).ToArbitrary();
             }
         }
         

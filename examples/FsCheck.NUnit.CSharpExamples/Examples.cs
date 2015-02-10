@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using FsCheck.Fluent;
 using FsCheck.NUnit.CSharpExamples.ClassesToTest;
 using NUnit.Framework;
 

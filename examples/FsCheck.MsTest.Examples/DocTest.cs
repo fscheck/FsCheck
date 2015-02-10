@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FsCheck;
-using FsCheck.Fluent;
 using FsCheck.MsTest.Examples.ClassesToTest;
 
 namespace FsCheck.MsTest.Examples
@@ -33,7 +32,7 @@ namespace FsCheck.MsTest.Examples
         {
             public static Arbitrary<Doc> Doc()
             {
-                return Any.OfSize(DocGenenerator.Generator).ToArbitrary();
+                return Gen.Sized(DocGenenerator.Generator).ToArbitrary();
             }            
         }        
     }

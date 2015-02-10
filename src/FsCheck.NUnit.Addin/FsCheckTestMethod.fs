@@ -10,7 +10,6 @@ open NUnit.Framework
 
 open FsCheck
 open FsCheck.NUnit
-open FsCheck.Fluent
 
 type FsCheckTestMethod(mi : MethodInfo) =
     inherit TestMethod(mi)

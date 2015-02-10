@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FsCheck.Fluent;
 
 namespace FsCheck.MsTest.Examples.ClassesToTest
 {
@@ -10,7 +9,7 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
     {
         public Gen<Commands.ICommand<Counter, int>> GenCommand(int value)
         {
-            return Any.ValueIn(new Commands.ICommand<Counter, int>[] { new Inc(), new Dec() });
+            return Gen.Elements(new Commands.ICommand<Counter, int>[] { new Inc(), new Dec() });
         }
 
         public Tuple<Counter, int> Initial()
