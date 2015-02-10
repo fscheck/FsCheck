@@ -69,9 +69,12 @@
     <Compile Include="Random.fs" />
     <Compile Include="Reflect.fs" />
     <Compile Include="TypeClass.fs" />
-    <Compile Include="Gen.fs" />
+    <Compile Include="GenModule.fs" />
+    <Compile Include="GenStaticType.fs" />
     <Compile Include="ReflectArbitrary.fs" />
     <Compile Include="Arbitrary.fs" />
+    <Compile Include="ArbitraryExtensions.fs" />
+    <Compile Include="GenExtensions.fs" />
     <Compile Include="Property.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="Runner.fs" />
