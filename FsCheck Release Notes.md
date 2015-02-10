@@ -2,8 +2,11 @@
   * Rename FsCheckTestCaseBuider to Builder. (potentially breaking change)
   * Add RequireQualifiedAccess to TestResult and Outcome. (breaking change for IRunner implementations and test framework integrations)
   * Rename UnbrowsableObject to Specification (breaking change)
-  * In the fluent interface, if a Generator but no shrinker is given, don't use the shrinker derived from the type (breaking change)
-  * Add methods to Fluent interface to allow working with Arbitrary. Add missing arity of Spec.For. Add overloads that take Arbitrary.
+  * In the Spec interface, if a generator but no shrinker is given, don't use the shrinker derived from the type (breaking change)
+  * Add extension methods to allow working with Arbitrary from C#/VB. 
+  * Add missing arities of Spec.For and add overloads that take Arbitrary.
+  * Rename Any to Gen. Rename pretty much all methods on Any to match the existing methods they wrap on Gen module. (painful breaking change)
+  * Add missing Gen and Arbitrary extension methods and C# wrappers.
 
 ### 1.0.4 - 9 December 2014
   * Add NonNull<T>.
