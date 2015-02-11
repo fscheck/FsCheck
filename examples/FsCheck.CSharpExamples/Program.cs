@@ -137,7 +137,7 @@ namespace FsCheck.CSharpExamples
                         }).QuickCheck();
 
             //generators support select, selectmany and where
-            var gen = from x in Arb.generate<int>()
+            var gen = from x in Arb.Generate<int>()
                       from y in Gen.Choose(5, 10)
                       where x > 5
                       select new { Fst = x, Snd = y };
@@ -184,7 +184,7 @@ namespace FsCheck.CSharpExamples
             }
 
             public static Arbitrary<StringBuilder> StringBuilder() {
-                return Arb.generate<string>().Select(x => new StringBuilder(x)).ToArbitrary();
+                return Arb.Generate<string>().Select(x => new StringBuilder(x)).ToArbitrary();
             }
         }
         

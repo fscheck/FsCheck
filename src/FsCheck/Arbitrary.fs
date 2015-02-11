@@ -12,56 +12,67 @@ namespace FsCheck
 
 open System
 
-//First some type we're going to make default generators for later
-
+///Represents an int >= 0
 type NonNegativeInt = NonNegativeInt of int with
     member x.Get = match x with NonNegativeInt r -> r
     static member op_Explicit(NonNegativeInt i) = i
 
+///Represents an int > 0
 type PositiveInt = PositiveInt of int with
     member x.Get = match x with PositiveInt r -> r
     static member op_Explicit(PositiveInt i) = i
 
+///Represents an int <> 0
 type NonZeroInt = NonZeroInt of int with
     member x.Get = match x with NonZeroInt r -> r
     static member op_Explicit(NonZeroInt i) = i
 
+///Represents a float that is not NaN or Infinity.
 type NormalFloat = NormalFloat of float with
     member x.Get = match x with NormalFloat f -> f
     static member op_Explicit(NormalFloat f) = f
     static member get (NormalFloat f) = f
 
+///Represents a string that is not null or empty, and does not contain any null characters ('\000')
 type NonEmptyString = NonEmptyString of string with
     member x.Get = match x with NonEmptyString r -> r
     override x.ToString() = x.Get
 
+///Represents a string that does not contain null characters ('\000')
 type StringNoNulls = StringNoNulls of string with
     member x.Get = match x with StringNoNulls r -> r
     override x.ToString() = x.Get
 
+///Represents an integer interval.
 type Interval = Interval of int * int with
     member x.Left = match x with Interval (l,_) -> l
     member x.Right = match x with Interval (_,r) -> r
 
+///Represents an int that can include int.MinValue and int.MaxValue.
 type IntWithMinMax = IntWithMinMax of int with
     member x.Get = match x with IntWithMinMax r -> r
     static member op_Explicit(IntWithMinMax i) = i
 
+///Represents a non-empty Set.
 type NonEmptySet<'a when 'a : comparison> = NonEmptySet of Set<'a> with
     member x.Get = match x with NonEmptySet r -> r
     static member toSet(NonEmptySet s) = s
     
+///Represents a non-empty array.
 type NonEmptyArray<'a> = NonEmptyArray of 'a[] with
     member x.Get = match x with NonEmptyArray r -> r
     static member toArray(NonEmptyArray a) = a
 
+///Represents an array whose length does not change when shrinking.
 type FixedLengthArray<'a> = FixedLengthArray of 'a[] with
     member x.Get = match x with FixedLengthArray r -> r
     static member toArray(FixedLengthArray a) = a
 
+///Wrap a type in NonNull to prevent null being generated for the wrapped type.
 type NonNull<'a when 'a : null> = NonNull of 'a with
     member x.Get = match x with NonNull r -> r
 
+///A function (F# function) that can be displayed and shrunk.
 [<StructuredFormatDisplay("{StructuredDisplayAsTable}")>]
 [<NoEquality;NoComparison>]
 type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) with
@@ -101,19 +112,24 @@ module Arb =
     open System.Collections.Generic
     open System.Linq
     open TypeClass
+    open System.ComponentModel
 
     let internal Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
 
     ///Get the Arbitrary instance for the given type.
+    [<CompiledName("From")>]
     let from<'Value> = (!Arbitrary).InstanceFor<'Value,Arbitrary<'Value>>()
 
     ///Returns a Gen<'Value>
+    [<CompiledName("Generate")>]
     let generate<'Value> = from<'Value>.Generator
 
     ///Returns the immediate shrinks for the given value based on its type.
+    [<CompiledName("Shrink")>]
     let shrink<'Value> (a:'Value) = from<'Value>.Shrinker a
 
-    ///The generic shrinker should work for most number-like types.
+    ///A generic shrinker that should work for most number-like types.
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
     let inline shrinkNumber n =
         let (|>|) x y = abs x > abs y 
         let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
@@ -128,6 +144,7 @@ module Arb =
     let internal getShrink t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
 
     ///Register the generators that are static members of the given type.
+    [<CompiledName("Register")>]
     let registerByType t = 
         let newTypeClass = (!Arbitrary).Discover(onlyPublic=true,instancesType=t)
         let result = (!Arbitrary).Compare newTypeClass
@@ -135,36 +152,46 @@ module Arb =
         result
 
     ///Register the generators that are static members of the type argument.
+    [<CompiledName("Register")>]
     let register<'t>() = registerByType typeof<'t>
 
     /// Construct an Arbitrary instance from a generator.
     /// Shrink is not supported for this type.
+    [<CompiledName("From")>]
     let fromGen (gen: Gen<'Value>) : Arbitrary<'Value> =
        { new Arbitrary<'Value>() with
-           override x.Generator = gen
+           override __.Generator = gen
        }
 
     /// Construct an Arbitrary instance from a generator and shrinker.
+    [<CompiledName("From")>]
     let fromGenShrink (gen: Gen<'Value>, shrinker: 'Value -> seq<'Value>): Arbitrary<'Value> =
        { new Arbitrary<'Value>() with
-           override x.Generator = gen
-           override x.Shrinker a = shrinker a
+           override __.Generator = gen
+           override __.Shrinker a = shrinker a
        }
+
+    // Construct an Arbitrary instance from a generator and shrinker.
+    [<CompiledName("From")>]
+    let fromGenShrinkFunc (gen: Gen<'Value>, shrinker: Func<'Value, seq<'Value>>): Arbitrary<'Value> =
+       fromGenShrink(gen, shrinker.Invoke)
       
     ///Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
-    ///based on a Arbitrary instance for the source type and two mapping functions. 
+    ///based on a Arbitrary instance for the source type and two mapping functions.
+    [<CompiledName("Convert"); EditorBrowsable(EditorBrowsableState.Never)>]
     let convert convertTo convertFrom (a:Arbitrary<'a>) =
         { new Arbitrary<'b>() with
-           override x.Generator = a.Generator |> Gen.map convertTo
-           override x.Shrinker b = b |> convertFrom |> a.Shrinker |> Seq.map convertTo
+           override __.Generator = a.Generator |> Gen.map convertTo
+           override __.Shrinker b = b |> convertFrom |> a.Shrinker |> Seq.map convertTo
        }
 
     /// Return an Arbitrary instance that is a filtered version of an existing arbitrary instance.
     /// The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter with the given predicate.
+    [<CompiledName("Filter"); EditorBrowsable(EditorBrowsableState.Never)>]
     let filter pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
-           override x.Generator = a.Generator |> Gen.suchThat pred
-           override x.Shrinker b = b |> a.Shrinker |> Seq.filter pred
+           override __.Generator = a.Generator |> Gen.suchThat pred
+           override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
 
     /// Return an Arbitrary instance that is a mapped and filtered version of an existing arbitrary instance.
@@ -172,10 +199,11 @@ module Arb =
     /// and the shrinks are filtered using Seq.filter with the given predicate.
     ///This is sometimes useful if using just a filter would reduce the chance of getting a good value
     ///from the generator - and you can map the value instead. E.g. PositiveInt.
+    [<CompiledName("MapFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
     let mapFilter mapper pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
-           override x.Generator = a.Generator |> Gen.map mapper |> Gen.suchThat pred
-           override x.Shrinker b = b |> a.Shrinker |> Seq.filter pred
+           override __.Generator = a.Generator |> Gen.map mapper |> Gen.suchThat pred
+           override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }     
     
 //TODO
@@ -211,27 +239,26 @@ module Arb =
         ///Generates (), of the unit type.
         static member Unit() = 
             { new Arbitrary<unit>() with
-                override x.Generator = gen { return () } 
+                override __.Generator = gen { return () } 
             }
         ///Generates an arbitrary bool.
         static member Bool() = 
             { new Arbitrary<bool>() with
-                override x.Generator = Gen.elements [true; false] 
+                override __.Generator = Gen.elements [true; false] 
             }
-        //byte generator contributed by Steve Gilham.
         ///Generates an arbitrary byte.
         static member Byte() =   
             { new Arbitrary<byte>() with  
-                override x.Generator = 
+                override __.Generator = 
                     Gen.choose (0,255) |> Gen.map byte //this is now size independent - 255 is not enough to not cover them all anyway 
-                override x.Shrinker n = n |> int |> shrink |> Seq.map byte
+                override __.Shrinker n = n |> int |> shrink |> Seq.map byte
             }
         ///Generates an arbitrary signed byte.
         static member SByte() =   
             { new Arbitrary<sbyte>() with  
-                override x.Generator = 
+                override __.Generator = 
                     Gen.choose (-128,127) |> Gen.map sbyte 
-                override x.Shrinker n = 
+                override __.Shrinker n = 
                   n |> int |> shrink 
                   |> Seq.filter (fun e -> -128 <= e && e <= 127) //the int shrinker shrinks -128 to 128 which overflows
                   |> Seq.map sbyte
@@ -261,8 +288,8 @@ module Arb =
         ///Generate arbitrary int32 that is between -size and size.
         static member Int32() = 
             { new Arbitrary<int>() with
-                override x.Generator = Gen.sized <| fun n -> Gen.choose (-n,n) 
-                override x.Shrinker n = shrinkNumber n
+                override __.Generator = Gen.sized <| fun n -> Gen.choose (-n,n) 
+                override __.Shrinker n = shrinkNumber n
             }
 
         ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
@@ -318,11 +345,11 @@ module Arb =
         ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float() = 
             { new Arbitrary<float>() with
-                override x.Generator = 
+                override __.Generator = 
                     Gen.frequency   [(6, Gen.map3 Default.fraction generate generate generate)
                                     ;(1, Gen.elements [ Double.NaN; Double.NegativeInfinity; Double.PositiveInfinity])
                                     ;(1, Gen.elements [ Double.MaxValue; Double.MinValue; Double.Epsilon])]
-                override x.Shrinker fl =
+                override __.Shrinker fl =
                     let (|<|) x y = abs x < abs y
                     seq {   if Double.IsInfinity fl || Double.IsNaN fl then 
                                 yield 0.0
@@ -336,12 +363,12 @@ module Arb =
         ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float32() = 
             { new Arbitrary<float32>() with
-                override x.Generator = 
+                override __.Generator = 
                     let fraction a b c = float32 (Default.fraction a b c)
                     Gen.frequency   [(6, Gen.map3 fraction generate generate generate)
                                     ;(1, Gen.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity])
                                     ;(1, Gen.elements [ Single.MaxValue; Single.MinValue; Single.Epsilon])]
-                override x.Shrinker fl =
+                override __.Shrinker fl =
                     let (|<|) x y = abs x < abs y
                     seq {   if Single.IsInfinity fl || Single.IsNaN fl then 
                                 yield 0.0f
@@ -351,7 +378,7 @@ module Arb =
                                 if truncated |<| fl then yield truncated }
                     |> Seq.distinct
             }
-
+        ///Generate arbitrary decimal.
         static member Decimal() =
             let genDecimal = 
                 gen {
@@ -374,15 +401,15 @@ module Arb =
         ///Generates arbitrary chars, between ASCII codes Char.MinValue and 127.
         static member Char() = 
             { new Arbitrary<char>() with
-                override x.Generator = Gen.choose (int Char.MinValue, 127) |> Gen.map char
-                override x.Shrinker c =
+                override __.Generator = Gen.choose (int Char.MinValue, 127) |> Gen.map char
+                override __.Shrinker c =
                     seq { for c' in ['a';'b';'c'] do if c' < c || not (Char.IsLower c) then yield c' }
             }
         ///Generates arbitrary strings, which are lists of chars generated by Char.
         static member String() = 
             { new Arbitrary<string>() with
-                override x.Generator = Gen.frequency [(9, Gen.map (fun (chars:char[]) -> new String(chars)) generate);(1, Gen.constant null)]
-                override x.Shrinker s = 
+                override __.Generator = Gen.frequency [(9, Gen.map (fun (chars:char[]) -> new String(chars)) generate);(1, Gen.constant null)]
+                override __.Shrinker s = 
                     match s with
                     | null -> Seq.empty
                     | _ -> s.ToCharArray() |> Array.toList |> shrink |> Seq.map (fun chars -> new String(List.toArray chars))
@@ -390,27 +417,28 @@ module Arb =
         ///Generate an option value that is 'None' 1/8 of the time.
         static member Option() = 
             { new Arbitrary<option<'a>>() with
-                override x.Generator = Gen.frequency [(1, gen { return None }); (7, Gen.map Some generate)]
-                override x.Shrinker o =
+                override __.Generator = Gen.frequency [(1, gen { return None }); (7, Gen.map Some generate)]
+                override __.Shrinker o =
                     match o with
                     | Some x -> seq { yield None; for x' in shrink x -> Some x' }
                     | None  -> Seq.empty
             }
 
+        ///Generate underlying values that are not null.
         static member NonNull() =
             let inline notNull x = not (LanguagePrimitives.PhysicalEquality null x)
             { new Arbitrary<NonNull<'a>>() with
-                override x.Generator = 
+                override __.Generator = 
                     generate |> Gen.suchThat notNull |> Gen.map NonNull
-                override x.Shrinker (NonNull o) = 
+                override __.Shrinker (NonNull o) = 
                     shrink o |> Seq.where notNull |> Seq.map NonNull
             }
 
         ///Generate a nullable value that is null 1/8 of the time.
         static member Nullable() = 
             { new Arbitrary<Nullable<'a>>() with
-                override x.Generator = Gen.frequency [(1, gen { return Nullable() }); (7, Gen.map (fun x -> Nullable x) generate)]
-                override x.Shrinker o =
+                override __.Generator = Gen.frequency [(1, gen { return Nullable() }); (7, Gen.map (fun x -> Nullable x) generate)]
+                override __.Shrinker o =
                     if o.HasValue
                         then seq { yield Nullable(); for x' in shrink o.Value -> Nullable x' }
                         else Seq.empty
@@ -419,8 +447,8 @@ module Arb =
         ///Generate a list of values. The size of the list is between 0 and the test size + 1.
         static member FsList() = 
             { new Arbitrary<list<'a>>() with
-                override x.Generator = Gen.listOf generate
-                override x.Shrinker l =
+                override __.Generator = Gen.listOf generate
+                override __.Shrinker l =
                     match l with
                     | [] ->         Seq.empty
                     | (x::xs) ->    seq { yield xs
@@ -431,24 +459,24 @@ module Arb =
         ///Generate an object - a boxed char, string or boolean value.
         static member Object() =
             { new Arbitrary<obj>() with
-                override x.Generator = 
+                override __.Generator = 
                     Gen.oneof [ Gen.map box <| generate<char> ; Gen.map box <| generate<string>; Gen.map box <| generate<bool> ]
-                override x.Shrinker o =
+                override __.Shrinker o =
                     if o = null then Seq.empty
                     else
                         seq {
                             match o with
                             | :? char as c -> yield box true; yield box false; yield! shrink c |> Seq.map box
                             | :? string as s -> yield box true; yield box false; yield! shrink s |> Seq.map box
-                            | :? bool as b -> yield! Seq.empty
+                            | :? bool -> yield! Seq.empty
                             | _ -> failwith "Unknown type in shrink of obj"
                         }
             }
         ///Generate a rank 1 array.
         static member Array() =
             { new Arbitrary<'a[]>() with
-                override x.Generator = Gen.arrayOf generate
-                override x.Shrinker a = a |> Array.toList |> shrink |> Seq.map List.toArray
+                override __.Generator = Gen.arrayOf generate
+                override __.Shrinker a = a |> Array.toList |> shrink |> Seq.map List.toArray
             }
 
         ///Generate a rank 2, zero based array.
@@ -470,58 +498,67 @@ module Arb =
                             
             fromGenShrink (Gen.array2DOf generate,shrinkArray2D)
 
-         ///Generate a function value. Function values can be generated for types 'a->'b where 'a has a CoArbitrary
-         ///value and 'b has an Arbitrary value.
+         ///Generate a function value. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
+         ///THere is no shrinking function values.
         static member Arrow() = 
             { new Arbitrary<'a->'b>() with
-                override x.Generator = Gen.promote (fun a -> Gen.variant a generate) //coarbitrary a arbitrary)
+                override __.Generator = Gen.promote (fun a -> Gen.variant a generate)
             }
 
-        ///Generate a Function value that can be printed and shrunk. Function values can be generated for types 'a->'b where 'a has a CoArbitrary
-         ///value and 'b has an Arbitrary value.
+        ///Generate a Function value that can be printed and shrunk. Function values can be generated for types 'a->'b 
+        ///where 'b has an Arbitrary instance.
         static member Function() =
             { new Arbitrary<Function<'a,'b>>() with
-                override x.Generator = Gen.map Function<'a,'b>.from generate
-                override x.Shrinker f = 
+                override __.Generator = Gen.map Function<'a,'b>.from generate
+                override __.Shrinker f = 
                     let update x' y' f x = if x = x' then y' else f x
                     seq { for (x,y) in f.Table do 
                             for y' in shrink y do 
                                 yield Function<'a,'b>.from (update x y' f.Value) }
             }
 
+        ///Generates a Func'1.
         static member SystemFunc() =
             Default.Arrow()
             |> convert (fun f -> Func<_>(f)) (fun f -> f.Invoke)
 
+        ///Generates a Func'2.
         static member SystemFunc1() =
             Default.Arrow()
             |> convert (fun f -> Func<_,_>(f)) (fun f -> f.Invoke)
 
+        ///Generates a Func'3.
         static member SystemFunc2() =
             Default.Arrow()
             |> convert (fun f -> Func<_,_,_>(f)) (fun f a b -> f.Invoke(a,b))
 
+        ///Generates a Func'4.
         static member SystemFunc3() =
             Default.Arrow()
             |> convert (fun f -> Func<_,_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
 
+        ///Generates an Action'0
         static member SystemAction() =
             Default.Arrow()
             |> convert (fun f -> Action(f)) (fun f -> f.Invoke)
 
+        ///Generates an Action'1
         static member SystemAction1() =
             Default.Arrow()
             |> convert (fun f -> Action<_>(f)) (fun f -> f.Invoke)
 
+        ///Generates an Action'2
         static member SystemAction2() =
             Default.Arrow()
             |> convert (fun f -> Action<_,_>(f)) (fun f a b -> f.Invoke(a,b))
 
+        ///Generates an Action'3
         static member SystemAction3() =
             Default.Arrow()
             |> convert (fun f -> Action<_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
 
-        ///Generates an arbitrary DateTime between 1900 and 2100. A DateTime is shrunk by removing its second, minute and hour components.
+        ///Generates an arbitrary DateTime between 1900 and 2100. 
+        ///A DateTime is shrunk by removing its second, minute and hour components.
         static member DateTime() = 
             let genDate = gen {  let! y = Gen.choose(1900,2100)
                                  let! m = Gen.choose(1, 12)
@@ -541,6 +578,7 @@ module Arb =
                     Seq.empty
             fromGenShrink (genDate,shrinkDate)
 
+        ///Generates an arbitrary TimeSpan. A TimeSpan is shrunk by removing days, hours, minutes, second and milliseconds.
         static member TimeSpan() =
             let genTimeSpan = generate |> Gen.map (fun (DontSize ticks) -> TimeSpan ticks)
             let shrink (t: TimeSpan) = 
@@ -622,15 +660,15 @@ module Arb =
 
         static member IntWithMinMax() =
             { new Arbitrary<IntWithMinMax>() with
-                override x.Generator = Gen.frequency    [ (1 ,Gen.elements [Int32.MaxValue; Int32.MinValue])
-                                                          (10,generate) ] 
+                override __.Generator = Gen.frequency [(1 ,Gen.elements [Int32.MaxValue; Int32.MinValue])
+                                                       (10,generate) ] 
                                        |> Gen.map IntWithMinMax
-                override x.Shrinker (IntWithMinMax i) = shrink i |> Seq.map IntWithMinMax }
+                override __.Shrinker (IntWithMinMax i) = shrink i |> Seq.map IntWithMinMax }
 
         ///Generates an interval between two non-negative integers.
         static member Interval() =
             { new Arbitrary<Interval>() with
-                override  x.Generator = 
+                override  __.Generator = 
                     gen { let! start,offset = Gen.two generate
                           return Interval (abs start,abs start+abs offset) } //TODO: shrinker
             }
@@ -666,8 +704,8 @@ module Arb =
         ///Arrays whose length does not change when shrinking.
         static member FixedLengthArray() =
             { new Arbitrary<'a[]>() with
-                override x.Generator = generate
-                override x.Shrinker a = a |> Seq.mapi (fun i x -> shrink x |> Seq.map (fun x' ->
+                override __.Generator = generate
+                override __.Shrinker a = a |> Seq.mapi (fun i x -> shrink x |> Seq.map (fun x' ->
                                                            let data' = Array.copy a
                                                            data'.[i] <- x'
                                                            data')
@@ -749,12 +787,11 @@ module Arb =
         ///(i.e. single constructor, no mutable properties or fields).
         static member Derive() =
             { new Arbitrary<'a>() with
-                override x.Generator = ReflectArbitrary.reflectGen getGenerator
-                override x.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
+                override __.Generator = ReflectArbitrary.reflectGen getGenerator
+                override __.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
             
         //TODO: add float32, BigInteger
 
 
     let internal init = lazy register<Default>()
-    let private forceInit = init.Force()

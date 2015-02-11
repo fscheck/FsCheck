@@ -22,8 +22,8 @@ namespace FsCheck.MsTest.Examples
             {
                 Constant<Doc.Empty>(),
                 Constant<Doc.Line>(),
-                from x in Arb.generate<char>() select new Doc.Char(x) as Doc,
-                from s in Arb.generate<string>() select new Doc.Text(s) as Doc,
+                from x in Arb.Generate<char>() select new Doc.Char(x) as Doc,
+                from s in Arb.Generate<string>() select new Doc.Text(s) as Doc,
             };
         }
 
