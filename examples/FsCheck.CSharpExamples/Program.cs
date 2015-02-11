@@ -143,7 +143,7 @@ namespace FsCheck.CSharpExamples
                       select new { Fst = x, Snd = y };
 
             //registering default arbitrary instances
-            DefaultArbitraries.Add<MyArbitraries>();
+            Arb.Register<MyArbitraries>();
 
             Spec.ForAny<long>(l => l + 1 > l)
                 .QuickCheck();

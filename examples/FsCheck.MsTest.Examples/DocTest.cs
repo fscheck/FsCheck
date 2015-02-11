@@ -11,7 +11,7 @@ namespace FsCheck.MsTest.Examples
         [TestInitialize]
         public void Initialize()
         {
-            DefaultArbitraries.Add<MyArbitraries>();          
+            Arb.Register<MyArbitraries>();          
         }
         
         [TestMethod]

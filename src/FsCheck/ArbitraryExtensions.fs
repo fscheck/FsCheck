@@ -26,9 +26,4 @@ type ArbitraryExtensions =
     static member MapFilter (arb, map: Func<_,_>, filter: Func<_,_>) =
         Arb.mapFilter map.Invoke filter.Invoke arb
 
-  
-///Register a number of Arbitrary instances so they are available implicitly.  
-type DefaultArbitraries =
-    ///Register the generators that are static members of the type argument.
-    static member Add<'t>() = Arb.register<'t>()
 
