@@ -793,5 +793,6 @@ module Arb =
             
         //TODO: add float32, BigInteger
 
-
+    //this is necessary to force initialization when the module is first accessed (e.g. Arb.generate)
     let internal init = lazy register<Default>()
+    let private force = init.Value
