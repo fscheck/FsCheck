@@ -28,13 +28,6 @@ open Runner
 //"And" and "Or" should start a new property, with own classifies and labels etc (see prop_Label)
 //label: maybe add some overloads, should be able to nest (see propMul)
 
-
-
-///Methods to build shrinkers.
-type Shrink =
-    ///Returns the immediate shrinks for the given value based on its type.
-    static member Type<'a>() = shrink<'a>
-
 ///Configure the test run.
 type Configuration() =
     let mutable maxTest = Config.Quick.MaxTest
