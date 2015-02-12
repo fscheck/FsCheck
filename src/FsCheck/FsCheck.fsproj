@@ -70,7 +70,6 @@
     <Compile Include="Reflect.fs" />
     <Compile Include="TypeClass.fs" />
     <Compile Include="GenModule.fs" />
-    <Compile Include="GenStaticType.fs" />
     <Compile Include="ReflectArbitrary.fs" />
     <Compile Include="Arbitrary.fs" />
     <Compile Include="ArbitraryExtensions.fs" />
