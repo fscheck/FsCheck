@@ -70,12 +70,6 @@ module internal Reflect =
     /// Get reader for union case name (aka tag)
     let getUnionTagReader unionType = 
         FSharpValue.PreComputeUnionTagReader(unionType, recordFieldBindingFlags)
-
-    ///Equality for generic types    
-    let genericTypeEq (lhs: System.Type) (rhs: System.Type) : bool =
-            lhs.IsGenericType && 
-            rhs.IsGenericType &&
-            lhs.GetGenericTypeDefinition() = rhs.GetGenericTypeDefinition()
                 
     // resolve fails if the generic type is only determined by the return type 
     //(e.g., Array.zero_create) but that is easily fixed by additionally passing in the return type...
@@ -100,12 +94,12 @@ module internal Reflect =
                     m
         match target with None -> m.Invoke(null, args) | Some t -> m.Invoke(t,args)
 
-    let private _preserveInternalException =
-        let preserveStackTrace = typeof<Exception>.GetMethod( "InternalPreserveStackTrace", BindingFlags.Instance ||| BindingFlags.NonPublic );
-        Delegate.CreateDelegate( typeof<Action<Exception>>, preserveStackTrace ) :?> Action<Exception>
-    
-    let preserveStackTrace (ex:Exception) =
-        _preserveInternalException.Invoke(ex)
-        ex
+//    let private _preserveInternalException =
+//        let preserveStackTrace = typeof<Exception>.GetMethod( "InternalPreserveStackTrace", BindingFlags.Instance ||| BindingFlags.NonPublic );
+//        Delegate.CreateDelegate( typeof<Action<Exception>>, preserveStackTrace ) :?> Action<Exception>
+//    
+//    let preserveStackTrace (ex:Exception) =
+//        _preserveInternalException.Invoke(ex)
+//        ex
 
 
