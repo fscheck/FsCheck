@@ -33,15 +33,6 @@ module internal Common =
 
     let flip f x y = f y x
 
-    let curry f = fun a b -> f (a,b)
-
-    let curry2 f = fun a b c -> f (a,b,c)
-
-    let uncurry f = fun (a,b) -> f a b
-
-    let uncurry2 f = fun (a,b,c) -> f a b c
-
-
     //the following three are from Don Syme's blog:
     //http://blogs.msdn.com/b/dsyme/archive/2009/11/08/equality-and-comparison-constraints-in-f-1-9-7.aspx
     let equalsOn f x (yobj:obj) =
@@ -58,9 +49,3 @@ module internal Common =
 
     let (|MapContains|_|) key value =
         Map.tryFind key value
-        
-    module Option =
-        let toObject(opt:_ option) = 
-            match opt with
-            | None -> null
-            | Some a -> a
