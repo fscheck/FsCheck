@@ -20,7 +20,6 @@ type Outcome =
     /// determines for which Outcome the result should be shrunk, or shrinking should continue.
     member internal x.Shrink = match x with Exception _ -> true | False -> true | _ -> false 
 
-
 ///The result of one execution of a property.
 [<NoComparison>]
 type Result = 
@@ -73,9 +72,6 @@ module internal Res =
 
     let rejected = { result with Outcome = Outcome.Rejected }
 
-     
-
-
 //A rose is a pretty tree
 //Draw it and you'll see.
 //A Rose<Result> is used to keep, in a lazy way, a Result and the possible shrinks for the value in the node.
@@ -108,21 +104,13 @@ module internal Rose =
                                      
     let ofLazy x = MkRose (x,Seq.empty)
 
-    type Builder() =
-        member internal b.Return(x) : Rose<_> = ret x
-        member internal b.Bind(m, k) : Rose<_> = bind m k
-                         
-    let rose = new Builder()
-
 
 ///Type synonym for a test result generator.
 type Property = Gen<Rose<Result>>
 
-module internal Testable =
+module private Testable =
 
     open System
-    open System.Reflection // for Testable<MethodInfo>
-    open Common
     open TypeClass
                    
     type Testable<'a> =
@@ -142,7 +130,7 @@ module internal Testable =
         let ofRoseResult t : Property = gen { return t }
 
         let ofResult (r:Result) : Property = 
-            ofRoseResult <| Rose.rose { return r }
+            ofRoseResult <| Rose.ret r
          
         let ofBool b = ofResult <| if b then Res.succeeded else Res.failed
 
@@ -177,6 +165,15 @@ module internal Testable =
         gen{let! a = arb.Generator
             return! shrinking arb.Shrinker a (fun a' -> evaluate body a')}
 
+    let private combine f a b:Property = 
+        let pa = property a
+        let pb = property b
+        Gen.map2 (Rose.map2 f) pa pb
+
+    let (.&) l r = combine (&&&) l r
+
+    let (.|) l r = combine (|||) l r
+
     type Testables with
         static member Unit() =
             { new Testable<unit> with
@@ -205,36 +202,6 @@ module internal Testable =
         static member Arrow() =
             { new Testable<('a->'b)> with
                 member x.Property f = forAll Arb.from f }
-//        static member MethodInfo() =
-//            { new Testable<MethodInfo> with
-//                member x.Property m =
-//                    let fromTypes = m.GetParameters() |> Array.map (fun p -> p.ParameterType) 
-////                    let fromP = fromTypes |> arrayToTupleType
-////                    //we can check methods that return void or unit. We cannot add it to  to the Testable typeclass
-////                    //since F# won't let us define that - System.Void can only be used in typeof<> expressions.
-////                    //hence the translation here.
-////                    let toP = if m.ReturnType = typeof<System.Void> then typeof<unit> else m.ReturnType
-////                    let funType = FSharpType.MakeFunctionType(fromP, toP)
-//                    TestableTC.GetInstance m.ReturnType
-//                    let invokeAndThrowInner (m:MethodInfo) o = 
-//                        try
-//                            Reflect.invokeMethod m None o
-//                         with :? TargetInvocationException as e -> //this is just to avoid huge non-interesting stacktraces in the output
-//                            raise (Reflect.preserveStackTrace  e.InnerException)
-//                    let funValue = Microsoft.FSharp.Reflection.FSharpValue.MakeFunction(funType, (tupleToArray fromTypes) >> invokeAndThrowInner m)
-//                    let genericM = checkMethodInfo.MakeGenericMethod([|funType|])
-//                    genericM.Invoke(null, [|box config; funValue|]) |> ignore }
-
-    let private combine f a b:Property = 
-        let pa = property a
-        let pb = property b
-        Gen.map2 (Rose.map2 f) pa pb
-
-    let (.&) l r = combine (&&&) l r
-
-    let (.|) l r = combine (|||) l r
-
-    type Testables with
         static member Tuple2() =
             { new Testable<'a*'b> with
                 member x.Property ((a,b)) = a .& b }
@@ -253,88 +220,3 @@ module internal Testable =
         static member List() =
             { new Testable<list<'a>> with
                 member x.Property l = List.fold (.&) (property <| List.head l) (List.tail l) }
-
-
-///Combinators to build properties, which define the property to be tested, with some
-///convenience methods to investigate the generated arguments and any found counter-examples.
-module Prop =
-    open Testable
-    open System
-
-    ///Quantified property combinator. Provide a custom test data generator to a property.
-    let forAll (arb:Arbitrary<'Value>) (body:'Value -> 'Testable) = forAll arb body
-
-    ///Depending on the condition, return the first testable if true and the second if false.
-    let given condition (iftrue:'TestableIfTrue,ifFalse:'TestableIfFalse) = 
-        if condition then property iftrue else property ifFalse
-
-    ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
-    ///and a failure otherwise.
-    let throws<'Exception, 'Testable when 'Exception :> exn> (p : Lazy<'Testable>) = 
-       property <| try ignore p.Value; Res.failed with :? 'Exception -> Res.succeeded
-
-    let private stamp str = 
-        let add res = { res with Stamp = str :: res.Stamp } 
-        Prop.mapResult add
-
-    ///Classify test cases combinator. Test cases satisfying the condition are assigned the classification given.
-    let classify b name : ('Testable -> Property) = if b then stamp name else property
-
-    ///Count trivial cases property combinator. Test cases for which the condition is True are classified as trivial.
-    let trivial b : ('Testable -> Property) = classify b "trivial"
-
-    ///Collect data values property combinator. The argument of collect is evaluated in each test case, 
-    ///and the distribution of values is reported, using any_to_string.
-    let collect (v:'CollectedValue) : ('Testable -> Property) = stamp <| sprintf "%A" v
-
-    ///Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
-    let label l : ('Testable -> Property) = 
-        let add res = { res with Labels = Set.add l res.Labels }
-        Prop.mapResult add
-
-    ///Fails the property if it does not complete within t milliseconds. Note that the called property gets a
-    ///cancel signal, but whether it responds to that is up to the property; the execution may not actually stop.
-    let within time (lazyProperty:Lazy<'Testable>) =
-        try 
-            let test = new Func<_>(fun () -> property lazyProperty.Value)
-            let asyncTest = Async.FromBeginEnd(test.BeginInvoke, test.EndInvoke)                     
-            Async.RunSynchronously(asyncTest, timeout = time)
-        with
-            :? TimeoutException -> 
-                Async.CancelDefaultToken()
-                property (Res.timeout time)
-
-    /// Turns a testable type into a property. Testables are unit, boolean, Lazy testables, Gen testables, functions
-    /// from a type for which a generator is know to a testable, tuples up to 6 tuple containing testables, and lists
-    /// containing testables.
-    let ofTestable (testable:'Testable) =
-        property testable
-
-
-///Operators for Prop.
-[<AutoOpen>]
-module PropOperators =
-
-    open Testable
-
-    ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
-    let (==>) condition (assertion:'Testable) = Prop.given condition (assertion,property Res.rejected)
-
-    ///Add the given label to the property. Property on the left hand side, label on the right.
-    let (|@) x y = (Common.flip Prop.label) x y
-
-    ///Add the given label to the property. label on the left hand side, property on the right.
-    let (@|) = Prop.label
-
-    ///Add the given label to the property. Property on the left hand side, label on the right.
-    let (%>) = (|@)
-
-    ///Construct a property that succeeds if both succeed. (cfr 'and')
-    let (.&.) (l:'LeftTestable) (r:'RightTestable) = 
-        let andProp = l .& r
-        andProp
-
-    ///Construct a property that fails if both fail. (cfr 'or')
-    let (.|.) (l:'LeftTestable) (r:'RightTestable) = 
-        let orProp = l .| r
-        orProp

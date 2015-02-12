@@ -75,7 +75,8 @@
     <Compile Include="Arbitrary.fs" />
     <Compile Include="ArbitraryExtensions.fs" />
     <Compile Include="GenExtensions.fs" />
-    <Compile Include="Property.fs" />
+    <Compile Include="Testable.fs" />
+    <Compile Include="PropModule.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="Fluent.fs" />
