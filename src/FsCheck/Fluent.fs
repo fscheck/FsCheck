@@ -60,7 +60,7 @@ type Configuration() =
     member __.Runner with get() = runner and set(v) = runner <- v
 
     //TODO: figure out how to deal with null values
-    //member __.Replay with get() = (match replay with None -> null | Some s -> s) and set(v) = replay <- Some v
+    //member __.Replay with get() = (match replay with None -> null | Some (Random.StdGen s) -> s) and set(v) = replay <- Some (Random.StdGen v)
     member internal __.ToConfig() =
         { MaxTest = maxTest
           MaxFail = maxFail 
@@ -108,7 +108,7 @@ type Specification() =
     ///Check the given property using the given config.
     member x.Check(configuration:Configuration) = Check.One(configuration.ToConfig(),x.Build())
 
-and SpecBuilder<'a> internal   ( generator0:'a Gen
+and Specification<'a> internal   ( generator0:'a Gen
                                , shrinker0: 'a -> 'a seq
                                , assertion0:'a -> Property
                                , conditions:('a -> bool) list
@@ -121,37 +121,37 @@ and SpecBuilder<'a> internal   ( generator0:'a Gen
             let classifies' a prop = classifies |> List.fold (fun prop (f,name) -> prop |> classify (f a) name) prop  
             forAll (Arb.fromGenShrink(generator0,shrinker0)) (fun a -> (conditions' a) ==> lazy (assertion0 a) |> collects' a |> classifies' a)
     member __.When( condition:Func<'a,bool> ) = 
-        SpecBuilder<'a>(generator0, shrinker0, assertion0, (fun a -> condition.Invoke(a))::conditions, collects, classifies)
+        Specification<'a>(generator0, shrinker0, assertion0, (fun a -> condition.Invoke(a))::conditions, collects, classifies)
 
     ///Collect data values. The argument of collect is evaluated in each test case, 
     ///and the distribution of values is reported.
     member __.Collect(collectedValue:Func<'a,string>)=
-        SpecBuilder<'a>(generator0, shrinker0,assertion0,conditions,(fun a -> collectedValue.Invoke(a))::collects,classifies)
+        Specification<'a>(generator0, shrinker0,assertion0,conditions,(fun a -> collectedValue.Invoke(a))::collects,classifies)
 
     member __.Classify(filter:Func<'a,bool>,name:string) =
-        SpecBuilder<'a>(generator0, shrinker0,assertion0,conditions,collects,((fun a -> filter.Invoke(a)),name)::classifies)
+        Specification<'a>(generator0, shrinker0,assertion0,conditions,collects,((fun a -> filter.Invoke(a)),name)::classifies)
     member __.Shrink(shrinker:Func<'a,'a seq>) =
-        SpecBuilder<'a>( generator0, shrinker.Invoke, assertion0, conditions, collects, classifies)
+        Specification<'a>( generator0, shrinker.Invoke, assertion0, conditions, collects, classifies)
     member __.Label( name:string ) =
-        SpecBuilder<'a>(generator0, shrinker0, label name << assertion0,conditions, collects, classifies)
+        Specification<'a>(generator0, shrinker0, label name << assertion0,conditions, collects, classifies)
 
     ///Construct a property that succeeds if both succeed.
     member __.And(assertion : Func<'a,bool>) =
-        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (assertion.Invoke(a))), conditions, collects, classifies)
+        Specification<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (assertion.Invoke(a))), conditions, collects, classifies)
 
     ///Construct a property that succeeds if both succeed.
     member __.And(assertion : Func<'a,bool>, name:string ) =
-        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
+        Specification<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .&. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
 
     ///Construct a property that fails if both fail.
     member __.Or(assertion : Func<'a,bool>) =
-        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (assertion.Invoke(a))), conditions, collects, classifies)
+        Specification<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (assertion.Invoke(a))), conditions, collects, classifies)
 
     ///Construct a property that fails if both fail.
     member __.Or(assertion : Func<'a,bool>, name:string ) =
-        SpecBuilder<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
+        Specification<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
     member __.AndFor<'b>(generator:'b Gen, assertion:Func<'b,bool>) =
-        SpecBuilder<'a,'b>  (generator0
+        Specification<'a,'b>  (generator0
                             ,shrinker0 
                             ,generator
                             ,fun _ -> Seq.empty
@@ -162,7 +162,7 @@ and SpecBuilder<'a> internal   ( generator0:'a Gen
                             )
   
        
-and SpecBuilder<'a,'b> internal   ( generator0:'a Gen
+and Specification<'a,'b> internal   ( generator0:'a Gen
                                   , shrinker0: 'a -> 'a seq
                                   , generator1:'b Gen
                                   , shrinker1: 'b -> 'b seq
@@ -177,29 +177,29 @@ and SpecBuilder<'a,'b> internal   ( generator0:'a Gen
             let classifies' a b prop = classifies |> List.fold (fun prop (f,name) -> prop |> classify (f a b) name) prop  
             forAll (Arb.fromGen generator0) (fun a -> forAll (Arb.fromGen generator1) (fun b -> (conditions' a b) ==> lazy (assertion0 a b) |> collects' a b |> classifies' a b))
     member __.When( condition:Func<'a,'b,bool> ) = 
-        SpecBuilder<'a,'b>(generator0, shrinker0, generator1, shrinker1, assertion0, (fun a b -> condition.Invoke(a,b))::conditions, collects, classifies)
+        Specification<'a,'b>(generator0, shrinker0, generator1, shrinker1, assertion0, (fun a b -> condition.Invoke(a,b))::conditions, collects, classifies)
     member __.Collect(collectedValue:Func<'a,'b,string>)=
-        SpecBuilder<'a,'b>(generator0, shrinker0, generator1, shrinker1, assertion0,conditions,(fun a b -> collectedValue.Invoke(a,b))::collects,classifies)
+        Specification<'a,'b>(generator0, shrinker0, generator1, shrinker1, assertion0,conditions,(fun a b -> collectedValue.Invoke(a,b))::collects,classifies)
     member __.Classify(filter:Func<'a,'b,bool>,name:string) =
-        SpecBuilder<'a,'b>(generator0, shrinker0,generator1, shrinker1,assertion0,conditions,collects,((fun a b -> filter.Invoke(a,b)),name)::classifies)
+        Specification<'a,'b>(generator0, shrinker0,generator1, shrinker1,assertion0,conditions,collects,((fun a b -> filter.Invoke(a,b)),name)::classifies)
     member __.Shrink(shrinker:Func<'b,'b seq>) =
-        SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker.Invoke, assertion0, conditions, collects, classifies)
+        Specification<'a,'b>( generator0, shrinker0, generator1, shrinker.Invoke, assertion0, conditions, collects, classifies)
     member __.Label( name:string ) =
-        SpecBuilder<'a,'b>(generator0, shrinker0, generator1, shrinker1, (fun a b-> label name (assertion0 a b)),conditions, collects, classifies)
+        Specification<'a,'b>(generator0, shrinker0, generator1, shrinker1, (fun a b-> label name (assertion0 a b)),conditions, collects, classifies)
     member __.And(assertion : Func<'a,'b,bool>) =
-        SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1,
+        Specification<'a,'b>( generator0, shrinker0, generator1, shrinker1,
             (fun a b -> (assertion0 a b) .&. (assertion.Invoke(a, b))) , conditions, collects, classifies)
     member __.And(assertion : Func<'a,'b,bool>, name:string ) =
-        SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
+        Specification<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
             (fun a b -> (assertion0 a b) .&. (label name (assertion.Invoke(a,b)))), conditions, collects, classifies)
     member __.Or(assertion : Func<'a,'b,bool>) =
-        SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
+        Specification<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
             (fun a b -> (assertion0 a b) .|. (assertion.Invoke(a,b))), conditions, collects, classifies)
     member __.Or(assertion : Func<'a,'b,bool>, name:string ) =
-        SpecBuilder<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
+        Specification<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
             (fun a b -> (assertion0 a b) .|. (label name (assertion.Invoke(a,b)))), conditions, collects, classifies)
     member __.AndFor<'c>(generator:'c Gen, assertion:Func<'c,bool>) =
-        SpecBuilder<'a,'b,'c>   (generator0, shrinker0
+        Specification<'a,'b,'c>   (generator0, shrinker0
                                 ,generator1, shrinker1
                                 ,generator, fun _ -> Seq.empty
                                 ,fun a b c -> (assertion0 a b) .&. property (assertion.Invoke(c))
@@ -208,7 +208,7 @@ and SpecBuilder<'a,'b> internal   ( generator0:'a Gen
                                 ,classifies |> List.map (fun (f,name) -> (fun a b _ -> f a b),name)
                                 )
                                 
-and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
+and Specification<'a,'b,'c> internal  ( generator0:'a Gen
                                     , shrinker0:'a -> 'a seq
                                     , generator1:'b Gen
                                     , shrinker1: 'b -> 'b seq
@@ -228,76 +228,76 @@ and SpecBuilder<'a,'b,'c> internal  ( generator0:'a Gen
             forAll (Arb.fromGen generator2) (fun c ->
                 (conditions' a b c) ==> lazy (assertion0 a b c) |> collects' a b c |> classifies' a b c))) 
     member __.When( condition:Func<'a,'b,'c,bool> ) = 
-        SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, assertion0, (fun a b c -> condition.Invoke(a,b,c))::conditions, collects, classifies)
+        Specification<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, assertion0, (fun a b c -> condition.Invoke(a,b,c))::conditions, collects, classifies)
     member __.Collect(collectedValue:Func<'a,'b,'c,string>)=
-        SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, assertion0, conditions,(fun a b c -> collectedValue.Invoke(a,b,c))::collects,classifies)
+        Specification<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, assertion0, conditions,(fun a b c -> collectedValue.Invoke(a,b,c))::collects,classifies)
     member __.Classify(filter:Func<'a,'b,'c,bool>,name:string) =
-        SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, assertion0, conditions, collects,((fun a b c -> filter.Invoke(a,b,c)),name)::classifies)         
+        Specification<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, assertion0, conditions, collects,((fun a b c -> filter.Invoke(a,b,c)),name)::classifies)         
     member __.Shrink(shrinker:Func<'c,'c seq>) =
-        SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker.Invoke, assertion0, conditions, collects, classifies)
+        Specification<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker.Invoke, assertion0, conditions, collects, classifies)
     member __.Label( name:string ) =
-        SpecBuilder<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, (fun a b c -> label name (assertion0 a b c)),conditions, collects, classifies)
+        Specification<'a,'b,'c>(generator0, shrinker0, generator1, shrinker1, generator2, shrinker2, (fun a b c -> label name (assertion0 a b c)),conditions, collects, classifies)
     member __.And(assertion : Func<'a,'b,'c,bool>) =
-        SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1,generator2, shrinker2,
+        Specification<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1,generator2, shrinker2,
             (fun a b c -> (assertion0 a b c) .&. (assertion.Invoke(a, b, c))) , conditions, collects, classifies)
     member __.And(assertion : Func<'a,'b,'c,bool>, name:string ) =
-        SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1, generator2, shrinker2,
+        Specification<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1, generator2, shrinker2,
             (fun a b c -> (assertion0 a b c) .&. (label name (assertion.Invoke(a,b,c)))), conditions, collects, classifies)
     member __.Or(assertion : Func<'a,'b,'c,bool>) =
-        SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1, generator2, shrinker2,
+        Specification<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1, generator2, shrinker2,
             (fun a b c -> (assertion0 a b c) .|. (assertion.Invoke(a,b,c))), conditions, collects, classifies)
     member __.Or(assertion : Func<'a,'b,'c,bool>, name:string ) =
-        SpecBuilder<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1,generator2, shrinker2, 
+        Specification<'a,'b,'c>( generator0, shrinker0, generator1, shrinker1,generator2, shrinker2, 
             (fun a b c -> (assertion0 a b c) .|. (label name (assertion.Invoke(a,b,c)))), conditions, collects, classifies)  
       
 ///Entry point to specifying a property.
-type Spec private() =
+type Prop private() =
     static let _ = Runner.init.Value
     static let noshrink = fun _ -> Seq.empty
 
     static member ForAny(assertion:Action<'a>) =
-        Spec.For(Arb.from, assertion)
+        Prop.For(Arb.from, assertion)
     static member ForAny(assertion:Func<'a,bool>) =
-        Spec.For(Arb.from, assertion)
+        Prop.For(Arb.from, assertion)
     
     static member ForAny(assertion:Action<'a,'b>) =
-        Spec.For(Arb.from, Arb.from, assertion)
+        Prop.For(Arb.from, Arb.from, assertion)
     static member ForAny(assertion:Func<'a,'b,bool>) =
-        Spec.For(Arb.from, Arb.from, assertion)
+        Prop.For(Arb.from, Arb.from, assertion)
 
     static member ForAny(assertion:Action<'a,'b,'c>) =
-        Spec.For(Arb.from, Arb.from, Arb.from, assertion)
+        Prop.For(Arb.from, Arb.from, Arb.from, assertion)
     static member ForAny(assertion:Func<'a,'b,'c,bool>) =
-        Spec.For(Arb.from, Arb.from, Arb.from, assertion)
+        Prop.For(Arb.from, Arb.from, Arb.from, assertion)
      
     static member For(generator:'a Gen, assertion:Func<'a,bool>) =
-        SpecBuilder<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
+        Specification<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
     static member For(arbitrary:'a Arbitrary, assertion:Func<'a,bool>) =
-        SpecBuilder<'a>(arbitrary.Generator, arbitrary.Shrinker, property << assertion.Invoke, [], [], [])
+        Specification<'a>(arbitrary.Generator, arbitrary.Shrinker, property << assertion.Invoke, [], [], [])
 
     static member For(generator:'a Gen, assertion:Action<'a>) =
-        SpecBuilder<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
+        Specification<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
     static member For(arbitrary:'a Arbitrary, assertion:Action<'a>) =
-        SpecBuilder<'a>(arbitrary.Generator, arbitrary.Shrinker, property << assertion.Invoke, [], [], [])
+        Specification<'a>(arbitrary.Generator, arbitrary.Shrinker, property << assertion.Invoke, [], [], [])
 
     static member For(generator1:'a Gen,generator2:'b Gen, assertion:Func<'a,'b,bool>) =
-        SpecBuilder<'a,'b>(generator1, noshrink, generator2, noshrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+        Specification<'a,'b>(generator1, noshrink, generator2, noshrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
     static member For(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary, assertion:Func<'a,'b,bool>) =
-        SpecBuilder<'a,'b>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+        Specification<'a,'b>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
 
     static member For(generator1:'a Gen,generator2:'b Gen, assertion:Action<'a,'b>) =
-        SpecBuilder<'a,'b>(generator1, noshrink, generator2, noshrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+        Specification<'a,'b>(generator1, noshrink, generator2, noshrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
     static member For(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary, assertion:Action<'a,'b>) =
-        SpecBuilder<'a,'b>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+        Specification<'a,'b>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
 
     static member For(generator1:'a Gen,generator2:'b Gen,generator3:'c Gen, assertion:Func<'a,'b,'c,bool>) =
-        SpecBuilder<'a,'b,'c>(generator1, noshrink, generator2, noshrink, generator3, noshrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+        Specification<'a,'b,'c>(generator1, noshrink, generator2, noshrink, generator3, noshrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
     static member For(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary,arbitrary3:'c Arbitrary, assertion:Func<'a,'b,'c,bool>) =
-        SpecBuilder<'a,'b,'c>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, arbitrary3.Generator, arbitrary3.Shrinker, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+        Specification<'a,'b,'c>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, arbitrary3.Generator, arbitrary3.Shrinker, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
 
     static member For(generator1:'a Gen,generator2:'b Gen,generator3:'c Gen, assertion:Action<'a,'b,'c>) =
-        SpecBuilder<'a,'b,'c>(generator1, noshrink, generator2, noshrink, generator3, noshrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+        Specification<'a,'b,'c>(generator1, noshrink, generator2, noshrink, generator3, noshrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
     static member For(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary,arbitrary3:'c Arbitrary, assertion:Action<'a,'b,'c>) =
-        SpecBuilder<'a,'b,'c>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, arbitrary3.Generator, arbitrary3.Shrinker, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+        Specification<'a,'b,'c>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, arbitrary3.Generator, arbitrary3.Shrinker, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
 
 

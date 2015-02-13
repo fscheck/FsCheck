@@ -46,7 +46,7 @@ namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
         {
             public override Gen<Rose<Result>> Post(Counter c, int m)
             {
-                return Prop.ofTestable(m == c.Get());
+                return PropModule.ofTestable(m == c.Get());
             }
 
             public override string ToString()

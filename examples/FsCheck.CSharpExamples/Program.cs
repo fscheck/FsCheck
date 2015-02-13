@@ -50,49 +50,49 @@ namespace FsCheck.CSharpExamples
         static void Main(string[] args)
         {
             //A simple example
-            Spec.ForAny<int[]>(xs => xs.Reverse().Reverse().SequenceEqual( xs ))
+            Prop.ForAny<int[]>(xs => xs.Reverse().Reverse().SequenceEqual( xs ))
                 .QuickCheck("RevRev");
 
-            Spec.ForAny<int[]>(xs => xs.Reverse().SequenceEqual(xs))
+            Prop.ForAny<int[]>(xs => xs.Reverse().SequenceEqual(xs))
                 .QuickCheck("RevId");
 
             //Grouping properties : not yet implemented
 
 
             //--------Properties--------------
-            Spec.ForAny<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
+            Prop.ForAny<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
                 .QuickCheck("RevRevFloat");
 
             //conditional properties
-            Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
+            Prop.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
                 .When((x, xs) => xs.IsOrdered())
                 .QuickCheck("Insert");
 
-            Spec.ForAny<int>(a => 1 / a == 1 / a)
+            Prop.ForAny<int>(a => 1 / a == 1 / a)
                 .When(a => a != 0)
                 .QuickCheck("DivByZero");
 
             //counting trivial cases
-            Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
+            Prop.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
                 .When((x, xs) => xs.IsOrdered())
                 .Classify( (x,xs) => xs.Count() == 0, "trivial")
                 .QuickCheck("InsertTrivial");
 
             //classifying test values
-            Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
+            Prop.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
                 .When((x, xs) => xs.IsOrdered())
                 .Classify((x, xs) => new int[] { x }.Concat(xs).IsOrdered(), "at-head")
                 .Classify((x, xs) => xs.Concat(new int[] { x }).IsOrdered(), "at-tail")
                 .QuickCheck("InsertClassify");
 
             //collecting data values
-            Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
+            Prop.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
                 .When((x, xs) => xs.IsOrdered())
                 .Collect((x, xs) => "length " + xs.Count().ToString())
                 .QuickCheck("InsertCollect");
 
             //combining observations
-            Spec.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
+            Prop.ForAny<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
                 .When((x, xs) => xs.IsOrdered())
                 .Classify((x, xs) => new int[] { x }.Concat(xs).IsOrdered(), "at-head")
                 .Classify((x, xs) => xs.Concat(new int[] { x }).IsOrdered(), "at-tail")
@@ -101,12 +101,12 @@ namespace FsCheck.CSharpExamples
 
             //---labelling sub properties-----
             //hmm. Cannot express result = m + n once this way.
-            Spec.ForAny<int, int>((m, n) => m + n >= m).Label("result > #1") //maybe add overload with label to ForAny?
+            Prop.ForAny<int, int>((m, n) => m + n >= m).Label("result > #1") //maybe add overload with label to ForAny?
                 .And((m, n) => m + n >= n, "result > #2")
                 .And((m, n) => m + n < m + n, "result not sum")
                 .QuickCheck("ComplexProp");
 
-            Spec.ForAny<int>(x => false).Label("Always false")
+            Prop.ForAny<int>(x => false).Label("Always false")
                 .And(x => Math.Abs(x) - x == 0) //actually, And should start a new property, not just a new assertion...
                 .QuickCheck("Label");
 
@@ -130,7 +130,7 @@ namespace FsCheck.CSharpExamples
             //generating recursive data types: not so common in C#?
 
             // generating functions:
-            Spec.ForAny((Func<int, int> f, Func<int, int> g, ICollection<int> a) => {
+            Prop.ForAny((Func<int, int> f, Func<int, int> g, ICollection<int> a) => {
                             var l1 = a.Select(x => f(g(x)));
                             var l2 = a.Select(g).Select(f);
                             return l1.SequenceEqual(l2);
@@ -145,13 +145,13 @@ namespace FsCheck.CSharpExamples
             //registering default arbitrary instances
             Arb.Register<MyArbitraries>();
 
-            Spec.ForAny<long>(l => l + 1 > l)
+            Prop.ForAny<long>(l => l + 1 > l)
                 .QuickCheck();
 
-            Spec.ForAny<string>(s => true)
+            Prop.ForAny<string>(s => true)
                 .Check(new Configuration { Name = "Configuration Demo", MaxNbOfTest = 500 });
 
-            Spec.ForAny((IEnumerable<int> a, IEnumerable<int> b) => 
+            Prop.ForAny((IEnumerable<int> a, IEnumerable<int> b) => 
                             a.Except(b).Count() <= a.Count())
                 .QuickCheck();
 

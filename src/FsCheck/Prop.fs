@@ -2,6 +2,7 @@
 
 ///Combinators to build properties, which define the property to be tested, with some
 ///convenience methods to investigate the generated arguments and any found counter-examples.
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Prop =
     open Testable
     open System

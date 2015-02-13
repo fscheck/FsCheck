@@ -19,7 +19,7 @@ namespace FsCheck.NUnit.CSharpExamples
         [Property(Verbose = true)]
         public Specification RevId_shouldFail()
         {
-            return Spec.ForAny<int[]>(xs => xs.Reverse().SequenceEqual(xs));
+            return Prop.ForAny<int[]>(xs => xs.Reverse().SequenceEqual(xs));
         }
 
         //TODO: do not call Commands.asProperty. Implement check for ISpecification directly

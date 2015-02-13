@@ -17,14 +17,14 @@ namespace FsCheck.MsTest.Examples
         [TestMethod]
         public void VerboseTest()
         {
-            Spec.ForAny<Doc>(doc => doc.ToString() != "")
+            Prop.ForAny<Doc>(doc => doc.ToString() != "")
                 .AssertVerbose(); 
         }
 
         [TestMethod]
         public void QuickTest()
         {
-            Spec.ForAny<Doc>(doc => doc.ToString() != "")
+            Prop.ForAny<Doc>(doc => doc.ToString() != "")
                 .Assert();
         }
 
