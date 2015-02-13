@@ -14,7 +14,6 @@ namespace FsCheck
 module internal ReflectArbitrary =
 
     open System
-    open System.Reflection
     open Microsoft.FSharp.Reflection
     open Reflect
     open Gen
@@ -147,7 +146,7 @@ module internal ReflectArbitrary =
                 if Seq.isEmpty children then 0 
                 elif Seq.exists ((=) t)(*(fun x -> x.ToString() = t.ToString())*) children then 2 
                 else 1
-            let info,vals = FSharpValue.GetUnionFields(o,t)
+            let info,_ = FSharpValue.GetUnionFields(o,t)
             let makeCase = FSharpValue.PreComputeUnionConstructor info
             let readCase = FSharpValue.PreComputeUnionReader info
             let childrenTypes = info.GetFields() |> Array.map ( fun x -> x.PropertyType ) //|> Array.toList

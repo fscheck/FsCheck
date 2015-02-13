@@ -110,11 +110,11 @@ module TypeClass =
         let keySet map = map |> Map.toSeq |> Seq.map fst |> Set.ofSeq
         let memo = new Dictionary<_,_>() //should fix memo bug since the memo table is re-initialized when a new registration is done
          
-        member x.Class = typedefof<'TypeClass>
-        member x.Instances = instances |> keySet
+        member __.Class = typedefof<'TypeClass>
+        member __.Instances = instances |> keySet
         member x.HasCatchAll = x.Instances |> Set.contains (CatchAll typeof<int> (* doesn't matter *), Set.empty)
 
-        member private x.InstancesMap = instances
+        member private __.InstancesMap = instances
 
         ///Make a new TypeClass with only the instances registered on the given type.
         ///Note that the instances of this TypeClass will not be registered on the new TypeClass. 
@@ -131,7 +131,7 @@ module TypeClass =
 
         ///Merge the instances defined by the given instances type with the ones already defined in this TypeClass.
         ///Instances defined in the given type override the instances in this TypeClass instance.
-        member x.Merge(overrideWith:TypeClass<'TypeClass>) =
+        member __.Merge(overrideWith:TypeClass<'TypeClass>) =
             new TypeClass<'TypeClass>(overrideWith.InstancesMap |> Map.fold (fun map k v -> Map.add k v map) instances)
 
         ///Discover instances for this TypeClass on the given type. Merge the result with this TypeClass,

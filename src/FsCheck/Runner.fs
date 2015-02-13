@@ -71,14 +71,11 @@ type Config =
 
 module Runner =
 
-    open System.Collections.Generic
     open System.Reflection
 
     open Microsoft.FSharp.Reflection
-    open Gen
     open Testable
     open TypeClass
-    open Common
    
     [<NoEquality;NoComparison>]
     type private TestStep = 
@@ -199,18 +196,18 @@ module Runner =
         | TestResult.True data -> 
             sprintf "%sOk, passed %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
-        | TestResult.False (data, origArgs, args, Outcome.Exception exc, usedSeed) -> 
+        | TestResult.False (data, _, args, Outcome.Exception exc, usedSeed) -> 
             sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels  
             + sprintf "%s%s" (args |> argumentsToString) newline
             + sprintf "with exception:%s%O%s" newline exc newline
-        | TestResult.False (data, origArgs, args, Outcome.Timeout i, usedSeed) -> 
+        | TestResult.False (data, _, args, Outcome.Timeout i, usedSeed) -> 
             sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):%s" 
                 name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels 
             + sprintf "%s%s" (args |> argumentsToString) newline
-        | TestResult.False (data, origArgs, args, _, usedSeed) -> 
+        | TestResult.False (data, _, args, _, usedSeed) -> 
             sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels  
@@ -228,13 +225,13 @@ module Runner =
     ///A runner that prints results to the console.
     let consoleRunner =
         { new IRunner with
-            member x.OnStartFixture t =
+            member __.OnStartFixture t =
                 printf "%s" (onStartFixtureToString t)
-            member x.OnArguments (ntest,args, every) =
+            member __.OnArguments (ntest,args, every) =
                 printf "%s" (every ntest args)
-            member x.OnShrink(args, everyShrink) =
+            member __.OnShrink(args, everyShrink) =
                 printf "%s" (everyShrink args)
-            member x.OnFinished(name,testResult) = 
+            member __.OnFinished(name,testResult) = 
                 printf "%s" (onFinishedToString name testResult)
         }
            
@@ -249,7 +246,7 @@ module Runner =
             TestableTC.GetInstance m.ReturnType |> ignore
             true
         with
-            e -> false
+            _ -> false
 
     let internal check config p = 
         //every check, even the reflective one, passes through here. So:
@@ -264,9 +261,6 @@ module Runner =
         finally
             Arb.Arbitrary := defaultArbitrary
 
-
-    let internal checkName name config p = check { config with Name = name } p
-
     let private checkMethodInfo = typeof<TestStep>.DeclaringType.GetMethod("check",BindingFlags.Static ||| BindingFlags.NonPublic)
 
     let private arrayToTupleType (arr:Type[]) =
@@ -277,10 +271,10 @@ module Runner =
         else
             FSharpType.MakeTupleType(arr)
 
-    let private tupleToArray types tvalue  =
+    let private tupleToArray types tvalue =
         match types with
         | [||] -> Array.empty
-        | [|t|] -> [|tvalue|]
+        | [|_|] -> [|tvalue|]
         | _ -> FSharpValue.GetTupleFields(tvalue) 
 
     let internal checkMethod (config:Config) (m:MethodInfo) (target:obj option) =
@@ -322,8 +316,8 @@ type Config with
               Name          = ""
               StartSize     = 1
               EndSize       = 100
-              Every         = fun ntest args -> String.Empty
-              EveryShrink   = fun args -> String.Empty
+              Every         = fun _ _ -> String.Empty
+              EveryShrink   = fun _ -> String.Empty
               Arbitrary     = []
               Runner        = consoleRunner } 
 
@@ -336,13 +330,13 @@ type Config with
 
     static member private throwingRunner =
         { new IRunner with
-            member x.OnStartFixture t =
+            member __.OnStartFixture t =
                 printf "%s" (onStartFixtureToString t)
-            member x.OnArguments (ntest,args, every) =
+            member __.OnArguments (ntest,args, every) =
                 printf "%s" (every ntest args)
-            member x.OnShrink(args, everyShrink) =
+            member __.OnShrink(args, everyShrink) =
                 printf "%s" (everyShrink args)
-            member x.OnFinished(name,testResult) = 
+            member __.OnFinished(name,testResult) = 
                 match testResult with
                 | TestResult.True _ -> printf "%s" (onFinishedToString name testResult)
                 | _ -> failwithf "%s" (onFinishedToString name testResult)

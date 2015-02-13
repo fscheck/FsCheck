@@ -30,11 +30,11 @@ module Random =
     //since the implementation uses divMod and mod, we need to reimplement these.
     //fortunately that's fairly easy given Math.DivRem
     let divMod (n:int) d = 
-        let (q,r) as qr = Math.DivRem(n,d) //neat F# feature here: out parameters are converted to tuples!
+        let (q,r) = Math.DivRem(n,d)
         if (Math.Sign(r) = -Math.Sign(d)) then (q-1,r+d) else (q,r)
 
     let divMod64 (n:int64) d = 
-        let (q,r) as qr = Math.DivRem(n,d)
+        let (q,r) = Math.DivRem(n,d)
         if (Math.Sign(r) = -Math.Sign(d)) then (q-1L,r+d) else (q,r)
 
     let hMod n d = 
