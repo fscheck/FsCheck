@@ -18,14 +18,14 @@ namespace FsCheck.MsTest.Examples
         public void VerboseTest()
         {
             Prop.ForAll<Doc>(doc => doc.ToString() != "")
-                .AssertVerbose(); 
+                .VerboseCheckThrowOnFailure(); 
         }
 
         [TestMethod]
         public void QuickTest()
         {
             Prop.ForAll<Doc>(doc => doc.ToString() != "")
-                .Assert();
+                .QuickCheckThrowOnFailure();
         }
 
         private class MyArbitraries

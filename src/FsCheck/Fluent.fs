@@ -96,6 +96,9 @@ type Specification() =
     /// Check one property with the verbose configuration.
     member x.VerboseCheck() = Check.Verbose(x.Build())
 
+    /// Check one property with the verbose configuration, and throw an exception if it fails or is exhausted.
+    member x.VerboseCheckThrowOnFailure() = Check.VerboseThrowOnFailure(x.Build())
+
     /// Check one property with the quick configuration, and using the given name.
     member x.QuickCheck(name:string) = Check.Quick(name,x.Build())
 
@@ -104,6 +107,9 @@ type Specification() =
 
     ///Check one property with the verbose configuration, and using the given name.
     member x.VerboseCheck(name:string) = Check.Verbose(name,x.Build())
+
+    /// Check one property with the verbose configuration, and throw an exception if it fails or is exhausted.
+    member x.VerboseCheckThrowOnFailure(name:string) = Check.VerboseThrowOnFailure(name,x.Build())
 
     ///Check the given property using the given config.
     member x.Check(configuration:Configuration) = Check.One(configuration.ToConfig(),x.Build())
