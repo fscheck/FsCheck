@@ -257,14 +257,23 @@ and Specification<'a,'b,'c> internal  ( generator0:'a Gen
             (fun a b c -> (assertion0 a b c) .|. (label name (assertion.Invoke(a,b,c)))), conditions, collects, classifies)  
       
 ///Entry point to specifying a property.
+[<AbstractClass;Sealed>]
 type Prop private() =
     static let _ = Runner.init.Value
     static let noshrink = fun _ -> Seq.empty
 
+    static member ForAll(assertion:bool) =
+        Specification<unit>(Arb.from.Generator, Arb.from.Shrinker, (fun () -> property assertion), [], [], [])
+
+    static member ForAll(assertion:Action) =
+        Specification<unit>(Arb.from.Generator, Arb.from.Shrinker, property << assertion.Invoke, [], [], [])
+    static member ForAll(assertion:Func<bool>) =
+        Specification<unit>(Arb.from.Generator, Arb.from.Shrinker, property << assertion.Invoke, [], [], [])
+
     static member ForAll(assertion:Action<'a>) =
         Prop.ForAll(Arb.from, assertion)
     static member ForAll(assertion:Func<'a,bool>) =
-        Prop.For(Arb.from, assertion)
+        Prop.ForAll(Arb.from, assertion)
     
     static member ForAll(assertion:Action<'a,'b>) =
         Prop.ForAll(Arb.from, Arb.from, assertion)
@@ -278,7 +287,7 @@ type Prop private() =
      
     static member ForAll(generator:'a Gen, assertion:Func<'a,bool>) =
         Specification<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
-    static member For(arbitrary:'a Arbitrary, assertion:Func<'a,bool>) =
+    static member ForAll(arbitrary:'a Arbitrary, assertion:Func<'a,bool>) =
         Specification<'a>(arbitrary.Generator, arbitrary.Shrinker, property << assertion.Invoke, [], [], [])
 
     static member ForAll(generator:'a Gen, assertion:Action<'a>) =
