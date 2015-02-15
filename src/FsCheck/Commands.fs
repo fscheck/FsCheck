@@ -41,8 +41,8 @@ module Command =
             override __.Post(model,actual) = postCondition (model,actual)}
 
     [<CompiledName("Run"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let runFunc (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,_>) =
-        run runActual.Invoke runModel.Invoke postCondition.Invoke
+    let runFunc (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
+        run runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
 
     [<CompiledName("Run"); EditorBrowsable(EditorBrowsableState.Never)>]
     let runIf preCondition runActual runModel checkPostCondition =
@@ -53,8 +53,8 @@ module Command =
             override __.Pre model = preCondition model}
 
     [<CompiledName("Run"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let runIfFunc (preCondition:Func<_,_>) (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,_>) =
-        runIf preCondition.Invoke runActual.Invoke runModel.Invoke postCondition.Invoke
+    let runIfFunc (preCondition:Func<_,_>) (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
+        runIf preCondition.Invoke runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
 
 ///Defines the initial state for actual and model object, and allows to define the generator to use
 ///for the next state, based on the model.

@@ -7,54 +7,23 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
 {
     public class CounterSpec : ICommandGenerator<Counter, int>
     {
+        private readonly Command<Counter, int> Inc =
+                Command.Run<Counter, int>(c => { c.Inc(); return c; },
+                                         c => c + 1,
+                                         (counter, i) => Prop.ForAll(() => counter.Get() == i));
+
+        private readonly Command<Counter, int> Dec =
+                Command.Run<Counter, int>(c => { c.Dec(); return c; },
+                                         c => c - 1,
+                                         (counter, i) => Prop.ForAll(() => counter.Get() == i));
+
         public Gen<Command<Counter, int>> Next(int value)
         {
-            return Gen.Elements(new Command<Counter, int>[] { new Inc(), new Dec() });
+            return Gen.Elements(new Command<Counter, int>[] { Inc, Dec });
         }
 
         public Counter InitialActual { get { return new Counter();}}
 
         public int InitialModel { get { return 0; } }
-
-        private class Inc : BaseCommand
-        {
-            public override Counter RunActual(Counter c)
-            {
-                c.Inc();
-                return c;
-            }
-
-            public override int RunModel(int m)
-            {
-                return m + 1;
-            }            
-        }
-
-        private class Dec : BaseCommand
-        {
-            public override Counter RunActual(Counter c)
-            {
-                c.Dec();
-                return c;
-            }
-
-            public override int RunModel(int m)
-            {
-                return m - 1;
-            }
-        }
-
-        private abstract class BaseCommand : Command<Counter, int>
-        {
-            public override Gen<Rose<Result>> Post(Counter c, int m)
-            {
-                return Prop.ForAll(m == c.Get()).Build();
-            }
-
-            public override string ToString()
-            {
-                return GetType().Name;
-            }
-        }
     }
 }
