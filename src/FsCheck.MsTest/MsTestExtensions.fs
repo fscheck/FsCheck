@@ -23,11 +23,11 @@ type MsTestExtensions =
     static member private msTestConfigVerbose() = { Config.Verbose with Runner = MsTestExtensions.msTestRunner() }
     
     [<Extension>]
-    static member Assert (spec : Commands.ISpecification<'a, 'b>) =
+    static member Assert (spec : ICommandGenerator<'a, 'b>) =
         Check.One(MsTestExtensions.msTestConfig(), Commands.asProperty spec)
 
     [<Extension>]
-    static member AssertVerbose (spec : Commands.ISpecification<'a, 'b>) =        
+    static member AssertVerbose (spec : ICommandGenerator<'a, 'b>) =        
         Check.One(MsTestExtensions.msTestConfigVerbose(), Commands.asProperty spec)
 
 

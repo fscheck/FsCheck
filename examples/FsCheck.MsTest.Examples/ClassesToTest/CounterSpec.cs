@@ -5,17 +5,16 @@ using System.Text;
 
 namespace FsCheck.MsTest.Examples.ClassesToTest
 {
-    public class CounterSpec : Commands.ISpecification<Counter, int>
+    public class CounterSpec : ICommandGenerator<Counter, int>
     {
-        public Gen<Commands.ICommand<Counter, int>> GenCommand(int value)
+        public Gen<Command<Counter, int>> Next(int value)
         {
-            return Gen.Elements(new Commands.ICommand<Counter, int>[] { new Inc(), new Dec() });
+            return Gen.Elements(new Command<Counter, int>[] { new Inc(), new Dec() });
         }
 
-        public Tuple<Counter, int> Initial()
-        {
-            return new Tuple<Counter, int>(new Counter(), 0);
-        }
+        public Counter InitialActual { get { return new Counter();}}
+
+        public int InitialModel { get { return 0; } }
 
         private class Inc : BaseCommand
         {
@@ -45,7 +44,7 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
             }
         }
 
-        private abstract class BaseCommand : Commands.ICommand<Counter, int>
+        private abstract class BaseCommand : Command<Counter, int>
         {
             public override Gen<Rose<Result>> Post(Counter c, int m)
             {

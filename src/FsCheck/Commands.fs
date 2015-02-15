@@ -10,51 +10,85 @@
 
 namespace FsCheck
 
+///A single command describes pre and post conditions and the model for a single method under test.
+///The post-conditions are the invariants that will be checked; when these do not hold the test fails.
+[<AbstractClass>]
+type Command<'Actual,'Model>() =
+    ///Excecutes the command on the actual object under test.
+    abstract RunActual : 'Actual -> 'Actual
+    ///Executes the command on the model of the object.
+    abstract RunModel : 'Model -> 'Model
+    ///Precondition for execution of the command. When this does not hold, the test continues
+    ///but the command will not be executed.
+    abstract Pre : 'Model -> bool
+    ///Postcondition that must hold after execution of the command. Compares state of model and actual
+    ///object and fails the property if they do not match.
+    abstract Post : 'Actual * 'Model -> Property
+    ///The default precondition is true.
+    default __.Pre _ = true
+    ///The default postcondition is true.
+    default __.Post (_,_) = Prop.ofTestable true
+
+module Command =
+    open System
+    open System.ComponentModel
+
+    [<CompiledName("Run"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let run runActual runModel postCondition =
+        { new Command<'Actual,'Model>() with
+            override __.RunActual pre = runActual pre
+            override __.RunModel pre = runModel pre
+            override __.Post(model,actual) = postCondition (model,actual)}
+
+    [<CompiledName("Run"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let runFunc (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,_>) =
+        run runActual.Invoke runModel.Invoke postCondition.Invoke
+
+    [<CompiledName("Run"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let runIf preCondition runActual runModel checkPostCondition =
+        { new Command<'Actual,'Model>() with
+            override __.RunActual pre = runActual pre
+            override __.RunModel pre = runModel pre
+            override __.Post(model,actual) = checkPostCondition (model,actual)
+            override __.Pre model = preCondition model}
+
+    [<CompiledName("Run"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let runIfFunc (preCondition:Func<_,_>) (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,_>) =
+        runIf preCondition.Invoke runActual.Invoke runModel.Invoke postCondition.Invoke
+
+///Defines the initial state for actual and model object, and allows to define the generator to use
+///for the next state, based on the model.
+type ICommandGenerator<'Actual,'Model> =
+    ///Initial state of actual object. Should correspond to initial state of model object.
+    abstract InitialActual : 'Actual
+    ///Initial state of model object. Should correspond to initial state of actual object.
+    abstract InitialModel : 'Model
+    ///Generate a number of possible commands based on the current state of the model. The commands
+    ///are just hints to speed up execution; preconditions are still checked.
+    abstract Next : 'Model -> Gen<Command<'Actual,'Model>>
+
 ///For model-based random testing.
 module Commands =
 
     open Arb
     open Prop
 
-    ///A single command describes pre and post conditions and the model for a single method under test.
-    [<AbstractClass>]
-    type ICommand<'Actual,'Model>() =
-        ///Excecutes the command on the actual object under test.
-        abstract RunActual : 'Actual -> 'Actual
-        ///Executes the command on the model of the object.
-        abstract RunModel : 'Model -> 'Model
-        ///Precondition for execution of the command.
-        abstract Pre : 'Model -> bool
-        ///Postcondition that must hold after execution of the command.
-        abstract Post : 'Actual * 'Model -> Property
-        default __.Pre _ = true
-        default __.Post (_,_) = Prop.ofTestable true
-
-    ///A specification for an object under test, based on an abstract model of the
-    ///object's behavior.
-    type ISpecification<'Actual,'Model> =
-        ///Initial state of both object and model.
-        abstract Initial : unit -> 'Actual * 'Model
-        ///Generate a number of possible commands based on the current state of the model. The commands
-        ///are just hints to speed up execution; preconditions are still checked.
-        abstract GenCommand : 'Model -> Gen<ICommand<'Actual,'Model>>
-
-    let private genCommands (spec:ISpecification<_,_>) = 
+    let private genCommands (spec:ICommandGenerator<_,_>) = 
         let rec genCommandsS state size =
             gen {
                 if size > 0 then
-                    let! command = (spec.GenCommand state) |> Gen.suchThat (fun command -> command.Pre state)
+                    let! command = (spec.Next state) |> Gen.suchThat (fun command -> command.Pre state)
                     let! commands = genCommandsS (command.RunModel state) (size-1)
                     return (command :: commands)
                 else
                     return []
             }
             |> Gen.map List.rev
-        Gen.sized <| genCommandsS (spec.Initial() |> snd)      
+        spec.InitialModel |> genCommandsS |> Gen.sized
      
     ///Turn a specification into a property.
-    let asProperty (spec:ISpecification<_,_>) =
-        let rec applyCommands (actual,model) (cmds:list<ICommand<_,_>>) =
+    let asProperty (spec:ICommandGenerator<'Actual,'Model>) =
+        let rec applyCommands (actual,model) (cmds:list<Command<_,_>>) =
             match cmds with
             | [] -> Testable.property true
             | (c::cs) -> 
@@ -64,7 +98,7 @@ module Commands =
                           c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs)
                 
         forAll (Arb.fromGenShrink(genCommands spec,shrink)) 
-                (fun l -> l |> applyCommands (spec.Initial()) 
+                (fun l -> l |> applyCommands (spec.InitialActual, spec.InitialModel) 
                             |> Prop.trivial (l.Length=0)
                             |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
                             |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" )

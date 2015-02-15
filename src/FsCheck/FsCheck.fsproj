@@ -76,9 +76,9 @@
     <Compile Include="GenExtensions.fs" />
     <Compile Include="Testable.fs" />
     <Compile Include="Prop.fs" />
-    <Compile Include="Commands.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="PropBuilder.fs" />
+    <Compile Include="Commands.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">

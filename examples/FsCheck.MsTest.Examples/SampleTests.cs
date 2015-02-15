@@ -15,14 +15,14 @@ namespace FsCheck.MsTest.Examples
                 .QuickCheckThrowOnFailure();
         }
 
-        [TestMethod, ExpectedException(typeof(AssertFailedException))]
+        [TestMethod, ExpectedException(typeof(Exception))]
         public void RevId()
         {
             Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs))
                 .VerboseCheckThrowOnFailure();
         }
 
-        [TestMethod, ExpectedException(typeof(AssertFailedException))]
+        [TestMethod, ExpectedException(typeof(Exception))]
         public void Insert()
         {            
              Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -38,7 +38,7 @@ namespace FsCheck.MsTest.Examples
                 .QuickCheckThrowOnFailure();
         }
 
-        [TestMethod, ExpectedException(typeof(AssertFailedException))]
+        [TestMethod, ExpectedException(typeof(Exception))]
         public void InsertTrivial()
         {
             Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -47,7 +47,7 @@ namespace FsCheck.MsTest.Examples
                 .QuickCheckThrowOnFailure();            
         }
 
-        [TestMethod, ExpectedException(typeof(AssertFailedException))]
+        [TestMethod, ExpectedException(typeof(Exception))]
         public void InsertClassify()
         {
             Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -57,7 +57,7 @@ namespace FsCheck.MsTest.Examples
                 .QuickCheckThrowOnFailure();            
         }
 
-        [TestMethod, ExpectedException(typeof(AssertFailedException))]
+        [TestMethod, ExpectedException(typeof(Exception))]
         public void InsertCollect()
         {
             Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -66,7 +66,7 @@ namespace FsCheck.MsTest.Examples
                 .QuickCheckThrowOnFailure();
         }
 
-        [TestMethod, ExpectedException(typeof(AssertFailedException))]
+        [TestMethod, ExpectedException(typeof(Exception))]
         public void InsertCombined()
         {            
             Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
@@ -77,7 +77,7 @@ namespace FsCheck.MsTest.Examples
                 .QuickCheckThrowOnFailure();
         }
 
-        [TestMethod, ExpectedException(typeof(AssertFailedException))]
+        [TestMethod, ExpectedException(typeof(Exception))]
         public void ComplexProp()
         {
             Prop.ForAll<int, int>((m, n) => m + n >= m).Label("result > #1")
@@ -86,7 +86,7 @@ namespace FsCheck.MsTest.Examples
                 .QuickCheckThrowOnFailure();
         }
 
-        [TestMethod, ExpectedException(typeof(AssertFailedException))]
+        [TestMethod, ExpectedException(typeof(Exception))]
         public void Label()
         {
             Prop.ForAll<int>(x => false).Label("Always false")
