@@ -19,7 +19,7 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
 
         public Gen<Command<Counter, int>> Next(int value)
         {
-            return Gen.Elements(new Command<Counter, int>[] { Inc, Dec });
+            return Gen.Elements(Inc, Dec);
         }
 
         public Counter InitialActual { get { return new Counter();}}

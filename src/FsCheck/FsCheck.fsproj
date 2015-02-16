@@ -78,6 +78,7 @@
     <Compile Include="Prop.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="PropBuilder.fs" />
+    <Compile Include="RunnerExtensions.fs" />
     <Compile Include="Commands.fs" />
   </ItemGroup>
   <ItemGroup>
