@@ -153,7 +153,7 @@ All the generator combinators are functions on the Gen module.
     
 ## Default Generators and Shrinkers based on type
 
-FsCheck defines default test data generators and shrinkers for some often used typesm for example
+FsCheck defines default test data generators and shrinkers for some often used types, for example
 unit, bool, byte, int, float, char, string, DateTime, lists, array 1D and 2D, Set, Map, objects and 
 functions from and to any of the above. Furthermore, by using reflection, FsCheck can derive 
 default implementations of record types, discriminated unions, tuples and enums in terms 
