@@ -24,11 +24,11 @@ type MsTestExtensions =
     
     [<Extension>]
     static member Assert (spec : ICommandGenerator<'a, 'b>) =
-        Check.One(MsTestExtensions.msTestConfig(), Commands.asProperty spec)
+        Check.One(MsTestExtensions.msTestConfig(), Command.asProperty spec)
 
     [<Extension>]
     static member AssertVerbose (spec : ICommandGenerator<'a, 'b>) =        
-        Check.One(MsTestExtensions.msTestConfigVerbose(), Commands.asProperty spec)
+        Check.One(MsTestExtensions.msTestConfigVerbose(), Command.asProperty spec)
 
 
 

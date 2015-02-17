@@ -27,7 +27,7 @@ namespace FsCheck.NUnit.CSharpExamples
         [Property]
         public Gen<Rose<Result>> Counter_shouldFail()
         {
-            return Commands.asProperty(new CounterSpec());
+            return Command.asProperty(new CounterSpec());
         }
     }
 }

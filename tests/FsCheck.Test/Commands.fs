@@ -4,7 +4,6 @@ module Commands =
 
     open FsCheck
     open FsCheck.Xunit
-    open FsCheck.Commands
 
     //a counter that never goes below zero
     type Counter() =
@@ -39,5 +38,5 @@ module Commands =
 
     [<Property>]
     let ``should check Counter``() =
-        asProperty spec
+        Command.asProperty spec
 

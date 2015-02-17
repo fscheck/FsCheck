@@ -182,7 +182,7 @@ and Specification<'a,'b,'c> internal  ( generator0:'a Gen
 ///Entry point to specifying a property.
 [<AbstractClass;Sealed>]
 type Prop private() =
-    static let _ = Runner.init.Value
+    static do ignore Arb.init.Value
     static let noshrink = fun _ -> Seq.empty
 
     static member ForAll(assertion:bool) =

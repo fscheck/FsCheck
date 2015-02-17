@@ -29,9 +29,30 @@ type Command<'Actual,'Model>() =
     ///The default postcondition is true.
     default __.Post (_,_) = Prop.ofTestable true
 
+///Defines the initial state for actual and model object, and allows to define the generator to use
+///for the next state, based on the model.
+type ICommandGenerator<'Actual,'Model> =
+    ///Initial state of actual object. Should correspond to initial state of model object.
+    abstract InitialActual : 'Actual
+    ///Initial state of model object. Should correspond to initial state of actual object.
+    abstract InitialModel : 'Model
+    ///Generate a number of possible commands based on the current state of the model. The commands
+    ///are just hints to speed up execution; preconditions are still checked.
+    abstract Next : 'Model -> Gen<Command<'Actual,'Model>>
+
 module Command =
     open System
     open System.ComponentModel
+    open Arb
+    open Prop
+
+    [<CompiledName("Run"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let runIf preCondition runActual runModel checkPostCondition =
+        { new Command<'Actual,'Model>() with
+            override __.RunActual pre = runActual pre
+            override __.RunModel pre = runModel pre
+            override __.Post(model,actual) = checkPostCondition (model,actual)
+            override __.Pre model = preCondition model}
 
     [<CompiledName("Run"); EditorBrowsable(EditorBrowsableState.Never)>]
     let run runActual runModel postCondition =
@@ -44,34 +65,9 @@ module Command =
     let runFunc (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
         run runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
 
-    [<CompiledName("Run"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let runIf preCondition runActual runModel checkPostCondition =
-        { new Command<'Actual,'Model>() with
-            override __.RunActual pre = runActual pre
-            override __.RunModel pre = runModel pre
-            override __.Post(model,actual) = checkPostCondition (model,actual)
-            override __.Pre model = preCondition model}
-
     [<CompiledName("Run"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let runIfFunc (preCondition:Func<_,_>) (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
         runIf preCondition.Invoke runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
-
-///Defines the initial state for actual and model object, and allows to define the generator to use
-///for the next state, based on the model.
-type ICommandGenerator<'Actual,'Model> =
-    ///Initial state of actual object. Should correspond to initial state of model object.
-    abstract InitialActual : 'Actual
-    ///Initial state of model object. Should correspond to initial state of actual object.
-    abstract InitialModel : 'Model
-    ///Generate a number of possible commands based on the current state of the model. The commands
-    ///are just hints to speed up execution; preconditions are still checked.
-    abstract Next : 'Model -> Gen<Command<'Actual,'Model>>
-
-///For model-based random testing.
-module Commands =
-
-    open Arb
-    open Prop
 
     let private genCommands (spec:ICommandGenerator<_,_>) = 
         let rec genCommandsS state size =
@@ -102,4 +98,6 @@ module Commands =
                             |> Prop.trivial (l.Length=0)
                             |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
                             |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" )
+
+
         
