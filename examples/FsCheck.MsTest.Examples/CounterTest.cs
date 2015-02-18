@@ -8,16 +8,16 @@ namespace FsCheck.MsTest.Examples
     [TestClass]
     public class CounterTest
     {
-        [TestMethod, ExpectedException(typeof(AssertFailedException))]
+        [TestMethod, ExpectedException(typeof(Exception))]
         public void QuickCounter()
         {
-            (new CounterSpec()).Assert();
+            new CounterSpec().ToSpecification().QuickCheckThrowOnFailure();
         }
 
-        [TestMethod, ExpectedException(typeof(AssertFailedException))]
+        [TestMethod, ExpectedException(typeof(Exception))]
         public void VerboseCounter()
         {
-            (new CounterSpec()).AssertVerbose();
+            new CounterSpec().ToSpecification().VerboseCheckThrowOnFailure();
         }
     }
 }

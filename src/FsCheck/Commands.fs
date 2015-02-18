@@ -10,6 +10,8 @@
 
 namespace FsCheck
 
+open System.Runtime.CompilerServices
+
 ///A single command describes pre and post conditions and the model for a single method under test.
 ///The post-conditions are the invariants that will be checked; when these do not hold the test fails.
 [<AbstractClass>]
@@ -36,8 +38,9 @@ type ICommandGenerator<'Actual,'Model> =
     abstract InitialActual : 'Actual
     ///Initial state of model object. Should correspond to initial state of actual object.
     abstract InitialModel : 'Model
-    ///Generate a number of possible commands based on the current state of the model. The commands
-    ///are just hints to speed up execution; preconditions are still checked.
+    ///Generate a number of possible commands based on the current state of the model. 
+    ///Preconditions are still checked, so even if a Command is returned, it is not chosen
+    ///if its precondition does not hold.
     abstract Next : 'Model -> Gen<Command<'Actual,'Model>>
 
 module Command =
@@ -46,36 +49,29 @@ module Command =
     open Arb
     open Prop
 
-    [<CompiledName("Run"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let runIf preCondition runActual runModel checkPostCondition =
+    [<CompiledName("Create"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let create preCondition runActual runModel checkPostCondition =
         { new Command<'Actual,'Model>() with
             override __.RunActual pre = runActual pre
             override __.RunModel pre = runModel pre
             override __.Post(model,actual) = checkPostCondition (model,actual)
-            override __.Pre model = preCondition model}
+            override __.Pre model = defaultArg preCondition (fun _ -> true) model}
 
-    [<CompiledName("Run"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let run runActual runModel postCondition =
-        { new Command<'Actual,'Model>() with
-            override __.RunActual pre = runActual pre
-            override __.RunModel pre = runModel pre
-            override __.Post(model,actual) = postCondition (model,actual)}
+    [<CompiledName("Create"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let createFunc (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
+        create None runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
 
-    [<CompiledName("Run"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let runFunc (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
-        run runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
-
-    [<CompiledName("Run"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let runIfFunc (preCondition:Func<_,_>) (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
-        runIf preCondition.Invoke runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
+    [<CompiledName("Create"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let createPreFunc (preCondition:Func<_,_>) (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
+        create (Some preCondition.Invoke) runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
 
     let private genCommands (spec:ICommandGenerator<_,_>) = 
         let rec genCommandsS state size =
             gen {
                 if size > 0 then
-                    let! command = (spec.Next state) |> Gen.suchThat (fun command -> command.Pre state)
+                    let! command = spec.Next state |> Gen.suchThat (fun command -> command.Pre state)
                     let! commands = genCommandsS (command.RunModel state) (size-1)
-                    return (command :: commands)
+                    return command :: commands
                 else
                     return []
             }
@@ -83,7 +79,8 @@ module Command =
         spec.InitialModel |> genCommandsS |> Gen.sized
      
     ///Turn a specification into a property.
-    let asProperty (spec:ICommandGenerator<'Actual,'Model>) =
+    [<CompiledName("ToProperty"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let toProperty (spec:ICommandGenerator<'Actual,'Model>) =
         let rec applyCommands (actual,model) (cmds:list<Command<_,_>>) =
             match cmds with
             | [] -> Testable.property true
@@ -93,11 +90,14 @@ module Command =
                           let newModel = c.RunModel model
                           c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs)
                 
-        forAll (Arb.fromGenShrink(genCommands spec,shrink)) 
+        forAll (Arb.fromGenShrink(genCommands spec,shrink))  //note: this uses the list shrinker which is not correct - should take preconditions into accout for example
                 (fun l -> l |> applyCommands (spec.InitialActual, spec.InitialModel) 
                             |> Prop.trivial (l.Length=0)
                             |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
                             |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" )
 
-
-        
+[<AbstractClass;Sealed;Extension>]
+type CommandExtensions =
+    [<Extension>]
+    static member ToSpecification(generator:ICommandGenerator<'Actual,'Model>) =
+        PropertySpecification(Command.toProperty generator) :> Specification

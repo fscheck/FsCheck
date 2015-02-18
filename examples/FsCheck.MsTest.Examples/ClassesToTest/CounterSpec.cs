@@ -8,12 +8,12 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
     public class CounterSpec : ICommandGenerator<Counter, int>
     {
         private readonly Command<Counter, int> Inc =
-                Command.Run<Counter, int>(c => { c.Inc(); return c; },
+                Command.Create<Counter, int>(c => { c.Inc(); return c; },
                                          c => c + 1,
                                          (counter, i) => Prop.ForAll(() => counter.Get() == i));
 
         private readonly Command<Counter, int> Dec =
-                Command.Run<Counter, int>(c => { c.Dec(); return c; },
+                Command.Create<Counter, int>(c => { c.Dec(); return c; },
                                          c => c - 1,
                                          (counter, i) => Prop.ForAll(() => counter.Get() == i));
 

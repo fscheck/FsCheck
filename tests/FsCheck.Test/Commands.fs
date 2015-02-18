@@ -38,5 +38,5 @@ module Commands =
 
     [<Property>]
     let ``should check Counter``() =
-        Command.asProperty spec
+        Command.toProperty spec
 

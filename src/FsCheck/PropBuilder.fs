@@ -35,9 +35,11 @@ type Specification() =
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     abstract Build : unit -> Property
 
+type internal PropertySpecification internal(prop:Property) =
+    inherit Specification()
+    override __.Build() = prop
 
-
-and Specification<'a> internal   ( generator0:'a Gen
+type Specification<'a> internal( generator0:'a Gen
                                , shrinker0: 'a -> 'a seq
                                , assertion0:'a -> Property
                                , conditions:('a -> bool) list
@@ -80,7 +82,7 @@ and Specification<'a> internal   ( generator0:'a Gen
     member __.Or(assertion : Func<'a,bool>, name:string ) =
         Specification<'a>( generator0, shrinker0, (fun a -> (assertion0 a) .|. (label name (assertion.Invoke(a)))), conditions, collects, classifies)
     member __.AndFor<'b>(generator:'b Gen, assertion:Func<'b,bool>) =
-        Specification<'a,'b>  (generator0
+        Specification<'a,'b>(generator0
                             ,shrinker0 
                             ,generator
                             ,fun _ -> Seq.empty
@@ -91,7 +93,7 @@ and Specification<'a> internal   ( generator0:'a Gen
                             )
   
        
-and Specification<'a,'b> internal   ( generator0:'a Gen
+and Specification<'a,'b> internal ( generator0:'a Gen
                                   , shrinker0: 'a -> 'a seq
                                   , generator1:'b Gen
                                   , shrinker1: 'b -> 'b seq
@@ -137,7 +139,7 @@ and Specification<'a,'b> internal   ( generator0:'a Gen
                                 ,classifies |> List.map (fun (f,name) -> (fun a b _ -> f a b),name)
                                 )
                                 
-and Specification<'a,'b,'c> internal  ( generator0:'a Gen
+and Specification<'a,'b,'c> internal( generator0:'a Gen
                                     , shrinker0:'a -> 'a seq
                                     , generator1:'b Gen
                                     , shrinker1: 'b -> 'b seq

@@ -25,9 +25,9 @@ namespace FsCheck.NUnit.CSharpExamples
         //TODO: do not call Commands.asProperty. Implement check for ISpecification directly
         // Note this one should fail
         [Property]
-        public Gen<Rose<Result>> Counter_shouldFail()
+        public Specification Counter_shouldFail()
         {
-            return Command.asProperty(new CounterSpec());
+            return new CounterSpec().ToSpecification();
         }
     }
 }
