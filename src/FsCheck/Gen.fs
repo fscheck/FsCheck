@@ -106,23 +106,23 @@ module Gen =
     open System.ComponentModel
 
     ///Apply the function f to the value in the generator, yielding a new generator.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Map"); EditorBrowsable(EditorBrowsableState.Never)>]
     let map f (gen:Gen<_>) = gen.Map f
 
     ///Obtain the current size. sized g calls g, passing it the current size as a parameter.
-    ///[category: Managing size]
+    //[category: Managing size]
     [<CompiledName("Sized"); EditorBrowsable(EditorBrowsableState.Never)>]
     let sized fgen = Gen (fun n r -> let (Gen m) = fgen n in m n r)
 
     ///Obtain the current size. sized g calls g, passing it the current size as a parameter.
-    ///[category: Managing size]
+    //[category: Managing size]
     [<CompiledName("Sized"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let sizedFunc (sizedGen : Func<int,Gen<_>>) =
         sized sizedGen.Invoke
 
     ///Override the current size of the test. resize n g invokes generator g with size parameter n.
-    ///[category: Managing size]
+    //[category: Managing size]
     [<CompiledName("Resize")>]
     let resize newSize (Gen m) = Gen (fun _ r -> m newSize r)
 
@@ -131,14 +131,14 @@ module Gen =
     let internal rand = Gen (fun _ r -> r)
 
     ///Generates a value with maximum size n.
-    ///[category: Generating test values]
+    //[category: Generating test values]
     [<CompiledName("Eval")>]
     let eval n rnd (Gen m) = 
         let size,rnd' = range (0,n) rnd
         m size rnd'
 
     ///Generates n values of the given size.
-    ///[category: Generating test values]
+    //[category: Generating test values]
     [<CompiledName("Sample")>]
     let sample size n gn  = 
         let rec sample i seed samples =
@@ -147,38 +147,38 @@ module Gen =
         sample n (Random.newSeed()) []
 
     ///Generates an integer between l and h, inclusive.
-    ///[category: Creating generators]
+    //[category: Creating generators]
     [<CompiledName("Choose")>]
     let choose (l, h) = rand |> map (range (l,h) >> fst) 
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
-    ///[category: Creating generators]
+    //[category: Creating generators]
     [<CompiledName("Elements")>]
     let elements xs = 
         choose (0, (Seq.length xs)-1)  |> map(flip Seq.nth xs)
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
-    ///[category: Creating generators]
+    //[category: Creating generators]
     [<CompiledName("Elements"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let elementsArr ([<ParamArrayAttribute>] values : array<_>) = 
         values |> elements
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///equal probability.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("OneOf")>]
     let oneof gens = gen.Bind(elements gens, id)
 
     ///Build a generator that generates a value from one of the given generators, with
     ///equal probability.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("OneOf"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let oneOfArr ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
         generators |> oneof
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Frequency")>]
     let frequency xs = 
         let xs = Seq.cache xs
@@ -193,32 +193,32 @@ module Gen =
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let frequencySeqWeightAndValue ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
         weighedValues |> frequencyOfWeighedSeq
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let frequencySeqWeightAndValueArr ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<Gen<'a>>> ) =
         weighedValues |> frequencyOfWeighedSeq
 
     ///Map the given function over values to a function over generators of those values.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Map2"); EditorBrowsable(EditorBrowsableState.Never)>]
     let map2 f = fun a b -> gen {   let! a' = a
                                     let! b' = b
                                     return f a' b' }
                                         
     ///Build a generator that generates a 2-tuple of the values generated by the given generator.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Two")>]
     let two g = map2 (fun a b -> (a,b)) g g
 
     ///Map the given function over values to a function over generators of those values.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Map3"); EditorBrowsable(EditorBrowsableState.Never)>]
     let map3 f = fun a b c -> gen { let! a' = a
                                     let! b' = b
@@ -226,12 +226,12 @@ module Gen =
                                     return f a' b' c' }
 
     ///Build a generator that generates a 3-tuple of the values generated by the given generator.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Three")>]
     let three g = map3 (fun a b c -> (a,b,c)) g g g
 
     ///Map the given function over values to a function over generators of those values.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Map4"); EditorBrowsable(EditorBrowsableState.Never)>]
     let map4 f = fun a b c d -> gen {   let! a' = a
                                         let! b' = b
@@ -240,12 +240,12 @@ module Gen =
                                         return f a' b' c' d' }
 
     ///Build a generator that generates a 4-tuple of the values generated by the given generator.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Four")>]
     let four g = map4 (fun a b c d -> (a,b,c,d)) g g g g
 
     ///Map the given function over values to a function over generators of those values.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Map5"); EditorBrowsable(EditorBrowsableState.Never)>]
     let map5 f = fun a b c d e -> gen {  let! a' = a
                                          let! b' = b
@@ -255,7 +255,7 @@ module Gen =
                                          return f a' b' c' d' e'}
 
     ///Map the given function over values to a function over generators of those values.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Map6"); EditorBrowsable(EditorBrowsableState.Never)>]
     let map6 f = fun a b c d e g -> gen {   let! a' = a
                                             let! b' = b
@@ -266,7 +266,7 @@ module Gen =
                                             return f a' b' c' d' e' g'}
 
     ///Sequence the given seq of generators into a generator of a list.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("SequenceToList"); EditorBrowsable(EditorBrowsableState.Never)>]
     let sequence l = 
         let rec go gs acc size r0 = 
@@ -279,26 +279,26 @@ module Gen =
         Gen(fun n r -> go (Seq.toList l) [] n r)
 
     ///Sequence the given list of generators into a generator of a list.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let sequenceToSeq generators = 
         generators |> sequence |> map List.toSeq
 
     ///Sequence the given list of generators into a generator of a list.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let sequenceToArr ([<ParamArrayAttribute>]generators:array<Gen<_>>) = 
         generators |> sequence |> map List.toArray
 
     ///Generates a list of given length, containing values generated by the given generator.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("ListOf")>]
     let listOfLength n arb = sequence [ for _ in 1..n -> arb ]
 
     ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
     ///if the given original generator did not generate any values that satisfied the predicate, after trying to
     ///get values from by increasing its size.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("SuchThatOption"); EditorBrowsable(EditorBrowsableState.Never)>]
     let suchThatOption p gn =
         let rec tryValue k n =
@@ -312,7 +312,7 @@ module Gen =
     ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
     ///the predicate is satisfied.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("SuchThat")>]
     let rec suchThat p gn =
         gen {   let! mx = suchThatOption p gn
@@ -339,7 +339,7 @@ module Gen =
 
     /// Generates a list of random length. The maximum length depends on the
     /// size parameter.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("ListOf")>]
     let listOf gn =
         sized <| fun n ->
@@ -348,7 +348,7 @@ module Gen =
 
     /// Generates a non-empty list of random length. The maximum length 
     /// depends on the size parameter.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("NonEmptyListOf")>]
     let nonEmptyListOf gn =
         sized <| fun n ->
@@ -356,7 +356,7 @@ module Gen =
                     return! listOfLength k gn }
 
     /// Generates sublists of the given sequence.
-    ///[category: Creating generators]
+    //[category: Creating generators]
     [<CompiledName("SubListOfToList"); EditorBrowsable(EditorBrowsableState.Never)>]
     let subListOf l =
         let elems = Array.ofSeq l
@@ -367,26 +367,26 @@ module Gen =
              return List.ofSeq subSeq }
 
     /// Generates sublists of the given IEnumerable.
-    ///[category: Creating generators]
+    //[category: Creating generators]
     [<CompiledName("SubListOf"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let subListOfToIList s = 
         subListOf s
         |> map (fun l -> new List<_>(l) :> IList<_>)
 
     /// Generates sublists of the given arguments.
-    ///[category: Creating generators]
+    //[category: Creating generators]
     [<CompiledName("SubListOf"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let subListOfArr ([<ParamArrayAttribute>] s:_ array) = 
         subListOf s
         |> map (fun l -> new List<_>(l) :> IList<_>)
 
     /// Generates an array of a specified length.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("ArrayOf")>]
     let arrayOfLength n (g: Gen<'a>) : Gen<'a[]> = listOfLength n g |> map Array.ofList
 
     /// Generates an array using the specified generator. The maximum length is the size+1.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("ArrayOf")>]
     let arrayOf (g: Gen<'a>) : Gen<'a[]> = 
        sized <| fun n ->
@@ -394,14 +394,14 @@ module Gen =
                    return! arrayOfLength size g }
 
     /// Generates a 2D array of the given dimensions.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Array2DOf")>]
     let array2DOfDim (rows: int,cols: int) (g: Gen<'a>)  = 
         gen { let! arr1 = arrayOfLength (rows * cols) g
               return Array2D.init rows cols (fun r c -> arr1.[cols*r + c]) }
 
     /// Generates a 2D array. The square root of the size is the maximum number of rows and columns.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Array2DOf")>]
     let array2DOf (g: Gen<'a>) = 
         sized <| fun n ->
@@ -411,12 +411,12 @@ module Gen =
                   return! array2DOfDim (rows,cols) g }
         
     ///Always generate v.
-    ///[category: Creating generators]   
+    //[category: Creating generators]   
     [<CompiledName("Constant")>]
     let constant v = gen { return v }
 
     ///Apply the given Gen function to the given generator, aka the applicative <*> operator.
-    ///[category: Creating generators from generators]
+    //[category: Creating generators from generators]
     [<CompiledName("Apply")>]
     let apply (f:Gen<'a -> 'b>) (gn:Gen<'a>) : Gen<'b> =
         gen { let! f' = f
