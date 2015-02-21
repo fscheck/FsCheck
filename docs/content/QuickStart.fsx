@@ -16,7 +16,10 @@ First install FsCheck, open an fsx file and start with:*)
 
 open FsCheck
 
-(**
+(** In C#: To easily experiment, start a new console app to execute the snippets below (the output is written to console
+by default). Alternatively, in LinqPad, reference FsCheck.dll and FSharp.Core.dll, open namespace FsCheck, change the language to "C# statements"
+and you should be able to execute most of the snippets as well. 
+
 ## A Simple Example
 
 A simple example of a property - a test with parameters - is written as a normal F# function that returns a bool: *)
@@ -30,18 +33,23 @@ Check.Quick revRevIsOrig
 
 (*** include-output: revRevIsOrig ***)
 
-(** When a property fails, FsCheck displays a counter-example. For example, if we define *)
+(** In C#:
 
-let revIsOrig (xs:list<int>) = List.rev xs = xs
+    [lang=csharp,file=../csharp/QuickStart.cs,key=revRevIsOrig]
 
-(** then checking it results in *)
+When a property fails, FsCheck displays a counter-example. For example, if we define *)
 
 (*** define-output: revIsOrig ***)
+let revIsOrig (xs:list<int>) = List.rev xs = xs
 Check.Quick revIsOrig
 
 (*** include-output: revIsOrig ***)
 
-(** FsCheck also *shrinks* the counter example: it tries to find the minimal counter example that 
+(** In C#: 
+
+    [lang=csharp,file=../csharp/QuickStart.cs,key=revIsOrig]
+
+FsCheck also *shrinks* the counter example: it tries to find the minimal counter example that 
 still fails the property. The counter example is indeed minimal: 
 the list must have at least two different elements for the test to fail. FsCheck displays how many times it 
 found a smaller (in some way) counter example and so proceeded to shrink further.
@@ -52,7 +60,7 @@ To learn more on how to write properties, see [Properties](Properties.html).
 
 In this case we know that the property does not hold, but Check.Quick does not display the counter-example. 
 There is another testing function provided for this situation. Repeat the test using 
-<pre>Check.Verbose <property_name></pre>
+<pre>Check.Verbose</pre> or in C# <pre>VerboseCheck()</pre>
 which displays each test case before running the test: the last test case displayed is thus
 the one in which the loop or error arises.
 
@@ -68,14 +76,16 @@ behavior is seldom what you want, FsCheck only generates values that are 'neatly
 the type polymorphic (currently, unit, bool, char and string values). To see this error, force 
 FsCheck to generate lists of floats:*)
 
-let revRevIsOrigFloat (xs:list<float>) = List.rev(List.rev xs) = xs
-
 (***define-output:revFloat***)
+let revRevIsOrigFloat (xs:list<float>) = List.rev(List.rev xs) = xs
 Check.Quick revRevIsOrigFloat
 
 (***include-output:revFloat***)
 
-(**
+(** In C#:
+
+    [lang=csharp,file=../csharp/QuickStart.cs,key=revRevIsOrigFloat]
+
 ## Using FsCheck with other testing frameworks
 
 Once you have finished your initial exploration of FsCheck, you'll probably want to use it with your existing
@@ -93,7 +103,10 @@ let ``Reverse of reverse of a list is the original list``() =
   let revRevIsOrig (xs:list<int>) = List.rev(List.rev xs) = xs
   Check.QuickThrowOnFailure revRevIsOrig
   
-(** For xUnit, the test looks like any normal test, and the QuickThrowOnFailure ensures that if the test fails,
+(**
+    [lang=csharp,file=../csharp/QuickStart.cs,key=revRevIsOrigFact]
+
+For xUnit, the test looks like any normal test, and the QuickThrowOnFailure ensures that if the test fails,
 an exception with the necessary information is raised so xUnit knows the test failed. The output of the test is the same
 as above.
 

@@ -66,6 +66,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ja", "ja", "{34021B41-3EED-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.XUnit.CSharpExamples", "examples\FsCheck.XUnit.CSharpExamples\FsCheck.XUnit.CSharpExamples.csproj", "{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp.DocSnippets", "docs\csharp\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,6 +118,10 @@ Global
 		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AB84678-E55F-4387-A040-67312735D089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AB84678-E55F-4387-A040-67312735D089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AB84678-E55F-4387-A040-67312735D089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AB84678-E55F-4387-A040-67312735D089}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -128,6 +134,7 @@ Global
 		{CB41BAC5-272F-4562-9494-E3DC1D0B4139} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 		{34021B41-3EED-409A-AF7C-6EC2BD4371B2} = {6B36173B-D4E0-4CF4-840D-3F3016653F85}
 		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
+		{6AB84678-E55F-4387-A040-67312735D089} = {6B36173B-D4E0-4CF4-840D-3F3016653F85}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = examples\FsCheck.Examples\FsCheck.Examples.fsproj
