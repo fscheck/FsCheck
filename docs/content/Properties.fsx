@@ -8,15 +8,18 @@ open System
 (**
 # Properties
 
-Properties are expressed as F# function definitions. Properties are universally quantified over their parameters, so *)
+Properties are expressed as F# function definitions or C# lamdas or methods. 
+Properties are universally quantified over their parameters, so *)
 
 let revRevIsOrig xs = List.rev(List.rev xs) = xs
 
 (**
+    [lang=csharp,file=../csharp/Properties.cs,key=revRevIsOrig]
+
 means that the equality holds for all lists xs.
 
-Properties must not necessarily have monomorphic types.
-Polymorphic properties, such as the one above will be tested 
+Properties must not necessarily have generic types.
+Generic properties, such as the one above will be tested 
 by FsCheck as if the generic arguments are of type object; this means, 
 that values of various simple types (bool, char, string,...) are generated. 
 It may even be the case that one generated list contains more than one type, e.g. `{['r', "1a", true]}`
@@ -26,12 +29,18 @@ simply by giving xs a different inferred or explicit type: *)
 
 let revRevIsOrigInt (xs:list<int>) = List.rev(List.rev xs) = xs
 
-(** is only checked with lists of int.
+(** 
+    [lang=csharp,file=../csharp/Properties.cs,key=revRevIsOrigInt]
+
+is only checked with lists of int.
 
 FsCheck can check properties of various forms - these forms are called testable, 
 and are indicated in the API by a generic type called `'Testable`. A `'Testable` may 
 be a function of any number of parameters that returns bool or unit. In the latter case, 
- a test passes if it does not throw.
+ a test passes if it does not throw. The entry point to create properties is the Prop module.
+
+ In C# (or, if you prefer it, you can use this API from F# too), properties are expressed
+ more explicitly and in a more type safe way by a fluent API with as entry point the Prop class.
     
 ## Conditional Properties
 
@@ -53,6 +62,8 @@ let rec insert x xs =
 (***define-output:insertKeepsOrder***)
 let insertKeepsOrder (x:int) xs = ordered xs ==> ordered (insert x xs)
 Check.Quick insertKeepsOrder
+
+(**    [lang=csharp,file=../csharp/Properties.cs,key=insertKeepsOrder]    *)
 
 (***include-output:insertKeepsOrder***)
 
@@ -91,7 +102,12 @@ Check.Quick moreLazy
 
 (***include-output: lazy***)
 
-(**   
+(** The fluent API does not have this gotcha, it is lazy by default:
+
+    [lang=csharp,file=../csharp/Properties.cs,key=lazy]
+
+works as expected.
+   
 ## Quantified Properties
 
 Properties may take the form `forAll <arbitrary>  (fun <args> -> <property>)`.
@@ -102,6 +118,8 @@ For example, *)
 let orderedList = Arb.from<list<int>> |> Arb.mapFilter List.sort ordered
 let insertWithArb x = Prop.forAll orderedList (fun xs -> ordered(insert x xs))
 Check.Quick insertWithArb
+
+(**    [lang=csharp,file=../csharp/Properties.cs,key=insertWithArb] *)
 
 (***include-output:insertWithArb***)
 
@@ -126,7 +144,8 @@ Check.Quick expectDivideByZero
 
 (***include-output: expectDivideByZero***)
   
-(**
+(**This functionality is not available in the fluent API.
+
 ## Timed Properties
 
 Properties may take the form `within <timeout in ms> <Lazy<property>>`
@@ -159,6 +178,8 @@ The first argument is the time the lazy property may run. If it runs longer,
 FsCheck considers the test as failed. Otherwise, the outcome of the lazy property is 
 the outcome of within. Note that, although within attempts to cancel the thread in which 
 the property is executed, that may not succeed, and so the thread may actually continue to run until the process ends.
+
+This functionality is not available in the fluent API.
     
 ## Observing Test Case Distribution
 
