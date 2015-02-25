@@ -130,7 +130,7 @@ and Specification<'a,'b> internal ( generator0:'a Gen
         Specification<'a,'b>( generator0, shrinker0, generator1, shrinker1, 
             (fun a b -> (assertion0 a b) .|. (label name (assertion.Invoke(a,b)))), conditions, collects, classifies)
     member __.AndFor<'c>(generator:'c Gen, assertion:Func<'c,bool>) =
-        Specification<'a,'b,'c>   (generator0, shrinker0
+        Specification<'a,'b,'c> (generator0, shrinker0
                                 ,generator1, shrinker1
                                 ,generator, fun _ -> Seq.empty
                                 ,fun a b c -> (assertion0 a b) .&. property (assertion.Invoke(c))
@@ -194,50 +194,72 @@ type Prop private() =
         Specification<unit>(Arb.from.Generator, Arb.from.Shrinker, property << assertion.Invoke, [], [], [])
     static member ForAll(assertion:Func<bool>) =
         Specification<unit>(Arb.from.Generator, Arb.from.Shrinker, property << assertion.Invoke, [], [], [])
+    static member ForAll(assertion:Func<Specification>) =
+        Specification<unit>(Arb.from.Generator, Arb.from.Shrinker, (fun () -> assertion.Invoke().Build()), [], [], [])
 
     static member ForAll(assertion:Action<'a>) =
         Prop.ForAll(Arb.from, assertion)
     static member ForAll(assertion:Func<'a,bool>) =
+        Prop.ForAll(Arb.from, assertion)
+    static member ForAll(assertion:Func<'a,Specification>) =
         Prop.ForAll(Arb.from, assertion)
     
     static member ForAll(assertion:Action<'a,'b>) =
         Prop.ForAll(Arb.from, Arb.from, assertion)
     static member ForAll(assertion:Func<'a,'b,bool>) =
         Prop.ForAll(Arb.from, Arb.from, assertion)
+    static member ForAll(assertion:Func<'a,'b,Specification>) =
+        Prop.ForAll(Arb.from, Arb.from, assertion)
+
 
     static member ForAll(assertion:Action<'a,'b,'c>) =
         Prop.ForAll(Arb.from, Arb.from, Arb.from, assertion)
     static member ForAll(assertion:Func<'a,'b,'c,bool>) =
         Prop.ForAll(Arb.from, Arb.from, Arb.from, assertion)
+    static member ForAll(assertion:Func<'a,'b,'c,Specification>) =
+        Prop.ForAll(Arb.from, Arb.from, Arb.from, assertion)
+
+    static member ForAll(generator:'a Gen, assertion:Action<'a>) =
+        Specification<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
+    static member ForAll(arbitrary:'a Arbitrary, assertion:Action<'a>) =
+        Specification<'a>(arbitrary.Generator, arbitrary.Shrinker, property << assertion.Invoke, [], [], [])
      
     static member ForAll(generator:'a Gen, assertion:Func<'a,bool>) =
         Specification<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
     static member ForAll(arbitrary:'a Arbitrary, assertion:Func<'a,bool>) =
         Specification<'a>(arbitrary.Generator, arbitrary.Shrinker, property << assertion.Invoke, [], [], [])
 
-    static member ForAll(generator:'a Gen, assertion:Action<'a>) =
-        Specification<'a>(generator, noshrink, property << assertion.Invoke, [], [], [])
-    static member ForAll(arbitrary:'a Arbitrary, assertion:Action<'a>) =
-        Specification<'a>(arbitrary.Generator, arbitrary.Shrinker, property << assertion.Invoke, [], [], [])
-
-    static member ForAll(generator1:'a Gen,generator2:'b Gen, assertion:Func<'a,'b,bool>) =
-        Specification<'a,'b>(generator1, noshrink, generator2, noshrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
-    static member ForAll(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary, assertion:Func<'a,'b,bool>) =
-        Specification<'a,'b>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+    static member ForAll(generator:'a Gen, assertion:Func<'a,Specification>) =
+        Specification<'a>(generator, noshrink, (fun a -> assertion.Invoke(a).Build()), [], [], [])
+    static member ForAll(arbitrary:'a Arbitrary, assertion:Func<'a,Specification>) =
+        Specification<'a>(arbitrary.Generator, arbitrary.Shrinker, (fun a -> assertion.Invoke(a).Build()), [], [], [])
 
     static member ForAll(generator1:'a Gen,generator2:'b Gen, assertion:Action<'a,'b>) =
         Specification<'a,'b>(generator1, noshrink, generator2, noshrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
     static member ForAll(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary, assertion:Action<'a,'b>) =
         Specification<'a,'b>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
 
-    static member ForAll(generator1:'a Gen,generator2:'b Gen,generator3:'c Gen, assertion:Func<'a,'b,'c,bool>) =
-        Specification<'a,'b,'c>(generator1, noshrink, generator2, noshrink, generator3, noshrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
-    static member ForAll(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary,arbitrary3:'c Arbitrary, assertion:Func<'a,'b,'c,bool>) =
-        Specification<'a,'b,'c>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, arbitrary3.Generator, arbitrary3.Shrinker, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+    static member ForAll(generator1:'a Gen,generator2:'b Gen, assertion:Func<'a,'b,bool>) =
+        Specification<'a,'b>(generator1, noshrink, generator2, noshrink, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+    static member ForAll(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary, assertion:Func<'a,'b,bool>) =
+        Specification<'a,'b>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, (fun a b -> property <| assertion.Invoke(a,b)),[],[],[])
+
+    static member ForAll(generator1:'a Gen,generator2:'b Gen, assertion:Func<'a,'b,Specification>) =
+        Specification<'a,'b>(generator1, noshrink, generator2, noshrink, (fun a b -> assertion.Invoke(a,b).Build()),[],[],[])
+    static member ForAll(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary, assertion:Func<'a,'b,Specification>) =
+        Specification<'a,'b>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, (fun a b -> assertion.Invoke(a,b).Build()),[],[],[])
 
     static member ForAll(generator1:'a Gen,generator2:'b Gen,generator3:'c Gen, assertion:Action<'a,'b,'c>) =
         Specification<'a,'b,'c>(generator1, noshrink, generator2, noshrink, generator3, noshrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
     static member ForAll(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary,arbitrary3:'c Arbitrary, assertion:Action<'a,'b,'c>) =
         Specification<'a,'b,'c>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, arbitrary3.Generator, arbitrary3.Shrinker, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
 
+    static member ForAll(generator1:'a Gen,generator2:'b Gen,generator3:'c Gen, assertion:Func<'a,'b,'c,bool>) =
+        Specification<'a,'b,'c>(generator1, noshrink, generator2, noshrink, generator3, noshrink, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
+    static member ForAll(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary,arbitrary3:'c Arbitrary, assertion:Func<'a,'b,'c,bool>) =
+        Specification<'a,'b,'c>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, arbitrary3.Generator, arbitrary3.Shrinker, (fun a b c -> property <| assertion.Invoke(a,b,c)),[],[],[])
 
+    static member ForAll(generator1:'a Gen,generator2:'b Gen,generator3:'c Gen, assertion:Func<'a,'b,'c,Specification>) =
+        Specification<'a,'b,'c>(generator1, noshrink, generator2, noshrink, generator3, noshrink, (fun a b c -> assertion.Invoke(a,b,c).Build()),[],[],[])
+    static member ForAll(arbitrary1:'a Arbitrary,arbitrary2:'b Arbitrary,arbitrary3:'c Arbitrary, assertion:Func<'a,'b,'c,Specification>) =
+        Specification<'a,'b,'c>(arbitrary1.Generator, arbitrary1.Shrinker, arbitrary2.Generator, arbitrary2.Shrinker, arbitrary3.Generator, arbitrary3.Shrinker, (fun a b c -> assertion.Invoke(a,b,c).Build()),[],[],[])
