@@ -205,7 +205,8 @@ let insertTrivial (x:int) xs =
   |> Prop.trivial (List.length xs = 0)
 Check.Quick insertTrivial
 
-(**
+(**    [lang=csharp,file=../csharp/Properties.cs,key=insertTrivial]
+
 Test cases for which the condition is true are classified as trivial, and the proportion of 
 trivial test cases in the total is reported:*)
 
@@ -225,7 +226,8 @@ let insertClassify (x:int) xs =
   |> Prop.classify (ordered (xs @ [x])) "at-tail"
 Check.Quick insertClassify
 
-(**
+(**    [lang=csharp,file=../csharp/Properties.cs,key=insertClassify]
+
 Test cases satisfying the condition are assigned the classification given, and the distribution of 
 classifications is reported after testing:*)
 
@@ -246,7 +248,8 @@ let insertCollect (x:int) xs =
       |> Prop.collect (List.length xs)
 Check.Quick insertCollect
 
-(**
+(**    [lang=csharp,file=../csharp/Properties.cs,key=insertCollect]
+
 The argument of collect is evaluated in each test case, and the distribution of 
 values is reported. The type of this argument is printed using `sprintf "%A"`:*)
 
@@ -266,6 +269,8 @@ let insertCombined (x:int) xs =
     |> Prop.classify (ordered (xs @ [x])) "at-tail"
     |> Prop.collect (List.length xs)
 Check.Quick insertCombined
+
+(**    [lang=csharp,file=../csharp/Properties.cs,key=insertCollect]*)
 
 (***include-output:insertCombined***)
 
