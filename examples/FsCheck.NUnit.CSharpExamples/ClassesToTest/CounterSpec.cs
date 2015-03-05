@@ -44,7 +44,7 @@ namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
 
         private abstract class BaseCommand : Command<Counter, int>
         {
-            public override Gen<Rose<Result>> Post(Counter c, int m)
+            public override Property Post(Counter c, int m)
             {
                 return Prop.ForAll(m == c.Get()).Build();
             }

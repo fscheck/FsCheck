@@ -106,7 +106,7 @@ module internal Rose =
 
 
 ///Type synonym for a test result generator.
-type Property = Gen<Rose<Result>>
+type Property = private Property of Gen<Rose<Result>> with static member internal GetGen (Property g) = g
 
 module private Testable =
 
@@ -127,14 +127,14 @@ module private Testable =
 
     module internal Prop = 
     
-        let ofRoseResult t : Property = gen { return t }
+        let ofRoseResult t : Property = Property <| gen { return t }
 
         let ofResult (r:Result) : Property = 
             ofRoseResult <| Rose.ret r
          
         let ofBool b = ofResult <| if b then Res.succeeded else Res.failed
 
-        let mapRoseResult f :( _ -> Property) = Gen.map f << property
+        let mapRoseResult f a = property a |> Property.GetGen |> Gen.map f |> Property
 
         let mapResult f = mapRoseResult (Rose.map f)
 
@@ -145,30 +145,34 @@ module private Testable =
                 e -> ofResult (Res.exc e)
     
 
-    let shrinking shrink x pf : Property =
+    let private shrinking shrink x pf =
         let promoteRose m = Gen (fun s r -> Rose.map (fun (Gen m') -> m' s r) m)
         //cache is important here to avoid re-evaluation of property
-        let rec props x = MkRose (lazy (property (pf x)), shrink x |> Seq.map props |> Seq.cache)
-        Gen.map Rose.join <| promoteRose (props x)
+        let rec props x = MkRose (lazy (property (pf x) |> Property.GetGen), shrink x |> Seq.map props |> Seq.cache)
+        promoteRose (props x)
+        |> Gen.map Rose.join
      
-    let private evaluate body a : Property =
+    let private evaluate body a =
         let argument a res = { res with Arguments = (box a) :: res.Arguments }
         //safeForce (lazy ( body a )) //this doesn't work - exception escapes??
         try 
             body a |> property
         with e -> 
             Prop.ofResult (Res.exc e)
+        |> Property.GetGen 
         |> Gen.map (Rose.map (argument a))
 
 
     let forAll (arb:Arbitrary<_>) body : Property =
         gen{let! a = arb.Generator
             return! shrinking arb.Shrinker a (fun a' -> evaluate body a')}
+        |> Property
 
     let private combine f a b:Property = 
-        let pa = property a
-        let pb = property b
+        let pa = property a |> Property.GetGen
+        let pb = property b |> Property.GetGen
         Gen.map2 (Rose.map2 f) pa pb
+        |> Property
 
     let (.&) l r = combine (&&&) l r
 
@@ -186,7 +190,7 @@ module private Testable =
                 member x.Property b =
                     let promoteLazy (m:Lazy<_>) = 
                         Gen (fun s r -> Rose.join <| Rose.ofLazy (lazy (match m.Value with (Gen g) -> g s r)))
-                    promoteLazy (lazy (Prop.safeForce (lazy b.Value))) } //TODO: check if the lazy b.Value is necessary (b is already lazy?)
+                    promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
         static member Result() =
             { new Testable<Result> with
                 member x.Property res = Prop.ofResult res }
@@ -195,10 +199,10 @@ module private Testable =
                 member x.Property prop = prop }
         static member Gen() =
             { new Testable<Gen<'a>> with
-                member x.Property gena = gen { let! a = gena in return! property a } }
+                member x.Property gena = gen { let! a = gena in return! property a |> Property.GetGen } |> Property }
         static member RoseResult() =
             { new Testable<Rose<Result>> with
-                member x.Property rosea = gen { return rosea } } 
+                member x.Property rosea = gen { return rosea } |> Property }
         static member Arrow() =
             { new Testable<('a->'b)> with
                 member x.Property f = forAll Arb.from f }
