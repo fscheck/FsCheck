@@ -41,7 +41,7 @@ is equivalent to `Check.One(Config.Quick, <property>)`.
 Take note of `Config.Verbose` and `Check.Verbose`. These will print the arguments for each test, and are useful for example if
 your test loops infinitely on some inputs.
 
-Also take not of `Check.QuickThrowOnFailure` and `Check.VerboseThrowOnFailure`. These are intended to be used from unit tests executed
+Also take note of `Check.QuickThrowOnFailure` and `Check.VerboseThrowOnFailure`. These are intended to be used from unit tests executed
 through another test framework's unit tests. They'll call the FsCheck runner directly and configure it such that is throws on failure;
 in all frameworks I'm aware of this signals that the test has failed and so is an easy way to integrate FsCheck tests with unit tests 
 you may already have.
