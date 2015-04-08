@@ -3,8 +3,9 @@ source https://www.nuget.org/api/v2
 nuget FAKE
 nuget NUnit
 nuget NUnit.Runners
-nuget xunit < 2.0
-nuget xunit.runners < 2.0
+nuget xunit
+nuget xunit.extensibility.execution
+nuget xunit.runners
 nuget xunit.runner.visualstudio
 nuget NuGet.CommandLine
 nuget SourceLink.Fake
