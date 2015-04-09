@@ -7,6 +7,7 @@ open Xunit
 open Xunit.Sdk
 open Xunit.Abstractions
 open FsCheck
+open System.Threading.Tasks
 
 type PropertyFailedException(testResult:FsCheck.TestResult) =
     inherit XunitException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "sorry no stacktrace")
@@ -77,6 +78,49 @@ type PropertyAttribute() =
     ///test failures.
     member x.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
 
+type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
+    inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
+    let mutable config = Config.Default
+
+    member x.Config with get() = config and set(c) = config <- c
+
+    override this.Initialize() =
+        base.Initialize()
+//            match xunitRunner.Result with
+//            | TestResult.True _ ->
+//                if not property.QuietOnSuccess then
+//                    printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
+//                upcast new PassedResult(runMethod, this.DisplayName)
+//            | TestResult.Exhausted testdata ->
+//                upcast new FailedResult(runMethod, PropertyFailedException(xunitRunner.Result), this.DisplayName)
+//            | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
+//                upcast new FailedResult(runMethod, PropertyFailedException(xunitRunner.Result), this.DisplayName)
+        ()
+
+    override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
+        let testExec() =
+            let sw = System.Diagnostics.Stopwatch.StartNew()
+            let target = if testMethod.TestClass <> null then Some (testMethod.TestClass :> obj) else None
+            let runMethod = testMethod.Method.ToRuntimeMethod()
+            Check.Method(config, runMethod, ?target=target)
+            sw.Stop()
+// #WARNING IMPLEMENT THE SKIPPED SETTING?
+            let skipped = 0
+            let failed = match (config.Runner :?> XunitRunner).Result with
+                                | TestResult.True _ ->
+        //                            if not property.QuietOnSuccess then
+        //                                printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
+                                    0
+                                | TestResult.Exhausted testdata ->
+                                    //upcast new FailedResult(runMethod, PropertyFailedException(xunitRunner.Result), this.DisplayName)
+                                    1
+                                | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
+                                    //upcast new FailedResult(runMethod, PropertyFailedException(xunitRunner.Result), this.DisplayName)
+                                    1
+            new RunSummary(Time = (decimal sw.Elapsed.TotalSeconds), Total = 1, Failed = failed, Skipped = skipped)
+        Task.Factory.StartNew<RunSummary>(fun () -> testExec())
+
+
 type PropertyDiscoverer(messageSink:IMessageSink) =
     member this.MessageSink = messageSink
 
@@ -100,29 +144,18 @@ type PropertyDiscoverer(messageSink:IMessageSink) =
                 |> Seq.toList
             let config =
                 {Config.Default with
-//                    Replay = this.ReplayStdGen
-//                    MaxTest = this.MaxTest
-//                    MaxFail = this.MaxFail
-//                    StartSize = this.StartSize
-//                    EndSize = this.EndSize
-//                    Every = if this.Verbose then Config.Verbose.Every else Config.Quick.Every
-//                    EveryShrink = if this.Verbose then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
+                    Replay = property.ReplayStdGen
+                    MaxTest = property.MaxTest
+                    MaxFail = property.MaxFail
+                    StartSize = property.StartSize
+                    EndSize = property.EndSize
+                    Every = if property.Verbose then Config.Verbose.Every else Config.Quick.Every
+                    EveryShrink = if property.Verbose then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
                     Arbitrary = arbitraries
                     Runner = xunitRunner
                 }
-            let target = if testMethod.TestClass <> null then Some (testMethod.TestClass :> obj) else None
-            let runMethod = testMethod.Method.ToRuntimeMethod()
-            Check.Method(config, runMethod, ?target=target)
-//            match xunitRunner.Result with
-//            | TestResult.True _ ->
-//                if not property.QuietOnSuccess then
-//                    printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
-//                upcast new PassedResult(runMethod, this.DisplayName)
-//            | TestResult.Exhausted testdata ->
-//                upcast new FailedResult(runMethod, PropertyFailedException(xunitRunner.Result), this.DisplayName)
-//            | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
-//                upcast new FailedResult(runMethod, PropertyFailedException(xunitRunner.Result), this.DisplayName)
-            Seq.empty<IXunitTestCase>
+            let ptc = new PropertyTestCase(this.MessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod, Config = config)
+            Seq.singleton (ptc :> IXunitTestCase)
 
 (*
     // EnumerateTestCommands - get test commands represented by this test method.
