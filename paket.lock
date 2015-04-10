@@ -23,5 +23,8 @@ NUGET
       xunit.abstractions (2.0.0)
     xunit.extensibility.execution (2.0.0)
       xunit.extensibility.core (2.0.0)
+    xunit.runner.console (2.0.0)
+    xunit.runner.utility (2.0.0)
+      xunit.abstractions (2.0.0)
     xunit.runner.visualstudio (2.0.0)
     xunit.runners (2.0.0)

@@ -165,9 +165,9 @@ Target "Build" (fun _ ->
 
 Target "RunTests" (fun _ ->
     !! testAssemblies
-    |> xUnit (fun p -> 
+    |> Fake.XUnit2Helper.xUnit2 (fun p -> 
             {p with 
-                ToolPath = "packages/xunit.runners/tools/xunit.console.clr4.exe"
+                ToolPath = "packages/xunit.runner.console/tools/xunit.console.exe"
                 ShadowCopy = false
                 HtmlOutput = not (isLinux || isMacOS)
                 XmlOutput = false

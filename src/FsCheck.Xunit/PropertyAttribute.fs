@@ -1,4 +1,7 @@
-﻿
+﻿// note: FsCheck.Xunit.dll needs to exist at: %TEMP%\VisualStudioTestExplorerExtensions\xunit.runner.visualstudio.2.0.0\build\_common
+//  as indicated here http://xunit.github.io/docs/running-tests-in-vs.html
+// also the same for the console runner, why?
+
 namespace FsCheck.Xunit
 
 open System
@@ -13,7 +16,7 @@ type PropertyFailedException(testResult:FsCheck.TestResult) =
     inherit XunitException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "sorry no stacktrace")
 
 //can not be an anonymous type because of let mutable.
-type private XunitRunner() =
+type XunitRunner() =
     let mutable result = None
     member x.Result = result.Value
     interface IRunner with
@@ -36,7 +39,7 @@ type ArbitraryAttribute(types:Type[]) =
 ///Run this method as an FsCheck test.
 [<AttributeUsage(AttributeTargets.Method ||| AttributeTargets.Property, AllowMultiple = false)>]
 [<XunitTestCaseDiscoverer("FsCheck.Xunit.PropertyDiscoverer", "FsCheck.Xunit")>]
-type PropertyAttribute() =
+type public PropertyAttribute() =
     inherit FactAttribute()
     let mutable maxTest = Config.Default.MaxTest
     let mutable maxFail = Config.Default.MaxFail
@@ -68,7 +71,7 @@ type PropertyAttribute() =
     member x.Verbose with get() = verbose and set(v) = verbose <- v
     ///The Arbitrary instances to use for this test method. The Arbitrary instances
     ///are merged in back to front order i.e. instances for the same generated type
-    //at the front of the array will override those at the back.
+    ///at the front of the array will override those at the back.
     member x.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v
     ///If set, suppresses the output from the test if the test is successful. This can be useful when running tests
     ///with TestDriven.net, because TestDriven.net pops up the Output window in Visual Studio if a test fails; thus,
@@ -78,124 +81,100 @@ type PropertyAttribute() =
     ///test failures.
     member x.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
 
+type PropertyTest (displayName, testClass) =
+    interface ITest with
+        member this.DisplayName = displayName
+        member this.TestCase = testClass
+
 type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
     inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
-    let mutable config = Config.Default
 
-    member x.Config with get() = config and set(c) = config <- c
+    new() =
+        new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, null)
 
-    override this.Initialize() =
-        base.Initialize()
-//            match xunitRunner.Result with
-//            | TestResult.True _ ->
-//                if not property.QuietOnSuccess then
-//                    printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
-//                upcast new PassedResult(runMethod, this.DisplayName)
-//            | TestResult.Exhausted testdata ->
-//                upcast new FailedResult(runMethod, PropertyFailedException(xunitRunner.Result), this.DisplayName)
-//            | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
-//                upcast new FailedResult(runMethod, PropertyFailedException(xunitRunner.Result), this.DisplayName)
-        ()
+    member this.Init() =
+        let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
+        let arbitraryOnMethod = factAttribute.GetNamedArgument "Arbitrary"
+        let arbitrariesOnClass =
+            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<ArbitraryAttribute>)
+                |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
+
+        let arbitraries =
+            Config.Default.Arbitrary
+            |> Seq.append arbitrariesOnClass
+            |> Seq.append arbitraryOnMethod
+            |> Seq.toList
+
+        {Config.Default with
+                Replay = factAttribute.GetNamedArgument("ReplayStdGen")
+                MaxTest = factAttribute.GetNamedArgument("MaxTest")
+                MaxFail = factAttribute.GetNamedArgument("MaxFail")
+                StartSize = factAttribute.GetNamedArgument("StartSize")
+                EndSize = factAttribute.GetNamedArgument("EndSize")
+                Every = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.Every else Config.Quick.Every
+                EveryShrink = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
+                Arbitrary = arbitraries
+                Runner = new XunitRunner()
+            }
 
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
-        let testExec() =
-            let sw = System.Diagnostics.Stopwatch.StartNew()
-            let target = if testMethod.TestClass <> null then Some (testMethod.TestClass :> obj) else None
-            let runMethod = testMethod.Method.ToRuntimeMethod()
-            Check.Method(config, runMethod, ?target=target)
-            sw.Stop()
-// #WARNING IMPLEMENT THE SKIPPED SETTING?
-            let skipped = 0
-            let failed = match (config.Runner :?> XunitRunner).Result with
-                                | TestResult.True _ ->
-        //                            if not property.QuietOnSuccess then
-        //                                printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
-                                    0
-                                | TestResult.Exhausted testdata ->
-                                    //upcast new FailedResult(runMethod, PropertyFailedException(xunitRunner.Result), this.DisplayName)
-                                    1
-                                | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
-                                    //upcast new FailedResult(runMethod, PropertyFailedException(xunitRunner.Result), this.DisplayName)
-                                    1
-            new RunSummary(Time = (decimal sw.Elapsed.TotalSeconds), Total = 1, Failed = failed, Skipped = skipped)
-        Task.Factory.StartNew<RunSummary>(fun () -> testExec())
+        let test = new PropertyTest(this.DisplayName, this)
+        let summary = new RunSummary(Total = 1);
+        if not (messageBus.QueueMessage(new TestStarting(test))) then
+            cancellationTokenSource.Cancel() |> ignore
 
+        if not(String.IsNullOrEmpty(this.SkipReason)) then
+            summary.Skipped <- summary.Skipped + 1
+            if not(messageBus.QueueMessage(new TestSkipped(test, this.SkipReason))) then
+                cancellationTokenSource.Cancel() |> ignore
+            Task.Factory.StartNew(fun () -> summary)
+        else
+            let testExec() =
+                let config = this.Init()
+                let sw = System.Diagnostics.Stopwatch.StartNew()
+                let result =
+                    try
+                        let xunitRunner = if config.Runner :? XunitRunner then (config.Runner :?> XunitRunner) else new XunitRunner()
+                        let runMethod = this.TestMethod.Method.ToRuntimeMethod()
+                        let target =
+                            if this.TestMethod.TestClass <> null && not this.TestMethod.Method.IsStatic then
+                                Some (Activator.CreateInstance(this.TestMethod.TestClass.Class.ToRuntimeType()))
+                            else None
+
+                        Check.Method(config, runMethod, ?target=target)
+
+                        let result =
+                            match xunitRunner.Result with
+                                  | TestResult.True _ ->
+                                    (0, new TestPassed(test, (decimal)sw.Elapsed.TotalSeconds, (Runner.onFinishedToString "" xunitRunner.Result)) :> TestResultMessage)
+                                  | TestResult.Exhausted testdata ->
+                                    summary.Failed <- summary.Failed + 1
+                                    (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                                  | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
+                                    summary.Failed <- summary.Failed + 1
+                                    (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                        result
+                    with
+                        | ex -> (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, "Exception during test:", ex))
+
+                let failed = fst result
+                let testMessage = snd result
+                messageBus.QueueMessage(testMessage) |> ignore
+                summary.Time <- summary.Time + testMessage.ExecutionTime
+                if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, testMessage.Output))) then
+                    cancellationTokenSource.Cancel() |> ignore
+                summary
+
+            Task.Factory.StartNew<RunSummary>(fun () -> testExec())
 
 type PropertyDiscoverer(messageSink:IMessageSink) =
-    member this.MessageSink = messageSink
+
+    new () = PropertyDiscoverer(null)
+
+    member x.MessageSink : IMessageSink = messageSink
 
     interface IXunitTestCaseDiscoverer with
-        /// Discover test cases from a test method.
-        /// discoveryOptions: The discovery options to be used.
-        /// testMethod: The test method the test cases belong to.
-        /// factAttribute: The fact attribute attached to the test method.
-        //override this.Discover discoveryOptions -> testMethod -> factAttribute =
         override this.Discover(discoveryOptions:ITestFrameworkDiscoveryOptions, testMethod:ITestMethod, factAttribute:IAttributeInfo)=
-            let xunitRunner = XunitRunner()
-            let property = factAttribute :?> PropertyAttribute
-            let arbitraries =
-                testMethod.TestClass.Class.BaseType
-                |> Seq.unfold (fun t -> if t <> null then Some(t,t.BaseType) else None)
-                // warning: fix the typeof<AA>.FullName
-                |> Seq.map (fun t -> t.GetCustomAttributes(typeof<ArbitraryAttribute>.FullName))
-                |> Seq.filter (fun attr -> (Seq.length attr) = 1)
-                |> Seq.collect (fun attr -> ((Seq.head attr) :?> ArbitraryAttribute).Arbitrary)
-                |> Seq.append Config.Default.Arbitrary
-                |> Seq.toList
-            let config =
-                {Config.Default with
-                    Replay = property.ReplayStdGen
-                    MaxTest = property.MaxTest
-                    MaxFail = property.MaxFail
-                    StartSize = property.StartSize
-                    EndSize = property.EndSize
-                    Every = if property.Verbose then Config.Verbose.Every else Config.Quick.Every
-                    EveryShrink = if property.Verbose then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
-                    Arbitrary = arbitraries
-                    Runner = xunitRunner
-                }
-            let ptc = new PropertyTestCase(this.MessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod, Config = config)
+            printfn "%s" testMethod.Method.Name
+            let ptc = new PropertyTestCase(this.MessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod)
             Seq.singleton (ptc :> IXunitTestCase)
-
-(*
-    // EnumerateTestCommands - get test commands represented by this test method.
-    // ITestCommand - invokes a test method
-
-    // IMethodInfo exists in the new one so that could be the basis of the new search
-    override this.EnumerateTestCommands(methodInfo:IMethodInfo) :seq<ITestCommand> =
-        { new TestCommand(methodInfo, null, 0) with
-            override x.Execute(testClass:obj) : MethodResult =
-                let xunitRunner = XunitRunner()
-                let arbitraries =
-                    methodInfo.Class.Type
-                    |> Seq.unfold (fun t -> if t <> null then Some(t,t.DeclaringType) else None)
-                    |> Seq.map (fun t -> t.GetCustomAttributes(typeof<ArbitraryAttribute>, true))
-                    |> Seq.filter (fun attr -> attr.Length = 1)
-                    |> Seq.collect (fun attr -> (attr.[0] :?> ArbitraryAttribute).Arbitrary)
-                    |> Seq.append this.Arbitrary
-                    |> Seq.toList
-                let config =
-                    {Config.Default with
-                        Replay = this.ReplayStdGen
-                        MaxTest = this.MaxTest
-                        MaxFail = this.MaxFail
-                        StartSize = this.StartSize
-                        EndSize = this.EndSize
-                        Every = if this.Verbose then Config.Verbose.Every else Config.Quick.Every
-                        EveryShrink = if this.Verbose then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
-                        Arbitrary = arbitraries
-                        Runner = xunitRunner
-                    }
-                Check.Method(config, methodInfo.MethodInfo,?target=if testClass <> null then Some testClass else None)
-                match xunitRunner.Result with
-                | TestResult.True _ ->
-                    if not quietOnSuccess then
-                        printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
-                    upcast new PassedResult(methodInfo,this.DisplayName)
-                | TestResult.Exhausted testdata ->
-                    upcast new FailedResult(methodInfo,PropertyFailedException(xunitRunner.Result), this.DisplayName)
-                | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
-                    upcast new FailedResult(methodInfo, PropertyFailedException(xunitRunner.Result), this.DisplayName)
-        } :> ITestCommand
-        |> Seq.singleton
-*)
