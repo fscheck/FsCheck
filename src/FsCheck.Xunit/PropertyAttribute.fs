@@ -35,7 +35,7 @@ type ArbitraryAttribute(types:Type[]) =
 
 ///Run this method as an FsCheck test.
 [<AttributeUsage(AttributeTargets.Method ||| AttributeTargets.Property, AllowMultiple = false)>]
-[<XunitTestCaseDiscoverer("FsCheck.Xunit.PropertyDiscoverer", "xunit.execution.{Platform}")>]
+[<XunitTestCaseDiscoverer("FsCheck.Xunit.PropertyDiscoverer", "FsCheck.Xunit")>]
 type PropertyAttribute() =
     inherit FactAttribute()
     let mutable maxTest = Config.Default.MaxTest
