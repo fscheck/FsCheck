@@ -197,4 +197,41 @@
     </ItemGroup>
     <Copy SourceFiles="@(xunitrunner)" DestinationFolder="$(ProjectDir)..\..\packages\xunit.runner.visualstudio.2.0.0\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
+  <ItemGroup>
+    <Compile Include="Helpers.fs" />
+    <Compile Include="Random.fs" />
+    <Compile Include="TypeClass.fs" />
+    <Compile Include="Gen.fs" />
+    <Compile Include="Arbitrary.fs" />
+    <Compile Include="Property.fs" />
+    <Compile Include="Commands.fs" />
+    <Compile Include="Runner.fs" />
+    <Compile Include="Fluent.fs" />
+    <None Include="Script.fsx" />
+    <None Include="paket.references" />
+    <Content Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <ProjectReference Include="..\..\src\FsCheck.Xunit\FsCheck.Xunit.fsproj">
+      <Name>FsCheck.Xunit</Name>
+      <Project>{26A87ED0-9836-45F6-A88E-603DA8FCD856}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj">
+      <Name>FsCheck</Name>
+      <Project>{32AA3276-BBA1-41CE-B78A-706B8454EC8D}</Project>
+    </ProjectReference>
+    <Reference Include="xunit.assert">
+      <HintPath>..\..\..\tmp\xunit.assert.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.core">
+      <HintPath>..\..\..\tmp\xunit.core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>
