@@ -151,6 +151,15 @@ namespace FsCheck.CSharpExamples
             Prop.ForAll<string>(s => true)
                 .Check(new Configuration { Name = "Configuration Demo", MaxNbOfTest = 500 });
 
+            Console.WriteLine();
+
+            // replay
+            Prop.ForAll<string>(s => s == null)
+                .Label("Replay")
+                .Check(new Configuration { MaxNbOfTest = 1, Replay = Random.StdGen.NewStdGen(1, 1) });
+
+            Console.WriteLine();
+
             Prop.ForAll((IEnumerable<int> a, IEnumerable<int> b) => 
                             a.Except(b).Count() <= a.Count())
                 .QuickCheck();

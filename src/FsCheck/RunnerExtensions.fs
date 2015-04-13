@@ -41,8 +41,11 @@ type Configuration() =
     ///A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit. 
     member __.Runner with get() = runner and set(v) = runner <- v
 
-    //TODO: figure out how to deal with null values
-    //member __.Replay with get() = (match replay with None -> null | Some (Random.StdGen s) -> s) and set(v) = replay <- Some (Random.StdGen v)
+    ///If set, the seed to use to start testing. Allows reproduction of previous runs.
+    member __.Replay 
+        with get() = (match replay with None -> Unchecked.defaultof<Random.StdGen> | Some s -> s)
+        and set(v) = match box v with null -> () | _ -> replay <- Some v
+
     member internal __.ToConfig() =
         { MaxTest = maxTest
           MaxFail = maxFail 
