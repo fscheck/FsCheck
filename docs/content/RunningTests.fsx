@@ -176,7 +176,7 @@ appears as normal.
 (**
 ## Using FsCheck.NUnit
 
-To use the integration install the FsCheck.Xunit nuget package. Then open FsCheck.NUnit.
+To use the integration install the FsCheck.NUnit nuget package. Then open FsCheck.NUnit.
 
 You can now attribute tests with `PropertyAttribute` (a subclass of NUnit's `TestAttribute`). Unlike NUnit tests, these 
 methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
