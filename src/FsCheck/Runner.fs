@@ -13,6 +13,8 @@ namespace FsCheck
 open Random
 open System
 
+exception DiscardException
+
 [<NoEquality;NoComparison>]
 type TestData = 
     { NumberOfTests: int
@@ -103,10 +105,17 @@ module Runner =
               let newSize = resize initSize
               //printfn "Before generate"
               //result forced here!
-              let (MkRose (Lazy result,shrinks)) = Gen.eval (newSize |> round |> int) rnd2 gen
-              //printfn "After generate"
-              //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
+              let result, shrinks =
+                  try
+                    let (MkRose (Lazy result,shrinks)) = Gen.eval (newSize |> round |> int) rnd2 gen
+                    result, shrinks
+                    //printfn "After generate"
+                    //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
+                  with :? DiscardException -> 
+                    Res.rejected, Seq.empty
+
               yield Generated result.Arguments
+
               match result.Outcome with
                 | Outcome.Rejected -> 
                     yield Failed result 
