@@ -76,7 +76,6 @@
     <Compile Include="GenExtensions.fs" />
     <Compile Include="Testable.fs" />
     <Compile Include="Prop.fs" />
-    <Compile Include="PropBuilder.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="RunnerExtensions.fs" />

@@ -14,26 +14,23 @@ namespace CSharp
         public static void Samples([CallerFilePath] string file = "")
         {
             //[revRevIsOrig]
-            var revRevIsOrig = Prop.ForAll<int[]>(xs => xs.Reverse().Reverse().SequenceEqual( xs ));
-            revRevIsOrig.QuickCheck();
+            Func<int[],bool> revRevIsOrig = xs => xs.Reverse().Reverse().SequenceEqual( xs );
+            Check.Quick(revRevIsOrig);
             //[/revRevIsOrig]
 
             //[revIsOrig]
-            Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs))
-                .QuickCheck();
+            Check.Quick<Func<int[],bool>>(xs => xs.Reverse().SequenceEqual(xs));
             //[/revIsOrig]
 
             //[revRevIsOrigFloat]
-            Prop.ForAll<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
-                .QuickCheck();
+            Check.Quick<Func<double[], bool>>(xs => xs.Reverse().Reverse().SequenceEqual(xs));
             //[/revRevIsOrigFloat]
         }
 
         //[revRevIsOrigFact]
         [Fact]
         public void RevRevIsOrig(){
-            Prop.ForAll<int[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
-                .QuickCheckThrowOnFailure();
+            Check.QuickThrowOnFailure<Func<int[], bool>>(xs => xs.Reverse().Reverse().SequenceEqual(xs));
         }
         //[/revRevIsOrigFact]
     }

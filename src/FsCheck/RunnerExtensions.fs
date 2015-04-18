@@ -1,7 +1,6 @@
 ﻿namespace FsCheck
 
 open System
-open System.Runtime.CompilerServices
 
 ///Configure the test run.
 type Configuration() =
@@ -55,41 +54,3 @@ type Configuration() =
           Replay = replay
           Arbitrary = []
         }
-
-[<AbstractClass;Sealed;Extension>]
-type SpecificationExtensions private() =
-    /// Check one property with the quick configuration
-    [<Extension>]
-    static member QuickCheck(spec:Specification) = Check.Quick(spec.Build())
-
-    /// Check one property with the quick configuration, and throw an exception if it fails or is exhausted.
-    [<Extension>]
-    static member QuickCheckThrowOnFailure(spec:Specification) = Check.QuickThrowOnFailure(spec.Build())
-
-    /// Check one property with the verbose configuration.
-    [<Extension>]
-    static member VerboseCheck(spec:Specification) = Check.Verbose(spec.Build())
-
-    /// Check one property with the verbose configuration, and throw an exception if it fails or is exhausted.
-    [<Extension>]
-    static member VerboseCheckThrowOnFailure(spec:Specification) = Check.VerboseThrowOnFailure(spec.Build())
-
-    /// Check one property with the quick configuration, and using the given name.
-    [<Extension>]
-    static member QuickCheck(spec:Specification, name:string) = Check.Quick(name,spec.Build())
-
-    /// Check one property with the quick configuration, and throw an exception if it fails or is exhausted.
-    [<Extension>]
-    static member QuickCheckThrowOnFailure(spec:Specification, name:string) = Check.QuickThrowOnFailure(name,spec.Build())
-
-    ///Check one property with the verbose configuration, and using the given name.
-    [<Extension>]
-    static member VerboseCheck(spec:Specification, name:string) = Check.Verbose(name,spec.Build())
-
-    /// Check one property with the verbose configuration, and throw an exception if it fails or is exhausted.
-    [<Extension>]
-    static member VerboseCheckThrowOnFailure(spec:Specification, name:string) = Check.VerboseThrowOnFailure(name,spec.Build())
-
-    ///Check the given property using the given config.
-    [<Extension>]
-    static member Check(spec:Specification, configuration:Configuration) = Check.One(configuration.ToConfig(),spec.Build())

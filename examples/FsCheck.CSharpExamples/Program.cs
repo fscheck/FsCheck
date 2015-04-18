@@ -47,11 +47,13 @@ namespace FsCheck.CSharpExamples
 
     class Program
     {
+
         static void Main(string[] args)
         {
             //A simple example
-            Prop.ForAll<int[]>(xs => xs.Reverse().Reverse().SequenceEqual( xs ))
-                .QuickCheck("RevRev");
+
+            Check.Quick<Func<int[], bool>> (xs => xs.Reverse().Reverse().SequenceEqual(xs));
+                //.QuickCheck("RevRev");
 
             Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs))
                 .QuickCheck("RevId");

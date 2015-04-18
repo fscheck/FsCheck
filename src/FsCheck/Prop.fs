@@ -2,13 +2,18 @@
 
 ///Combinators to build properties, which define the property to be tested, with some
 ///convenience methods to investigate the generated arguments and any found counter-examples.
-[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Prop =
     open Testable
     open System
 
     ///Quantified property combinator. Provide a custom test data generator to a property.
     let forAll (arb:Arbitrary<'Value>) (body:'Value -> 'Testable) = forAll arb body
+
+    [<CompiledName("ForAll")>]
+    let forAllFunc1 (arb:Arbitrary<'Value>) (body:Func<'Value,'Testable>) = forAll arb body.Invoke
+
+    [<CompiledName("ForAll")>]
+    let forAllFuncDef1 (body:Func<'Value,'Testable>) = forAll Arb.from body.Invoke
 
     ///Depending on the condition, return the first testable if true and the second if false.
     let given condition (iftrue:'TestableIfTrue, ifFalse:'TestableIfFalse) = 

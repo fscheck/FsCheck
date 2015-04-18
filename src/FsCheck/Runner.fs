@@ -356,6 +356,7 @@ type Config with
     ///The default configuration is the quick configuration.
     static member Default = Config.Quick
 
+[<AbstractClass;Sealed>]
 type Check =
 
     ///Check the given property using the given config.

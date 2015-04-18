@@ -54,11 +54,7 @@ namespace CSharp.DocSnippets
         }
         //[/revRevIsOrigInt]
 
-        public static void Samples<T>([CallerFilePath] string file = "") {
-
-            Prop.ForAll<T[]>(ts => RevRevIsOriginal(ts)).QuickCheck();
-
-            Prop.ForAll<int[]>(ts => RevRevIsOriginalInt(ts)).QuickCheck();
+        public static void Samples([CallerFilePath] string file = "") {
 
             //[insertKeepsOrder]
             Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())

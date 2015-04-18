@@ -57,13 +57,13 @@ module Command =
             override __.Post(model,actual) = checkPostCondition (model,actual)
             override __.Pre model = defaultArg preCondition (fun _ -> true) model}
 
-    [<CompiledName("Create"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let createFunc (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
-        create None runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
+//    [<CompiledName("Create"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+//    let createFunc (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
+//        create None runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
 
-    [<CompiledName("Create"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let createPreFunc (preCondition:Func<_,_>) (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
-        create (Some preCondition.Invoke) runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
+//    [<CompiledName("Create"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+//    let createPreFunc (preCondition:Func<_,_>) (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
+//        create (Some preCondition.Invoke) runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
 
     let private genCommands (spec:ICommandGenerator<_,_>) = 
         let rec genCommandsS state size =
@@ -95,9 +95,3 @@ module Command =
                             |> Prop.trivial (l.Length=0)
                             |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
                             |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" )
-
-[<AbstractClass;Sealed;Extension>]
-type CommandExtensions =
-    [<Extension>]
-    static member ToSpecification(generator:ICommandGenerator<'Actual,'Model>) =
-        PropertySpecification(Command.toProperty generator) :> Specification
