@@ -144,8 +144,8 @@ module private Testable =
             try
                 property body.Value
             with
-                e -> ofResult (Res.exc e)
-    
+            | :? DiscardException -> ofResult Res.rejected
+            | e -> ofResult (Res.exc e)    
 
     let private shrinking shrink x pf =
         let promoteRose m = Gen (fun s r -> Rose.map (fun (Gen m') -> m' s r) m)

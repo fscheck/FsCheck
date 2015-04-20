@@ -108,6 +108,9 @@ Arguments exhausted after 97 tests.
 ```
 indicates that 97 test cases satisfying the condition were found, and that the property held in those 97 cases. 
 Notice that in this case the generated values had to be restricted to int. This is because the generated values need to be comparable, but this is not reflected in the types. Therefore, without the explicit restriction, FsCheck could generate lists containing different types (subtypes of objects), and these are not mutually comparable.
+
+You can also use the `discard()` function (`Prop.Discard()` in C#) to discard a test case in a generator definition or in the test body.
+
 #### Lazy Properties
 Since F# has eager evaluation by default, the above property does more work than necessary: it evaluates the property at the right of the condition no matter what the outcome of the condition on the left. While only a performance consideration in the above example, this may limit the expressiveness of properties - consider:
 ```fsharp
