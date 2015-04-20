@@ -29,7 +29,7 @@ module Runner =
             gen {
                 let! a = Gen.elements [1;2;3;4]
                 return if a > 3 
-                            then raise DiscardException
+                            then discard()
                             else a
             }
 

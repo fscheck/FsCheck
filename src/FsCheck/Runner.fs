@@ -13,8 +13,6 @@ namespace FsCheck
 open Random
 open System
 
-exception DiscardException
-
 [<NoEquality;NoComparison>]
 type TestData = 
     { NumberOfTests: int

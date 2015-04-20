@@ -63,6 +63,10 @@ module PropOperators =
 
     open Testable
 
+    exception DiscardException
+
+    let discard() = raise DiscardException
+
     ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
     let (==>) condition (assertion:'Testable) = Prop.given condition (assertion,property Res.rejected)
 
