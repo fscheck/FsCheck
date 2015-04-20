@@ -110,6 +110,8 @@ type Property = private Property of Gen<Rose<Result>> with static member interna
 
 module private Testable =
 
+    exception DiscardException
+
     open System
     open TypeClass
                    
@@ -157,8 +159,9 @@ module private Testable =
         //safeForce (lazy ( body a )) //this doesn't work - exception escapes??
         try 
             body a |> property
-        with e -> 
-            Prop.ofResult (Res.exc e)
+        with
+        | :? DiscardException -> Prop.ofResult Res.rejected
+        | e -> Prop.ofResult (Res.exc e)
         |> Property.GetGen 
         |> Gen.map (Rose.map (argument a))
 

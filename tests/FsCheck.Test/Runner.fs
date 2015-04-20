@@ -24,10 +24,10 @@ module Runner =
         underTest <= 0.0
 
     [<Fact>]
-    let ``should discard case with discardexception``() =
+    let ``should discard case with discardexception in gen``() =
         let myGen = 
             gen {
-                let! a = Gen.elements [1;2;3;4]
+                let! a = Gen.choose(0, 4)
                 return if a > 3 
                             then discard()
                             else a
@@ -36,6 +36,12 @@ module Runner =
         let myArb = Arb.fromGen myGen
         
         Check.QuickThrowOnFailure <| Prop.forAll myArb (fun a -> a <= 3)
+
+    [<Fact>]
+    let ``should discard case with discardexception in test``() =
+        //let myArb = Arb.Default.Int32() |> Arb.filter (fun a -> a < 4)
+
+        Check.QuickThrowOnFailure <| (fun a -> if a > 3 then discard() else true)
         
     [<Fact>]
     let ``should replay property with one generator``() =
