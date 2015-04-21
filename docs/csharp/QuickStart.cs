@@ -15,22 +15,25 @@ namespace CSharp
         {
             //[revRevIsOrig]
             Func<int[],bool> revRevIsOrig = xs => xs.Reverse().Reverse().SequenceEqual( xs );
-            Check.Quick(revRevIsOrig);
+            Prop.ForAll(revRevIsOrig).QuickCheck();
             //[/revRevIsOrig]
 
             //[revIsOrig]
-            Check.Quick<Func<int[],bool>>(xs => xs.Reverse().SequenceEqual(xs));
+            Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs))
+                .QuickCheck();
             //[/revIsOrig]
 
             //[revRevIsOrigFloat]
-            Check.Quick<Func<double[], bool>>(xs => xs.Reverse().Reverse().SequenceEqual(xs));
+            Prop.ForAll<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
+                .QuickCheck();
             //[/revRevIsOrigFloat]
         }
 
         //[revRevIsOrigFact]
         [Fact]
         public void RevRevIsOrig(){
-            Check.QuickThrowOnFailure<Func<int[], bool>>(xs => xs.Reverse().Reverse().SequenceEqual(xs));
+            Prop.ForAll<int[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
+                .QuickCheckThrowOnFailure();
         }
         //[/revRevIsOrigFact]
     }

@@ -306,6 +306,7 @@ module Runner =
 
 open Runner
 open System
+open System.Runtime.CompilerServices
 
 type Config with
     ///The quick configuration only prints a summary result at the end of the test.
@@ -421,5 +422,3 @@ type Check =
     ///and throws on failure or exhaustion.
     static member VerboseThrowOnFailureAll<'Test>() = Check.All(Config.VerboseThrowOnFailure,typeof<'Test>)
 
-
-    

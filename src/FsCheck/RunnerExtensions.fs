@@ -1,6 +1,7 @@
 ﻿namespace FsCheck
 
 open System
+open System.Runtime.CompilerServices
 
 ///Configure the test run.
 type Configuration() =
@@ -54,3 +55,17 @@ type Configuration() =
           Replay = replay
           Arbitrary = []
         }
+
+
+[<AbstractClass;Sealed;Extension>]
+type CheckExtensions =
+    [<Extension>]
+    static member Check(property:Property,config:Configuration) = Check.One(config.ToConfig(),property)
+    [<Extension>]
+    static member QuickCheck(property:Property) = Check.Quick property
+    [<Extension>]
+    static member QuickCheckThrowOnFailure(property:Property) = Check.QuickThrowOnFailure property
+    [<Extension>]
+    static member VerboseCheck(property:Property) = Check.Verbose property
+    [<Extension>]
+    static member VerboseCheckThrowOnFailure(property:Property) = Check.VerboseThrowOnFailure property

@@ -10,7 +10,7 @@ namespace CSharp.DocSnippets
     {
         static void Main(string[] args) {
             QuickStart.Samples();
-            Properties.Samples<int>();
+            Properties.Samples();
         }
     }
 }
