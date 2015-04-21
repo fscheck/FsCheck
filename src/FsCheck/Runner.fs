@@ -103,10 +103,17 @@ module Runner =
               let newSize = resize initSize
               //printfn "Before generate"
               //result forced here!
-              let (MkRose (Lazy result,shrinks)) = Gen.eval (newSize |> round |> int) rnd2 gen
-              //printfn "After generate"
-              //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
+              let result, shrinks =
+                  try
+                    let (MkRose (Lazy result,shrinks)) = Gen.eval (newSize |> round |> int) rnd2 gen
+                    result, shrinks
+                    //printfn "After generate"
+                    //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
+                  with :? DiscardException -> 
+                    Res.rejected, Seq.empty
+
               yield Generated result.Arguments
+
               match result.Outcome with
                 | Outcome.Rejected -> 
                     yield Failed result 
@@ -121,7 +128,7 @@ module Runner =
               yield! test newSize resize rnd1 gen
         }
 
-    let private testsDone config outcome origArgs ntest nshrinks usedSeed stamps  =    
+    let private testsDone config testStep origArgs ntest nshrinks usedSeed stamps  =    
         let entry (n,xs) = (100 * n / ntest),xs
         let table = stamps 
                     |> Seq.filter (not << List.isEmpty)
@@ -133,7 +140,7 @@ module Runner =
 
         let testResult =
             let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
-            match outcome with
+            match testStep with
                 | Passed _ -> TestResult.True testData
                 | Falsified result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
                 | Failed _ -> TestResult.Exhausted testData

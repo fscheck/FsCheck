@@ -22,6 +22,26 @@ module Runner =
     [<Property( Arbitrary=[| typeof<TestArbitrary2>; typeof<TestArbitrary1> |] )>]
     let ``should register Arbitrary instances from Config in last to first order``(underTest:float) =
         underTest <= 0.0
+
+    [<Fact>]
+    let ``should discard case with discardexception in gen``() =
+        let myGen = 
+            gen {
+                let! a = Gen.choose(0, 4)
+                return if a > 3 
+                            then discard()
+                            else a
+            }
+
+        let myArb = Arb.fromGen myGen
+        
+        Check.QuickThrowOnFailure <| Prop.forAll myArb (fun a -> a <= 3)
+
+    [<Fact>]
+    let ``should discard case with discardexception in test``() =
+        //let myArb = Arb.Default.Int32() |> Arb.filter (fun a -> a < 4)
+
+        Check.QuickThrowOnFailure <| (fun a -> if a > 3 then discard() else true)
         
     [<Fact>]
     let ``should replay property with one generator``() =

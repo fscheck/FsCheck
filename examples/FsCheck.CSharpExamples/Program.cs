@@ -151,6 +151,10 @@ namespace FsCheck.CSharpExamples
             Prop.ForAll<string>(s => true)
                 .Check(new Configuration { Name = "Configuration Demo", MaxNbOfTest = 500 });
 
+            // discard
+
+            Prop.ForAll<int>(s => s >= 4 || Prop.Discard()).QuickCheckThrowOnFailure();
+
             Console.WriteLine();
 
             // replay

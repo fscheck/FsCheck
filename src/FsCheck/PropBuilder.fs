@@ -187,6 +187,8 @@ type Prop private() =
     static do ignore Arb.init.Value
     static let noshrink = fun _ -> Seq.empty
 
+    static member Discard() = PropOperators.discard(); true
+
     static member ForAll(assertion:bool) =
         Specification<unit>(Arb.from.Generator, Arb.from.Shrinker, (fun () -> property assertion), [], [], [])
 

@@ -110,6 +110,8 @@ type Property = private Property of Gen<Rose<Result>> with static member interna
 
 module private Testable =
 
+    exception DiscardException
+
     open System
     open TypeClass
                    
@@ -142,8 +144,8 @@ module private Testable =
             try
                 property body.Value
             with
-                e -> ofResult (Res.exc e)
-    
+            | :? DiscardException -> ofResult Res.rejected
+            | e -> ofResult (Res.exc e)    
 
     let private shrinking shrink x pf =
         let promoteRose m = Gen (fun s r -> Rose.map (fun (Gen m') -> m' s r) m)
@@ -157,8 +159,9 @@ module private Testable =
         //safeForce (lazy ( body a )) //this doesn't work - exception escapes??
         try 
             body a |> property
-        with e -> 
-            Prop.ofResult (Res.exc e)
+        with
+        | :? DiscardException -> Prop.ofResult Res.rejected
+        | e -> Prop.ofResult (Res.exc e)
         |> Property.GetGen 
         |> Gen.map (Rose.map (argument a))
 
