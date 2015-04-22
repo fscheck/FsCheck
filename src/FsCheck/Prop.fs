@@ -73,6 +73,18 @@ module Prop =
     let given condition (iftrue:'TestableIfTrue, ifFalse:'TestableIfFalse) = 
         if condition then property iftrue else property ifFalse
 
+    ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
+    [<CompiledName("When"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let condBool condition (assertion:bool) = given condition (assertion,property Res.rejected)
+
+    ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
+    [<CompiledName("When"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let condAction condition (assertion:Action) = given condition (lazy (assertion.Invoke()), property Res.rejected)
+
+    ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
+    [<CompiledName("When"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let condFuncBool condition (assertion:Func<bool>) = given condition (lazy (assertion.Invoke()), property Res.rejected)
+
     ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
     ///and a failure otherwise.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
@@ -83,16 +95,16 @@ module Prop =
         let add res = { res with Stamp = str :: res.Stamp } 
         Prop.mapResult add
 
-    ///Classify test cases combinator. Test cases satisfying the condition are assigned the classification given.
+    ///Classify test cases. Test cases satisfying the condition are assigned the classification given.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let classify b name : ('Testable -> Property) = if b then stamp name else property
 
-    ///Count trivial cases property combinator. Test cases for which the condition is True are classified as trivial.
+    ///Count trivial cases. Test cases for which the condition is True are classified as trivial.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let trivial b : ('Testable -> Property) = classify b "trivial"
 
-    ///Collect data values property combinator. The argument of collect is evaluated in each test case, 
-    ///and the distribution of values is reported, using any_to_string.
+    ///Collect data values. The argument of collect is evaluated in each test case, 
+    ///and the distribution of values is reported, using sprintf "%A".
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let collect (v:'CollectedValue) : ('Testable -> Property) = stamp <| sprintf "%A" v
 

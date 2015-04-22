@@ -25,9 +25,9 @@ namespace FsCheck.MsTest.Examples
         [TestMethod, ExpectedException(typeof(Exception))]
         public void Insert()
         {            
-             Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
-                .QuickCheckThrowOnFailure();
+             Prop.ForAll<int, int[]>((x, xs) => 
+                 Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered())
+                     .QuickCheckThrowOnFailure());
         }
 
         [TestMethod]

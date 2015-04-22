@@ -64,8 +64,12 @@ type CheckExtensions =
     [<Extension>]
     static member QuickCheck(property:Property) = Check.Quick property
     [<Extension>]
+    static member QuickCheck(property:Property, testName:string) = Check.Quick(testName, property)
+    [<Extension>]
     static member QuickCheckThrowOnFailure(property:Property) = Check.QuickThrowOnFailure property
     [<Extension>]
     static member VerboseCheck(property:Property) = Check.Verbose property
+    [<Extension>]
+    static member VerboseCheck(property:Property, testName:string) = Check.Verbose(testName, property)
     [<Extension>]
     static member VerboseCheckThrowOnFailure(property:Property) = Check.VerboseThrowOnFailure property

@@ -52,8 +52,8 @@ namespace FsCheck.CSharpExamples
         {
             //A simple example
 
-            Check.Quick<Func<int[], bool>> (xs => xs.Reverse().Reverse().SequenceEqual(xs));
-                //.QuickCheck("RevRev");
+            Prop.ForAll<int[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
+                .QuickCheck("RevRev");
 
             Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs))
                 .QuickCheck("RevId");
@@ -66,39 +66,37 @@ namespace FsCheck.CSharpExamples
                 .QuickCheck("RevRevFloat");
 
             //conditional properties
-            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
+            Prop.ForAll<int, int[]>((x, xs) => Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered()))
                 .QuickCheck("Insert");
 
-            Prop.ForAll<int>(a => 1 / a == 1 / a)
-                .When(a => a != 0)
+            Prop.ForAll<int>(a => Prop.When(a != 0, () => 1 / a == 1 / a))
                 .QuickCheck("DivByZero");
 
             //counting trivial cases
-            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
-                .Classify( (x,xs) => xs.Count() == 0, "trivial")
+            Prop.ForAll<int, int[]>((x, xs) => 
+                Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered())
+                    .Classify(xs.Count() == 0, "trivial"))
                 .QuickCheck("InsertTrivial");
 
             //classifying test values
-            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
-                .Classify((x, xs) => new int[] { x }.Concat(xs).IsOrdered(), "at-head")
-                .Classify((x, xs) => xs.Concat(new int[] { x }).IsOrdered(), "at-tail")
+            Prop.ForAll<int, int[]>((x, xs) => 
+                Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered())
+                    .Classify(new [] { x }.Concat(xs).IsOrdered(), "at-head")
+                    .Classify(xs.Concat(new int[] { x }).IsOrdered(), "at-tail"))
                 .QuickCheck("InsertClassify");
 
             //collecting data values
-            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
-                .Collect((x, xs) => "length " + xs.Count().ToString())
+            Prop.ForAll<int, int[]>((x, xs) => 
+                Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered())
+                    .Collect("length " + xs.Count().ToString()))
                 .QuickCheck("InsertCollect");
 
             //combining observations
-            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
-                .Classify((x, xs) => new int[] { x }.Concat(xs).IsOrdered(), "at-head")
-                .Classify((x, xs) => xs.Concat(new int[] { x }).IsOrdered(), "at-tail")
-                .Collect((x, xs) => "length " + xs.Count().ToString())
+            Prop.ForAll<int, int[]>((x, xs) => 
+                Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered())
+                    .Classify(new [] { x }.Concat(xs).IsOrdered(), "at-head")
+                    .Classify(xs.Concat(new [] { x }).IsOrdered(), "at-tail")
+                    .Collect("length " + xs.Count().ToString()))
                 .QuickCheck("InsertCombined");
 
             //---labelling sub properties-----
