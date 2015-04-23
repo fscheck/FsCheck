@@ -1,12 +1,3 @@
-### Don't install or downgrade Nuget package 2.0.0 ###
-
-I made a mistake and pushed a version 2.0.0 to nuget by mistake on 4 Feb (I guess one of the downsides of having a very automated release process...). This version is not yet ready for prime time. If you are one of the 62 people who have installed it, please downgrade.
-
-It is now unlisted but this can take a while to filter through nuget's system apparently.
-
-Currently v1.0.4 is what you should use, unless you really want the bleeding edge.
-
-Sorry!
 
 ### What is FsCheck? ###
 
