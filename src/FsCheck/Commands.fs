@@ -58,12 +58,13 @@ module Command =
             override __.Pre model = defaultArg preCondition (fun _ -> true) model}
 
     [<CompiledName("Create"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let createFunc (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
-        create None runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
+    let createFuncProp (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Property>) =
+        create None runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b))
 
     [<CompiledName("Create"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let createPreFunc (preCondition:Func<_,_>) (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,Specification>) =
-        create (Some preCondition.Invoke) runActual.Invoke runModel.Invoke (fun (a,b) -> postCondition.Invoke(a,b).Build())
+    let createFuncBool (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,bool>) =
+        create None runActual.Invoke runModel.Invoke (fun (a,b) -> Prop.ofTestable <| postCondition.Invoke(a,b))
+
 
     let private genCommands (spec:ICommandGenerator<_,_>) = 
         let rec genCommandsS state size =
@@ -79,7 +80,7 @@ module Command =
         spec.InitialModel |> genCommandsS |> Gen.sized
      
     ///Turn a specification into a property.
-    [<CompiledName("ToProperty"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toProperty (spec:ICommandGenerator<'Actual,'Model>) =
         let rec applyCommands (actual,model) (cmds:list<Command<_,_>>) =
             match cmds with
@@ -99,5 +100,4 @@ module Command =
 [<AbstractClass;Sealed;Extension>]
 type CommandExtensions =
     [<Extension>]
-    static member ToSpecification(generator:ICommandGenerator<'Actual,'Model>) =
-        PropertySpecification(Command.toProperty generator) :> Specification
+    static member ToProperty(spec: ICommandGenerator<'Actual,'Model>) = Command.toProperty spec

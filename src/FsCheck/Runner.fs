@@ -313,6 +313,7 @@ module Runner =
 
 open Runner
 open System
+open System.Runtime.CompilerServices
 
 type Config with
     ///The quick configuration only prints a summary result at the end of the test.
@@ -363,6 +364,7 @@ type Config with
     ///The default configuration is the quick configuration.
     static member Default = Config.Quick
 
+[<AbstractClass;Sealed>]
 type Check =
 
     ///Check the given property using the given config.
@@ -427,5 +429,3 @@ type Check =
     ///and throws on failure or exhaustion.
     static member VerboseThrowOnFailureAll<'Test>() = Check.All(Config.VerboseThrowOnFailure,typeof<'Test>)
 
-
-    

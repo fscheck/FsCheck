@@ -14,20 +14,19 @@ namespace FsCheck.NUnit.CSharpExamples
             return xs.Reverse().Reverse().SequenceEqual(xs);
         }
 
-        //Using Spec fluent interface
         // Note: should fail
         [Property(Verbose = true)]
-        public Specification RevId_shouldFail()
+        public Property RevId_shouldFail()
         {
             return Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs));
         }
 
-        //TODO: do not call Commands.asProperty. Implement check for ISpecification directly
+        //TODO: do not call toProperty.
         // Note this one should fail
         [Property]
-        public Specification Counter_shouldFail()
+        public Property Counter_shouldFail()
         {
-            return new CounterSpec().ToSpecification();
+            return new CounterSpec().ToProperty();
         }
     }
 }

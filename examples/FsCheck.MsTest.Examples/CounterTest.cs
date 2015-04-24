@@ -11,13 +11,13 @@ namespace FsCheck.MsTest.Examples
         [TestMethod, ExpectedException(typeof(Exception))]
         public void QuickCounter()
         {
-            new CounterSpec().ToSpecification().QuickCheckThrowOnFailure();
+            new CounterSpec().ToProperty().QuickCheckThrowOnFailure();
         }
 
         [TestMethod, ExpectedException(typeof(Exception))]
         public void VerboseCounter()
         {
-            new CounterSpec().ToSpecification().VerboseCheckThrowOnFailure();
+            new CounterSpec().ToProperty().VerboseCheckThrowOnFailure();
         }
     }
 }

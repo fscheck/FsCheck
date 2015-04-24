@@ -47,10 +47,12 @@ namespace FsCheck.CSharpExamples
 
     class Program
     {
+
         static void Main(string[] args)
         {
             //A simple example
-            Prop.ForAll<int[]>(xs => xs.Reverse().Reverse().SequenceEqual( xs ))
+
+            Prop.ForAll<int[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
                 .QuickCheck("RevRev");
 
             Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs))
@@ -64,53 +66,55 @@ namespace FsCheck.CSharpExamples
                 .QuickCheck("RevRevFloat");
 
             //conditional properties
-            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
+            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
                 .QuickCheck("Insert");
 
-            Prop.ForAll<int>(a => 1 / a == 1 / a)
-                .When(a => a != 0)
+            Prop.ForAll<int>(a => new Func<bool>(() => 1 / a == 1 / a).When(a != 0))
                 .QuickCheck("DivByZero");
 
             //counting trivial cases
-            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
-                .Classify( (x,xs) => xs.Count() == 0, "trivial")
+            Prop.ForAll<int, int[]>((x, xs) => 
+                    xs.Insert(x).IsOrdered()
+                    .When(xs.IsOrdered())
+                    .Classify(xs.Count() == 0, "trivial"))
                 .QuickCheck("InsertTrivial");
 
             //classifying test values
-            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
-                .Classify((x, xs) => new int[] { x }.Concat(xs).IsOrdered(), "at-head")
-                .Classify((x, xs) => xs.Concat(new int[] { x }).IsOrdered(), "at-tail")
+            Prop.ForAll<int, int[]>((x, xs) => 
+                    xs.Insert(x).IsOrdered()
+                    .When(xs.IsOrdered())
+                    .Classify(new [] { x }.Concat(xs).IsOrdered(), "at-head")
+                    .Classify(xs.Concat(new int[] { x }).IsOrdered(), "at-tail"))
                 .QuickCheck("InsertClassify");
 
             //collecting data values
-            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
-                .Collect((x, xs) => "length " + xs.Count().ToString())
+            Prop.ForAll<int, int[]>((x, xs) =>
+                    xs.Insert(x).IsOrdered()
+                    .When(xs.IsOrdered())
+                    .Collect("length " + xs.Count().ToString()))
                 .QuickCheck("InsertCollect");
 
             //combining observations
-            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered())
-                .When((x, xs) => xs.IsOrdered())
-                .Classify((x, xs) => new int[] { x }.Concat(xs).IsOrdered(), "at-head")
-                .Classify((x, xs) => xs.Concat(new int[] { x }).IsOrdered(), "at-tail")
-                .Collect((x, xs) => "length " + xs.Count().ToString())
+            Prop.ForAll<int, int[]>((x, xs) =>
+                    xs.Insert(x).IsOrdered()
+                    .When(xs.IsOrdered())
+                    .Classify(new [] { x }.Concat(xs).IsOrdered(), "at-head")
+                    .Classify(xs.Concat(new [] { x }).IsOrdered(), "at-tail")
+                    .Collect("length " + xs.Count().ToString()))
                 .QuickCheck("InsertCombined");
 
             //---labelling sub properties-----
-            //hmm. Cannot express result = m + n once this way.
-            Prop.ForAll<int, int>((m, n) => m + n >= m).Label("result > #1") //maybe add overload with label to ForAll?
-                .And((m, n) => m + n >= n, "result > #2")
-                .And((m, n) => m + n < m + n, "result not sum")
-                .QuickCheck("ComplexProp");
+            Prop.ForAll<int, int>((m, n) => {
+                    var result = m + n;
+                    return ( result >= m).Label("result > #1")
+                       .And( result >= n).Label("result > #2")
+                       .And( result < m + n).Label("result not sum");
+            }).QuickCheck("ComplexProp");
 
-            Prop.ForAll<int>(x => false).Label("Always false")
-                .And(x => Math.Abs(x) - x == 0) //actually, And should start a new property, not just a new assertion...
+            Prop.ForAll<int>(x => false.Label("Always false")
+                            .And(Math.Abs(x) - x == 0))
                 .QuickCheck("Label");
 
-            //rest seem hard to express without real "And" and "Or" support
 
             //-------Test data generators-----------
             //can't be made generic, only in separate method?
@@ -120,7 +124,6 @@ namespace FsCheck.CSharpExamples
             
             var chooseBool = Gen.OneOf( Gen.Constant( true), Gen.Constant(false));
 
-            //no tuples in C# until BCL 4.0...can we do better now?
             var chooseBool2 = Gen.Frequency(
                 new WeightAndValue<Gen<bool>>(2, Gen.Constant(true)),
                 new WeightAndValue<Gen<bool>>(1, Gen.Constant(false)));

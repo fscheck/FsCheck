@@ -10,12 +10,12 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
         private readonly Command<Counter, int> Inc =
                 Command.Create<Counter, int>(c => { c.Inc(); return c; },
                                          c => c + 1,
-                                         (counter, i) => Prop.ForAll(() => counter.Get() == i));
+                                         (counter, i) => counter.Get() == i);
 
         private readonly Command<Counter, int> Dec =
                 Command.Create<Counter, int>(c => { c.Dec(); return c; },
                                          c => c - 1,
-                                         (counter, i) => Prop.ForAll(() => counter.Get() == i));
+                                         (counter, i) => counter.Get() == i);
 
         public Gen<Command<Counter, int>> Next(int value)
         {

@@ -105,7 +105,7 @@ module internal Rose =
     let ofLazy x = MkRose (x,Seq.empty)
 
 
-///Type synonym for a test result generator.
+///A Property can be checked by FsCheck.
 type Property = private Property of Gen<Rose<Result>> with static member internal GetGen (Property g) = g
 
 module private Testable =

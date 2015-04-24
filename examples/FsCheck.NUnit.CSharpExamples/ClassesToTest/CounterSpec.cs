@@ -46,7 +46,7 @@ namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
         {
             public override Property Post(Counter c, int m)
             {
-                return Prop.ForAll(m == c.Get()).Build();
+                return (m == c.Get()).ToProperty();
             }
 
             public override string ToString()

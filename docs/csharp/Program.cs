@@ -9,7 +9,8 @@ namespace CSharp.DocSnippets
     class Program
     {
         static void Main(string[] args) {
-            Properties.Samples<int>();
+            QuickStart.Samples();
+            Properties.Samples();
         }
     }
 }
