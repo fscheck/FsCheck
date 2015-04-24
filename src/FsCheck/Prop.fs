@@ -124,13 +124,14 @@ module Prop =
     let ofTestable (testable:'Testable) =
         property testable
 
+    [<CompiledName("Discard")>]
+    let discard() = raise DiscardException
+
 ///Operators for Prop.
 [<AutoOpen>]
 module PropOperators =
 
     open Testable
-
-    let discard() = raise DiscardException
 
     ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
     let (==>) condition (assertion:'Testable) = Prop.given condition (assertion,property Res.rejected)

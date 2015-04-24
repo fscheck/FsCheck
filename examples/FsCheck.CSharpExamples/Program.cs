@@ -156,7 +156,7 @@ namespace FsCheck.CSharpExamples
 
             // discard
 
-            Prop.ForAll<int>(s => s >= 4 || Prop.Discard()).QuickCheckThrowOnFailure();
+            Prop.ForAll<int>(s => s >= 4 || Prop.Discard<bool>()).QuickCheck();
 
             Console.WriteLine();
 
