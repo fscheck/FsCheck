@@ -1,12 +1,13 @@
 ### 2.0.0-alpha - To be released
   * Rename FsCheckTestCaseBuider to Builder. (potentially breaking change)
   * Add RequireQualifiedAccess to TestResult and Outcome. (breaking change for IRunner implementations and test framework integrations)
-  * Rename UnbrowsableObject to Specification (breaking change)
-  * In the Spec interface, if a generator but no shrinker is given, don't use the shrinker derived from the type (breaking change)
+  * Remove Fluent API and SpecBuilder in favor of overloads in Prop and extension methods on Property (breaking change)
   * Add extension methods to allow working with Arbitrary from C#/VB. 
-  * Add missing arities of Spec.For and add overloads that take Arbitrary.
-  * Rename Any to Gen. Rename pretty much all methods on Any to match the existing methods they wrap on Gen module. (painful breaking change)
-  * Add missing Gen and Arbitrary extension methods and C# wrappers.
+  * Rename Any to Gen. Rename pretty much all methods on Any to match the existing methods they wrap on Gen module. (breaking change)
+  * Add missing Gen and Arbitrary extension methods and C#/VB wrappers.
+  * Make Property a real type instead of a type alias.
+  * Add discard (by Mauricio Scheffer)
+  * Various improvements and changes to Command interface for easier consumption, also from C#/VB (breaking change)
 
 ### 1.0.4 - 9 December 2014
   * Add NonNull<T>.
