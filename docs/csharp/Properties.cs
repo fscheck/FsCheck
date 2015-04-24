@@ -57,12 +57,12 @@ namespace CSharp.DocSnippets
         public static void Samples([CallerFilePath] string file = "") {
 
             //[insertKeepsOrder]
-            Prop.ForAll<int, int[]>((x, xs) => Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered()))
+            Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
                 .QuickCheck();
             //[/insertKeepsOrder]
 
             //[lazy]
-            Prop.ForAll<int>(a => Prop.When(a != 0, () => 1 / a == 1 / a))
+            Prop.ForAll<int>(a => new Func<bool>(() => 1 / a == 1 / a).When(a != 0))
                 .QuickCheck();
             //[/lazy]
 
@@ -75,30 +75,34 @@ namespace CSharp.DocSnippets
             //[/insertWithArb]
             
             //[insertTrivial]
-            Prop.ForAll<int, int[]>((x, xs) => 
-                    Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered())
+            Prop.ForAll<int, int[]>((x, xs) =>
+                        xs.Insert(x).IsOrdered()
+                        .When(xs.IsOrdered())
                         .Classify(xs.Count() == 0, "trivial"))
                 .QuickCheck();
             //[/insertTrivial]
 
             //[insertClassify]
-            Prop.ForAll<int, int[]>((x, xs) => 
-                Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered())
+            Prop.ForAll<int, int[]>((x, xs) =>
+                    xs.Insert(x).IsOrdered()
+                    .When(xs.IsOrdered())
                     .Classify(new[] { x }.Concat(xs).IsOrdered(), "at-head")
                     .Classify(xs.Concat(new int[] { x }).IsOrdered(), "at-tail"))
                 .QuickCheck();
             //[/insertClassify]
 
             //[insertCollect]
-            Prop.ForAll<int, int[]>((x, xs) => 
-                Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered())
+            Prop.ForAll<int, int[]>((x, xs) =>
+                    xs.Insert(x).IsOrdered()
+                    .When(xs.IsOrdered())
                     .Collect("length " + xs.Count().ToString()))
                 .QuickCheck();
             //[/insertCollect]
 
             //[insertCombined]
-            Prop.ForAll<int, int[]>((x, xs) => 
-                Prop.When(xs.IsOrdered(), xs.Insert(x).IsOrdered())
+            Prop.ForAll<int, int[]>((x, xs) =>
+                    xs.Insert(x).IsOrdered()
+                    .When(xs.IsOrdered())
                     .Classify(new [] { x }.Concat(xs).IsOrdered(), "at-head")
                     .Classify(xs.Concat(new int[] { x }).IsOrdered(), "at-tail")
                     .Collect("length " + xs.Count().ToString()))

@@ -73,17 +73,7 @@ module Prop =
     let given condition (iftrue:'TestableIfTrue, ifFalse:'TestableIfFalse) = 
         if condition then property iftrue else property ifFalse
 
-    ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
-    [<CompiledName("When"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let condBool condition (assertion:bool) = given condition (assertion,property Res.rejected)
-
-    ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
-    [<CompiledName("When"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let condAction condition (assertion:Action) = given condition (lazy (assertion.Invoke()), property Res.rejected)
-
-    ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
-    [<CompiledName("When"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let condFuncBool condition (assertion:Func<bool>) = given condition (lazy (assertion.Invoke()), property Res.rejected)
+    
 
     ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
     ///and a failure otherwise.
