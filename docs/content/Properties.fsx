@@ -322,6 +322,10 @@ Check.Quick multiply
 
 (**
     [lang=csharp,file=../csharp/Properties.cs,key=multipleLabels]*)
+
+(***include-output:multiply***)
+
+(**
 Notice that the above property combines subproperties by tupling them. This works for tuples up to length 6 and lists:
 
 *    `(<property1>,<property2>,...,<property6>)` means `<property1> .&. <property2> .&.... .&.<property6>`
