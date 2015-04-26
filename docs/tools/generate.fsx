@@ -82,5 +82,9 @@ let buildDocumentation () =
 
 // Generate
 copyFiles()
+#if HELP
 buildDocumentation()
+#endif
+#if REFERENCE
 buildReference()
+#endif

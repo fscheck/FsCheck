@@ -253,16 +253,16 @@ let generateHelp' fail debug =
             traceImportant "generating help documentation failed"
 
 let generateHelp fail =
-    generateHelp' fail false
+    generateHelp' fail true
 
 
 Target "KeepRunning" (fun _ ->    
-    use watcher = new FileSystemWatcher(DirectoryInfo("docs/content").FullName,"*.*")
+    use watcher = new FileSystemWatcher(DirectoryInfo("docs/content").FullName,"*.fsx")
     watcher.EnableRaisingEvents <- true
-    watcher.Changed.Add(fun e -> generateHelp false)
-    watcher.Created.Add(fun e -> generateHelp false)
-    watcher.Renamed.Add(fun e -> generateHelp false)
-    watcher.Deleted.Add(fun e -> generateHelp false)
+    watcher.Changed.Add(fun e -> trace (sprintf "%A %A" e.Name e.ChangeType); generateHelp false)
+    watcher.Created.Add(fun e -> trace (sprintf "%A %A" e.Name e.ChangeType); generateHelp false)
+    watcher.Renamed.Add(fun e -> trace (sprintf "%A %A" e.Name e.ChangeType); generateHelp false)
+    //watcher.Deleted.Add(fun e -> trace (sprintf "%A %A" e.Name e.ChangeType); generateHelp false)
 
     traceImportant "Waiting for help edits. Press any key to stop."
 
@@ -273,7 +273,7 @@ Target "KeepRunning" (fun _ ->
 )
 
 Target "GenerateDocs" (fun _ ->
-    executeFSIWithArgs "docs/tools" "generate.fsx" ["--define:RELEASE"] [] |> ignore
+    executeFSIWithArgs "docs/tools" "generate.fsx" ["--define:RELEASE"; "--define:HELP"; "--define:REFERENCE"] [] |> ignore
 )
 Target "GenerateDocsJa" (fun _ ->
     executeFSIWithArgs "docs/tools" "generate.ja.fsx" ["--define:RELEASE"] [] |> ignore
