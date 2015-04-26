@@ -199,6 +199,8 @@ Target "SourceLink" (fun _ ->
 type OptionalString = string option
 
 open System
+open System.IO
+
 Target "NuGet" (fun _ ->        
     let createFilesList (fileNames: string list) (extra: list<string*string> ) = 
         
@@ -237,6 +239,38 @@ Target "NuGet" (fun _ ->
 
 // --------------------------------------------------------------------------------------
 // Generate the documentation
+
+let generateHelp' fail debug =
+    let args =
+        if debug then ["--define:HELP"]
+        else ["--define:RELEASE"; "--define:HELP"]
+    if executeFSIWithArgs "docs/tools" "generate.fsx" args [] then
+        traceImportant "Help generated"
+    else
+        if fail then
+            failwith "generating help documentation failed"
+        else
+            traceImportant "generating help documentation failed"
+
+let generateHelp fail =
+    generateHelp' fail false
+
+
+Target "KeepRunning" (fun _ ->    
+    use watcher = new FileSystemWatcher(DirectoryInfo("docs/content").FullName,"*.*")
+    watcher.EnableRaisingEvents <- true
+    watcher.Changed.Add(fun e -> generateHelp false)
+    watcher.Created.Add(fun e -> generateHelp false)
+    watcher.Renamed.Add(fun e -> generateHelp false)
+    watcher.Deleted.Add(fun e -> generateHelp false)
+
+    traceImportant "Waiting for help edits. Press any key to stop."
+
+    System.Console.ReadKey() |> ignore
+
+    watcher.EnableRaisingEvents <- false
+    watcher.Dispose()
+)
 
 Target "GenerateDocs" (fun _ ->
     executeFSIWithArgs "docs/tools" "generate.fsx" ["--define:RELEASE"] [] |> ignore
