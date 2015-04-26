@@ -1,4 +1,4 @@
-### 2.0.0-alpha - To be released
+### 2.0.0-alpha - 26 April 2015
   * Rename FsCheckTestCaseBuider to Builder. (potentially breaking change)
   * Add RequireQualifiedAccess to TestResult and Outcome. (breaking change for IRunner implementations and test framework integrations)
   * Remove Fluent API and SpecBuilder in favor of overloads in Prop and extension methods on Property (breaking change)
@@ -8,6 +8,7 @@
   * Make Property a real type instead of a type alias.
   * Add discard (by Mauricio Scheffer)
   * Various improvements and changes to Command interface for easier consumption, also from C#/VB (breaking change)
+  * Add explicit dependency on FSharp.Core Nuget package to hopefully reduce version confusion and make things easier for C#/VB users.
 
 ### 1.0.4 - 9 December 2014
   * Add NonNull<T>.
