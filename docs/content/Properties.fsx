@@ -274,7 +274,7 @@ let insertCombined (x:int) xs =
 Check.Quick insertCombined
 
 (**
-    [lang=csharp,file=../csharp/Properties.cs,key=insertCollect]*)
+    [lang=csharp,file=../csharp/Properties.cs,key=insertCombined]*)
 
 (***include-output:insertCombined***)
 
@@ -297,9 +297,12 @@ For example,*)
 let complex (m: int) (n: int) =
   let res = n + m
   (res >= m)    |@ "result > #1" .&.
-  (res >= n)    |@ "result > #2" .&.
+  (res >= n)    |@ "result > #2" .&. 
   (res < m + n) |@ "result not sum"
 Check.Quick complex
+
+(**
+    [lang=csharp,file=../csharp/Properties.cs,key=complexProperty]*)
 
 (***include-output:complex***)
 
@@ -311,28 +314,13 @@ This is useful for displaying intermediate results, for example:*)
 let multiply (n: int, m: int) =
     let res = n*m
     sprintf "evidence = %i" res @| (
-      "div1" @| (m <> 0 ==> lazy (res / m = n)),
-      "div2" @| (n <> 0 ==> lazy (res / n = m)),
-      "lt1"  @| (res > m),
+      "div1" @| (m <> 0 ==> lazy (res / m = n)) .&. 
+      "div2" @| (n <> 0 ==> lazy (res / n = m)) .&. 
+      "lt1"  @| (res > m) .&. 
       "lt2"  @| (res > n))
 Check.Quick multiply
 
+(**
+    [lang=csharp,file=../csharp/Properties.cs,key=multipleLabels]*)
+
 (***include-output:multiply***)
-
-(**
-Notice that the above property combines subproperties by tupling them. This works for tuples up to length 6 and lists:
-
-*    `(<property1>,<property2>,...,<property6>)` means `<property1> .&. <property2> .&.... .&.<property6>`
-*    `[property1;property2,...,propertyN]` means `<property1> .&. <property2> .&.... .&.<propertyN>`
-
-The example written as a list:*)
-
-let multiplyAsList (n: int, m: int) =
-    let res = n*m
-    sprintf "evidence = %i" res @| [
-      "div1" @| (m <> 0 ==> lazy (res / m = n));
-      "div2" @| (n <> 0 ==> lazy (res / n = m));
-      "lt1"  @| (res > m);
-      "lt2"  @| (res > n)]
-(**
-Produces the same result.*)

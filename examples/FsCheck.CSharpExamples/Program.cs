@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FsCheck;
 
 namespace FsCheck.CSharpExamples
 {
@@ -104,6 +105,16 @@ namespace FsCheck.CSharpExamples
                 .QuickCheck("InsertCombined");
 
             //---labelling sub properties-----
+            Prop.ForAll<int, int>((n, m) => {
+                var res = n * m;
+                return  (new Func<bool>(() => res / m == n)).When(m != 0.0).Label("div1")
+                   .And((new Func<bool>(() => res / n == m)).When(n != 0.0).Label("div2"))
+                   .And((res > m).Label("lt1"))
+                   .And((res > n).Label("lt2"))
+                   .Label(string.Format("evidence = {0}", res));
+            }).QuickCheck("Multiple labels");
+
+
             Prop.ForAll<int, int>((m, n) => {
                     var result = m + n;
                     return ( result >= m).Label("result > #1")

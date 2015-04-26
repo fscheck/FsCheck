@@ -109,6 +109,25 @@ namespace CSharp.DocSnippets
                 .QuickCheck();
             //[/insertCombined]
 
+            //[complexProperty]
+            Prop.ForAll<int, int>((m, n) => {
+                var result = m + n;
+                return (result >= m).Label("result > #1")
+                   .And(result >= n).Label("result > #2")
+                   .And(result < m + n).Label("result not sum");
+            }).QuickCheck();
+            //[/complexProperty]
+
+            //[multipleLabels]
+            Prop.ForAll<int, int>((n, m) => {
+                var res = n * m;
+                return (new Func<bool>(() => res / m == n)).When(m != 0.0).Label("div1")
+                  .And((new Func<bool>(() => res / n == m)).When(n != 0.0).Label("div2"))
+                  .And((res > m).Label("lt1"))
+                  .And((res > n).Label("lt2"))
+                  .Label(string.Format("evidence = {0}", res));
+            }).QuickCheck();
+            //[/multipleLabels]
         }
 
             
