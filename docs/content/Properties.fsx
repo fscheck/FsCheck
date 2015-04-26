@@ -322,5 +322,19 @@ Check.Quick multiply
 
 (**
     [lang=csharp,file=../csharp/Properties.cs,key=multipleLabels]*)
+Notice that the above property combines subproperties by tupling them. This works for tuples up to length 6 and lists:
 
-(***include-output:multiply***)
+*    `(<property1>,<property2>,...,<property6>)` means `<property1> .&. <property2> .&.... .&.<property6>`
+*    `[property1;property2,...,propertyN]` means `<property1> .&. <property2> .&.... .&.<propertyN>`
+
+The example written as a list:*)
+
+let multiplyAsList (n: int, m: int) =
+    let res = n*m
+    sprintf "evidence = %i" res @| [
+      "div1" @| (m <> 0 ==> lazy (res / m = n));
+      "div2" @| (n <> 0 ==> lazy (res / n = m));
+      "lt1"  @| (res > m);
+      "lt2"  @| (res > n)]
+(**
+Produces the same result.*)
