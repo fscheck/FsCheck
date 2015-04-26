@@ -39,8 +39,7 @@ and are indicated in the API by a generic type called `'Testable`. A `'Testable`
 be a function of any number of parameters that returns bool or unit. In the latter case, 
  a test passes if it does not throw. The entry point to create properties is the Prop module.
 
- In C# (or, if you prefer it, you can use this API from F# too), properties are expressed
- more explicitly and in a more type safe way by a fluent API with as entry point the Prop class.
+ Like all of FsChek's API, there are C# counterparts for all of the F# methods described.
     
 ## Conditional Properties
 
@@ -63,7 +62,8 @@ let rec insert x xs =
 let insertKeepsOrder (x:int) xs = ordered xs ==> ordered (insert x xs)
 Check.Quick insertKeepsOrder
 
-(**    [lang=csharp,file=../csharp/Properties.cs,key=insertKeepsOrder]    *)
+(**
+    [lang=csharp,file=../csharp/Properties.cs,key=insertKeepsOrder]    *)
 
 (***include-output:insertKeepsOrder***)
 
@@ -94,20 +94,18 @@ Check.Quick tooEager
 (***include-output: eager***)
 
 (**
-Lazy evaluation is needed here to make sure the propery is checked correctly:*)
+Non-strict evaluation is needed here to make sure the propery is checked correctly:*)
 
 (***define-output: lazy***)
 let moreLazy a = a <> 0 ==> (lazy (1/a = 1/a))
 Check.Quick moreLazy
 
+(**
+    [lang=csharp,file=../csharp/Properties.cs,key=lazy] *)
+
 (***include-output: lazy***)
 
-(** The fluent API does not have this gotcha, it is lazy by default:
-
-    [lang=csharp,file=../csharp/Properties.cs,key=lazy]
-
-works as expected.
-   
+(**
 ## Quantified Properties
 
 Properties may take the form `forAll <arbitrary>  (fun <args> -> <property>)`.
@@ -119,7 +117,8 @@ let orderedList = Arb.from<list<int>> |> Arb.mapFilter List.sort ordered
 let insertWithArb x = Prop.forAll orderedList (fun xs -> ordered(insert x xs))
 Check.Quick insertWithArb
 
-(**    [lang=csharp,file=../csharp/Properties.cs,key=insertWithArb] *)
+(**
+    [lang=csharp,file=../csharp/Properties.cs,key=insertWithArb] *)
 
 (***include-output:insertWithArb***)
 
@@ -144,7 +143,8 @@ Check.Quick expectDivideByZero
 
 (***include-output: expectDivideByZero***)
   
-(**This functionality is not available in the fluent API.
+(**
+This functionality is not available in the C# API.
 
 ## Timed Properties
 
@@ -179,7 +179,7 @@ FsCheck considers the test as failed. Otherwise, the outcome of the lazy propert
 the outcome of within. Note that, although within attempts to cancel the thread in which 
 the property is executed, that may not succeed, and so the thread may actually continue to run until the process ends.
 
-This functionality is not available in the fluent API.
+This functionality is not available in the C# API.
     
 ## Observing Test Case Distribution
 
@@ -205,7 +205,8 @@ let insertTrivial (x:int) xs =
   |> Prop.trivial (List.length xs = 0)
 Check.Quick insertTrivial
 
-(**    [lang=csharp,file=../csharp/Properties.cs,key=insertTrivial]
+(**
+    [lang=csharp,file=../csharp/Properties.cs,key=insertTrivial]
 
 Test cases for which the condition is true are classified as trivial, and the proportion of 
 trivial test cases in the total is reported:*)
@@ -226,7 +227,8 @@ let insertClassify (x:int) xs =
   |> Prop.classify (ordered (xs @ [x])) "at-tail"
 Check.Quick insertClassify
 
-(**    [lang=csharp,file=../csharp/Properties.cs,key=insertClassify]
+(**
+    [lang=csharp,file=../csharp/Properties.cs,key=insertClassify]
 
 Test cases satisfying the condition are assigned the classification given, and the distribution of 
 classifications is reported after testing:*)
@@ -248,7 +250,8 @@ let insertCollect (x:int) xs =
       |> Prop.collect (List.length xs)
 Check.Quick insertCollect
 
-(**    [lang=csharp,file=../csharp/Properties.cs,key=insertCollect]
+(**
+    [lang=csharp,file=../csharp/Properties.cs,key=insertCollect]
 
 The argument of collect is evaluated in each test case, and the distribution of 
 values is reported. The type of this argument is printed using `sprintf "%A"`:*)
@@ -270,7 +273,8 @@ let insertCombined (x:int) xs =
     |> Prop.collect (List.length xs)
 Check.Quick insertCombined
 
-(**    [lang=csharp,file=../csharp/Properties.cs,key=insertCollect]*)
+(**
+    [lang=csharp,file=../csharp/Properties.cs,key=insertCollect]*)
 
 (***include-output:insertCombined***)
 
