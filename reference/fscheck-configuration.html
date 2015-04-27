@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Random - FsCheck</title>
+    <title>Configuration - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,376 +34,382 @@
 
 
 
-<h1>Random</h1>
+<h1>Configuration</h1>
 <div class="xmldoc">
-<p>Generate random numbers based on splitting seeds. Based Hugs' Random implementation.</p>
+<p>Configure the test run.</p>
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-  <h2>Nested types and modules</h2>
-  <div>
-      <table class="table table-bordered type-list">
-    <thead>
-      <tr><td>Type</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-random-stdgen.html">StdGen</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-  <h3>Functions and values</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '93', 93)" onmouseover="showTip(event, '93', 93)">
-            a1 
+          <code onmouseout="hideTip(event, '269', 269)" onmouseover="showTip(event, '269', 269)">
+            new()
           </code>
-          <div class="tip" id="93">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="269">
+            <strong>Signature:</strong> unit -&gt; Configuration<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L49-49" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L7-7" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
         </td>
       </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '94', 94)" onmouseover="showTip(event, '94', 94)">
-            a2 
+          <code onmouseout="hideTip(event, '270', 270)" onmouseover="showTip(event, '270', 270)">
+            EndSize()
           </code>
-          <div class="tip" id="94">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="270">
+            <strong>Signature:</strong> unit -&gt; int<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L49-49" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L39-39" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '95', 95)" onmouseover="showTip(event, '95', 95)">
-            divMod n d
+          <code onmouseout="hideTip(event, '271', 271)" onmouseover="showTip(event, '271', 271)">
+            EndSize()
           </code>
-          <div class="tip" id="95">
-            <strong>Signature:</strong> n:int -&gt; d:int -&gt; int * int<br />
+          <div class="tip" id="271">
+            <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L32-32" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L39-39" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '96', 96)" onmouseover="showTip(event, '96', 96)">
-            divMod64 n d
+          <code onmouseout="hideTip(event, '272', 272)" onmouseover="showTip(event, '272', 272)">
+            Every()
           </code>
-          <div class="tip" id="96">
-            <strong>Signature:</strong> n:int64 -&gt; d:int64 -&gt; int64 * int64<br />
+          <div class="tip" id="272">
+            <strong>Signature:</strong> unit -&gt; Func&lt;int,obj array,string&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L36-36" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L29-29" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>What to print when new arguments args are generated in test n</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '97', 97)" onmouseover="showTip(event, '97', 97)">
-            hMod n d
+          <code onmouseout="hideTip(event, '273', 273)" onmouseover="showTip(event, '273', 273)">
+            Every()
           </code>
-          <div class="tip" id="97">
-            <strong>Signature:</strong> n:int -&gt; d:int -&gt; int<br />
+          <div class="tip" id="273">
+            <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L40-40" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L28-28" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>What to print when new arguments args are generated in test n</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '98', 98)" onmouseover="showTip(event, '98', 98)">
-            hMod64 n d
+          <code onmouseout="hideTip(event, '274', 274)" onmouseover="showTip(event, '274', 274)">
+            EveryShrink()
           </code>
-          <div class="tip" id="98">
-            <strong>Signature:</strong> n:int64 -&gt; d:int64 -&gt; int64<br />
+          <div class="tip" id="274">
+            <strong>Signature:</strong> unit -&gt; Func&lt;obj array,string&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L44-44" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L33-33" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>What to print every time a counter-example is succesfully shrunk</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '99', 99)" onmouseover="showTip(event, '99', 99)">
-            m1 
+          <code onmouseout="hideTip(event, '275', 275)" onmouseover="showTip(event, '275', 275)">
+            EveryShrink()
           </code>
-          <div class="tip" id="99">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="275">
+            <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L51-51" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L32-32" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>What to print every time a counter-example is succesfully shrunk</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '100', 100)" onmouseover="showTip(event, '100', 100)">
-            m2 
+          <code onmouseout="hideTip(event, '276', 276)" onmouseover="showTip(event, '276', 276)">
+            MaxNbOfFailedTests()
           </code>
-          <div class="tip" id="100">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="276">
+            <strong>Signature:</strong> unit -&gt; int<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L51-51" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L22-22" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>The maximum number of tests where values are rejected</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '101', 101)" onmouseover="showTip(event, '101', 101)">
-            mkStdGen s
+          <code onmouseout="hideTip(event, '277', 277)" onmouseover="showTip(event, '277', 277)">
+            MaxNbOfFailedTests()
           </code>
-          <div class="tip" id="101">
-            <strong>Signature:</strong> s:int64 -&gt; StdGen<br />
+          <div class="tip" id="277">
+            <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L53-53" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L22-22" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>The maximum number of tests where values are rejected</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '102', 102)" onmouseover="showTip(event, '102', 102)">
-            newSeed ()
+          <code onmouseout="hideTip(event, '278', 278)" onmouseover="showTip(event, '278', 278)">
+            MaxNbOfTest()
           </code>
-          <div class="tip" id="102">
+          <div class="tip" id="278">
+            <strong>Signature:</strong> unit -&gt; int<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L19-19" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The maximum number of tests that are run.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '279', 279)" onmouseover="showTip(event, '279', 279)">
+            MaxNbOfTest()
+          </code>
+          <div class="tip" id="279">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L19-19" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>The maximum number of tests that are run.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '280', 280)" onmouseover="showTip(event, '280', 280)">
+            Name()
+          </code>
+          <div class="tip" id="280">
+            <strong>Signature:</strong> unit -&gt; string<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L25-25" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Name of the test.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '281', 281)" onmouseover="showTip(event, '281', 281)">
+            Name()
+          </code>
+          <div class="tip" id="281">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L25-25" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Name of the test.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '282', 282)" onmouseover="showTip(event, '282', 282)">
+            Replay()
+          </code>
+          <div class="tip" id="282">
             <strong>Signature:</strong> unit -&gt; StdGen<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L93-93" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L47-47" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>If set, the seed to use to start testing. Allows reproduction of previous runs.</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '103', 103)" onmouseover="showTip(event, '103', 103)">
-            q1 
+          <code onmouseout="hideTip(event, '283', 283)" onmouseover="showTip(event, '283', 283)">
+            Replay()
           </code>
-          <div class="tip" id="103">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="283">
+            <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L48-48" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L46-46" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>If set, the seed to use to start testing. Allows reproduction of previous runs.</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '104', 104)" onmouseover="showTip(event, '104', 104)">
-            q2 
+          <code onmouseout="hideTip(event, '284', 284)" onmouseover="showTip(event, '284', 284)">
+            Runner()
           </code>
-          <div class="tip" id="104">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="284">
+            <strong>Signature:</strong> unit -&gt; IRunner<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L48-48" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L42-42" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit.</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '105', 105)" onmouseover="showTip(event, '105', 105)">
-            r1 
+          <code onmouseout="hideTip(event, '285', 285)" onmouseover="showTip(event, '285', 285)">
+            Runner()
           </code>
-          <div class="tip" id="105">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="285">
+            <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L50-50" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L42-42" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit.</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '106', 106)" onmouseover="showTip(event, '106', 106)">
-            r2 
+          <code onmouseout="hideTip(event, '286', 286)" onmouseover="showTip(event, '286', 286)">
+            StartSize()
           </code>
-          <div class="tip" id="106">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="286">
+            <strong>Signature:</strong> unit -&gt; int<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L50-50" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L36-36" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>The size to use for the first test.</p>
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '107', 107)" onmouseover="showTip(event, '107', 107)">
-            range 
+          <code onmouseout="hideTip(event, '287', 287)" onmouseover="showTip(event, '287', 287)">
+            StartSize()
           </code>
-          <div class="tip" id="107">
-            <strong>Signature:</strong> int * int -&gt; StdGen -&gt; int * StdGen<br />
+          <div class="tip" id="287">
+            <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L91-91" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L36-36" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
+          <p>The size to use for the first test.</p>
 
-          <code onmouseout="hideTip(event, '108', 108)" onmouseover="showTip(event, '108', 108)">
-            split 
-          </code>
-          <div class="tip" id="108">
-            <strong>Signature:</strong> StdGen -&gt; StdGen * StdGen<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L92-92" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '109', 109)" onmouseover="showTip(event, '109', 109)">
-            stdNext arg1
-          </code>
-          <div class="tip" id="109">
-            <strong>Signature:</strong> StdGen -&gt; int * StdGen<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L59-59" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '110', 110)" onmouseover="showTip(event, '110', 110)">
-            stdRange (l, h) rng
-          </code>
-          <div class="tip" id="110">
-            <strong>Signature:</strong> (l:int * h:int) -&gt; rng:StdGen -&gt; int * StdGen<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L80-80" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
-            stdSplit arg1
-          </code>
-          <div class="tip" id="111">
-            <strong>Signature:</strong> StdGen -&gt; StdGen * StdGen<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Random.fs#L70-70" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
         </td>
       </tr>
     </tbody>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>GenExtensions - FsCheck</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Kurt Schelfthout and contributors"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
+    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+        </ul>
+        <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>GenExtensions</h1>
+<div class="xmldoc">
+<p>Extension methods to build generators - contains among other the Linq methods.</p>
+</div>
+  <h3>Static members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Static member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '299', 299)" onmouseover="showTip(event, '299', 299)">
+            Apply(generator, f)
+          </code>
+          <div class="tip" id="299">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88883&gt; * f:Gen&lt;Func&lt;&#39;?88883,&#39;?88884&gt;&gt;) -&gt; Gen&lt;&#39;?88884&gt;<br />
+                          <strong>Type parameters:</strong> '?88883, '?88884          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L95-95" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Apply the given Gen function to this generator, aka the applicative <*> operator.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '300', 300)" onmouseover="showTip(event, '300', 300)">
+            Array2DOf(generator)
+          </code>
+          <div class="tip" id="300">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?88881&gt; -&gt; Gen&lt;&#39;?88881 [,]&gt;<br />
+                          <strong>Type parameters:</strong> '?88881          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L89-89" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a 2D array. The square root of the size is the maximum number of rows and columns.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '301', 301)" onmouseover="showTip(event, '301', 301)">
+            Array2DOf(generator, rows, cols)
+          </code>
+          <div class="tip" id="301">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88879&gt; * rows:int * cols:int) -&gt; Gen&lt;&#39;?88879 [,]&gt;<br />
+                          <strong>Type parameters:</strong> '?88879          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L83-83" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a 2D array of the given dimensions.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '302', 302)" onmouseover="showTip(event, '302', 302)">
+            ArrayOf(generator)
+          </code>
+          <div class="tip" id="302">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?88877&gt; -&gt; Gen&lt;&#39;?88877 []&gt;<br />
+                          <strong>Type parameters:</strong> '?88877          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L77-77" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates an array using the specified generator. 
+The maximum length is size+1.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '303', 303)" onmouseover="showTip(event, '303', 303)">
+            ArrayOf(generator, length)
+          </code>
+          <div class="tip" id="303">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88875&gt; * length:int) -&gt; Gen&lt;&#39;?88875 []&gt;<br />
+                          <strong>Type parameters:</strong> '?88875          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L70-70" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates an array of a specified length.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '304', 304)" onmouseover="showTip(event, '304', 304)">
+            Eval(generator, size, random)
+          </code>
+          <div class="tip" id="304">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88853&gt; * size:int * random:StdGen) -&gt; &#39;?88853<br />
+                          <strong>Type parameters:</strong> '?88853          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L14-14" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a value with maximum size n.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '305', 305)" onmouseover="showTip(event, '305', 305)">
+            Four(generator)
+          </code>
+          <div class="tip" id="305">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?88896&gt; -&gt; Gen&lt;&#39;?88896 * &#39;?88896 * &#39;?88896 * &#39;?88896&gt;<br />
+                          <strong>Type parameters:</strong> '?88896          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L130-130" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that generates a 4-tuple of the values generated by the given generator.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '306', 306)" onmouseover="showTip(event, '306', 306)">
+            ListOf(generator)
+          </code>
+          <div class="tip" id="306">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?88871&gt; -&gt; Gen&lt;IList&lt;&#39;?88871&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?88871          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L55-55" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a list of random length. The maximum length depends on the
+size parameter.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '307', 307)" onmouseover="showTip(event, '307', 307)">
+            ListOf(generator, nbOfElements)
+          </code>
+          <div class="tip" id="307">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88869&gt; * nbOfElements:int) -&gt; Gen&lt;IList&lt;&#39;?88869&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?88869          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L47-47" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a list of given length, containing values generated by the given generator.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '308', 308)" onmouseover="showTip(event, '308', 308)">
+            NonEmptyListOf(generator)
+          </code>
+          <div class="tip" id="308">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;a&gt; -&gt; Gen&lt;IList&lt;&#39;a&gt;&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L63-63" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a non-empty list of random length. The maximum length 
+depends on the size parameter.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '309', 309)" onmouseover="showTip(event, '309', 309)">
+            Resize(generator, newSize)
+          </code>
+          <div class="tip" id="309">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88886&gt; * newSize:int) -&gt; Gen&lt;&#39;?88886&gt;<br />
+                          <strong>Type parameters:</strong> '?88886          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L101-101" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Override the current size of the test.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '310', 310)" onmouseover="showTip(event, '310', 310)">
+            Sample(generator, size, numberOfSamples)
+          </code>
+          <div class="tip" id="310">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88855&gt; * size:int * numberOfSamples:int) -&gt; &#39;?88855 list<br />
+                          <strong>Type parameters:</strong> '?88855          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L20-20" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates n values of the given size.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '311', 311)" onmouseover="showTip(event, '311', 311)">
+            Select(g, selector)
+          </code>
+          <div class="tip" id="311">
+            <strong>Signature:</strong> (g:Gen&lt;&#39;?88857&gt; * selector:Func&lt;&#39;?88857,&#39;?88858&gt;) -&gt; Gen&lt;&#39;?88858&gt;<br />
+                          <strong>Type parameters:</strong> '?88857, '?88858          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L25-25" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Map the given function to the value in the generator, yielding a new generator of the result type.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '312', 312)" onmouseover="showTip(event, '312', 312)">
+            SelectMany(source, f, select)
+          </code>
+          <div class="tip" id="312">
+            <strong>Signature:</strong> (source:Gen&lt;&#39;?88865&gt; * f:Func&lt;&#39;?88865,Gen&lt;&#39;?88866&gt;&gt; * select:Func&lt;&#39;?88865,&#39;?88866,&#39;?88867&gt;) -&gt; Gen&lt;&#39;?88867&gt;<br />
+                          <strong>Type parameters:</strong> '?88865, '?88866, '?88867          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L39-39" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '313', 313)" onmouseover="showTip(event, '313', 313)">
+            SelectMany(source, f)
+          </code>
+          <div class="tip" id="313">
+            <strong>Signature:</strong> (source:Gen&lt;&#39;?88862&gt; * f:Func&lt;&#39;?88862,Gen&lt;&#39;?88863&gt;&gt;) -&gt; Gen&lt;&#39;?88863&gt;<br />
+                          <strong>Type parameters:</strong> '?88862, '?88863          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L34-34" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '314', 314)" onmouseover="showTip(event, '314', 314)">
+            Three(generator)
+          </code>
+          <div class="tip" id="314">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?88894&gt; -&gt; Gen&lt;&#39;?88894 * &#39;?88894 * &#39;?88894&gt;<br />
+                          <strong>Type parameters:</strong> '?88894          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L124-124" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that generates a 3-tuple of the values generated by the given generator.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '315', 315)" onmouseover="showTip(event, '315', 315)">
+            ToArbitrary(generator, shrinker)
+          </code>
+          <div class="tip" id="315">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88890&gt; * shrinker:(&#39;?88890 -&gt; seq&lt;&#39;?88890&gt;)) -&gt; Arbitrary&lt;&#39;?88890&gt;<br />
+                          <strong>Type parameters:</strong> '?88890          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L112-112" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Construct an Arbitrary instance from a generator and a shrinker.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '316', 316)" onmouseover="showTip(event, '316', 316)">
+            ToArbitrary(generator)
+          </code>
+          <div class="tip" id="316">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?88888&gt; -&gt; Arbitrary&lt;&#39;?88888&gt;<br />
+                          <strong>Type parameters:</strong> '?88888          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L107-107" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Construct an Arbitrary instance from a generator.
+Shrink is not supported for this type.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '317', 317)" onmouseover="showTip(event, '317', 317)">
+            Two(generator)
+          </code>
+          <div class="tip" id="317">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?88892&gt; -&gt; Gen&lt;&#39;?88892 * &#39;?88892&gt;<br />
+                          <strong>Type parameters:</strong> '?88892          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L118-118" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that generates a 2-tuple of the values generated by the given generator.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '318', 318)" onmouseover="showTip(event, '318', 318)">
+            Where(g, predicate)
+          </code>
+          <div class="tip" id="318">
+            <strong>Signature:</strong> (g:Gen&lt;&#39;?88860&gt; * predicate:Func&lt;&#39;?88860,bool&gt;) -&gt; Gen&lt;&#39;?88860&gt;<br />
+                          <strong>Type parameters:</strong> '?88860          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L31-31" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a value that satisfies a predicate. This function keeps re-trying
+by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
+the predicate is satisfied.</p>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/FsCheck/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">FsCheck</li>
+            <li><a href="/FsCheck/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li>
+              <a href="/FsCheck/Properties.html">Properties</a>
+            </li>
+            <li>
+              <a href="/FsCheck/TestData.html">Generating test data</a>
+            </li>
+            <li>
+              <a href="/FsCheck/StatefulTesting.html">Model-based testing</a>
+            </li>
+            <li>
+              <a href="/FsCheck/RunningTests.html">Running tests</a>
+            </li>
+            <li>
+              <a href="/FsCheck/TipsAndTricks.html">Tips and Tricks</a>
+            </li>
+            <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/fsharp/FsCheck">
+      <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
+    </a>
+  </body>
+  </html>

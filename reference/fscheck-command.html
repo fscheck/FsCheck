@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>WeightAndValue<'a> - FsCheck</title>
+    <title>Command - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,53 +34,30 @@
 
 
 
-<h1>WeightAndValue<'a></h1>
+<h1>Command</h1>
 <div class="xmldoc">
 </div>
-  <h3>Constructors</h3>
+
+<!-- Render nested types and modules, if there are any -->
+
+  <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Constructor</td><td>Description</td></tr>
+      <tr><td>Function or value</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '395', 395)" onmouseover="showTip(event, '395', 395)">
-            new(weight, value)
+          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
+            create (...)
           </code>
-          <div class="tip" id="395">
-            <strong>Signature:</strong> (weight:int * value:&#39;a) -&gt; WeightAndValue&lt;&#39;a&gt;<br />
-                      </div>
+          <div class="tip" id="13">
+            <strong>Signature:</strong> preCondition:(&#39;Model -&gt; bool) option -&gt; runActual:(&#39;Actual -&gt; &#39;Actual) -&gt; runModel:(&#39;Model -&gt; &#39;Model) -&gt; checkPostCondition:(&#39;Actual * &#39;Model -&gt; Property) -&gt; Command&lt;&#39;Actual,&#39;Model&gt;<br />
+                          <strong>Type parameters:</strong> 'Model, 'Actual          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L32-32" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <h3>Instance members</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '396', 396)" onmouseover="showTip(event, '396', 396)">
-            Value
-          </code>
-          <div class="tip" id="396">
-            <strong>Signature:</strong> &#39;a<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L34-34" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Commands.fs#L53-53" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -90,19 +67,56 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '397', 397)" onmouseover="showTip(event, '397', 397)">
-            Weight
+          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+            createFuncBool (...)
           </code>
-          <div class="tip" id="397">
-            <strong>Signature:</strong> int<br />
-                      </div>
+          <div class="tip" id="14">
+            <strong>Signature:</strong> runActual:Func&lt;&#39;Actual,&#39;Actual&gt; -&gt; runModel:Func&lt;&#39;Model,&#39;Model&gt; -&gt; postCondition:Func&lt;&#39;Actual,&#39;Model,bool&gt; -&gt; Command&lt;&#39;Actual,&#39;Model&gt;<br />
+                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L33-33" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Commands.fs#L65-65" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
+            createFuncProp (...)
+          </code>
+          <div class="tip" id="15">
+            <strong>Signature:</strong> runActual:Func&lt;&#39;Actual,&#39;Actual&gt; -&gt; runModel:Func&lt;&#39;Model,&#39;Model&gt; -&gt; postCondition:Func&lt;&#39;Actual,&#39;Model,Property&gt; -&gt; Command&lt;&#39;Actual,&#39;Model&gt;<br />
+                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Commands.fs#L61-61" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
+            toProperty spec
+          </code>
+          <div class="tip" id="16">
+            <strong>Signature:</strong> spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; Property<br />
+                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Commands.fs#L84-84" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Turn a specification into a property.</p>
+
         </td>
       </tr>
     </tbody>

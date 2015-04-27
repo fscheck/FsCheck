@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>Shrink - FsCheck</title>
+    <title>ICommandGenerator<'Actual, 'Model> - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,31 +34,76 @@
 
 
 
-<h1>Shrink</h1>
+<h1>ICommandGenerator<'Actual, 'Model></h1>
 <div class="xmldoc">
+<p>Defines the initial state for actual and model object, and allows to define the generator to use
+for the next state, based on the model.</p>
 </div>
-  <h3>Static members</h3>
+  <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Static member</td><td>Description</td></tr>
+      <tr><td>Instance member</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '339', 339)" onmouseover="showTip(event, '339', 339)">
-            Type()
+          <code onmouseout="hideTip(event, '319', 319)" onmouseover="showTip(event, '319', 319)">
+            InitialActual
           </code>
-          <div class="tip" id="339">
-            <strong>Signature:</strong> unit -&gt; &#39;a -&gt; seq&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="319">
+            <strong>Signature:</strong> &#39;Actual<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L126-126" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Commands.fs#L38-38" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Returns the immediate shrinks for the given value based on its type.</p>
+          <p>Initial state of actual object. Should correspond to initial state of model object.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '320', 320)" onmouseover="showTip(event, '320', 320)">
+            InitialModel
+          </code>
+          <div class="tip" id="320">
+            <strong>Signature:</strong> &#39;Model<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Commands.fs#L40-40" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Initial state of model object. Should correspond to initial state of actual object.</p>
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '321', 321)" onmouseover="showTip(event, '321', 321)">
+            Next(arg1)
+          </code>
+          <div class="tip" id="321">
+            <strong>Signature:</strong> &#39;Model -&gt; Gen&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Commands.fs#L44-44" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generate a number of possible commands based on the current state of the model. 
+Preconditions are still checked, so even if a Command is returned, it is not chosen
+if its precondition does not hold.</p>
 
         </td>
       </tr>

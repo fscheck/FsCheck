@@ -34,9 +34,10 @@
 
 <h1>FsCheck</h1>
 
-    <h2>FsCheck Namespace</h2>
+
+  <h2>FsCheck Namespace</h2>
     <div>
-        <table class="table table-bordered type-list">
+      <table class="table table-bordered type-list">
     <thead>
       <tr><td>Type</td><td>Description</td></tr>
     </thead>
@@ -49,7 +50,34 @@
         </tr>
         <tr>
           <td class="type-name">
+            <a href="fscheck-arbitraryextensions.html">ArbitraryExtensions</a>
+          </td>
+          <td class="xmldoc"><p>Extensons to transform Arbitrary instances into other Arbitrary instances.</p>
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
             <a href="fscheck-check.html">Check</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fscheck-checkextensions.html">CheckExtensions</a>
+          </td>
+          <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fscheck-command-2.html">Command<'Actual, 'Model></a>
+          </td>
+          <td class="xmldoc"><p>A single command describes pre and post conditions and the model for a single method under test.
+The post-conditions are the invariants that will be checked; when these do not hold the test fails.</p>
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fscheck-commandextensions.html">CommandExtensions</a>
           </td>
           <td class="xmldoc"></td>
         </tr>
@@ -58,6 +86,13 @@
             <a href="fscheck-config.html">Config</a>
           </td>
           <td class="xmldoc"><p>For configuring a run.</p>
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fscheck-configuration.html">Configuration</a>
+          </td>
+          <td class="xmldoc"><p>Configure the test run.</p>
 </td>
         </tr>
         <tr>
@@ -84,19 +119,36 @@ that are comparable, hence the type constraints.</p>
           <td class="type-name">
             <a href="fscheck-fixedlengtharray-1.html">FixedLengthArray<'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents an array whose length does not change when shrinking.</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-function-2.html">Function<'a, 'b></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>A function (F# function) that can be displayed and shrunk.</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-gen-1.html">Gen<'a></a>
           </td>
           <td class="xmldoc"><p>Generator of a random value, based on a size parameter and a randomly generated int.</p>
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fscheck-genextensions.html">GenExtensions</a>
+          </td>
+          <td class="xmldoc"><p>Extension methods to build generators - contains among other the Linq methods.</p>
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fscheck-icommandgenerator-2.html">ICommandGenerator<'Actual, 'Model></a>
+          </td>
+          <td class="xmldoc"><p>Defines the initial state for actual and model object, and allows to define the generator to use
+for the next state, based on the model.</p>
 </td>
         </tr>
         <tr>
@@ -110,55 +162,64 @@ that are comparable, hence the type constraints.</p>
           <td class="type-name">
             <a href="fscheck-intwithminmax.html">IntWithMinMax</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents an int that can include int.MinValue and int.MaxValue.</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-interval.html">Interval</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents an integer interval.</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonemptyarray-1.html">NonEmptyArray<'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents a non-empty array.</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonemptyset-1.html">NonEmptySet<'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents a non-empty Set.</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonemptystring.html">NonEmptyString</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents a string that is not null or empty, and does not contain any null characters ('\000')</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonnegativeint.html">NonNegativeInt</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents an int &gt;= 0</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonnull-1.html">NonNull<'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Wrap a type in NonNull to prevent null being generated for the wrapped type.</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonzeroint.html">NonZeroInt</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents an int <> 0</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-normalfloat.html">NormalFloat</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents a float that is not NaN or Infinity.</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
@@ -170,13 +231,21 @@ that are comparable, hence the type constraints.</p>
           <td class="type-name">
             <a href="fscheck-positiveint.html">PositiveInt</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents an int &gt; 0</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-property.html">Property</a>
           </td>
-          <td class="xmldoc"><p>Type synonym for a test result generator.</p>
+          <td class="xmldoc"><p>A Property can be checked by FsCheck.</p>
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fscheck-propertyextensions.html">PropertyExtensions</a>
+          </td>
+          <td class="xmldoc"><p>Extensons to construct Properties.</p>
 </td>
         </tr>
         <tr>
@@ -196,7 +265,8 @@ that are comparable, hence the type constraints.</p>
           <td class="type-name">
             <a href="fscheck-stringnonulls.html">StringNoNulls</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Represents a string that does not contain null characters ('\000')</p>
+</td>
         </tr>
         <tr>
           <td class="type-name">
@@ -209,6 +279,14 @@ that are comparable, hence the type constraints.</p>
             <a href="fscheck-testresult.html">TestResult</a>
           </td>
           <td class="xmldoc"></td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fscheck-weightandvalue-1.html">WeightAndValue<'a></a>
+          </td>
+          <td class="xmldoc"><p>2-tuple containing a weight and a value, used in some Gen methods to indicate
+the probability of a value.</p>
+</td>
         </tr>
     </tbody>
   </table>
@@ -225,10 +303,9 @@ that are comparable, hence the type constraints.</p>
         </tr>
         <tr>
           <td class="module-name">
-            <a href="fscheck-commands.html">Commands</a>
+            <a href="fscheck-command.html">Command</a>
           </td>
-          <td class="xmldoc"><p>For model-based random testing.</p>
-</td>
+          <td class="xmldoc"></td>
         </tr>
         <tr>
           <td class="module-name">
@@ -285,89 +362,6 @@ convenience methods to investigate the generated arguments and any found counter
           </td>
           <td class="xmldoc"><p>Haskell typeclass concept simulation. For internal use.</p>
 </td>
-        </tr>
-    </tbody>
-  </table>
-
-    </div>
-    <h2>FsCheck.Fluent Namespace</h2>
-    <div>
-        <table class="table table-bordered type-list">
-    <thead>
-      <tr><td>Type</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-any.html">Any</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-arbitraryextensions.html">ArbitraryExtensions</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-configuration.html">Configuration</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-defaultarbitraries.html">DefaultArbitraries</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-generatorextensions.html">GeneratorExtensions</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-shrink.html">Shrink</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-spec.html">Spec</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-specbuilder-1.html">SpecBuilder<'a></a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-specbuilder-2.html">SpecBuilder<'a, 'b></a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-specbuilder-3.html">SpecBuilder<'a, 'b, 'c></a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-unbrowsableobject.html">UnbrowsableObject</a>
-          </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fluent-weightandvalue-1.html">WeightAndValue<'a></a>
-          </td>
-          <td class="xmldoc"></td>
         </tr>
     </tbody>
   </table>

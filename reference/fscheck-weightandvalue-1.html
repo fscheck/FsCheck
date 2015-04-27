@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>ISpecification<'Actual, 'Model> - FsCheck</title>
+    <title>WeightAndValue<'a> - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,56 +34,51 @@
 
 
 
-<h1>ISpecification<'Actual, 'Model></h1>
+<h1>WeightAndValue<'a></h1>
 <div class="xmldoc">
-<p>A specification for an object under test, based on an abstract model of the
-object's behavior.</p>
+<p>2-tuple containing a weight and a value, used in some Gen methods to indicate
+the probability of a value.</p>
 </div>
-  <h3>Instance members</h3>
+  <h3>Record Fields</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
+      <tr><td>Record Field</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '158', 158)" onmouseover="showTip(event, '158', 158)">
-            GenCommand(arg1)
+          <code onmouseout="hideTip(event, '405', 405)" onmouseover="showTip(event, '405', 405)">
+            Value
           </code>
-          <div class="tip" id="158">
-            <strong>Signature:</strong> &#39;Model -&gt; Gen&lt;ICommand&lt;&#39;Actual,&#39;Model&gt;&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
+          <div class="tip" id="405">
+            <strong>Signature:</strong> &#39;a<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Commands.fs#L39-39" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L96-96" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a number of possible commands based on the current state of the model. The commands
-are just hints to speed up execution; preconditions are still checked.</p>
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '159', 159)" onmouseover="showTip(event, '159', 159)">
-            Initial()
+          <code onmouseout="hideTip(event, '406', 406)" onmouseover="showTip(event, '406', 406)">
+            Weight
           </code>
-          <div class="tip" id="159">
-            <strong>Signature:</strong> unit -&gt; &#39;Actual * &#39;Model<br />
-              <strong>Modifiers:</strong> abstract<br />
+          <div class="tip" id="406">
+            <strong>Signature:</strong> int<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Commands.fs#L36-36" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L95-95" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Initial state of both object and model.</p>
-
+          
         </td>
       </tr>
     </tbody>

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>SpecBuilder<'a, 'b, 'c> - FsCheck</title>
+    <title>CheckExtensions - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,27 +34,27 @@
 
 
 
-<h1>SpecBuilder<'a, 'b, 'c></h1>
+<h1>CheckExtensions</h1>
 <div class="xmldoc">
 </div>
-  <h3>Instance members</h3>
+  <h3>Static members</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
+      <tr><td>Static member</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '373', 373)" onmouseover="showTip(event, '373', 373)">
-            And(assertion, name)
+          <code onmouseout="hideTip(event, '241', 241)" onmouseover="showTip(event, '241', 241)">
+            Check(property, config)
           </code>
-          <div class="tip" id="373">
-            <strong>Signature:</strong> (assertion:Func&lt;&#39;a,&#39;b,&#39;c,bool&gt; * name:string) -&gt; SpecBuilder&lt;&#39;a,&#39;b,&#39;c&gt;<br />
+          <div class="tip" id="241">
+            <strong>Signature:</strong> (property:Property * config:Configuration) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L348-348" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L66-66" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -64,15 +64,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '374', 374)" onmouseover="showTip(event, '374', 374)">
-            And(assertion)
+          <code onmouseout="hideTip(event, '242', 242)" onmouseover="showTip(event, '242', 242)">
+            QuickCheck(property, testName)
           </code>
-          <div class="tip" id="374">
-            <strong>Signature:</strong> assertion:Func&lt;&#39;a,&#39;b,&#39;c,bool&gt; -&gt; SpecBuilder&lt;&#39;a,&#39;b,&#39;c&gt;<br />
+          <div class="tip" id="242">
+            <strong>Signature:</strong> (property:Property * testName:string) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L345-345" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L70-70" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -82,15 +82,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '375', 375)" onmouseover="showTip(event, '375', 375)">
-            Build()
+          <code onmouseout="hideTip(event, '243', 243)" onmouseover="showTip(event, '243', 243)">
+            QuickCheck(property)
           </code>
-          <div class="tip" id="375">
-            <strong>Signature:</strong> unit -&gt; Property<br />
+          <div class="tip" id="243">
+            <strong>Signature:</strong> property:Property -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L327-327" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L68-68" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -100,15 +100,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '376', 376)" onmouseover="showTip(event, '376', 376)">
-            Classify(filter, name)
+          <code onmouseout="hideTip(event, '244', 244)" onmouseover="showTip(event, '244', 244)">
+            QuickCheckThrowOnFailure(property)
           </code>
-          <div class="tip" id="376">
-            <strong>Signature:</strong> (filter:Func&lt;&#39;a,&#39;b,&#39;c,bool&gt; * name:string) -&gt; SpecBuilder&lt;&#39;a,&#39;b,&#39;c&gt;<br />
+          <div class="tip" id="244">
+            <strong>Signature:</strong> property:Property -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L339-339" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L72-72" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -118,15 +118,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '377', 377)" onmouseover="showTip(event, '377', 377)">
-            Collect(collectedValue)
+          <code onmouseout="hideTip(event, '245', 245)" onmouseover="showTip(event, '245', 245)">
+            VerboseCheck(property, testName)
           </code>
-          <div class="tip" id="377">
-            <strong>Signature:</strong> collectedValue:Func&lt;&#39;a,&#39;b,&#39;c,string&gt; -&gt; SpecBuilder&lt;&#39;a,&#39;b,&#39;c&gt;<br />
+          <div class="tip" id="245">
+            <strong>Signature:</strong> (property:Property * testName:string) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L337-337" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L76-76" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -136,15 +136,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '378', 378)" onmouseover="showTip(event, '378', 378)">
-            Label(name)
+          <code onmouseout="hideTip(event, '246', 246)" onmouseover="showTip(event, '246', 246)">
+            VerboseCheck(property)
           </code>
-          <div class="tip" id="378">
-            <strong>Signature:</strong> name:string -&gt; SpecBuilder&lt;&#39;a,&#39;b,&#39;c&gt;<br />
+          <div class="tip" id="246">
+            <strong>Signature:</strong> property:Property -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L343-343" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L74-74" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -154,69 +154,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '379', 379)" onmouseover="showTip(event, '379', 379)">
-            Or(assertion, name)
+          <code onmouseout="hideTip(event, '247', 247)" onmouseover="showTip(event, '247', 247)">
+            VerboseCheckThrowOnFailure(property)
           </code>
-          <div class="tip" id="379">
-            <strong>Signature:</strong> (assertion:Func&lt;&#39;a,&#39;b,&#39;c,bool&gt; * name:string) -&gt; SpecBuilder&lt;&#39;a,&#39;b,&#39;c&gt;<br />
+          <div class="tip" id="247">
+            <strong>Signature:</strong> property:Property -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L354-354" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '380', 380)" onmouseover="showTip(event, '380', 380)">
-            Or(assertion)
-          </code>
-          <div class="tip" id="380">
-            <strong>Signature:</strong> assertion:Func&lt;&#39;a,&#39;b,&#39;c,bool&gt; -&gt; SpecBuilder&lt;&#39;a,&#39;b,&#39;c&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L351-351" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '381', 381)" onmouseover="showTip(event, '381', 381)">
-            Shrink(shrinker)
-          </code>
-          <div class="tip" id="381">
-            <strong>Signature:</strong> shrinker:Func&lt;&#39;c,seq&lt;&#39;c&gt;&gt; -&gt; SpecBuilder&lt;&#39;a,&#39;b,&#39;c&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L341-341" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '382', 382)" onmouseover="showTip(event, '382', 382)">
-            When(condition)
-          </code>
-          <div class="tip" id="382">
-            <strong>Signature:</strong> condition:Func&lt;&#39;a,&#39;b,&#39;c,bool&gt; -&gt; SpecBuilder&lt;&#39;a,&#39;b,&#39;c&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Fluent.fs#L335-335" class="github-link">
+            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L78-78" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
