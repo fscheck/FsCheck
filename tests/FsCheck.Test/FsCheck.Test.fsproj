@@ -191,4 +191,10 @@
   <PropertyGroup>
     <PreBuildEvent>xcopy /S $(ProjectDir)..\..\packages\xunit.runner.visualstudio $(ProjectDir)..\..\packages\xunit.runner.visualstudio.2.0.0\</PreBuildEvent>
   </PropertyGroup>
+  <Target Name="BeforeBuild">
+    <ItemGroup>
+      <xunitrunner Include="$(ProjectDir)..\..\packages\xunit.runner.visualstudio\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(xunitrunner)" DestinationFolder="$(ProjectDir)..\..\packages\xunit.runner.visualstudio.2.0.0\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
 </Project>
