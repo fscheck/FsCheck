@@ -81,11 +81,6 @@ type public PropertyAttribute() =
     ///test failures.
     member x.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
 
-type PropertyTest (displayName, testClass) =
-    interface ITest with
-        member this.DisplayName = displayName
-        member this.TestCase = testClass
-
 type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
     inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
 
@@ -118,7 +113,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             }
 
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
-        let test = new PropertyTest(this.DisplayName, this)
+        let test = new XunitTest(this, this.DisplayName)
         let summary = new RunSummary(Total = 1);
         if not (messageBus.QueueMessage(new TestStarting(test))) then
             cancellationTokenSource.Cancel() |> ignore
