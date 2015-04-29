@@ -188,4 +188,7 @@
       <HintPath>..\..\..\tmp\xunit.core.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy /S $(ProjectDir)..\..\packages\xunit.runner.visualstudio $(ProjectDir)..\..\packages\xunit.runner.visualstudio.2.0.0\</PreBuildEvent>
+  </PropertyGroup>
 </Project>
