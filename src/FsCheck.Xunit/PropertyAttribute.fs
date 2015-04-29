@@ -1,8 +1,4 @@
-﻿// note: FsCheck.Xunit.dll needs to exist at: %TEMP%\VisualStudioTestExplorerExtensions\xunit.runner.visualstudio.2.0.0\build\_common
-//  as indicated here http://xunit.github.io/docs/running-tests-in-vs.html
-// also the same for the console runner, why?
-
-namespace FsCheck.Xunit
+﻿namespace FsCheck.Xunit
 
 open System
 
