@@ -5,11 +5,6 @@ namespace FsCheck.XUnit.CSharpExamples
 {
     public class ReverseFixture
     {
-        //[Property]
-        //public void Bcl2()
-        //{
-        //}
-
         [Property]
         public bool Bcl(int[] xs)
         {
@@ -34,4 +29,4 @@ namespace FsCheck.XUnit.CSharpExamples
           return xs.BadReverse3().SequenceEqual(xs.Reverse());
         }
     }
-  }
+}

@@ -1,12 +1,12 @@
 ﻿namespace FsCheck.Xunit
 
 open System
+open System.Threading.Tasks
 
+open FsCheck
 open Xunit
 open Xunit.Sdk
 open Xunit.Abstractions
-open FsCheck
-open System.Threading.Tasks
 
 type PropertyFailedException(testResult:FsCheck.TestResult) =
     inherit XunitException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "sorry no stacktrace")
@@ -77,11 +77,11 @@ type public PropertyAttribute() =
     ///test failures.
     member x.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
 
+/// The xUnit2 test runner for the PropertyAttribute that executes the test via FsCheck
 type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
     inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
 
-    new() =
-        new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, null)
+    new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, null)
 
     member this.Init() =
         let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
@@ -111,6 +111,41 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
         let test = new XunitTest(this, this.DisplayName)
         let summary = new RunSummary(Total = 1);
+
+        let testExec() =
+            let config = this.Init()
+            let sw = System.Diagnostics.Stopwatch.StartNew()
+            let result =
+                try
+                    let xunitRunner = if config.Runner :? XunitRunner then (config.Runner :?> XunitRunner) else new XunitRunner()
+                    let runMethod = this.TestMethod.Method.ToRuntimeMethod()
+                    let target =
+                        if this.TestMethod.TestClass <> null && not this.TestMethod.Method.IsStatic then
+                            Some (Activator.CreateInstance(this.TestMethod.TestClass.Class.ToRuntimeType()))
+                        else None
+
+                    Check.Method(config, runMethod, ?target=target)
+
+                    match xunitRunner.Result with
+                          | TestResult.True _ ->
+                            (0, new TestPassed(test, (decimal)sw.Elapsed.TotalSeconds, (Runner.onFinishedToString "" xunitRunner.Result)) :> TestResultMessage)
+                          | TestResult.Exhausted testdata ->
+                            summary.Failed <- summary.Failed + 1
+                            (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                          | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
+                            summary.Failed <- summary.Failed + 1
+                            (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                with
+                    | ex -> (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, "Exception during test:", ex))
+
+            let failed = fst result
+            let testMessage = snd result
+            messageBus.QueueMessage(testMessage) |> ignore
+            summary.Time <- summary.Time + testMessage.ExecutionTime
+            if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, testMessage.Output))) then
+                cancellationTokenSource.Cancel() |> ignore
+            summary
+
         if not (messageBus.QueueMessage(new TestStarting(test))) then
             cancellationTokenSource.Cancel() |> ignore
 
@@ -120,44 +155,10 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                 cancellationTokenSource.Cancel() |> ignore
             Task.Factory.StartNew(fun () -> summary)
         else
-            let testExec() =
-                let config = this.Init()
-                let sw = System.Diagnostics.Stopwatch.StartNew()
-                let result =
-                    try
-                        let xunitRunner = if config.Runner :? XunitRunner then (config.Runner :?> XunitRunner) else new XunitRunner()
-                        let runMethod = this.TestMethod.Method.ToRuntimeMethod()
-                        let target =
-                            if this.TestMethod.TestClass <> null && not this.TestMethod.Method.IsStatic then
-                                Some (Activator.CreateInstance(this.TestMethod.TestClass.Class.ToRuntimeType()))
-                            else None
-
-                        Check.Method(config, runMethod, ?target=target)
-
-                        let result =
-                            match xunitRunner.Result with
-                                  | TestResult.True _ ->
-                                    (0, new TestPassed(test, (decimal)sw.Elapsed.TotalSeconds, (Runner.onFinishedToString "" xunitRunner.Result)) :> TestResultMessage)
-                                  | TestResult.Exhausted testdata ->
-                                    summary.Failed <- summary.Failed + 1
-                                    (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
-                                  | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
-                                    summary.Failed <- summary.Failed + 1
-                                    (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
-                        result
-                    with
-                        | ex -> (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, "Exception during test:", ex))
-
-                let failed = fst result
-                let testMessage = snd result
-                messageBus.QueueMessage(testMessage) |> ignore
-                summary.Time <- summary.Time + testMessage.ExecutionTime
-                if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, testMessage.Output))) then
-                    cancellationTokenSource.Cancel() |> ignore
-                summary
-
             Task.Factory.StartNew<RunSummary>(fun () -> testExec())
 
+/// xUnit2 test case discoverer to link the method with the PropertyAttribute to the PropertyTestCase
+/// so the test can be run via FsCheck.
 type PropertyDiscoverer(messageSink:IMessageSink) =
 
     new () = PropertyDiscoverer(null)
@@ -166,6 +167,5 @@ type PropertyDiscoverer(messageSink:IMessageSink) =
 
     interface IXunitTestCaseDiscoverer with
         override this.Discover(discoveryOptions:ITestFrameworkDiscoveryOptions, testMethod:ITestMethod, factAttribute:IAttributeInfo)=
-            printfn "%s" testMethod.Method.Name
             let ptc = new PropertyTestCase(this.MessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod)
             Seq.singleton (ptc :> IXunitTestCase)
