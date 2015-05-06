@@ -35,9 +35,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="nunit.core.interfaces">
-      <HintPath>..\..\packages\NUnit.Runners\tools\lib\nunit.core.interfaces.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -54,10 +51,6 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj">
-      <Project>{bf24de38-c529-4638-be50-a937ea3e6876}</Project>
-      <Name>FsCheck.NUnit.Addin</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\FsCheck.NUnit\FsCheck.NUnit.fsproj">
       <Project>{6b1b9ff5-8e6d-4461-9d77-cd1619403684}</Project>
       <Name>FsCheck.NUnit</Name>
