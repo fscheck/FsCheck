@@ -11,6 +11,8 @@ open NUnit.Framework.Interfaces
 open NUnit.Framework.Internal
 
 //warning  ..\nunit\bin\Debug\nunit-console.exe examples\FsCheck.NUnit.CSharpExamples\bin\Debug\FsCheck.NUnit.CSharpExamples.dll --trace=Verbose --pause
+//failing: ..\nunit\bin\Debug\nunit-console.exe examples\FsCheck.NUnit.Examples\bin\Debug\FsCheck.NUnit.Examples.dll
+
 
 ///help consumers remove the unneeded classes
 [<Obsolete("This class is no longer needed for running NUnit v3.", true)>]
@@ -59,26 +61,25 @@ type PropertyAttribute() =
     ///test failures.
     member x.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
 
-//    interface ISimpleTestBuilder with
-//        override x.BuildFrom (mi:Reflection.MethodInfo, suite:Internal.Test) =
-//            FsCheckTestMethod(mi) :> TestMethod
+    interface ISimpleTestBuilder with
+        override x.BuildFrom(mi, suite) =
+            FsCheckTestMethod(mi) :> TestMethod
 
     interface IWrapTestMethod with
         override x.Wrap command:Internal.Commands.TestCommand =
             {new Internal.Commands.TestCommand(command.Test) with
-                override x.Execute context = FsCheckTestMethod(command.Test.Method).RunTest() }
-
+                override x.Execute context = FsCheckTestMethod(command.Test.Method).RunTest(context) }
 
 and FsCheckTestMethod(mi : MethodInfo) =
     inherit TestMethod(mi)
 
-    member x.RunTest() =
+    member x.RunTest context =
         let testResult = x.MakeTestResult()
         TestExecutionContext.CurrentContext.CurrentResult <- testResult
         try
             try
                 x.runSetUp()
-                x.runTestCase testResult
+                x.runTestCase context testResult
             with
                 | ex -> x.handleException ex testResult FailureSite.SetUp
         finally
@@ -109,9 +110,9 @@ and FsCheckTestMethod(mi : MethodInfo) =
     member private x.invokeMethod (mi:MethodInfo) =
         Reflect.InvokeMethod(mi, if mi.IsStatic then null else x.Fixture)
 
-    member private x.runTestCase testResult =
+    member private x.runTestCase context testResult =
         try
-            x.runTestMethod testResult
+            x.runTestMethod context testResult
         with
             | ex -> x.handleException ex testResult FailureSite.Test
 
@@ -119,7 +120,7 @@ and FsCheckTestMethod(mi : MethodInfo) =
         let attr = x.Method.GetCustomAttributes(typeof<PropertyAttribute>, false) |> Seq.head
         attr :?> PropertyAttribute
 
-    member private x.runTestMethod testResult =
+    member private x.runTestMethod context testResult =
         let attr = x.getFsCheckPropertyAttribute()
         let testRunner = { new IRunner with
                 member x.OnStartFixture t = ()
@@ -154,7 +155,11 @@ and FsCheckTestMethod(mi : MethodInfo) =
                         Arbitrary = attr.Arbitrary |> Array.toList
                         Runner = testRunner }
 
-        Check.Method(config, x.Method, ?target = if x.Fixture <> null then Some x.Fixture else None)
+        printfn "%s method fixture is null? %b" x.MethodName (x.Fixture = null)
+        let target = if x.Fixture <> null then Some x.Fixture
+                     elif x.Method.IsStatic then None
+                     else Some context.TestObject
+        Check.Method(config, x.Method, ?target = target)
         testResult.SetResult(ResultState(TestStatus.Passed))
 
     member private x.handleException ex testResult failureSite =
