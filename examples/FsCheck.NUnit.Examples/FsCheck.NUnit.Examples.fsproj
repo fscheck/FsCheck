@@ -53,7 +53,6 @@
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
-    <Compile Include="FsCheckAddin.fs" />
     <Compile Include="PropertyExamples.fs" />
     <None Include="paket.references" />
   </ItemGroup>

@@ -10,10 +10,6 @@ open NUnit.Framework
 open NUnit.Framework.Interfaces
 open NUnit.Framework.Internal
 
-//warning  ..\nunit\bin\Debug\nunit-console.exe examples\FsCheck.NUnit.CSharpExamples\bin\Debug\FsCheck.NUnit.CSharpExamples.dll --trace=Verbose --pause
-//failing: ..\nunit\bin\Debug\nunit-console.exe examples\FsCheck.NUnit.Examples\bin\Debug\FsCheck.NUnit.Examples.dll
-
-
 ///help consumers remove the unneeded classes
 [<Obsolete("This class is no longer needed for running NUnit v3.", true)>]
 type FsCheckTestCaseBuilder() =
