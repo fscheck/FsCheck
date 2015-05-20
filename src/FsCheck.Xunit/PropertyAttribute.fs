@@ -111,6 +111,9 @@ type PropertyAttribute() =
                     upcast new PassedResult(methodInfo,this.DisplayName)
                 | TestResult.Exhausted testdata -> 
                     upcast new FailedResult(methodInfo,PropertyFailedException(xunitRunner.Result), this.DisplayName)
+                | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  -> 
+                    let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata shrunkArgs seed)
+                    upcast new FailedResult(methodInfo, PropertyFailedException(message, e), this.DisplayName)
                 | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  -> 
                     upcast new FailedResult(methodInfo, PropertyFailedException(xunitRunner.Result), this.DisplayName)
         } :> ITestCommand
