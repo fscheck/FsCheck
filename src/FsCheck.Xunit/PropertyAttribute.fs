@@ -8,7 +8,7 @@ open Xunit.Sdk
 open FsCheck
 
 type PropertyFailedException(testResult:FsCheck.TestResult) = 
-    inherit AssertException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "sorry no stacktrace")
+    inherit AssertException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "Sorry, no stack trace.")
 
 //can not be an anonymous type because of let mutable.
 type private XunitRunner() =
