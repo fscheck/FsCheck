@@ -183,31 +183,37 @@ module Runner =
     let onStartFixtureToString (t:Type) =
         sprintf "--- Checking %s ---%s" t.Name newline
 
+    let private pluralize nb = if nb = 1 then String.Empty else "s"
+
+    let private labels_to_string l = String.concat newline l
+
+    let private maybePrintLabels (l:Set<_>) = 
+        match l.Count with
+        | 0 -> String.Empty
+        | 1 -> sprintf "Label of failing property: %s%s" (labels_to_string l) newline
+        | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labels_to_string l) newline
+
+    let onFailureToString name data args usedSeed =
+        sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
+                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
+            + maybePrintLabels data.Labels  
+            + sprintf "%s%s" (args |> argumentsToString) newline
+
     ///A function that returns the default string that is printed as a result of the test.
     let onFinishedToString name testResult =
-        let pluralize nb = if nb = 1 then String.Empty else "s"
         let display l = match l with
                         | []  -> sprintf ".%s" newline
                         | [x] -> sprintf " (%s).%s" x newline
                         | xs  -> sprintf ".%s%s" newline (List.fold (fun acc x -> x + "." + newline + acc) "" xs)
         let entry (p,xs) = sprintf "%A%s %s" p "%" (String.concat ", " xs)
         let stamps_to_string s = s |> Seq.map entry |> Seq.toList |> display
-        let labels_to_string l = String.concat newline l
-        let maybePrintLabels (l:Set<_>) = 
-            match l.Count with
-            | 0 -> String.Empty
-            | 1 -> sprintf "Label of failing property: %s%s" (labels_to_string l) newline
-            | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labels_to_string l) newline
         let name = if String.IsNullOrEmpty(name) then String.Empty else (name+"-")  
         match testResult with
         | TestResult.True data -> 
             sprintf "%sOk, passed %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
         | TestResult.False (data, _, args, Outcome.Exception exc, usedSeed) -> 
-            sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
-            + maybePrintLabels data.Labels  
-            + sprintf "%s%s" (args |> argumentsToString) newline
+            onFailureToString name data args usedSeed
             + sprintf "with exception:%s%O%s" newline exc newline
         | TestResult.False (data, _, args, Outcome.Timeout i, usedSeed) -> 
             sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):%s" 
@@ -215,10 +221,7 @@ module Runner =
             + maybePrintLabels data.Labels 
             + sprintf "%s%s" (args |> argumentsToString) newline
         | TestResult.False (data, _, args, _, usedSeed) -> 
-            sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
-            + maybePrintLabels data.Labels  
-            + sprintf "%s%s" (args |> argumentsToString) newline
+            onFailureToString name data args usedSeed
         | TestResult.Exhausted data -> 
             sprintf "%sArguments exhausted after %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
