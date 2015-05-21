@@ -7,8 +7,12 @@ open Xunit
 open Xunit.Sdk
 open FsCheck
 
-type PropertyFailedException(testResult:FsCheck.TestResult) = 
-    inherit AssertException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "sorry no stacktrace")
+type PropertyFailedException = 
+    inherit AssertException
+    new (testResult:FsCheck.TestResult) = {
+        inherit AssertException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "Sorry, no stack trace.") }
+    new (userMessage, innerException : exn) = {
+        inherit AssertException(userMessage, innerException) }
 
 //can not be an anonymous type because of let mutable.
 type private XunitRunner() =
@@ -107,6 +111,9 @@ type PropertyAttribute() =
                     upcast new PassedResult(methodInfo,this.DisplayName)
                 | TestResult.Exhausted testdata -> 
                     upcast new FailedResult(methodInfo,PropertyFailedException(xunitRunner.Result), this.DisplayName)
+                | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  -> 
+                    let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata shrunkArgs seed)
+                    upcast new FailedResult(methodInfo, PropertyFailedException(message, e), this.DisplayName)
                 | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  -> 
                     upcast new FailedResult(methodInfo, PropertyFailedException(xunitRunner.Result), this.DisplayName)
         } :> ITestCommand
