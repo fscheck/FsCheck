@@ -4,6 +4,7 @@ nuget FAKE
 nuget NUnit
 nuget NUnit.Runners
 nuget xunit
+nuget xunit.extensibility.core
 nuget xunit.extensibility.execution
 nuget xunit.runner.utility
 nuget xunit.runners

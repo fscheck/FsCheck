@@ -1,2 +1,2 @@
-xunit
 xunit.extensibility.execution
+xunit.extensibility.core

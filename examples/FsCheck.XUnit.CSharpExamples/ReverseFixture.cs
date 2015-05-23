@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FsCheck.Xunit;
 
 namespace FsCheck.XUnit.CSharpExamples
@@ -33,5 +34,11 @@ namespace FsCheck.XUnit.CSharpExamples
         {
           return xs.BadReverse3().SequenceEqual(xs.Reverse());
         }
+
+        [Property]
+        public bool ShouldFail_Exception(int[] xs)
+        {
+            throw new InvalidOperationException("Test failed!");
+        }
     }
-  }
+}
