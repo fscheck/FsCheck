@@ -13,7 +13,7 @@ FsCheck
     <div class="well well-small" id="nuget">
       FsCheck, NUnit and xUnit.NET plugin can be <a href="https://www.nuget.org/packages?q=fscheck">installed from NuGet</a>:
       <pre>PM> Install-Package FsCheck
-PM> Install-Package FsCheck.Nunit
+PM> Install-Package FsCheck.NUnit
 PM> Install-Package FsCheck.Xunit</pre>
     </div>
   </div> 
