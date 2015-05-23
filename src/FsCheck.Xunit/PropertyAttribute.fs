@@ -8,8 +8,12 @@ open Xunit
 open Xunit.Sdk
 open Xunit.Abstractions
 
-type PropertyFailedException(testResult:FsCheck.TestResult) =
-    inherit XunitException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "sorry no stacktrace")
+type PropertyFailedException = 
+    inherit AssertException
+    new (testResult:FsCheck.TestResult) = {
+        inherit AssertException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "Sorry, no stack trace.") }
+    new (userMessage, innerException : exn) = {
+        inherit AssertException(userMessage, innerException) }
 
 //can not be an anonymous type because of let mutable.
 type XunitRunner() =
@@ -132,6 +136,9 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                           | TestResult.Exhausted testdata ->
                             summary.Failed <- summary.Failed + 1
                             (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  -> 
+                    let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata shrunkArgs seed)
+                    upcast new FailedResult(methodInfo, PropertyFailedException(message, e), this.DisplayName)
                           | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
                             summary.Failed <- summary.Failed + 1
                             (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
