@@ -102,7 +102,7 @@ When a property fails, FsCheck automatically displays a minimal counter example.
     Dependencies = [ 
                     "NUnit",    lazy GetPackageVersion "./packages/" "NUnit"  //delayed so only runs after package restore step
                     "NUnit.Runners",    lazy GetPackageVersion "./packages/" "NUnit.Runners"
-                    "FsCheck",  lazy release.AssemblyVersion
+                    "FsCheck",  lazy release.NugetVersion
                     ]     
     }
     { 
@@ -119,7 +119,7 @@ All the options normally available in vanilla FsCheck via configuration can be c
     ProjectFile = ["src/FsCheck.Xunit/FsCheck.Xunit.fsproj"]
     Dependencies = [ 
                     "xunit", lazy GetPackageVersion "./packages/" "xunit"  //delayed so only runs after package restore step
-                    "FsCheck",  lazy release.AssemblyVersion
+                    "FsCheck",  lazy release.NugetVersion
                      ]
    }
   ]
