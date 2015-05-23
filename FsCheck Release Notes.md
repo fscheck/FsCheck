@@ -1,3 +1,6 @@
+### 2.0.1 - 23 May 2015
+  * Because apparently there there is some problem with FsCheck.Xunit and FsCheck.NUnit's NuGet dependencies to unstable versions.
+
 ### 2.0.1-rc1 - 23 May 2015
   * Improve asssert failure reporting in FsCheck.Xunit (by Mark Seemann)
   * Add discard method (by Mauricio Scheffer)
