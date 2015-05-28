@@ -55,9 +55,9 @@ PM> Install-Package FsCheck.Xunit</pre>
 本ライブラリは BSD ライセンスの下で利用可能であり、変更および営利・非営利目的両方の再頒布が許可されます。
 詳細については、GitHub のリポジトリにある[ライセンスファイル][license]を確認して下さい。
 
-  [content]: https://github.com/fsharp/FsCheck/tree/master/docs/content
-  [gh]: https://github.com/fsharp/FsCheck
-  [issues]: https://github.com/fsharp/FsCheck/issues
-  [readme]: https://github.com/fsharp/FsCheck/blob/master/README.md
-  [license]: https://github.com/fsharp/FsCheck/blob/master/License.txt
+  [content]: https://github.com/fscheck/FsCheck/tree/master/docs/content
+  [gh]: https://github.com/fscheck/FsCheck
+  [issues]: https://github.com/fscheck/FsCheck/issues
+  [readme]: https://github.com/fscheck/FsCheck/blob/master/README.md
+  [license]: https://github.com/fscheck/FsCheck/blob/master/License.txt
 *)
