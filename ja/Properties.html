@@ -24,7 +24,7 @@
     <div class="container">
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+          <li><a href="http://github.com/fscheck/FsCheck/fork">Fork me on GitHub</a></li>
         </ul>
         <h3 class="muted"><a href="/FsCheck/ja/index.html">FsCheck</a></h3>
       </div>
@@ -75,7 +75,7 @@ bool または unit を返す任意個のパラメータを取る関数となる
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 41 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 72 tests.</code></pre></td></tr></table>
 
 <p>条件が成り立つときはいつでも <code>==&gt;</code> の後の性質が成り立つのなら、このような性質は成り立ちます。</p>
 
@@ -100,11 +100,11 @@ FsCheck は異なる型(object の派生型)を含むリストを生成したか
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1864263077,296011605)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (0 shrinks) (StdGen (899465344,296013655)):
 0
 with exception:
 System.DivideByZeroException: Attempted to divide by zero.
-   at FSI_0020.tooEager(Int32 a) in C:\Users\Kurt\Projects\FsCheck\fsharp\docs\tools\input.fsx:line 1
+   at FSI_0029.tooEager(Int32 a) in C:\Users\Kurt\Projects\FsCheck\fsharp\docs\tools\input.fsx:line 1
    at FsCheck.Testable.evaluate[a,b](FSharpFunc`2 body, a a) in C:\Users\Kurt\Projects\FsCheck\fsharp\src\FsCheck\Testable.fs:line 161</code></pre></td></tr></table>
 
 <p>ここで、性質が正しくチェックされているかどうかを確かめるために、遅延評価が必要になります:</p>
@@ -207,7 +207,7 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 
 <p>この条件が真になるテストケースは自明であると分類され、全体における自明なテストケースの比率が報告されます:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 45 tests (28% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 61 tests (29% trivial).</code></pre></td></tr></table>
 
 <h3>テストケースの分類</h3>
 
@@ -226,10 +226,10 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 
 <p>条件を満足するテストケースは与えられた分類に割り当てられ、分類の分布はテスト後に報告されます:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 56 tests.
-39% at-tail, at-head.
-30% at-head.
-23% at-tail.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 64 tests.
+37% at-tail, at-head.
+32% at-head.
+18% at-tail.</code></pre></td></tr></table>
 
 <p>1つのテストケースは複数の分類に当てはまる場合があることに注意してください。</p>
 
@@ -250,12 +250,12 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <p>collect の引数はテストケースごとに評価され、値の分布が報告されます。
 この引数の型は <code>sprintf "%A"</code> を用いて出力されます:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 55 tests.
-41% 0.
-38% 1.
-10% 3.
-7% 2.
-1% 4.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 49 tests.
+44% 0.
+36% 1.
+12% 2.
+4% 3.
+2% 5.</code></pre></td></tr></table>
 
 <h3>観測の連結</h3>
 
@@ -272,15 +272,17 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 67 tests.
-40% 0, at-tail, at-head.
-19% 1, at-tail.
-13% 1, at-head.
-10% 1, at-tail, at-head.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 57 tests.
+38% 0, at-tail, at-head.
+15% 1, at-tail.
+14% 1, at-head.
+7% 1, at-tail, at-head.
+5% 3.
 5% 2, at-tail.
-4% 3, at-tail.
-2% 3.
-2% 2, at-head.</code></pre></td></tr></table>
+5% 2.
+3% 3, at-head.
+3% 2, at-head.
+1% 4.</code></pre></td></tr></table>
 
 <h2>And, Or およびラベル</h2>
 
@@ -308,7 +310,7 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1872795949,296011605)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (908210801,296013655)):
 Label of failing property: result not sum
 0
 0</code></pre></td></tr></table>
@@ -328,7 +330,7 @@ Label of failing property: result not sum
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1873516457,296011605)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (908761192,296013655)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
@@ -406,9 +408,9 @@ lt1
             <li><a href="/FsCheck/ja/index.html">ホームページ</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.com/packages/FsCheck">Get Library via NuGet</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
             
             <li class="nav-header">はじめよう</li>
             <li><a href="/FsCheck/ja/QuickStart.html">クイックスタート</a></li>
@@ -434,7 +436,7 @@ lt1
         </div>
       </div>
     </div>
-    <a href="http://github.com/fsharp/FsCheck">
+    <a href="http://github.com/fscheck/FsCheck">
       <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
     </a>
   </body>

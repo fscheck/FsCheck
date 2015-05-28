@@ -23,7 +23,7 @@
     <div class="container">
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+          <li><a href="http://github.com/fscheck/FsCheck/fork">Fork me on GitHub</a></li>
         </ul>
         <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
       </div>
@@ -37,6 +37,8 @@
 <h1>GenExtensions</h1>
 <div class="xmldoc">
 <p>Extension methods to build generators - contains among other the Linq methods.</p>
+
+
 </div>
   <h3>Static members</h3>
   <table class="table table-bordered member-list">
@@ -51,15 +53,17 @@
             Apply(generator, f)
           </code>
           <div class="tip" id="300">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88920&gt; * f:Gen&lt;Func&lt;&#39;?88920,&#39;?88921&gt;&gt;) -&gt; Gen&lt;&#39;?88921&gt;<br />
-                          <strong>Type parameters:</strong> '?88920, '?88921          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?100946&gt; * f:Gen&lt;Func&lt;&#39;?100946,&#39;?100947&gt;&gt;) -&gt; Gen&lt;&#39;?100947&gt;<br />
+                          <strong>Type parameters:</strong> '?100946, '?100947          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L95-95" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L95-95" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Apply the given Gen function to this generator, aka the applicative <*> operator.</p>
+
+
 
         </td>
       </tr>
@@ -70,15 +74,17 @@
             Array2DOf(generator)
           </code>
           <div class="tip" id="301">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?88918&gt; -&gt; Gen&lt;&#39;?88918 [,]&gt;<br />
-                          <strong>Type parameters:</strong> '?88918          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?100944&gt; -&gt; Gen&lt;&#39;?100944 [,]&gt;<br />
+                          <strong>Type parameters:</strong> '?100944          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L89-89" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L89-89" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates a 2D array. The square root of the size is the maximum number of rows and columns.</p>
+
+
 
         </td>
       </tr>
@@ -89,15 +95,17 @@
             Array2DOf(generator, rows, cols)
           </code>
           <div class="tip" id="302">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88916&gt; * rows:int * cols:int) -&gt; Gen&lt;&#39;?88916 [,]&gt;<br />
-                          <strong>Type parameters:</strong> '?88916          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?100942&gt; * rows:int * cols:int) -&gt; Gen&lt;&#39;?100942 [,]&gt;<br />
+                          <strong>Type parameters:</strong> '?100942          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L83-83" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L83-83" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates a 2D array of the given dimensions.</p>
+
+
 
         </td>
       </tr>
@@ -108,16 +116,18 @@
             ArrayOf(generator)
           </code>
           <div class="tip" id="303">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?88914&gt; -&gt; Gen&lt;&#39;?88914 []&gt;<br />
-                          <strong>Type parameters:</strong> '?88914          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?100940&gt; -&gt; Gen&lt;&#39;?100940 []&gt;<br />
+                          <strong>Type parameters:</strong> '?100940          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L77-77" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L77-77" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates an array using the specified generator. 
 The maximum length is size+1.</p>
+
+
 
         </td>
       </tr>
@@ -128,15 +138,17 @@ The maximum length is size+1.</p>
             ArrayOf(generator, length)
           </code>
           <div class="tip" id="304">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88912&gt; * length:int) -&gt; Gen&lt;&#39;?88912 []&gt;<br />
-                          <strong>Type parameters:</strong> '?88912          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?100938&gt; * length:int) -&gt; Gen&lt;&#39;?100938 []&gt;<br />
+                          <strong>Type parameters:</strong> '?100938          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L70-70" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L70-70" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates an array of a specified length.</p>
+
+
 
         </td>
       </tr>
@@ -147,15 +159,17 @@ The maximum length is size+1.</p>
             Eval(generator, size, random)
           </code>
           <div class="tip" id="305">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88890&gt; * size:int * random:StdGen) -&gt; &#39;?88890<br />
-                          <strong>Type parameters:</strong> '?88890          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?100916&gt; * size:int * random:StdGen) -&gt; &#39;?100916<br />
+                          <strong>Type parameters:</strong> '?100916          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L14-14" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L14-14" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates a value with maximum size n.</p>
+
+
 
         </td>
       </tr>
@@ -166,15 +180,17 @@ The maximum length is size+1.</p>
             Four(generator)
           </code>
           <div class="tip" id="306">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?88933&gt; -&gt; Gen&lt;&#39;?88933 * &#39;?88933 * &#39;?88933 * &#39;?88933&gt;<br />
-                          <strong>Type parameters:</strong> '?88933          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?100959&gt; -&gt; Gen&lt;&#39;?100959 * &#39;?100959 * &#39;?100959 * &#39;?100959&gt;<br />
+                          <strong>Type parameters:</strong> '?100959          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L130-130" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L130-130" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Build a generator that generates a 4-tuple of the values generated by the given generator.</p>
+
+
 
         </td>
       </tr>
@@ -185,16 +201,18 @@ The maximum length is size+1.</p>
             ListOf(generator)
           </code>
           <div class="tip" id="307">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?88908&gt; -&gt; Gen&lt;IList&lt;&#39;?88908&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?88908          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?100934&gt; -&gt; Gen&lt;IList&lt;&#39;?100934&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?100934          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L55-55" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L55-55" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates a list of random length. The maximum length depends on the
 size parameter.</p>
+
+
 
         </td>
       </tr>
@@ -205,15 +223,17 @@ size parameter.</p>
             ListOf(generator, nbOfElements)
           </code>
           <div class="tip" id="308">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88906&gt; * nbOfElements:int) -&gt; Gen&lt;IList&lt;&#39;?88906&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?88906          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?100932&gt; * nbOfElements:int) -&gt; Gen&lt;IList&lt;&#39;?100932&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?100932          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L47-47" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L47-47" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates a list of given length, containing values generated by the given generator.</p>
+
+
 
         </td>
       </tr>
@@ -228,12 +248,14 @@ size parameter.</p>
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L63-63" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L63-63" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates a non-empty list of random length. The maximum length 
 depends on the size parameter.</p>
+
+
 
         </td>
       </tr>
@@ -244,15 +266,17 @@ depends on the size parameter.</p>
             Resize(generator, newSize)
           </code>
           <div class="tip" id="310">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88923&gt; * newSize:int) -&gt; Gen&lt;&#39;?88923&gt;<br />
-                          <strong>Type parameters:</strong> '?88923          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?100949&gt; * newSize:int) -&gt; Gen&lt;&#39;?100949&gt;<br />
+                          <strong>Type parameters:</strong> '?100949          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L101-101" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L101-101" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Override the current size of the test.</p>
+
+
 
         </td>
       </tr>
@@ -263,15 +287,17 @@ depends on the size parameter.</p>
             Sample(generator, size, numberOfSamples)
           </code>
           <div class="tip" id="311">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88892&gt; * size:int * numberOfSamples:int) -&gt; &#39;?88892 list<br />
-                          <strong>Type parameters:</strong> '?88892          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?100918&gt; * size:int * numberOfSamples:int) -&gt; &#39;?100918 list<br />
+                          <strong>Type parameters:</strong> '?100918          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L20-20" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L20-20" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates n values of the given size.</p>
+
+
 
         </td>
       </tr>
@@ -282,15 +308,17 @@ depends on the size parameter.</p>
             Select(g, selector)
           </code>
           <div class="tip" id="312">
-            <strong>Signature:</strong> (g:Gen&lt;&#39;?88894&gt; * selector:Func&lt;&#39;?88894,&#39;?88895&gt;) -&gt; Gen&lt;&#39;?88895&gt;<br />
-                          <strong>Type parameters:</strong> '?88894, '?88895          </div>
+            <strong>Signature:</strong> (g:Gen&lt;&#39;?100920&gt; * selector:Func&lt;&#39;?100920,&#39;?100921&gt;) -&gt; Gen&lt;&#39;?100921&gt;<br />
+                          <strong>Type parameters:</strong> '?100920, '?100921          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L25-25" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L25-25" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Map the given function to the value in the generator, yielding a new generator of the result type.</p>
+
+
 
         </td>
       </tr>
@@ -301,11 +329,11 @@ depends on the size parameter.</p>
             SelectMany(source, f, select)
           </code>
           <div class="tip" id="313">
-            <strong>Signature:</strong> (source:Gen&lt;&#39;?88902&gt; * f:Func&lt;&#39;?88902,Gen&lt;&#39;?88903&gt;&gt; * select:Func&lt;&#39;?88902,&#39;?88903,&#39;?88904&gt;) -&gt; Gen&lt;&#39;?88904&gt;<br />
-                          <strong>Type parameters:</strong> '?88902, '?88903, '?88904          </div>
+            <strong>Signature:</strong> (source:Gen&lt;&#39;?100928&gt; * f:Func&lt;&#39;?100928,Gen&lt;&#39;?100929&gt;&gt; * select:Func&lt;&#39;?100928,&#39;?100929,&#39;?100930&gt;) -&gt; Gen&lt;&#39;?100930&gt;<br />
+                          <strong>Type parameters:</strong> '?100928, '?100929, '?100930          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L39-39" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L39-39" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -319,11 +347,11 @@ depends on the size parameter.</p>
             SelectMany(source, f)
           </code>
           <div class="tip" id="314">
-            <strong>Signature:</strong> (source:Gen&lt;&#39;?88899&gt; * f:Func&lt;&#39;?88899,Gen&lt;&#39;?88900&gt;&gt;) -&gt; Gen&lt;&#39;?88900&gt;<br />
-                          <strong>Type parameters:</strong> '?88899, '?88900          </div>
+            <strong>Signature:</strong> (source:Gen&lt;&#39;?100925&gt; * f:Func&lt;&#39;?100925,Gen&lt;&#39;?100926&gt;&gt;) -&gt; Gen&lt;&#39;?100926&gt;<br />
+                          <strong>Type parameters:</strong> '?100925, '?100926          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L34-34" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L34-34" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -337,15 +365,17 @@ depends on the size parameter.</p>
             Three(generator)
           </code>
           <div class="tip" id="315">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?88931&gt; -&gt; Gen&lt;&#39;?88931 * &#39;?88931 * &#39;?88931&gt;<br />
-                          <strong>Type parameters:</strong> '?88931          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?100957&gt; -&gt; Gen&lt;&#39;?100957 * &#39;?100957 * &#39;?100957&gt;<br />
+                          <strong>Type parameters:</strong> '?100957          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L124-124" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L124-124" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Build a generator that generates a 3-tuple of the values generated by the given generator.</p>
+
+
 
         </td>
       </tr>
@@ -356,15 +386,17 @@ depends on the size parameter.</p>
             ToArbitrary(generator, shrinker)
           </code>
           <div class="tip" id="316">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?88927&gt; * shrinker:(&#39;?88927 -&gt; seq&lt;&#39;?88927&gt;)) -&gt; Arbitrary&lt;&#39;?88927&gt;<br />
-                          <strong>Type parameters:</strong> '?88927          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?100953&gt; * shrinker:(&#39;?100953 -&gt; seq&lt;&#39;?100953&gt;)) -&gt; Arbitrary&lt;&#39;?100953&gt;<br />
+                          <strong>Type parameters:</strong> '?100953          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L112-112" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L112-112" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Construct an Arbitrary instance from a generator and a shrinker.</p>
+
+
 
         </td>
       </tr>
@@ -375,16 +407,18 @@ depends on the size parameter.</p>
             ToArbitrary(generator)
           </code>
           <div class="tip" id="317">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?88925&gt; -&gt; Arbitrary&lt;&#39;?88925&gt;<br />
-                          <strong>Type parameters:</strong> '?88925          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?100951&gt; -&gt; Arbitrary&lt;&#39;?100951&gt;<br />
+                          <strong>Type parameters:</strong> '?100951          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L107-107" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L107-107" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Construct an Arbitrary instance from a generator.
 Shrink is not supported for this type.</p>
+
+
 
         </td>
       </tr>
@@ -395,15 +429,17 @@ Shrink is not supported for this type.</p>
             Two(generator)
           </code>
           <div class="tip" id="318">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?88929&gt; -&gt; Gen&lt;&#39;?88929 * &#39;?88929&gt;<br />
-                          <strong>Type parameters:</strong> '?88929          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?100955&gt; -&gt; Gen&lt;&#39;?100955 * &#39;?100955&gt;<br />
+                          <strong>Type parameters:</strong> '?100955          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L118-118" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L118-118" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Build a generator that generates a 2-tuple of the values generated by the given generator.</p>
+
+
 
         </td>
       </tr>
@@ -414,17 +450,19 @@ Shrink is not supported for this type.</p>
             Where(g, predicate)
           </code>
           <div class="tip" id="319">
-            <strong>Signature:</strong> (g:Gen&lt;&#39;?88897&gt; * predicate:Func&lt;&#39;?88897,bool&gt;) -&gt; Gen&lt;&#39;?88897&gt;<br />
-                          <strong>Type parameters:</strong> '?88897          </div>
+            <strong>Signature:</strong> (g:Gen&lt;&#39;?100923&gt; * predicate:Func&lt;&#39;?100923,bool&gt;) -&gt; Gen&lt;&#39;?100923&gt;<br />
+                          <strong>Type parameters:</strong> '?100923          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L31-31" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L31-31" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates a value that satisfies a predicate. This function keeps re-trying
 by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
 the predicate is satisfied.</p>
+
+
 
         </td>
       </tr>
@@ -439,9 +477,9 @@ the predicate is satisfied.</p>
             <li><a href="/FsCheck/index.html">Home page</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
             <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
             
             <li class="nav-header">Getting started</li>
@@ -468,7 +506,7 @@ the predicate is satisfied.</p>
         </div>
       </div>
     </div>
-    <a href="http://github.com/fsharp/FsCheck">
+    <a href="http://github.com/fscheck/FsCheck">
       <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
     </a>
   </body>

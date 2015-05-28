@@ -24,7 +24,7 @@
     <div class="container">
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+          <li><a href="http://github.com/fscheck/FsCheck/fork">Fork me on GitHub</a></li>
         </ul>
         <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
       </div>
@@ -91,8 +91,8 @@ you may already have.</p>
 
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 3 tests (6 shrinks) (StdGen (2061447339,296011605)):
-[1; 0]</code></pre></td></tr></table>
+ListProperties.reverse is original-Falsifiable, after 4 tests (1 shrink) (StdGen (1107887996,296013655)):
+[0; 1]</code></pre></td></tr></table>
 
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module, 
 you can also use Check.QuickAll to test all the top level functions in a certain module. 
@@ -124,9 +124,9 @@ top level let-bound functions, and then register all generators and and all prop
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>--- Checking FSI_0089 ---
-FSI_0089.myprop-Ok, passed 100 tests.
-FSI_0089.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>--- Checking FSI_0124 ---
+FSI_0124.myprop-Ok, passed 100 tests.
+FSI_0124.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
 
 <p>The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way 
 to get to a module's Type directly.</p>
@@ -368,9 +368,9 @@ appears as normal.</p>
             <li><a href="/FsCheck/index.html">Home page</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
             <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
             
             <li class="nav-header">Getting started</li>
@@ -397,7 +397,7 @@ appears as normal.</p>
         </div>
       </div>
     </div>
-    <a href="http://github.com/fsharp/FsCheck">
+    <a href="http://github.com/fscheck/FsCheck">
       <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
     </a>
   </body>

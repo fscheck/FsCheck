@@ -24,7 +24,7 @@
     <div class="container">
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+          <li><a href="http://github.com/fscheck/FsCheck/fork">Fork me on GitHub</a></li>
         </ul>
         <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
       </div>
@@ -72,7 +72,7 @@ To check the property, we load this definition in F# interactive and then invoke
 
 <p>In C#:</p>
 
-<table class="pre"><tr><td class="snippet"><pre lang="csharp">Func&lt;<span class="k">int</span>[],<span class="k">bool</span>&gt; revRevIsOrig <span class="o">=</span> xs <span class="o">=</span><span class="o">&gt;</span> xs.Reverse().Reverse().SequenceEqual( xs );
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp">Func&lt;<span class="k">int</span>[],<span class="k">bool</span>&gt; revRevIsOrig <span class="o">=</span> xs <span class="o">=</span><span class="o">&gt;</span> xs.Reverse().Reverse().SequenceEqual( xs );
 Prop.ForAll(revRevIsOrig).QuickCheck();</pre></td></tr></table>
 
 <p>When a property fails, FsCheck displays a counter-example. For example, if we define</p>
@@ -83,12 +83,12 @@ Prop.ForAll(revRevIsOrig).QuickCheck();</pre></td></tr></table>
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (2042057113,296011605)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (2 shrinks) (StdGen (1091501543,296013655)):
 [0; 1]</code></pre></td></tr></table>
 
 <p>In C#:</p>
 
-<table class="pre"><tr><td class="snippet"><pre lang="csharp">Prop.ForAll&lt;<span class="k">int</span>[]<span class="o">&gt;</span>(xs <span class="o">=</span><span class="o">&gt;</span> xs.Reverse().SequenceEqual(xs))
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp">Prop.ForAll&lt;<span class="k">int</span>[]<span class="o">&gt;</span>(xs <span class="o">=</span><span class="o">&gt;</span> xs.Reverse().SequenceEqual(xs))
     .QuickCheck();</pre></td></tr></table>
 
 <p>FsCheck also <em>shrinks</em> the counter example: it tries to find the minimal counter example that 
@@ -124,12 +124,12 @@ FsCheck to generate lists of floats:</p>
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (2 shrinks) (StdGen (2042327305,296011605)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 15 tests (15 shrinks) (StdGen (1091851795,296013655)):
 [nan]</code></pre></td></tr></table>
 
 <p>In C#:</p>
 
-<table class="pre"><tr><td class="snippet"><pre lang="csharp">Prop.ForAll&lt;<span class="k">double</span>[]<span class="o">&gt;</span>(xs <span class="o">=</span><span class="o">&gt;</span> xs.Reverse().Reverse().SequenceEqual(xs))
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp">Prop.ForAll&lt;<span class="k">double</span>[]<span class="o">&gt;</span>(xs <span class="o">=</span><span class="o">&gt;</span> xs.Reverse().Reverse().SequenceEqual(xs))
     .QuickCheck();</pre></td></tr></table>
 
 <h2>Using FsCheck with other testing frameworks</h2>
@@ -153,7 +153,7 @@ the unit test above so it can be run from xUnit.NET:</p>
 </pre>
 
 
-<table class="pre"><tr><td class="snippet"><pre lang="csharp">[Fact]
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp">[Fact]
 <span class="k">public</span> <span class="k">void</span> RevRevIsOrig(){
     Prop.ForAll&lt;<span class="k">int</span>[]<span class="o">&gt;</span>(xs <span class="o">=</span><span class="o">&gt;</span> xs.Reverse().Reverse().SequenceEqual(xs))
         .QuickCheckThrowOnFailure();
@@ -207,9 +207,9 @@ be written more tersely as follows:</p>
             <li><a href="/FsCheck/index.html">Home page</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
             <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
             
             <li class="nav-header">Getting started</li>
@@ -236,7 +236,7 @@ be written more tersely as follows:</p>
         </div>
       </div>
     </div>
-    <a href="http://github.com/fsharp/FsCheck">
+    <a href="http://github.com/fscheck/FsCheck">
       <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
     </a>
   </body>

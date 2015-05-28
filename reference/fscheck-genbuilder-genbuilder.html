@@ -23,7 +23,7 @@
     <div class="container">
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li><a href="http://github.com/fsharp/FsCheck/fork">Fork me on GitHub</a></li>
+          <li><a href="http://github.com/fscheck/FsCheck/fork">Fork me on GitHub</a></li>
         </ul>
         <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
       </div>
@@ -37,6 +37,8 @@
 <h1>GenBuilder</h1>
 <div class="xmldoc">
 <p>The workflow type for generators.</p>
+
+
 </div>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
@@ -51,11 +53,11 @@
             Bind(m, k)
           </code>
           <div class="tip" id="184">
-            <strong>Signature:</strong> (m:Gen&lt;&#39;?89754&gt; * k:(&#39;?89754 -&gt; Gen&lt;&#39;?89755&gt;)) -&gt; Gen&lt;&#39;?89755&gt;<br />
-                          <strong>Type parameters:</strong> '?89754, '?89755          </div>
+            <strong>Signature:</strong> (m:Gen&lt;&#39;?101780&gt; * k:(&#39;?101780 -&gt; Gen&lt;&#39;?101781&gt;)) -&gt; Gen&lt;&#39;?101781&gt;<br />
+                          <strong>Type parameters:</strong> '?101780, '?101781          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L74-74" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L74-74" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -69,11 +71,11 @@
             Combine(m1, m2)
           </code>
           <div class="tip" id="185">
-            <strong>Signature:</strong> (m1:Gen&lt;unit&gt; * m2:Gen&lt;&#39;?89759&gt;) -&gt; Gen&lt;&#39;?89759&gt;<br />
-                          <strong>Type parameters:</strong> '?89759          </div>
+            <strong>Signature:</strong> (m1:Gen&lt;unit&gt; * m2:Gen&lt;&#39;?101785&gt;) -&gt; Gen&lt;&#39;?101785&gt;<br />
+                          <strong>Type parameters:</strong> '?101785          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L76-76" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L76-76" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -87,11 +89,11 @@
             Delay(f)
           </code>
           <div class="tip" id="186">
-            <strong>Signature:</strong> (f:(unit -&gt; Gen&lt;&#39;?89757&gt;)) -&gt; Gen&lt;&#39;?89757&gt;<br />
-                          <strong>Type parameters:</strong> '?89757          </div>
+            <strong>Signature:</strong> (f:(unit -&gt; Gen&lt;&#39;?101783&gt;)) -&gt; Gen&lt;&#39;?101783&gt;<br />
+                          <strong>Type parameters:</strong> '?101783          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L75-75" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L75-75" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -105,11 +107,11 @@
             For(s, f)
           </code>
           <div class="tip" id="187">
-            <strong>Signature:</strong> (s:&#39;?89772 * f:(&#39;a -&gt; Gen&lt;&#39;b&gt;)) -&gt; Gen&lt;unit&gt;<br />
-                          <strong>Type parameters:</strong> '?89772, 'a, 'b          </div>
+            <strong>Signature:</strong> (s:&#39;?101798 * f:(&#39;a -&gt; Gen&lt;&#39;b&gt;)) -&gt; Gen&lt;unit&gt;<br />
+                          <strong>Type parameters:</strong> '?101798, 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L82-82" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L82-82" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -123,11 +125,11 @@
             Return(a)
           </code>
           <div class="tip" id="188">
-            <strong>Signature:</strong> a:&#39;?89752 -&gt; Gen&lt;&#39;?89752&gt;<br />
-                          <strong>Type parameters:</strong> '?89752          </div>
+            <strong>Signature:</strong> a:&#39;?101778 -&gt; Gen&lt;&#39;?101778&gt;<br />
+                          <strong>Type parameters:</strong> '?101778          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L73-73" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L73-73" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -141,11 +143,11 @@
             ReturnFrom(g)
           </code>
           <div class="tip" id="189">
-            <strong>Signature:</strong> g:Gen&lt;&#39;?89768&gt; -&gt; Gen&lt;&#39;?89768&gt;<br />
-                          <strong>Type parameters:</strong> '?89768          </div>
+            <strong>Signature:</strong> g:Gen&lt;&#39;?101794&gt; -&gt; Gen&lt;&#39;?101794&gt;<br />
+                          <strong>Type parameters:</strong> '?101794          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L80-80" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L80-80" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -159,11 +161,11 @@
             TryFinally(m, handler)
           </code>
           <div class="tip" id="190">
-            <strong>Signature:</strong> (m:Gen&lt;&#39;?89761&gt; * handler:(unit -&gt; unit)) -&gt; Gen&lt;&#39;?89761&gt;<br />
-                          <strong>Type parameters:</strong> '?89761          </div>
+            <strong>Signature:</strong> (m:Gen&lt;&#39;?101787&gt; * handler:(unit -&gt; unit)) -&gt; Gen&lt;&#39;?101787&gt;<br />
+                          <strong>Type parameters:</strong> '?101787          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L77-77" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L77-77" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -177,11 +179,11 @@
             TryWith(arg1, handler)
           </code>
           <div class="tip" id="191">
-            <strong>Signature:</strong> (Gen&lt;&#39;?89763&gt; * handler:(exn -&gt; &#39;?89763)) -&gt; Gen&lt;&#39;?89763&gt;<br />
-                          <strong>Type parameters:</strong> '?89763          </div>
+            <strong>Signature:</strong> (Gen&lt;&#39;?101789&gt; * handler:(exn -&gt; &#39;?101789)) -&gt; Gen&lt;&#39;?101789&gt;<br />
+                          <strong>Type parameters:</strong> '?101789          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L78-78" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L78-78" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -195,11 +197,11 @@
             Using(a, k)
           </code>
           <div class="tip" id="192">
-            <strong>Signature:</strong> (a:&#39;?89765 * k:(&#39;?89765 -&gt; Gen&lt;&#39;?89766&gt;)) -&gt; Gen&lt;&#39;?89766&gt;<br />
-                          <strong>Type parameters:</strong> '?89765, '?89766          </div>
+            <strong>Signature:</strong> (a:&#39;?101791 * k:(&#39;?101791 -&gt; Gen&lt;&#39;?101792&gt;)) -&gt; Gen&lt;&#39;?101792&gt;<br />
+                          <strong>Type parameters:</strong> '?101791, '?101792          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L79-79" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L79-79" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -213,11 +215,11 @@
             While(p, m)
           </code>
           <div class="tip" id="193">
-            <strong>Signature:</strong> (p:(unit -&gt; bool) * m:Gen&lt;&#39;?89770&gt;) -&gt; Gen&lt;unit&gt;<br />
-                          <strong>Type parameters:</strong> '?89770          </div>
+            <strong>Signature:</strong> (p:(unit -&gt; bool) * m:Gen&lt;&#39;?101796&gt;) -&gt; Gen&lt;unit&gt;<br />
+                          <strong>Type parameters:</strong> '?101796          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L81-81" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L81-81" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -235,7 +237,7 @@
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fsharp/FsCheck/tree/master/src/FsCheck/Gen.fs#L86-86" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L86-86" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -253,9 +255,9 @@
             <li><a href="/FsCheck/index.html">Home page</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck">Source Code on GitHub</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck/blob/master/License.txt">License</a></li>
-            <li><a href="http://github.com/fsharp/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="http://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
             <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
             
             <li class="nav-header">Getting started</li>
@@ -282,7 +284,7 @@
         </div>
       </div>
     </div>
-    <a href="http://github.com/fsharp/FsCheck">
+    <a href="http://github.com/fscheck/FsCheck">
       <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
     </a>
   </body>
