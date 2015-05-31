@@ -5,3 +5,7 @@ before_script:
 
 script: 
   - ./build.sh RunTests
+  
+cache:
+  directories:
+  - packages
