@@ -9,3 +9,4 @@ script:
 cache:
   directories:
   - packages
+  - $HOME/.local/share/NuGet
