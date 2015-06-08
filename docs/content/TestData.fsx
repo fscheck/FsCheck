@@ -141,7 +141,6 @@ let tree =
     Gen.sized tree'
 
 (**
-
     [lang=csharp,file=../csharp/TestData.cs,key=safeTree]
 
 Note that
@@ -194,15 +193,22 @@ type MyGenerators =
           override x.Shrinker t = Seq.empty }
 
 (**
+    [lang=csharp,file=../csharp/TestData.cs,key=MyGenerators]
+
 Replace the `'a` by the particular type you are defining an Arbitary instance for. 
 Only the `Generator` method needs to be defined; `Shrinker` by default returns the empty 
 sequence which means no shrinking will be done for this type).
+
+As the F# code shows, you can create your own subclass of Arbitrary and return that, or you can use one of the `Arb.from`
+methods or functions.
 
 Now, to register all Arbitrary instances in this class:*)
 
 Arb.register<MyGenerators>()
 
 (**
+    [lang=csharp,file=../csharp/TestData.cs,key=register]
+
 FsCheck now knows about `Tree` types, and can not only generate Tree values, but also e.g. lists, tuples and 
 option values containing Trees:*)
 

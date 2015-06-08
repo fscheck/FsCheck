@@ -68,6 +68,13 @@ namespace CSharp.DocSnippets {
         }
         //[/safeTree]
 
+        //[MyGenerators]
+        public class MyGenerators {
+            public static Arbitrary<Tree> Trees() {
+                return Arb.From(SafeTree());
+            }
+        }
+        //[/MyGenerators]
 
         public static void Samples() {
             //[chooseBool]
@@ -83,6 +90,10 @@ namespace CSharp.DocSnippets {
             //[sizedInt]
             var sizedInt = Gen.Sized(s => Gen.Choose(0, s));
             //[/sizedInt]
+
+            //[register]
+            Arb.Register<MyGenerators>();
+            //[/register]
         }
 
     }
