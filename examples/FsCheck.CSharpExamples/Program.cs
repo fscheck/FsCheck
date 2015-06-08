@@ -185,7 +185,7 @@ namespace FsCheck.CSharpExamples
             Console.ReadKey();
         }
 
-        public static FsCheck.Gen<T> Matrix<T>(Gen<T> gen)
+        public static Gen<T> Matrix<T>(Gen<T> gen)
         {
             return Gen.Sized(s => gen.Resize(Convert.ToInt32(Math.Sqrt(s))));
         }

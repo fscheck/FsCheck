@@ -12,11 +12,13 @@ generators for some often used types, but you can use your own, and
 will need to define your own generators for any new types you introduce.
 
 Generators have types of the form `Gen<'a>`; this is a generator for values 
-of type a. To build your own generators, a computation expression 
-called `gen` is provided by FsCheck, and all the functions in the `Gen` module are at your disposal.
+of type a. To build your own generators in F#, a computation expression 
+called `gen` is provided by FsCheck, and all the functions in the `Gen` module are at your disposal. 
+For C#, there are some LINQ methods you can use (select, where) and a number of methods on the `Gen` class.
+The name for the methods in F# and C# are largely the same except for casing.
 
-Shrinkers have types of the for `'a -> seq<'a>`; given a value, a shrinker 
-produces a sequence of values that are in some way smaller than the given value. 
+Shrinkers have types of the for `'a -> seq<'a>` aka `Func<T,IEnumerable<T>`; given a value, a shrinker 
+produces a sequence of values that are (in some way) smaller than the given value. 
 If FsCheck finds a set of values that falsify a given property, it will try 
 to make that value smaller than the original (random) value by getting the 
 shrinks for the value and trying each one in turn to check that the property 
@@ -24,14 +26,14 @@ is still false. If it is, the smaller value becomes the new counter example
 and the shrinking process continues with that value.
 
 Shrinkers have no special support from FsCheck - this is not needed, 
-since you have all you need in `seq` computation expressions and the `Seq` module.
+since you have all you need in `seq` computation expressions and the `Seq` module, or in LINQ and IEnumerable.
 
-Finally, an `Arbitrary<'a>` instance packages these two types together to be used in properties. 
+Finally, an `Arbitrary<'a>` instance packages a generator and shrinker together to be used in properties. 
 FsCheck also allows you to register Arbitrary instances in a `Type` to `Arbitrary` dictionary. 
 This dictionary is used to find an arbitrary instance for properties that have arguments, 
 based on the argument's type.
 
-Arbitrary instances have some helper functions in the `Arb` module.
+Arbitrary instances have some helper functions in `Arb`.
     
 ## Generators
 
@@ -42,26 +44,29 @@ a random choice between the elements of a list, use*)
 let chooseFromList xs = 
   gen { let! i = Gen.choose (0, List.length xs-1) 
         return (List.nth xs i) }
-  
-(**  
+
+(**
+    [lang=csharp,file=../csharp/TestData.cs,key=chooseFrom]
+
 ### Choosing between alternatives
 
 A generator may take the form `Gen.oneof <sequence of generators>`
-which chooses among the generators in the list with equal probability. For example,*)
+which chooses among the generators in the list with equal probability. For example, 
+this generates a random boolean which is true with probability one half:*)
 
 Gen.oneof [ gen { return true }; gen { return false } ]
 
 (**
-generates a random boolean which is true with probability one half.
+    [lang=csharp,file=../csharp/TestData.cs,key=chooseBool]
 
 We can control the distribution of results using `frequency`
 instead. `frequency` chooses a generator from the list randomly, but weighs the probability of 
-choosing each alternative by the factor given. For example,*)
+choosing each alternative by the factor given. For example, this generates true two thirds of the time.*)
 
 Gen.frequency [ (2, gen { return true }); (1, gen { return false })]
 
 (**
-generates true two thirds of the time.
+    [lang=csharp,file=../csharp/TestData.cs,key=chooseBool2]
     
 ### The size of test data
 
@@ -79,6 +84,8 @@ the current size as a parameter. For example, to generate natural
 Gen.sized <| fun s -> Gen.choose (0,s)
 
 (**
+    [lang=csharp,file=../csharp/TestData.cs,key=sizedInt]
+
 The purpose of size control is to ensure that test cases are large enough to reveal errors, 
 while remaining small enough to test fast. Sometimes the default size control does not achieve 
 this. For example, towards the end of a test run arbitrary lists may have up to 50 elements, 
@@ -93,10 +100,12 @@ root of the original size:*)
 let matrix gen = Gen.sized <| fun s -> Gen.resize (s|>float|>sqrt|>int) gen
 
 (**
+    [lang=csharp,file=../csharp/TestData.cs,key=matrixGen]
+
 ### Generating recursive data types
 
 Generators for recursive data types are easy to express using `oneof` or `frequency` to choose 
-between constructors, and F#'s standard computation expression syntax to form a generator for each case. 
+between constructors, and F#'s computation expressions or C# LINQ to form a generator for each case. 
 There are also `map` functions for arity up to 6 to lift constructors and functions into the `Gen` type. 
 For example, if the type of trees is defined by *)
 
@@ -110,9 +119,15 @@ let rec unsafeTree() =
               Gen.map2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
 
 (**
+In C#, we elide the type because it is quite a bit more verbose than in F# - assume the typical composite
+of having an abstract superclass Tree with two subclasses, one for Leaf and one fro Branch. Basically this is
+the code F# generates for the type definition above. Assuming that, `unsafeTree` in C# looks like:
+
+    [lang=csharp,file=../csharp/TestData.cs,key=unsafeTree]
+
 However, a recursive generator like this may fail to terminate with a 
 StackOverflowException, or produce very large results. To avoid this, 
-recursive generators should always use the size control mechanism. For example,*)
+recursive generators should always use the size control mechanis:*)
 
 let tree =
     let rec tree' s = 
@@ -126,6 +141,9 @@ let tree =
     Gen.sized tree'
 
 (**
+
+    [lang=csharp,file=../csharp/TestData.cs,key=safeTree]
+
 Note that
 
 - We guarantee termination by forcing the result to be a leaf when the size is zero. 
@@ -149,14 +167,14 @@ If `g` is a generator for type `t`, then
 - `suchThatOption p g` generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')
 
 
-All the generator combinators are functions on the Gen module.
+All the generator combinators are functions on the Gen module. In C#, the names are the same just capitalized differently.
     
 ## Default Generators and Shrinkers based on type
 
 FsCheck defines default test data generators and shrinkers for some often used types, for example
 unit, bool, byte, int, float, char, string, DateTime, lists, array 1D and 2D, Set, Map, objects and 
 functions from and to any of the above. Furthermore, by using reflection, FsCheck can derive 
-default implementations of record types, discriminated unions, tuples and enums in terms 
+default implementations of record types, discriminated unions, tuples, enums and basic immutable classes in terms 
 of any primitive types that are defined (either in FsCheck or by you).
 
 You do not need to define these explicity for every property: FsCheck can provide a property with 
@@ -166,8 +184,8 @@ based on your properties. However if you want to coerce FsCheck to use a particu
 and shrinker, you can do so by providing the appropriate type annotations.
 
 FsCheck packages a generator and shrinker for a particular type in an `Arbitrary` type. You can 
-provide FsCheck with an Arbitrary instance for your own types, by defining static members of a class, 
-each of which should return an instance of a subclass of the class `Arbitrary<'a>`:*)
+provide FsCheck with an Arbitrary instance for your own types, by defining static members that 
+return an instance of a subclass of `Arbitrary<'a>`:*)
 
 type MyGenerators =
   static member Tree() =
@@ -178,7 +196,7 @@ type MyGenerators =
 (**
 Replace the `'a` by the particular type you are defining an Arbitary instance for. 
 Only the `Generator` method needs to be defined; `Shrinker` by default returns the empty 
-sequence (i.e. no shrinking will occur for this type).
+sequence which means no shrinking will be done for this type).
 
 Now, to register all Arbitrary instances in this class:*)
 
@@ -189,9 +207,9 @@ FsCheck now knows about `Tree` types, and can not only generate Tree values, but
 option values containing Trees:*)
 
 (***define-output:RevRevTree***)
-let RevRevTree (xs:list<Tree>) = 
+let revRevTree (xs:list<Tree>) = 
   List.rev(List.rev xs) = xs
-Check.Quick RevRevTree
+Check.Quick revRevTree
 
 (***include-output:RevRevTree***)
 
@@ -223,9 +241,9 @@ to get a feeling of how to write such Arbitrary instances. The Arb module should
 Now, the following property can be checked:*)
 
 (***define-output:RevRevBox***)
-let RevRevBox (xs:list<Box<int>>) = 
+let revRevBox (xs:list<Box<int>>) = 
   List.rev(List.rev xs) = xs
-Check.Quick RevRevBox
+Check.Quick revRevBox
 
 (***include-output:RevRevBox***)
 
@@ -234,7 +252,7 @@ Note that the class needs not be tagged with attributes in any way. FsCheck dete
 the generator by the return type of each static member.
 
 Also note that in this case we actually didn't need to write a generator or shrinker: FsCheck can 
-derive suitable generators using reflection for discriminated unions, record types and enums.
+derive suitable instances using reflection for discriminated unions, record types and enums.
     
 ## Useful methods on the Arb module
 
