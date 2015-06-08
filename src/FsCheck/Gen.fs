@@ -195,15 +195,22 @@ module Gen =
     ///given probabilities. The sum of the probabilities must be larger than zero.
     //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let frequencySeqWeightAndValue ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
-        weighedValues |> frequencyOfWeighedSeq
+    let frequencySeqWeightAndValue ( weightedValues : seq<WeightAndValue<Gen<'a>>> ) =
+        weightedValues |> frequencyOfWeighedSeq
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
     //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let frequencySeqWeightAndValueArr ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<Gen<'a>>> ) =
-        weighedValues |> frequencyOfWeighedSeq
+    let frequencyWeightAndValueArr ( [<ParamArrayAttribute>] weightedValues : WeightAndValue<Gen<'a>>[] ) =
+        weightedValues |> frequencyOfWeighedSeq
+
+    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///given probabilities. The sum of the probabilities must be larger than zero.
+    //[category: Creating generators from generators]
+    [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let frequencyTupleArr ( [<ParamArrayAttribute>] weightedValues : (int * Gen<'a>)[] ) =
+        weightedValues |> frequency
 
     ///Map the given function over values to a function over generators of those values.
     //[category: Creating generators from generators]
