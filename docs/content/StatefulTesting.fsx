@@ -27,7 +27,8 @@ As a model to test this class we can use an int value which is an abstraction of
 idea is that each operation on the class (in this case, Inc and Dec) affects both the model and the actual object, and 
 after each such operation, the model and the actual instance should still be equivalent.
 
-With this idea in mind, you can write a specification of the Counter class using an int model as follows:*)
+With this idea in mind, you can write a specification of the Counter class using an int model as follows (full example
+in C# below):*)
 
 let spec =
   let inc = //specify what happens to model and actual instance when `Inc()` is called.
@@ -67,4 +68,14 @@ Check.Quick (Command.toProperty spec)
 (***include-output:spec***)
 
 (**
-Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.*)
+Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.
+
+Finally, in C#, all this looks as follows:
+
+    [lang=csharp,file=../csharp/StatefulTesting.cs,key=counterspec]
+
+And to run:
+
+    [lang=csharp,file=../csharp/StatefulTesting.cs,key=check]
+
+*)
