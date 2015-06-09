@@ -71,7 +71,7 @@ namespace CSharp.DocSnippets {
             }
 
             public override string ToString() {
-                return "inc";
+                return "dec";
             }
         }
     }
