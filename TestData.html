@@ -39,11 +39,13 @@ generators for some often used types, but you can use your own, and
 will need to define your own generators for any new types you introduce.</p>
 
 <p>Generators have types of the form <code>Gen&lt;'a&gt;</code>; this is a generator for values 
-of type a. To build your own generators, a computation expression 
-called <code>gen</code> is provided by FsCheck, and all the functions in the <code>Gen</code> module are at your disposal.</p>
+of type a. To build your own generators in F#, a computation expression 
+called <code>gen</code> is provided by FsCheck, and all the functions in the <code>Gen</code> module are at your disposal. 
+For C#, there are some LINQ methods you can use (select, where) and a number of methods on the <code>Gen</code> class.
+The name for the methods in F# and C# are largely the same except for casing.</p>
 
-<p>Shrinkers have types of the for <code>'a -&gt; seq&lt;'a&gt;</code>; given a value, a shrinker 
-produces a sequence of values that are in some way smaller than the given value. 
+<p>Shrinkers have types of the for <code>'a -&gt; seq&lt;'a&gt;</code> aka <code>Func&lt;T,IEnumerable&lt;T&gt;</code>; given a value, a shrinker 
+produces a sequence of values that are (in some way) smaller than the given value. 
 If FsCheck finds a set of values that falsify a given property, it will try 
 to make that value smaller than the original (random) value by getting the 
 shrinks for the value and trying each one in turn to check that the property 
@@ -51,14 +53,14 @@ is still false. If it is, the smaller value becomes the new counter example
 and the shrinking process continues with that value.</p>
 
 <p>Shrinkers have no special support from FsCheck - this is not needed, 
-since you have all you need in <code>seq</code> computation expressions and the <code>Seq</code> module.</p>
+since you have all you need in <code>seq</code> computation expressions and the <code>Seq</code> module, or in LINQ and IEnumerable.</p>
 
-<p>Finally, an <code>Arbitrary&lt;'a&gt;</code> instance packages these two types together to be used in properties. 
+<p>Finally, an <code>Arbitrary&lt;'a&gt;</code> instance packages a generator and shrinker together to be used in properties. 
 FsCheck also allows you to register Arbitrary instances in a <code>Type</code> to <code>Arbitrary</code> dictionary. 
 This dictionary is used to find an arbitrary instance for properties that have arguments, 
 based on the argument's type.</p>
 
-<p>Arbitrary instances have some helper functions in the <code>Arb</code> module.</p>
+<p>Arbitrary instances have some helper functions in <code>Arb</code>.</p>
 
 <h2>Generators</h2>
 
@@ -70,32 +72,39 @@ a random choice between the elements of a list, use</p>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">chooseFromList</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">xs</span> <span class="o">=</span> 
   <span class="i">gen</span> { <span class="k">let!</span> <span class="i">i</span> <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">choose</span> (<span class="n">0</span>, <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="i">length</span> <span onmouseout="hideTip(event, 'fs4', 7)" onmouseover="showTip(event, 'fs4', 7)" class="i">xs</span><span class="o">-</span><span class="n">1</span>) 
         <span class="k">return</span> (<span onmouseout="hideTip(event, 'fs5', 8)" onmouseover="showTip(event, 'fs5', 8)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 9)" onmouseover="showTip(event, 'fs7', 9)" class="i">nth</span> <span onmouseout="hideTip(event, 'fs4', 10)" onmouseover="showTip(event, 'fs4', 10)" class="i">xs</span> <span class="i">i</span>) }
-  
 </pre>
 
+
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> Gen&lt;T&gt; ChooseFrom&lt;T&gt;(T[] xs) {
+    <span class="k">return</span> <span class="k">from</span> i <span class="k">in</span> Gen.Choose(0,xs.Length-1)
+           <span class="k">select</span> xs[i];
+}</pre></td></tr></table>
 
 <h3>Choosing between alternatives</h3>
 
 <p>A generator may take the form <code>Gen.oneof &lt;sequence of generators&gt;</code>
-which chooses among the generators in the list with equal probability. For example,</p>
+which chooses among the generators in the list with equal probability. For example, 
+this generates a random boolean which is true with probability one half:</p>
 
 <pre class="fssnip">
 <span class="i">Gen</span><span class="o">.</span><span class="i">oneof</span> [ <span class="i">gen</span> { <span class="k">return</span> <span class="k">true</span> }; <span class="i">gen</span> { <span class="k">return</span> <span class="k">false</span> } ]
 </pre>
 
 
-<p>generates a random boolean which is true with probability one half.</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">var</span> chooseBool <span class="o">=</span> Gen.OneOf(Gen.Constant(<span class="k">true</span>), Gen.Constant(<span class="k">false</span>));</pre></td></tr></table>
 
 <p>We can control the distribution of results using <code>frequency</code>
 instead. <code>frequency</code> chooses a generator from the list randomly, but weighs the probability of 
-choosing each alternative by the factor given. For example,</p>
+choosing each alternative by the factor given. For example, this generates true two thirds of the time.</p>
 
 <pre class="fssnip">
 <span class="i">Gen</span><span class="o">.</span><span class="i">frequency</span> [ (<span class="n">2</span>, <span class="i">gen</span> { <span class="k">return</span> <span class="k">true</span> }); (<span class="n">1</span>, <span class="i">gen</span> { <span class="k">return</span> <span class="k">false</span> })]
 </pre>
 
 
-<p>generates true two thirds of the time.</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">var</span> chooseBool2 <span class="o">=</span> Gen.Frequency(
+    Tuple.Create(2, Gen.Constant(<span class="k">true</span>)),
+    Tuple.Create(1, Gen.Constant(<span class="k">false</span>)));</pre></td></tr></table>
 
 <h3>The size of test data</h3>
 
@@ -115,6 +124,8 @@ the current size as a parameter. For example, to generate natural
 </pre>
 
 
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">var</span> sizedInt <span class="o">=</span> Gen.Sized(s <span class="o">=</span><span class="o">&gt;</span> Gen.Choose(0, s));</pre></td></tr></table>
+
 <p>The purpose of size control is to ensure that test cases are large enough to reveal errors, 
 while remaining small enough to test fast. Sometimes the default size control does not achieve 
 this. For example, towards the end of a test run arbitrary lists may have up to 50 elements, 
@@ -131,10 +142,14 @@ root of the original size:</p>
 </pre>
 
 
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> <span class="k">static</span> Gen&lt;T&gt; Matrix&lt;T&gt;(Gen&lt;T&gt; generator) {
+    <span class="k">return</span> Gen.Sized(s <span class="o">=</span><span class="o">&gt;</span> generator.Resize(Convert.ToInt32(Math.Sqrt(s))));
+}</pre></td></tr></table>
+
 <h3>Generating recursive data types</h3>
 
 <p>Generators for recursive data types are easy to express using <code>oneof</code> or <code>frequency</code> to choose 
-between constructors, and F#'s standard computation expression syntax to form a generator for each case. 
+between constructors, and F#'s computation expressions or C# LINQ to form a generator for each case. 
 There are also <code>map</code> functions for arity up to 6 to lift constructors and functions into the <code>Gen</code> type. 
 For example, if the type of trees is defined by</p>
 
@@ -152,9 +167,18 @@ For example, if the type of trees is defined by</p>
 </pre>
 
 
+<p>In C#, we elide the type because it is quite a bit more verbose than in F# - assume the typical composite
+of having an abstract superclass Tree with two subclasses, one for Leaf and one fro Branch. Basically this is
+the code F# generates for the type definition above. Assuming that, <code>unsafeTree</code> in C# looks like:</p>
+
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> <span class="k">static</span> Gen&lt;Tree&gt; UnsafeTree() {
+    <span class="k">return</span> Gen.OneOf(Arb.Generate&lt;<span class="k">int</span>&gt;().Select(i <span class="o">=</span><span class="o">&gt;</span> (Tree) <span class="k">new</span> Leaf(i)),
+                     Gen.Two(UnsafeTree()).Select(t <span class="o">=</span><span class="o">&gt;</span> (Tree) <span class="k">new</span> Branch(t.Item1,t.Item2)));
+}</pre></td></tr></table>
+
 <p>However, a recursive generator like this may fail to terminate with a 
 StackOverflowException, or produce very large results. To avoid this, 
-recursive generators should always use the size control mechanism. For example,</p>
+recursive generators should always use the size control mechanis:</p>
 
 <pre class="fssnip">
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">tree</span> <span class="o">=</span>
@@ -169,6 +193,21 @@ recursive generators should always use the size control mechanism. For example,<
     <span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span onmouseout="hideTip(event, 'fs19', 50)" onmouseover="showTip(event, 'fs19', 50)" class="i">tree&#39;</span>
 </pre>
 
+
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> <span class="k">static</span> Gen&lt;Tree&gt; SafeTreeHelper(<span class="k">int</span> size) {
+    <span class="k">if</span> (size <span class="o">=</span><span class="o">=</span> 0) {
+        <span class="k">return</span> Arb.Generate&lt;<span class="k">int</span>&gt;().Select(i <span class="o">=</span><span class="o">&gt;</span> (Tree)<span class="k">new</span> Leaf(i));
+    }
+    <span class="k">else</span> {
+        <span class="k">var</span> subtree <span class="o">=</span> SafeTreeHelper(size <span class="o">/</span> 2);
+        <span class="k">return</span> Gen.OneOf(Arb.Generate&lt;<span class="k">int</span>&gt;().Select(i <span class="o">=</span><span class="o">&gt;</span> (Tree) <span class="k">new</span> Leaf(i)),
+                         Gen.Two(subtree).Select(t <span class="o">=</span><span class="o">&gt;</span> (Tree) <span class="k">new</span> Branch(t.Item1,t.Item2)));
+    }
+}
+
+<span class="k">public</span> <span class="k">static</span> Gen&lt;Tree&gt; SafeTree() {
+    <span class="k">return</span> Gen.Sized(SafeTreeHelper);
+}</pre></td></tr></table>
 
 <p>Note that</p>
 
@@ -195,14 +234,14 @@ recursive generators should always use the size control mechanism. For example,<
 <li><code>suchThatOption p g</code> generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')</li>
 </ul>
 
-<p>All the generator combinators are functions on the Gen module.</p>
+<p>All the generator combinators are functions on the Gen module. In C#, the names are the same just capitalized differently.</p>
 
 <h2>Default Generators and Shrinkers based on type</h2>
 
 <p>FsCheck defines default test data generators and shrinkers for some often used types, for example
 unit, bool, byte, int, float, char, string, DateTime, lists, array 1D and 2D, Set, Map, objects and 
 functions from and to any of the above. Furthermore, by using reflection, FsCheck can derive 
-default implementations of record types, discriminated unions, tuples and enums in terms 
+default implementations of record types, discriminated unions, tuples, enums and basic immutable classes in terms 
 of any primitive types that are defined (either in FsCheck or by you).</p>
 
 <p>You do not need to define these explicity for every property: FsCheck can provide a property with 
@@ -212,8 +251,8 @@ based on your properties. However if you want to coerce FsCheck to use a particu
 and shrinker, you can do so by providing the appropriate type annotations.</p>
 
 <p>FsCheck packages a generator and shrinker for a particular type in an <code>Arbitrary</code> type. You can 
-provide FsCheck with an Arbitrary instance for your own types, by defining static members of a class, 
-each of which should return an instance of a subclass of the class <code>Arbitrary&lt;'a&gt;</code>:</p>
+provide FsCheck with an Arbitrary instance for your own types, by defining static members that 
+return an instance of a subclass of <code>Arbitrary&lt;'a&gt;</code>:</p>
 
 <pre class="fssnip">
 <span class="k">type</span> <span onmouseout="hideTip(event, 'fs24', 51)" onmouseover="showTip(event, 'fs24', 51)" class="t">MyGenerators</span> <span class="o">=</span>
@@ -224,9 +263,18 @@ each of which should return an instance of a subclass of the class <code>Arbitra
 </pre>
 
 
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> <span class="k">class</span> MyGenerators {
+    <span class="k">public</span> <span class="k">static</span> Arbitrary&lt;Tree&gt; Trees() {
+        <span class="k">return</span> Arb.From(SafeTree());
+    }
+}</pre></td></tr></table>
+
 <p>Replace the <code>'a</code> by the particular type you are defining an Arbitary instance for. 
 Only the <code>Generator</code> method needs to be defined; <code>Shrinker</code> by default returns the empty 
-sequence (i.e. no shrinking will occur for this type).</p>
+sequence which means no shrinking will be done for this type).</p>
+
+<p>As the F# code shows, you can create your own subclass of Arbitrary and return that, or you can use one of the <code>Arb.from</code>
+methods or functions.</p>
 
 <p>Now, to register all Arbitrary instances in this class:</p>
 
@@ -235,13 +283,15 @@ sequence (i.e. no shrinking will occur for this type).</p>
 </pre>
 
 
+<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp">Arb.Register&lt;MyGenerators&gt;();</pre></td></tr></table>
+
 <p>FsCheck now knows about <code>Tree</code> types, and can not only generate Tree values, but also e.g. lists, tuples and 
 option values containing Trees:</p>
 
 <pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 58)" onmouseover="showTip(event, 'fs28', 58)" class="f">RevRevTree</span> (<span onmouseout="hideTip(event, 'fs29', 59)" onmouseover="showTip(event, 'fs29', 59)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 60)" onmouseover="showTip(event, 'fs30', 60)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs14', 61)" onmouseover="showTip(event, 'fs14', 61)" class="t">Tree</span><span class="o">&gt;</span>) <span class="o">=</span> 
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 58)" onmouseover="showTip(event, 'fs28', 58)" class="f">revRevTree</span> (<span onmouseout="hideTip(event, 'fs29', 59)" onmouseover="showTip(event, 'fs29', 59)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 60)" onmouseover="showTip(event, 'fs30', 60)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs14', 61)" onmouseover="showTip(event, 'fs14', 61)" class="t">Tree</span><span class="o">&gt;</span>) <span class="o">=</span> 
   <span onmouseout="hideTip(event, 'fs5', 62)" onmouseover="showTip(event, 'fs5', 62)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 63)" onmouseover="showTip(event, 'fs31', 63)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs5', 64)" onmouseover="showTip(event, 'fs5', 64)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 65)" onmouseover="showTip(event, 'fs31', 65)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs29', 66)" onmouseover="showTip(event, 'fs29', 66)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs29', 67)" onmouseover="showTip(event, 'fs29', 67)" class="i">xs</span>
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs28', 68)" onmouseover="showTip(event, 'fs28', 68)" class="i">RevRevTree</span>
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs28', 68)" onmouseover="showTip(event, 'fs28', 68)" class="i">revRevTree</span>
 </pre>
 
 
@@ -278,9 +328,9 @@ to get a feeling of how to write such Arbitrary instances. The Arb module should
 <p>Now, the following property can be checked:</p>
 
 <pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 84)" onmouseover="showTip(event, 'fs36', 84)" class="f">RevRevBox</span> (<span onmouseout="hideTip(event, 'fs37', 85)" onmouseover="showTip(event, 'fs37', 85)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 86)" onmouseover="showTip(event, 'fs30', 86)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs32', 87)" onmouseover="showTip(event, 'fs32', 87)" class="t">Box</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 88)" onmouseover="showTip(event, 'fs13', 88)" class="t">int</span><span class="o">&gt;</span><span class="o">&gt;</span>) <span class="o">=</span> 
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 84)" onmouseover="showTip(event, 'fs36', 84)" class="f">revRevBox</span> (<span onmouseout="hideTip(event, 'fs37', 85)" onmouseover="showTip(event, 'fs37', 85)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 86)" onmouseover="showTip(event, 'fs30', 86)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs32', 87)" onmouseover="showTip(event, 'fs32', 87)" class="t">Box</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 88)" onmouseover="showTip(event, 'fs13', 88)" class="t">int</span><span class="o">&gt;</span><span class="o">&gt;</span>) <span class="o">=</span> 
   <span onmouseout="hideTip(event, 'fs5', 89)" onmouseover="showTip(event, 'fs5', 89)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 90)" onmouseover="showTip(event, 'fs31', 90)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs5', 91)" onmouseover="showTip(event, 'fs5', 91)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 92)" onmouseover="showTip(event, 'fs31', 92)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs37', 93)" onmouseover="showTip(event, 'fs37', 93)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs37', 94)" onmouseover="showTip(event, 'fs37', 94)" class="i">xs</span>
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs36', 95)" onmouseover="showTip(event, 'fs36', 95)" class="i">RevRevBox</span>
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs36', 95)" onmouseover="showTip(event, 'fs36', 95)" class="i">revRevBox</span>
 </pre>
 
 
@@ -290,7 +340,7 @@ to get a feeling of how to write such Arbitrary instances. The Arb module should
 the generator by the return type of each static member.</p>
 
 <p>Also note that in this case we actually didn't need to write a generator or shrinker: FsCheck can 
-derive suitable generators using reflection for discriminated unions, record types and enums.</p>
+derive suitable instances using reflection for discriminated unions, record types and enums.</p>
 
 <h2>Useful methods on the Arb module</h2>
 
@@ -333,7 +383,7 @@ derive suitable generators using reflection for discriminated unions, record typ
 <div class="tip" id="fs25">Multiple items<br />static member MyGenerators.Tree : unit -&gt; &#39;a<br /><br />Full name: TestData.MyGenerators.Tree<br /><br />--------------------<br />type Tree =<br />&#160;&#160;| Leaf of int<br />&#160;&#160;| Branch of Tree * Tree<br /><br />Full name: TestData.Tree</div>
 <div class="tip" id="fs26">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
 <div class="tip" id="fs27">val empty&lt;&#39;T&gt; : seq&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Collections.Seq.empty</div>
-<div class="tip" id="fs28">val RevRevTree : xs:Tree list -&gt; bool<br /><br />Full name: TestData.RevRevTree</div>
+<div class="tip" id="fs28">val revRevTree : xs:Tree list -&gt; bool<br /><br />Full name: TestData.revRevTree</div>
 <div class="tip" id="fs29">val xs : Tree list</div>
 <div class="tip" id="fs30">type &#39;T list = List&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Collections.list&lt;_&gt;</div>
 <div class="tip" id="fs31">val rev : list:&#39;T list -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.rev</div>
@@ -341,7 +391,7 @@ derive suitable generators using reflection for discriminated unions, record typ
 <div class="tip" id="fs33">union case Box.Whitebox: &#39;a -&gt; Box&lt;&#39;a&gt;</div>
 <div class="tip" id="fs34">union case Box.Blackbox: &#39;a -&gt; Box&lt;&#39;a&gt;</div>
 <div class="tip" id="fs35">val boxGen&lt;&#39;a&gt; : obj<br /><br />Full name: TestData.boxGen</div>
-<div class="tip" id="fs36">val RevRevBox : xs:Box&lt;int&gt; list -&gt; bool<br /><br />Full name: TestData.RevRevBox</div>
+<div class="tip" id="fs36">val revRevBox : xs:Box&lt;int&gt; list -&gt; bool<br /><br />Full name: TestData.revRevBox</div>
 <div class="tip" id="fs37">val xs : Box&lt;int&gt; list</div>
 
         </div>

@@ -60,8 +60,8 @@ Then FsCheck can even shrink your function. For example:</p>
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1148550837,296013655)):
-{ 0-&gt;1 }
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (11 shrinks) (StdGen (1547204543,296018520)):
+{ 0-&gt;2; 1-&gt;0; 3-&gt;0; 4-&gt;0; 5-&gt;0; 6-&gt;0 }
 [0]</code></pre></td></tr></table>
 
 <p>The type <code>Function&lt;'a,'b&gt;</code> records a map of all the arguments it was called with, and the result it produced. 
@@ -115,9 +115,9 @@ define your own labelling equality combinator:</p>
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1150041895,296013655)):
-Label of failing property: 3 = -1
-1
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1548785647,296018520)):
+Label of failing property: 1 = -1
+0
 0</code></pre></td></tr></table>
 
 <p>Of course, you can do this for any operator or function that you often use.</p>
