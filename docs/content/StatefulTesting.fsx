@@ -49,7 +49,7 @@ let spec =
       member __.Next model = Gen.elements [inc;dec] }
 
 (**
-A specification is put together for FsCcheck as an object that implementents `ICommandGenerator<'typeUnderTest,'modelType>`. It should return 
+A specification is put together for FsCheck as an object that implementents `ICommandGenerator<'typeUnderTest,'modelType>`. It should return 
 an initial object and an initial model of that object; and it should return a generator of `Command` objects.
 
 Each `Command` typically represents one method to call on the object under test, and describes what 
