@@ -43,6 +43,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D4E0-4CF4-840D-3F3016653F85}"
 	ProjectSection(SolutionItems) = preProject
 		Docs\content\index.fsx = Docs\content\index.fsx
+		docs\content\LearningResources.md = docs\content\LearningResources.md
 		Docs\content\Properties.fsx = Docs\content\Properties.fsx
 		Docs\content\QuickStart.fsx = Docs\content\QuickStart.fsx
 		Docs\content\RunningTests.fsx = Docs\content\RunningTests.fsx
