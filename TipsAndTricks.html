@@ -60,8 +60,8 @@ Then FsCheck can even shrink your function. For example:</p>
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (11 shrinks) (StdGen (1547204543,296018520)):
-{ 0-&gt;2; 1-&gt;0; 3-&gt;0; 4-&gt;0; 5-&gt;0; 6-&gt;0 }
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (0 shrinks) (StdGen (1039778789,296021708)):
+{ 0-&gt;1 }
 [0]</code></pre></td></tr></table>
 
 <p>The type <code>Function&lt;'a,'b&gt;</code> records a map of all the arguments it was called with, and the result it produced. 
@@ -115,7 +115,7 @@ define your own labelling equality combinator:</p>
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1548785647,296018520)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1041329892,296021708)):
 Label of failing property: 1 = -1
 0
 0</code></pre></td></tr></table>
@@ -183,6 +183,7 @@ at some of the existing integrations with test runners like Xunit.NET, NUnit, Fu
             
             <li class="nav-header">Getting started</li>
             <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
+            <li><a href="/FsCheck/LearningResources.html">Learning Resources</a></li>
 
             <li class="nav-header">Documentation</li>
             <li>

@@ -80,7 +80,7 @@ in C# below):</p>
 </pre>
 
 
-<p>A specification is put together for FsCcheck as an object that implementents <code>ICommandGenerator&lt;'typeUnderTest,'modelType&gt;</code>. It should return 
+<p>A specification is put together for FsCheck as an object that implementents <code>ICommandGenerator&lt;'typeUnderTest,'modelType&gt;</code>. It should return 
 an initial object and an initial model of that object; and it should return a generator of <code>Command</code> objects.</p>
 
 <p>Each <code>Command</code> typically represents one method to call on the object under test, and describes what 
@@ -98,7 +98,7 @@ fails the test if a postcondition does not hold.</p>
 </pre>
 
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 14 tests (9 shrinks) (StdGen (1512481042,296018520)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 15 tests (4 shrinks) (StdGen (1008564078,296021708)):
 [inc; inc; inc; dec]</code></pre></td></tr></table>
 
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.</p>
@@ -149,7 +149,7 @@ fails the test if a postcondition does not hold.</p>
         }
 
         <span class="k">public</span> <span class="k">override</span> <span class="k">string</span> ToString() {
-            <span class="k">return</span> <span class="s">"inc"</span>;
+            <span class="k">return</span> <span class="s">"dec"</span>;
         }
     }
 }</pre></td></tr></table>
@@ -191,6 +191,7 @@ fails the test if a postcondition does not hold.</p>
             
             <li class="nav-header">Getting started</li>
             <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
+            <li><a href="/FsCheck/LearningResources.html">Learning Resources</a></li>
 
             <li class="nav-header">Documentation</li>
             <li>
