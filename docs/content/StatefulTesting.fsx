@@ -37,7 +37,7 @@ let spec =
           member x.RunModel m = m + 1
           member x.Post (c,m) = m = c.Get |> Prop.ofTestable //the property that must hold after each invocation.
           override x.ToString() = "inc"}
-  let dec = //specify what happens to model and actual instance when `Inc()` is called.
+  let dec = //specify what happens to model and actual instance when `Dec()` is called.
       { new Command<Counter,int>() with
           member x.RunActual c = c.Dec(); c
           member x.RunModel m = m - 1
