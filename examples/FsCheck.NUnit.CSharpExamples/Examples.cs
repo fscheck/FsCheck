@@ -21,7 +21,6 @@ namespace FsCheck.NUnit.CSharpExamples
             return Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs));
         }
 
-        //TODO: do not call toProperty.
         // Note this one should fail
         [Property]
         public Property Counter_shouldFail()
