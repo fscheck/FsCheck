@@ -198,7 +198,7 @@ module Runner =
                 name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels
             + sprintf "Original:%s%s%s" newline (argumentsToString originalArgs) newline
-            + sprintf "Shrunk:%s%s%s" newline (argumentsToString args) newline
+            + if (data.NumberOfShrinks > 0 ) then sprintf "Shrunk:%s%s%s" newline (argumentsToString args) newline else ""
 
     ///A function that returns the default string that is printed as a result of the test.
     let onFinishedToString name testResult =
