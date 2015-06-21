@@ -417,10 +417,22 @@ module Gen =
                   let! cols = chooseSqrtOfSize
                   return! array2DOfDim (rows,cols) g }
         
-    ///Always generate v.
+    ///Always generate the same instance v. See also fresh.
     //[category: Creating generators]   
     [<CompiledName("Constant")>]
     let constant v = gen { return v }
+
+    ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
+    ///See also constant.
+    //[category: Creating generators]   
+    [<CompiledName("Fresh"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let fresh fv = gen { let a = fv() in return a }
+
+    ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
+    ///See also constant.
+    //[category: Creating generators]   
+    [<CompiledName("Fresh"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false) >]
+    let freshFunc (fv:Func<_>) = fresh fv.Invoke
 
     ///Apply the given Gen function to the given generator, aka the applicative <*> operator.
     //[category: Creating generators from generators]

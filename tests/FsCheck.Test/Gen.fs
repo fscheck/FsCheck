@@ -21,10 +21,16 @@ module Gen =
                 |> List.forall (isIn l))
     
     [<Property>]
-    let constant (v : char) =
+    let constant (v : (int * char)) =
         Gen.constant v
         |> sample 10
-        |> List.forall ((=) v)
+        |> List.forall (fun actual -> obj.ReferenceEquals(actual, v))
+
+    [<Property>]
+    let fresh ((i:int,c:char) as v) =
+        Gen.fresh (fun () -> (i,c)) 
+        |> sample 10
+        |> List.forall (fun actual -> not (obj.ReferenceEquals(actual, v)) && actual = v)
     
     [<Property>]
     let Oneof (l:list<string>) =
