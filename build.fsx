@@ -10,6 +10,7 @@ open Fake
 open Fake.Git
 open Fake.AssemblyInfoFile
 open Fake.ReleaseNotesHelper
+open Fake.Testing
 
 open SourceLink
 
@@ -184,7 +185,7 @@ Target "SourceLink" (fun _ ->
         let files = proj.Compiles -- "**/AssemblyInfo.fs"
         repo.VerifyChecksums files
         proj.VerifyPdbChecksums files
-        proj.CreateSrcSrv (sprintf "%s/%s/{0}/%%var2%%" gitRaw gitName) repo.Revision (repo.Paths files)
+        proj.CreateSrcSrv (sprintf "%s/%s/{0}/%%var2%%" gitRaw gitName) repo.Commit (repo.Paths files)
         Pdbstr.exec proj.OutputFilePdb proj.OutputFilePdbSrcSrv
     packages 
     |> Seq.iter (fun f ->
