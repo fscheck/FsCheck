@@ -76,7 +76,6 @@ module Command =
                 else
                     return []
             }
-            |> Gen.map List.rev
         spec.InitialModel |> genCommandsS |> Gen.sized
      
     ///Turn a specification into a property.
@@ -86,10 +85,9 @@ module Command =
             match cmds with
             | [] -> Testable.property true
             | (c::cs) -> 
-                c.Pre model ==> 
-                    lazy (let newActual = c.RunActual actual
-                          let newModel = c.RunModel model
-                          c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs)
+                    let newActual = c.RunActual actual
+                    let newModel = c.RunModel model
+                    c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs
                 
         forAll (Arb.fromGenShrink(genCommands spec,shrink))  //note: this uses the list shrinker which is not correct - should take preconditions into accout for example
                 (fun l -> l |> applyCommands (spec.InitialActual, spec.InitialModel) 
