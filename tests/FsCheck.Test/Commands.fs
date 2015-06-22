@@ -2,15 +2,38 @@
 
 module Commands =
 
+    open Xunit
     open FsCheck
-    open FsCheck.Xunit
+
+    type CheckPrecondition() =
+        let mutable b = true
+        member __.SetTrue() = if b then invalidOp "Precondition violated" else b <- true; true
+        member __.SetFalse() = if not b then invalidOp "Precondition violated" else b <- false; false
+
+    let checkPreconditionSpec =
+        let setTrue = 
+            Command.fromFunWithPrecondition not (fun _ -> true) (fun (actual:CheckPrecondition, model) -> actual.SetTrue() = model)
+        let setFalse = 
+            Command.fromFunWithPrecondition id (fun _ -> false) (fun (actual:CheckPrecondition, model) -> actual.SetFalse() = model)
+        let create =
+            Command.create (fun () -> CheckPrecondition()) (fun () -> true)
+        { new CommandGenerator<_,_>() with
+            member __.Create = Gen.constant create
+            member __.Next model = Gen.elements [setTrue; setFalse]}
+
+
+    [<Fact>]
+    let ``generated commands should never violate precondition``() =
+        checkPreconditionSpec
+        |> Command.toProperty
+        |> Check.QuickThrowOnFailure
+
 
     //a counter that never goes below zero
     type Counter(?dontcare:int) =
       let mutable n = 0
-      member __.Inc() = n <- n + 1
-      member __.Dec() = if n = 0 then failwithf "Precondition fail" else n <- n - 1
-      member __.Get = n
+      member __.Inc() = n <- n + 1; n 
+      member __.Dec() = if n <= 0 then failwithf "Precondition fail" else n <- n - 1; n
       member __.Reset() = n <- 0
       override __.ToString() = sprintf "Counter = %i, don't care = %i" n (defaultArg dontcare 0)
 
@@ -18,25 +41,34 @@ module Commands =
         let inc = 
             Gen.constant <|
             { new Command<Counter,int>() with
-                member __.RunActual c = c.Inc(); c
                 member __.RunModel m = m + 1
-                member __.Post (c,m) = m = c.Get |@ sprintf "m = %i, c = %i" m c.Get
+                member __.Check (c,m) = 
+                    let res = c.Inc() 
+                    m = res 
+                    |@ sprintf "model = %i, actual = %i" m res
                 override __.ToString() = "inc"}
         let dec = 
             Gen.constant <|
             { new Command<Counter,int>() with
-                member __.RunActual c = c.Dec(); c
                 member __.RunModel m = m - 1
-                member __.Pre m = m > 0
-                member __.Post (c,m) = m = c.Get |@ sprintf "m = %i, c = %i" m c.Get
+                override __.Pre m = 
+                    m > 0
+                member __.Check (c,m) = 
+                    let res = c.Dec()
+                    m = res 
+                    |@ sprintf "model = %i, actual = %i" m res
                 override __.ToString() = "dec"}
-        { new ICommandGenerator<Counter,int> with
-            member __.InitialActual = gen { let! dontcare = Gen.choose (0,100) in return Counter(dontcare) }
-            member __.InitialModel = 0
-            member __.Next _ = Gen.frequency [ 2, inc //otherwise, args exhausted
+        let create dontcare = 
+            { new Create<Counter,int>() with
+                member __.Actual() = new Counter(dontcare)
+                member __.Model() = 0 }
+        { new CommandGenerator<Counter,int>() with
+            member __.Create = gen { let! dontcare = Gen.choose (0,100) in return create dontcare }
+            member __.Next _ = Gen.frequency [ 1, inc //otherwise, args exhausted
                                                1, dec ] }
 
-    [<Property>]
+    [<Fact>]
     let ``should check Counter``() =
-        Command.toProperty spec
+        let prop = Command.toProperty spec
+        Check.Quick prop
 
