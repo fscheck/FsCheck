@@ -22,7 +22,7 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
             return Gen.Elements(Inc, Dec);
         }
 
-        public Gen<Counter> InitialActual { get { return Gen.Constant(new Counter());}}
+        public Counter InitialActual { get { return new Counter();}}
 
         public int InitialModel { get { return 0; } }
     }

@@ -34,10 +34,8 @@ type Command<'Actual,'Model>() =
 ///Defines the initial state for actual and model object, and allows to define the generator to use
 ///for the next state, based on the model.
 type ICommandGenerator<'Actual,'Model> =
-    ///Randomly generate the initial state of the actual object. Should still correspond to the 
-    ///initial state of model object; so you should only randomly generate parameters to the instance
-    ///that don't affect the model.
-    abstract InitialActual : Gen<'Actual>
+    ///Initial state of actual object. Should correspond to initial state of model object.
+    abstract InitialActual : 'Actual
     ///Initial state of model object. Should correspond to initial state of actual object.
     abstract InitialModel : 'Model
     ///Generate a number of possible commands based on the current state of the model. 
@@ -92,16 +90,12 @@ module Command =
                     lazy (let newActual = c.RunActual actual
                           let newModel = c.RunModel model
                           c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs)
-        
-        forAll (Arb.fromGen(genCommands spec)) (fun l -> 
-            //this needs to be the inner forAll - so that
-            //the object under test is created every time a new sequence is generated.
-            forAll (Arb.fromGen spec.InitialActual) (fun initialActual -> 
-                l 
-                |> applyCommands (initialActual, spec.InitialModel) 
-                |> Prop.trivial (l.Length=0)
-                |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
-                |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" ))
+                
+        forAll (Arb.fromGenShrink(genCommands spec,shrink))  //note: this uses the list shrinker which is not correct - should take preconditions into accout for example
+                (fun l -> l |> applyCommands (spec.InitialActual, spec.InitialModel) 
+                            |> Prop.trivial (l.Length=0)
+                            |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
+                            |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" )
 
 [<AbstractClass;Sealed;Extension>]
 type CommandExtensions =
