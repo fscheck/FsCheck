@@ -8,7 +8,7 @@ let referenceBinaries = [ "FsCheck.dll" ]
 // Web site location for the generated documentation
 let website = "/FsCheck/ja"
 
-let githubLink = "http://github.com/fsharp/FsCheck"
+let githubLink = "http://github.com/fscheck/FsCheck"
 
 // Specify more information about your project
 let info =

@@ -193,11 +193,12 @@ module Runner =
         | 1 -> sprintf "Label of failing property: %s%s" (labels_to_string l) newline
         | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labels_to_string l) newline
 
-    let onFailureToString name data args usedSeed =
+    let onFailureToString name data originalArgs args usedSeed =
         sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
-            + maybePrintLabels data.Labels  
-            + sprintf "%s%s" (args |> argumentsToString) newline
+            + maybePrintLabels data.Labels
+            + sprintf "Original:%s%s%s" newline (argumentsToString originalArgs) newline
+            + if (data.NumberOfShrinks > 0 ) then sprintf "Shrunk:%s%s%s" newline (argumentsToString args) newline else ""
 
     ///A function that returns the default string that is printed as a result of the test.
     let onFinishedToString name testResult =
@@ -212,16 +213,16 @@ module Runner =
         | TestResult.True data -> 
             sprintf "%sOk, passed %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
-        | TestResult.False (data, _, args, Outcome.Exception exc, usedSeed) -> 
-            onFailureToString name data args usedSeed
+        | TestResult.False (data, originalArgs, args, Outcome.Exception exc, usedSeed) -> 
+            onFailureToString name data originalArgs args usedSeed
             + sprintf "with exception:%s%O%s" newline exc newline
         | TestResult.False (data, _, args, Outcome.Timeout i, usedSeed) -> 
             sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):%s" 
                 name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels 
             + sprintf "%s%s" (args |> argumentsToString) newline
-        | TestResult.False (data, _, args, _, usedSeed) -> 
-            onFailureToString name data args usedSeed
+        | TestResult.False (data, originalArgs, args, _, usedSeed) -> 
+            onFailureToString name data originalArgs args usedSeed
         | TestResult.Exhausted data -> 
             sprintf "%sArguments exhausted after %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )

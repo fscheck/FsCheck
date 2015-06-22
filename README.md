@@ -17,8 +17,8 @@ FsCheck's generator combinators can be used in any testing framework to easily g
  
 ### Documentation ###
 
-* [English](https://fsharp.github.io/FsCheck/)
-* [Japanese](https://fsharp.github.io/FsCheck/ja)
+* [English](https://fscheck.github.io/FsCheck/)
+* [Japanese](https://fscheck.github.io/FsCheck/ja)
 
 ### More reading ###
 * [Blog](http://fortysix-and-two.blogspot.com) for announcements, change logs and other posts more or less related to FsCheck. 
@@ -35,7 +35,7 @@ Then, open FsCheck.sln in Visual Studio on Windows or FsCheck-mono.sln on Linux/
 Building and testing from Visual Studio also works, to re-generate documentation quickly, execute docs/tools/generate.fsx in FSI. This should also work in Monodevelop and Xamarin, though I have not tested.
 
 - Windows on .NET:[![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
-- Linux on Mono: [![Build Status](https://travis-ci.org/fsharp/FsCheck.svg?branch=master)](https://travis-ci.org/fsharp/FsCheck)
+- Linux on Mono: [![Build Status](https://travis-ci.org/fscheck/FsCheck.svg?branch=master)](https://travis-ci.org/fsharp/FsCheck)
 
 
 

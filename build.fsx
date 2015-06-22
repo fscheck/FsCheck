@@ -10,6 +10,7 @@ open Fake
 open Fake.Git
 open Fake.AssemblyInfoFile
 open Fake.ReleaseNotesHelper
+open Fake.Testing
 
 open SourceLink
 
@@ -54,9 +55,9 @@ let testAssemblies = "tests/**/bin/Release/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted 
-let gitHome = "ssh://github.com/fsharp"
+let gitHome = "ssh://github.com/fscheck"
 // gitraw location - used for source linking
-let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/fsharp"
+let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/fscheck"
 // The name of the project on GitHub
 let gitName = "FsCheck"
 
@@ -168,10 +169,7 @@ Target "RunTests" (fun _ ->
     |> Fake.XUnit2Helper.xUnit2 (fun p -> 
             {p with 
                 ToolPath = "packages/xunit.runner.console/tools/xunit.console.exe"
-                ShadowCopy = false
-                HtmlOutput = not (isLinux || isMacOS)
-                XmlOutput = false
-                OutputDir = "temp" }) 
+                ShadowCopy = false }) 
 )
 
 // --------------------------------------------------------------------------------------
@@ -184,7 +182,7 @@ Target "SourceLink" (fun _ ->
         let files = proj.Compiles -- "**/AssemblyInfo.fs"
         repo.VerifyChecksums files
         proj.VerifyPdbChecksums files
-        proj.CreateSrcSrv (sprintf "%s/%s/{0}/%%var2%%" gitRaw gitName) repo.Revision (repo.Paths files)
+        proj.CreateSrcSrv (sprintf "%s/%s/{0}/%%var2%%" gitRaw gitName) repo.Commit (repo.Paths files)
         Pdbstr.exec proj.OutputFilePdb proj.OutputFilePdbSrcSrv
     packages 
     |> Seq.iter (fun f ->
@@ -285,7 +283,7 @@ Target "GenerateDocsJa" (fun _ ->
 Target "ReleaseDocs" (fun _ ->
     let tempDocsDir = "temp/gh-pages"
     CleanDir tempDocsDir
-    Repository.cloneSingleBranch "" ("git@github.com:fsharp/FsCheck.git") "gh-pages" tempDocsDir
+    Repository.cloneSingleBranch "" ("git@github.com:fscheck/FsCheck.git") "gh-pages" tempDocsDir
 
     fullclean tempDocsDir
     CopyRecursive "docs/output" tempDocsDir true |> tracefn "%A"

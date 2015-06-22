@@ -1,3 +1,8 @@
+### 2.0.2 - To be released
+  * Update NuGet package with new project home.
+  * Add missing frequency overload.
+  * Added some more C# examples to documentation.
+
 ### 2.0.1 - 23 May 2015
   * Because apparently there there is some problem with FsCheck.Xunit and FsCheck.NUnit's NuGet dependencies to unstable versions.
 
