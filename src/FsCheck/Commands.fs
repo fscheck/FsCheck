@@ -43,8 +43,8 @@ type Create<'Actual,'Model>() =
     override __.ToString() = sprintf "Create %s" typeof<'Actual>.Name
 
 type Destroy<'Actual>() =
-    abstract Dispose : 'Actual -> unit
-    default __.Dispose _ = ()
+    abstract Actual : 'Actual -> unit
+    default __.Actual _ = ()
     override __.ToString() = sprintf "Destroy %s" typeof<'Actual>.Name
 
 ///Defines the initial state for actual and model object, and allows to define the generator to use
@@ -80,12 +80,12 @@ module Command =
     [<CompiledName("Destroy"); EditorBrowsable(EditorBrowsableState.Never)>]
     let destroy run =
         { new Destroy<_>() with
-            override __.Dispose actual = run actual }
+            override __.Actual actual = run actual }
 
     [<CompiledName("Destroy"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let destroyFunc (run:Action<_>) =
         { new Destroy<_>() with
-            override __.Dispose actual = run.Invoke actual }
+            override __.Actual actual = run.Invoke actual }
 
     [<CompiledName("FromFun"); EditorBrowsable(EditorBrowsableState.Never)>]
     let fromFunWithPrecondition preCondition runModel check =
