@@ -169,10 +169,7 @@ Target "RunTests" (fun _ ->
     |> xUnit (fun p -> 
             {p with 
                 ToolPath = "packages/xunit.runners/tools/xunit.console.clr4.exe"
-                ShadowCopy = false
-                HtmlOutput = not (isLinux || isMacOS)
-                XmlOutput = false
-                OutputDir = "temp" }) 
+                ShadowCopy = false }) 
 )
 
 // --------------------------------------------------------------------------------------

@@ -54,7 +54,7 @@ module Commands =
 
 
     //a counter that never goes below zero
-    type Counter(?dontcare:int) =
+    type Counter() =
       let mutable n = 0
       member __.Inc() = n <- n + 1; n 
       member __.Dec() = if n <= 0 then failwithf "Precondition fail" else n <- n - 1; n
