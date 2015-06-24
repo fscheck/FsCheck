@@ -1,8 +1,8 @@
 (*** hide ***)
-#I @"../../src/FsCheck/bin/Release"
-#r @"FsCheck"
+#r @"../../src/FsCheck/bin/Release/FsCheck.dll"
 open FsCheck
 open System
+open FsCheck
 
 (**
 # Model-based Testing
@@ -31,21 +31,11 @@ With this idea in mind, you can write a specification of the Counter class using
 in C# below):*)
 
 let spec =
-  let inc = //specify what happens to model and actual instance when `Inc()` is called.
-      { new Command<Counter,int>() with
-          member x.RunActual c = c.Inc(); c
-          member x.RunModel m = m + 1
-          member x.Post (c,m) = m = c.Get |> Prop.ofTestable //the property that must hold after each invocation.
-          override x.ToString() = "inc"}
-  let dec = //specify what happens to model and actual instance when `Dec()` is called.
-      { new Command<Counter,int>() with
-          member x.RunActual c = c.Dec(); c
-          member x.RunModel m = m - 1
-          member x.Post (c,m) = m = c.Get |> Prop.ofTestable
-          override x.ToString() = "dec"}
-  { new ICommandGenerator<Counter,int> with
-      member __.InitialActual = Counter()
-      member __.InitialModel = 0
+  let inc = Command.fromFun "inc" ((+) 1) (fun (counter:Counter, count) -> counter.Inc(); counter.Get = count)
+  let dec = Command.fromFun "dec" ((-) 1) (fun (counter:Counter, count) -> counter.Dec(); counter.Get = count)
+  
+  { new CommandGenerator<Counter,int>() with
+      member __.Create = Gen.constant <| Command.create (fun () -> Counter()) (fun () -> 0)
       member __.Next model = Gen.elements [inc;dec] }
 
 (**
