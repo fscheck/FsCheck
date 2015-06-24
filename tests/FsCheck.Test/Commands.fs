@@ -5,6 +5,30 @@ module Commands =
     open Xunit
     open FsCheck
 
+    type SimpleModel() =
+        let count = ref 0
+        member __.Inc() = incr count
+        member __.Get = !count
+
+    let checkSimpleModelSpec =
+        let inc = Command.fromFun ((+) 1) (fun (actual:SimpleModel,model) -> actual.Get = model)
+        let create = Command.create (fun () -> SimpleModel()) (fun () -> 0)
+        { new CommandGenerator<_,_>() with
+            member __.Create = Gen.constant create
+            member __.Next model = Gen.constant inc }
+
+    [<Fact>]
+    let ``check generated commands``() =
+        let commands =
+            Command.generator checkSimpleModelSpec
+            |> Gen.sample 10 10
+        for (create,comms,_) in commands do
+            Assert.IsType<SimpleModel>(create.Actual()) |> ignore
+            Assert.Equal(0, create.Model())
+            for comm in comms do
+                Assert.True(comm.Pre 5)
+                Assert.Equal(6, comm.RunModel 5)
+
     type CheckPrecondition() =
         let mutable b = true
         member __.SetTrue() = if b then invalidOp "Precondition violated" else b <- true; true
@@ -64,7 +88,7 @@ module Commands =
                 member __.Model() = 0 }
         { new CommandGenerator<Counter,int>() with
             member __.Create = gen { let! dontcare = Gen.choose (0,100) in return create dontcare }
-            member __.Next _ = Gen.frequency [ 1, inc //otherwise, args exhausted
+            member __.Next _ = Gen.frequency [ 1, inc
                                                1, dec ] }
 
     [<Fact>]
