@@ -3,7 +3,7 @@ using FsCheck;
 
 namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
 {
-    public class CounterSpec : ICommandGenerator<Counter, int>
+    public class CounterSpec : CommandGenerator<Counter, int>
     {
         public Gen<Command<Counter, int>> Next(int value)
         {
@@ -53,6 +53,10 @@ namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
             {
                 return GetType().Name;
             }
+        }
+
+        public override Gen<Create<Counter, int>> Create {
+            get { throw new NotImplementedException(); }
         }
     }
 }

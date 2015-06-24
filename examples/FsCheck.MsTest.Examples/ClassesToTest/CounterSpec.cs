@@ -7,11 +7,11 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
 {
     public class CounterSpec : CommandGenerator<Counter, int>
     {
-        private readonly Command<Counter, int> Inc =
-                Command.FromFunc<Counter,int>(c => c + 1, (counter, i) => { counter.Inc(); return counter.Get() == i; });
+        private Command<Counter, int> Inc =
+                Command.FromFunc<Counter,int>("Inc", c => c + 1, (counter, i) => { counter.Inc(); return counter.Get() == i; });
 
         private readonly Command<Counter, int> Dec =
-                Command.FromFunc<Counter,int>(c => c - 1, (counter, i) => { counter.Dec(); return counter.Get() == i; });
+                Command.FromFunc<Counter,int>("Dec", c => c - 1, (counter, i) => { counter.Dec(); return counter.Get() == i; });
 
         private readonly Create<Counter, int> NewCounter =
                 Command.Create(() => new Counter(), () => 0);
