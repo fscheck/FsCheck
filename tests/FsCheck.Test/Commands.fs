@@ -11,7 +11,7 @@ module Commands =
         member __.Get = !count
 
     let checkSimpleModelSpec =
-        let inc = Command.fromFun ((+) 1) (fun (actual:SimpleModel,model) -> actual.Get = model)
+        let inc = Command.fromFun "inc" ((+) 1) (fun (actual:SimpleModel,model) -> actual.Get = model)
         let create = Command.create (fun () -> SimpleModel()) (fun () -> 0)
         { new CommandGenerator<_,_>() with
             member __.Create = Gen.constant create
@@ -36,9 +36,9 @@ module Commands =
 
     let checkPreconditionSpec =
         let setTrue = 
-            Command.fromFunWithPrecondition not (fun _ -> true) (fun (actual:CheckPrecondition, model) -> actual.SetTrue() = model)
+            Command.fromFunWithPrecondition "setTrue" not (fun _ -> true) (fun (actual:CheckPrecondition, model) -> actual.SetTrue() = model)
         let setFalse = 
-            Command.fromFunWithPrecondition id (fun _ -> false) (fun (actual:CheckPrecondition, model) -> actual.SetFalse() = model)
+            Command.fromFunWithPrecondition "setFalse" id (fun _ -> false) (fun (actual:CheckPrecondition, model) -> actual.SetFalse() = model)
         let create =
             Command.create (fun () -> CheckPrecondition()) (fun () -> true)
         { new CommandGenerator<_,_>() with
@@ -54,7 +54,7 @@ module Commands =
 
 
     //a counter that never goes below zero
-    type Counter() =
+    type Counter(?dontcare:int) =
       let mutable n = 0
       member __.Inc() = n <- n + 1; n 
       member __.Dec() = if n <= 0 then failwithf "Precondition fail" else n <- n - 1; n

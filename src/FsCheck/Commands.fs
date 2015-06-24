@@ -62,8 +62,8 @@ type CommandGenerator<'Actual,'Model>() =
 module Command =
     open System
     open System.ComponentModel
-    open Arb
     open Prop
+    open System.Runtime.InteropServices
 
     [<CompiledName("Create"); EditorBrowsable(EditorBrowsableState.Never)>]
     let create actual model =
@@ -83,34 +83,36 @@ module Command =
             override __.Actual actual = run actual }
 
     [<CompiledName("Destroy"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let destroyFunc (run:Action<_>) =
+    let destroyAction (run:Action<_>) =
         { new Destroy<_>() with
             override __.Actual actual = run.Invoke actual }
 
     [<CompiledName("FromFun"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let fromFunWithPrecondition preCondition runModel check =
+    let fromFunWithPrecondition name preCondition runModel check =
         { new Command<'Actual,'Model>() with
             override __.RunModel pre = runModel pre
             override __.Check(model,actual) = check (model,actual) |> Prop.ofTestable
-            override __.Pre model = preCondition model}
+            override __.Pre model = preCondition model
+            override __.ToString() = name }
 
     [<CompiledName("FromFun"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let fromFun runModel check =
+    let fromFun name runModel check =
         { new Command<'Actual,'Model>() with
             override __.RunModel pre = runModel pre
-            override __.Check(model,actual) = check (model,actual) |> Prop.ofTestable }
+            override __.Check(model,actual) = check (model,actual) |> Prop.ofTestable
+            override __.ToString() = name }
 
     [<CompiledName("FromFunc"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let fromFuncProp<'Actual,'Model> (runModel:Func<'Model,_>) (check:Func<'Actual,_,Property>) =
-        fromFun runModel.Invoke (fun (a,b) -> check.Invoke(a,b))
+    let fromFuncProp<'Actual,'Model> name (runModel:Func<'Model,_>) (check:Func<'Actual,_,Property>) =
+        fromFun name runModel.Invoke (fun (a,b) -> check.Invoke(a,b))
 
     [<CompiledName("FromFunc"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let fromFuncBool<'Actual,'Model> (runModel:Func<'Model,_>) (check:Func<'Actual,_,bool>) =
-        fromFun runModel.Invoke (fun (a,b) -> Prop.ofTestable <| check.Invoke(a,b))
+    let fromFuncBool<'Actual,'Model> name (runModel:Func<'Model,_>) (check:Func<'Actual,_,bool>) =
+        fromFun name runModel.Invoke (fun (a,b) -> Prop.ofTestable <| check.Invoke(a,b))
 
     [<CompiledName("FromFunc"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let fromFuncAction<'Actual,'Model> (runModel:Func<'Model,_>) (check:Action<'Actual,_>) =
-        fromFun runModel.Invoke (fun (a,b) -> Prop.ofTestable <| check.Invoke(a,b))
+    let fromFuncAction<'Actual,'Model> name (runModel:Func<'Model,_>) (check:Action<'Actual,_>) =
+        fromFun name runModel.Invoke (fun (a,b) -> Prop.ofTestable <| check.Invoke(a,b))
 
 
     let generator (spec:CommandGenerator<'Actual,'Model>) = 
