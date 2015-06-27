@@ -155,6 +155,12 @@ module Arb =
     [<CompiledName("Register")>]
     let register<'t>() = registerByType typeof<'t>
 
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    let toGen (arb:Arbitrary<'Value>) = arb.Generator
+
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    let toShrink (arb:Arbitrary<'Value>) = arb.Shrinker
+
     /// Construct an Arbitrary instance from a generator.
     /// Shrink is not supported for this type.
     [<CompiledName("From")>]

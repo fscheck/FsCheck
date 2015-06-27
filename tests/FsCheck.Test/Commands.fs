@@ -4,6 +4,7 @@ module Commands =
 
     open Xunit
     open FsCheck
+    open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
 
     type SimpleModel() =
         let count = ref 0
@@ -14,13 +15,13 @@ module Commands =
         let inc = Command.fromFun "inc" ((+) 1) (fun (actual:SimpleModel,model) -> actual.Get = model)
         let create = Command.create (fun () -> SimpleModel()) (fun () -> 0)
         { new CommandGenerator<_,_>() with
-            member __.Create = Gen.constant create
-            member __.Next model = Gen.constant inc }
+            member __.Create = Gen.constant create |> Arb.fromGen
+            member __.Next _ = Gen.constant inc }
 
     [<Fact>]
     let ``check generated commands``() =
         let commands =
-            Command.generator checkSimpleModelSpec
+            Command.generate checkSimpleModelSpec
             |> Gen.sample 10 10
         for (create,comms,_) in commands do
             Assert.IsType<SimpleModel>(create.Actual()) |> ignore
@@ -29,29 +30,44 @@ module Commands =
                 Assert.True(comm.Pre 5)
                 Assert.Equal(6, comm.RunModel 5)
 
-    type CheckPrecondition() =
-        let mutable b = true
-        member __.SetTrue() = if b then invalidOp "Precondition violated" else b <- true; true
-        member __.SetFalse() = if not b then invalidOp "Precondition violated" else b <- false; false
 
+    //this spec is created using preconditions such that the only valid sequence is setFalse,setTrue
+    //repeated 0 or more times. To simplify the test it doesn't even use an actual object under test;
+    //the specification is just meant to check that preconditions are handled correctly.
     let checkPreconditionSpec =
         let setTrue = 
-            Command.fromFunWithPrecondition "setTrue" not (fun _ -> true) (fun (actual:CheckPrecondition, model) -> actual.SetTrue() = model)
+            Command.fromFunWithPrecondition "setTrue" not (fun _ -> true) (fun (_, _) -> true)
         let setFalse = 
-            Command.fromFunWithPrecondition "setFalse" id (fun _ -> false) (fun (actual:CheckPrecondition, model) -> actual.SetFalse() = model)
+            Command.fromFunWithPrecondition "setFalse" id (fun _ -> false) (fun (_, _) -> true)
         let create =
-            Command.create (fun () -> CheckPrecondition()) (fun () -> true)
+            Command.create id (fun () -> true)
         { new CommandGenerator<_,_>() with
-            member __.Create = Gen.constant create
-            member __.Next model = Gen.elements [setTrue; setFalse]}
+            member __.Create = Gen.constant create |> Arb.fromGen
+            member __.Next _ = Gen.elements [setTrue; setFalse] }
 
+
+    let inline checkPreconditions initial (cmds:seq<Command<_,_>>) =
+        cmds 
+        |> Seq.fold (fun (model,pres) cmd -> cmd.RunModel model,pres && cmd.Pre model) (initial, true)
+        |> snd
 
     [<Fact>]
-    let ``generated commands should never violate precondition``() =
-        checkPreconditionSpec
-        |> Command.toProperty
-        |> Check.QuickThrowOnFailure
+    let ``generate commands should never violate precondition``() =
+        Command.generate checkPreconditionSpec
+        |> Gen.sample 100 10
+        |> Seq.forall (fun (c,cmds,_) -> checkPreconditions (c.Model()) cmds)
+        |> Assert.True
+        
 
+    [<Fact>]
+    let ``shrink commands should never violate precondition``() =
+        Command.generate checkPreconditionSpec 
+        |> Gen.sample 100 10
+        |> Seq.map (Command.shrink checkPreconditionSpec) 
+        |> Seq.concat
+        |> Seq.forall (fun (c,cmds,_) -> checkPreconditions (c.Model()) cmds)
+        |> Assert.True
+        
 
     //a counter that never goes below zero
     type Counter(?dontcare:int) =
@@ -87,9 +103,8 @@ module Commands =
                 member __.Actual() = new Counter(dontcare)
                 member __.Model() = 0 }
         { new CommandGenerator<Counter,int>() with
-            member __.Create = gen { let! dontcare = Gen.choose (0,100) in return create dontcare }
-            member __.Next _ = Gen.frequency [ 1, inc
-                                               1, dec ] }
+            member __.Create = gen { let! dontcare = Gen.choose (0,100) in return create dontcare } |> Arb.fromGen
+            member __.Next _ = Gen.oneof [ inc; dec ] }
 
     [<Fact>]
     let ``should check Counter``() =

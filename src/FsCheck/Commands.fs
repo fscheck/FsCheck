@@ -12,8 +12,6 @@ namespace FsCheck
 
 open System.Runtime.CompilerServices
 
-
-
 ///A single command describes pre and post conditions and the model for a single method under test.
 ///The post-conditions are the invariants that will be checked; when these do not hold the test fails.
 [<AbstractClass>]
@@ -51,7 +49,7 @@ type Destroy<'Actual>() =
 ///for the next state, based on the model.
 [<AbstractClass>]
 type CommandGenerator<'Actual,'Model>() =
-    abstract Create : Gen<Create<'Actual,'Model>>
+    abstract Create : Arbitrary<Create<'Actual,'Model>>
     abstract Destroy : Destroy<'Actual>
     default __.Destroy = Destroy<_>()
     ///Generate a number of possible commands based on the current state of the model. 
@@ -63,7 +61,6 @@ module Command =
     open System
     open System.ComponentModel
     open Prop
-    open System.Runtime.InteropServices
 
     [<CompiledName("Create"); EditorBrowsable(EditorBrowsableState.Never)>]
     let create actual model =
@@ -115,7 +112,7 @@ module Command =
         fromFun name runModel.Invoke (fun (a,b) -> Prop.ofTestable <| check.Invoke(a,b))
 
 
-    let generator (spec:CommandGenerator<'Actual,'Model>) = 
+    let generate (spec:CommandGenerator<'Actual,'Model>) = 
         let rec genCommandsS state size =
             gen {
                 if size > 0 then
@@ -125,23 +122,33 @@ module Command =
                 else
                     return []
             }
-        gen { let! create = spec.Create
+        gen { let! create = spec.Create |> Arb.toGen
               let! commands = genCommandsS (create.Model()) |> Gen.sized
               return (create, commands, spec.Destroy)
         }
+
+    let shrink (spec:CommandGenerator<'Actual,'Model>) (create:Create<'Actual,'Model>, commands:list<Command<'Actual,'Model>>, destroy:Destroy<'Actual>) =
+        let preconditionsOk initial (commands:seq<Command<_,_>>) = 
+            commands 
+            |> Seq.fold (fun (model,pres) cmd -> cmd.RunModel model,pres && cmd.Pre model) (initial, true)
+            |> snd
+        Arb.Default.FsList().Shrinker commands
+        |> Seq.choose (fun commands -> if preconditionsOk (create.Model()) commands then Some (create,commands,destroy) else None)
+        |> Seq.append (Arb.toShrink spec.Create create |> Seq.map (fun create -> (create,commands,destroy)))
+        
      
     ///Turn a specification into a property.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toProperty (spec:CommandGenerator<'Actual,'Model>) =
         let rec run (actual,model) (cmds:list<Command<'Actual,'Model>>) property =
             match cmds with
-            | [] -> property
+            | [] -> spec.Destroy.Actual actual; property
             | (c::cs) -> 
                 let newModel = c.RunModel model
                 let prop = c.Check(actual, newModel) |> Prop.ofTestable               
                 run (actual,newModel) cs (property .&. prop)
         
-        forAll (Arb.fromGen(generator spec)) (fun (create, commands, destroy) -> 
+        forAll (Arb.fromGenShrink(generate spec, shrink spec)) (fun (create, commands, destroy) -> 
             run (create.Actual(), create.Model()) commands (Prop.ofTestable true))
 //                |> Prop.trivial (l.Length=0)
 //                |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
