@@ -2,6 +2,9 @@
   * Update NuGet package with new project home.
   * Add missing frequency overload.
   * Added some more C# examples to documentation.
+  * Many iternal changes to eventually support PCL.
+  * Fix bug in Commands.
+  * Improved output - now shows argument before and after shrinking.
 
 ### 2.0.1 - 23 May 2015
   * Because apparently there there is some problem with FsCheck.Xunit and FsCheck.NUnit's NuGet dependencies to unstable versions.
