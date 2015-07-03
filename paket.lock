@@ -1,9 +1,9 @@
 NUGET
   remote: https://www.nuget.org/api/v2
   specs:
-    FAKE (3.34.5)
-    FSharp.Compiler.Service (0.0.89)
-    FSharp.Formatting (2.9.6)
+    FAKE (3.35.5)
+    FSharp.Compiler.Service (0.0.90)
+    FSharp.Formatting (2.9.10)
       FSharp.Compiler.Service (>= 0.0.87)
       FSharpVSPowerTools.Core (1.8.0)
     FSharpVSPowerTools.Core (1.8.0)
@@ -11,7 +11,7 @@ NUGET
     NuGet.CommandLine (2.8.5)
     NUnit (2.6.4)
     NUnit.Runners (2.6.4)
-    SourceLink.Fake (0.5.0)
+    SourceLink.Fake (1.0.0)
     xunit (1.9.2)
     xunit.runner.visualstudio (2.0.0)
     xunit.runners (1.9.2)
