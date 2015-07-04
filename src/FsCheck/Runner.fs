@@ -233,8 +233,24 @@ module Runner =
     let onShrinkToString args =
         sprintf "shrink:%s%s%s" newline (argumentsToString args) newline
 
-    ///A runner that prints results to the console.
-    let consoleRunner =
+    let private consoleWriter = 
+        let consoleTy = Type.GetType("System.Console", throwOnError = false)
+        if consoleTy <> null then
+            let outProp = consoleTy.GetRuntimeProperty("Out")
+            if outProp <> null then
+                let output = outProp.GetValue(null) :?> IO.TextWriter
+                Some output
+            else None
+        else None
+
+    let internal printf fmt = 
+        Printf.kprintf (fun s -> 
+            match consoleWriter with
+            | Some w -> w.Write(s)
+            | None -> Diagnostics.Debug.WriteLine(s)) fmt
+
+    ///A runner that prints results to the standard output.
+    let defaultRunner =
         { new IRunner with
             member __.OnStartFixture t =
                 printf "%s" (onStartFixtureToString t)
@@ -334,7 +350,7 @@ type Config with
               Every         = fun _ _ -> String.Empty
               EveryShrink   = fun _ -> String.Empty
               Arbitrary     = []
-              Runner        = consoleRunner } 
+              Runner        = defaultRunner } 
 
     ///The verbose configuration prints each generated argument.
     static member Verbose = 
