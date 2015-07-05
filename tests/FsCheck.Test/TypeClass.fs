@@ -27,6 +27,10 @@ module TypeClass =
         static member Int() =
             { new ITypeClassUnderTest<int> with
                 override x.GetSomething = 1 }
+        //to check that methods with arguments are ignored
+        static member Int2(_:string) =
+            { new ITypeClassUnderTest<int> with
+                override x.GetSomething = 3 }
 
     [<Fact>]
     let ``should discover primitive types``() = 
@@ -35,7 +39,7 @@ module TypeClass =
                 .New()
                 .Discover(true, typeof<PrimitiveInstance>)
         Assert.Equal(1, typeClass.Instances.Count)
-        Assert.Contains((Primitive typeof<int>, Set.empty), typeClass.Instances) 
+        Assert.Contains((Primitive typeof<int>), typeClass.Instances) 
         Assert.False typeClass.HasCatchAll
 
     type ArrayInstance() =
@@ -50,7 +54,7 @@ module TypeClass =
                 .New()
                 .Discover(true, typeof<ArrayInstance>)
         Assert.Equal(1, typeClass.Instances.Count)
-        Assert.Contains((Array typeof<_[,]>,Set.empty), typeClass.Instances)
+        Assert.Contains((Array typeof<_[,]>), typeClass.Instances)
 
     type CatchAllInstance() =
         static member CatchAll() =
@@ -65,63 +69,6 @@ module TypeClass =
                 .Discover(true, typeof<CatchAllInstance>)
         Assert.True typeClass.HasCatchAll
         Assert.Equal(1,typeClass.Instances.Count)
-
-
-    // Now test instances parametrized on attributes
-
-    [<AttributeUsage(AttributeTargets.Parameter)>]
-    type GenParameterAttribute(first:int,second:string) =
-        inherit Attribute()
-        member x.First = first
-        member x.Second = second
-
-    [<AttributeUsage(AttributeTargets.Parameter)>]
-    type AnotherGenParameterAttribute(first:double) =
-        inherit Attribute()
-        member x.First = first
-
-    type PrimitiveInstanceWithAttribute() =
-        static member Int(attribute:GenParameterAttribute) =
-            { new ITypeClassUnderTest<int> with
-                override x.GetSomething = attribute.First }
-        static member Int(attribute:GenParameterAttribute, anotherAttribute:AnotherGenParameterAttribute) =
-            { new ITypeClassUnderTest<int> with
-                override x.GetSomething = attribute.First + 10 * int anotherAttribute.First }
-
-    [<Fact>]
-    let ``should discover primitive types parametrized on attribute``() = 
-        let typeClass = 
-            TypeClass<ITypeClassUnderTest<_>>
-                .New()
-                .Discover(true, typeof<PrimitiveInstanceWithAttribute>)
-        let expectedInstances =
-            [ (Primitive typeof<int>, Argument typeof<GenParameterAttribute> |> Set.singleton)
-              (Primitive typeof<int>, [ Argument typeof<GenParameterAttribute>; Argument typeof<AnotherGenParameterAttribute>]  |> Set.ofList)
-            ] |> Set.ofList
-
-        Assert.Equal(2, typeClass.Instances.Count)
-        Assert.Equal<_ * _>(expectedInstances, typeClass.Instances)
-
-    type ArrayInstanceWithAttributes() =
-        static member Array(attribute:GenParameterAttribute, attribute2:AnotherGenParameterAttribute) =
-            { new ITypeClassUnderTest<'a[]> with
-                override x.GetSomething = attribute.First + 10 * int attribute2.First }
-        static member Array(attribute:GenParameterAttribute) =
-            { new ITypeClassUnderTest<'a[]> with
-                override x.GetSomething = attribute.First  }
-
-    [<Fact>]
-    let ``should discover array types parametrized on attribute``() = 
-        let typeClass = 
-            TypeClass<ITypeClassUnderTest<_>>
-                .New()
-                .Discover(true, typeof<ArrayInstanceWithAttributes>)
-
-        let expectedInstances =
-            [ (Array typeof<_[]>, Argument typeof<GenParameterAttribute> |> Set.singleton)
-              (Array typeof<_[]>, [ Argument typeof<GenParameterAttribute>; Argument typeof<AnotherGenParameterAttribute>]  |> Set.ofList)
-            ] |> Set.ofList
-        Assert.Equal< _ * _ >(expectedInstances, typeClass.Instances)
 
     [<Fact>]
     let ``should instantiate primitive type``() =
@@ -151,27 +98,6 @@ module TypeClass =
                 .Discover(true, typeof<CatchAllInstance>)
                 .InstanceFor<string,ITypeClassUnderTest<string>>() //string not defined explicitly
         Assert.Equal(3, instance.GetSomething)
-                 
-    [<Property(MaxTest=10)>]
-    let ``should instantiate primitive type with attributes``(parameter:int) =
-        let instance = 
-            TypeClass<ITypeClassUnderTest<_>>
-                .New()
-                .Discover(true, typeof<PrimitiveInstanceWithAttribute>)
-                .InstanceFor<int,ITypeClassUnderTest<int>>([new GenParameterAttribute(parameter,"")])
-        
-        Assert.Equal(parameter, instance.GetSomething)
-
-    [<Property(MaxTest=10)>]
-    let ``should instantiate array type with attributes``(parameter:int, parameter2:int) =
-        let instance = 
-            TypeClass<ITypeClassUnderTest<_>>
-                .New()
-                .Discover(true, typeof<ArrayInstanceWithAttributes>)
-                .DiscoverAndMerge(true, typeof<PrimitiveInstance>) //so the int is defined too
-                .InstanceFor<int[],ITypeClassUnderTest<int[]>>([new GenParameterAttribute(parameter,""); new AnotherGenParameterAttribute(float parameter2)])
-
-        Assert.Equal(parameter + 10 * parameter2, instance.GetSomething)
 
 
 
