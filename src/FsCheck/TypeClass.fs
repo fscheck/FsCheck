@@ -140,12 +140,6 @@ module TypeClass =
         ///Get the instance registered on this TypeClass for the given type and optionally the given arguments. 
         ///The result is of type 'TypeClass<'T>, dynamically.
         member x.GetInstance (instance:Type) =
-
-            //returns the index of the argument of the given type in the parameters of the given method.
-            //Only works if each type occurs exactly once inthe parameters.
-            let argumentOrder (methodInfo:MethodInfo) (arg:obj) =
-                methodInfo.GetParameters()
-                |> Array.findIndex (fun param -> param.ParameterType = arg.GetType())
                 
             Common.memoizeWith memo (fun (instance:Type) -> 
                 let mi =
