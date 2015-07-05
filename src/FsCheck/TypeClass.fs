@@ -22,14 +22,15 @@ module TypeClass =
     //parametrized active pattern that recognizes generic types with generic type definitions equal to the first paramater, 
     //and that returns the generic type parameters of the generic type.
     let private (|GenericTypeDef|_|) (p:Type) (t:Type) = 
-        if t.IsConstructedGenericType then
-            let generic = t.GetGenericTypeDefinition() 
-            if p.Equals(generic) then Some(t.GenericTypeArguments) else None
+        let tdef = t.GetTypeInfo()
+        if tdef.IsGenericType then
+            let generic = tdef.GetGenericTypeDefinition() 
+            if p.Equals(generic) then Some(tdef.GenericTypeArguments) else None
         else None
 
     let private (|IsArray|IsGeneric|IsOther|) (x:Type) = 
         if x.IsArray then IsArray
-        elif x.IsConstructedGenericType then IsGeneric
+        elif x.GetTypeInfo().IsGenericType then IsGeneric
         else IsOther
 
     let [<Literal>] internal CatchAllName = "--FsCheck.CatchAll--"
@@ -54,7 +55,7 @@ module TypeClass =
             match ``type`` with
             | catchAll when catchAll.IsGenericParameter -> 
                 CatchAll catchAll
-            | generic when generic.IsConstructedGenericType && (generic.GenericTypeArguments |> Array.forall (fun t -> t.IsGenericParameter)) ->
+            | generic when generic.GetTypeInfo().IsGenericType && (generic.GenericTypeArguments |> Array.forall (fun t -> t.IsGenericParameter)) ->
                     Generic <| generic.GetGenericTypeDefinition()
             | arr when arr.IsArray && arr.GetElementType().IsGenericParameter ->
                     Array <| arr
