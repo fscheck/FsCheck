@@ -93,7 +93,11 @@ module TypeClass =
                     ""
                 else
                     (Set.fold (sprintf "%s, %A") pre s) + "\n"
+<<<<<<< Updated upstream
             let instances = sprintf "%s%s" (setToString "New: " x.NewInstances) (setToString "Overridden: " x.OverriddenInstances)
+=======
+            let instances = sprintf "%s%s" (setToString "New: " x.NewInstances) (setToString "Override: " x.OverriddenInstances)
+>>>>>>> Stashed changes
             instances
 
     type TypeClass<'TypeClass> 

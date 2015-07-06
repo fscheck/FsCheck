@@ -3,13 +3,13 @@ source https://www.nuget.org/api/v2
 nuget FAKE
 nuget NUnit
 nuget NUnit.Runners
-nuget xunit
-nuget xunit.assert
-nuget xunit.extensibility.execution
-nuget xunit.runner.utility
-nuget xunit.runners
-nuget xunit.runner.console
-nuget xunit.runner.visualstudio
+nuget xunit prerelease
+nuget xunit.assert prerelease
+nuget xunit.extensibility.execution prerelease
+nuget xunit.runner.utility prerelease
+nuget xunit.runners prerelease
+nuget xunit.runner.console prerelease
+nuget xunit.runner.visualstudio prerelease
 nuget NuGet.CommandLine
 nuget SourceLink.Fake
 nuget FSharp.Formatting
