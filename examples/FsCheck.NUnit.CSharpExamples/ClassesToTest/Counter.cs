@@ -21,9 +21,5 @@
         {
             return n;
         }
-
-        public override string ToString() {
-            return n.ToString();
-        }
     }
 }

@@ -10,7 +10,7 @@ namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
             return Gen.Elements(new Command<Counter, int>[] {new Inc(), new Dec()});
         }
 
-        public Gen<Counter> InitialActual { get { return Gen.Constant(new Counter());} }
+        public Counter InitialActual { get { return new Counter();} }
     
         public int InitialModel { get { return 0; } }
 
