@@ -754,6 +754,7 @@ module Arb =
             |> convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
 
         static member Culture() =
+#if PCL
             let names = [
                 "af"; "af-ZA";
                 "am"; "am-ET";
@@ -879,6 +880,9 @@ module Arb =
                                       CultureInfo.DefaultThreadCurrentCulture;
                                       CultureInfo.DefaultThreadCurrentUICulture; ]
             let genCulture = Gen.elements cultures
+#else
+            let genCulture = Gen.elements (CultureInfo.GetCultures (CultureTypes.NeutralCultures ||| CultureTypes.SpecificCultures))
+#endif
             let shrinkCulture =
                 Seq.unfold <| fun c -> if c = null || c = CultureInfo.InvariantCulture || c.Parent = null
                                             then None

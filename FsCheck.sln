@@ -69,6 +69,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.XUnit.CSharpExample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp.DocSnippets", "docs\csharp\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Portable", "src\FsCheck.Portable\FsCheck.Portable.fsproj", "{474F0377-247A-444D-8EF7-AD6C786A6526}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,10 @@ Global
 		{6AB84678-E55F-4387-A040-67312735D089}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AB84678-E55F-4387-A040-67312735D089}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AB84678-E55F-4387-A040-67312735D089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{474F0377-247A-444D-8EF7-AD6C786A6526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{474F0377-247A-444D-8EF7-AD6C786A6526}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{474F0377-247A-444D-8EF7-AD6C786A6526}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{474F0377-247A-444D-8EF7-AD6C786A6526}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
