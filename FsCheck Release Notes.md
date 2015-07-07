@@ -1,8 +1,8 @@
-### 2.0.2 - To be released
+### 2.0.2 - 7 July 2015
   * Update NuGet package with new project home.
   * Add missing frequency overload.
   * Added some more C# examples to documentation.
-  * Many iternal changes to eventually support PCL.
+  * Internal changes related to use of reflection API to eventually support PCL.
   * Fix bug in Commands.
   * Improved output - now shows argument before and after shrinking.
 
