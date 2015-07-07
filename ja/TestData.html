@@ -63,13 +63,11 @@ FsCheck では Arbitrary インスタンスを、 <code>Type</code> から <code
 <p>ジェネレータは関数 <code>choose</code> により構築され、一様分布を利用した区間から値のランダム抽出を行います。
 例えばリストからの要素のランダム抽出を行いたい場合、</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">chooseFromList</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">xs</span> <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">chooseFromList</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">xs</span> <span class="o">=</span> 
   <span class="i">gen</span> { <span class="k">let!</span> <span class="i">i</span> <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">choose</span> (<span class="n">0</span>, <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="i">length</span> <span onmouseout="hideTip(event, 'fs4', 7)" onmouseover="showTip(event, 'fs4', 7)" class="i">xs</span><span class="o">-</span><span class="n">1</span>) 
         <span class="k">return</span> (<span onmouseout="hideTip(event, 'fs5', 8)" onmouseover="showTip(event, 'fs5', 8)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 9)" onmouseover="showTip(event, 'fs7', 9)" class="i">nth</span> <span onmouseout="hideTip(event, 'fs4', 10)" onmouseover="showTip(event, 'fs4', 10)" class="i">xs</span> <span class="i">i</span>) }
   
-</pre>
-
+</code></pre>
 
 <p>を使用します。</p>
 
@@ -78,10 +76,8 @@ FsCheck では Arbitrary インスタンスを、 <code>Type</code> から <code
 <p>ジェネレータは、リスト内のジェネレータから等確率で選ぶ <code>Gen.oneof &lt;sequence of generators&gt;</code>
 のような形式を取るかもしれません。例えば、</p>
 
-<pre class="fssnip">
-<span class="i">Gen</span><span class="o">.</span><span class="i">oneof</span> [ <span class="i">gen</span> { <span class="k">return</span> <span class="k">true</span> }; <span class="i">gen</span> { <span class="k">return</span> <span class="k">false</span> } ]
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Gen</span><span class="o">.</span><span class="i">oneof</span> [ <span class="i">gen</span> { <span class="k">return</span> <span class="k">true</span> }; <span class="i">gen</span> { <span class="k">return</span> <span class="k">false</span> } ]
+</code></pre>
 
 <p>は確率 1/2 で true になるランダムな bool 値を生成します。</p>
 
@@ -89,10 +85,8 @@ FsCheck では Arbitrary インスタンスを、 <code>Type</code> から <code
 <code>frequency</code> はリストからジェネレータをランダムに選びますが、それぞれの選択肢が選ばれる確率は
 与えられた要素により重み付けされます。例えば、</p>
 
-<pre class="fssnip">
-<span class="i">Gen</span><span class="o">.</span><span class="i">frequency</span> [ (<span class="n">2</span>, <span class="i">gen</span> { <span class="k">return</span> <span class="k">true</span> }); (<span class="n">1</span>, <span class="i">gen</span> { <span class="k">return</span> <span class="k">false</span> })]
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Gen</span><span class="o">.</span><span class="i">frequency</span> [ (<span class="n">2</span>, <span class="i">gen</span> { <span class="k">return</span> <span class="k">true</span> }); (<span class="n">1</span>, <span class="i">gen</span> { <span class="k">return</span> <span class="k">false</span> })]
+</code></pre>
 
 <p>は 2/3 の確率で true を生成します。</p>
 
@@ -107,10 +101,8 @@ FsCheck では Arbitrary インスタンスを、 <code>Type</code> から <code
 <p>サイズパラメータの値は <code>sized</code> を使用することで取得できます。 <code>sized g</code> は現在のサイズをパラメータとして
 <code>g</code> を呼びます。例えば、0 から size までの自然数を生成するには、</p>
 
-<pre class="fssnip">
-<span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs8', 11)" onmouseover="showTip(event, 'fs8', 11)" class="i">s</span> <span class="k">-&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">choose</span> (<span class="n">0</span>,<span onmouseout="hideTip(event, 'fs8', 12)" onmouseover="showTip(event, 'fs8', 12)" class="i">s</span>)
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs8', 11)" onmouseover="showTip(event, 'fs8', 11)" class="i">s</span> <span class="k">-&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">choose</span> (<span class="n">0</span>,<span onmouseout="hideTip(event, 'fs8', 12)" onmouseover="showTip(event, 'fs8', 12)" class="i">s</span>)
+</code></pre>
 
 <p>サイズ制御の目的は、エラーを見つけるのに充分大きく、しかもテストを素早く行うのに充分小さいテストケースを
 確保するためにあります。既定のサイズ制御ではこれを達成できない場合があります。
@@ -121,10 +113,8 @@ FsCheck では Arbitrary インスタンスを、 <code>Type</code> から <code
 <p><code>resize n g</code> はサイズパラメータ <code>n</code> とともに <code>g</code> を実行します。サイズパラメータは負になってはいけません。
 例えば、ランダム行列を生成するために元のサイズの平方根をとるのは適切でしょう。</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="f">matrix</span> <span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="i">gen</span> <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs8', 15)" onmouseover="showTip(event, 'fs8', 15)" class="i">s</span> <span class="k">-&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">resize</span> (<span onmouseout="hideTip(event, 'fs8', 16)" onmouseover="showTip(event, 'fs8', 16)" class="i">s</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs11', 17)" onmouseover="showTip(event, 'fs11', 17)" class="i">float</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs12', 18)" onmouseover="showTip(event, 'fs12', 18)" class="i">sqrt</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs13', 19)" onmouseover="showTip(event, 'fs13', 19)" class="i">int</span>) <span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="i">gen</span>
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="f">matrix</span> <span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="i">gen</span> <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs8', 15)" onmouseover="showTip(event, 'fs8', 15)" class="i">s</span> <span class="k">-&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">resize</span> (<span onmouseout="hideTip(event, 'fs8', 16)" onmouseover="showTip(event, 'fs8', 16)" class="i">s</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs11', 17)" onmouseover="showTip(event, 'fs11', 17)" class="i">float</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs12', 18)" onmouseover="showTip(event, 'fs12', 18)" class="i">sqrt</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs13', 19)" onmouseover="showTip(event, 'fs13', 19)" class="i">int</span>) <span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="i">gen</span>
+</code></pre>
 
 <h3>再帰的データ型の生成</h3>
 
@@ -133,26 +123,21 @@ FsCheck では Arbitrary インスタンスを、 <code>Type</code> から <code
 容易に表現することができます。また、コンストラクタや関数を <code>Gen</code> 型に持ち上げる、6個までのアリティ用の
 `map 関数もあります。例えば、木の型が</p>
 
-<pre class="fssnip">
-<span class="k">type</span> <span onmouseout="hideTip(event, 'fs14', 21)" onmouseover="showTip(event, 'fs14', 21)" class="t">Tree</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 22)" onmouseover="showTip(event, 'fs15', 22)" class="p">Leaf</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs13', 23)" onmouseover="showTip(event, 'fs13', 23)" class="t">int</span> | <span onmouseout="hideTip(event, 'fs16', 24)" onmouseover="showTip(event, 'fs16', 24)" class="p">Branch</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs14', 25)" onmouseover="showTip(event, 'fs14', 25)" class="t">Tree</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs14', 26)" onmouseover="showTip(event, 'fs14', 26)" class="t">Tree</span>
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs14', 21)" onmouseover="showTip(event, 'fs14', 21)" class="t">Tree</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 22)" onmouseover="showTip(event, 'fs15', 22)" class="p">Leaf</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs13', 23)" onmouseover="showTip(event, 'fs13', 23)" class="t">int</span> | <span onmouseout="hideTip(event, 'fs16', 24)" onmouseover="showTip(event, 'fs16', 24)" class="p">Branch</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs14', 25)" onmouseover="showTip(event, 'fs14', 25)" class="t">Tree</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs14', 26)" onmouseover="showTip(event, 'fs14', 26)" class="t">Tree</span>
+</code></pre>
 
 <p>で定義されているとすると、木のためのジェネレータは</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs17', 27)" onmouseover="showTip(event, 'fs17', 27)" class="f">unsafeTree</span>() <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs17', 27)" onmouseover="showTip(event, 'fs17', 27)" class="f">unsafeTree</span>() <span class="o">=</span> 
   <span class="i">Gen</span><span class="o">.</span><span class="i">oneof</span> [ <span class="i">Gen</span><span class="o">.</span><span class="i">map</span> <span onmouseout="hideTip(event, 'fs15', 28)" onmouseover="showTip(event, 'fs15', 28)" class="i">Leaf</span> <span class="i">Arb</span><span class="o">.</span><span class="i">generate</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 29)" onmouseover="showTip(event, 'fs13', 29)" class="i">int</span><span class="o">&gt;</span> 
               <span class="i">Gen</span><span class="o">.</span><span class="i">map2</span> (<span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs16', 30)" onmouseover="showTip(event, 'fs16', 30)" class="i">Branch</span> (<span class="i">x</span>,<span class="i">y</span>)) (<span onmouseout="hideTip(event, 'fs17', 31)" onmouseover="showTip(event, 'fs17', 31)" class="i">unsafeTree</span>()) (<span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="i">unsafeTree</span>())]
-</pre>
-
+</code></pre>
 
 <p>で定義できるでしょう。しかしながら、このような再帰ジェネレータはおそらく停止できずに StackOverflowException
 とともに失敗するか、とても大きな結果を生じるでしょう。これを防ぐために、
 再帰ジェネレータは常にサイズ制御機構を使用するべきです。例えば、</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">tree</span> <span class="o">=</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">tree</span> <span class="o">=</span>
     <span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs19', 34)" onmouseover="showTip(event, 'fs19', 34)" class="f">tree&#39;</span> <span onmouseout="hideTip(event, 'fs20', 35)" onmouseover="showTip(event, 'fs20', 35)" class="i">s</span> <span class="o">=</span> 
         <span class="k">match</span> <span onmouseout="hideTip(event, 'fs20', 36)" onmouseover="showTip(event, 'fs20', 36)" class="i">s</span> <span class="k">with</span>
         | <span class="n">0</span> <span class="k">-&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">map</span> <span onmouseout="hideTip(event, 'fs15', 37)" onmouseover="showTip(event, 'fs15', 37)" class="i">Leaf</span> <span class="i">Arb</span><span class="o">.</span><span class="i">generate</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 38)" onmouseover="showTip(event, 'fs13', 38)" class="i">int</span><span class="o">&gt;</span>
@@ -162,8 +147,7 @@ FsCheck では Arbitrary インスタンスを、 <code>Type</code> から <code
                         <span class="i">Gen</span><span class="o">.</span><span class="i">map2</span> (<span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs16', 46)" onmouseover="showTip(event, 'fs16', 46)" class="i">Branch</span> (<span class="i">x</span>,<span class="i">y</span>)) <span onmouseout="hideTip(event, 'fs22', 47)" onmouseover="showTip(event, 'fs22', 47)" class="i">subtree</span> <span onmouseout="hideTip(event, 'fs22', 48)" onmouseover="showTip(event, 'fs22', 48)" class="i">subtree</span>]
         | _ <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs23', 49)" onmouseover="showTip(event, 'fs23', 49)" class="f">invalidArg</span> <span class="s">&quot;s&quot;</span> <span class="s">&quot;Only positive arguments are allowed&quot;</span>
     <span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span onmouseout="hideTip(event, 'fs19', 50)" onmouseover="showTip(event, 'fs19', 50)" class="i">tree&#39;</span>
-</pre>
-
+</code></pre>
 
 <p>以下に注意してください。</p>
 
@@ -206,48 +190,39 @@ FsCheck では Arbitrary インスタンスを、 <code>Type</code> から <code
 <p>FsCheck は特定の型に対するジェネレータとシュリンカを <code>Arbitrary</code> 型としてまとめます。 <code>Arbitrary&lt;'a&gt;</code> を継承したクラスの
  インスタンスを返すようなクラスの静的メンバを定義することで、独自型に対する Arbitrary インスタンスを FsCheck に与えることができます。</p>
 
-<pre class="fssnip">
-<span class="k">type</span> <span onmouseout="hideTip(event, 'fs24', 51)" onmouseover="showTip(event, 'fs24', 51)" class="t">MyGenerators</span> <span class="o">=</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs24', 51)" onmouseover="showTip(event, 'fs24', 51)" class="t">MyGenerators</span> <span class="o">=</span>
   <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs25', 52)" onmouseover="showTip(event, 'fs25', 52)" class="f">Tree</span>() <span class="o">=</span>
       {<span class="k">new</span> <span class="i">Arbitrary</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs14', 53)" onmouseover="showTip(event, 'fs14', 53)" class="i">Tree</span><span class="o">&gt;</span>() <span class="k">with</span>
           <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">Generator</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs18', 54)" onmouseover="showTip(event, 'fs18', 54)" class="i">tree</span>
           <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">Shrinker</span> <span class="i">t</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs26', 55)" onmouseover="showTip(event, 'fs26', 55)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs27', 56)" onmouseover="showTip(event, 'fs27', 56)" class="i">empty</span> }
-</pre>
-
+</code></pre>
 
 <p><code>'a</code> を Arbitrary インスタンスを定義したい特定の型に置き換えてください。 <code>Generator</code> メソッドのみ定義する必要があります。
 <code>Shrinker</code> は既定では空のシーケンスを返します(すなわち、この型に対してはシュリンクが起こらない)。</p>
 
 <p>そして、このクラスのすべての Arbitrary インスタンスを登録するために、次のようにします。</p>
 
-<pre class="fssnip">
-<span class="i">Arb</span><span class="o">.</span><span class="i">register</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs24', 57)" onmouseover="showTip(event, 'fs24', 57)" class="i">MyGenerators</span><span class="o">&gt;</span>()
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Arb</span><span class="o">.</span><span class="i">register</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs24', 57)" onmouseover="showTip(event, 'fs24', 57)" class="i">MyGenerators</span><span class="o">&gt;</span>()
+</code></pre>
 
 <p>これで FsCheck は <code>Tree</code> 型のことを知るようになりました。そして、Tree 値のみならず、例えば Tree を含むリストやタプル、
 オプション値についても生成できます。</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 58)" onmouseover="showTip(event, 'fs28', 58)" class="f">RevRevTree</span> (<span onmouseout="hideTip(event, 'fs29', 59)" onmouseover="showTip(event, 'fs29', 59)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 60)" onmouseover="showTip(event, 'fs30', 60)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs14', 61)" onmouseover="showTip(event, 'fs14', 61)" class="t">Tree</span><span class="o">&gt;</span>) <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 58)" onmouseover="showTip(event, 'fs28', 58)" class="f">RevRevTree</span> (<span onmouseout="hideTip(event, 'fs29', 59)" onmouseover="showTip(event, 'fs29', 59)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 60)" onmouseover="showTip(event, 'fs30', 60)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs14', 61)" onmouseover="showTip(event, 'fs14', 61)" class="t">Tree</span><span class="o">&gt;</span>) <span class="o">=</span> 
   <span onmouseout="hideTip(event, 'fs5', 62)" onmouseover="showTip(event, 'fs5', 62)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 63)" onmouseover="showTip(event, 'fs31', 63)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs5', 64)" onmouseover="showTip(event, 'fs5', 64)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 65)" onmouseover="showTip(event, 'fs31', 65)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs29', 66)" onmouseover="showTip(event, 'fs29', 66)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs29', 67)" onmouseover="showTip(event, 'fs29', 67)" class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs28', 68)" onmouseover="showTip(event, 'fs28', 68)" class="i">RevRevTree</span>
-</pre>
-
+</code></pre>
 
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 
 <p>ジェネリックな型パラメータを持った型を生成するために、例えば、</p>
 
-<pre class="fssnip">
-<span class="k">type</span> <span onmouseout="hideTip(event, 'fs32', 69)" onmouseover="showTip(event, 'fs32', 69)" class="t">Box</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs33', 70)" onmouseover="showTip(event, 'fs33', 70)" class="p">Whitebox</span> <span class="k">of</span> <span class="o">&#39;</span><span class="i">a</span> | <span onmouseout="hideTip(event, 'fs34', 71)" onmouseover="showTip(event, 'fs34', 71)" class="p">Blackbox</span> <span class="k">of</span> <span class="o">&#39;</span><span class="i">a</span>
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs32', 69)" onmouseover="showTip(event, 'fs32', 69)" class="t">Box</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs33', 70)" onmouseover="showTip(event, 'fs33', 70)" class="p">Whitebox</span> <span class="k">of</span> <span class="o">&#39;</span><span class="i">a</span> | <span onmouseout="hideTip(event, 'fs34', 71)" onmouseover="showTip(event, 'fs34', 71)" class="p">Blackbox</span> <span class="k">of</span> <span class="o">&#39;</span><span class="i">a</span>
+</code></pre>
 
 <p>について、同様の原理があてはまります。したがって <code>MyGenerators</code> 型は次のように記述できます。</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 72)" onmouseover="showTip(event, 'fs35', 72)" class="i">boxGen</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span> <span class="o">:</span> <span class="i">Gen</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs32', 73)" onmouseover="showTip(event, 'fs32', 73)" class="i">Box</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span><span class="o">&gt;</span> <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 72)" onmouseover="showTip(event, 'fs35', 72)" class="i">boxGen</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span> <span class="o">:</span> <span class="i">Gen</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs32', 73)" onmouseover="showTip(event, 'fs32', 73)" class="i">Box</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span><span class="o">&gt;</span> <span class="o">=</span> 
     <span class="i">gen</span> { <span class="k">let!</span> <span class="i">a</span> <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">generate</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span>
           <span class="k">return!</span> <span class="i">Gen</span><span class="o">.</span><span class="i">elements</span> [ <span onmouseout="hideTip(event, 'fs33', 74)" onmouseover="showTip(event, 'fs33', 74)" class="i">Whitebox</span> <span class="i">a</span>; <span onmouseout="hideTip(event, 'fs34', 75)" onmouseover="showTip(event, 'fs34', 75)" class="i">Blackbox</span> <span class="i">a</span>] }
 
@@ -257,8 +232,7 @@ FsCheck では Arbitrary インスタンスを、 <code>Type</code> から <code
             <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">Generator</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs18', 79)" onmouseover="showTip(event, 'fs18', 79)" class="i">tree</span>
             <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">Shrinker</span> <span class="i">t</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs26', 80)" onmouseover="showTip(event, 'fs26', 80)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs27', 81)" onmouseover="showTip(event, 'fs27', 81)" class="i">empty</span> }
     <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs32', 82)" onmouseover="showTip(event, 'fs32', 82)" class="i">Box</span>() <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">fromGen</span> <span onmouseout="hideTip(event, 'fs35', 83)" onmouseover="showTip(event, 'fs35', 83)" class="i">boxGen</span>
-</pre>
-
+</code></pre>
 
 <p><code>Box</code> の型パラメータのジェネレータを取得するために、Arb モジュールの関数 <code>generate&lt;'a&gt;</code> を使用していることに注目してください。
 これによりジェネレータを再帰的に定義することができます。同じように、 <code>shrink&lt;'a&gt;</code> 関数があります。
@@ -267,12 +241,10 @@ Arb モジュールも同様に役立つでしょう。</p>
 
 <p>さあ、次の性質を確認してみましょう。</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 84)" onmouseover="showTip(event, 'fs36', 84)" class="f">RevRevBox</span> (<span onmouseout="hideTip(event, 'fs37', 85)" onmouseover="showTip(event, 'fs37', 85)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 86)" onmouseover="showTip(event, 'fs30', 86)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs32', 87)" onmouseover="showTip(event, 'fs32', 87)" class="t">Box</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 88)" onmouseover="showTip(event, 'fs13', 88)" class="t">int</span><span class="o">&gt;</span><span class="o">&gt;</span>) <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 84)" onmouseover="showTip(event, 'fs36', 84)" class="f">RevRevBox</span> (<span onmouseout="hideTip(event, 'fs37', 85)" onmouseover="showTip(event, 'fs37', 85)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 86)" onmouseover="showTip(event, 'fs30', 86)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs32', 87)" onmouseover="showTip(event, 'fs32', 87)" class="t">Box</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 88)" onmouseover="showTip(event, 'fs13', 88)" class="t">int</span><span class="o">&gt;</span><span class="o">&gt;</span>) <span class="o">=</span> 
   <span onmouseout="hideTip(event, 'fs5', 89)" onmouseover="showTip(event, 'fs5', 89)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 90)" onmouseover="showTip(event, 'fs31', 90)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs5', 91)" onmouseover="showTip(event, 'fs5', 91)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 92)" onmouseover="showTip(event, 'fs31', 92)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs37', 93)" onmouseover="showTip(event, 'fs37', 93)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs37', 94)" onmouseover="showTip(event, 'fs37', 94)" class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs36', 95)" onmouseover="showTip(event, 'fs36', 95)" class="i">RevRevBox</span>
-</pre>
-
+</code></pre>
 
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 

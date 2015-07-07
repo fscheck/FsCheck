@@ -35,6 +35,10 @@
 
 
 <h1>TypeClass<'TypeClass></h1>
+<p>
+  <span>Namespace: FsCheck</span><br />
+  <span>Parent Module: <a href="fscheck-typeclass.html">TypeClass</a></span>
+</p>
 <div class="xmldoc">
 </div>
   <h3>Instance members</h3>
@@ -54,7 +58,7 @@
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L113-113" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L106-106" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -72,7 +76,7 @@
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L145-145" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L134-134" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -94,7 +98,7 @@ new array instances, overridden array instances, new catch all or overridden cat
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L122-122" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L115-115" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -117,7 +121,7 @@ Use Merge in addition to achieve that, or use DiscoverAndMerge to do both.</p>
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L139-139" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L128-128" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -132,14 +136,14 @@ with the newly discovered instances overriding the instances on this TypeClass.<
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '209', 209)" onmouseover="showTip(event, '209', 209)">
-            GetInstance(instance, arguments)
+            GetInstance(instance)
           </code>
           <div class="tip" id="209">
-            <strong>Signature:</strong> (instance:Type * arguments:seq&lt;obj&gt; option) -&gt; obj<br />
+            <strong>Signature:</strong> instance:Type -&gt; obj<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L154-154" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L143-143" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -161,7 +165,7 @@ The result is of type 'TypeClass<'T>, dynamically.</p>
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L115-115" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L108-108" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -172,14 +176,14 @@ The result is of type 'TypeClass<'T>, dynamically.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '211', 211)" onmouseover="showTip(event, '211', 211)">
-            InstanceFor(arguments)
+            InstanceFor()
           </code>
           <div class="tip" id="211">
-            <strong>Signature:</strong> (arguments:seq&lt;obj&gt; option) -&gt; &#39;TypeClassT<br />
+            <strong>Signature:</strong> unit -&gt; &#39;TypeClassT<br />
                           <strong>Type parameters:</strong> 'TypeClassT          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L183-183" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L161-161" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -197,11 +201,11 @@ to TypeClassT, which should be 'TypeClass<'T> but that's impossible to express i
             Instances
           </code>
           <div class="tip" id="212">
-            <strong>Signature:</strong> Set&lt;InstanceKind * Set&lt;InstanceArgument&gt;&gt;<br />
+            <strong>Signature:</strong> Set&lt;InstanceKind&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L114-114" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L107-107" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -219,7 +223,7 @@ to TypeClassT, which should be 'TypeClass<'T> but that's impossible to express i
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L134-134" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L123-123" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -249,7 +253,7 @@ Instances defined in the given type override the instances in this TypeClass ins
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L187-187" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/TypeClass.fs#L165-165" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

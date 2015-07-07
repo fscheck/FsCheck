@@ -35,6 +35,9 @@
 
 
 <h1>ArbitraryExtensions</h1>
+<p>
+  <span>Namespace: FsCheck</span><br />
+</p>
 <div class="xmldoc">
 <p>Extensons to transform Arbitrary instances into other Arbitrary instances.</p>
 
@@ -53,8 +56,8 @@
             Convert(arb, convertTo, convertFrom)
           </code>
           <div class="tip" id="221">
-            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?101595&gt; * convertTo:Func&lt;&#39;?101595,&#39;?101596&gt; * convertFrom:Func&lt;&#39;?101596,&#39;?101595&gt;) -&gt; Arbitrary&lt;&#39;?101596&gt;<br />
-                          <strong>Type parameters:</strong> '?101595, '?101596          </div>
+            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?101592&gt; * convertTo:Func&lt;&#39;?101592,&#39;?101593&gt; * convertFrom:Func&lt;&#39;?101593,&#39;?101592&gt;) -&gt; Arbitrary&lt;&#39;?101593&gt;<br />
+                          <strong>Type parameters:</strong> '?101592, '?101593          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L11-11" class="github-link">
@@ -75,8 +78,8 @@ based on a Arbitrary instance for the source type and two mapping functions.</p>
             Filter(arb, filter)
           </code>
           <div class="tip" id="222">
-            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?101598&gt; * filter:Func&lt;&#39;?101598,bool&gt;) -&gt; Arbitrary&lt;&#39;?101598&gt;<br />
-                          <strong>Type parameters:</strong> '?101598          </div>
+            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?101595&gt; * filter:Func&lt;&#39;?101595,bool&gt;) -&gt; Arbitrary&lt;&#39;?101595&gt;<br />
+                          <strong>Type parameters:</strong> '?101595          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L17-17" class="github-link">
@@ -97,8 +100,8 @@ The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter w
             MapFilter(arb, map, filter)
           </code>
           <div class="tip" id="223">
-            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?101600&gt; * map:Func&lt;&#39;?101600,&#39;?101600&gt; * filter:Func&lt;&#39;?101600,bool&gt;) -&gt; Arbitrary&lt;&#39;?101600&gt;<br />
-                          <strong>Type parameters:</strong> '?101600          </div>
+            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?101597&gt; * map:Func&lt;&#39;?101597,&#39;?101597&gt; * filter:Func&lt;&#39;?101597,bool&gt;) -&gt; Arbitrary&lt;&#39;?101597&gt;<br />
+                          <strong>Type parameters:</strong> '?101597          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L26-26" class="github-link">

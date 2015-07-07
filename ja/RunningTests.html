@@ -68,35 +68,32 @@
 
 <p>大抵、テストするための性質を複数書くでしょう。FsCheck はクラスの静的メンバーとして性質をグループ化できるようにします:</p>
 
-<pre class="fssnip">
-<span class="k">type</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">ListProperties</span> <span class="o">=</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">ListProperties</span> <span class="o">=</span>
   <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="f">``reverse of reverse is original``</span> (<span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs7', 7)" onmouseover="showTip(event, 'fs7', 7)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 8)" onmouseover="showTip(event, 'fs8', 8)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 9)" onmouseover="showTip(event, 'fs9', 9)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs8', 10)" onmouseover="showTip(event, 'fs8', 10)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 11)" onmouseover="showTip(event, 'fs9', 11)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs5', 12)" onmouseover="showTip(event, 'fs5', 12)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 13)" onmouseover="showTip(event, 'fs5', 13)" class="i">xs</span>
   <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="f">``reverse is original``</span> (<span onmouseout="hideTip(event, 'fs5', 15)" onmouseover="showTip(event, 'fs5', 15)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 16)" onmouseover="showTip(event, 'fs6', 16)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs7', 17)" onmouseover="showTip(event, 'fs7', 17)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 18)" onmouseover="showTip(event, 'fs8', 18)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 19)" onmouseover="showTip(event, 'fs9', 19)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs5', 20)" onmouseover="showTip(event, 'fs5', 20)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 21)" onmouseover="showTip(event, 'fs5', 21)" class="i">xs</span>
-</pre>
-
+</code></pre>
 
 <p>これらは使うときに1度だけチェックされます:</p>
 
-<pre class="fssnip">
-<span class="i">Check</span><span class="o">.</span><span class="i">QuickAll</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 22)" onmouseover="showTip(event, 'fs3', 22)" class="i">ListProperties</span><span class="o">&gt;</span>()
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">QuickAll</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 22)" onmouseover="showTip(event, 'fs3', 22)" class="i">ListProperties</span><span class="o">&gt;</span>()
+</code></pre>
 
 <p>FsCheck はそれぞれのテストの名前も印字します:</p>
 
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 4 tests (5 shrinks) (StdGen (808597715,296021708)):
+ListProperties.reverse is original-Falsifiable, after 4 tests (3 shrinks) (StdGen (182607723,296029733)):
+Original:
+[1; 2; -2]
+Shrunk:
 [1; 0]</code></pre></td></tr></table>
 
 <p>モジュールの全てのトップレベル関数がモジュール名とともにクラスの静的メンバーとしてコンパイルされるので、あるモジュールの全てのトップレベル関数を
 テストするのに Check.QuickAll を使うこともできます。
 しかしながら、モジュールの型は F# から直接アクセスできないので、以下のトリックを使うことができます:</p>
 
-<pre class="fssnip">
-<span class="i">Check</span><span class="o">.</span><span class="i">QuickAll</span> <span onmouseout="hideTip(event, 'fs11', 23)" onmouseover="showTip(event, 'fs11', 23)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 24)" onmouseover="showTip(event, 'fs3', 24)" class="i">ListProperties</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span>
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">QuickAll</span> <span onmouseout="hideTip(event, 'fs11', 23)" onmouseover="showTip(event, 'fs11', 23)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 24)" onmouseover="showTip(event, 'fs3', 24)" class="i">ListProperties</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span>
+</code></pre>
 
 <p><code>Check.Verbose</code> の対になるものについても知っておきましょう: <code>Check.VerboseAll</code> です。</p>
 
@@ -106,8 +103,7 @@ ListProperties.reverse is original-Falsifiable, after 4 tests (5 shrinks) (StdGe
 トップレベルの let 関数はそれらを囲むモジュール(クラスとしてコンパイルされます)の静的メンバーとしてコンパイルされるので、
 単に性質やジェネレータをトップレベルの let 束縛関数として定義でき、次のトリックを使って全てのジェネレータと全ての性質をすぐに登録することができます:</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="f">myprop</span> (<span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="i">i</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs7', 27)" onmouseover="showTip(event, 'fs7', 27)" class="t">int</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs13', 28)" onmouseover="showTip(event, 'fs13', 28)" class="i">i</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="f">myprop</span> (<span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="i">i</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs7', 27)" onmouseover="showTip(event, 'fs7', 27)" class="t">int</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs13', 28)" onmouseover="showTip(event, 'fs13', 28)" class="i">i</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 29)" onmouseover="showTip(event, 'fs14', 29)" class="i">mygen</span> <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">Default</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs15', 30)" onmouseover="showTip(event, 'fs15', 30)" class="i">Int32</span>() <span class="o">|&gt;</span> <span class="i">Arb</span><span class="o">.</span><span class="i">mapFilter</span> (<span class="k">fun</span> <span class="i">i</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs16', 31)" onmouseover="showTip(event, 'fs16', 31)" class="i">Math</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="i">Abs</span> <span class="i">i</span>) (<span class="k">fun</span> <span class="i">i</span> <span class="k">-&gt;</span> <span class="i">i</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span>)
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">helper</span> <span class="o">=</span> <span class="s">&quot;a string&quot;</span>
 <span class="k">let</span> <span class="k">private</span> <span onmouseout="hideTip(event, 'fs19', 34)" onmouseover="showTip(event, 'fs19', 34)" class="i">helper&#39;</span> <span class="o">=</span> <span class="k">true</span>
@@ -115,8 +111,7 @@ ListProperties.reverse is original-Falsifiable, after 4 tests (5 shrinks) (StdGe
 <span class="k">type</span> <span onmouseout="hideTip(event, 'fs20', 35)" onmouseover="showTip(event, 'fs20', 35)" class="t">Marker</span> <span class="o">=</span> <span class="k">class</span> <span class="k">end</span>
 <span class="i">Arb</span><span class="o">.</span><span class="i">registerByType</span> (<span onmouseout="hideTip(event, 'fs11', 36)" onmouseover="showTip(event, 'fs11', 36)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs20', 37)" onmouseover="showTip(event, 'fs20', 37)" class="i">Marker</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">QuickAll</span> (<span onmouseout="hideTip(event, 'fs11', 38)" onmouseover="showTip(event, 'fs11', 38)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs20', 39)" onmouseover="showTip(event, 'fs20', 39)" class="i">Marker</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span>)
-</pre>
-
+</code></pre>
 
 <table class="pre"><tr><td><pre><code>--- Checking FSI_0132 ---
 FSI_0132.myprop-Ok, passed 100 tests.
@@ -155,8 +150,7 @@ FSI_0132.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
 別のユニットテストフレームワークの能力を行使することができます</li>
 </ul>
 
-<pre class="fssnip">
-<span class="k">open</span> <span class="i">Xunit</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="i">Xunit</span>
 
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 40)" onmouseover="showTip(event, 'fs21', 40)" class="i">xUnitRunner</span> <span class="o">=</span>
   { <span class="k">new</span> <span class="i">IRunner</span> <span class="k">with</span>
@@ -170,8 +164,7 @@ FSI_0132.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
   }
    
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 41)" onmouseover="showTip(event, 'fs22', 41)" class="i">withxUnitConfig</span> <span class="o">=</span> { <span class="i">Config</span><span class="o">.</span><span class="i">Default</span> <span class="k">with</span> <span class="i">Runner</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs21', 42)" onmouseover="showTip(event, 'fs21', 42)" class="i">xUnitRunner</span> }
-</pre>
-
+</code></pre>
 
 <h3>例2: 生成された引数の印字をカスタマイズする</h3>
 
@@ -180,8 +173,7 @@ FSI_0132.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
 ― オーバーライドされた ToString は選択肢になく、構造化フォーマットは役に立つようなことは何もしません)、これを性質ごとに解決するために <code>label</code> コンビネータを
 使うことができますが、より構造化された解決策は <code>IRunner</code> を実装することで達成できます。例は以下のとおりです:</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs23', 43)" onmouseover="showTip(event, 'fs23', 43)" class="f">formatterRunner</span> <span onmouseout="hideTip(event, 'fs24', 44)" onmouseover="showTip(event, 'fs24', 44)" class="i">formatter</span> <span class="o">=</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs23', 43)" onmouseover="showTip(event, 'fs23', 43)" class="f">formatterRunner</span> <span onmouseout="hideTip(event, 'fs24', 44)" onmouseover="showTip(event, 'fs24', 44)" class="i">formatter</span> <span class="o">=</span>
   { <span class="k">new</span> <span class="i">IRunner</span> <span class="k">with</span>
       <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">OnStartFixture</span> <span class="i">t</span> <span class="o">=</span>
           <span onmouseout="hideTip(event, 'fs25', 45)" onmouseover="showTip(event, 'fs25', 45)" class="i">printf</span> <span class="s">&quot;%s&quot;</span> (<span class="i">Runner</span><span class="o">.</span><span class="i">onStartFixtureToString</span> <span class="i">t</span>)
@@ -196,8 +188,7 @@ FSI_0132.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
                               | <span class="i">t</span> <span class="k">-&gt;</span> <span class="i">t</span>
           <span onmouseout="hideTip(event, 'fs25', 60)" onmouseover="showTip(event, 'fs25', 60)" class="i">printf</span> <span class="s">&quot;%s&quot;</span> (<span class="i">Runner</span><span class="o">.</span><span class="i">onFinishedToString</span> <span class="i">name</span> <span class="i">testResult&#39;</span>) 
   }
-</pre>
-
+</code></pre>
 
 <div class="tip" id="fs1">namespace FsCheck</div>
 <div class="tip" id="fs2">namespace System</div>

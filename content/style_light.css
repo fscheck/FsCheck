@@ -74,6 +74,9 @@ table.pre, pre.fssnip, pre {
   border-radius:5px;
   color:#000000;  
 }
+pre.fssnip code {
+  font: 9pt 'Droid Sans Mono',consolas,monospace;
+}
 table.pre pre {
   padding:0px;
   margin:0px;

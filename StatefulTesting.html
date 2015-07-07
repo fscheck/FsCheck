@@ -39,16 +39,14 @@ state through a set of methods. FsCheck, through small extension,
 allows you to do model-based specification of a class under test. Consider the following class, 
 with an artificial bug in it:</p>
 
-<pre class="fssnip">
-<span class="k">type</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">Counter</span>() <span class="o">=</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">Counter</span>() <span class="o">=</span>
   <span class="k">let</span> <span class="k">mutable</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="v">n</span> <span class="o">=</span> <span class="n">0</span>
   <span class="k">member</span> <span class="i">__</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="f">Inc</span>() <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 6)" onmouseover="showTip(event, 'fs4', 6)" class="v">n</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs4', 7)" onmouseover="showTip(event, 'fs4', 7)" class="v">n</span> <span class="o">+</span> <span class="n">1</span>
   <span class="k">member</span> <span onmouseout="hideTip(event, 'fs6', 8)" onmouseover="showTip(event, 'fs6', 8)" class="i">__</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 9)" onmouseover="showTip(event, 'fs7', 9)" class="f">Dec</span>() <span class="o">=</span> <span class="k">if</span> <span onmouseout="hideTip(event, 'fs4', 10)" onmouseover="showTip(event, 'fs4', 10)" class="v">n</span> <span class="o">&gt;</span> <span class="n">2</span> <span class="k">then</span> <span onmouseout="hideTip(event, 'fs4', 11)" onmouseover="showTip(event, 'fs4', 11)" class="v">n</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs4', 12)" onmouseover="showTip(event, 'fs4', 12)" class="v">n</span> <span class="o">-</span> <span class="n">2</span> <span class="k">else</span> <span onmouseout="hideTip(event, 'fs4', 13)" onmouseover="showTip(event, 'fs4', 13)" class="v">n</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs4', 14)" onmouseover="showTip(event, 'fs4', 14)" class="v">n</span> <span class="o">-</span> <span class="n">1</span>
   <span class="k">member</span> <span onmouseout="hideTip(event, 'fs6', 15)" onmouseover="showTip(event, 'fs6', 15)" class="i">__</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 16)" onmouseover="showTip(event, 'fs8', 16)" class="i">Get</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 17)" onmouseover="showTip(event, 'fs4', 17)" class="v">n</span>
   <span class="k">member</span> <span onmouseout="hideTip(event, 'fs6', 18)" onmouseover="showTip(event, 'fs6', 18)" class="i">__</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 19)" onmouseover="showTip(event, 'fs9', 19)" class="f">Reset</span>() <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 20)" onmouseover="showTip(event, 'fs4', 20)" class="v">n</span> <span class="o">&lt;-</span> <span class="n">0</span>
   <span class="k">override</span> <span onmouseout="hideTip(event, 'fs6', 21)" onmouseover="showTip(event, 'fs6', 21)" class="i">__</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 22)" onmouseover="showTip(event, 'fs10', 22)" class="f">ToString</span>() <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 23)" onmouseover="showTip(event, 'fs4', 23)" class="v">n</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 24)" onmouseover="showTip(event, 'fs11', 24)" class="f">ToString</span>()
-</pre>
-
+</code></pre>
 
 <p>We'll elide the class definition in C#, it's very similar.</p>
 
@@ -59,15 +57,14 @@ after each such operation, the model and the actual instance should still be equ
 <p>With this idea in mind, you can write a specification of the Counter class using an int model as follows (full example
 in C# below):</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="i">spec</span> <span class="o">=</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="i">spec</span> <span class="o">=</span>
   <span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="i">inc</span> <span class="o">=</span> <span class="c">//specify what happens to model and actual instance when `Inc()` is called.</span>
       { <span class="k">new</span> <span class="i">Command</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 27)" onmouseover="showTip(event, 'fs3', 27)" class="i">Counter</span>,<span onmouseout="hideTip(event, 'fs14', 28)" onmouseover="showTip(event, 'fs14', 28)" class="i">int</span><span class="o">&gt;</span>() <span class="k">with</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">RunActual</span> <span class="i">c</span> <span class="o">=</span> <span class="i">c</span><span class="o">.</span><span class="i">Inc</span>(); <span class="i">c</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">RunModel</span> <span class="i">m</span> <span class="o">=</span> <span class="i">m</span> <span class="o">+</span> <span class="n">1</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">Post</span> (<span class="i">c</span>,<span class="i">m</span>) <span class="o">=</span> <span class="i">m</span> <span class="o">=</span> <span class="i">c</span><span class="o">.</span><span class="i">Get</span> <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">ofTestable</span> <span class="c">//the property that must hold after each invocation.</span>
           <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">ToString</span>() <span class="o">=</span> <span class="s">&quot;inc&quot;</span>}
-  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 29)" onmouseover="showTip(event, 'fs15', 29)" class="i">dec</span> <span class="o">=</span> <span class="c">//specify what happens to model and actual instance when `Inc()` is called.</span>
+  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 29)" onmouseover="showTip(event, 'fs15', 29)" class="i">dec</span> <span class="o">=</span> <span class="c">//specify what happens to model and actual instance when `Dec()` is called.</span>
       { <span class="k">new</span> <span class="i">Command</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 30)" onmouseover="showTip(event, 'fs3', 30)" class="i">Counter</span>,<span onmouseout="hideTip(event, 'fs14', 31)" onmouseover="showTip(event, 'fs14', 31)" class="i">int</span><span class="o">&gt;</span>() <span class="k">with</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">RunActual</span> <span class="i">c</span> <span class="o">=</span> <span class="i">c</span><span class="o">.</span><span class="i">Dec</span>(); <span class="i">c</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">RunModel</span> <span class="i">m</span> <span class="o">=</span> <span class="i">m</span> <span class="o">-</span> <span class="n">1</span>
@@ -77,8 +74,7 @@ in C# below):</p>
       <span class="k">member</span> <span class="i">__</span><span class="o">.</span><span class="i">InitialActual</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 34)" onmouseover="showTip(event, 'fs3', 34)" class="i">Counter</span>()
       <span class="k">member</span> <span class="i">__</span><span class="o">.</span><span class="i">InitialModel</span> <span class="o">=</span> <span class="n">0</span>
       <span class="k">member</span> <span class="i">__</span><span class="o">.</span><span class="i">Next</span> <span class="i">model</span> <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">elements</span> [<span onmouseout="hideTip(event, 'fs13', 35)" onmouseover="showTip(event, 'fs13', 35)" class="i">inc</span>;<span onmouseout="hideTip(event, 'fs15', 36)" onmouseover="showTip(event, 'fs15', 36)" class="i">dec</span>] }
-</pre>
-
+</code></pre>
 
 <p>A specification is put together for FsCheck as an object that implementents <code>ICommandGenerator&lt;'typeUnderTest,'modelType&gt;</code>. It should return 
 an initial object and an initial model of that object; and it should return a generator of <code>Command</code> objects.</p>
@@ -93,19 +89,20 @@ fails the test if a postcondition does not hold.</p>
 
 <p>A specification can be checked as follows:</p>
 
-<pre class="fssnip">
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">Command</span><span class="o">.</span><span class="i">toProperty</span> <span onmouseout="hideTip(event, 'fs12', 37)" onmouseover="showTip(event, 'fs12', 37)" class="i">spec</span>)
-</pre>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">Command</span><span class="o">.</span><span class="i">toProperty</span> <span onmouseout="hideTip(event, 'fs12', 37)" onmouseover="showTip(event, 'fs12', 37)" class="i">spec</span>)
+</code></pre>
 
-
-<table class="pre"><tr><td><pre><code>Falsifiable, after 15 tests (4 shrinks) (StdGen (1008564078,296021708)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 6 tests (3 shrinks) (StdGen (382691901,296029733)):
+Original:
+[inc; inc; dec; inc; inc; dec; inc]
+Shrunk:
 [inc; inc; inc; dec]</code></pre></td></tr></table>
 
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.</p>
 
 <p>Finally, in C#, all this looks as follows:</p>
 
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> <span class="k">class</span> CounterSpec <span class="o">:</span> ICommandGenerator&lt;Counter, <span class="k">int</span>&gt; {
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">public</span> <span class="k">class</span> CounterSpec <span class="o">:</span> ICommandGenerator&lt;Counter, <span class="k">int</span>&gt; {
 
     <span class="k">public</span> Gen&lt;Command&lt;Counter, <span class="k">int</span>&gt;<span class="o">&gt;</span> Next(<span class="k">int</span> <span class="k">value</span>) {
         <span class="k">return</span> Gen.Elements(<span class="k">new</span> Command&lt;Counter, <span class="k">int</span>&gt;[] { <span class="k">new</span> Inc(), <span class="k">new</span> Dec() });
@@ -152,13 +149,13 @@ fails the test if a postcondition does not hold.</p>
             <span class="k">return</span> <span class="s">"dec"</span>;
         }
     }
-}</pre></td></tr></table>
+}</code></pre></td></tr></table>
 
 <p>And to run:</p>
 
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">new</span> CounterSpec()
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">new</span> CounterSpec()
     .ToProperty()
-    .QuickCheck();</pre></td></tr></table>
+    .QuickCheck();</code></pre></td></tr></table>
 
 <div class="tip" id="fs1">namespace FsCheck</div>
 <div class="tip" id="fs2">namespace System</div>

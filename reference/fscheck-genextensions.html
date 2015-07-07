@@ -35,6 +35,9 @@
 
 
 <h1>GenExtensions</h1>
+<p>
+  <span>Namespace: FsCheck</span><br />
+</p>
 <div class="xmldoc">
 <p>Extension methods to build generators - contains among other the Linq methods.</p>
 
@@ -53,8 +56,8 @@
             Apply(generator, f)
           </code>
           <div class="tip" id="301">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101580&gt; * f:Gen&lt;Func&lt;&#39;?101580,&#39;?101581&gt;&gt;) -&gt; Gen&lt;&#39;?101581&gt;<br />
-                          <strong>Type parameters:</strong> '?101580, '?101581          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101577&gt; * f:Gen&lt;Func&lt;&#39;?101577,&#39;?101578&gt;&gt;) -&gt; Gen&lt;&#39;?101578&gt;<br />
+                          <strong>Type parameters:</strong> '?101577, '?101578          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L95-95" class="github-link">
@@ -74,8 +77,8 @@
             Array2DOf(generator)
           </code>
           <div class="tip" id="302">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?101578&gt; -&gt; Gen&lt;&#39;?101578 [,]&gt;<br />
-                          <strong>Type parameters:</strong> '?101578          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?101575&gt; -&gt; Gen&lt;&#39;?101575 [,]&gt;<br />
+                          <strong>Type parameters:</strong> '?101575          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L89-89" class="github-link">
@@ -95,8 +98,8 @@
             Array2DOf(generator, rows, cols)
           </code>
           <div class="tip" id="303">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101576&gt; * rows:int * cols:int) -&gt; Gen&lt;&#39;?101576 [,]&gt;<br />
-                          <strong>Type parameters:</strong> '?101576          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101573&gt; * rows:int * cols:int) -&gt; Gen&lt;&#39;?101573 [,]&gt;<br />
+                          <strong>Type parameters:</strong> '?101573          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L83-83" class="github-link">
@@ -116,8 +119,8 @@
             ArrayOf(generator)
           </code>
           <div class="tip" id="304">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?101574&gt; -&gt; Gen&lt;&#39;?101574 []&gt;<br />
-                          <strong>Type parameters:</strong> '?101574          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?101571&gt; -&gt; Gen&lt;&#39;?101571 []&gt;<br />
+                          <strong>Type parameters:</strong> '?101571          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L77-77" class="github-link">
@@ -138,8 +141,8 @@ The maximum length is size+1.</p>
             ArrayOf(generator, length)
           </code>
           <div class="tip" id="305">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101572&gt; * length:int) -&gt; Gen&lt;&#39;?101572 []&gt;<br />
-                          <strong>Type parameters:</strong> '?101572          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101569&gt; * length:int) -&gt; Gen&lt;&#39;?101569 []&gt;<br />
+                          <strong>Type parameters:</strong> '?101569          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L70-70" class="github-link">
@@ -159,8 +162,8 @@ The maximum length is size+1.</p>
             Eval(generator, size, random)
           </code>
           <div class="tip" id="306">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101550&gt; * size:int * random:StdGen) -&gt; &#39;?101550<br />
-                          <strong>Type parameters:</strong> '?101550          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101547&gt; * size:int * random:StdGen) -&gt; &#39;?101547<br />
+                          <strong>Type parameters:</strong> '?101547          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L14-14" class="github-link">
@@ -180,8 +183,8 @@ The maximum length is size+1.</p>
             Four(generator)
           </code>
           <div class="tip" id="307">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?101593&gt; -&gt; Gen&lt;&#39;?101593 * &#39;?101593 * &#39;?101593 * &#39;?101593&gt;<br />
-                          <strong>Type parameters:</strong> '?101593          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?101590&gt; -&gt; Gen&lt;&#39;?101590 * &#39;?101590 * &#39;?101590 * &#39;?101590&gt;<br />
+                          <strong>Type parameters:</strong> '?101590          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L130-130" class="github-link">
@@ -201,8 +204,8 @@ The maximum length is size+1.</p>
             ListOf(generator)
           </code>
           <div class="tip" id="308">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?101568&gt; -&gt; Gen&lt;IList&lt;&#39;?101568&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?101568          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?101565&gt; -&gt; Gen&lt;IList&lt;&#39;?101565&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?101565          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L55-55" class="github-link">
@@ -223,8 +226,8 @@ size parameter.</p>
             ListOf(generator, nbOfElements)
           </code>
           <div class="tip" id="309">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101566&gt; * nbOfElements:int) -&gt; Gen&lt;IList&lt;&#39;?101566&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?101566          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101563&gt; * nbOfElements:int) -&gt; Gen&lt;IList&lt;&#39;?101563&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?101563          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L47-47" class="github-link">
@@ -266,8 +269,8 @@ depends on the size parameter.</p>
             Resize(generator, newSize)
           </code>
           <div class="tip" id="311">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101583&gt; * newSize:int) -&gt; Gen&lt;&#39;?101583&gt;<br />
-                          <strong>Type parameters:</strong> '?101583          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101580&gt; * newSize:int) -&gt; Gen&lt;&#39;?101580&gt;<br />
+                          <strong>Type parameters:</strong> '?101580          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L101-101" class="github-link">
@@ -287,8 +290,8 @@ depends on the size parameter.</p>
             Sample(generator, size, numberOfSamples)
           </code>
           <div class="tip" id="312">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101552&gt; * size:int * numberOfSamples:int) -&gt; &#39;?101552 list<br />
-                          <strong>Type parameters:</strong> '?101552          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101549&gt; * size:int * numberOfSamples:int) -&gt; &#39;?101549 list<br />
+                          <strong>Type parameters:</strong> '?101549          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L20-20" class="github-link">
@@ -308,8 +311,8 @@ depends on the size parameter.</p>
             Select(g, selector)
           </code>
           <div class="tip" id="313">
-            <strong>Signature:</strong> (g:Gen&lt;&#39;?101554&gt; * selector:Func&lt;&#39;?101554,&#39;?101555&gt;) -&gt; Gen&lt;&#39;?101555&gt;<br />
-                          <strong>Type parameters:</strong> '?101554, '?101555          </div>
+            <strong>Signature:</strong> (g:Gen&lt;&#39;?101551&gt; * selector:Func&lt;&#39;?101551,&#39;?101552&gt;) -&gt; Gen&lt;&#39;?101552&gt;<br />
+                          <strong>Type parameters:</strong> '?101551, '?101552          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L25-25" class="github-link">
@@ -329,8 +332,8 @@ depends on the size parameter.</p>
             SelectMany(source, f, select)
           </code>
           <div class="tip" id="314">
-            <strong>Signature:</strong> (source:Gen&lt;&#39;?101562&gt; * f:Func&lt;&#39;?101562,Gen&lt;&#39;?101563&gt;&gt; * select:Func&lt;&#39;?101562,&#39;?101563,&#39;?101564&gt;) -&gt; Gen&lt;&#39;?101564&gt;<br />
-                          <strong>Type parameters:</strong> '?101562, '?101563, '?101564          </div>
+            <strong>Signature:</strong> (source:Gen&lt;&#39;?101559&gt; * f:Func&lt;&#39;?101559,Gen&lt;&#39;?101560&gt;&gt; * select:Func&lt;&#39;?101559,&#39;?101560,&#39;?101561&gt;) -&gt; Gen&lt;&#39;?101561&gt;<br />
+                          <strong>Type parameters:</strong> '?101559, '?101560, '?101561          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L39-39" class="github-link">
@@ -347,8 +350,8 @@ depends on the size parameter.</p>
             SelectMany(source, f)
           </code>
           <div class="tip" id="315">
-            <strong>Signature:</strong> (source:Gen&lt;&#39;?101559&gt; * f:Func&lt;&#39;?101559,Gen&lt;&#39;?101560&gt;&gt;) -&gt; Gen&lt;&#39;?101560&gt;<br />
-                          <strong>Type parameters:</strong> '?101559, '?101560          </div>
+            <strong>Signature:</strong> (source:Gen&lt;&#39;?101556&gt; * f:Func&lt;&#39;?101556,Gen&lt;&#39;?101557&gt;&gt;) -&gt; Gen&lt;&#39;?101557&gt;<br />
+                          <strong>Type parameters:</strong> '?101556, '?101557          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L34-34" class="github-link">
@@ -365,8 +368,8 @@ depends on the size parameter.</p>
             Three(generator)
           </code>
           <div class="tip" id="316">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?101591&gt; -&gt; Gen&lt;&#39;?101591 * &#39;?101591 * &#39;?101591&gt;<br />
-                          <strong>Type parameters:</strong> '?101591          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?101588&gt; -&gt; Gen&lt;&#39;?101588 * &#39;?101588 * &#39;?101588&gt;<br />
+                          <strong>Type parameters:</strong> '?101588          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L124-124" class="github-link">
@@ -386,8 +389,8 @@ depends on the size parameter.</p>
             ToArbitrary(generator, shrinker)
           </code>
           <div class="tip" id="317">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101587&gt; * shrinker:(&#39;?101587 -&gt; seq&lt;&#39;?101587&gt;)) -&gt; Arbitrary&lt;&#39;?101587&gt;<br />
-                          <strong>Type parameters:</strong> '?101587          </div>
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?101584&gt; * shrinker:(&#39;?101584 -&gt; seq&lt;&#39;?101584&gt;)) -&gt; Arbitrary&lt;&#39;?101584&gt;<br />
+                          <strong>Type parameters:</strong> '?101584          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L112-112" class="github-link">
@@ -407,8 +410,8 @@ depends on the size parameter.</p>
             ToArbitrary(generator)
           </code>
           <div class="tip" id="318">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?101585&gt; -&gt; Arbitrary&lt;&#39;?101585&gt;<br />
-                          <strong>Type parameters:</strong> '?101585          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?101582&gt; -&gt; Arbitrary&lt;&#39;?101582&gt;<br />
+                          <strong>Type parameters:</strong> '?101582          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L107-107" class="github-link">
@@ -429,8 +432,8 @@ Shrink is not supported for this type.</p>
             Two(generator)
           </code>
           <div class="tip" id="319">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?101589&gt; -&gt; Gen&lt;&#39;?101589 * &#39;?101589&gt;<br />
-                          <strong>Type parameters:</strong> '?101589          </div>
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?101586&gt; -&gt; Gen&lt;&#39;?101586 * &#39;?101586&gt;<br />
+                          <strong>Type parameters:</strong> '?101586          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L118-118" class="github-link">
@@ -450,8 +453,8 @@ Shrink is not supported for this type.</p>
             Where(g, predicate)
           </code>
           <div class="tip" id="320">
-            <strong>Signature:</strong> (g:Gen&lt;&#39;?101557&gt; * predicate:Func&lt;&#39;?101557,bool&gt;) -&gt; Gen&lt;&#39;?101557&gt;<br />
-                          <strong>Type parameters:</strong> '?101557          </div>
+            <strong>Signature:</strong> (g:Gen&lt;&#39;?101554&gt; * predicate:Func&lt;&#39;?101554,bool&gt;) -&gt; Gen&lt;&#39;?101554&gt;<br />
+                          <strong>Type parameters:</strong> '?101554          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L31-31" class="github-link">

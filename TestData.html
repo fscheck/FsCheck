@@ -68,17 +68,15 @@ based on the argument's type.</p>
 a value from an interval, with a uniform distribution. For example, to make 
 a random choice between the elements of a list, use</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">chooseFromList</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">xs</span> <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">chooseFromList</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">xs</span> <span class="o">=</span> 
   <span class="i">gen</span> { <span class="k">let!</span> <span class="i">i</span> <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">choose</span> (<span class="n">0</span>, <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="i">length</span> <span onmouseout="hideTip(event, 'fs4', 7)" onmouseover="showTip(event, 'fs4', 7)" class="i">xs</span><span class="o">-</span><span class="n">1</span>) 
         <span class="k">return</span> (<span onmouseout="hideTip(event, 'fs5', 8)" onmouseover="showTip(event, 'fs5', 8)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 9)" onmouseover="showTip(event, 'fs7', 9)" class="i">nth</span> <span onmouseout="hideTip(event, 'fs4', 10)" onmouseover="showTip(event, 'fs4', 10)" class="i">xs</span> <span class="i">i</span>) }
-</pre>
+</code></pre>
 
-
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> Gen&lt;T&gt; ChooseFrom&lt;T&gt;(T[] xs) {
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">public</span> Gen&lt;T&gt; ChooseFrom&lt;T&gt;(T[] xs) {
     <span class="k">return</span> <span class="k">from</span> i <span class="k">in</span> Gen.Choose(0,xs.Length-1)
            <span class="k">select</span> xs[i];
-}</pre></td></tr></table>
+}</code></pre></td></tr></table>
 
 <h3>Choosing between alternatives</h3>
 
@@ -86,25 +84,21 @@ a random choice between the elements of a list, use</p>
 which chooses among the generators in the list with equal probability. For example, 
 this generates a random boolean which is true with probability one half:</p>
 
-<pre class="fssnip">
-<span class="i">Gen</span><span class="o">.</span><span class="i">oneof</span> [ <span class="i">gen</span> { <span class="k">return</span> <span class="k">true</span> }; <span class="i">gen</span> { <span class="k">return</span> <span class="k">false</span> } ]
-</pre>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Gen</span><span class="o">.</span><span class="i">oneof</span> [ <span class="i">gen</span> { <span class="k">return</span> <span class="k">true</span> }; <span class="i">gen</span> { <span class="k">return</span> <span class="k">false</span> } ]
+</code></pre>
 
-
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">var</span> chooseBool <span class="o">=</span> Gen.OneOf(Gen.Constant(<span class="k">true</span>), Gen.Constant(<span class="k">false</span>));</pre></td></tr></table>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">var</span> chooseBool <span class="o">=</span> Gen.OneOf(Gen.Constant(<span class="k">true</span>), Gen.Constant(<span class="k">false</span>));</code></pre></td></tr></table>
 
 <p>We can control the distribution of results using <code>frequency</code>
 instead. <code>frequency</code> chooses a generator from the list randomly, but weighs the probability of 
 choosing each alternative by the factor given. For example, this generates true two thirds of the time.</p>
 
-<pre class="fssnip">
-<span class="i">Gen</span><span class="o">.</span><span class="i">frequency</span> [ (<span class="n">2</span>, <span class="i">gen</span> { <span class="k">return</span> <span class="k">true</span> }); (<span class="n">1</span>, <span class="i">gen</span> { <span class="k">return</span> <span class="k">false</span> })]
-</pre>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Gen</span><span class="o">.</span><span class="i">frequency</span> [ (<span class="n">2</span>, <span class="i">gen</span> { <span class="k">return</span> <span class="k">true</span> }); (<span class="n">1</span>, <span class="i">gen</span> { <span class="k">return</span> <span class="k">false</span> })]
+</code></pre>
 
-
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">var</span> chooseBool2 <span class="o">=</span> Gen.Frequency(
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">var</span> chooseBool2 <span class="o">=</span> Gen.Frequency(
     Tuple.Create(2, Gen.Constant(<span class="k">true</span>)),
-    Tuple.Create(1, Gen.Constant(<span class="k">false</span>)));</pre></td></tr></table>
+    Tuple.Create(1, Gen.Constant(<span class="k">false</span>)));</code></pre></td></tr></table>
 
 <h3>The size of test data</h3>
 
@@ -119,12 +113,10 @@ free to use it as you wish to control your own test data generators.</p>
 the current size as a parameter. For example, to generate natural
  numbers in the range 0 to size, use</p>
 
-<pre class="fssnip">
-<span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs8', 11)" onmouseover="showTip(event, 'fs8', 11)" class="i">s</span> <span class="k">-&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">choose</span> (<span class="n">0</span>,<span onmouseout="hideTip(event, 'fs8', 12)" onmouseover="showTip(event, 'fs8', 12)" class="i">s</span>)
-</pre>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs8', 11)" onmouseover="showTip(event, 'fs8', 11)" class="i">s</span> <span class="k">-&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">choose</span> (<span class="n">0</span>,<span onmouseout="hideTip(event, 'fs8', 12)" onmouseover="showTip(event, 'fs8', 12)" class="i">s</span>)
+</code></pre>
 
-
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">var</span> sizedInt <span class="o">=</span> Gen.Sized(s <span class="o">=</span><span class="o">&gt;</span> Gen.Choose(0, s));</pre></td></tr></table>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">var</span> sizedInt <span class="o">=</span> Gen.Sized(s <span class="o">=</span><span class="o">&gt;</span> Gen.Choose(0, s));</code></pre></td></tr></table>
 
 <p>The purpose of size control is to ensure that test cases are large enough to reveal errors, 
 while remaining small enough to test fast. Sometimes the default size control does not achieve 
@@ -137,14 +129,12 @@ such cases it can be useful to modify the size parameter explicitly. You can do 
 negative. For example, to generate a random matrix it might be appropriate to take the square 
 root of the original size:</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="f">matrix</span> <span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="i">gen</span> <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs8', 15)" onmouseover="showTip(event, 'fs8', 15)" class="i">s</span> <span class="k">-&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">resize</span> (<span onmouseout="hideTip(event, 'fs8', 16)" onmouseover="showTip(event, 'fs8', 16)" class="i">s</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs11', 17)" onmouseover="showTip(event, 'fs11', 17)" class="i">float</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs12', 18)" onmouseover="showTip(event, 'fs12', 18)" class="i">sqrt</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs13', 19)" onmouseover="showTip(event, 'fs13', 19)" class="i">int</span>) <span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="i">gen</span>
-</pre>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="f">matrix</span> <span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="i">gen</span> <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span class="o">&lt;|</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs8', 15)" onmouseover="showTip(event, 'fs8', 15)" class="i">s</span> <span class="k">-&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">resize</span> (<span onmouseout="hideTip(event, 'fs8', 16)" onmouseover="showTip(event, 'fs8', 16)" class="i">s</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs11', 17)" onmouseover="showTip(event, 'fs11', 17)" class="i">float</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs12', 18)" onmouseover="showTip(event, 'fs12', 18)" class="i">sqrt</span><span class="o">|&gt;</span><span onmouseout="hideTip(event, 'fs13', 19)" onmouseover="showTip(event, 'fs13', 19)" class="i">int</span>) <span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="i">gen</span>
+</code></pre>
 
-
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> <span class="k">static</span> Gen&lt;T&gt; Matrix&lt;T&gt;(Gen&lt;T&gt; generator) {
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">public</span> <span class="k">static</span> Gen&lt;T&gt; Matrix&lt;T&gt;(Gen&lt;T&gt; generator) {
     <span class="k">return</span> Gen.Sized(s <span class="o">=</span><span class="o">&gt;</span> generator.Resize(Convert.ToInt32(Math.Sqrt(s))));
-}</pre></td></tr></table>
+}</code></pre></td></tr></table>
 
 <h3>Generating recursive data types</h3>
 
@@ -153,35 +143,30 @@ between constructors, and F#'s computation expressions or C# LINQ to form a gene
 There are also <code>map</code> functions for arity up to 6 to lift constructors and functions into the <code>Gen</code> type. 
 For example, if the type of trees is defined by</p>
 
-<pre class="fssnip">
-<span class="k">type</span> <span onmouseout="hideTip(event, 'fs14', 21)" onmouseover="showTip(event, 'fs14', 21)" class="t">Tree</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 22)" onmouseover="showTip(event, 'fs15', 22)" class="p">Leaf</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs13', 23)" onmouseover="showTip(event, 'fs13', 23)" class="t">int</span> | <span onmouseout="hideTip(event, 'fs16', 24)" onmouseover="showTip(event, 'fs16', 24)" class="p">Branch</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs14', 25)" onmouseover="showTip(event, 'fs14', 25)" class="t">Tree</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs14', 26)" onmouseover="showTip(event, 'fs14', 26)" class="t">Tree</span>
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs14', 21)" onmouseover="showTip(event, 'fs14', 21)" class="t">Tree</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 22)" onmouseover="showTip(event, 'fs15', 22)" class="p">Leaf</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs13', 23)" onmouseover="showTip(event, 'fs13', 23)" class="t">int</span> | <span onmouseout="hideTip(event, 'fs16', 24)" onmouseover="showTip(event, 'fs16', 24)" class="p">Branch</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs14', 25)" onmouseover="showTip(event, 'fs14', 25)" class="t">Tree</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs14', 26)" onmouseover="showTip(event, 'fs14', 26)" class="t">Tree</span>
+</code></pre>
 
 <p>then a generator for trees might be defined by</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs17', 27)" onmouseover="showTip(event, 'fs17', 27)" class="f">unsafeTree</span>() <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs17', 27)" onmouseover="showTip(event, 'fs17', 27)" class="f">unsafeTree</span>() <span class="o">=</span> 
   <span class="i">Gen</span><span class="o">.</span><span class="i">oneof</span> [ <span class="i">Gen</span><span class="o">.</span><span class="i">map</span> <span onmouseout="hideTip(event, 'fs15', 28)" onmouseover="showTip(event, 'fs15', 28)" class="i">Leaf</span> <span class="i">Arb</span><span class="o">.</span><span class="i">generate</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 29)" onmouseover="showTip(event, 'fs13', 29)" class="i">int</span><span class="o">&gt;</span> 
               <span class="i">Gen</span><span class="o">.</span><span class="i">map2</span> (<span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs16', 30)" onmouseover="showTip(event, 'fs16', 30)" class="i">Branch</span> (<span class="i">x</span>,<span class="i">y</span>)) (<span onmouseout="hideTip(event, 'fs17', 31)" onmouseover="showTip(event, 'fs17', 31)" class="i">unsafeTree</span>()) (<span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="i">unsafeTree</span>())]
-</pre>
-
+</code></pre>
 
 <p>In C#, we elide the type because it is quite a bit more verbose than in F# - assume the typical composite
 of having an abstract superclass Tree with two subclasses, one for Leaf and one fro Branch. Basically this is
 the code F# generates for the type definition above. Assuming that, <code>unsafeTree</code> in C# looks like:</p>
 
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> <span class="k">static</span> Gen&lt;Tree&gt; UnsafeTree() {
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">public</span> <span class="k">static</span> Gen&lt;Tree&gt; UnsafeTree() {
     <span class="k">return</span> Gen.OneOf(Arb.Generate&lt;<span class="k">int</span>&gt;().Select(i <span class="o">=</span><span class="o">&gt;</span> (Tree) <span class="k">new</span> Leaf(i)),
                      Gen.Two(UnsafeTree()).Select(t <span class="o">=</span><span class="o">&gt;</span> (Tree) <span class="k">new</span> Branch(t.Item1,t.Item2)));
-}</pre></td></tr></table>
+}</code></pre></td></tr></table>
 
 <p>However, a recursive generator like this may fail to terminate with a 
 StackOverflowException, or produce very large results. To avoid this, 
 recursive generators should always use the size control mechanis:</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">tree</span> <span class="o">=</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">tree</span> <span class="o">=</span>
     <span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs19', 34)" onmouseover="showTip(event, 'fs19', 34)" class="f">tree&#39;</span> <span onmouseout="hideTip(event, 'fs20', 35)" onmouseover="showTip(event, 'fs20', 35)" class="i">s</span> <span class="o">=</span> 
         <span class="k">match</span> <span onmouseout="hideTip(event, 'fs20', 36)" onmouseover="showTip(event, 'fs20', 36)" class="i">s</span> <span class="k">with</span>
         | <span class="n">0</span> <span class="k">-&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">map</span> <span onmouseout="hideTip(event, 'fs15', 37)" onmouseover="showTip(event, 'fs15', 37)" class="i">Leaf</span> <span class="i">Arb</span><span class="o">.</span><span class="i">generate</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 38)" onmouseover="showTip(event, 'fs13', 38)" class="i">int</span><span class="o">&gt;</span>
@@ -191,10 +176,9 @@ recursive generators should always use the size control mechanis:</p>
                         <span class="i">Gen</span><span class="o">.</span><span class="i">map2</span> (<span class="k">fun</span> <span class="i">x</span> <span class="i">y</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs16', 46)" onmouseover="showTip(event, 'fs16', 46)" class="i">Branch</span> (<span class="i">x</span>,<span class="i">y</span>)) <span onmouseout="hideTip(event, 'fs22', 47)" onmouseover="showTip(event, 'fs22', 47)" class="i">subtree</span> <span onmouseout="hideTip(event, 'fs22', 48)" onmouseover="showTip(event, 'fs22', 48)" class="i">subtree</span>]
         | _ <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs23', 49)" onmouseover="showTip(event, 'fs23', 49)" class="f">invalidArg</span> <span class="s">&quot;s&quot;</span> <span class="s">&quot;Only positive arguments are allowed&quot;</span>
     <span class="i">Gen</span><span class="o">.</span><span class="i">sized</span> <span onmouseout="hideTip(event, 'fs19', 50)" onmouseover="showTip(event, 'fs19', 50)" class="i">tree&#39;</span>
-</pre>
+</code></pre>
 
-
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> <span class="k">static</span> Gen&lt;Tree&gt; SafeTreeHelper(<span class="k">int</span> size) {
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">public</span> <span class="k">static</span> Gen&lt;Tree&gt; SafeTreeHelper(<span class="k">int</span> size) {
     <span class="k">if</span> (size <span class="o">=</span><span class="o">=</span> 0) {
         <span class="k">return</span> Arb.Generate&lt;<span class="k">int</span>&gt;().Select(i <span class="o">=</span><span class="o">&gt;</span> (Tree)<span class="k">new</span> Leaf(i));
     }
@@ -207,7 +191,7 @@ recursive generators should always use the size control mechanis:</p>
 
 <span class="k">public</span> <span class="k">static</span> Gen&lt;Tree&gt; SafeTree() {
     <span class="k">return</span> Gen.Sized(SafeTreeHelper);
-}</pre></td></tr></table>
+}</code></pre></td></tr></table>
 
 <p>Note that</p>
 
@@ -254,20 +238,18 @@ and shrinker, you can do so by providing the appropriate type annotations.</p>
 provide FsCheck with an Arbitrary instance for your own types, by defining static members that 
 return an instance of a subclass of <code>Arbitrary&lt;'a&gt;</code>:</p>
 
-<pre class="fssnip">
-<span class="k">type</span> <span onmouseout="hideTip(event, 'fs24', 51)" onmouseover="showTip(event, 'fs24', 51)" class="t">MyGenerators</span> <span class="o">=</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs24', 51)" onmouseover="showTip(event, 'fs24', 51)" class="t">MyGenerators</span> <span class="o">=</span>
   <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs25', 52)" onmouseover="showTip(event, 'fs25', 52)" class="f">Tree</span>() <span class="o">=</span>
       {<span class="k">new</span> <span class="i">Arbitrary</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs14', 53)" onmouseover="showTip(event, 'fs14', 53)" class="i">Tree</span><span class="o">&gt;</span>() <span class="k">with</span>
           <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">Generator</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs18', 54)" onmouseover="showTip(event, 'fs18', 54)" class="i">tree</span>
           <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">Shrinker</span> <span class="i">t</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs26', 55)" onmouseover="showTip(event, 'fs26', 55)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs27', 56)" onmouseover="showTip(event, 'fs27', 56)" class="i">empty</span> }
-</pre>
+</code></pre>
 
-
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp"><span class="k">public</span> <span class="k">class</span> MyGenerators {
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">public</span> <span class="k">class</span> MyGenerators {
     <span class="k">public</span> <span class="k">static</span> Arbitrary&lt;Tree&gt; Trees() {
         <span class="k">return</span> Arb.From(SafeTree());
     }
-}</pre></td></tr></table>
+}</code></pre></td></tr></table>
 
 <p>Replace the <code>'a</code> by the particular type you are defining an Arbitary instance for. 
 Only the <code>Generator</code> method needs to be defined; <code>Shrinker</code> by default returns the empty 
@@ -278,36 +260,29 @@ methods or functions.</p>
 
 <p>Now, to register all Arbitrary instances in this class:</p>
 
-<pre class="fssnip">
-<span class="i">Arb</span><span class="o">.</span><span class="i">register</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs24', 57)" onmouseover="showTip(event, 'fs24', 57)" class="i">MyGenerators</span><span class="o">&gt;</span>()
-</pre>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Arb</span><span class="o">.</span><span class="i">register</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs24', 57)" onmouseover="showTip(event, 'fs24', 57)" class="i">MyGenerators</span><span class="o">&gt;</span>()
+</code></pre>
 
-
-<table class="pre"><tr><td class="snippet"><pre class="fssnip" lang="csharp">Arb.Register&lt;MyGenerators&gt;();</pre></td></tr></table>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Arb.Register&lt;MyGenerators&gt;();</code></pre></td></tr></table>
 
 <p>FsCheck now knows about <code>Tree</code> types, and can not only generate Tree values, but also e.g. lists, tuples and 
 option values containing Trees:</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 58)" onmouseover="showTip(event, 'fs28', 58)" class="f">revRevTree</span> (<span onmouseout="hideTip(event, 'fs29', 59)" onmouseover="showTip(event, 'fs29', 59)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 60)" onmouseover="showTip(event, 'fs30', 60)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs14', 61)" onmouseover="showTip(event, 'fs14', 61)" class="t">Tree</span><span class="o">&gt;</span>) <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 58)" onmouseover="showTip(event, 'fs28', 58)" class="f">revRevTree</span> (<span onmouseout="hideTip(event, 'fs29', 59)" onmouseover="showTip(event, 'fs29', 59)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 60)" onmouseover="showTip(event, 'fs30', 60)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs14', 61)" onmouseover="showTip(event, 'fs14', 61)" class="t">Tree</span><span class="o">&gt;</span>) <span class="o">=</span> 
   <span onmouseout="hideTip(event, 'fs5', 62)" onmouseover="showTip(event, 'fs5', 62)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 63)" onmouseover="showTip(event, 'fs31', 63)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs5', 64)" onmouseover="showTip(event, 'fs5', 64)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 65)" onmouseover="showTip(event, 'fs31', 65)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs29', 66)" onmouseover="showTip(event, 'fs29', 66)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs29', 67)" onmouseover="showTip(event, 'fs29', 67)" class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs28', 68)" onmouseover="showTip(event, 'fs28', 68)" class="i">revRevTree</span>
-</pre>
-
+</code></pre>
 
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 
 <p>To generate types with a generic type argument, e.g.</p>
 
-<pre class="fssnip">
-<span class="k">type</span> <span onmouseout="hideTip(event, 'fs32', 69)" onmouseover="showTip(event, 'fs32', 69)" class="t">Box</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs33', 70)" onmouseover="showTip(event, 'fs33', 70)" class="p">Whitebox</span> <span class="k">of</span> <span class="o">&#39;</span><span class="i">a</span> | <span onmouseout="hideTip(event, 'fs34', 71)" onmouseover="showTip(event, 'fs34', 71)" class="p">Blackbox</span> <span class="k">of</span> <span class="o">&#39;</span><span class="i">a</span>
-</pre>
-
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs32', 69)" onmouseover="showTip(event, 'fs32', 69)" class="t">Box</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs33', 70)" onmouseover="showTip(event, 'fs33', 70)" class="p">Whitebox</span> <span class="k">of</span> <span class="o">&#39;</span><span class="i">a</span> | <span onmouseout="hideTip(event, 'fs34', 71)" onmouseover="showTip(event, 'fs34', 71)" class="p">Blackbox</span> <span class="k">of</span> <span class="o">&#39;</span><span class="i">a</span>
+</code></pre>
 
 <p>you can use the same principle. So the class <code>MyGenerators</code> can be writtten as follows:</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 72)" onmouseover="showTip(event, 'fs35', 72)" class="i">boxGen</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span> <span class="o">:</span> <span class="i">Gen</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs32', 73)" onmouseover="showTip(event, 'fs32', 73)" class="i">Box</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span><span class="o">&gt;</span> <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 72)" onmouseover="showTip(event, 'fs35', 72)" class="i">boxGen</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span> <span class="o">:</span> <span class="i">Gen</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs32', 73)" onmouseover="showTip(event, 'fs32', 73)" class="i">Box</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span><span class="o">&gt;</span> <span class="o">=</span> 
     <span class="i">gen</span> { <span class="k">let!</span> <span class="i">a</span> <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">generate</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span>
           <span class="k">return!</span> <span class="i">Gen</span><span class="o">.</span><span class="i">elements</span> [ <span onmouseout="hideTip(event, 'fs33', 74)" onmouseover="showTip(event, 'fs33', 74)" class="i">Whitebox</span> <span class="i">a</span>; <span onmouseout="hideTip(event, 'fs34', 75)" onmouseover="showTip(event, 'fs34', 75)" class="i">Blackbox</span> <span class="i">a</span>] }
 
@@ -317,8 +292,7 @@ option values containing Trees:</p>
             <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">Generator</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs18', 79)" onmouseover="showTip(event, 'fs18', 79)" class="i">tree</span>
             <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">Shrinker</span> <span class="i">t</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs26', 80)" onmouseover="showTip(event, 'fs26', 80)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs27', 81)" onmouseover="showTip(event, 'fs27', 81)" class="i">empty</span> }
     <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs32', 82)" onmouseover="showTip(event, 'fs32', 82)" class="i">Box</span>() <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">fromGen</span> <span onmouseout="hideTip(event, 'fs35', 83)" onmouseover="showTip(event, 'fs35', 83)" class="i">boxGen</span>
-</pre>
-
+</code></pre>
 
 <p>Notice that we use the function <code>generate&lt;'a&gt;</code> from the Arb module to get the generator 
 for the type argument of <code>Box</code>. This allows you to define generators recursively. Similarly, there is 
@@ -327,12 +301,10 @@ to get a feeling of how to write such Arbitrary instances. The Arb module should
 
 <p>Now, the following property can be checked:</p>
 
-<pre class="fssnip">
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 84)" onmouseover="showTip(event, 'fs36', 84)" class="f">revRevBox</span> (<span onmouseout="hideTip(event, 'fs37', 85)" onmouseover="showTip(event, 'fs37', 85)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 86)" onmouseover="showTip(event, 'fs30', 86)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs32', 87)" onmouseover="showTip(event, 'fs32', 87)" class="t">Box</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 88)" onmouseover="showTip(event, 'fs13', 88)" class="t">int</span><span class="o">&gt;</span><span class="o">&gt;</span>) <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 84)" onmouseover="showTip(event, 'fs36', 84)" class="f">revRevBox</span> (<span onmouseout="hideTip(event, 'fs37', 85)" onmouseover="showTip(event, 'fs37', 85)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs30', 86)" onmouseover="showTip(event, 'fs30', 86)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs32', 87)" onmouseover="showTip(event, 'fs32', 87)" class="t">Box</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 88)" onmouseover="showTip(event, 'fs13', 88)" class="t">int</span><span class="o">&gt;</span><span class="o">&gt;</span>) <span class="o">=</span> 
   <span onmouseout="hideTip(event, 'fs5', 89)" onmouseover="showTip(event, 'fs5', 89)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 90)" onmouseover="showTip(event, 'fs31', 90)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs5', 91)" onmouseover="showTip(event, 'fs5', 91)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 92)" onmouseover="showTip(event, 'fs31', 92)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs37', 93)" onmouseover="showTip(event, 'fs37', 93)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs37', 94)" onmouseover="showTip(event, 'fs37', 94)" class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs36', 95)" onmouseover="showTip(event, 'fs36', 95)" class="i">revRevBox</span>
-</pre>
-
+</code></pre>
 
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 
