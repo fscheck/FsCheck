@@ -234,21 +234,8 @@ module Runner =
         sprintf "shrink:%s%s%s" newline (argumentsToString args) newline
 
 #if PCL
-    let private consoleWriter = 
-        let consoleTy = Type.GetType("System.Console", throwOnError = false)
-        if consoleTy <> null then
-            let outProp = consoleTy.GetRuntimeProperty("Out")
-            if outProp <> null then
-                let output = outProp.GetValue(null) :?> IO.TextWriter
-                Some output
-            else None
-        else None
-
     let internal printf fmt = 
-        Printf.kprintf (fun s -> 
-            match consoleWriter with
-            | Some w -> w.Write(s)
-            | None -> Diagnostics.Debug.WriteLine(s)) fmt
+        Printf.kprintf Diagnostics.Debug.WriteLine fmt
 #endif
     
     ///A runner that prints results to the standard output.

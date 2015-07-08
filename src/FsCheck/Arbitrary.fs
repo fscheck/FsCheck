@@ -755,7 +755,7 @@ module Arb =
 
         static member Culture() =
 #if PCL
-            let names = [
+            let cultureNames = [
                 "af"; "af-ZA";
                 "am"; "am-ET";
                 "ar"; "ar-AE"; "ar-BH"; "ar-DZ"; "ar-EG"; "ar-IQ"; "ar-JO"; "ar-KW"; "ar-LB"; "ar-LY"; "ar-MA"; "ar-OM"; "ar-QA"; "ar-SA"; "ar-SY"; "ar-TN"; "ar-YE"; "arn"; "arn-CL";
@@ -873,7 +873,7 @@ module Arb =
                 "zh"; "zh-CN"; "zh-HK"; "zh-Hans"; "zh-Hant"; "zh-MO"; "zh-SG"; "zh-TW";
                 "zu"; "zu-ZA";]
             let cultures = 
-                names |> Seq.choose (fun name -> try Some (CultureInfo name) with _ -> None)
+                cultureNames |> Seq.choose (fun name -> try Some (CultureInfo name) with _ -> None)
                       |> Seq.append [ CultureInfo.InvariantCulture; 
                                       CultureInfo.CurrentCulture; 
                                       CultureInfo.CurrentUICulture; 
