@@ -84,7 +84,7 @@ be a function of any number of parameters that returns bool or unit. In the latt
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span> xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
     .QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 70 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 52 tests.</code></pre></td></tr></table>
 
 <p>Such a property holds if the property after <code>==&gt;</code> holds whenever the condition does.</p>
 
@@ -109,13 +109,13 @@ example, this may limit the expressiveness of properties - consider:</p>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">tooEager</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (0 shrinks) (StdGen (337114777,296029733)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1455482388,296030963)):
 Original:
 0
 with exception:
 System.DivideByZeroException: Attempted to divide by zero.
-   at FSI_0029.tooEager(Int32 a) in C:\Users\Kurt\Projects\FsCheck\fsharp\docs\tools\input.fsx:line 1
-   at FsCheck.Testable.evaluate[a,b](FSharpFunc`2 body, a a) in C:\Users\Kurt\Projects\FsCheck\fsharp\src\FsCheck\Testable.fs:line 161</code></pre></td></tr></table>
+   at FSI_0029.tooEager(Int32 a) in c:\Users\Kurt\Projects\FsCheck\fsharp\docs\tools\input.fsx:line 1
+   at FsCheck.Testable.evaluate[a,b](FSharpFunc`2 body, a a) in c:\Users\Kurt\Projects\FsCheck\fsharp\src\FsCheck\Testable.fs:line 161</code></pre></td></tr></table>
 
 <p>Non-strict evaluation is needed here to make sure the propery is checked correctly:</p>
 
@@ -229,7 +229,7 @@ are then summarized when testing is complete.</p>
 <p>Test cases for which the condition is true are classified as trivial, and the proportion of 
 trivial test cases in the total is reported:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 62 tests (45% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 55 tests (36% trivial).</code></pre></td></tr></table>
 
 <h3>Classifying Test Cases</h3>
 
@@ -254,10 +254,10 @@ trivial test cases in the total is reported:</p>
 <p>Test cases satisfying the condition are assigned the classification given, and the distribution of 
 classifications is reported after testing:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 57 tests.
-57% at-tail, at-head.
-21% at-head.
-15% at-tail.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 42 tests.
+42% at-tail, at-head.
+26% at-tail.
+26% at-head.</code></pre></td></tr></table>
 
 <p>Note that a test case may fall into more than one classification.</p>
 
@@ -282,11 +282,12 @@ classifications is reported after testing:</p>
 <p>The argument of collect is evaluated in each test case, and the distribution of 
 values is reported. The type of this argument is printed using <code>sprintf "%A"</code>:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 52 tests.
-44% 1.
-34% 0.
-17% 2.
-3% 3.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 63 tests.
+36% 1.
+31% 0.
+22% 2.
+7% 3.
+1% 4.</code></pre></td></tr></table>
 
 <h3>Combining Observations</h3>
 
@@ -310,15 +311,15 @@ reported. For example:</p>
         .Collect(<span class="s">"length "</span> <span class="o">+</span> xs.Count().ToString()))
     .QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 53 tests.
-41% 0, at-tail, at-head.
-20% 1, at-head.
-13% 1, at-tail.
-11% 2, at-tail.
-5% 2, at-head.
-3% 1, at-tail, at-head.
-1% 3.
-1% 2, at-tail, at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 42 tests.
+52% 0, at-tail, at-head.
+14% 1, at-tail, at-head.
+11% 1, at-tail.
+9% 2, at-tail.
+4% 2.
+2% 3, at-tail.
+2% 2, at-tail, at-head.
+2% 2, at-head.</code></pre></td></tr></table>
 
 <h2>And, Or and Labels</h2>
 
@@ -351,9 +352,12 @@ it finds a counter-example. This takes the form: <code>&lt;string&gt; @| &lt;pro
        .And(result <span class="o">&lt;</span> m <span class="o">+</span> n).Label(<span class="s">"result not sum"</span>);
 }).QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (346014080,296029733)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1482561659,296030963)):
 Label of failing property: result not sum
 Original:
+-2
+0
+Shrunk:
 0
 0</code></pre></td></tr></table>
 
@@ -379,13 +383,11 @@ This is useful for displaying intermediate results, for example:</p>
       .Label(<span class="k">string</span>.Format(<span class="s">"evidence = {0}"</span>, res));
 }).QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (346534450,296029733)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (0 shrinks) (StdGen (1484503044,296030963)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
 Original:
-(1, 2)
-Shrunk:
 (0, 0)</code></pre></td></tr></table>
 
 <p>Notice that the above property combines subproperties by tupling them. This works for tuples up to length 6 and lists:</p>
