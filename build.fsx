@@ -39,9 +39,9 @@ type ProjectInfo =
     ///The projectfile (csproj or fsproj)
     ProjectFile : list<string>
     Dependencies : list<string * Lazy<string>>
-    Files: list<string>
+    //Files: list<string>
     //For extra files like tools and content string*string is for path target, if an excludes becomes necesary a third tuple element string option can be added
-    FilesExtra: list<string * string >
+    //FilesExtra: list<string * string >
   }
 
 //File that contains the release notes.
@@ -69,8 +69,6 @@ let packages =
   [
     {
     Name = "FsCheck"
-    Files = ["FsCheck"]     
-    FilesExtra = []
     Summary = "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
     Description = """
 FsCheck is a tool for testing .NET programs automatically. The programmer provides 
@@ -92,8 +90,6 @@ When a property fails, FsCheck automatically displays a minimal counter example.
     }
     { 
     Name = "FsCheck.NUnit"
-    Files = ["FsCheck.NUnit"; "FsCheck.NUnit.Addin"]
-    FilesExtra = [("FsCheck.NUnit.nuspec.tools\install.ps1", "tools\install.ps1");(@"FsCheck.NUnit.nuspec.tools\FsCheckAddin.fs","content\FsCheckAddin.fs")]
     Summary = "Integrates FsCheck with NUnit"
     Description = """FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute. 
     All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
@@ -108,8 +104,6 @@ When a property fails, FsCheck automatically displays a minimal counter example.
     }
     { 
     Name = "FsCheck.Xunit"
-    Files = ["FsCheck.Xunit"]
-    FilesExtra = []
     Summary = "Integrates FsCheck with xUnit.NET"
     Description = """
 FsCheck.Xunit integrates FsCheck with xUnit.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.NET's FactAttribute.
@@ -191,20 +185,6 @@ open System
 open System.IO
 
 Target "NuGet" (fun _ ->        
-    let createFilesList (fileNames: string list) (extra: list<string*string> ) = 
-        
-        let createBinariesFiles fileNames =
-            let extensions = [ "dll";"pdb";"XML"]            
-            [for filename in fileNames do
-                for ext in extensions do
-                    yield (sprintf @"..\src\%s\bin\Release\%s.%s" filename filename ext, Some @"lib\net45", OptionalString.None)]
-        let addExtras (extraFiles:list<string*string>) =
-            extraFiles
-            |>  List.map (fun f -> (fst f, Some (snd f), OptionalString.None))
-                                   
-                
-        createBinariesFiles fileNames@addExtras extra 
-   
     packages |> Seq.iter (fun package ->
     NuGet (fun p -> 
         { p with   
@@ -220,7 +200,6 @@ Target "NuGet" (fun _ ->
             Publish = hasBuildParam "nugetkey"
             //ProjectFile = package.ProjectFile //if we add this, it produces a symbols package
             Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
-            Files = createFilesList package.Files package.FilesExtra           
         })
         ("nuget/" + package.Name + ".nuspec")
    )
@@ -304,11 +283,9 @@ Target "CI" DoNothing
   ==> "Build"
   ==> "RunTests"
   ==> "All"
-  ==> "CleanDocs"
-  ==> "GenerateDocsJa"
-  ==> "GenerateDocs"
+  //==> "CleanDocs"  ==> "GenerateDocsJa"  ==> "GenerateDocs"
   ==> "CI"
-  ==> "ReleaseDocs"
+  //==> "ReleaseDocs"
   =?> ("SourceLink", isLocalBuild && not isLinux)
   ==> "NuGet"
   ==> "Release"

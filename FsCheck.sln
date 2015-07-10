@@ -77,6 +77,13 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Portable.Profile78"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Portable.Profile259", "src\FsCheck.Portable.Profile259\FsCheck.Portable.Profile259.fsproj", "{20F79E8F-C87D-4E6C-AD6C-B16518519292}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuspec", "nuspec", "{D3B5178B-D178-4011-B576-7B8D8ECD0A94}"
+	ProjectSection(SolutionItems) = preProject
+		nuget\FsCheck.NUnit.nuspec = nuget\FsCheck.NUnit.nuspec
+		nuget\FsCheck.nuspec = nuget\FsCheck.nuspec
+		nuget\FsCheck.Xunit.nuspec = nuget\FsCheck.Xunit.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +166,7 @@ Global
 		{474F0377-247A-444D-8EF7-AD6C786A6526} = {08B3CD84-5D0A-45AF-80A7-3998117F983C}
 		{2F39D1FB-7C12-49D3-BAAD-E20DB9F31A73} = {08B3CD84-5D0A-45AF-80A7-3998117F983C}
 		{20F79E8F-C87D-4E6C-AD6C-B16518519292} = {08B3CD84-5D0A-45AF-80A7-3998117F983C}
+		{D3B5178B-D178-4011-B576-7B8D8ECD0A94} = {3162219D-7729-49C4-849A-9CCD889798DB}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = examples\FsCheck.Examples\FsCheck.Examples.fsproj

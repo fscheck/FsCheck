@@ -16,5 +16,9 @@
     <tags>@tags@</tags>
     @dependencies@
   </metadata>
-  @files@
+  <files>
+    <file src="..\src\FsCheck.NUnit\bin\Release\FsCheck.NUnit.dll" target="lib/net45" />
+    <file src="..\src\FsCheck.NUnit\bin\Release\FsCheck.NUnit.pdb" target="lib/net45" />
+    <file src="..\src\FsCheck.NUnit\bin\Release\FsCheck.NUnit.xml" target="lib/net45" />
+  </files>
 </package>
