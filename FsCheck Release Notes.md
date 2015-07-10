@@ -1,3 +1,6 @@
+### 2.0.3 - 10 July 2015
+  * Add support for Portable Class Library profiles 7,78 and 259.
+
 ### 2.0.2 - 7 July 2015
   * Update NuGet package with new project home.
   * Add missing frequency overload.
