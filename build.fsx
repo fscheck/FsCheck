@@ -283,9 +283,9 @@ Target "CI" DoNothing
   ==> "Build"
   ==> "RunTests"
   ==> "All"
-  //==> "CleanDocs"  ==> "GenerateDocsJa"  ==> "GenerateDocs"
+  ==> "CleanDocs"  ==> "GenerateDocsJa"  ==> "GenerateDocs"
   ==> "CI"
-  //==> "ReleaseDocs"
+  ==> "ReleaseDocs"
   =?> ("SourceLink", isLocalBuild && not isLinux)
   ==> "NuGet"
   ==> "Release"
