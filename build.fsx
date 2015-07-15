@@ -39,9 +39,6 @@ type ProjectInfo =
     ///The projectfile (csproj or fsproj)
     ProjectFile : list<string>
     Dependencies : list<string * Lazy<string>>
-    //Files: list<string>
-    //For extra files like tools and content string*string is for path target, if an excludes becomes necesary a third tuple element string option can be added
-    //FilesExtra: list<string * string >
   }
 
 //File that contains the release notes.
@@ -285,7 +282,7 @@ Target "CI" DoNothing
   ==> "All"
   ==> "CleanDocs"  ==> "GenerateDocsJa"  ==> "GenerateDocs"
   ==> "CI"
-  ==> "ReleaseDocs"
+  =?> ("ReleaseDocs", isLocalBuild)
   =?> ("SourceLink", isLocalBuild && not isLinux)
   ==> "NuGet"
   ==> "Release"
