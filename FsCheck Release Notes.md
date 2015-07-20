@@ -1,3 +1,6 @@
+### 2.0.4 - 20 July 2015
+  * Fix FsCheck.NUnit NuGet package.
+
 ### 2.0.3 - 10 July 2015
   * Add support for Portable Class Library profiles 7,78 and 259.
 
