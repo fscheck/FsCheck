@@ -11,6 +11,8 @@
 namespace FsCheck
 
 open System.Runtime.CompilerServices
+open System.Reflection
+open System.Threading
 
 ///A single command describes pre and post conditions and the model for a single method under test.
 ///The post-conditions are the invariants that will be checked; when these do not hold the test fails.
@@ -56,6 +58,78 @@ type CommandGenerator<'Actual,'Model>() =
     ///Preconditions are still checked, so even if a Command is returned, it is not chosen
     ///if its precondition does not hold.
     abstract Next : 'Model -> Gen<Command<'Actual,'Model>>
+
+
+//a single assignment variable
+type CommandResult(?result) =
+    static let mutable resultCounter = 0
+    static let nextCounter() = Interlocked.Increment &resultCounter
+    let mutable counter = nextCounter()
+    let mutable result = result
+    member __.Get = result
+    member __.Set v = match result with None -> result <- Some v | Some _ -> invalidOp "Result already set to value."
+    override __.ToString() = sprintf "result_%i" counter
+
+type ReflectiveModel = list<CommandResult*string> //a list of commands as string?
+
+type ReflectiveCreate<'Actual>(ctor:ConstructorInfo, parameters:array<obj>) =
+    inherit Create<'Actual,ReflectiveModel>()
+    override __.Actual() = ctor.Invoke parameters  :?> 'Actual
+    override __.Model() = 
+        let result = CommandResult()
+        let str = parameters 
+                  |> Seq.map (fun p -> p.ToString()) 
+                  |> String.concat ", " 
+                  |> sprintf "let %O = new %s(%s)" result ctor.Name
+        [ result,str ]
+
+type ReflectiveCommand<'Actual>(meth:MethodInfo, parameters:array<obj>) =
+    inherit Command<'Actual,ReflectiveModel>()
+    let paramstring = 
+                  parameters
+                  |> Seq.map (fun p -> p.ToString()) 
+                  |> String.concat ", " 
+    override __.RunModel model =
+        let result = CommandResult()
+        let last = Seq.last model |> fst
+        let str = sprintf "let %O = %O.%s(%s)" last result meth.Name paramstring
+        (result,str) :: model
+    override __.Check(actual, model) =
+        //invoke on actual
+        //what to test? how to get the property?
+        //separate input? based on function - needs to wrap invocation to catch exceptions?
+        //or some DSL like thnigs - but property is already that...so try to reuse
+        // fun model invoker -> try let res = invoker();  with 
+        ///should model be a quotation/expression so we can match?
+        let result = lazy let result = meth.Invoke(actual, parameters)
+                          let modelResult = Seq.last model |> fst
+                          modelResult.Set result
+        Prop.ofTestable result
+    override __.ToString() =
+        sprintf "%s(%s)" meth.Name paramstring
+
+type ReflectiveCommandGenerator<'Actual>() = 
+    inherit CommandGenerator<'Actual,ReflectiveModel>()
+    let parameterGenerator (parameters:seq<ParameterInfo>) =
+        parameters |> Seq.map (fun p -> p.ParameterType) |> Seq.map Arb.getGenerator |> Gen.sequence
+    let ctors = 
+        typeof<'Actual>.GetConstructors() 
+        |> Seq.map (fun ctor -> 
+                        gen { let! parameters = parameterGenerator (ctor.GetParameters())
+                              return ReflectiveCreate<'Actual>(ctor, List.toArray parameters) :> Create<'Actual,ReflectiveModel> })
+        |> Seq.toArray
+        |> Gen.oneof
+
+    let instanceMethods =
+        typeof<'Actual>.GetMethods(BindingFlags.Public ||| BindingFlags.Instance)
+        |> Seq.map (fun meth -> 
+                        gen { let! parameters = parameterGenerator (meth.GetParameters())
+                              return ReflectiveCommand<'Actual>(meth, List.toArray parameters) :> Command<'Actual,ReflectiveModel> })
+        |> Seq.toArray
+        |> Gen.oneof
+
+    override __.Create = ctors |> Arb.fromGen
+    override __.Next model = instanceMethods
 
 module Command =
     open System
@@ -136,20 +210,20 @@ module Command =
         |> Seq.choose (fun commands -> if preconditionsOk (create.Model()) commands then Some (create,commands,destroy) else None)
         |> Seq.append (Arb.toShrink spec.Create create |> Seq.map (fun create -> (create,commands,destroy)))
         
-     
-    ///Turn a specification into a property.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let toProperty (spec:CommandGenerator<'Actual,'Model>) =
+    let check (create:Create<'Actual,'Model>, commands:list<Command<'Actual,'Model>>, destroy:Destroy<'Actual>) =
         let rec run (actual,model) (cmds:list<Command<'Actual,'Model>>) property =
             match cmds with
-            | [] -> spec.Destroy.Actual actual; property
+            | [] -> destroy.Actual actual; property
             | (c::cs) -> 
                 let newModel = c.RunModel model
                 let prop = c.Check(actual, newModel) |> Prop.ofTestable               
                 run (actual,newModel) cs (property .&. prop)
-        
-        forAll (Arb.fromGenShrink(generate spec, shrink spec)) (fun (create, commands, destroy) -> 
-            run (create.Actual(), create.Model()) commands (Prop.ofTestable true))
+        run (create.Actual(), create.Model()) commands (Prop.ofTestable true)
+
+    ///Turn a specification into a property.
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    let toProperty (spec:CommandGenerator<'Actual,'Model>) = 
+        forAll (Arb.fromGenShrink(generate spec, shrink spec)) check
 //                |> Prop.trivial (l.Length=0)
 //                |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
 //                |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" ))

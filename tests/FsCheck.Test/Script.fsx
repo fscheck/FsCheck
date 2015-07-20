@@ -5,6 +5,17 @@ open Microsoft.FSharp.Reflection
 #r "bin\Debug\FsCheck.dll"
 open FsCheck
 
+type Counter() =
+    let mutable c = 0
+    member __.Inc() = c <- c + 1
+    member __.Dec() = c <- c- 1
+    member __.Get = c
+
+let spec = ReflectiveCommandGenerator<Counter>()
+let generator = Command.generate spec
+
+let sample = generator |> Gen.sample 10 1 |> Seq.head
+
 //how to generate float between 0 and 5
 //let f = 
 //    Arb.generate<NormalFloat>
