@@ -84,7 +84,7 @@ be a function of any number of parameters that returns bool or unit. In the latt
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span> xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
     .QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 58 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 52 tests.</code></pre></td></tr></table>
 
 <p>Such a property holds if the property after <code>==&gt;</code> holds whenever the condition does.</p>
 
@@ -109,7 +109,7 @@ example, this may limit the expressiveness of properties - consider:</p>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">tooEager</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1769901099,296032166)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (0 shrinks) (StdGen (1752948786,296034983)):
 Original:
 0
 with exception:
@@ -229,7 +229,7 @@ are then summarized when testing is complete.</p>
 <p>Test cases for which the condition is true are classified as trivial, and the proportion of 
 trivial test cases in the total is reported:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 58 tests (34% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 59 tests (32% trivial).</code></pre></td></tr></table>
 
 <h3>Classifying Test Cases</h3>
 
@@ -254,10 +254,10 @@ trivial test cases in the total is reported:</p>
 <p>Test cases satisfying the condition are assigned the classification given, and the distribution of 
 classifications is reported after testing:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 62 tests.
-51% at-tail, at-head.
-24% at-head.
-19% at-tail.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 45 tests.
+33% at-tail, at-head.
+33% at-tail.
+20% at-head.</code></pre></td></tr></table>
 
 <p>Note that a test case may fall into more than one classification.</p>
 
@@ -282,10 +282,11 @@ classifications is reported after testing:</p>
 <p>The argument of collect is evaluated in each test case, and the distribution of 
 values is reported. The type of this argument is printed using <code>sprintf "%A"</code>:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 57 tests.
-43% 0.
-35% 1.
-19% 2.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 60 tests.
+43% 1.
+31% 0.
+18% 2.
+5% 3.
 1% 4.</code></pre></td></tr></table>
 
 <h3>Combining Observations</h3>
@@ -310,16 +311,16 @@ reported. For example:</p>
         .Collect(<span class="s">"length "</span> <span class="o">+</span> xs.Count().ToString()))
     .QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 51 tests.
-33% 0, at-tail, at-head.
-19% 1, at-tail.
-9% 2, at-tail.
-9% 1, at-tail, at-head.
-7% 2.
-7% 1, at-head.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 58 tests.
+36% 0, at-tail, at-head.
+17% 1, at-tail.
+12% 1, at-head.
+10% 1, at-tail, at-head.
+8% 2, at-tail.
 5% 2, at-head.
-1% 6.
-1% 4, at-tail.
+3% 3.
+3% 2.
+1% 3, at-tail.
 1% 3, at-head.</code></pre></td></tr></table>
 
 <h2>And, Or and Labels</h2>
@@ -353,12 +354,9 @@ it finds a counter-example. This takes the form: <code>&lt;string&gt; @| &lt;pro
        .And(result <span class="o">&lt;</span> m <span class="o">+</span> n).Label(<span class="s">"result not sum"</span>);
 }).QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1815743666,296032166)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1761414618,296034983)):
 Label of failing property: result not sum
 Original:
--1
-0
-Shrunk:
 0
 0</code></pre></td></tr></table>
 
@@ -384,12 +382,12 @@ This is useful for displaying intermediate results, for example:</p>
       .Label(<span class="k">string</span>.Format(<span class="s">"evidence = {0}"</span>, res));
 }).QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (1818695750,296032166)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1761965029,296034983)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
 Original:
-(-1, 1)
+(0, 1)
 Shrunk:
 (0, 0)</code></pre></td></tr></table>
 

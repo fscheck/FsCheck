@@ -92,9 +92,9 @@ fails the test if a postcondition does not hold.</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">Command</span><span class="o">.</span><span class="i">toProperty</span> <span onmouseout="hideTip(event, 'fs12', 37)" onmouseover="showTip(event, 'fs12', 37)" class="i">spec</span>)
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 12 tests (4 shrinks) (StdGen (1985537772,296032166)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 13 tests (8 shrinks) (StdGen (1801455657,296034983)):
 Original:
-[inc; inc; inc; inc; dec; inc; dec; inc]
+[dec; inc; inc; inc; inc; inc; dec; inc; inc; inc; dec; dec]
 Shrunk:
 [inc; inc; inc; dec]</code></pre></td></tr></table>
 
