@@ -1,3 +1,5 @@
+### 2.0.5 - To be released
+
 ### 2.0.4 - 20 July 2015
   * Fix FsCheck.NUnit NuGet package.
 
