@@ -65,12 +65,6 @@ namespace FsCheck.CSharpExamples
             
             Prop.ForAll<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs, new Eq()))
                 .QuickCheck("RevRev");
-            
-            Console.Out.WriteLine(Double.NaN.Equals(Double.NaN));
-            Console.Out.WriteLine((Double) Double.NaN == (Double) Double.NaN);
-            Console.Out.WriteLine(new[] { Double.NaN }.SequenceEqual(new[] { Double.NaN }));
-
-            Console.ReadKey();
 
             Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs))
                 .QuickCheck("RevId");
