@@ -11,7 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests.</description>
     <summary>Integrates FsCheck with NUnit</summary>        
-    <copyright>Copyright 2012</copyright>    
+    <copyright>Copyright 2015</copyright>    
     <releaseNotes>@releaseNotes@</releaseNotes>    
     <tags>@tags@</tags>
     @dependencies@
