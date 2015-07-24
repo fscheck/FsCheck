@@ -15,6 +15,7 @@ open Fake.Testing
 open SourceLink
 
 open System
+open Fake.AppVeyor
 
 // Information about each project is used
 //  - for version and project name in generated AssemblyInfo file
@@ -60,7 +61,7 @@ let gitName = "FsCheck"
 
 // Read additional information from the release notes document
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-let release = parseReleaseNotes (IO.File.ReadAllLines releaseNotes)
+let release = LoadReleaseNotes releaseNotes
 
 let packages =
   [
@@ -116,18 +117,32 @@ All the options normally available in vanilla FsCheck via configuration can be c
    }
   ]
 
+let isAppVeyorBuild = buildServer = BuildServer.AppVeyor
+let buildDate = DateTime.UtcNow
+let buildVersion = 
+    let isVersionTag tag = Version.TryParse tag |> fst
+    let hasRepoVersionTag = isAppVeyorBuild && AppVeyorEnvironment.RepoTag && isVersionTag AppVeyorEnvironment.RepoTagName
+    let assemblyVersion = if hasRepoVersionTag then AppVeyorEnvironment.RepoTagName else release.NugetVersion
+    if hasRepoVersionTag then assemblyVersion
+    else if isAppVeyorBuild then sprintf "%s-b%s" assemblyVersion AppVeyorEnvironment.BuildNumber
+    else sprintf "%s-a%s" assemblyVersion (buildDate.ToString "yyMMddHHmm")
+
+Target "BuildVersion" (fun _ ->
+    Shell.Exec("appveyor", sprintf "UpdateBuild -Version \"%s\"" buildVersion) |> ignore
+)
+
 // Generate assembly info files with the right version & up-to-date information
 Target "AssemblyInfo" (fun _ ->
-  packages |> Seq.iter (fun package ->
-  let fileName = "src/" + package.Name + "/AssemblyInfo.fs"
-  CreateFSharpAssemblyInfo fileName
-      ([Attribute.Title package.Name
-        Attribute.Product package.Name
-        Attribute.Description package.Summary
-        Attribute.Version release.AssemblyVersion
-        Attribute.FileVersion release.AssemblyVersion
-       ] @ (if package.Name = "FsCheck" then [Attribute.InternalsVisibleTo("FsCheck.Test")] else []))
-  )
+    packages |> Seq.iter (fun package ->
+    let fileName = "src/" + package.Name + "/AssemblyInfo.fs"
+    CreateFSharpAssemblyInfo fileName
+        ([Attribute.Title package.Name
+          Attribute.Product package.Name
+          Attribute.Description package.Summary
+          Attribute.Version release.AssemblyVersion
+          Attribute.FileVersion release.AssemblyVersion
+        ] @ (if package.Name = "FsCheck" then [Attribute.InternalsVisibleTo("FsCheck.Test")] else []))
+    )
 )
 
 // --------------------------------------------------------------------------------------
@@ -189,13 +204,12 @@ Target "NuGet" (fun _ ->
             Project = package.Name
             Summary = package.Summary
             Description = package.Description
-            Version = release.NugetVersion
+            Version = buildVersion
             ReleaseNotes = String.Join(Environment.NewLine, release.Notes)
             Tags = package.Tags
             OutputPath = "bin"
             AccessKey = getBuildParamOrDefault "nugetkey" ""
             Publish = hasBuildParam "nugetkey"
-            //ProjectFile = package.ProjectFile //if we add this, it produces a symbols package
             Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
         })
         ("nuget/" + package.Name + ".nuspec")
@@ -255,7 +269,7 @@ Target "ReleaseDocs" (fun _ ->
     fullclean tempDocsDir
     CopyRecursive "docs/output" tempDocsDir true |> tracefn "%A"
     StageAll tempDocsDir
-    Commit tempDocsDir (sprintf "Update generated documentation for version %s" release.NugetVersion)
+    Commit tempDocsDir (sprintf "Update generated documentation for version %s" buildVersion)
     Branches.push tempDocsDir
 )
 
@@ -271,20 +285,27 @@ Target "Release" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Run all targets by default. Invoke 'build <Target>' to override
 
-Target "All" DoNothing
 Target "CI" DoNothing
 
 "Clean"
+  =?> ("BuildVersion", isAppVeyorBuild)
   ==> "RestorePackages"
   ==> "AssemblyInfo"
   ==> "Build"
   ==> "RunTests"
-  ==> "All"
-  ==> "CleanDocs"  ==> "GenerateDocsJa"  ==> "GenerateDocs"
+
+"RunTests"  
+  ==> "CleanDocs"
+  ==> "GenerateDocsJa"  
+  ==> "GenerateDocs"
   ==> "CI"
   =?> ("ReleaseDocs", isLocalBuild)
+
+"RunTests"
   =?> ("SourceLink", isLocalBuild && not isLinux)
   ==> "NuGet"
+
+"ReleaseDocs"
   ==> "Release"
 
-RunTargetOrDefault "All"
+RunTargetOrDefault "RunTests"
