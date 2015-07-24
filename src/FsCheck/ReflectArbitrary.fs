@@ -94,7 +94,7 @@ module internal ReflectArbitrary =
                 box result
 
             else
-                failwithf "Geneflect: type not handled %A" t)
+                failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing and registering a generator for it." t.FullName)
 
     let private reflectGenObj getGenerator (t:Type) = (reflectObj getGenerator t |> unbox<IGen>).AsGenObject
 
