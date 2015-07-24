@@ -35,7 +35,8 @@ nuget FsCheck
 nuget FsCheck prerelease
 nuget FsCheck 2.0.4
 nuget FsCheck 2.0.5-b247
- 
+```
+
 ### Documentation ###
 
 * [English](https://fscheck.github.io/FsCheck/)
