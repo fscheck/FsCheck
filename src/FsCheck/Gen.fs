@@ -464,11 +464,10 @@ module Gen =
         Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.
-[<AutoOpen>]
-module GenOperators =
+type Gen with
 
     /// Lifted function application = apply f to a, all in the Gen applicative functor.
-    let (<*>) f a = Gen.apply f a
+    static member (<*>) (f, a) = Gen.apply f a
 
     /// Like <*>, but puts f in a Gen first.
-    let (<!>) f a = Gen.constant f <*> a
+    static member (<!>) (f, a) = Gen.constant f <*> a

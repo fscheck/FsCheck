@@ -5,7 +5,7 @@ nuget NUnit
 nuget NUnit.Runners
 nuget xunit < 2.0
 nuget xunit.runners < 2.0
-nuget xunit.runner.visualstudio
+nuget xunit.runner.visualstudio version_in_path: true
 nuget NuGet.CommandLine
 nuget SourceLink.Fake
 nuget FSharp.Formatting

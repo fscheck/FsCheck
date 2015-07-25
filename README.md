@@ -11,10 +11,32 @@ FsCheck's generator combinators can be used in any testing framework to easily g
 
 ### NuGet ###
 
+Releases:
+
 * [FsCheck](http://nuget.org/List/Packages/FsCheck)
 * [FsCheck with xUnit.NET integration](http://nuget.org/List/Packages/FsCheck.Xunit)
 * [FsCheck with NUnit integration](http://www.nuget.org/packages/FsCheck.Nunit/)
  
+All AppVeyor builds are available using the NuGet feed: https://ci.appveyor.com/nuget/fscheck
+
+If using Paket, add the source at the top of `paket.dependencies`.
+
+```
+source https://www.nuget.org/api/v2
+source https://ci.appveyor.com/nuget/fscheck
+```
+
+See the build history for a list of available versions: https://ci.appveyor.com/project/kurtschelfthout/fscheck/history
+
+Here are some options for specifying the dependency:
+
+```
+nuget FsCheck
+nuget FsCheck prerelease
+nuget FsCheck 2.0.4
+nuget FsCheck 2.0.5-b247
+```
+
 ### Documentation ###
 
 * [English](https://fscheck.github.io/FsCheck/)
@@ -35,7 +57,7 @@ Then, open FsCheck.sln in Visual Studio on Windows or FsCheck-mono.sln on Linux/
 Building and testing from Visual Studio also works, to re-generate documentation quickly, execute docs/tools/generate.fsx in FSI. This should also work in Monodevelop and Xamarin, though I have not tested.
 
 - Windows on .NET:[![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
-- Linux on Mono: [![Build Status](https://travis-ci.org/fscheck/FsCheck.svg?branch=master)](https://travis-ci.org/fsharp/FsCheck)
+- Linux on Mono: [![Build Status](https://travis-ci.org/fscheck/FsCheck.svg?branch=master)](https://travis-ci.org/fscheck/FsCheck)
 
 
 

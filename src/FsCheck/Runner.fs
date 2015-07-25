@@ -233,7 +233,12 @@ module Runner =
     let onShrinkToString args =
         sprintf "shrink:%s%s%s" newline (argumentsToString args) newline
 
-    ///A runner that prints results to the console.
+#if PCL
+    let internal printf fmt = 
+        Printf.kprintf Diagnostics.Debug.WriteLine fmt
+#endif
+    
+    ///A runner that prints results to the standard output.
     let consoleRunner =
         { new IRunner with
             member __.OnStartFixture t =
@@ -272,7 +277,9 @@ module Runner =
         finally
             Arb.Arbitrary := defaultArbitrary
 
-    let private checkMethodInfo = typeof<TestStep>.DeclaringType.GetMethod("check",BindingFlags.Static ||| BindingFlags.NonPublic)
+    let private checkMethodInfo = 
+        typeof<TestStep>.DeclaringType.GetTypeInfo().DeclaredMethods 
+        |> Seq.find (fun meth -> meth.IsStatic && meth.Name = "check")
 
     let private arrayToTupleType (arr:Type[]) =
         if arr.Length = 0 then
@@ -310,9 +317,10 @@ module Runner =
 
     let internal checkAll config (t:Type) = 
         config.Runner.OnStartFixture t  
-        t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) 
-        |> Array.filter hasTestableReturnType 
-        |> Array.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m None)
+        t.GetRuntimeMethods() 
+        |> Seq.filter (fun meth -> meth.IsStatic && meth.IsPublic)
+        |> Seq.filter hasTestableReturnType 
+        |> Seq.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m None)
         printf "%s" newline
 
 open Runner

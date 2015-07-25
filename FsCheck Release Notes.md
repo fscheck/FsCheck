@@ -1,7 +1,18 @@
-### 2.0.2 - To be released
+### 2.0.5 - To be released
+
+### 2.0.4 - 20 July 2015
+  * Fix FsCheck.NUnit NuGet package.
+
+### 2.0.3 - 10 July 2015
+  * Add support for Portable Class Library profiles 7,78 and 259.
+
+### 2.0.2 - 7 July 2015
   * Update NuGet package with new project home.
   * Add missing frequency overload.
   * Added some more C# examples to documentation.
+  * Internal changes related to use of reflection API to eventually support PCL.
+  * Fix bug in Commands.
+  * Improved output - now shows argument before and after shrinking.
 
 ### 2.0.1 - 23 May 2015
   * Because apparently there there is some problem with FsCheck.Xunit and FsCheck.NUnit's NuGet dependencies to unstable versions.
