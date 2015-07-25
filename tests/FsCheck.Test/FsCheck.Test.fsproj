@@ -56,7 +56,6 @@
     <Compile Include="Commands.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="Fluent.fs" />
-    <None Include="Script.fsx" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>

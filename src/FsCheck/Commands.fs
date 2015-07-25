@@ -14,24 +14,8 @@ open System.Runtime.CompilerServices
 open System.Reflection
 open System.Threading
 
-///A single command describes pre and post conditions and the model for a single method under test.
-///The post-conditions are the invariants that will be checked; when these do not hold the test fails.
 [<AbstractClass>]
-type Command<'Actual,'Model>() =
-    ///Excecutes the command on the object under test, and returns a property that must hold.
-    ///This property typically compares the state of the model with the state of the object after
-    ///execution of the command.
-    abstract Check : 'Actual * 'Model  -> Property
-    ///Executes the command on the model of the object.
-    abstract RunModel : 'Model -> 'Model
-    ///Optional precondition for execution of the command. When this does not hold, the test continues
-    ///but the command is not executed.
-    abstract Pre : 'Model -> bool
-    ///The default precondition is true.
-    default __.Pre _ = true
-
-[<AbstractClass>]
-type Create<'Actual,'Model>() =
+type Setup<'Actual,'Model>() =
     ///Randomly generate the initial state of the actual object. Should still correspond to the 
     ///initial state of model object; so you should only randomly generate parameters to the instance
     ///that don't affect the model.
@@ -40,28 +24,48 @@ type Create<'Actual,'Model>() =
     abstract Actual : unit -> 'Actual
     ///Initial state of model object. Must correspond to initial state of actual object.
     abstract Model : unit -> 'Model
-    override __.ToString() = sprintf "Create %s" typeof<'Actual>.Name
+    override __.ToString() = sprintf "Setup %s" typeof<'Actual>.Name
 
-type Destroy<'Actual>() =
+///An operation describes pre and post conditions and the model for a single operation under test.
+///The post-conditions are the invariants that will be checked; when these do not hold the test fails.
+[<AbstractClass>]
+type Operation<'Actual,'Model>() =
+    ///Excecutes the command on the object under test, and returns a property that must hold.
+    ///This property typically compares the state of the model with the state of the object after
+    ///execution of the command.
+    abstract Check : 'Actual * 'Model  -> Property
+    ///Executes the command on the model of the object.
+    abstract Run : 'Model -> 'Model
+    ///Optional precondition for execution of the command. When this does not hold, the test continues
+    ///but the command is not executed.
+    abstract Pre : 'Model -> bool
+    ///The default precondition is true.
+    default __.Pre _ = true
+
+type TearDown<'Actual>() =
     abstract Actual : 'Actual -> unit
     default __.Actual _ = ()
-    override __.ToString() = sprintf "Destroy %s" typeof<'Actual>.Name
+    override __.ToString() = sprintf "TearDown %s" typeof<'Actual>.Name
 
 ///Defines the initial state for actual and model object, and allows to define the generator to use
 ///for the next state, based on the model.
 [<AbstractClass>]
-type CommandGenerator<'Actual,'Model>() =
-    abstract Create : Arbitrary<Create<'Actual,'Model>>
-    abstract Destroy : Destroy<'Actual>
-    default __.Destroy = Destroy<_>()
+type Machine<'Actual,'Model>() =
+    abstract Setup : Arbitrary<Setup<'Actual,'Model>>
+    abstract TearDown : TearDown<'Actual>
+    default __.TearDown = TearDown<_>()
     ///Generate a number of possible commands based on the current state of the model. 
     ///Preconditions are still checked, so even if a Command is returned, it is not chosen
     ///if its precondition does not hold.
-    abstract Next : 'Model -> Gen<Command<'Actual,'Model>>
+    abstract Next : 'Model -> Gen<Operation<'Actual,'Model>>
 
+type MachineRun<'Actual, 'Model> =
+    { Setup : 'Model * Setup<'Actual,'Model> 
+      Operations : list<'Model * Operation<'Actual,'Model>>
+      TearDown : TearDown<'Actual> }
 
 //a single assignment variable
-type CommandResult(?result) =
+type MethodCallResult(?result) =
     static let mutable resultCounter = 0
     static let nextCounter() = Interlocked.Increment &resultCounter
     let mutable counter = nextCounter()
@@ -70,65 +74,58 @@ type CommandResult(?result) =
     member __.Set v = match result with None -> result <- Some v | Some _ -> invalidOp "Result already set to value."
     override __.ToString() = sprintf "result_%i" counter
 
-type ReflectiveModel = list<CommandResult*string> //a list of commands as string?
+type ObjectMachineModel = MethodCallResult * string //*string> //a list of commands as string?
 
-type ReflectiveCreate<'Actual>(ctor:ConstructorInfo, parameters:array<obj>) =
-    inherit Create<'Actual,ReflectiveModel>()
-    override __.Actual() = ctor.Invoke parameters  :?> 'Actual
+type New<'Actual>(ctor:ConstructorInfo, parameters:array<obj>) =
+    inherit Setup<'Actual,ObjectMachineModel>()
+    override __.Actual() = ctor.Invoke parameters :?> 'Actual
     override __.Model() = 
-        let result = CommandResult()
+        let result = MethodCallResult()
         let str = parameters 
                   |> Seq.map (fun p -> p.ToString()) 
                   |> String.concat ", " 
                   |> sprintf "let %O = new %s(%s)" result ctor.Name
-        [ result,str ]
+        result, str
 
-type ReflectiveCommand<'Actual>(meth:MethodInfo, parameters:array<obj>) =
-    inherit Command<'Actual,ReflectiveModel>()
+type MethodCall<'Actual>(meth:MethodInfo, parameters:array<obj>) =
+    inherit Operation<'Actual,ObjectMachineModel>()
     let paramstring = 
                   parameters
-                  |> Seq.map (fun p -> p.ToString()) 
+                  |> Seq.map (sprintf "%O") 
                   |> String.concat ", " 
-    override __.RunModel model =
-        let result = CommandResult()
-        let last = Seq.last model |> fst
-        let str = sprintf "let %O = %O.%s(%s)" last result meth.Name paramstring
-        (result,str) :: model
+    override __.Run model =
+        let result = MethodCallResult()
+        let last = model |> fst
+        let str = sprintf "let %O = %O.%s(%s)" result last meth.Name paramstring
+        result, str
     override __.Check(actual, model) =
-        //invoke on actual
-        //what to test? how to get the property?
-        //separate input? based on function - needs to wrap invocation to catch exceptions?
-        //or some DSL like thnigs - but property is already that...so try to reuse
-        // fun model invoker -> try let res = invoker();  with 
-        ///should model be a quotation/expression so we can match?
         let result = lazy let result = meth.Invoke(actual, parameters)
-                          let modelResult = Seq.last model |> fst
+                          let modelResult = model |> fst
                           modelResult.Set result
         Prop.ofTestable result
     override __.ToString() =
         sprintf "%s(%s)" meth.Name paramstring
 
-type ReflectiveCommandGenerator<'Actual>() = 
-    inherit CommandGenerator<'Actual,ReflectiveModel>()
+type ObjectMachine<'Actual>() = 
+    inherit Machine<'Actual,ObjectMachineModel>()
     let parameterGenerator (parameters:seq<ParameterInfo>) =
         parameters |> Seq.map (fun p -> p.ParameterType) |> Seq.map Arb.getGenerator |> Gen.sequence
     let ctors = 
         typeof<'Actual>.GetConstructors() 
         |> Seq.map (fun ctor -> 
                         gen { let! parameters = parameterGenerator (ctor.GetParameters())
-                              return ReflectiveCreate<'Actual>(ctor, List.toArray parameters) :> Create<'Actual,ReflectiveModel> })
-        |> Seq.toArray
+                              return New<'Actual>(ctor, List.toArray parameters) :> Setup<'Actual,ObjectMachineModel> })
         |> Gen.oneof
 
     let instanceMethods =
-        typeof<'Actual>.GetMethods(BindingFlags.Public ||| BindingFlags.Instance)
+        typeof<'Actual>.GetTypeInfo().GetMethods()
         |> Seq.map (fun meth -> 
                         gen { let! parameters = parameterGenerator (meth.GetParameters())
-                              return ReflectiveCommand<'Actual>(meth, List.toArray parameters) :> Command<'Actual,ReflectiveModel> })
-        |> Seq.toArray
+                              return MethodCall<'Actual>(meth, List.toArray parameters) :> Operation<'Actual,ObjectMachineModel> })
         |> Gen.oneof
 
-    override __.Create = ctors |> Arb.fromGen
+    override __.Setup = ctors |> Arb.fromGen
+    //override __.TearDown = check if 'Actual is IDisposable, if so, call Dispose.
     override __.Next model = instanceMethods
 
 module Command =
@@ -138,38 +135,38 @@ module Command =
 
     [<CompiledName("Create"); EditorBrowsable(EditorBrowsableState.Never)>]
     let create actual model =
-        { new Create<_,_>() with
+        { new Setup<_,_>() with
             override __.Actual() = actual()
             override __.Model() = model() }
 
     [<CompiledName("Create"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let createFunc (actual:Func<_>) (model:Func<_>) =
-        { new Create<_,_>() with
+        { new Setup<_,_>() with
             override __.Actual() = actual.Invoke()
             override __.Model() = model.Invoke() }
 
     [<CompiledName("Destroy"); EditorBrowsable(EditorBrowsableState.Never)>]
     let destroy run =
-        { new Destroy<_>() with
+        { new TearDown<_>() with
             override __.Actual actual = run actual }
 
     [<CompiledName("Destroy"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let destroyAction (run:Action<_>) =
-        { new Destroy<_>() with
+        { new TearDown<_>() with
             override __.Actual actual = run.Invoke actual }
 
     [<CompiledName("FromFun"); EditorBrowsable(EditorBrowsableState.Never)>]
     let fromFunWithPrecondition name preCondition runModel check =
-        { new Command<'Actual,'Model>() with
-            override __.RunModel pre = runModel pre
+        { new Operation<'Actual,'Model>() with
+            override __.Run pre = runModel pre
             override __.Check(model,actual) = check (model,actual) |> Prop.ofTestable
             override __.Pre model = preCondition model
             override __.ToString() = name }
 
     [<CompiledName("FromFun"); EditorBrowsable(EditorBrowsableState.Never)>]
     let fromFun name runModel check =
-        { new Command<'Actual,'Model>() with
-            override __.RunModel pre = runModel pre
+        { new Operation<'Actual,'Model>() with
+            override __.Run pre = runModel pre
             override __.Check(model,actual) = check (model,actual) |> Prop.ofTestable
             override __.ToString() = name }
 
@@ -186,43 +183,54 @@ module Command =
         fromFun name runModel.Invoke (fun (a,b) -> Prop.ofTestable <| check.Invoke(a,b))
 
 
-    let generate (spec:CommandGenerator<'Actual,'Model>) = 
+    let generate (spec:Machine<'Actual,'Model>) = 
         let rec genCommandsS state size =
             gen {
                 if size > 0 then
-                    let! command = spec.Next state |> Gen.suchThat (fun command -> command.Pre state)
-                    let! commands = genCommandsS (command.RunModel state) (size-1)
-                    return command :: commands
+                    let nextState = spec.Next state
+                    let! command = nextState |> Gen.suchThat (fun command -> command.Pre state)
+                    let! states, commands = genCommandsS (command.Run state) (size-1)
+                    return state :: states, command :: commands
                 else
-                    return []
+                    return [state],[]
             }
-        gen { let! create = spec.Create |> Arb.toGen
-              let! commands = genCommandsS (create.Model()) |> Gen.sized
-              return (create, commands, spec.Destroy)
+        gen { let! setup = spec.Setup |> Arb.toGen
+              let initialModel = setup.Model()
+              let! states,commands = genCommandsS initialModel |> Gen.sized
+              return { Setup = initialModel, setup
+                       Operations = List.zip (List.tail states) commands //first state is actually the initial state; so drop it.
+                       TearDown = spec.TearDown }
         }
 
-    let shrink (spec:CommandGenerator<'Actual,'Model>) (create:Create<'Actual,'Model>, commands:list<Command<'Actual,'Model>>, destroy:Destroy<'Actual>) =
-        let preconditionsOk initial (commands:seq<Command<_,_>>) = 
+    let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
+        let preconditionsOk initial (commands:list<_ * Operation<_,_>>) = 
             commands 
-            |> Seq.fold (fun (model,pres) cmd -> cmd.RunModel model,pres && cmd.Pre model) (initial, true)
-            |> snd
-        Arb.Default.FsList().Shrinker commands
-        |> Seq.choose (fun commands -> if preconditionsOk (create.Model()) commands then Some (create,commands,destroy) else None)
-        |> Seq.append (Arb.toShrink spec.Create create |> Seq.map (fun create -> (create,commands,destroy)))
+            |> List.scan (fun (model,pre) (_,cmd) -> cmd.Run model,cmd.Pre model) (initial, true)
+            
+        Arb.Default.FsList().Shrinker run.Operations
+        //try to shrink the list of operations
+        |> Seq.choose (fun commands -> 
+                            let preconditions = preconditionsOk (fst run.Setup) commands
+                            let ok = preconditions |> Seq.map snd |> Seq.forall id
+                            if ok then 
+                                let newmodels = preconditions |> List.unzip |> fst
+                                Some { run with Operations = commands |> List.unzip |> snd |> List.zip newmodels } 
+                            else None)
+        //try to srhink the initial setup state
+        |> Seq.append (Arb.toShrink spec.Setup (snd run.Setup) |> Seq.map (fun create -> { run with Setup = create.Model(), create }))
         
-    let check (create:Create<'Actual,'Model>, commands:list<Command<'Actual,'Model>>, destroy:Destroy<'Actual>) =
-        let rec run (actual,model) (cmds:list<Command<'Actual,'Model>>) property =
+    let check { Setup = initialModel,setup; Operations = operations; TearDown = teardown } =
+        let rec run (actual,model) (cmds:list<'Model * Operation<'Actual,'Model>>) property =
             match cmds with
-            | [] -> destroy.Actual actual; property
-            | (c::cs) -> 
-                let newModel = c.RunModel model
+            | [] -> teardown.Actual actual; property
+            | ((newModel,c)::cs) -> 
                 let prop = c.Check(actual, newModel) |> Prop.ofTestable               
                 run (actual,newModel) cs (property .&. prop)
-        run (create.Actual(), create.Model()) commands (Prop.ofTestable true)
+        run (setup.Actual(), initialModel) operations (Prop.ofTestable true)
 
     ///Turn a specification into a property.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let toProperty (spec:CommandGenerator<'Actual,'Model>) = 
+    let toProperty (spec:Machine<'Actual,'Model>) = 
         forAll (Arb.fromGenShrink(generate spec, shrink spec)) check
 //                |> Prop.trivial (l.Length=0)
 //                |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
@@ -231,4 +239,4 @@ module Command =
 [<AbstractClass;Sealed;Extension>]
 type CommandExtensions =
     [<Extension>]
-    static member ToProperty(spec: CommandGenerator<'Actual,'Model>) = Command.toProperty spec
+    static member ToProperty(spec: Machine<'Actual,'Model>) = Command.toProperty spec
