@@ -111,14 +111,14 @@ type ObjectMachine<'Actual>() =
     let parameterGenerator (parameters:seq<ParameterInfo>) =
         parameters |> Seq.map (fun p -> p.ParameterType) |> Seq.map Arb.getGenerator |> Gen.sequence
     let ctors = 
-        typeof<'Actual>.GetConstructors() 
+        typeof<'Actual>.GetTypeInfo().DeclaredConstructors
         |> Seq.map (fun ctor -> 
                         gen { let! parameters = parameterGenerator (ctor.GetParameters())
                               return New<'Actual>(ctor, List.toArray parameters) :> Setup<'Actual,ObjectMachineModel> })
         |> Gen.oneof
 
     let instanceMethods =
-        typeof<'Actual>.GetTypeInfo().GetMethods()
+        typeof<'Actual>.GetRuntimeMethods()
         |> Seq.map (fun meth -> 
                         gen { let! parameters = parameterGenerator (meth.GetParameters())
                               return MethodCall<'Actual>(meth, List.toArray parameters) :> Operation<'Actual,ObjectMachineModel> })
