@@ -13,6 +13,9 @@ namespace FsCheck
 open System.Runtime.CompilerServices
 open System.Reflection
 open System.Threading
+open System
+open Common
+open Microsoft.FSharp.Core.Operators.Unchecked
 
 [<AbstractClass>]
 type Setup<'Actual,'Model>() =
@@ -65,27 +68,29 @@ type MachineRun<'Actual, 'Model> =
       TearDown : TearDown<'Actual> }
 
 //a single assignment variable
-type MethodCallResult(?result) =
+type OperationResult(?result,?name) =
     static let mutable resultCounter = 0
     static let nextCounter() = Interlocked.Increment &resultCounter
+    let name = defaultArg name "result"
     let mutable counter = nextCounter()
     let mutable result = result
     member __.Get = result
     member __.Set v = match result with None -> result <- Some v | Some _ -> invalidOp "Result already set to value."
-    override __.ToString() = sprintf "result_%i" counter
+    override __.ToString() = sprintf "%s_%i" name counter
 
-type ObjectMachineModel = MethodCallResult * string //*string> //a list of commands as string?
+type ObjectMachineModel = OperationResult * OperationResult * string
 
 type New<'Actual>(ctor:ConstructorInfo, parameters:array<obj>) =
     inherit Setup<'Actual,ObjectMachineModel>()
+    let paramstring = 
+        parameters
+        |> Seq.map (sprintf "%O") 
+        |> String.concat ", "
     override __.Actual() = ctor.Invoke parameters :?> 'Actual
     override __.Model() = 
-        let result = MethodCallResult()
-        let str = parameters 
-                  |> Seq.map (fun p -> p.ToString()) 
-                  |> String.concat ", " 
-                  |> sprintf "let %O = new %s(%s)" result ctor.Name
-        result, str
+        let result = OperationResult()
+        let str = sprintf "let %O = new %s(%s)" result typeof<'Actual>.Name paramstring
+        result, result, str
 
 type MethodCall<'Actual>(meth:MethodInfo, parameters:array<obj>) =
     inherit Operation<'Actual,ObjectMachineModel>()
@@ -93,23 +98,29 @@ type MethodCall<'Actual>(meth:MethodInfo, parameters:array<obj>) =
                   parameters
                   |> Seq.map (sprintf "%O") 
                   |> String.concat ", " 
-    override __.Run model =
-        let result = MethodCallResult()
-        let last = model |> fst
-        let str = sprintf "let %O = %O.%s(%s)" result last meth.Name paramstring
-        result, str
-    override __.Check(actual, model) =
+    override __.Run ((objectUnderTest, _, _)) =
+        let result = OperationResult()
+        let str = sprintf "let %O = %O.%s(%s)" result objectUnderTest meth.Name paramstring
+        objectUnderTest, result, str
+    override __.Check(actual, (_, modelResult, _)) =
         let result = lazy let result = meth.Invoke(actual, parameters)
-                          let modelResult = model |> fst
                           modelResult.Set result
         Prop.ofTestable result
     override __.ToString() =
         sprintf "%s(%s)" meth.Name paramstring
 
-type ObjectMachine<'Actual>() = 
+type DisposeCall<'Actual>() =
+    inherit TearDown<'Actual>()
+    override __.Actual actual = match box actual with :? IDisposable as d -> d.Dispose() | _ -> ()
+    override __.ToString() = if typeof<IDisposable>.IsAssignableFrom typeof<'Actual> then sprintf "Dispose" else "Nothing"
+
+type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) = 
     inherit Machine<'Actual,ObjectMachineModel>()
+    static let skipMethods = [ "GetType"; "Finalize"; "MemberwiseClone"; "Dispose"; "System-IDisposable-Dispose"] |> Set.ofList
+    let methodFilter = defaultArg methodFilter (fun mi -> not <| Set.contains mi.Name skipMethods)
     let parameterGenerator (parameters:seq<ParameterInfo>) =
         parameters |> Seq.map (fun p -> p.ParameterType) |> Seq.map Arb.getGenerator |> Gen.sequence
+
     let ctors = 
         typeof<'Actual>.GetTypeInfo().DeclaredConstructors
         |> Seq.map (fun ctor -> 
@@ -119,13 +130,14 @@ type ObjectMachine<'Actual>() =
 
     let instanceMethods =
         typeof<'Actual>.GetRuntimeMethods()
+        |> Seq.filter methodFilter
         |> Seq.map (fun meth -> 
                         gen { let! parameters = parameterGenerator (meth.GetParameters())
                               return MethodCall<'Actual>(meth, List.toArray parameters) :> Operation<'Actual,ObjectMachineModel> })
         |> Gen.oneof
 
     override __.Setup = ctors |> Arb.fromGen
-    //override __.TearDown = check if 'Actual is IDisposable, if so, call Dispose.
+    override __.TearDown = upcast DisposeCall<'Actual>()
     override __.Next model = instanceMethods
 
 module Command =
@@ -203,19 +215,21 @@ module Command =
         }
 
     let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
-        let preconditionsOk initial (commands:list<_ * Operation<_,_>>) = 
+        let runModels initial (commands:list<_ * Operation<_,_>>) =
+            let commands = commands |> List.unzip |> snd
+            let newModels = commands |> List.scan (fun model operation -> operation.Run model) initial |> List.tail
+            List.zip newModels commands
+
+        let preconditionsOk (commands:List<_ * Operation<_,_>>) = 
             commands 
-            |> List.scan (fun (model,pre) (_,cmd) -> cmd.Run model,cmd.Pre model) (initial, true)
+            |> Seq.forall (fun (model,op) -> op.Pre model)
             
         Arb.Default.FsList().Shrinker run.Operations
         //try to shrink the list of operations
         |> Seq.choose (fun commands -> 
-                            let preconditions = preconditionsOk (fst run.Setup) commands
-                            let ok = preconditions |> Seq.map snd |> Seq.forall id
-                            if ok then 
-                                let newmodels = preconditions |> List.unzip |> fst
-                                Some { run with Operations = commands |> List.unzip |> snd |> List.zip newmodels } 
-                            else None)
+                            let newModels = runModels (fst run.Setup) commands
+                            let ok = preconditionsOk newModels
+                            if ok then Some { run with Operations = newModels } else None)
         //try to srhink the initial setup state
         |> Seq.append (Arb.toShrink spec.Setup (snd run.Setup) |> Seq.map (fun create -> { run with Setup = create.Model(), create }))
         

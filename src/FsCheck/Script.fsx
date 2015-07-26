@@ -11,6 +11,10 @@ type Counter(initial:int) =
     member __.Dec() = c <- c- 1
     member __.Add(i:int) = c <- c + i
     member __.Get = c
+    interface IDisposable with
+        member x.Dispose(): unit = 
+            ()
+        
 
 let spec = ObjectMachine<Counter>()
 let generator = Command.generate spec
