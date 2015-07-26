@@ -86,6 +86,9 @@
     <Compile Include="..\FsCheck\Commands.fs">
       <Link>Commands.fs</Link>
     </Compile>
+    <Compile Include="..\FsCheck\StateMachine.fs">
+      <Link>StateMachine.fs</Link>
+    </Compile>
     <Compile Include="..\FsCheck\Runner.fs">
       <Link>Runner.fs</Link>
     </Compile>

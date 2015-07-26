@@ -1,8 +1,8 @@
 (*** hide ***)
-#I @"../../src/FsCheck/bin/Release"
-#r @"FsCheck"
+#r @"../../src/FsCheck/bin/Release/FsCheck.dll"
 open FsCheck
 open System
+open FsCheck
 
 (**
 # Model-based Testing
@@ -18,7 +18,7 @@ type Counter() =
   member __.Dec() = if n > 2 then n <- n - 2 else n <- n - 1
   member __.Get = n
   member __.Reset() = n <- 0
-  override __.ToString() = n.ToString()
+  override __.ToString() = sprintf "Counter=%i" n
 
 (**
 We'll elide the class definition in C#, it's very similar.
@@ -31,22 +31,14 @@ With this idea in mind, you can write a specification of the Counter class using
 in C# below):*)
 
 let spec =
-  let inc = //specify what happens to model and actual instance when `Inc()` is called.
-      { new Command<Counter,int>() with
-          member x.RunActual c = c.Inc(); c
-          member x.RunModel m = m + 1
-          member x.Post (c,m) = m = c.Get |> Prop.ofTestable //the property that must hold after each invocation.
-          override x.ToString() = "inc"}
-  let dec = //specify what happens to model and actual instance when `Dec()` is called.
-      { new Command<Counter,int>() with
-          member x.RunActual c = c.Dec(); c
-          member x.RunModel m = m - 1
-          member x.Post (c,m) = m = c.Get |> Prop.ofTestable
-          override x.ToString() = "dec"}
-  { new ICommandGenerator<Counter,int> with
-      member __.InitialActual = Counter()
-      member __.InitialModel = 0
-      member __.Next model = Gen.elements [inc;dec] }
+  let inc = Command.fromFun "inc" (fun x -> x + 1) 
+                            (fun (counter:Counter, count) -> counter.Inc(); counter.Get = count |@ sprintf "model: %i <> %A" count counter)
+  let dec = Command.fromFun "dec" (fun x -> x - 1) 
+                            (fun (counter:Counter, count) -> counter.Dec(); counter.Get = count |@ sprintf "model: %i <> %A" count counter)
+  
+  { new CommandGenerator<Counter,int>() with
+      member __.Create = Gen.constant <| Command.create (fun () -> Counter()) (fun () -> 0) |> Arb.fromGen
+      member __.Next model = Gen.elements [inc;dec] |> Arb.fromGen}
 
 (**
 A specification is put together for FsCheck as an object that implementents `ICommandGenerator<'typeUnderTest,'modelType>`. It should return 
