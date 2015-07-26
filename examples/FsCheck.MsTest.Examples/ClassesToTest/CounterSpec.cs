@@ -5,24 +5,25 @@ using System.Text;
 
 namespace FsCheck.MsTest.Examples.ClassesToTest
 {
-    public class CounterSpec : CommandGenerator<Counter, int>
+    public class CounterSpec : ICommandGenerator<Counter, int>
     {
-        private Command<Counter, int> Inc =
-                Command.FromFunc<Counter,int>("Inc", c => c + 1, (counter, i) => { counter.Inc(); return counter.Get() == i; });
+        private readonly Command<Counter, int> Inc =
+                Command.Create<Counter, int>(c => { c.Inc(); return c; },
+                                         c => c + 1,
+                                         (counter, i) => counter.Get() == i);
 
         private readonly Command<Counter, int> Dec =
-                Command.FromFunc<Counter,int>("Dec", c => c - 1, (counter, i) => { counter.Dec(); return counter.Get() == i; });
+                Command.Create<Counter, int>(c => { c.Dec(); return c; },
+                                         c => c - 1,
+                                         (counter, i) => counter.Get() == i);
 
-        private readonly Create<Counter, int> NewCounter =
-                Command.Create(() => new Counter(), () => 0);
-
-        public override Gen<Command<Counter, int>> Next(int value)
+        public Gen<Command<Counter, int>> Next(int value)
         {
             return Gen.Elements(Inc, Dec);
         }
 
-        public override Gen<Create<Counter, int>> Create {
-            get { return Gen.Constant(NewCounter); }
-        }
+        public Counter InitialActual { get { return new Counter();}}
+
+        public int InitialModel { get { return 0; } }
     }
 }

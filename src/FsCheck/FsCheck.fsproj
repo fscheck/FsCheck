@@ -86,6 +86,7 @@
     <Compile Include="Prop.fs" />
     <Compile Include="PropExtensions.fs" />
     <Compile Include="Commands.fs" />
+    <Compile Include="StateMachine.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="RunnerExtensions.fs" />
     <None Include="Script.fsx" />

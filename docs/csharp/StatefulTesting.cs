@@ -27,32 +27,28 @@ namespace CSharp.DocSnippets {
     }
 
     //[counterspec]
-    public class CounterSpec : CommandGenerator<Counter, int> {
+    public class CounterSpec : ICommandGenerator<Counter, int> {
 
-        public override Gen<Command<Counter, int>> Next(int value) {
+        public Gen<Command<Counter, int>> Next(int value) {
             return Gen.Elements(new Command<Counter, int>[] { new Inc(), new Dec() });
         }
 
-        private class NewCounter : Create<Counter, int> {
+        public Counter InitialActual { get { return new Counter(); } }
 
-            public override Counter Actual() {
-                return new Counter();
-            }
-
-            public override int Model() {
-                return 0;
-            }
-        }
+        public int InitialModel { get { return 0; } }
 
         private class Inc : Command<Counter,int> {
+            public override Counter RunActual(Counter c) {
+                c.Inc();
+                return c;
+            }
 
             public override int RunModel(int m) {
                 return m + 1;
             }
 
-            public override Property Check(Counter counter, int value) {
-                counter.Inc();
-                return (counter.Get() == value).ToProperty();
+            public override Property Post(Counter c, int m) {
+                return (m == c.Get()).ToProperty();
             }
 
             public override string ToString() {
@@ -61,23 +57,22 @@ namespace CSharp.DocSnippets {
         }
 
         private class Dec : Command<Counter,int>{
+            public override Counter RunActual(Counter c) {
+                c.Dec();
+                return c;
+            }
 
             public override int RunModel(int m) {
                 return m - 1;
             }
 
+            public override Property Post(Counter c, int m) {
+                return (m == c.Get()).ToProperty();
+            }
+
             public override string ToString() {
                 return "dec";
             }
-
-            public override Property Check(Counter counter, int value) {
-                counter.Dec();
-                return (counter.Get() == value).ToProperty();
-            }
-        }
-
-        public override Gen<Create<Counter, int>> Create {
-            get { return Gen.Constant((Create<Counter,int>)new NewCounter()); }
         }
     }
     //[/counterspec]

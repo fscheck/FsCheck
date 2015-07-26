@@ -55,6 +55,7 @@
     <Compile Include="Arbitrary.fs" />
     <Compile Include="Property.fs" />
     <Compile Include="Commands.fs" />
+    <Compile Include="StateMachine.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="Fluent.fs" />
     <None Include="paket.references" />

@@ -4,6 +4,7 @@ open Microsoft.FSharp.Reflection
 
 #r "bin\Debug\FsCheck.dll"
 open FsCheck
+open FsCheck.Experimental
 
 type Counter(initial:int) =
     let mutable c = initial
@@ -17,11 +18,11 @@ type Counter(initial:int) =
         
 
 let spec = ObjectMachine<Counter>()
-let generator = Command.generate spec
+let generator = StateMachine.generate spec
 
 let sample = generator |> Gen.sample 10 1 |> Seq.head
 
-Command.toProperty spec |> Check.Verbose
+StateMachine.toProperty spec |> Check.Verbose
 
 //how to generate float between 0 and 5
 //let f = 

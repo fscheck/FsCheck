@@ -3,14 +3,14 @@ using FsCheck;
 
 namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
 {
-    public class CounterSpec : CommandGenerator<Counter, int>
+    public class CounterSpec : ICommandGenerator<Counter, int>
     {
         public Gen<Command<Counter, int>> Next(int value)
         {
             return Gen.Elements(new Command<Counter, int>[] {new Inc(), new Dec()});
         }
 
-        public Gen<Counter> InitialActual { get { return Gen.Fresh(() => new Counter());} }
+        public Counter InitialActual { get { return new Counter();} }
     
         public int InitialModel { get { return 0; } }
 
@@ -53,10 +53,6 @@ namespace FsCheck.NUnit.CSharpExamples.ClassesToTest
             {
                 return GetType().Name;
             }
-        }
-
-        public override Gen<Create<Counter, int>> Create {
-            get { throw new NotImplementedException(); }
         }
     }
 }
