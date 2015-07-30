@@ -83,7 +83,7 @@ When a property fails, FsCheck automatically displays a minimal counter example.
     Authors = [ "Kurt Schelfthout and contributors" ]
     Tags = "test testing random fscheck quickcheck"
     ProjectFile = ["src/FsCheck/FsCheck.fsproj" ]
-    Dependencies = ["FSharp.Core", lazy "3.1.2.1" ]
+    Dependencies = ["FSharp.Core", lazy "3.1.2.5" ]
     
     }
     { 
@@ -300,12 +300,11 @@ Target "CI" DoNothing
   ==> "GenerateDocs"
   ==> "CI"
   =?> ("ReleaseDocs", isLocalBuild)
+  ==> "Release"
 
 "RunTests"
   =?> ("SourceLink", isLocalBuild && not isLinux)
   ==> "NuGet"
-
-"ReleaseDocs"
   ==> "Release"
 
 RunTargetOrDefault "RunTests"
