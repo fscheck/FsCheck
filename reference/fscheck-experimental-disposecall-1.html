@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>GenOperators - FsCheck</title>
+    <title>DisposeCall<'Actual> - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,64 +34,34 @@
 
 
 
-<h1>GenOperators</h1>
+<h1>DisposeCall<'Actual></h1>
 <p>
-  <span>Namespace: FsCheck</span><br />
+  <span>Namespace: FsCheck.Experimental</span><br />
 </p>
 <div class="xmldoc">
-<p>Operators for Gen.</p>
-
-
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
-            ( &lt;!&gt; ) f a
+          <code onmouseout="hideTip(event, '423', 423)" onmouseover="showTip(event, '423', 423)">
+            new()
           </code>
-          <div class="tip" id="60">
-            <strong>Signature:</strong> f:(&#39;?102334 -&gt; &#39;?102335) -&gt; a:Gen&lt;&#39;?102334&gt; -&gt; Gen&lt;&#39;?102335&gt;<br />
-                          <strong>Type parameters:</strong> '?102334, '?102335          </div>
+          <div class="tip" id="423">
+            <strong>Signature:</strong> unit -&gt; DisposeCall&lt;&#39;Actual&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L474-474" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L113-113" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Like <*>, but puts f in a Gen first.</p>
-
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
-            ( &lt;*&gt; ) f a
-          </code>
-          <div class="tip" id="61">
-            <strong>Signature:</strong> f:Gen&lt;(&#39;?102331 -&gt; &#39;?102332)&gt; -&gt; a:Gen&lt;&#39;?102331&gt; -&gt; Gen&lt;&#39;?102332&gt;<br />
-                          <strong>Type parameters:</strong> '?102331, '?102332          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L471-471" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Lifted function application = apply f to a, all in the Gen applicative functor.</p>
-
-
-
+          
         </td>
       </tr>
     </tbody>

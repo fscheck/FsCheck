@@ -56,12 +56,12 @@
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 42)" onmouseover="showTip(event, 'fs11', 42)" class="i">mapRec</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (8 shrinks) (StdGen (1631617926,296034983)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (4 shrinks) (StdGen (1668216832,296039430)):
 Original:
-{ 0-&gt;3; 2-&gt;3; 3-&gt;3 }
-[0; 2; 3; 2]
+{ 0-&gt;1; 2-&gt;1 }
+[2; 2; 2]
 Shrunk:
-{ 0-&gt;1; 2-&gt;0; 3-&gt;0 }
+{ 0-&gt;1; 2-&gt;0 }
 [0]</code></pre></td></tr></table>
 
 <p><code>Function&lt;'a,'b&gt;</code> 型は呼ばれていたすべての引数、および生成した結果の写像を記録します。
@@ -109,13 +109,13 @@ Function は関数を出力し、また関数をシュリンクするために�
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1633399189,296034983)):
-Label of failing property: 3 = -1
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1669677871,296039430)):
+Label of failing property: 1 = -1
 Original:
-1
-1
+0
+2
 Shrunk:
-1
+0
 0</code></pre></td></tr></table>
 
 <p>もちろん、あなたがよく使用する任意の演算子や関数に対してこれを行うことが出来ます。</p>
@@ -149,7 +149,7 @@ Shrunk:
 <div class="tip" id="fs13">type &#39;T list = List&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Collections.list&lt;_&gt;</div>
 <div class="tip" id="fs14">val not : value:bool -&gt; bool<br /><br />Full name: Microsoft.FSharp.Core.Operators.not</div>
 <div class="tip" id="fs15">property List.IsEmpty: bool</div>
-<div class="tip" id="fs16">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
+<div class="tip" id="fs16">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
 <div class="tip" id="fs17">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; list:&#39;T list -&gt; &#39;U list<br /><br />Full name: Microsoft.FSharp.Collections.List.map</div>
 <div class="tip" id="fs18">val head : list:&#39;T list -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Collections.List.head</div>
 <div class="tip" id="fs19">val tail : list:&#39;T list -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.tail</div>

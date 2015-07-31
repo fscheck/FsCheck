@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>WeightAndValue<'a> - FsCheck</title>
+    <title>Machine<'Actual, 'Model> - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,34 +34,85 @@
 
 
 
-<h1>WeightAndValue<'a></h1>
+<h1>Machine<'Actual, 'Model></h1>
 <p>
-  <span>Namespace: FsCheck</span><br />
+  <span>Namespace: FsCheck.Experimental</span><br />
 </p>
 <div class="xmldoc">
-<p>2-tuple containing a weight and a value, used in some Gen methods to indicate
-the probability of a value.</p>
+<p>Defines the initial state for actual and model object, and allows to define the generator to use
+for the next state, based on the model.</p>
 
 
 </div>
-  <h3>Record Fields</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Record Field</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '421', 421)" onmouseover="showTip(event, '421', 421)">
-            Value
+          <code onmouseout="hideTip(event, '424', 424)" onmouseover="showTip(event, '424', 424)">
+            new()
           </code>
-          <div class="tip" id="421">
-            <strong>Signature:</strong> &#39;a<br />
+          <div class="tip" id="424">
+            <strong>Signature:</strong> unit -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L95-95" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L57-57" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '425', 425)" onmouseover="showTip(event, '425', 425)">
+            Next(arg1)
+          </code>
+          <div class="tip" id="425">
+            <strong>Signature:</strong> &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L64-64" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generate a number of possible commands based on the current state of the model. 
+Preconditions are still checked, so even if a Command is returned, it is not chosen
+if its precondition does not hold.</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '426', 426)" onmouseover="showTip(event, '426', 426)">
+            Setup
+          </code>
+          <div class="tip" id="426">
+            <strong>Signature:</strong> Arbitrary&lt;Setup&lt;&#39;Actual,&#39;Model&gt;&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L58-58" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -71,15 +122,16 @@ the probability of a value.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '422', 422)" onmouseover="showTip(event, '422', 422)">
-            Weight
+          <code onmouseout="hideTip(event, '427', 427)" onmouseover="showTip(event, '427', 427)">
+            TearDown
           </code>
-          <div class="tip" id="422">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="427">
+            <strong>Signature:</strong> TearDown&lt;&#39;Actual&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L94-94" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L59-59" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

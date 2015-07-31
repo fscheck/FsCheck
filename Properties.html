@@ -84,7 +84,7 @@ be a function of any number of parameters that returns bool or unit. In the latt
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span> xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
     .QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 52 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 62 tests.</code></pre></td></tr></table>
 
 <p>Such a property holds if the property after <code>==&gt;</code> holds whenever the condition does.</p>
 
@@ -109,7 +109,7 @@ example, this may limit the expressiveness of properties - consider:</p>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">tooEager</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (0 shrinks) (StdGen (1752948786,296034983)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (0 shrinks) (StdGen (1784280657,296039430)):
 Original:
 0
 with exception:
@@ -229,7 +229,7 @@ are then summarized when testing is complete.</p>
 <p>Test cases for which the condition is true are classified as trivial, and the proportion of 
 trivial test cases in the total is reported:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 59 tests (32% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 57 tests (35% trivial).</code></pre></td></tr></table>
 
 <h3>Classifying Test Cases</h3>
 
@@ -254,10 +254,10 @@ trivial test cases in the total is reported:</p>
 <p>Test cases satisfying the condition are assigned the classification given, and the distribution of 
 classifications is reported after testing:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 45 tests.
-33% at-tail, at-head.
-33% at-tail.
-20% at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 54 tests.
+44% at-tail, at-head.
+25% at-head.
+24% at-tail.</code></pre></td></tr></table>
 
 <p>Note that a test case may fall into more than one classification.</p>
 
@@ -282,11 +282,11 @@ classifications is reported after testing:</p>
 <p>The argument of collect is evaluated in each test case, and the distribution of 
 values is reported. The type of this argument is printed using <code>sprintf "%A"</code>:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 60 tests.
-43% 1.
-31% 0.
-18% 2.
-5% 3.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 54 tests.
+37% 1.
+35% 0.
+14% 2.
+11% 3.
 1% 4.</code></pre></td></tr></table>
 
 <h3>Combining Observations</h3>
@@ -311,17 +311,18 @@ reported. For example:</p>
         .Collect(<span class="s">"length "</span> <span class="o">+</span> xs.Count().ToString()))
     .QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 58 tests.
-36% 0, at-tail, at-head.
-17% 1, at-tail.
-12% 1, at-head.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 59 tests.
+33% 0, at-tail, at-head.
+20% 1, at-head.
+15% 1, at-tail.
 10% 1, at-tail, at-head.
-8% 2, at-tail.
-5% 2, at-head.
+6% 2, at-tail.
+3% 3, at-tail.
 3% 3.
-3% 2.
-1% 3, at-tail.
-1% 3, at-head.</code></pre></td></tr></table>
+1% 4.
+1% 2, at-tail, at-head.
+1% 2, at-head.
+1% 2.</code></pre></td></tr></table>
 
 <h2>And, Or and Labels</h2>
 
@@ -354,9 +355,12 @@ it finds a counter-example. This takes the form: <code>&lt;string&gt; @| &lt;pro
        .And(result <span class="o">&lt;</span> m <span class="o">+</span> n).Label(<span class="s">"result not sum"</span>);
 }).QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1761414618,296034983)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1791596036,296039430)):
 Label of failing property: result not sum
 Original:
+1
+1
+Shrunk:
 0
 0</code></pre></td></tr></table>
 
@@ -382,13 +386,11 @@ This is useful for displaying intermediate results, for example:</p>
       .Label(<span class="k">string</span>.Format(<span class="s">"evidence = {0}"</span>, res));
 }).QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1761965029,296034983)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1792186450,296039430)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
 Original:
-(0, 1)
-Shrunk:
 (0, 0)</code></pre></td></tr></table>
 
 <p>Notice that the above property combines subproperties by tupling them. This works for tuples up to length 6 and lists:</p>
@@ -415,7 +417,7 @@ Shrunk:
 <div class="tip" id="fs2">namespace System</div>
 <div class="tip" id="fs3">val revRevIsOrig : xs:&#39;a list -&gt; bool (requires equality)<br /><br />Full name: Properties.revRevIsOrig</div>
 <div class="tip" id="fs4">val xs : &#39;a list (requires equality)</div>
-<div class="tip" id="fs5">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
+<div class="tip" id="fs5">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
 <div class="tip" id="fs6">val rev : list:&#39;T list -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.rev</div>
 <div class="tip" id="fs7">val revRevIsOrigInt : xs:int list -&gt; bool<br /><br />Full name: Properties.revRevIsOrigInt</div>
 <div class="tip" id="fs8">val xs : int list</div>

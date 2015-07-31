@@ -69,7 +69,7 @@ bool または unit を返す任意個のパラメータを取る関数となる
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertKeepsOrder</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 46 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 64 tests.</code></pre></td></tr></table>
 
 <p>条件が成り立つときはいつでも <code>==&gt;</code> の後の性質が成り立つのなら、このような性質は成り立ちます。</p>
 
@@ -92,7 +92,7 @@ FsCheck は異なる型(object の派生型)を含むリストを生成したか
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">tooEager</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (0 shrinks) (StdGen (1551811571,296034983)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (0 shrinks) (StdGen (1600540522,296039430)):
 Original:
 0
 with exception:
@@ -188,7 +188,7 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 
 <p>この条件が真になるテストケースは自明であると分類され、全体における自明なテストケースの比率が報告されます:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 50 tests (40% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 60 tests (28% trivial).</code></pre></td></tr></table>
 
 <h3>テストケースの分類</h3>
 
@@ -205,9 +205,9 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 
 <p>条件を満足するテストケースは与えられた分類に割り当てられ、分類の分布はテスト後に報告されます:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 63 tests.
-39% at-tail, at-head.
-26% at-tail.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 58 tests.
+44% at-tail, at-head.
+31% at-tail.
 22% at-head.</code></pre></td></tr></table>
 
 <p>1つのテストケースは複数の分類に当てはまる場合があることに注意してください。</p>
@@ -227,12 +227,11 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <p>collect の引数はテストケースごとに評価され、値の分布が報告されます。
 この引数の型は <code>sprintf "%A"</code> を用いて出力されます:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 66 tests.
-50% 1.
-28% 0.
-13% 2.
-6% 3.
-1% 4.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 59 tests.
+42% 1.
+33% 0.
+20% 2.
+3% 3.</code></pre></td></tr></table>
 
 <h3>観測の連結</h3>
 
@@ -247,15 +246,15 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs36', 156)" onmouseover="showTip(event, 'fs36', 156)" class="i">insertCombined</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 55 tests.
-40% 0, at-tail, at-head.
-14% 1, at-tail.
-9% 2, at-tail.
-9% 2, at-head.
-9% 1, at-head.
-5% 3, at-tail.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 54 tests.
+42% 0, at-tail, at-head.
+12% 1, at-tail.
+11% 1, at-head.
+9% 1, at-tail, at-head.
+7% 2, at-tail.
+7% 2, at-head.
 5% 2.
-5% 1, at-tail, at-head.
+1% 3, at-tail.
 1% 3.</code></pre></td></tr></table>
 
 <h2>And, Or およびラベル</h2>
@@ -282,12 +281,9 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs37', 172)" onmouseover="showTip(event, 'fs37', 172)" class="i">complex</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1559937162,296034983)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1608254038,296039430)):
 Label of failing property: result not sum
 Original:
--1
-0
-Shrunk:
 0
 0</code></pre></td></tr></table>
 
@@ -304,7 +300,7 @@ Shrunk:
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">multiply</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1560517574,296034983)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1608914316,296039430)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
@@ -335,7 +331,7 @@ Original:
 <div class="tip" id="fs2">namespace System</div>
 <div class="tip" id="fs3">val revRevIsOrig : xs:&#39;a list -&gt; bool (requires equality)<br /><br />Full name: Properties.revRevIsOrig</div>
 <div class="tip" id="fs4">val xs : &#39;a list (requires equality)</div>
-<div class="tip" id="fs5">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
+<div class="tip" id="fs5">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
 <div class="tip" id="fs6">val rev : list:&#39;T list -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.rev</div>
 <div class="tip" id="fs7">val revRevIsOrigInt : xs:int list -&gt; bool<br /><br />Full name: Properties.revRevIsOrigInt</div>
 <div class="tip" id="fs8">val xs : int list</div>

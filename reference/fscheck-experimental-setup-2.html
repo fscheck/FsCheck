@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>WeightAndValue<'a> - FsCheck</title>
+    <title>Setup<'Actual, 'Model> - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,56 +34,90 @@
 
 
 
-<h1>WeightAndValue<'a></h1>
+<h1>Setup<'Actual, 'Model></h1>
 <p>
-  <span>Namespace: FsCheck</span><br />
+  <span>Namespace: FsCheck.Experimental</span><br />
 </p>
 <div class="xmldoc">
-<p>2-tuple containing a weight and a value, used in some Gen methods to indicate
-the probability of a value.</p>
-
-
 </div>
-  <h3>Record Fields</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Record Field</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '421', 421)" onmouseover="showTip(event, '421', 421)">
-            Value
+          <code onmouseout="hideTip(event, '441', 441)" onmouseover="showTip(event, '441', 441)">
+            new()
           </code>
-          <div class="tip" id="421">
-            <strong>Signature:</strong> &#39;a<br />
+          <div class="tip" id="441">
+            <strong>Signature:</strong> unit -&gt; Setup&lt;&#39;Actual,&#39;Model&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L95-95" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L22-22" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
         </td>
       </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '422', 422)" onmouseover="showTip(event, '422', 422)">
-            Weight
+          <code onmouseout="hideTip(event, '442', 442)" onmouseover="showTip(event, '442', 442)">
+            Actual()
           </code>
-          <div class="tip" id="422">
-            <strong>Signature:</strong> int<br />
+          <div class="tip" id="442">
+            <strong>Signature:</strong> unit -&gt; &#39;Actual<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L94-94" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L28-28" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Randomly generate the initial state of the actual object. Should still correspond to the 
+initial state of model object; so you should only randomly generate parameters to the instance
+that don't affect the model.
+Note:make sure that each value is truly a new instance if the commands change the state
+of the object. Gen.connstant in particular is a bad idea - use Gen.fresh instead.</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '443', 443)" onmouseover="showTip(event, '443', 443)">
+            Model()
+          </code>
+          <div class="tip" id="443">
+            <strong>Signature:</strong> unit -&gt; &#39;Model<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L30-30" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Initial state of model object. Must correspond to initial state of actual object.</p>
+
+
+
         </td>
       </tr>
     </tbody>
