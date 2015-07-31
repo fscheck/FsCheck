@@ -92,6 +92,8 @@ type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) 
         let table = ref []
         F (table,fun x -> let y = f x in table := (x,y)::(!table); y)    
 
+
+
 ///Use the generator for 'a, but don't shrink.
 type DontShrink<'a> = DontShrink of 'a
 
@@ -105,6 +107,10 @@ type DontShrink<'a> = DontShrink of 'a
 type DontSize<'a when 'a : struct and 'a : comparison> = 
     DontSize of 'a with
     static member Unwrap(DontSize a) : 'a = a
+
+[<AutoOpen>]
+module ArbPatterns =
+    let (|Fun|) (f:Function<'a,'b>) = f.Value
 
 module Arb =
 
