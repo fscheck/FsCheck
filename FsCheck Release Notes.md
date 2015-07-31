@@ -1,6 +1,8 @@
-### 2.0.5 - To be released
+### 2.0.5 - 31 July 2015
   * Make Gen operators <*> and <!> actual operators on the Gen type, instead of functions to avoid name clashes. (by Paul Young)
   * Add FsCheck.Experimental.StateMachine for more advanced state machine-based checking, i.e. for mutable systems.
+  * Fix GenBuilder.delay so that generators inside gen computation expression are not needlessly re-created.
+  * Add Fun active pattern to make using shrinkable and printable functions easier.
 
 ### 2.0.4 - 20 July 2015
   * Fix FsCheck.NUnit NuGet package.
