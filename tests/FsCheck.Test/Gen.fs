@@ -253,3 +253,15 @@ module Gen =
         |> Seq.pairwise 
         |> Seq.forall obj.ReferenceEquals
         |> Assert.True
+    [<Property>]
+    // this currently fails on mono
+    let ``recursive generator should not stackoverflow`` () =
+        let rec recursiveGenerator (iterations : int) : Gen<unit> = gen {
+            if iterations < 100000 then
+                let! _ = Gen.constant 1
+                return! recursiveGenerator (iterations + 1)
+            else
+                return ()
+        }
+
+        Prop.forAll (recursiveGenerator 0 |> Arb.fromGen) (fun () -> true)
