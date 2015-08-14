@@ -130,10 +130,6 @@ module Gen =
     [<CompiledName("Resize")>]
     let resize newSize (Gen m) = Gen (fun _ r -> m newSize r)
 
-    ///Generates a random number generator. Useful for starting off the process
-    ///of generating a random value.
-    let internal rand = Gen (fun _ r -> r)
-
     ///Generates a value with maximum size n.
     //[category: Generating test values]
     [<CompiledName("Eval")>]
@@ -153,13 +149,13 @@ module Gen =
     ///Generates an integer between l and h, inclusive.
     //[category: Creating generators]
     [<CompiledName("Choose")>]
-    let choose (l, h) = rand |> map (range (l,h) >> fst) 
+    let choose (l, h) = Gen (fun _ r -> range (l,h) r |> fst) 
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
     [<CompiledName("Elements")>]
     let elements xs = 
-        choose (0, (Seq.length xs)-1)  |> map(flip Seq.nth xs)
+        choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
