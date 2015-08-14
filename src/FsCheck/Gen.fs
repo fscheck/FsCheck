@@ -52,6 +52,8 @@ module GenBuilder =
                          let (Gen m') = k (m n r1) 
                          m' n r2)
 
+    let private delay (f : unit -> Gen<_>) : Gen<_> = f()  
+
     let rec private doWhile p m =
       if p() then
         bind m (fun _ -> doWhile p m)
@@ -69,6 +71,7 @@ module GenBuilder =
     type GenBuilder internal() =
         member __.Return(a) : Gen<_> = ``return`` a
         member __.Bind(m, k) : Gen<_> = bind m k                            
+        member __.Delay(f) : Gen<_> = delay f
         member __.Combine(m1, m2) = bind m1 (fun () -> m2)
         member __.TryFinally(m, handler) = tryFinally m handler
         member __.TryWith(Gen m, handler) = Gen (fun n r -> try m n r with e -> handler e)
@@ -77,7 +80,7 @@ module GenBuilder =
         member __.While(p, m:Gen<_>) = doWhile p m
         member __.For(s:#seq<_>, f:('a -> Gen<'b>)) =
           using (s.GetEnumerator()) (fun ie ->
-            doWhile (fun () -> ie.MoveNext()) (f ie.Current)
+            doWhile (fun () -> ie.MoveNext()) (delay (fun () -> f ie.Current))
           )
         member __.Zero() = ``return`` ()
 
