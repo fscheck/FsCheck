@@ -56,11 +56,11 @@
             ( &lt;!&gt; )(f, a)
           </code>
           <div class="tip" id="313">
-            <strong>Signature:</strong> (f:(&#39;?127587 -&gt; &#39;?127588) * a:Gen&lt;&#39;?127587&gt;) -&gt; Gen&lt;&#39;?127588&gt;<br />
-                          <strong>Type parameters:</strong> '?127588          </div>
+            <strong>Signature:</strong> (f:(&#39;?127604 -&gt; &#39;?127605) * a:Gen&lt;&#39;?127604&gt;) -&gt; Gen&lt;&#39;?127605&gt;<br />
+                          <strong>Type parameters:</strong> '?127605          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L472-472" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L473-473" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -77,15 +77,37 @@
             ( &lt;*&gt; )(f, a)
           </code>
           <div class="tip" id="314">
-            <strong>Signature:</strong> (f:Gen&lt;(&#39;?127583 -&gt; &#39;?127584)&gt; * a:Gen&lt;&#39;?127583&gt;) -&gt; Gen&lt;&#39;?127584&gt;<br />
-                          <strong>Type parameters:</strong> '?127584          </div>
+            <strong>Signature:</strong> (f:Gen&lt;(&#39;?127600 -&gt; &#39;?127601)&gt; * a:Gen&lt;&#39;?127600&gt;) -&gt; Gen&lt;&#39;?127601&gt;<br />
+                          <strong>Type parameters:</strong> '?127601          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L469-469" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L470-470" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Lifted function application = apply f to a, all in the Gen applicative functor.</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '315', 315)" onmouseover="showTip(event, '315', 315)">
+            ( &gt;&gt;= )(m, k)
+          </code>
+          <div class="tip" id="315">
+            <strong>Signature:</strong> (m:Gen&lt;&#39;?127608&gt; * k:(&#39;?127608 -&gt; Gen&lt;&#39;?127609&gt;)) -&gt; Gen&lt;&#39;?127609&gt;<br />
+                          <strong>Type parameters:</strong> '?127609          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L477-477" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Bind operator; runs the first generator, then feeds the result
+to the second generator function.</p>
 
 
 
