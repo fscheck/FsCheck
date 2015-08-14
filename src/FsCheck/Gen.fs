@@ -420,7 +420,7 @@ module Gen =
     ///Always generate the same instance v. See also fresh.
     //[category: Creating generators]   
     [<CompiledName("Constant")>]
-    let constant v = gen { return v }
+    let constant v = gen.Return v
 
     ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
     ///See also constant.
