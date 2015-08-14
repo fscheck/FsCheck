@@ -55,11 +55,15 @@ module GenBuilder =
     let private delay (f : unit -> Gen<_>) : Gen<_> = 
         Gen (fun n r -> match f() with (Gen g) -> g n r)
 
-    let rec private doWhile p m =
-      if p() then
-        bind m (fun _ -> doWhile p m)
-      else
-        result ()
+    let rec private doWhile p (Gen m) =
+        let rec go pred size rand =
+            if pred() then
+                let r1,r2 = split rand
+                m size r1 |> ignore
+                go pred size r2 
+            else
+                ()
+        Gen (fun n r -> go p n r)
 
     let private tryFinally (Gen m) handler = 
         Gen (fun n r -> try m n r finally handler ())
