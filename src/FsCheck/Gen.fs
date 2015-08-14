@@ -45,7 +45,7 @@ type Arbitrary<'a>() =
 [<AutoOpen>]
 module GenBuilder =
 
-    let private ``return`` x = Gen (fun _ _ -> x)
+    let private result x = Gen (fun _ _ -> x)
 
     let private bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
         Gen (fun n r0 -> let r1,r2 = split r0
@@ -59,7 +59,7 @@ module GenBuilder =
       if p() then
         bind m (fun _ -> doWhile p m)
       else
-        ``return`` ()
+        result ()
 
     let private tryFinally (Gen m) handler = 
         Gen (fun n r -> try m n r finally handler ())
@@ -70,7 +70,7 @@ module GenBuilder =
 
     ///The workflow type for generators.
     type GenBuilder internal() =
-        member __.Return(a) : Gen<_> = ``return`` a
+        member __.Return(a) : Gen<_> = result a
         member __.Bind(m, k) : Gen<_> = bind m k                            
         member __.Delay(f) : Gen<_> = delay f
         member __.Combine(m1, m2) = bind m1 (fun () -> m2)
@@ -83,7 +83,7 @@ module GenBuilder =
           using (s.GetEnumerator()) (fun ie ->
             doWhile (fun () -> ie.MoveNext()) (delay (fun () -> f ie.Current))
           )
-        member __.Zero() = ``return`` ()
+        member __.Zero() = result ()
 
     ///The workflow function for generators, e.g. gen { ... }
     let gen = GenBuilder()
