@@ -243,13 +243,4 @@ module Gen =
 
     [<Fact>]
     let ``should satisfy Applicative Functor laws``() =
-        Check.QuickThrowOnFailureAll<ApplicativeLaws<_,_,_>>()
-
-    [<Fact>]
-    let ``genbuilder.Delay should not lift``() =
-        let g = gen { return! Gen.constant (new obj())}
-        let samples = g |> Gen.sample 10 10
-        samples 
-        |> Seq.pairwise 
-        |> Seq.forall obj.ReferenceEquals
-        |> Assert.True
+        Check.QuickThrowOnFailureAll<ApplicativeLaws<_,_,_>>() 

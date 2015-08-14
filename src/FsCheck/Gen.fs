@@ -52,7 +52,8 @@ module GenBuilder =
                          let (Gen m') = k (m n r1) 
                          m' n r2)
 
-    let private delay (f : unit -> Gen<_>) : Gen<_> = f()  
+    let private delay (f : unit -> Gen<_>) : Gen<_> = 
+        Gen (fun n r -> match f() with (Gen g) -> g n r)
 
     let rec private doWhile p m =
       if p() then
