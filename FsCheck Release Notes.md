@@ -1,3 +1,8 @@
+### 2.0.6 - 14 August 2015
+  * Undo removal of GenBuilder.delay - this is needed otherwise while and for don't work correctly.
+  * Optimize GenBuilder.While.
+  * Add Gen.(>>=), monadic bind operator.
+
 ### 2.0.5 - 31 July 2015
   * Make Gen operators <*> and <!> actual operators on the Gen type, instead of functions to avoid name clashes. (by Paul Young)
   * Add FsCheck.Experimental.StateMachine for more advanced state machine-based checking, i.e. for mutable systems.
