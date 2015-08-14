@@ -471,3 +471,7 @@ type Gen with
 
     /// Like <*>, but puts f in a Gen first.
     static member (<!>) (f, a) = Gen.constant f <*> a
+
+    /// Bind operator; runs the first generator, then feeds the result
+    /// to the second generator function.
+    static member (>>=) (m,k) = gen.Bind(m,k)

@@ -245,6 +245,29 @@ module Gen =
     let ``should satisfy Applicative Functor laws``() =
         Check.QuickThrowOnFailureAll<ApplicativeLaws<_,_,_>>()
 
+    type MonadLaws<'a,'b,'c when 'a : equality and 'b : equality and 'c:equality>() =
+        static member LeftIdentity (a:'a) (f:'a -> 'b) =
+            let f = f >> Gen.constant
+            let left = Gen.constant a >>= f 
+            let right = f a
+            sample 10 left = sample 10 right 
+        static member RightIdentity (a:'a) =
+            let m = Gen.constant a
+            let left = m >>= Gen.constant
+            let right = m
+            sample 10 left = sample 10 right
+        static member Associativity (a:'a) (f:'a->'b) (g:'b->'c) =
+            let m = Gen.constant a
+            let f = f >> Gen.constant
+            let g = g >> Gen.constant
+            let left = (m >>= f) >>= g
+            let right =  m >>= (fun x -> f x >>= g)
+            sample 10 left = sample 10 right
+
+    [<Fact>]
+    let ``should satisfy Monad laws``() =
+        Check.QuickThrowOnFailureAll<MonadLaws<_,_,_>>()
+
     [<Fact>]
     let ``GenBuilder.While``() =
         // same as Gen.constant n, just to test while
@@ -254,8 +277,10 @@ module Gen =
                     s := !s + 1
                   return !s
                 }
-        let samples = convolutedGenNumber 100 |> Gen.sample 1 10
-        samples |> Seq.forall ((=) 100) |> Assert.True
+        convolutedGenNumber 100 
+        |> Gen.sample 1 10
+        |> Seq.forall ((=) 100) 
+        |> Assert.True
 
     [<Fact>]
     let ``GenBuilder.For``() =
@@ -266,5 +291,7 @@ module Gen =
                     s := !s + 1
                   return !s
                 }
-        let samples = convolutedGenNumber 100 |> Gen.sample 1 10
-        samples |> Seq.forall ((=) 100) |> Assert.True
+        convolutedGenNumber 100 
+        |> Gen.sample 1 10
+        |> Seq.forall ((=) 100) 
+        |> Assert.True
