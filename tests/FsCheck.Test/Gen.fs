@@ -243,4 +243,16 @@ module Gen =
 
     [<Fact>]
     let ``should satisfy Applicative Functor laws``() =
-        Check.QuickThrowOnFailureAll<ApplicativeLaws<_,_,_>>() 
+        Check.QuickThrowOnFailureAll<ApplicativeLaws<_,_,_>>()
+
+    [<Fact>]
+    let ``GenBuilder.while works``() =
+        // same as Gen.constant n, just to test while
+        let convolutedGenNumber n =
+            gen { let s = ref 0
+                  while !s < n do
+                    s := !s + 1
+                  return !s
+                }
+        let samples = convolutedGenNumber 100 |> Gen.sample 10 10
+        samples |> Seq.forall ((=) 100) |> Assert.True
