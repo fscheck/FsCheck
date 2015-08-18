@@ -8,6 +8,7 @@ open System.Runtime.CompilerServices
 [<assembly: AssemblyVersionAttribute("2.0.6")>]
 [<assembly: AssemblyFileVersionAttribute("2.0.6")>]
 [<assembly: InternalsVisibleToAttribute("FsCheck.Test")>]
+[<assembly: Extension>]
 do ()
 
 module internal AssemblyVersionInformation =
