@@ -1,3 +1,6 @@
+### 2.0.7 - 20 August 2015
+  * Add assembly level ExtensionAttribute so VB.NET sees extension methods too. (by Paulmichael Blasucci)
+
 ### 2.0.6 - 14 August 2015
   * Undo removal of GenBuilder.delay - this is needed otherwise while and for don't work correctly.
   * Optimize GenBuilder.While.
