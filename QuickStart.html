@@ -75,9 +75,9 @@ Prop.ForAll(revRevIsOrig).QuickCheck();</code></pre></td></tr></table>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (1 shrink) (StdGen (1894646739,296044964)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (8 shrinks) (StdGen (1874565385,296047450)):
 Original:
-[-1; 1; 0]
+[1; 2; -2; -4; -1]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 
@@ -117,10 +117,9 @@ FsCheck to generate lists of floats:</p>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 16 tests (10 shrinks) (StdGen (1895007180,296044964)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 6 tests (4 shrinks) (StdGen (1875105596,296047450)):
 Original:
-[4.940656458e-324; nan; 5.25; 11.88888889; -7.5; 3.0; -11.0; -9.0;
- -1.797693135e+308; nan; -9.0]
+[-6.0; 2.0; 1.75; nan; -4.6]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 

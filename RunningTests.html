@@ -87,11 +87,11 @@ you may already have.</p>
 
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 4 tests (1 shrink) (StdGen (1913416901,296044964)):
+ListProperties.reverse is original-Falsifiable, after 3 tests (4 shrinks) (StdGen (1892903265,296047450)):
 Original:
-[0; -1]
+[3; -1]
 Shrunk:
-[0; 1]</code></pre></td></tr></table>
+[1; 0]</code></pre></td></tr></table>
 
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module, 
 you can also use Check.QuickAll to test all the top level functions in a certain module. 
