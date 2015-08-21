@@ -2,7 +2,7 @@
 **  FsCheck                                                                 **
 **  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
 **  All rights reserved.                                                    **
-**  https://github.com/kurtschelfthout/FsCheck                              **
+**  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
@@ -233,7 +233,12 @@ module Runner =
     let onShrinkToString args =
         sprintf "shrink:%s%s%s" newline (argumentsToString args) newline
 
-    ///A runner that prints results to the console.
+#if PCL
+    let internal printf fmt = 
+        Printf.kprintf Diagnostics.Debug.WriteLine fmt
+#endif
+    
+    ///A runner that prints results to the standard output.
     let consoleRunner =
         { new IRunner with
             member __.OnStartFixture t =

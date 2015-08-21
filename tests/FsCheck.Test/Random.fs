@@ -15,8 +15,8 @@ module Random =
         (abs v) % k = abs(v % k)
 
     [<Property>]
-    let ``divMod should satisfy definition`` (x:int) (y:int) = 
-        y <> 0 ==> lazy (let (d,m) = divMod x y in d*y + m = x)
+    let ``divMod should satisfy definition`` (x:int64) (y:int64) = 
+        y <> 0L ==> lazy (let (d,m) = divMod64 x y in d*y + m = x)
     
     [<Property>]    
     let ``mkStdGen should return StdGen for every seed`` (IntWithMinMax seed) =

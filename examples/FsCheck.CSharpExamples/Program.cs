@@ -49,11 +49,21 @@ namespace FsCheck.CSharpExamples
     class Program
     {
 
+        class Eq : IEqualityComparer<double> {
+            public bool Equals(double x, double y) {
+                return x == y;
+            }
+
+            public int GetHashCode(double obj) {
+                throw new NotImplementedException();
+            }
+        }
+
         static void Main(string[] args)
         {
             //A simple example
-
-            Prop.ForAll<int[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
+            
+            Prop.ForAll<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs, new Eq()))
                 .QuickCheck("RevRev");
 
             Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs))

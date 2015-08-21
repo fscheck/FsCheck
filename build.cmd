@@ -10,7 +10,7 @@ if errorlevel 1 (
 exit /b %errorlevel%
 )
 
-SET TARGET="All"
+SET TARGET="RunTests"
 
 IF NOT [%1]==[] (set TARGET="%1")
 

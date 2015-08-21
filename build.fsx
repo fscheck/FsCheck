@@ -15,6 +15,7 @@ open Fake.Testing
 open SourceLink
 
 open System
+open Fake.AppVeyor
 
 // Information about each project is used
 //  - for version and project name in generated AssemblyInfo file
@@ -39,9 +40,6 @@ type ProjectInfo =
     ///The projectfile (csproj or fsproj)
     ProjectFile : list<string>
     Dependencies : list<string * Lazy<string>>
-    Files: list<string>
-    //For extra files like tools and content string*string is for path target, if an excludes becomes necesary a third tuple element string option can be added
-    FilesExtra: list<string * string >
   }
 
 //File that contains the release notes.
@@ -63,14 +61,12 @@ let gitName = "FsCheck"
 
 // Read additional information from the release notes document
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-let release = parseReleaseNotes (IO.File.ReadAllLines releaseNotes)
+let release = LoadReleaseNotes releaseNotes
 
 let packages =
   [
     {
     Name = "FsCheck"
-    Files = ["FsCheck"]     
-    FilesExtra = []
     Summary = "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
     Description = """
 FsCheck is a tool for testing .NET programs automatically. The programmer provides 
@@ -87,13 +83,11 @@ When a property fails, FsCheck automatically displays a minimal counter example.
     Authors = [ "Kurt Schelfthout and contributors" ]
     Tags = "test testing random fscheck quickcheck"
     ProjectFile = ["src/FsCheck/FsCheck.fsproj" ]
-    Dependencies = ["FSharp.Core", lazy "3.1.2.1" ]
+    Dependencies = ["FSharp.Core", lazy "3.1.2.5" ]
     
     }
     { 
     Name = "FsCheck.NUnit"
-    Files = ["FsCheck.NUnit"; "FsCheck.NUnit.Addin"]
-    FilesExtra = [("FsCheck.NUnit.nuspec.tools\install.ps1", "tools\install.ps1");(@"FsCheck.NUnit.nuspec.tools\FsCheckAddin.fs","content\FsCheckAddin.fs")]
     Summary = "Integrates FsCheck with NUnit"
     Description = """FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute. 
     All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
@@ -108,8 +102,6 @@ When a property fails, FsCheck automatically displays a minimal counter example.
     }
     { 
     Name = "FsCheck.Xunit"
-    Files = ["FsCheck.Xunit"]
-    FilesExtra = []
     Summary = "Integrates FsCheck with xUnit.NET"
     Description = """
 FsCheck.Xunit integrates FsCheck with xUnit.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.NET's FactAttribute.
@@ -125,18 +117,31 @@ All the options normally available in vanilla FsCheck via configuration can be c
    }
   ]
 
+let isAppVeyorBuild = buildServer = BuildServer.AppVeyor
+let buildDate = DateTime.UtcNow
+let buildVersion = 
+    let isVersionTag tag = Version.TryParse tag |> fst
+    let hasRepoVersionTag = isAppVeyorBuild && AppVeyorEnvironment.RepoTag && isVersionTag AppVeyorEnvironment.RepoTagName
+    let assemblyVersion = if hasRepoVersionTag then AppVeyorEnvironment.RepoTagName else release.NugetVersion
+    if isAppVeyorBuild then sprintf "%s-b%s" assemblyVersion AppVeyorEnvironment.BuildNumber
+    else assemblyVersion
+
+Target "BuildVersion" (fun _ ->
+    Shell.Exec("appveyor", sprintf "UpdateBuild -Version \"%s\"" buildVersion) |> ignore
+)
+
 // Generate assembly info files with the right version & up-to-date information
 Target "AssemblyInfo" (fun _ ->
-  packages |> Seq.iter (fun package ->
-  let fileName = "src/" + package.Name + "/AssemblyInfo.fs"
-  CreateFSharpAssemblyInfo fileName
-      ([Attribute.Title package.Name
-        Attribute.Product package.Name
-        Attribute.Description package.Summary
-        Attribute.Version release.AssemblyVersion
-        Attribute.FileVersion release.AssemblyVersion
-       ] @ (if package.Name = "FsCheck" then [Attribute.InternalsVisibleTo("FsCheck.Test")] else []))
-  )
+    packages |> Seq.iter (fun package ->
+    let fileName = "src/" + package.Name + "/AssemblyInfo.fs"
+    CreateFSharpAssemblyInfo fileName
+        ([Attribute.Title package.Name
+          Attribute.Product package.Name
+          Attribute.Description package.Summary
+          Attribute.Version release.AssemblyVersion
+          Attribute.FileVersion release.AssemblyVersion
+        ] @ (if package.Name = "FsCheck" then [Attribute.InternalsVisibleTo("FsCheck.Test")] else []))
+    )
 )
 
 // --------------------------------------------------------------------------------------
@@ -176,22 +181,13 @@ Target "RunTests" (fun _ ->
 // Source linking
 
 Target "SourceLink" (fun _ ->
-    use repo = new GitRepo(__SOURCE_DIRECTORY__)
-    let LogAndVerify (proj: Microsoft.Build.Evaluation.Project) =
-        logfn "source linking %s" proj.OutputFilePdb
-        let files = proj.Compiles -- "**/AssemblyInfo.fs"
-        repo.VerifyChecksums files
-        proj.VerifyPdbChecksums files
-        proj.CreateSrcSrv (sprintf "%s/%s/{0}/%%var2%%" gitRaw gitName) repo.Commit (repo.Paths files)
-        Pdbstr.exec proj.OutputFilePdb proj.OutputFilePdbSrcSrv
-    packages 
-    |> Seq.iter (fun f ->
-        let proj = List.map VsProj.LoadRelease f.ProjectFile
-        List.iter (fun p-> LogAndVerify p) proj
-        
+    let baseUrl = sprintf "%s/%s/{0}/%%var2%%" gitRaw packages.[0].Name
+    !! "src/**/*.??proj"
+    |> Seq.iter (fun projFile ->
+        let proj = VsProj.LoadRelease projFile 
+        SourceLink.Index proj.CompilesNotLinked proj.OutputFilePdb __SOURCE_DIRECTORY__ baseUrl
     )
 )
-
 // --------------------------------------------------------------------------------------
 // Build a NuGet package
 type OptionalString = string option
@@ -200,20 +196,6 @@ open System
 open System.IO
 
 Target "NuGet" (fun _ ->        
-    let createFilesList (fileNames: string list) (extra: list<string*string> ) = 
-        
-        let createBinariesFiles fileNames =
-            let extensions = [ "dll";"pdb";"XML"]            
-            [for filename in fileNames do
-                for ext in extensions do
-                    yield (sprintf @"..\src\%s\bin\Release\%s.%s" filename filename ext, Some @"lib\net45", OptionalString.None)]
-        let addExtras (extraFiles:list<string*string>) =
-            extraFiles
-            |>  List.map (fun f -> (fst f, Some (snd f), OptionalString.None))
-                                   
-                
-        createBinariesFiles fileNames@addExtras extra 
-   
     packages |> Seq.iter (fun package ->
     NuGet (fun p -> 
         { p with   
@@ -221,15 +203,13 @@ Target "NuGet" (fun _ ->
             Project = package.Name
             Summary = package.Summary
             Description = package.Description
-            Version = release.NugetVersion
+            Version = buildVersion
             ReleaseNotes = String.Join(Environment.NewLine, release.Notes)
             Tags = package.Tags
             OutputPath = "bin"
             AccessKey = getBuildParamOrDefault "nugetkey" ""
             Publish = hasBuildParam "nugetkey"
-            //ProjectFile = package.ProjectFile //if we add this, it produces a symbols package
             Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
-            Files = createFilesList package.Files package.FilesExtra           
         })
         ("nuget/" + package.Name + ".nuspec")
    )
@@ -288,7 +268,7 @@ Target "ReleaseDocs" (fun _ ->
     fullclean tempDocsDir
     CopyRecursive "docs/output" tempDocsDir true |> tracefn "%A"
     StageAll tempDocsDir
-    Commit tempDocsDir (sprintf "Update generated documentation for version %s" release.NugetVersion)
+    Commit tempDocsDir (sprintf "Update generated documentation for version %s" buildVersion)
     Branches.push tempDocsDir
 )
 
@@ -304,22 +284,26 @@ Target "Release" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Run all targets by default. Invoke 'build <Target>' to override
 
-Target "All" DoNothing
 Target "CI" DoNothing
 
 "Clean"
+  =?> ("BuildVersion", isAppVeyorBuild)
   ==> "RestorePackages"
   ==> "AssemblyInfo"
   ==> "Build"
   ==> "RunTests"
-  ==> "All"
+
+"RunTests"  
   ==> "CleanDocs"
-  ==> "GenerateDocsJa"
+  ==> "GenerateDocsJa"  
   ==> "GenerateDocs"
   ==> "CI"
-  ==> "ReleaseDocs"
+  =?> ("ReleaseDocs", isLocalBuild)
+  ==> "Release"
+
+"RunTests"
   =?> ("SourceLink", isLocalBuild && not isLinux)
   ==> "NuGet"
   ==> "Release"
 
-RunTargetOrDefault "All"
+RunTargetOrDefault "RunTests"

@@ -4,6 +4,25 @@ open Microsoft.FSharp.Reflection
 
 #r "bin\Debug\FsCheck.dll"
 open FsCheck
+open FsCheck.Experimental
+
+type Counter(initial:int) =
+    let mutable c = initial
+    member __.Inc() = c <- c + 1
+    member __.Dec() = c <- c- 1
+    member __.Add(i:int) = c <- c + i
+    member __.Get = c
+    interface IDisposable with
+        member x.Dispose(): unit = 
+            ()
+        
+
+let spec = ObjectMachine<Counter>()
+let generator = StateMachine.generate spec
+
+let sample = generator |> Gen.sample 10 1 |> Seq.head
+
+StateMachine.toProperty spec |> Check.Verbose
 
 //how to generate float between 0 and 5
 //let f = 

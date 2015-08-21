@@ -191,6 +191,12 @@ module Arbitrary =
             (List.map (fun (a,b) -> f a b) vs)
 
     [<Property>]
+    let ``Fun pattern works``(Fun (f:bool->bool)) =
+        let a = f true
+        let b = f false
+        Assert.True true
+
+    [<Property>]
     let SystemFunc (f: Func<int>) (vs: list<unit>) =
         testFunction f.Invoke vs
 
