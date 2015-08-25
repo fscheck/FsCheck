@@ -118,32 +118,36 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
         let testExec() =
             let config = this.Init()
-            let sw = System.Diagnostics.Stopwatch.StartNew()
+            let timer = ExecutionTimer()
             let result =
                 try
                     let xunitRunner = if config.Runner :? XunitRunner then (config.Runner :?> XunitRunner) else new XunitRunner()
                     let runMethod = this.TestMethod.Method.ToRuntimeMethod()
                     let target =
+                        constructorArguments
+                            |> Array.tryFind (fun x -> x :? TestOutputHelper)
+                            |> Option.iter (fun x -> (x :?> TestOutputHelper).Initialize(messageBus, test))
+                        let testClass = this.TestMethod.TestClass.Class.ToRuntimeType()
                         if this.TestMethod.TestClass <> null && not this.TestMethod.Method.IsStatic then
-                            Some (Activator.CreateInstance(this.TestMethod.TestClass.Class.ToRuntimeType()))
+                            Some (test.CreateTestClass(testClass, constructorArguments, messageBus, timer, cancellationTokenSource))
                         else None
 
                     Check.Method(config, runMethod, ?target=target)
 
                     match xunitRunner.Result with
                           | TestResult.True _ ->
-                            (0, new TestPassed(test, (decimal)sw.Elapsed.TotalSeconds, (Runner.onFinishedToString "" xunitRunner.Result)) :> TestResultMessage)
+                            (0, new TestPassed(test, timer.Total, (Runner.onFinishedToString "" xunitRunner.Result)) :> TestResultMessage)
                           | TestResult.Exhausted testdata ->
                             summary.Failed <- summary.Failed + 1
-                            (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                            (1, upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
                           | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
                             let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
-                            (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, message, new PropertyFailedException(message, e)))
+                            (1, upcast new TestFailed(test, timer.Total, message, new PropertyFailedException(message, e)))
                           | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
                             summary.Failed <- summary.Failed + 1
-                            (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                            (1, upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
                 with
-                    | ex -> (1, upcast new TestFailed(test, (decimal)sw.Elapsed.TotalSeconds, "Exception during test:", ex))
+                    | ex -> (1, upcast new TestFailed(test, timer.Total, "Exception during test:", ex))
 
             let failed = fst result
             let testMessage = snd result
