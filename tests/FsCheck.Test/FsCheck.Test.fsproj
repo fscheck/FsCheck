@@ -63,75 +63,12 @@
 	</Target>
 	-->
   <Import Project="..\..\.paket\paket.targets" />
-  <ItemGroup>
-    <Compile Include="Helpers.fs" />
-    <Compile Include="Random.fs" />
-    <Compile Include="TypeClass.fs" />
-    <Compile Include="Gen.fs" />
-    <Compile Include="Arbitrary.fs" />
-    <Compile Include="Property.fs" />
-    <Compile Include="Commands.fs" />
-    <Compile Include="Runner.fs" />
-    <Compile Include="Fluent.fs" />
-    <None Include="Script.fsx" />
-    <None Include="paket.references" />
-    <Content Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <ProjectReference Include="..\..\src\FsCheck.Xunit\FsCheck.Xunit.fsproj">
-      <Name>FsCheck.Xunit</Name>
-      <Project>{26A87ED0-9836-45F6-A88E-603DA8FCD856}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj">
-      <Name>FsCheck</Name>
-      <Project>{32AA3276-BBA1-41CE-B78A-706B8454EC8D}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Target Name="BeforeBuild">
     <ItemGroup>
       <xunitrunner Include="$(ProjectDir)..\..\packages\xunit.runner.visualstudio\**\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(xunitrunner)" DestinationFolder="$(ProjectDir)..\..\packages\xunit.runner.visualstudio.2.0.0\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
-  <ItemGroup>
-    <Compile Include="Helpers.fs" />
-    <Compile Include="Random.fs" />
-    <Compile Include="TypeClass.fs" />
-    <Compile Include="Gen.fs" />
-    <Compile Include="Arbitrary.fs" />
-    <Compile Include="Property.fs" />
-    <Compile Include="Commands.fs" />
-    <Compile Include="StateMachine.fs" />
-    <Compile Include="Runner.fs" />
-    <Compile Include="Fluent.fs" />
-    <None Include="paket.references" />
-    <Content Include="App.config" />
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <ProjectReference Include="..\..\src\FsCheck.Xunit\FsCheck.Xunit.fsproj">
-      <Name>FsCheck.Xunit</Name>
-      <Project>{26A87ED0-9836-45F6-A88E-603DA8FCD856}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj">
-      <Name>FsCheck</Name>
-      <Project>{32AA3276-BBA1-41CE-B78A-706B8454EC8D}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -301,4 +238,35 @@
   </Choose>
   <Import Project="..\..\packages\xunit.runner.visualstudio\build\$(__paket__xunit_runner_visualstudio_props).props" Condition="Exists('..\..\packages\xunit.runner.visualstudio\build\$(__paket__xunit_runner_visualstudio_props).props')" Label="Paket" />
   <Import Project="..\..\packages\xunit.runner.visualstudio\build\$(__paket__xunit_runner_visualstudio_targets).targets" Condition="Exists('..\..\packages\xunit.runner.visualstudio\build\$(__paket__xunit_runner_visualstudio_targets).targets')" Label="Paket" />
+  <ItemGroup>
+    <Compile Include="Helpers.fs" />
+    <Compile Include="Random.fs" />
+    <Compile Include="TypeClass.fs" />
+    <Compile Include="Gen.fs" />
+    <Compile Include="Arbitrary.fs" />
+    <Compile Include="Property.fs" />
+    <Compile Include="Commands.fs" />
+    <Compile Include="Runner.fs" />
+    <Compile Include="StateMachine.fs" />
+    <None Include="Script.fsx" />
+    <None Include="paket.references" />
+    <Content Include="App.config" />    
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
+    <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj">
+      <Name>FsCheck</Name>
+      <Project>{32AA3276-BBA1-41CE-B78A-706B8454EC8D}</Project>
+    </ProjectReference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <ProjectReference Include="..\..\src\FsCheck.Xunit\FsCheck.Xunit.fsproj">
+      <Name>FsCheck.Xunit</Name>
+      <Project>{26A87ED0-9836-45F6-A88E-603DA8FCD856}</Project>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
