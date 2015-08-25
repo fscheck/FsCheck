@@ -5,6 +5,7 @@
 #r @"./packages/FAKE/tools/NuGet.Core.dll"
 #r @"./packages/FAKE/tools/FakeLib.dll"
 #load "./packages/SourceLink.Fake/tools/SourceLink.fsx"
+#load "XUnit2Alt.fsx"
 
 open Fake 
 open Fake.Git
@@ -170,11 +171,13 @@ Target "Build" (fun _ ->
 // Run the unit tests using test runner
 
 Target "RunTests" (fun _ ->
+// temporary change to alt because support for the new xunit argument -noappdomain is required on mono
     !! testAssemblies
-    |> Fake.XUnit2Helper.xUnit2 (fun p -> 
-            {p with 
+    |> Fake.Testing.XUnit2Alt.xUnit2 (fun p ->
+            {p with
                 ToolPath = "packages/xunit.runner.console/tools/xunit.console.exe"
-                ShadowCopy = false }) 
+                AddArg = Some "-noappdomain"
+                ShadowCopy = false })
 )
 
 // --------------------------------------------------------------------------------------
