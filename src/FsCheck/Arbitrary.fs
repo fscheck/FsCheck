@@ -119,12 +119,32 @@ module Arb =
     open System.Linq
     open TypeClass
     open System.ComponentModel
+    open System.Threading
 
-    let internal Arbitrary = ref <| TypeClass<Arbitrary<obj>>.New()
+    [<AbstractClass;Sealed>]
+    type Default = class end
+
+    let internal defaultArbitrary = 
+        let empty = TypeClass<Arbitrary<obj>>.New()
+        empty.Discover(onlyPublic=true,instancesType=typeof<Default>)
+
+    let internal Arbitrary = new ThreadLocal<TypeClass<Arbitrary<obj>>>(fun () -> defaultArbitrary)
+
+    ///Register the generators that are static members of the given type.
+    [<CompiledName("Register")>]
+    let registerByType t = 
+        let newTypeClass = Arbitrary.Value.Discover(onlyPublic=true,instancesType=t)
+        let result = Arbitrary.Value.Compare newTypeClass
+        Arbitrary.Value <- Arbitrary.Value.Merge newTypeClass
+        result
+
+    ///Register the generators that are static members of the type argument.
+    [<CompiledName("Register")>]
+    let register<'t>() = registerByType typeof<'t>
 
     ///Get the Arbitrary instance for the given type.
     [<CompiledName("From")>]
-    let from<'Value> = (!Arbitrary).InstanceFor<'Value,Arbitrary<'Value>>()
+    let from<'Value> = Arbitrary.Value.InstanceFor<'Value,Arbitrary<'Value>>()
 
     ///Returns a Gen<'Value>
     [<CompiledName("Generate")>]
@@ -145,21 +165,9 @@ module Arb =
                         |> Seq.takeWhile ((|>|) n) }
         |> Seq.distinct
 
-    let internal getGenerator t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
+    let internal getGenerator t = Arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
 
-    let internal getShrink t = (!Arbitrary).GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
-
-    ///Register the generators that are static members of the given type.
-    [<CompiledName("Register")>]
-    let registerByType t = 
-        let newTypeClass = (!Arbitrary).Discover(onlyPublic=true,instancesType=t)
-        let result = (!Arbitrary).Compare newTypeClass
-        Arbitrary := (!Arbitrary).Merge newTypeClass
-        result
-
-    ///Register the generators that are static members of the type argument.
-    [<CompiledName("Register")>]
-    let register<'t>() = registerByType typeof<'t>
+    let internal getShrink t = Arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toGen (arb:Arbitrary<'Value>) = arb.Generator
@@ -244,7 +252,7 @@ module Arb =
 //             return Set.ofArray arr }
   
     ///A collection of default generators.
-    type Default =
+    type Default with
         static member private fraction (a:int) (b:int) (c:int) = 
             double a + double b / (abs (double c) + 1.0) 
         
@@ -931,8 +939,5 @@ module Arb =
                 override __.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
             
-        //TODO: add float32, BigInteger
 
-    //this is necessary to force initialization when the module is first accessed (e.g. Arb.generate)
-    let internal init = lazy register<Default>()
-    let private force = init.Value
+    
