@@ -1,3 +1,13 @@
+### 2.1.0 - To be released
+  * Switch to xunit2. Need at least beta4 and -noshadow argument on Mono to get things to work. A mono fix
+  is submitted. (heroic effort by Jon Hamm)
+  * Made Arbitrary overrides (e.g. using Arb.register, passing arbitrary to Config, or setting them
+  in PropertyAttribute) thread-local. This is mainly to support xunit2: it runs tests in the same class
+  in parallel by default. Not making the overrides thread local causes overrides from one test to mistakenly apply
+  to others.
+  * FsCheck.Runner.init is Obsolete, it should not longer be necessary to call this explicitly. (though
+  I am cautious here - please report any issues.)
+
 ### 2.0.7 - 20 August 2015
   * Add assembly level ExtensionAttribute so VB.NET sees extension methods too. (by Paulmichael Blasucci)
 
