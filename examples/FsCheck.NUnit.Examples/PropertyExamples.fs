@@ -24,6 +24,11 @@ module PropertyExamples
     let revIdVerbose_shouldFail (xs:int[]) =
         Array.rev xs = xs
 
+    // Note: should fail, this test property does not make sense. it is used to verify the exhausted case fails this nunit test
+    [<Property( MaxTest = 1 )>]
+    let exhausted_shouldFail (x:float) =
+        false ==> (x > 0.)
+
     [<Property>]
     let product (x:int, y:int) =
         (x > 0 && y > 0) ==> (x*y > 0)

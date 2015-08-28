@@ -22,6 +22,26 @@ type FsCheckAddin() =
     do
         failwith "This class is no longer needed for running NUnit v3."
 
+//can not be an anonymous type because of let mutable.
+type private NunitRunner() =
+    let mutable result = None
+    member x.Result = result.Value
+    interface IRunner with
+        override x.OnStartFixture t = ()
+        override x.OnArguments (ntest,args, every) =
+            let argsForOutput = every ntest args
+            // Only write the args if there's something to write.
+            // Although it may seem harmless to write an empty string, writing anything at this stage seems to
+            // trigger NUnit's formatting system, so that it adds a 'header' for the test in the output. That
+            // doesn't look pretty in the cases where it turns out that there's truly nothing to write (e.g.
+            // when QuietOnSuccess is true, and the Property passed.
+            if not (String.IsNullOrWhiteSpace argsForOutput) then
+                printfn "%s" argsForOutput
+        override x.OnShrink(args, everyShrink) =
+            printfn "%s" (everyShrink args)
+        override x.OnFinished(name,testResult) =
+            result <- Some testResult
+
 ///Run this method as an FsCheck test.
 [<AttributeUsage(AttributeTargets.Method, AllowMultiple = false)>]
 type PropertyAttribute() =
@@ -94,14 +114,15 @@ and FsCheckTestMethod(mi : MethodInfo) =
                 |> Array.iter x.invokeMethodIgnore
         with
             | ex ->
-                let tmpEx =
-                    match ex with
-                    | :? NUnitException -> ex.InnerException
-                    | _ -> ex
-                testResult.RecordTearDownException(tmpEx)
+                testResult.RecordTearDownException(x.filterException ex)
 
     member private x.invokeMethodIgnore mi =
         x.invokeMethod mi |> ignore
+
+    member private x.filterException ex =
+        match ex with
+        | :? NUnitException as nue when nue.InnerException <> null -> nue.InnerException
+        | _ -> ex
 
     member private x.invokeMethod (mi:MethodInfo) =
         Reflect.InvokeMethod(mi, if mi.IsStatic then null else x.Fixture)
@@ -113,34 +134,19 @@ and FsCheckTestMethod(mi : MethodInfo) =
             | ex -> x.handleException ex testResult FailureSite.Test
 
     member private x.getFsCheckPropertyAttribute() =
-        let attr = x.Method.GetCustomAttributes(typeof<PropertyAttribute>, false) |> Seq.head
-        attr :?> PropertyAttribute
+        x.Method.GetCustomAttributes(typeof<PropertyAttribute>, false)
+        |> Seq.head
+        |> id :?> PropertyAttribute
+
+    member private x.handleException ex testResult failureSite =
+        match ex with
+        | :? ThreadAbortException -> Thread.ResetAbort()
+        | _ -> ()
+        testResult.RecordException(x.filterException <| ex, failureSite)
 
     member private x.runTestMethod context testResult =
         let attr = x.getFsCheckPropertyAttribute()
-        let testRunner = { new IRunner with
-                member x.OnStartFixture t = ()
-                member x.OnArguments (ntest, args, every) =
-                    let argsForOutput = every ntest args
-                    // Only write the args if there's something to write.
-                    // Although it may seem harmless to write an empty string, writing anything at this stage seems to
-                    // trigger NUnit's formatting system, so that it adds a 'header' for the test in the output. That
-                    // doesn't look pretty in the cases where it turns out that there's truly nothing to write (e.g.
-                    // when QuietOnSuccess is true, and the Property passed.
-                    if not (String.IsNullOrWhiteSpace argsForOutput) then
-                        Console.Write(argsForOutput)
-                member x.OnShrink(args, everyShrink) = Console.Write(everyShrink args)
-                member x.OnFinished(name, fsCheckResult) =
-                    let message = Runner.onFinishedToString name fsCheckResult
-                    match fsCheckResult with
-                    | TestResult.True _ ->
-                        if not attr.QuietOnSuccess then
-                            Console.WriteLine(message)
-                    | _ ->
-                        Console.WriteLine(message)
-                        Assert.Fail(message) //TODO: find better way to tell NUnit about error. Now AssertionException is wrapped into TargetInvocationException
-
-            }
+        let testRunner = NunitRunner()
         let config = { Config.Default with
                         MaxTest = attr.MaxTest
                         MaxFail = attr.MaxFail
@@ -151,15 +157,21 @@ and FsCheckTestMethod(mi : MethodInfo) =
                         Arbitrary = attr.Arbitrary |> Array.toList
                         Runner = testRunner }
 
-        printfn "%s method fixture is null? %b" x.MethodName (x.Fixture = null)
         let target = if x.Fixture <> null then Some x.Fixture
                      elif x.Method.IsStatic then None
                      else Some context.TestObject
         Check.Method(config, x.Method, ?target = target)
-        testResult.SetResult(ResultState(TestStatus.Passed))
-
-    member private x.handleException ex testResult failureSite =
-        match ex with
-        | :? ThreadAbortException -> Thread.ResetAbort()
-        | _ -> ()
-        testResult.RecordException(ex, failureSite)
+        match testRunner.Result with
+        | TestResult.True _ ->
+            if not attr.QuietOnSuccess then
+                printfn "%s" (Runner.onFinishedToString "" testRunner.Result)
+            testResult.SetResult(ResultState(TestStatus.Passed))
+        | TestResult.Exhausted testdata ->
+            let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
+            testResult.SetResult(new ResultState(TestStatus.Failed, msg))
+        | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
+            let msg = sprintf "%s" (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
+            testResult.SetResult(new ResultState(TestStatus.Failed, msg))
+        | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed) ->
+            let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
+            testResult.SetResult(new ResultState(TestStatus.Failed, msg))
