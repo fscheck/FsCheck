@@ -2,7 +2,7 @@
 **  FsCheck                                                                 **
 **  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
 **  All rights reserved.                                                    **
-**  https://github.com/kurtschelfthout/FsCheck                              **
+**  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
@@ -28,18 +28,11 @@ module Random =
     // quotRem              | divRem
 
     //since the implementation uses divMod and mod, we need to reimplement these.
-    //fortunately that's fairly easy given Math.DivRem
-    let divMod (n:int) d = 
-        let (q,r) = Math.DivRem(n,d)
-        if (Math.Sign(r) = -Math.Sign(d)) then (q-1,r+d) else (q,r)
-
+    //fortunately that's fairly easy
     let divMod64 (n:int64) d = 
-        let (q,r) = Math.DivRem(n,d)
+        let q = n / d
+        let r = n % d
         if (Math.Sign(r) = -Math.Sign(d)) then (q-1L,r+d) else (q,r)
-
-    let hMod n d = 
-        let _,r = divMod n d
-        r
 
     let hMod64 n d = 
         let _,r = divMod64 n d

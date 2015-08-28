@@ -1,55 +1,52 @@
 (*** hide ***)
-#I @"../../src/FsCheck/bin/Release"
-#r @"FsCheck"
+#r @"../../src/FsCheck/bin/Release/FsCheck.dll"
 open FsCheck
 open System
+open FsCheck
 
 (**
 # Model-based Testing
 
 FsCheck also allows you to test objects, which usually encapsulate internal 
-state through a set of methods. FsCheck, through a very small extension, 
+state through a set of methods. FsCheck, through small extension, 
 allows you to do model-based specification of a class under test. Consider the following class, 
 with an artificial bug in it:*)
 
 type Counter() =
   let mutable n = 0
-  member x.Inc() = n <- n + 1
-  member x.Dec() = if n > 2 then n <- n - 2 else n <- n - 1
-  member x.Get = n
-  member x.Reset() = n <- 0
-  override x.ToString() = n.ToString()
+  member __.Inc() = n <- n + 1
+  member __.Dec() = if n > 2 then n <- n - 2 else n <- n - 1
+  member __.Get = n
+  member __.Reset() = n <- 0
+  override __.ToString() = sprintf "Counter=%i" n
 
 (**
-As a model to test this class we'll use an int value which is an abstraction of the object's internal state. 
-With this idea in mind, you can write a specification as follows:*)
+We'll elide the class definition in C#, it's very similar.
 
-open FsCheck.Commands
+As a model to test this class we can use an int value which is an abstraction of the object's internal state. The
+idea is that each operation on the class (in this case, Inc and Dec) affects both the model and the actual object, and 
+after each such operation, the model and the actual instance should still be equivalent.
+
+With this idea in mind, you can write a specification of the Counter class using an int model as follows (full example
+in C# below):*)
 
 let spec =
-  let inc = 
-      { new ICommand<Counter,int>() with
-          member x.RunActual c = c.Inc(); c
-          member x.RunModel m = m + 1
-          member x.Post (c,m) = m = c.Get |> Prop.ofTestable
-          override x.ToString() = "inc"}
-  let dec = 
-      { new ICommand<Counter,int>() with
-          member x.RunActual c = c.Dec(); c
-          member x.RunModel m = m - 1
-          member x.Post (c,m) = m = c.Get |> Prop.ofTestable
-          override x.ToString() = "dec"}
-  { new ISpecification<Counter,int> with
-      member x.Initial() = (new Counter(),0)
-      member x.GenCommand _ = Gen.elements [inc;dec] }
+  let inc = Command.fromFun "inc" (fun x -> x + 1) 
+                            (fun (counter:Counter, count) -> counter.Inc(); counter.Get = count |@ sprintf "model: %i <> %A" count counter)
+  let dec = Command.fromFun "dec" (fun x -> x - 1) 
+                            (fun (counter:Counter, count) -> counter.Dec(); counter.Get = count |@ sprintf "model: %i <> %A" count counter)
+  
+  { new CommandGenerator<Counter,int>() with
+      member __.Create = Gen.constant <| Command.create (fun () -> Counter()) (fun () -> 0) |> Arb.fromGen
+      member __.Next model = Gen.elements [inc;dec] |> Arb.fromGen}
 
 (**
-A specification is an object that implementents `ISpecification<'typeUnderTest,'modelType>`. It should return 
-an initial object and an initial model of that object; and it should return a generator of ICommand objects.
+A specification is put together for FsCheck as an object that implementents `ICommandGenerator<'typeUnderTest,'modelType>`. It should return 
+an initial object and an initial model of that object; and it should return a generator of `Command` objects.
 
-Each ICommand object typically represents one method to call on the object under test, and describes what 
-happens to the model and the object when the command is executed. Also, it asserts preconditions that 
-need to hold before executing the command: FsCheck will not execute that command if the precondition doesn 
+Each `Command` typically represents one method to call on the object under test, and describes what 
+happens to the model and the object when the command is executed. Also, it can assert preconditions that 
+need to hold before executing the command: FsCheck will not execute that command if the precondition does 
 not hold. It asserts postconditions that should hold after a command is executed: FsCheck 
 fails the test if a postcondition does not hold.
 
@@ -58,9 +55,19 @@ Preferably also override ToString in each command so that counterexamples can be
 A specification can be checked as follows:*)
 
 (***define-output:spec***)
-Check.Quick (asProperty spec)
+Check.Quick (Command.toProperty spec)
 
 (***include-output:spec***)
 
 (**
-Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.*)
+Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.
+
+Finally, in C#, all this looks as follows:
+
+    [lang=csharp,file=../csharp/StatefulTesting.cs,key=counterspec]
+
+And to run:
+
+    [lang=csharp,file=../csharp/StatefulTesting.cs,key=check]
+
+*)

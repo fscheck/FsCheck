@@ -2,7 +2,7 @@
 **  FsCheck                                                                 **
 **  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
 **  All rights reserved.                                                    **
-**  https://github.com/kurtschelfthout/FsCheck                              **
+**  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
@@ -76,7 +76,6 @@ module Command =
                 else
                     return []
             }
-            |> Gen.map List.rev
         spec.InitialModel |> genCommandsS |> Gen.sized
      
     ///Turn a specification into a property.
@@ -86,10 +85,9 @@ module Command =
             match cmds with
             | [] -> Testable.property true
             | (c::cs) -> 
-                c.Pre model ==> 
-                    lazy (let newActual = c.RunActual actual
-                          let newModel = c.RunModel model
-                          c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs)
+                    let newActual = c.RunActual actual
+                    let newModel = c.RunModel model
+                    c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs
                 
         forAll (Arb.fromGenShrink(genCommands spec,shrink))  //note: this uses the list shrinker which is not correct - should take preconditions into accout for example
                 (fun l -> l |> applyCommands (spec.InitialActual, spec.InitialModel) 

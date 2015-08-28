@@ -2,7 +2,7 @@
 **  FsCheck                                                                 **
 **  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
 **  All rights reserved.                                                    **
-**  https://github.com/kurtschelfthout/FsCheck                              **
+**  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
@@ -22,14 +22,15 @@ module TypeClass =
     //parametrized active pattern that recognizes generic types with generic type definitions equal to the first paramater, 
     //and that returns the generic type parameters of the generic type.
     let private (|GenericTypeDef|_|) (p:Type) (t:Type) = 
-        if t.IsGenericType then
-            let generic = t.GetGenericTypeDefinition() 
-            if p.Equals(generic) then Some(t.GetGenericArguments()) else None
+        let tdef = t.GetTypeInfo()
+        if tdef.IsGenericType then
+            let generic = tdef.GetGenericTypeDefinition() 
+            if p.Equals(generic) then Some(tdef.GenericTypeArguments) else None
         else None
 
     let private (|IsArray|IsGeneric|IsOther|) (x:Type) = 
         if x.IsArray then IsArray
-        elif x.IsGenericType then IsGeneric
+        elif x.GetTypeInfo().IsGenericType then IsGeneric
         else IsOther
 
     let [<Literal>] internal CatchAllName = "--FsCheck.CatchAll--"
@@ -54,23 +55,14 @@ module TypeClass =
             match ``type`` with
             | catchAll when catchAll.IsGenericParameter -> 
                 CatchAll catchAll
-            | generic when generic.IsGenericType && (generic.GetGenericArguments() |> Array.forall (fun t -> t.IsGenericParameter)) ->
+            | generic when generic.GetTypeInfo().IsGenericType && (generic.GenericTypeArguments |> Array.forall (fun t -> t.IsGenericParameter)) ->
                     Generic <| generic.GetGenericTypeDefinition()
             | arr when arr.IsArray && arr.GetElementType().IsGenericParameter ->
                     Array <| arr
             | prim -> Primitive prim
  
-    [<CustomComparison;CustomEquality>]
-    type InstanceArgument =
-        | Argument of Type
-        static member TypeFullName (Argument t) = t.FullName
-        override x.Equals y = equalsOn InstanceArgument.TypeFullName x y
-        override x.GetHashCode() = hashOn InstanceArgument.TypeFullName x
-        interface System.IComparable with
-            member x.CompareTo y = compareOn InstanceArgument.TypeFullName x y
-
     //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank
-    let private findInstances (typeClass:Type) bindingFlags instancesType = 
+    let private findInstances (typeClass:Type) onlyPublic instancesType = 
         let addMethod acc (m:MethodInfo) =
             match m.ReturnType with
             | GenericTypeDef typeClass args when args.Length <> 1 -> 
@@ -80,7 +72,8 @@ module TypeClass =
                 (InstanceKind.FromType instance,m) :: acc
             | _ -> acc
         let addMethods (t:Type) =
-            t.GetMethods((BindingFlags.Static ||| BindingFlags.Public ||| bindingFlags))
+            t.GetRuntimeMethods()
+            |> Seq.where(fun meth -> meth.IsStatic && (meth.IsPublic || not onlyPublic) && meth.GetParameters().Length = 0)
             |> Seq.fold addMethod []
         let instances = addMethods instancesType
         if instances.Length = 0 then 
@@ -90,8 +83,8 @@ module TypeClass =
 
     [<StructuredFormatDisplay("{ToStructuredDisplay}")>]
     type TypeClassComparison =
-        { NewInstances : Set<InstanceKind*Set<InstanceArgument>>
-          OverriddenInstances : Set<InstanceKind*Set<InstanceArgument>>
+        { NewInstances : Set<InstanceKind>
+          OverriddenInstances : Set<InstanceKind>
         } with
         member x.ToStructuredDisplay = x.ToString()
         override x.ToString() =
@@ -100,11 +93,11 @@ module TypeClass =
                     ""
                 else
                     (Set.fold (sprintf "%s, %A") pre s) + "\n"
-            let instances = sprintf "%s%s" (setToString "New: " x.NewInstances) (setToString "Overridde: " x.OverriddenInstances)
+            let instances = sprintf "%s%s" (setToString "New: " x.NewInstances) (setToString "Overridden: " x.OverriddenInstances)
             instances
 
     type TypeClass<'TypeClass> 
-        internal(?instances:Map<InstanceKind * Set<InstanceArgument>,MethodInfo>) =
+        internal(?instances:Map<InstanceKind,MethodInfo>) =
 
         let instances = defaultArg instances Map.empty
         let keySet map = map |> Map.toSeq |> Seq.map fst |> Set.ofSeq
@@ -112,7 +105,7 @@ module TypeClass =
          
         member __.Class = typedefof<'TypeClass>
         member __.Instances = instances |> keySet
-        member x.HasCatchAll = x.Instances |> Set.contains (CatchAll typeof<int> (* doesn't matter *), Set.empty)
+        member x.HasCatchAll = x.Instances |> Set.contains (CatchAll typeof<int> (* doesn't matter *))
 
         member private __.InstancesMap = instances
 
@@ -121,11 +114,7 @@ module TypeClass =
         ///Use Merge in addition to achieve that, or use DiscoverAndMerge to do both.
         member x.Discover(onlyPublic,instancesType) =
             let newInstances = 
-                findInstances x.Class (if onlyPublic then BindingFlags.Default else BindingFlags.NonPublic)  instancesType
-                |> Seq.map (fun (instanceKind,methodInfo) -> 
-                            ((instanceKind, 
-                              methodInfo.GetParameters() |> Seq.map (fun param -> Argument param.ParameterType)  |> Set.ofSeq),
-                              methodInfo))
+                findInstances x.Class onlyPublic instancesType
                 |> Map.ofSeq
             new TypeClass<'TypeClass>(newInstances)
 
@@ -151,42 +140,31 @@ module TypeClass =
 
         ///Get the instance registered on this TypeClass for the given type and optionally the given arguments. 
         ///The result is of type 'TypeClass<'T>, dynamically.
-        member x.GetInstance (instance:Type,?arguments) =
-            let arguments = defaultArg arguments Seq.empty
-            let argumentTypes = 
-                arguments
-                |> Seq.map (fun k -> Argument <| k.GetType()) 
-                |> Set.ofSeq
-
-            //returns the index of the argument of the given type in the parameters of the given method.
-            //Only works if each type occurs exactly once inthe parameters.
-            let argumentOrder (methodInfo:MethodInfo) (arg:obj) =
-                methodInfo.GetParameters()
-                |> Array.findIndex (fun param -> param.ParameterType = arg.GetType())
+        member x.GetInstance (instance:Type) =
                 
-            Common.memoizeWith memo (fun (instance:Type, argumentTypes:Set<_>) -> 
+            Common.memoizeWith memo (fun (instance:Type) -> 
                 let mi =
                     match instance,instances with
-                    | (_,MapContains (Primitive instance, argumentTypes) mi') -> 
+                    | (_,MapContains (Primitive instance) mi') -> 
                         mi'
-                    | (IsGeneric,MapContains (Generic (instance.GetGenericTypeDefinition()), argumentTypes) mi') -> 
-                        if mi'.ContainsGenericParameters then (mi'.MakeGenericMethod(instance.GetGenericArguments())) else mi'
-                    | (IsArray, MapContains (Array instance, argumentTypes) mi') -> 
+                    | (IsGeneric,MapContains (Generic (instance.GetGenericTypeDefinition())) mi') -> 
+                        if mi'.ContainsGenericParameters then (mi'.MakeGenericMethod(instance.GetTypeInfo().GenericTypeArguments)) else mi'
+                    | (IsArray, MapContains (Array instance) mi') -> 
                         if mi'.ContainsGenericParameters then mi'.MakeGenericMethod([|instance.GetElementType()|]) else mi'
-                    | (_,MapContains (CatchAll instance,argumentTypes) mi') ->  
+                    | (_,MapContains (CatchAll instance) mi') ->  
                         mi'.MakeGenericMethod([|instance|])
-                    | _ -> failwithf "No instances of class %A for type %A with arguments %A" x.Class instance argumentTypes
-                (fun arguments -> mi.Invoke(null, arguments |> Seq.sortBy (argumentOrder mi) |> Seq.toArray ))) (instance,argumentTypes) arguments
+                    | _ -> failwithf "No instances of class %A for type %A" x.Class instance
+                mi.Invoke(null, [||])) instance
 
         ///Get the instance registered on this TypeClass for the given type parameter 'T. The result will be cast
         ///to TypeClassT, which should be 'TypeClass<'T> but that's impossible to express in .NET's type system.
-        member x.InstanceFor<'T,'TypeClassT>(?arguments:seq<_>) = 
-            x.GetInstance(typeof<'T>,defaultArg arguments Seq.empty) 
+        member x.InstanceFor<'T,'TypeClassT>() = 
+            x.GetInstance(typeof<'T>) 
             |> unbox<'TypeClassT> 
 
         static member New<'TypeClass>() =
             let t = (typedefof<'TypeClass>)
-            if t.IsGenericTypeDefinition then 
+            if t.GetTypeInfo().IsGenericTypeDefinition then 
                 TypeClass<'TypeClass>() 
             else 
                 failwithf "Type parameter %s must be a generic type definition." typeof<'TypeClass>.FullName

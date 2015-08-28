@@ -25,7 +25,7 @@ However, FsCheck can show you the generated function in more detail, with the Fu
 Then FsCheck can even shrink your function. For example:*)
 
 (***define-output:mapRec***)
-let mapRec (F (_,f)) (l:list<int>) =
+let mapRec (Fun f) (l:list<int>) =
   not l.IsEmpty ==>
       lazy (List.map f l = ((*f <|*) List.head l) :: List.map f (List.tail l))
 Check.Quick mapRec
@@ -33,9 +33,10 @@ Check.Quick mapRec
 (***include-output:mapRec***)
 
 (**
-The type `Function<'a,'b>` records a map of all the arguments it was called with, and the result it produced. 
+The type `Function<'a,'b>` - here deconstructed using the single case active pattern `Fun` - 
+records a map of all the arguments it was called with, and the result it produced. 
 In your properties, you can extract the actual function by pattern matching as in the example. 
-Function is used to print the function, and also to shrink it.
+`Function` is used to print the function, and also to shrink it.
     
 ## Use pattern matching instead of forAll to use custom generators
 

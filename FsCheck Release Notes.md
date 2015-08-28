@@ -1,3 +1,39 @@
+### 2.0.7 - 20 August 2015
+  * Add assembly level ExtensionAttribute so VB.NET sees extension methods too. (by Paulmichael Blasucci)
+
+### 2.0.6 - 14 August 2015
+  * Undo removal of GenBuilder.delay - this is needed otherwise while and for don't work correctly.
+  * Optimize GenBuilder.While.
+  * Add Gen.(>>=), monadic bind operator.
+
+### 2.0.5 - 31 July 2015
+  * Make Gen operators <*> and <!> actual operators on the Gen type, instead of functions to avoid name clashes. (by Paul Young)
+  * Add FsCheck.Experimental.StateMachine for more advanced state machine-based checking, i.e. for mutable systems.
+  * Fix GenBuilder.delay so that generators inside gen computation expression are not needlessly re-created.
+  * Add Fun active pattern to make using shrinkable and printable functions easier.
+
+### 2.0.4 - 20 July 2015
+  * Fix FsCheck.NUnit NuGet package.
+
+### 2.0.3 - 10 July 2015
+  * Add support for Portable Class Library profiles 7,78 and 259.
+
+### 2.0.2 - 7 July 2015
+  * Update NuGet package with new project home.
+  * Add missing frequency overload.
+  * Added some more C# examples to documentation.
+  * Internal changes related to use of reflection API to eventually support PCL.
+  * Fix bug in Commands.
+  * Improved output - now shows argument before and after shrinking.
+
+### 2.0.1 - 23 May 2015
+  * Because apparently there there is some problem with FsCheck.Xunit and FsCheck.NUnit's NuGet dependencies to unstable versions.
+
+### 2.0.1-rc1 - 23 May 2015
+  * Improve asssert failure reporting in FsCheck.Xunit (by Mark Seemann)
+  * Add discard method (by Mauricio Scheffer)
+  * Fix capitalization of Fscheck.NUnit package
+
 ### 2.0.0-alpha - 26 April 2015
   * Rename FsCheckTestCaseBuider to Builder. (potentially breaking change)
   * Add RequireQualifiedAccess to TestResult and Outcome. (breaking change for IRunner implementations and test framework integrations)

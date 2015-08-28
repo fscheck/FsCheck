@@ -151,6 +151,9 @@ $RECYCLE.BIN/
 
 # Mac crap
 .DS_Store
+
+# Other
 .paket/paket.exe
 *.userprefs
 release.cmd
+.fake/

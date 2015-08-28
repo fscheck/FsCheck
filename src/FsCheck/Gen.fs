@@ -2,7 +2,7 @@
 **  FsCheck                                                                 **
 **  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
 **  All rights reserved.                                                    **
-**  https://github.com/kurtschelfthout/FsCheck                              **
+**  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
@@ -45,7 +45,7 @@ type Arbitrary<'a>() =
 [<AutoOpen>]
 module GenBuilder =
 
-    let private ``return`` x = Gen (fun _ _ -> x)
+    let private result x = Gen (fun _ _ -> x)
 
     let private bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
         Gen (fun n r0 -> let r1,r2 = split r0
@@ -55,11 +55,15 @@ module GenBuilder =
     let private delay (f : unit -> Gen<_>) : Gen<_> = 
         Gen (fun n r -> match f() with (Gen g) -> g n r)
 
-    let rec private doWhile p m =
-      if p() then
-        bind m (fun _ -> doWhile p m)
-      else
-        ``return`` ()
+    let rec private doWhile p (Gen m) =
+        let rec go pred size rand =
+            if pred() then
+                let r1,r2 = split rand
+                m size r1 |> ignore
+                go pred size r2 
+            else
+                ()
+        Gen (fun n r -> go p n r)
 
     let private tryFinally (Gen m) handler = 
         Gen (fun n r -> try m n r finally handler ())
@@ -70,7 +74,7 @@ module GenBuilder =
 
     ///The workflow type for generators.
     type GenBuilder internal() =
-        member __.Return(a) : Gen<_> = ``return`` a
+        member __.Return(a) : Gen<_> = result a
         member __.Bind(m, k) : Gen<_> = bind m k                            
         member __.Delay(f) : Gen<_> = delay f
         member __.Combine(m1, m2) = bind m1 (fun () -> m2)
@@ -83,7 +87,7 @@ module GenBuilder =
           using (s.GetEnumerator()) (fun ie ->
             doWhile (fun () -> ie.MoveNext()) (delay (fun () -> f ie.Current))
           )
-        member __.Zero() = ``return`` ()
+        member __.Zero() = result ()
 
     ///The workflow function for generators, e.g. gen { ... }
     let gen = GenBuilder()
@@ -126,10 +130,6 @@ module Gen =
     [<CompiledName("Resize")>]
     let resize newSize (Gen m) = Gen (fun _ r -> m newSize r)
 
-    ///Generates a random number generator. Useful for starting off the process
-    ///of generating a random value.
-    let internal rand = Gen (fun _ r -> r)
-
     ///Generates a value with maximum size n.
     //[category: Generating test values]
     [<CompiledName("Eval")>]
@@ -149,13 +149,13 @@ module Gen =
     ///Generates an integer between l and h, inclusive.
     //[category: Creating generators]
     [<CompiledName("Choose")>]
-    let choose (l, h) = rand |> map (range (l,h) >> fst) 
+    let choose (l, h) = Gen (fun _ r -> range (l,h) r |> fst) 
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
     [<CompiledName("Elements")>]
     let elements xs = 
-        choose (0, (Seq.length xs)-1)  |> map(flip Seq.nth xs)
+        choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
@@ -195,15 +195,22 @@ module Gen =
     ///given probabilities. The sum of the probabilities must be larger than zero.
     //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let frequencySeqWeightAndValue ( weighedValues : seq<WeightAndValue<Gen<'a>>> ) =
-        weighedValues |> frequencyOfWeighedSeq
+    let frequencySeqWeightAndValue ( weightedValues : seq<WeightAndValue<Gen<'a>>> ) =
+        weightedValues |> frequencyOfWeighedSeq
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
     //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let frequencySeqWeightAndValueArr ( [<ParamArrayAttribute>] weighedValues : array<WeightAndValue<Gen<'a>>> ) =
-        weighedValues |> frequencyOfWeighedSeq
+    let frequencyWeightAndValueArr ( [<ParamArrayAttribute>] weightedValues : WeightAndValue<Gen<'a>>[] ) =
+        weightedValues |> frequencyOfWeighedSeq
+
+    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    ///given probabilities. The sum of the probabilities must be larger than zero.
+    //[category: Creating generators from generators]
+    [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let frequencyTupleArr ( [<ParamArrayAttribute>] weightedValues : (int * Gen<'a>)[] ) =
+        weightedValues |> frequency
 
     ///Map the given function over values to a function over generators of those values.
     //[category: Creating generators from generators]
@@ -410,10 +417,22 @@ module Gen =
                   let! cols = chooseSqrtOfSize
                   return! array2DOfDim (rows,cols) g }
         
-    ///Always generate v.
+    ///Always generate the same instance v. See also fresh.
     //[category: Creating generators]   
     [<CompiledName("Constant")>]
-    let constant v = gen { return v }
+    let constant v = gen.Return v
+
+    ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
+    ///See also constant.
+    //[category: Creating generators]   
+    [<CompiledName("Fresh"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let fresh fv = gen { let a = fv() in return a }
+
+    ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
+    ///See also constant.
+    //[category: Creating generators]   
+    [<CompiledName("Fresh"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false) >]
+    let freshFunc (fv:Func<_>) = fresh fv.Invoke
 
     ///Apply the given Gen function to the given generator, aka the applicative <*> operator.
     //[category: Creating generators from generators]
@@ -445,11 +464,14 @@ module Gen =
         Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.
-[<AutoOpen>]
-module GenOperators =
+type Gen with
 
     /// Lifted function application = apply f to a, all in the Gen applicative functor.
-    let (<*>) f a = Gen.apply f a
+    static member (<*>) (f, a) = Gen.apply f a
 
     /// Like <*>, but puts f in a Gen first.
-    let (<!>) f a = Gen.constant f <*> a
+    static member (<!>) (f, a) = Gen.constant f <*> a
+
+    /// Bind operator; runs the first generator, then feeds the result
+    /// to the second generator function.
+    static member (>>=) (m,k) = gen.Bind(m,k)

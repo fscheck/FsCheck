@@ -1,10 +1,10 @@
 NUGET
   remote: https://www.nuget.org/api/v2
   specs:
-    FAKE (3.28.8)
-    FSharp.Compiler.Service (0.0.87)
-    FSharp.Formatting (2.9.2)
-      FSharp.Compiler.Service (0.0.87)
+    FAKE (4.0.1)
+    FSharp.Compiler.Service (1.3.1.0)
+    FSharp.Formatting (2.9.10)
+      FSharp.Compiler.Service (>= 0.0.87)
       FSharpVSPowerTools.Core (1.8.0)
     FSharpVSPowerTools.Core (1.8.0)
       FSharp.Compiler.Service (>= 0.0.87)
@@ -17,7 +17,7 @@ NUGET
     NUnit (3.0.0-beta-1)
       Microsoft.Bcl.Async (>= 1.0.165) - framework: >= net40 < net45
     NUnitTestAdapter (2.0.0)
-    SourceLink.Fake (0.5.0)
+    SourceLink.Fake (1.0.0)
     xunit (1.9.2)
-    xunit.runner.visualstudio (2.0.0)
+    xunit.runner.visualstudio (2.0.1) - version_in_path: true
     xunit.runners (1.9.2)

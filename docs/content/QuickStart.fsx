@@ -66,14 +66,14 @@ the one in which the loop or error arises.
 
 To learn more on how to run FsCheck tests see [Running Tests](RunningTests.html).
 
-## Caveat
+## FsCheck teaches us a lesson
 
 The property above (the reverse of the reverse of a list is the list itself) is not always correct. 
-Consider a list of floats that contains `infinity`, or `nan` (not a number). Since `nan <> nan`, the reverse of 
-the reverse of `[nan,nan]` is not actually equal to `[nan,nan]` if you use straightforward element by element 
+Consider a list of floats that contains `NaN` (not a number). Since `NaN <> NaN`, the reverse of 
+the reverse of `[NaN]` is not actually equal to `[NaN]` if you use straightforward element by element 
 comparison. FsCheck has a knack for finding this kind of specification problem. However, since this 
 behavior is seldom what you want, FsCheck only generates values that are 'neatly' comparable when you leave 
-the type polymorphic (currently, unit, bool, char and string values). To see this error, force 
+the type generic (currently, unit, bool, char and string values). To see this error, force 
 FsCheck to generate lists of floats:*)
 
 (***define-output:revFloat***)
@@ -82,9 +82,16 @@ Check.Quick revRevIsOrigFloat
 
 (***include-output:revFloat***)
 
-(** In C#:
+(** That said, the example in C# using floats actually works!
 
     [lang=csharp,file=../csharp/QuickStart.cs,key=revRevIsOrigFloat]
+
+This is because SequenceEquals uses the default equality comparer under the hood, which uses `Double`'s `Equals` method, which
+has a special provision for `NaN`, as you can see in the [reference source](http://referencesource.microsoft.com/#mscorlib/system/double.cs,152).
+If we pass an `EqualityComparer` that uses `==` to `SequenceEquals`, the C# example also fails.
+
+As this seeminly trivial example shows, FsCheck helps you discover interesting properties of your code - and so ultimately,
+more bugs!
 
 ## Using FsCheck with other testing frameworks
 

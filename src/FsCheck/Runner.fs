@@ -2,7 +2,7 @@
 **  FsCheck                                                                 **
 **  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
 **  All rights reserved.                                                    **
-**  https://github.com/kurtschelfthout/FsCheck                              **
+**  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
@@ -183,42 +183,46 @@ module Runner =
     let onStartFixtureToString (t:Type) =
         sprintf "--- Checking %s ---%s" t.Name newline
 
+    let private pluralize nb = if nb = 1 then String.Empty else "s"
+
+    let private labels_to_string l = String.concat newline l
+
+    let private maybePrintLabels (l:Set<_>) = 
+        match l.Count with
+        | 0 -> String.Empty
+        | 1 -> sprintf "Label of failing property: %s%s" (labels_to_string l) newline
+        | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labels_to_string l) newline
+
+    let onFailureToString name data originalArgs args usedSeed =
+        sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
+                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
+            + maybePrintLabels data.Labels
+            + sprintf "Original:%s%s%s" newline (argumentsToString originalArgs) newline
+            + if (data.NumberOfShrinks > 0 ) then sprintf "Shrunk:%s%s%s" newline (argumentsToString args) newline else ""
+
     ///A function that returns the default string that is printed as a result of the test.
     let onFinishedToString name testResult =
-        let pluralize nb = if nb = 1 then String.Empty else "s"
         let display l = match l with
                         | []  -> sprintf ".%s" newline
                         | [x] -> sprintf " (%s).%s" x newline
                         | xs  -> sprintf ".%s%s" newline (List.fold (fun acc x -> x + "." + newline + acc) "" xs)
         let entry (p,xs) = sprintf "%A%s %s" p "%" (String.concat ", " xs)
         let stamps_to_string s = s |> Seq.map entry |> Seq.toList |> display
-        let labels_to_string l = String.concat newline l
-        let maybePrintLabels (l:Set<_>) = 
-            match l.Count with
-            | 0 -> String.Empty
-            | 1 -> sprintf "Label of failing property: %s%s" (labels_to_string l) newline
-            | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labels_to_string l) newline
         let name = if String.IsNullOrEmpty(name) then String.Empty else (name+"-")  
         match testResult with
         | TestResult.True data -> 
             sprintf "%sOk, passed %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
-        | TestResult.False (data, _, args, Outcome.Exception exc, usedSeed) -> 
-            sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
-            + maybePrintLabels data.Labels  
-            + sprintf "%s%s" (args |> argumentsToString) newline
+        | TestResult.False (data, originalArgs, args, Outcome.Exception exc, usedSeed) -> 
+            onFailureToString name data originalArgs args usedSeed
             + sprintf "with exception:%s%O%s" newline exc newline
         | TestResult.False (data, _, args, Outcome.Timeout i, usedSeed) -> 
             sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):%s" 
                 name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
             + maybePrintLabels data.Labels 
             + sprintf "%s%s" (args |> argumentsToString) newline
-        | TestResult.False (data, _, args, _, usedSeed) -> 
-            sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
-            + maybePrintLabels data.Labels  
-            + sprintf "%s%s" (args |> argumentsToString) newline
+        | TestResult.False (data, originalArgs, args, _, usedSeed) -> 
+            onFailureToString name data originalArgs args usedSeed
         | TestResult.Exhausted data -> 
             sprintf "%sArguments exhausted after %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
@@ -229,7 +233,12 @@ module Runner =
     let onShrinkToString args =
         sprintf "shrink:%s%s%s" newline (argumentsToString args) newline
 
-    ///A runner that prints results to the console.
+#if PCL
+    let internal printf fmt = 
+        Printf.kprintf Diagnostics.Debug.WriteLine fmt
+#endif
+    
+    ///A runner that prints results to the standard output.
     let consoleRunner =
         { new IRunner with
             member __.OnStartFixture t =
@@ -268,7 +277,9 @@ module Runner =
         finally
             Arb.Arbitrary := defaultArbitrary
 
-    let private checkMethodInfo = typeof<TestStep>.DeclaringType.GetMethod("check",BindingFlags.Static ||| BindingFlags.NonPublic)
+    let private checkMethodInfo = 
+        typeof<TestStep>.DeclaringType.GetTypeInfo().DeclaredMethods 
+        |> Seq.find (fun meth -> meth.IsStatic && meth.Name = "check")
 
     let private arrayToTupleType (arr:Type[]) =
         if arr.Length = 0 then
@@ -306,9 +317,10 @@ module Runner =
 
     let internal checkAll config (t:Type) = 
         config.Runner.OnStartFixture t  
-        t.GetMethods(BindingFlags.Static ||| BindingFlags.Public) 
-        |> Array.filter hasTestableReturnType 
-        |> Array.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m None)
+        t.GetRuntimeMethods() 
+        |> Seq.filter (fun meth -> meth.IsStatic && meth.IsPublic)
+        |> Seq.filter hasTestableReturnType 
+        |> Seq.iter (fun m -> checkMethod {config with Name = t.Name+"."+m.Name} m None)
         printf "%s" newline
 
 open Runner

@@ -13,7 +13,7 @@ FsCheck
     <div class="well well-small" id="nuget">
       FsCheck, NUnit and xUnit.NET plugin can be <a href="https://www.nuget.org/packages?q=fscheck">installed from NuGet</a>:
       <pre>PM> Install-Package FsCheck
-PM> Install-Package FsCheck.Nunit
+PM> Install-Package FsCheck.NUnit
 PM> Install-Package FsCheck.Xunit</pre>
     </div>
   </div> 
@@ -64,9 +64,9 @@ The library is available under the BSD license, which allows modification and
 redistribution for both commercial and non-commercial purposes. For more information see the 
 [License file][license] in the GitHub repository. 
 
-  [content]: https://github.com/fsharp/FsCheck/tree/master/docs/content
-  [gh]: https://github.com/fsharp/FsCheck
-  [issues]: https://github.com/fsharp/FsCheck/issues
-  [readme]: https://github.com/fsharp/FsCheck/blob/master/README.md
-  [license]: https://github.com/fsharp/FsCheck/blob/master/License.txt
+  [content]: https://github.com/fscheck/FsCheck/tree/master/docs/content
+  [gh]: https://github.com/fscheck/FsCheck
+  [issues]: https://github.com/fscheck/FsCheck/issues
+  [readme]: https://github.com/fscheck/FsCheck/blob/master/README.md
+  [license]: https://github.com/fscheck/FsCheck/blob/master/License.txt
 *)

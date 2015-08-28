@@ -2,7 +2,7 @@
 **  FsCheck                                                                 **
 **  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
 **  All rights reserved.                                                    **
-**  https://github.com/kurtschelfthout/FsCheck                              **
+**  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
@@ -14,13 +14,15 @@ namespace FsCheck
 module internal ReflectArbitrary =
 
     open System
+    open System.Linq
+    open System.Reflection
     open Microsoft.FSharp.Reflection
     open Reflect
     open Gen
 
     /// Generate a random enum of the type specified by the System.Type
     let enumOfType (t: System.Type) : Gen<Enum> =
-       let isFlags = t.GetCustomAttributes(typeof<System.FlagsAttribute>,false).Length = 1 
+       let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
        let vals: Array = System.Enum.GetValues(t) 
        let elems = elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> System.Enum] 
        if isFlags then 
@@ -79,7 +81,7 @@ module internal ReflectArbitrary =
                     |> resize (size - 1) 
                 sized getgs |> box
                 
-            elif t.IsEnum then
+            elif t.GetTypeInfo().IsEnum then
                     enumOfType t |> box
 
             elif isCSharpRecordType t then
@@ -92,7 +94,7 @@ module internal ReflectArbitrary =
                 box result
 
             else
-                failwithf "Geneflect: type not handled %A" t)
+                failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing and registering a generator for it." t.FullName)
 
     let private reflectGenObj getGenerator (t:Type) = (reflectObj getGenerator t |> unbox<IGen>).AsGenObject
 
