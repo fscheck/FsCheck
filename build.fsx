@@ -93,10 +93,9 @@ When a property fails, FsCheck automatically displays a minimal counter example.
     All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
     Authors = [ "Kurt Schelfthout and contributors" ]
     Tags = "test testing random fscheck quickcheck nunit"
-    ProjectFile = ["src/FsCheck.NUnit/FsCheck.NUnit.fsproj";"src/FsCheck.NUnit.Addin/FsCheck.NUnit.Addin.fsproj"]
+    ProjectFile = ["src/FsCheck.NUnit/FsCheck.NUnit.fsproj"]
     Dependencies = [ 
                     "NUnit",    lazy GetPackageVersion "./packages/" "NUnit"  //delayed so only runs after package restore step
-                    "NUnit.Runners",    lazy GetPackageVersion "./packages/" "NUnit.Runners"
                     "FsCheck",  lazy release.NugetVersion
                     ]     
     }

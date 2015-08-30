@@ -72,11 +72,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <ProjectReference Include="..\..\src\FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj">
-      <Name>FsCheck.NUnit.Addin</Name>
-      <Project>{bf24de38-c529-4638-be50-a937ea3e6876}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\FsCheck.NUnit\FsCheck.NUnit.fsproj">
       <Name>FsCheck.NUnit</Name>
       <Project>{6b1b9ff5-8e6d-4461-9d77-cd1619403684}</Project>
