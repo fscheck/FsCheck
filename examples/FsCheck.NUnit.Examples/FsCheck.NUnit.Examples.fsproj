@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -54,7 +54,6 @@
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
-    <Compile Include="FsCheckAddin.fs" />
     <Compile Include="PropertyExamples.fs" />
     <None Include="paket.references" />
     <Content Include="App.config" />
@@ -73,11 +72,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-    <ProjectReference Include="..\..\src\FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj">
-      <Name>FsCheck.NUnit.Addin</Name>
-      <Project>{bf24de38-c529-4638-be50-a937ea3e6876}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\FsCheck.NUnit\FsCheck.NUnit.fsproj">
       <Name>FsCheck.NUnit</Name>
       <Project>{6b1b9ff5-8e6d-4461-9d77-cd1619403684}</Project>
@@ -97,9 +91,61 @@
 	</Target>
 	-->
   <Import Project="..\..\.paket\paket.targets" />
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v2.0' Or $(TargetFrameworkVersion) == 'v3.0' Or $(TargetFrameworkVersion) == 'v3.5')">
+      <ItemGroup>
+        <Reference Include="nunit.framework">
+          <HintPath>..\..\packages\NUnit\lib\net20\nunit.framework.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0')">
+      <ItemGroup>
+        <Reference Include="nunit.framework">
+          <HintPath>..\..\packages\NUnit\lib\net40\nunit.framework.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')">
+      <ItemGroup>
+        <Reference Include="nunit.framework">
+          <HintPath>..\..\packages\NUnit\lib\net45\nunit.framework.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(TargetFrameworkIdentifier) == 'Silverlight' And $(TargetFrameworkVersion) == 'v5.0'">
+      <ItemGroup>
+        <Reference Include="nunit.framework">
+          <HintPath>..\..\packages\NUnit\lib\sl50\nunit.framework.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="($(TargetFrameworkIdentifier) == 'WindowsPhoneApp') Or ($(TargetFrameworkIdentifier) == '.NETCore') Or ($(TargetFrameworkIdentifier) == 'WindowsPhone' And ($(TargetFrameworkVersion) == 'v8.0' Or $(TargetFrameworkVersion) == 'v8.1')) Or ($(TargetFrameworkIdentifier) == 'MonoAndroid') Or ($(TargetFrameworkIdentifier) == 'MonoTouch') Or ($(TargetFrameworkIdentifier) == 'Xamarin.iOS') Or ($(TargetFrameworkIdentifier) == 'Xamarin.Mac') Or ($(TargetFrameworkProfile) == 'Profile7') Or ($(TargetFrameworkProfile) == 'Profile24') Or ($(TargetFrameworkProfile) == 'Profile31') Or ($(TargetFrameworkProfile) == 'Profile32') Or ($(TargetFrameworkProfile) == 'Profile44') Or ($(TargetFrameworkProfile) == 'Profile47') Or ($(TargetFrameworkProfile) == 'Profile49') Or ($(TargetFrameworkProfile) == 'Profile78') Or ($(TargetFrameworkProfile) == 'Profile84') Or ($(TargetFrameworkProfile) == 'Profile111') Or ($(TargetFrameworkProfile) == 'Profile151') Or ($(TargetFrameworkProfile) == 'Profile157') Or ($(TargetFrameworkProfile) == 'Profile158') Or ($(TargetFrameworkProfile) == 'Profile255') Or ($(TargetFrameworkProfile) == 'Profile259') Or ($(TargetFrameworkProfile) == 'Profile344')">
+      <ItemGroup>
+        <Reference Include="nunit.framework">
+          <HintPath>..\..\packages\NUnit\lib\portable-net45+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\nunit.framework.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
   <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit\lib\nunit.framework.dll</HintPath>
+    <Reference Include="NUnit.VisualStudio.TestAdapter">
+      <HintPath>..\..\packages\NUnitTestAdapter\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
+      <Private>True</Private>
+      <Paket>True</Paket>
+    </Reference>
+    <Reference Include="nunit.util">
+      <HintPath>..\..\packages\NUnitTestAdapter\lib\nunit.util.dll</HintPath>
       <Private>True</Private>
       <Paket>True</Paket>
     </Reference>

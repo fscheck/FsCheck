@@ -9,8 +9,9 @@ NUGET
     FSharpVSPowerTools.Core (1.8.0)
       FSharp.Compiler.Service (>= 0.0.87)
     NuGet.CommandLine (2.8.6)
-    NUnit (2.6.4)
-    NUnit.Runners (2.6.4)
+    NUnit (3.0.0-beta-4)
+    NUnit.Console (3.0.0-beta-4)
+    NUnitTestAdapter (2.0.0)
     SourceLink.Fake (1.0.0)
     xunit (1.9.2)
     xunit.runner.visualstudio (2.0.1) - version_in_path: true
