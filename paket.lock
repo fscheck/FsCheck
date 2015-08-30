@@ -1,7 +1,7 @@
 NUGET
   remote: https://www.nuget.org/api/v2
   specs:
-    FAKE (4.2.0)
+    FAKE (4.3.3)
     FSharp.Compiler.Service (1.4.0.1)
     FSharp.Formatting (2.10.0)
       FSharp.Compiler.Service (>= 0.0.87)
@@ -171,19 +171,19 @@ NUGET
       System.Threading.Tasks (>= 4.0.0)
       xunit.abstractions (>= 2.0.0)
     xunit.extensibility.execution (2.1.0-beta4-build3109)
-      System.Collections (>= 4.0.0) - framework: dnx451
+      System.Collections (>= 4.0.0)
       System.Collections (>= 4.0.10)
       System.Collections.Concurrent (>= 4.0.0)
-      System.Diagnostics.Debug (>= 4.0.0) - framework: dnx451
+      System.Diagnostics.Debug (>= 4.0.0)
       System.Diagnostics.Debug (>= 4.0.10)
       System.Globalization (>= 4.0.0)
       System.IO (>= 4.0.0)
       System.Linq (>= 4.0.0)
       System.Reflection (>= 4.0.0)
       System.Reflection.Extensions (>= 4.0.0)
-      System.Runtime (>= 4.0.0) - framework: dnx451
+      System.Runtime (>= 4.0.0)
       System.Runtime (>= 4.0.20)
-      System.Runtime.Extensions (>= 4.0.0) - framework: dnx451
+      System.Runtime.Extensions (>= 4.0.0)
       System.Runtime.Extensions (>= 4.0.10)
       System.Text.Encoding (>= 4.0.0)
       System.Threading (>= 4.0.0)
@@ -192,18 +192,18 @@ NUGET
       xunit.extensibility.core (2.1.0-beta4-build3109)
     xunit.runner.console (2.1.0-beta4-build3109)
     xunit.runner.utility (2.1.0-beta4-build3109)
-      System.Collections (>= 4.0.0) - framework: dnx451
+      System.Collections (>= 4.0.0)
       System.Collections (>= 4.0.10)
-      System.Diagnostics.Debug (>= 4.0.0) - framework: dnx451
+      System.Diagnostics.Debug (>= 4.0.0)
       System.Diagnostics.Debug (>= 4.0.10)
       System.Globalization (>= 4.0.0)
       System.IO (>= 4.0.0)
       System.Linq (>= 4.0.0)
       System.Reflection (>= 4.0.0)
       System.Reflection.Extensions (>= 4.0.0)
-      System.Runtime (>= 4.0.0) - framework: dnx451
+      System.Runtime (>= 4.0.0)
       System.Runtime (>= 4.0.20)
-      System.Runtime.Extensions (>= 4.0.0) - framework: dnx451
+      System.Runtime.Extensions (>= 4.0.0)
       System.Runtime.Extensions (>= 4.0.10)
       System.Text.Encoding (>= 4.0.0)
       System.Text.RegularExpressions (>= 4.0.0)
