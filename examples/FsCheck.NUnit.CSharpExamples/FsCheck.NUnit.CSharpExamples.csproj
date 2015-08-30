@@ -35,7 +35,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FSharp.Core, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="FSharp.Core, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -49,7 +48,6 @@
     <Compile Include="ClassesToTest\Counter.cs" />
     <Compile Include="ClassesToTest\CounterSpec.cs" />
     <Compile Include="Examples.cs" />
-    <Compile Include="FsCheckNunitAddin.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
