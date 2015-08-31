@@ -63,6 +63,15 @@ let gitName = "FsCheck"
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
 let release = LoadReleaseNotes releaseNotes
 
+let isAppVeyorBuild = buildServer = BuildServer.AppVeyor
+let buildDate = DateTime.UtcNow
+let buildVersion = 
+    let isVersionTag tag = Version.TryParse tag |> fst
+    let hasRepoVersionTag = isAppVeyorBuild && AppVeyorEnvironment.RepoTag && isVersionTag AppVeyorEnvironment.RepoTagName
+    let assemblyVersion = if hasRepoVersionTag then AppVeyorEnvironment.RepoTagName else release.NugetVersion
+    if isAppVeyorBuild then sprintf "%s-b%s" assemblyVersion AppVeyorEnvironment.BuildNumber
+    else assemblyVersion
+
 let packages =
   [
     {
@@ -97,7 +106,7 @@ When a property fails, FsCheck automatically displays a minimal counter example.
     Dependencies = [ 
                     "NUnit",    lazy GetPackageVersion "./packages/" "NUnit"  //delayed so only runs after package restore step
                     "NUnit.Runners",    lazy GetPackageVersion "./packages/" "NUnit.Runners"
-                    "FsCheck",  lazy release.NugetVersion
+                    "FsCheck",  lazy buildVersion
                     ]     
     }
     { 
@@ -112,19 +121,12 @@ All the options normally available in vanilla FsCheck via configuration can be c
     ProjectFile = ["src/FsCheck.Xunit/FsCheck.Xunit.fsproj"]
     Dependencies = [ 
                     "xunit", lazy GetPackageVersion "./packages/" "xunit"  //delayed so only runs after package restore step
-                    "FsCheck",  lazy release.NugetVersion
+                    "FsCheck",  lazy buildVersion
                      ]
    }
   ]
 
-let isAppVeyorBuild = buildServer = BuildServer.AppVeyor
-let buildDate = DateTime.UtcNow
-let buildVersion = 
-    let isVersionTag tag = Version.TryParse tag |> fst
-    let hasRepoVersionTag = isAppVeyorBuild && AppVeyorEnvironment.RepoTag && isVersionTag AppVeyorEnvironment.RepoTagName
-    let assemblyVersion = if hasRepoVersionTag then AppVeyorEnvironment.RepoTagName else release.NugetVersion
-    if isAppVeyorBuild then sprintf "%s-b%s" assemblyVersion AppVeyorEnvironment.BuildNumber
-    else assemblyVersion
+
 
 Target "BuildVersion" (fun _ ->
     Shell.Exec("appveyor", sprintf "UpdateBuild -Version \"%s\"" buildVersion) |> ignore
