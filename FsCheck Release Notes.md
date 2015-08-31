@@ -1,4 +1,8 @@
-### 2.0.8 - To release
+### 2.1.0 - To Release
+  * Update FsCheck.NUnit to use NUnit 3.0. This (hopefully) solves a lot of issues with NUnit 2's wonky plugin model. 
+  FsCheck.NUnit.Addin is no longer needed, for example, and neither is the install.ps1 in the FsCheck.NUnit package. Also,
+  FsCheck.NUnit only needs a dependency on NUnit now, which should solve a bunch of install issues on its own. (another 
+  heroic contribution by Jon Hamm.)
   * Fix for AppVeryor NuGetfeed dependency problem.
 
 ### 2.0.7 - 20 August 2015
