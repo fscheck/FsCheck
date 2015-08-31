@@ -53,6 +53,7 @@
       </PropertyGroup>
     </Otherwise>
   </Choose>
+  <Import Project="..\..\.paket\paket.targets" />
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -62,23 +63,6 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
-  <Import Project="..\..\.paket\paket.targets" />
-  <Target Name="BeforeBuild">
-    <ItemGroup>
-      <xunitrunner Include="$(ProjectDir)..\..\packages\xunit.runner.visualstudio\**\*.*" />
-    </ItemGroup>
-    <Copy SourceFiles="@(xunitrunner)" DestinationFolder="$(ProjectDir)..\..\packages\xunit.runner.visualstudio.2.0.0\%(RecursiveDir)" SkipUnchangedFiles="true" />
-  </Target>
-  <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-	     Other similar extension points exist, see Microsoft.Common.targets.
-	<Target Name="BeforeBuild">
-	</Target>
-	<Target Name="AfterBuild">
-	</Target>
-	-->
-  <Import Project="..\..\.paket\paket.targets" />
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.6'">
       <ItemGroup>
