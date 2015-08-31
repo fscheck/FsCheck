@@ -1,8 +1,9 @@
 source https://www.nuget.org/api/v2
 
 nuget FAKE
-nuget NUnit
-nuget NUnit.Runners
+nuget NUnit beta
+nuget NUnit.Console beta
+nuget NUnitTestAdapter
 nuget xunit < 2.0
 nuget xunit.runners < 2.0
 nuget xunit.runner.visualstudio version_in_path: true
