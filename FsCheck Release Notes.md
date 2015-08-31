@@ -7,6 +7,7 @@
   to others.
   * FsCheck.Runner.init is Obsolete, it should not longer be necessary to call this explicitly. (though
   I am cautious here - please report any issues.)
+  * Fix for AppVeryor NuGet feed dependency problem.
 
 ### 2.0.7 - 20 August 2015
   * Add assembly level ExtensionAttribute so VB.NET sees extension methods too. (by Paulmichael Blasucci)

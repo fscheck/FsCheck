@@ -1,7 +1,7 @@
 NUGET
   remote: https://www.nuget.org/api/v2
   specs:
-    FAKE (4.3.3)
+    FAKE (4.3.4)
     FSharp.Compiler.Service (1.4.0.1)
     FSharp.Formatting (2.10.0)
       FSharp.Compiler.Service (>= 0.0.87)
@@ -11,7 +11,6 @@ NUGET
     NuGet.CommandLine (2.8.6)
     NUnit (2.6.4)
     NUnit.Runners (2.6.4)
-    SourceLink.Fake (1.0.0)
     System.Collections (4.0.10)
       System.Diagnostics.Debug (>= 4.0.0)
       System.Resources.ResourceManager (>= 4.0.0)
@@ -210,5 +209,5 @@ NUGET
       System.Threading (>= 4.0.0)
       xunit.abstractions (>= 2.0.0)
       xunit.abstractions (2.0.0)
-    xunit.runner.visualstudio (2.1.0-beta4-build1109)
+    xunit.runner.visualstudio (2.1.0-beta4-build1109) - version_in_path: true
     xunit.runners (2.0.0)
