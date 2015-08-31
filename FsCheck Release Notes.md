@@ -1,3 +1,6 @@
+### 2.0.8 - To release
+  * Fix for AppVeryor NuGetfeed dependency problem.
+
 ### 2.0.7 - 20 August 2015
   * Add assembly level ExtensionAttribute so VB.NET sees extension methods too. (by Paulmichael Blasucci)
 
