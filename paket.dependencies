@@ -4,10 +4,6 @@ nuget FAKE
 nuget NUnit
 nuget NUnit.Runners
 nuget xunit prerelease
-nuget xunit.assert prerelease
-nuget xunit.extensibility.execution prerelease
-nuget xunit.runner.utility prerelease
-nuget xunit.runners prerelease
 nuget xunit.runner.console prerelease
 nuget xunit.runner.visualstudio prerelease
 nuget NuGet.CommandLine
