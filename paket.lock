@@ -191,4 +191,4 @@ NUGET
       xunit.abstractions (>= 2.0.0)
       xunit.extensibility.core (2.1.0-beta4-build3109)
     xunit.runner.console (2.1.0-beta4-build3109)
-    xunit.runner.visualstudio (2.1.0-beta4-build1109)
+    xunit.runner.visualstudio (2.1.0-beta4-build1109) - version_in_path: true

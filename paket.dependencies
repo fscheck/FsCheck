@@ -5,7 +5,7 @@ nuget NUnit
 nuget NUnit.Runners
 nuget xunit prerelease
 nuget xunit.runner.console prerelease
-nuget xunit.runner.visualstudio prerelease
+nuget xunit.runner.visualstudio prerelease version_in_path: true
 nuget NuGet.CommandLine
 nuget SourceLink.Fake
 nuget FSharp.Formatting
