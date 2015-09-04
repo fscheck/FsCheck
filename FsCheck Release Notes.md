@@ -1,4 +1,4 @@
-### 2.1.0 - To be released
+### 2.1.0-xunit2 - To be released
   * Switch to xunit2. Need at least beta4 and -noshadow argument on Mono to get things to work. A mono fix
   is submitted. (heroic effort by Jon Hamm)
   * Made Arbitrary overrides (e.g. using Arb.register, passing arbitrary to Config, or setting them
