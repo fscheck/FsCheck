@@ -9,11 +9,11 @@ open Xunit.Sdk
 open Xunit.Abstractions
 
 type PropertyFailedException =
-    inherit XunitException
+    inherit Exception
     new (testResult:FsCheck.TestResult) = {
-        inherit XunitException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "Sorry, no stack trace.") }
+        inherit Exception(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult)) }
     new (userMessage, innerException : exn) = {
-        inherit XunitException(userMessage, innerException) }
+        inherit Exception(userMessage, innerException) }
 
 //can not be an anonymous type because of let mutable.
 type XunitRunner() =
