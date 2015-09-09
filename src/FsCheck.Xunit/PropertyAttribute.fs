@@ -100,7 +100,8 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             |> Seq.append arbitraryOnMethod
             |> Seq.toList
 
-        {Config.Default with
+        (factAttribute.GetNamedArgument("QuietOnSuccess"),
+         {Config.Default with
                 Replay = factAttribute.GetNamedArgument("ReplayStdGen")
                 MaxTest = factAttribute.GetNamedArgument("MaxTest")
                 MaxFail = factAttribute.GetNamedArgument("MaxFail")
@@ -110,14 +111,14 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                 EveryShrink = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
                 Arbitrary = arbitraries
                 Runner = new XunitRunner()
-            }
+            })
 
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
         let test = new XunitTest(this, this.DisplayName)
         let summary = new RunSummary(Total = 1);
 
         let testExec() =
-            let config = this.Init()
+            let (quietOnSuccess,config) = this.Init()
             let timer = ExecutionTimer()
             let result =
                 try
@@ -136,7 +137,13 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
                     match xunitRunner.Result with
                           | TestResult.True _ ->
-                            (0, new TestPassed(test, timer.Total, (Runner.onFinishedToString "" xunitRunner.Result)) :> TestResultMessage)
+                            let output =
+                                if not quietOnSuccess then
+                                    let msg = Runner.onFinishedToString "" xunitRunner.Result
+                                    printf "%s%s" Environment.NewLine msg
+                                    msg
+                                else ""
+                            (0, new TestPassed(test, timer.Total, output) :> TestResultMessage)
                           | TestResult.Exhausted testdata ->
                             summary.Failed <- summary.Failed + 1
                             (1, upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
@@ -149,8 +156,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                 with
                     | ex -> (1, upcast new TestFailed(test, timer.Total, "Exception during test:", ex))
 
-            let failed = fst result
-            let testMessage = snd result
+            let (failed, testMessage) = result
             messageBus.QueueMessage(testMessage) |> ignore
             summary.Time <- summary.Time + testMessage.ExecutionTime
             if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, testMessage.Output))) then
@@ -174,7 +180,7 @@ type PropertyDiscoverer(messageSink:IMessageSink) =
 
     new () = PropertyDiscoverer(null)
 
-    member x.MessageSink : IMessageSink = messageSink
+    member x.MessageSink = messageSink
 
     interface IXunitTestCaseDiscoverer with
         override this.Discover(discoveryOptions:ITestFrameworkDiscoveryOptions, testMethod:ITestMethod, factAttribute:IAttributeInfo)=
