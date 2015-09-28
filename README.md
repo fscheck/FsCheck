@@ -21,6 +21,9 @@ FsCheck follows [Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html).
 
 All AppVeyor builds are available using the NuGet feed: https://ci.appveyor.com/nuget/fscheck
 
+
+### Paket ###
+
 If using Paket, add the source at the top of `paket.dependencies`.
 
 ```
@@ -38,6 +41,19 @@ nuget FsCheck prerelease
 nuget FsCheck 2.0.4
 nuget FsCheck 2.0.5-b247
 ```
+
+#### Using `FsCheck.NUnit` installed by Paket ####
+Note that [Paket doesn't run any powershell scripts](https://fsprojects.github.io/Paket/faq.html#Does-Paket-run-install-ps1-scripts).
+So if you want to use `FsCheck.NUnit` that you installed via Paket, you have to perform this step manually.
+Add reference to the following assemblies in the apropriate project(s):
+
+```
+packages/NUnit.Runners/tools/lib/nunit.core.dll
+packages/NUnit.Runners/tools/lib/nunit.core.interfaces.dll
+```
+
+Also make sure your project(s) has target `.NET 4.5` or greater.
+
 
 ### Documentation ###
 

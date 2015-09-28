@@ -1,7 +1,7 @@
 ﻿(*** hide ***)
 #I "../../src/FsCheck/bin/Release"
 #r "../../src/FsCheck.Xunit/bin/Release/FsCheck.Xunit.dll"
-#r "../../packages/xunit.1.9.2/lib/net20/xunit.dll"
+#r "../../packages/xunit/lib/net20/xunit.dll"
 
 (**
 # Quick Start
@@ -10,7 +10,20 @@ The fastest way to understand how FsCheck works is by writing some *properties* 
 test, or a generative test - and run them using the built-in test runner. Later on, we'll describe how they can be integrated
 with existing test frameworks like NUnit, xUnit.NET or MsTest.
 
-First install FsCheck, open an fsx file and start with:*)
+## Installation
+First install FsCheck. Make sure your project(s) has target `.NET 4.5` or greater.
+
+If you installed `FsCheck.NUnit` via Paket, make sure you have added these references to your project
+([Paket doesn't run any powershell scripts](https://fsprojects.github.io/Paket/faq.html#Does-Paket-run-install-ps1-scripts)
+that usually do this for you):
+
+```
+packages/NUnit.Runners/tools/lib/nunit.core.dll
+packages/NUnit.Runners/tools/lib/nunit.core.interfaces.dll
+```
+
+## Usage
+Open an fsx file and start with:*)
 
 #r "FsCheck"
 
