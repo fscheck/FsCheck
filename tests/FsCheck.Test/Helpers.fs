@@ -1,5 +1,8 @@
 ﻿namespace FsCheck.Test
 
+[<assembly: Xunit.CollectionBehavior(Xunit.CollectionBehavior.CollectionPerAssembly)>]
+do()
+
 module Helpers = 
 
     open System

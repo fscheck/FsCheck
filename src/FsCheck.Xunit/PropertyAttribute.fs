@@ -1,46 +1,48 @@
-﻿
-namespace FsCheck.Xunit
+﻿namespace FsCheck.Xunit
 
 open System
+open System.Threading.Tasks
 
+open FsCheck
 open Xunit
 open Xunit.Sdk
-open FsCheck
+open Xunit.Abstractions
 
-type PropertyFailedException = 
-    inherit AssertException
+type PropertyFailedException =
+    inherit Exception
     new (testResult:FsCheck.TestResult) = {
-        inherit AssertException(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult), "Sorry, no stack trace.") }
+        inherit Exception(sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" testResult)) }
     new (userMessage, innerException : exn) = {
-        inherit AssertException(userMessage, innerException) }
+        inherit Exception(userMessage, innerException) }
 
 //can not be an anonymous type because of let mutable.
-type private XunitRunner() =
+type XunitRunner() =
     let mutable result = None
     member x.Result = result.Value
     interface IRunner with
         override x.OnStartFixture t = ()
-        override x.OnArguments (ntest,args, every) = 
+        override x.OnArguments (ntest,args, every) =
             printf "%s" (every ntest args)
-        override x.OnShrink(args, everyShrink) = 
+        override x.OnShrink(args, everyShrink) =
             printf "%s" (everyShrink args)
-        override x.OnFinished(name,testResult) = 
+        override x.OnFinished(name,testResult) =
             result <- Some testResult
 
 ///Override Arbitrary instances for FsCheck tests within the attributed class
 ///or module.
 [<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
-type ArbitraryAttribute(types:Type[]) = 
+type ArbitraryAttribute(types:Type[]) =
     inherit Attribute()
     new(typ:Type) = ArbitraryAttribute([|typ|])
     member x.Arbitrary = types
 
 ///Run this method as an FsCheck test.
 [<AttributeUsage(AttributeTargets.Method ||| AttributeTargets.Property, AllowMultiple = false)>]
-type PropertyAttribute() =
+[<XunitTestCaseDiscoverer("FsCheck.Xunit.PropertyDiscoverer", "FsCheck.Xunit")>]
+type public PropertyAttribute() =
     inherit FactAttribute()
     let mutable maxTest = Config.Default.MaxTest
-    let mutable maxFail = Config.Default.MaxFail 
+    let mutable maxFail = Config.Default.MaxFail
     let mutable replay = Config.Default.Replay
     let mutable startSize = Config.Default.StartSize
     let mutable endSize = Config.Default.EndSize
@@ -50,7 +52,7 @@ type PropertyAttribute() =
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
     member x.Replay with get() = match replay with None -> String.Empty | Some (Random.StdGen (x,y)) -> sprintf "%A" (x,y)
-                    and set(v:string) = 
+                    and set(v:string) =
                         //if someone sets this, we want it to throw if it fails
                         let split = v.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
                         let elem1 = Int32.Parse(split.[0])
@@ -67,10 +69,10 @@ type PropertyAttribute() =
     member x.EndSize with get() = endSize and set(v) = endSize <- v
     ///Output all generated arguments.
     member x.Verbose with get() = verbose and set(v) = verbose <- v
-    ///The Arbitrary instances to use for this test method. The Arbitrary instances 
-    ///are merged in back to front order i.e. instances for the same generated type 
-    //at the front of the array will override those at the back.
-    member x.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v    
+    ///The Arbitrary instances to use for this test method. The Arbitrary instances
+    ///are merged in back to front order i.e. instances for the same generated type
+    ///at the front of the array will override those at the back.
+    member x.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v
     ///If set, suppresses the output from the test if the test is successful. This can be useful when running tests
     ///with TestDriven.net, because TestDriven.net pops up the Output window in Visual Studio if a test fails; thus,
     ///when conditioned to that behaviour, it's always a bit jarring to receive output from passing tests.
@@ -79,42 +81,108 @@ type PropertyAttribute() =
     ///test failures.
     member x.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
 
-    override this.EnumerateTestCommands(methodInfo:IMethodInfo) :seq<ITestCommand> = 
-        { new TestCommand(methodInfo, null, 0) with
-            override x.Execute(testClass:obj) : MethodResult = 
-                let xunitRunner = XunitRunner()
-                let arbitraries = 
-                    methodInfo.Class.Type 
-                    |> Seq.unfold (fun t -> if t <> null then Some(t,t.DeclaringType) else None)
-                    |> Seq.map (fun t -> t.GetCustomAttributes(typeof<ArbitraryAttribute>, true))
-                    |> Seq.filter (fun attr -> attr.Length = 1)
-                    |> Seq.collect (fun attr -> (attr.[0] :?> ArbitraryAttribute).Arbitrary)
-                    |> Seq.append this.Arbitrary
-                    |> Seq.toList
-                let config = 
-                    {Config.Default with
-                        Replay = this.ReplayStdGen
-                        MaxTest = this.MaxTest
-                        MaxFail = this.MaxFail
-                        StartSize = this.StartSize
-                        EndSize = this.EndSize
-                        Every = if this.Verbose then Config.Verbose.Every else Config.Quick.Every
-                        EveryShrink = if this.Verbose then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
-                        Arbitrary = arbitraries
-                        Runner = xunitRunner
-                    }
-                Check.Method(config, methodInfo.MethodInfo,?target=if testClass <> null then Some testClass else None)
-                match xunitRunner.Result with
-                | TestResult.True _ ->
-                    if not quietOnSuccess then
-                        printf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)
-                    upcast new PassedResult(methodInfo,this.DisplayName)
-                | TestResult.Exhausted testdata -> 
-                    upcast new FailedResult(methodInfo,PropertyFailedException(xunitRunner.Result), this.DisplayName)
-                | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  -> 
-                    let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
-                    upcast new FailedResult(methodInfo, PropertyFailedException(message, e), this.DisplayName)
-                | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  -> 
-                    upcast new FailedResult(methodInfo, PropertyFailedException(xunitRunner.Result), this.DisplayName)
-        } :> ITestCommand
-        |> Seq.singleton
+/// The xUnit2 test runner for the PropertyAttribute that executes the test via FsCheck
+type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
+    inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
+
+    new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, null)
+
+    member this.Init() =
+        let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
+        let arbitraryOnMethod = factAttribute.GetNamedArgument "Arbitrary"
+        let arbitrariesOnClass =
+            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<ArbitraryAttribute>)
+                |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
+
+        let arbitraries =
+            Config.Default.Arbitrary
+            |> Seq.append arbitrariesOnClass
+            |> Seq.append arbitraryOnMethod
+            |> Seq.toList
+
+        (factAttribute.GetNamedArgument("QuietOnSuccess"),
+         {Config.Default with
+                Replay = factAttribute.GetNamedArgument("ReplayStdGen")
+                MaxTest = factAttribute.GetNamedArgument("MaxTest")
+                MaxFail = factAttribute.GetNamedArgument("MaxFail")
+                StartSize = factAttribute.GetNamedArgument("StartSize")
+                EndSize = factAttribute.GetNamedArgument("EndSize")
+                Every = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.Every else Config.Quick.Every
+                EveryShrink = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
+                Arbitrary = arbitraries
+                Runner = new XunitRunner()
+            })
+
+    override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
+        let test = new XunitTest(this, this.DisplayName)
+        let summary = new RunSummary(Total = 1);
+
+        let testExec() =
+            let (quietOnSuccess,config) = this.Init()
+            let timer = ExecutionTimer()
+            let result =
+                try
+                    let xunitRunner = if config.Runner :? XunitRunner then (config.Runner :?> XunitRunner) else new XunitRunner()
+                    let runMethod = this.TestMethod.Method.ToRuntimeMethod()
+                    let target =
+                        constructorArguments
+                            |> Array.tryFind (fun x -> x :? TestOutputHelper)
+                            |> Option.iter (fun x -> (x :?> TestOutputHelper).Initialize(messageBus, test))
+                        let testClass = this.TestMethod.TestClass.Class.ToRuntimeType()
+                        if this.TestMethod.TestClass <> null && not this.TestMethod.Method.IsStatic then
+                            Some (test.CreateTestClass(testClass, constructorArguments, messageBus, timer, cancellationTokenSource))
+                        else None
+
+                    Check.Method(config, runMethod, ?target=target)
+
+                    match xunitRunner.Result with
+                          | TestResult.True _ ->
+                            let output =
+                                if not quietOnSuccess then
+                                    let msg = Runner.onFinishedToString "" xunitRunner.Result
+                                    printf "%s%s" Environment.NewLine msg
+                                    msg
+                                else ""
+                            (0, new TestPassed(test, timer.Total, output) :> TestResultMessage)
+                          | TestResult.Exhausted testdata ->
+                            summary.Failed <- summary.Failed + 1
+                            (1, upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                          | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
+                            let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
+                            (1, upcast new TestFailed(test, timer.Total, message, new PropertyFailedException(message, e)))
+                          | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
+                            summary.Failed <- summary.Failed + 1
+                            (1, upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                with
+                    | ex -> (1, upcast new TestFailed(test, timer.Total, "Exception during test:", ex))
+
+            let (failed, testMessage) = result
+            messageBus.QueueMessage(testMessage) |> ignore
+            summary.Time <- summary.Time + testMessage.ExecutionTime
+            if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, testMessage.Output))) then
+                cancellationTokenSource.Cancel() |> ignore
+            summary
+
+        if not (messageBus.QueueMessage(new TestStarting(test))) then
+            cancellationTokenSource.Cancel() |> ignore
+
+        if not(String.IsNullOrEmpty(this.SkipReason)) then
+            summary.Skipped <- summary.Skipped + 1
+            if not(messageBus.QueueMessage(new TestSkipped(test, this.SkipReason))) then
+                cancellationTokenSource.Cancel() |> ignore
+            Task.Factory.StartNew(fun () -> summary)
+        else
+            Task.Factory.StartNew<RunSummary>(fun () -> testExec())
+
+/// xUnit2 test case discoverer to link the method with the PropertyAttribute to the PropertyTestCase
+/// so the test can be run via FsCheck.
+type PropertyDiscoverer(messageSink:IMessageSink) =
+
+    new () = PropertyDiscoverer(null)
+
+    member x.MessageSink = messageSink
+
+    interface IXunitTestCaseDiscoverer with
+        override this.Discover(discoveryOptions:ITestFrameworkDiscoveryOptions, testMethod:ITestMethod, factAttribute:IAttributeInfo)=
+            let ptc = new PropertyTestCase(this.MessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod)
+            Seq.singleton (ptc :> IXunitTestCase)
