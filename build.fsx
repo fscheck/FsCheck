@@ -172,7 +172,6 @@ Target "Build" (fun _ ->
 // Run the unit tests using test runner
 
 Target "RunTests" (fun _ ->
-// temporary change to alt because support for the new xunit argument -noappdomain is required on mono
     !! testAssemblies
     |> xUnit2 (fun p ->
             {p with
