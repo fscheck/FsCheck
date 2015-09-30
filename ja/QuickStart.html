@@ -70,10 +70,8 @@
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1654141080,296047450)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1360840146,296063931)):
 Original:
-[0; -1]
-Shrunk:
 [0; 1]</code></pre></td></tr></table>
 
 <p>FsCheck は反例の <em>シュリンク</em> (訳註: 推定による絞り込みのこと)も行うので、テストケースを失敗させる最小の反例を見つけようとします。
@@ -105,10 +103,8 @@ Shrunk:
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1655241673,296047450)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (0 shrinks) (StdGen (1361280459,296063931)):
 Original:
-[nan; -1.5; 0.3333333333]
-Shrunk:
 [nan]</code></pre></td></tr></table>
 
 <h2>FsCheck を他のテスティングフレームワークで使う</h2>
@@ -141,8 +137,8 @@ Shrunk:
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 45)" onmouseover="showTip(event, 'fs1', 45)" class="i">FsCheck</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 46)" onmouseover="showTip(event, 'fs14', 46)" class="i">Xunit</span>
 
 [&lt;<span onmouseout="hideTip(event, 'fs15', 47)" onmouseover="showTip(event, 'fs15', 47)" class="t">Property</span>&gt;]
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs16', 48)" onmouseover="showTip(event, 'fs16', 48)" class="f">``Reverse of reverse of a list is the original list ``</span>(<span onmouseout="hideTip(event, 'fs3', 49)" onmouseover="showTip(event, 'fs3', 49)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs4', 50)" onmouseover="showTip(event, 'fs4', 50)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs5', 51)" onmouseover="showTip(event, 'fs5', 51)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span>
-  <span onmouseout="hideTip(event, 'fs6', 52)" onmouseover="showTip(event, 'fs6', 52)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 53)" onmouseover="showTip(event, 'fs7', 53)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs6', 54)" onmouseover="showTip(event, 'fs6', 54)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 55)" onmouseover="showTip(event, 'fs7', 55)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs3', 56)" onmouseover="showTip(event, 'fs3', 56)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 57)" onmouseover="showTip(event, 'fs3', 57)" class="i">xs</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 48)" onmouseover="showTip(event, 'fs15', 48)" class="f">``Reverse of reverse of a list is the original list ``</span>(<span onmouseout="hideTip(event, 'fs15', 49)" onmouseover="showTip(event, 'fs15', 49)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs15', 50)" onmouseover="showTip(event, 'fs15', 50)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs15', 51)" onmouseover="showTip(event, 'fs15', 51)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs15', 52)" onmouseover="showTip(event, 'fs15', 52)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 53)" onmouseover="showTip(event, 'fs7', 53)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs15', 54)" onmouseover="showTip(event, 'fs15', 54)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 55)" onmouseover="showTip(event, 'fs7', 55)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs15', 56)" onmouseover="showTip(event, 'fs15', 56)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 57)" onmouseover="showTip(event, 'fs15', 57)" class="i">xs</span>
   
 </code></pre>
 
@@ -164,8 +160,7 @@ Shrunk:
 <div class="tip" id="fs12">val ( Reverse of reverse of a list is the original list ) : unit -&gt; &#39;a<br /><br />Full name: QuickStart.( Reverse of reverse of a list is the original list )</div>
 <div class="tip" id="fs13">val revRevIsOrig : (int list -&gt; bool)</div>
 <div class="tip" id="fs14">namespace FsCheck.Xunit</div>
-<div class="tip" id="fs15">Multiple items<br /><br />--------------------<br />new : unit -&gt; PropertyAttribute</div>
-<div class="tip" id="fs16">val ( Reverse of reverse of a list is the original list  ) : xs:int list -&gt; bool<br /><br />Full name: QuickStart.( Reverse of reverse of a list is the original list  )</div>
+<div class="tip" id="fs15"></div>
 
         </div>
         <div class="span3">
