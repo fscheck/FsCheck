@@ -1,11 +1,12 @@
-### 2.1.0-xunit2 - To be released
-  * Switch to xunit2. Need at least beta4 and -noshadow argument on Mono to get things to work. A mono fix
-  is submitted. (heroic effort by Jon Hamm)
+### 2.1.0 - 30 September 2015
+  * Switch to xunit 2.1. Note: Needs -noshadow argument on Mono due to Mono bug. A fix for Mono
+  is submitted and is expected in Mono 4.3. (heroic achievement by Jon Hamm - thanks to all who tested early versions and found bugs.)
+  * xunit versions < 2.1 are no longer supported. The latest FsCheck version that supports xunit 1.9.2 is currently FsCheck.Xunit 2.0.7.
   * Made Arbitrary overrides (e.g. using Arb.register, passing arbitrary to Config, or setting them
   in PropertyAttribute) thread-local. This is mainly to support xunit2: it runs tests in the same class
   in parallel by default. Not making the overrides thread local causes overrides from one test to mistakenly apply
   to others.
-  * FsCheck.Runner.init is Obsolete, it should not longer be necessary to call this explicitly. (though
+  * FsCheck.Runner.init is Obsolete, it should not longer be necessary to call it explicitly. (though
   I am cautious here - please report any issues.)
   * Fix for AppVeryor NuGet feed dependency problem.
 
