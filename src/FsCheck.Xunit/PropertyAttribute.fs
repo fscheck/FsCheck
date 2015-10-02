@@ -89,7 +89,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
     member this.Init() =
         let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
-        let arbitraryOnMethod = factAttribute.GetNamedArgument "Arbitrary"
+        let arbitrariesOnMethod = factAttribute.GetNamedArgument "Arbitrary"
         let arbitrariesOnClass =
             this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<ArbitraryAttribute>)
                 |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
@@ -97,7 +97,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
         let arbitraries =
             Config.Default.Arbitrary
             |> Seq.append arbitrariesOnClass
-            |> Seq.append arbitraryOnMethod
+            |> Seq.append arbitrariesOnMethod
             |> Seq.toList
 
         (factAttribute.GetNamedArgument("QuietOnSuccess"),
