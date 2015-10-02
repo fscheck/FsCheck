@@ -119,7 +119,7 @@ All the options normally available in vanilla FsCheck via configuration can be c
     Tags = "test testing random fscheck quickcheck xunit xunit.net"
     ProjectFile = ["src/FsCheck.Xunit/FsCheck.Xunit.fsproj"]
     Dependencies = [ 
-                    "xunit", lazy GetPackageVersion "./packages/" "xunit"  //delayed so only runs after package restore step
+                    "xunit.extensibility.execution", lazy GetPackageVersion "./packages/" "xunit.extensibility.execution"  //delayed so only runs after package restore step
                     "FsCheck",  lazy buildVersion
                      ]
    }
@@ -172,10 +172,11 @@ Target "Build" (fun _ ->
 
 Target "RunTests" (fun _ ->
     !! testAssemblies
-    |> xUnit (fun p -> 
-            {p with 
-                ToolPath = "packages/xunit.runners/tools/xunit.console.clr4.exe"
-                ShadowCopy = false }) 
+    |> xUnit2 (fun p ->
+            {p with
+                ToolPath = "packages/xunit.runner.console/tools/xunit.console.exe"
+                NoAppDomain = true
+                ShadowCopy = false })
 )
 
 // --------------------------------------------------------------------------------------

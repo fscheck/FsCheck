@@ -185,7 +185,6 @@ module Gen =
 
     [<Fact>]
     let ``should generate functions from nullable values``() =
-        Runner.init.Force() |> ignore //in case this is run as the only test
         let generated =
             Arb.generate<unit->int>
             |> sample1

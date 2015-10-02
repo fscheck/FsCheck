@@ -1,9 +1,22 @@
-### 2.1.0 - To Release
+
+### 2.2.0-nunit3 - To Release
   * Update FsCheck.NUnit to use NUnit 3.0. This (hopefully) solves a lot of issues with NUnit 2's wonky plugin model. 
   FsCheck.NUnit.Addin is no longer needed, for example, and neither is the install.ps1 in the FsCheck.NUnit package. Also,
   FsCheck.NUnit only needs a dependency on NUnit now, which should solve a bunch of install issues on its own. (another 
   heroic contribution by Jon Hamm.)
   * Fix for AppVeryor NuGetfeed dependency problem.
+
+### 2.1.0 - 30 September 2015
+  * Switch to xunit 2.1. Note: Needs -noshadow argument on Mono due to Mono bug. A fix for Mono
+  is submitted and is expected in Mono 4.3. (heroic achievement by Jon Hamm - thanks to all who tested early versions and found bugs.)
+  * xunit versions before 2.1 are no longer supported. The latest FsCheck version that supports xunit 1.9.2 is currently FsCheck.Xunit 2.0.7.
+  * Made Arbitrary overrides (e.g. using Arb.register, passing arbitrary to Config, or setting them
+  in PropertyAttribute) thread-local. This is mainly to support xunit2: it runs tests in the same class
+  in parallel by default. Not making the overrides thread local causes overrides from one test to mistakenly apply
+  to others.
+  * FsCheck.Runner.init is Obsolete, it should not longer be necessary to call it explicitly. (though
+  I am cautious here - please report any issues.)
+  * Fix for AppVeryor NuGet feed dependency problem.
 
 ### 2.0.7 - 20 August 2015
   * Add assembly level ExtensionAttribute so VB.NET sees extension methods too. (by Paulmichael Blasucci)

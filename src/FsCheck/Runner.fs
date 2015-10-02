@@ -254,10 +254,12 @@ module Runner =
 
     ///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
     ///In any case, it can be forced any number of times without problem.
-    let init = Arb.init
+    [<Obsolete("Calling this should no longer be necessary - though please file an issue if you find a case where it is :)")>]
+    let init = 
+        Arb.defaultArbitrary |> ignore
+        lazy ()
 
     let private hasTestableReturnType (m:MethodInfo) =
-        //ignore init.Value
         try
             TestableTC.GetInstance m.ReturnType |> ignore
             true
@@ -265,17 +267,14 @@ module Runner =
             _ -> false
 
     let internal check config p = 
-        //every check, even the reflective one, passes through here. So:
-        ignore init.Value // should always work
-
         //save so we can restore after the run
-        let defaultArbitrary = !Arb.Arbitrary
+        let defaultArbitrary = Arb.Arbitrary.Value
         let merge newT (existingTC:TypeClass<_>) = existingTC.DiscoverAndMerge(onlyPublic=true,instancesType=newT)
-        Arb.Arbitrary := List.foldBack merge config.Arbitrary defaultArbitrary
+        Arb.Arbitrary.Value <- List.foldBack merge config.Arbitrary defaultArbitrary
         try
             runner config (property p)
         finally
-            Arb.Arbitrary := defaultArbitrary
+            Arb.Arbitrary.Value <- defaultArbitrary
 
     let private checkMethodInfo = 
         typeof<TestStep>.DeclaringType.GetTypeInfo().DeclaredMethods 

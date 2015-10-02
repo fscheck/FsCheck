@@ -8,7 +8,6 @@ module Runner =
     open FsCheck.Xunit
     open Helpers
 
-
     type TestArbitrary1 =
         static member PositiveDouble() =
             Arb.Default.Float()
@@ -102,5 +101,3 @@ module Runner =
         [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
         let ``should use Arb instance on method preferentially``(underTest:float) =
             underTest >= 0.0
-
-        
