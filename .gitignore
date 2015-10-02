@@ -157,3 +157,4 @@ $RECYCLE.BIN/
 *.userprefs
 release.cmd
 .fake/
+docs/tools/FSharp.Formatting.svclog
