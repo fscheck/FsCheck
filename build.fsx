@@ -15,6 +15,7 @@ open Fake.Testing
 open SourceLink
 
 open System
+open System.IO
 open Fake.AppVeyor
 
 // Information about each project is used
@@ -193,10 +194,6 @@ Target "SourceLink" (fun _ ->
 )
 // --------------------------------------------------------------------------------------
 // Build a NuGet package
-type OptionalString = string option
-
-open System
-open System.IO
 
 Target "NuGet" (fun _ ->        
     packages |> Seq.iter (fun package ->
@@ -214,7 +211,7 @@ Target "NuGet" (fun _ ->
             Publish = hasBuildParam "nugetkey"
             Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
         })
-        ("nuget/" + package.Name + ".nuspec")
+        ("NuGet/" + package.Name + ".nuspec")
    )
 )
 
