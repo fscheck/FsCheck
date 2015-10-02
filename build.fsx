@@ -300,7 +300,6 @@ Target "CI" DoNothing
   ==> "CleanDocs"
   ==> "GenerateDocsJa"  
   ==> "GenerateDocs"
-  ==> "CI"
   =?> ("ReleaseDocs", isLocalBuild)
   ==> "Release"
 
@@ -308,5 +307,8 @@ Target "CI" DoNothing
   =?> ("SourceLink", isLocalBuild && not isLinux)
   ==> "NuGet"
   ==> "Release"
+
+"GenerateDocs" ==> "CI"
+"NuGet" ==> "CI"
 
 RunTargetOrDefault "RunTests"
