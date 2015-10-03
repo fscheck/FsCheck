@@ -156,10 +156,9 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                 with
                     | ex -> upcast new TestFailed(test, timer.Total, "Exception during test:", ex)
 
-            let testMessage = result
-            messageBus.QueueMessage(testMessage) |> ignore
-            summary.Time <- summary.Time + testMessage.ExecutionTime
-            if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, testMessage.Output))) then
+            messageBus.QueueMessage(result) |> ignore
+            summary.Time <- summary.Time + result.ExecutionTime
+            if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, result.Output))) then
                 cancellationTokenSource.Cancel() |> ignore
             summary
 
