@@ -140,7 +140,6 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                             let output =
                                 if not quietOnSuccess then
                                     let msg = Runner.onFinishedToString "" xunitRunner.Result
-                                    printf "%s%s" Environment.NewLine msg
                                     msg
                                 else ""
                             (0, new TestPassed(test, timer.Total, output) :> TestResultMessage)
