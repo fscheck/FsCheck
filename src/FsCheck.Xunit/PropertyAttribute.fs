@@ -139,8 +139,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                           | TestResult.True _ ->
                             let output =
                                 if not quietOnSuccess then
-                                    let msg = Runner.onFinishedToString "" xunitRunner.Result
-                                    msg
+                                    Runner.onFinishedToString "" xunitRunner.Result
                                 else ""
                             (0, new TestPassed(test, timer.Total, output) :> TestResultMessage)
                           | TestResult.Exhausted testdata ->
