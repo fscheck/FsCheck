@@ -143,20 +143,20 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                                     printf "%s%s" Environment.NewLine msg
                                     msg
                                 else ""
-                            (0, new TestPassed(test, timer.Total, output) :> TestResultMessage)
+                            new TestPassed(test, timer.Total, output) :> TestResultMessage
                           | TestResult.Exhausted testdata ->
                             summary.Failed <- summary.Failed + 1
-                            (1, upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                            upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result))
                           | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
                             let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
-                            (1, upcast new TestFailed(test, timer.Total, message, new PropertyFailedException(message, e)))
+                            upcast new TestFailed(test, timer.Total, message, new PropertyFailedException(message, e))
                           | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
                             summary.Failed <- summary.Failed + 1
-                            (1, upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                            upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result))
                 with
-                    | ex -> (1, upcast new TestFailed(test, timer.Total, "Exception during test:", ex))
+                    | ex -> upcast new TestFailed(test, timer.Total, "Exception during test:", ex)
 
-            let (failed, testMessage) = result
+            let testMessage = result
             messageBus.QueueMessage(testMessage) |> ignore
             summary.Time <- summary.Time + testMessage.ExecutionTime
             if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, testMessage.Output))) then
