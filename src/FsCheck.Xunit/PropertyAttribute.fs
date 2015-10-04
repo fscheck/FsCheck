@@ -150,7 +150,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                             upcast new TestFailed(test, timer.Total, "", new PropertyFailedException(message, e))
                           | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
                             summary.Failed <- summary.Failed + 1
-                            upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result))
+                            upcast new TestFailed(test, timer.Total, "", new PropertyFailedException(xunitRunner.Result))
                 with
                     | ex -> upcast new TestFailed(test, timer.Total, "Exception during test:", ex)
 
