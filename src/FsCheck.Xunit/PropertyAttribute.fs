@@ -144,7 +144,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                             new TestPassed(test, timer.Total, output) :> TestResultMessage
                           | TestResult.Exhausted testdata ->
                             summary.Failed <- summary.Failed + 1
-                            upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result))
+                            upcast new TestFailed(test, timer.Total, "", new PropertyFailedException(xunitRunner.Result))
                           | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
                             let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
                             upcast new TestFailed(test, timer.Total, "", new PropertyFailedException(message, e))
