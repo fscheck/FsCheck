@@ -10,20 +10,7 @@ The fastest way to understand how FsCheck works is by writing some *properties* 
 test, or a generative test - and run them using the built-in test runner. Later on, we'll describe how they can be integrated
 with existing test frameworks like NUnit, xUnit.NET or MsTest.
 
-## Installation
-First install FsCheck. Make sure your project(s) has target `.NET 4.5` or greater.
-
-If you installed `FsCheck.NUnit` via Paket, make sure you have added these references to your project
-([Paket doesn't run any powershell scripts](https://fsprojects.github.io/Paket/faq.html#Does-Paket-run-install-ps1-scripts)
-that usually do this for you):
-
-```
-packages/NUnit.Runners/tools/lib/nunit.core.dll
-packages/NUnit.Runners/tools/lib/nunit.core.interfaces.dll
-```
-
-## Usage
-Open an fsx file and start with:*)
+First install FsCheck, open an fsx file and start with:*)
 
 #r "FsCheck"
 
@@ -143,4 +130,5 @@ let ``Reverse of reverse of a list is the original list ``(xs:list<int>) =
   
 (** xUnit now shows the test similarly to a regular test, and is able to run it directly.
 
-To learn more on how to use this integration, see [Running Tests](RunningTests.html). *)
+To learn more on how to use this integration or integration with other frameworks like NUnit,
+see [Running Tests](RunningTests.html). *)

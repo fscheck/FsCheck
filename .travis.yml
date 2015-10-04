@@ -4,10 +4,9 @@ before_script:
  - chmod +x build.sh
 
 script: 
-  - ./build.sh GenerateDocs
+  - ./build.sh RunTests
   
 cache:
   directories:
   - packages
   - $HOME/.local/share/NuGet
-
