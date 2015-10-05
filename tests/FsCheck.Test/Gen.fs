@@ -286,11 +286,10 @@ module Gen =
         // same as Gen.constant n, just to test while
         let convolutedGenNumber n =
             gen { let s = ref 0
-                  for c in [1..100] do
+                  for c in [1..n] do
                     s := !s + 1
                   return !s
                 }
-        convolutedGenNumber 100 
-        |> Gen.sample 1 10
-        |> Seq.forall ((=) 100) 
-        |> Assert.True
+        test <@ convolutedGenNumber 100 
+                |> Gen.sample 1 10
+                |> Seq.forall ((=) 100) @>
