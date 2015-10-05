@@ -38,9 +38,9 @@ module TypeClass =
             TypeClass<ITypeClassUnderTest<_>>
                 .New()
                 .Discover(true, typeof<PrimitiveInstance>)
-        Assert.Equal(1, typeClass.Instances.Count)
-        Assert.Contains((Primitive typeof<int>), typeClass.Instances) 
-        Assert.False typeClass.HasCatchAll
+        1 =! typeClass.Instances.Count
+        test <@ typeClass.Instances.Contains (Primitive typeof<int>) @>
+        false =! typeClass.HasCatchAll
 
     type ArrayInstance() =
         static member Array2() =
