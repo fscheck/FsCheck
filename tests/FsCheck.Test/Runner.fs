@@ -90,7 +90,7 @@ module Runner =
     type TypeToInstantiate() =
         [<Property>]
         let ``should run a property on an instance``(random:int) =
-            Assert.True true
+            true =! true
 
     [<Arbitrary(typeof<TestArbitrary2>)>]
     module ModuleWithArbitrary =
