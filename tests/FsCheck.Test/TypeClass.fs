@@ -67,8 +67,8 @@ module TypeClass =
             TypeClass<ITypeClassUnderTest<_>>
                 .New()
                 .Discover(true, typeof<CatchAllInstance>)
-        Assert.True typeClass.HasCatchAll
-        Assert.Equal(1,typeClass.Instances.Count)
+        test <@ typeClass.HasCatchAll @>
+        1 =! typeClass.Instances.Count
 
     [<Fact>]
     let ``should instantiate primitive type``() =
