@@ -88,7 +88,7 @@ module TypeClass =
                 .Discover(true, typeof<ArrayInstance>)
                 .DiscoverAndMerge(true, typeof<PrimitiveInstance>) //so the int is defined too
                 .InstanceFor<int[,],ITypeClassUnderTest<int[,]>>()
-        Assert.Equal(2, instance.GetSomething)
+        2 =! instance.GetSomething
 
     [<Fact>]
     let ``should instantiate unknown type using catchall``() =
