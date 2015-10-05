@@ -277,10 +277,9 @@ module Gen =
                     s := !s + 1
                   return !s
                 }
-        convolutedGenNumber 100 
-        |> Gen.sample 1 10
-        |> Seq.forall ((=) 100) 
-        |> Assert.True
+        test <@ convolutedGenNumber 100 
+                |> Gen.sample 1 10
+                |> Seq.forall ((=) 100) @>
 
     [<Fact>]
     let ``GenBuilder.For``() =
