@@ -71,9 +71,9 @@ module Runner =
             Seq.initInfinite (fun i -> doOne(123,654321))
             |> Seq.take(5)
             |> Seq.distinct
-        Assert.Equal(1,Seq.length same)
-        Assert.NotEqual<string>("should have failed", Seq.head same)
-        Assert.Contains("(123,654321)", Seq.head same);
+        1 =! Seq.length same
+        "should have failed" <>! Seq.head same
+        test <@ (Seq.head same).Contains "(123,654321)" @>
 
     [<Property(Replay="54321,67584")>]
     let ``should pick up replay seeds from PropertyAttribute without parens``(a:int, b:string) =
