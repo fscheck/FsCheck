@@ -53,8 +53,8 @@ module TypeClass =
             TypeClass<ITypeClassUnderTest<_>>
                 .New()
                 .Discover(true, typeof<ArrayInstance>)
-        Assert.Equal(1, typeClass.Instances.Count)
-        Assert.Contains((Array typeof<_[,]>), typeClass.Instances)
+        1 =! typeClass.Instances.Count
+        test <@ typeClass.Instances.Contains (Array typeof<_[,]>) @>
 
     type CatchAllInstance() =
         static member CatchAll() =
