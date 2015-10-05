@@ -79,7 +79,7 @@ module Runner =
     let ``should pick up replay seeds from PropertyAttribute without parens``(a:int, b:string) =
         //testing the replay separately in other tests - this just checks we can run
         //this test
-        Assert.True true
+        true =! true
 
     [<Property(Replay="(54321,67584)")>]
     let ``should pick up replay seeds from PropertyAttribute with parens``(a:int, b:string) =
