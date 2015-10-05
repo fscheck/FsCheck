@@ -6,6 +6,7 @@ module Gen =
     open FsCheck
     open FsCheck.Xunit
     open Helpers
+    open Swensen.Unquote
 
     [<Property>]
     let Choose (Interval (l,h)) = 
@@ -193,7 +194,7 @@ module Gen =
         generated
         |> Seq.pairwise
         |> Seq.map (fun (a,b) -> a = b)
-        |> fun l -> Assert.DoesNotContain(false, l)
+        |> fun l -> test <@ Seq.forall id l @>
 
     //variant generators should be independent...this is not a good check for that.
 //    let Variant (v:char) =
