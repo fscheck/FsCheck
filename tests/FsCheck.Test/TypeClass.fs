@@ -21,8 +21,7 @@ module TypeClass =
 
     [<Fact>]
     let ``should throw when intialized with non-generic type``() =
-        Assert.Throws<Exception>(fun () -> TypeClass<string>.New() |> ignore) 
-        |> ignore
+        raises<Exception> <@ TypeClass<string>.New() @>
 
     type PrimitiveInstance() =
         static member Int() =
