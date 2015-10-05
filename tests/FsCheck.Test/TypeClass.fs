@@ -97,7 +97,7 @@ module TypeClass =
                 .New()
                 .Discover(true, typeof<CatchAllInstance>)
                 .InstanceFor<string,ITypeClassUnderTest<string>>() //string not defined explicitly
-        Assert.Equal(3, instance.GetSomething)
+        3 =! instance.GetSomething
 
 
 
