@@ -3,6 +3,7 @@ source https://www.nuget.org/api/v2
 nuget FAKE
 nuget NUnit
 nuget NUnit.Runners
+nuget Unquote
 nuget xunit
 nuget xunit.runner.console
 nuget xunit.runner.visualstudio version_in_path: true
