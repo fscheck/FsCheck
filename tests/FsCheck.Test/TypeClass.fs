@@ -7,6 +7,7 @@ module TypeClass =
     open FsCheck
     open FsCheck.Xunit
     open FsCheck.TypeClass
+    open Swensen.Unquote
 
     type ITypeClassUnderTest<'a> =
         abstract GetSomething : int
@@ -14,9 +15,9 @@ module TypeClass =
     [<Fact>]
     let ``should be empty on initialization``() =
         let typeClassDef = TypeClass<ITypeClassUnderTest<_>>.New()
-        Assert.Equal(typedefof<ITypeClassUnderTest<_>>,typeClassDef.Class)
-        Assert.Empty typeClassDef.Instances
-        Assert.False typeClassDef.HasCatchAll
+        typedefof<ITypeClassUnderTest<_>> =! typeClassDef.Class
+        test <@ typeClassDef.Instances.IsEmpty @>
+        false =! typeClassDef.HasCatchAll
 
     [<Fact>]
     let ``should throw when intialized with non-generic type``() =
