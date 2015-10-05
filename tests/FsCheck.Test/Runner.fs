@@ -7,6 +7,7 @@ module Runner =
     open FsCheck
     open FsCheck.Xunit
     open Helpers
+    open Swensen.Unquote
 
     type TestArbitrary1 =
         static member PositiveDouble() =
@@ -54,9 +55,9 @@ module Runner =
             Seq.initInfinite (fun i -> doOne(123,654321))
             |> Seq.take(5)
             |> Seq.distinct
-        Assert.Equal(1,Seq.length same)
-        Assert.NotEqual<string>("should have failed", Seq.head same)
-        Assert.Contains("(123,654321)", Seq.head same);
+        1 =! Seq.length same
+        "should have failed" <>! Seq.head same
+        test <@ (Seq.head same).Contains "(123,654321)" @>
 
     [<Fact>]
     let ``should replay property with complex set of generators``() =
