@@ -78,7 +78,7 @@ module TypeClass =
                 .Discover(true, typeof<PrimitiveInstance>)
                 .InstanceFor<int,ITypeClassUnderTest<int>>()
 
-        Assert.Equal(1, instance.GetSomething)
+        1 =! instance.GetSomething
 
     [<Fact>]
     let ``should instantiate array type``() =
