@@ -125,8 +125,6 @@ module Gen =
         Gen.suchThatOption predicate (Gen.constant v)
         |> sample1
         |> ((=) expected)
-//        |> classify expected.IsNone "None"
-//        |> classify expected.IsSome "Some"
     
     [<Property>]   
     let SuchThat (v:int) =
