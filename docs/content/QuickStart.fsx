@@ -1,7 +1,7 @@
 ﻿(*** hide ***)
 #I "../../src/FsCheck/bin/Release"
 #r "../../src/FsCheck.Xunit/bin/Release/FsCheck.Xunit.dll"
-#r "../../packages/xunit.1.9.2/lib/net20/xunit.dll"
+#r "../../packages/xunit/lib/net20/xunit.dll"
 
 (**
 # Quick Start
@@ -130,4 +130,5 @@ let ``Reverse of reverse of a list is the original list ``(xs:list<int>) =
   
 (** xUnit now shows the test similarly to a regular test, and is able to run it directly.
 
-To learn more on how to use this integration, see [Running Tests](RunningTests.html). *)
+To learn more on how to use this integration or integration with other frameworks like NUnit,
+see [Running Tests](RunningTests.html). *)
