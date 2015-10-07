@@ -106,11 +106,8 @@ module Property =
         | Outcome.Exception _, TestResult.False(_,_,_,Outcome.Exception _,_) -> true && r0.Labels = testData.Labels
         | Outcome.False, TestResult.False(_,_,_,Outcome.False,_) -> true && r0.Labels = testData.Labels
         | Outcome.True, TestResult.True _ -> true && (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
-        | Outcome.Rejected,TestResult.Exhausted _ -> true //&& (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
+        | Outcome.Rejected,TestResult.Exhausted _ -> true
         | _ -> false
-        //&& (r0.Stamp |> Seq.filter ((<>) "") |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
-        //&& r0.Labels = testData.Labels
-        //&& List.forall2 (fun s0 s1 -> s0 = s1) r0.Arguments r1.Arguments
     
     let rec private depth (prop:SymProp) =
         match prop with
