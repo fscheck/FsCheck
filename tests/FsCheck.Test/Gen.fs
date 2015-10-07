@@ -6,6 +6,7 @@ module Gen =
     open FsCheck
     open FsCheck.Xunit
     open Helpers
+    open Swensen.Unquote
 
     [<Property>]
     let Choose (Interval (l,h)) = 
@@ -193,7 +194,7 @@ module Gen =
         generated
         |> Seq.pairwise
         |> Seq.map (fun (a,b) -> a = b)
-        |> fun l -> Assert.DoesNotContain(false, l)
+        |> fun l -> test <@ Seq.forall id l @>
 
     //variant generators should be independent...this is not a good check for that.
 //    let Variant (v:char) =
@@ -276,21 +277,19 @@ module Gen =
                     s := !s + 1
                   return !s
                 }
-        convolutedGenNumber 100 
-        |> Gen.sample 1 10
-        |> Seq.forall ((=) 100) 
-        |> Assert.True
+        test <@ convolutedGenNumber 100 
+                |> Gen.sample 1 10
+                |> Seq.forall ((=) 100) @>
 
     [<Fact>]
     let ``GenBuilder.For``() =
         // same as Gen.constant n, just to test while
         let convolutedGenNumber n =
             gen { let s = ref 0
-                  for c in [1..100] do
+                  for c in [1..n] do
                     s := !s + 1
                   return !s
                 }
-        convolutedGenNumber 100 
-        |> Gen.sample 1 10
-        |> Seq.forall ((=) 100) 
-        |> Assert.True
+        test <@ convolutedGenNumber 100 
+                |> Gen.sample 1 10
+                |> Seq.forall ((=) 100) @>

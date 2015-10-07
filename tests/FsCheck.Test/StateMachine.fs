@@ -6,6 +6,7 @@ module StateMachine =
     open FsCheck
     open FsCheck.Experimental
     open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
+    open Swensen.Unquote
 
     type SimpleModel() =
         let count = ref 0
@@ -25,11 +26,11 @@ module StateMachine =
             StateMachine.generate checkSimpleModelSpec
             |> Gen.sample 10 10
         for { Setup = _,create; Operations = comms } in commands do
-            Assert.IsType<SimpleModel>(create.Actual()) |> ignore
-            Assert.Equal(0, create.Model())
+            typeof<SimpleModel> =! create.Actual().GetType()
+            0 =! create.Model()
             for m,comm in comms do
-                Assert.True(comm.Pre 5)
-                Assert.Equal(6, comm.Run 5)
+                test <@ comm.Pre 5 @>
+                6 =! comm.Run 5
 
 
     //this spec is created using preconditions such that the only valid sequence is setFalse,setTrue
@@ -54,21 +55,17 @@ module StateMachine =
 
     [<Fact>]
     let ``generate commands should never violate precondition``() =
-        StateMachine.generate checkPreconditionSpec
-        |> Gen.sample 100 10
-        |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> checkPreconditions (c.Model()) cmds)
-        |> Assert.True
-        
+        test <@ StateMachine.generate checkPreconditionSpec
+                |> Gen.sample 100 10
+                |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> checkPreconditions (c.Model()) cmds) @>
 
     [<Fact>]
     let ``shrink commands should never violate precondition``() =
-        StateMachine.generate checkPreconditionSpec 
-        |> Gen.sample 100 10
-        |> Seq.map (StateMachine.shrink checkPreconditionSpec) 
-        |> Seq.concat
-        |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> checkPreconditions (c.Model()) cmds)
-        |> Assert.True
-        
+        test <@ StateMachine.generate checkPreconditionSpec 
+                |> Gen.sample 100 10
+                |> Seq.map (StateMachine.shrink checkPreconditionSpec) 
+                |> Seq.concat
+                |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> checkPreconditions (c.Model()) cmds) @>
 
     //a counter that never goes below zero
     type Counter(?dontcare:int) =

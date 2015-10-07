@@ -11,6 +11,7 @@ module Arbitrary =
     open System.Collections.Generic
     open Helpers
     open Arb
+    open Swensen.Unquote
     
     let private addLabels (generator,shrinker) = ( generator |@ "Generator", shrinker |@ "Shrinker")
     
@@ -194,7 +195,7 @@ module Arbitrary =
     let ``Fun pattern works``(Fun (f:bool->bool)) =
         let a = f true
         let b = f false
-        Assert.True true
+        true =! true
 
     [<Property>]
     let SystemFunc (f: Func<int>) (vs: list<unit>) =
