@@ -177,7 +177,10 @@ Target "RunTests" (fun _ ->
     |> xUnit2 (fun p ->
             {p with
                 ToolPath = "packages/xunit.runner.console/tools/xunit.console.exe"
-                NoAppDomain = true
+                //The NoAppDomain setting requires care.
+                //On linux, it needs to be true otherwise xunit won't work due to a Mono bug.
+                //On windows, it needs to be true otherwise Unquote won't work because it won't be able to load the FsCheck assembly.
+                NoAppDomain = isLinux 
                 ShadowCopy = false })
 )
 
