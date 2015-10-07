@@ -39,8 +39,6 @@ module Runner =
 
     [<Fact>]
     let ``should discard case with discardexception in test``() =
-        //let myArb = Arb.Default.Int32() |> Arb.filter (fun a -> a < 4)
-
         Check.QuickThrowOnFailure <| (fun a -> if a > 3 then Prop.discard() else true)
         
     [<Fact>]
