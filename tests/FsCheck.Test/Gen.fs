@@ -142,8 +142,7 @@ module Gen =
     let NonEmptyListOf (NonNegativeInt size) (v:string) =
         let actual = Gen.resize size (Gen.nonEmptyListOf <| Gen.constant v) |> sample 10
         actual
-        |> List.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && List.forall ((=) v) l) 
-        //|> label (sprintf "Actual: %A" actual)
+        |> List.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && List.forall ((=) v) l)
     
     [<Property>]
     let SubListOf (l:list<int>) =
