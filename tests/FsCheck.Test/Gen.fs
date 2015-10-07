@@ -125,8 +125,6 @@ module Gen =
         Gen.suchThatOption predicate (Gen.constant v)
         |> sample1
         |> ((=) expected)
-//        |> classify expected.IsNone "None"
-//        |> classify expected.IsSome "Some"
     
     [<Property>]   
     let SuchThat (v:int) =
@@ -144,8 +142,7 @@ module Gen =
     let NonEmptyListOf (NonNegativeInt size) (v:string) =
         let actual = Gen.resize size (Gen.nonEmptyListOf <| Gen.constant v) |> sample 10
         actual
-        |> List.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && List.forall ((=) v) l) 
-        //|> label (sprintf "Actual: %A" actual)
+        |> List.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && List.forall ((=) v) l)
     
     [<Property>]
     let SubListOf (l:list<int>) =
@@ -195,10 +192,6 @@ module Gen =
         |> Seq.pairwise
         |> Seq.map (fun (a,b) -> a = b)
         |> fun l -> test <@ Seq.forall id l @>
-
-    //variant generators should be independent...this is not a good check for that.
-//    let Variant (v:char) =
-//        Gen.variant v (Gen.constant v) |> sample1 |>  ((=) v)
 
     type FunctorLaws<'a,'b,'c when 'a:equality and 'b :equality and 'c:equality> =
         static member identity (x :'a) =
