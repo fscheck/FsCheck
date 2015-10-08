@@ -102,6 +102,7 @@ module TypeClass =
                 .New()
                 .Discover(true, typeof<CatchAllInstance>)
                 .InstanceFor<string,ITypeClassUnderTest<string>>() //string not defined explicitly
+
         3 =! instance.GetSomething
 
 
