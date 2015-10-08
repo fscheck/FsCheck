@@ -188,6 +188,7 @@ module Gen =
             |> sample1
             |> List.replicate 10
             |> List.map ((|>) ())
+
         generated
         |> Seq.pairwise
         |> Seq.map (fun (a,b) -> a = b)
