@@ -55,6 +55,7 @@ module TypeClass =
             TypeClass<ITypeClassUnderTest<_>>
                 .New()
                 .Discover(true, typeof<ArrayInstance>)
+
         1 =! typeClass.Instances.Count
         test <@ typeClass.Instances.Contains (Array typeof<_[,]>) @>
 
