@@ -92,6 +92,7 @@ module TypeClass =
                 .Discover(true, typeof<ArrayInstance>)
                 .DiscoverAndMerge(true, typeof<PrimitiveInstance>) //so the int is defined too
                 .InstanceFor<int[,],ITypeClassUnderTest<int[,]>>()
+
         2 =! instance.GetSomething
 
     [<Fact>]
