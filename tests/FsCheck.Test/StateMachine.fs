@@ -25,6 +25,7 @@ module StateMachine =
         let commands =
             StateMachine.generate checkSimpleModelSpec
             |> Gen.sample 10 10
+
         for { Setup = _,create; Operations = comms } in commands do
             typeof<SimpleModel> =! create.Actual().GetType()
             0 =! create.Model()
