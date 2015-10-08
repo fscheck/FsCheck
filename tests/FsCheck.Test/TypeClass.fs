@@ -15,6 +15,7 @@ module TypeClass =
     [<Fact>]
     let ``should be empty on initialization``() =
         let typeClassDef = TypeClass<ITypeClassUnderTest<_>>.New()
+
         typedefof<ITypeClassUnderTest<_>> =! typeClassDef.Class
         test <@ typeClassDef.Instances.IsEmpty @>
         false =! typeClassDef.HasCatchAll
