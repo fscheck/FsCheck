@@ -70,6 +70,7 @@ module TypeClass =
             TypeClass<ITypeClassUnderTest<_>>
                 .New()
                 .Discover(true, typeof<CatchAllInstance>)
+
         test <@ typeClass.HasCatchAll @>
         1 =! typeClass.Instances.Count
 
