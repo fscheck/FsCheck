@@ -49,10 +49,12 @@ module Runner =
                 "should have failed"
             with e ->
                 e.Message
+
         let same =
             Seq.initInfinite (fun i -> doOne(123,654321))
             |> Seq.take(5)
             |> Seq.distinct
+
         1 =! Seq.length same
         "should have failed" <>! Seq.head same
         test <@ (Seq.head same).Contains "(123,654321)" @>
