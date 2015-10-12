@@ -17,13 +17,13 @@
     @dependencies@
   </metadata>
   <files>
-    <file src="..\src\FsCheck.NUnit\bin\Release\FsCheck.NUnit.dll" target="lib/net45" />
-    <file src="..\src\FsCheck.NUnit\bin\Release\FsCheck.NUnit.pdb" target="lib/net45" />
-    <file src="..\src\FsCheck.NUnit\bin\Release\FsCheck.NUnit.xml" target="lib/net45" />
-    <file src="..\src\FsCheck.NUnit.Addin\bin\Release\FsCheck.NUnit.Addin.dll" target="lib/net45" />
-    <file src="..\src\FsCheck.NUnit.Addin\bin\Release\FsCheck.NUnit.Addin.pdb" target="lib/net45" />
-    <file src="..\src\FsCheck.NUnit.Addin\bin\Release\FsCheck.NUnit.Addin.xml" target="lib/net45" />
-    <file src="..\nuget\FsCheck.NUnit.nuspec.tools\install.ps1" target="tools\install.ps1" />
-    <file src="..\nuget\FsCheck.NUnit.nuspec.tools\FsCheckAddin.fs" target="content\FsCheckAddin.fs" />
+    <file src="../src/FsCheck.NUnit/bin/Release/FsCheck.NUnit.dll" target="lib/net45" />
+    <file src="../src/FsCheck.NUnit/bin/Release/FsCheck.NUnit.pdb" target="lib/net45" />
+    <file src="../src/FsCheck.NUnit/bin/Release/FsCheck.NUnit.xml" target="lib/net45" />
+    <file src="../src/FsCheck.NUnit.Addin/bin/Release/FsCheck.NUnit.Addin.dll" target="lib/net45" />
+    <file src="../src/FsCheck.NUnit.Addin/bin/Release/FsCheck.NUnit.Addin.pdb" target="lib/net45" />
+    <file src="../src/FsCheck.NUnit.Addin/bin/Release/FsCheck.NUnit.Addin.xml" target="lib/net45" />
+    <file src="../nuget/FsCheck.NUnit.nuspec.tools/install.ps1" target="tools/install.ps1" />
+    <file src="../nuget/FsCheck.NUnit.nuspec.tools/FsCheckAddin.fs" target="content/FsCheckAddin.fs" />
   </files>
 </package>

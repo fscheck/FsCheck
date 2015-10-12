@@ -17,8 +17,8 @@
     @dependencies@
   </metadata>
   <files>
-    <file src="..\src\FsCheck.Xunit\bin\Release\FsCheck.Xunit.dll" target="lib/net45" />
-    <file src="..\src\FsCheck.Xunit\bin\Release\FsCheck.Xunit.pdb" target="lib/net45" />
-    <file src="..\src\FsCheck.Xunit\bin\Release\FsCheck.Xunit.xml" target="lib/net45" />
+    <file src="../src/FsCheck.Xunit/bin/Release/FsCheck.Xunit.dll" target="lib/net45" />
+    <file src="../src/FsCheck.Xunit/bin/Release/FsCheck.Xunit.pdb" target="lib/net45" />
+    <file src="../src/FsCheck.Xunit/bin/Release/FsCheck.Xunit.xml" target="lib/net45" />
   </files>
 </package>
