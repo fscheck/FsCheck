@@ -198,6 +198,26 @@ Target "SourceLink" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Build a NuGet package
 
+let projectDirs = List.map (sprintf "src/%s")
+                           [ "FsCheck"
+                             "FsCheck.NUnit"
+                             "FsCheck.Xunit"
+                           ]
+
+Target "PaketPack" (fun _ ->
+  projectDirs |> Seq.iter (fun projectDirs ->
+    Paket.Pack (fun p ->
+      { p with
+          TemplateFile = "paket.template"
+          WorkingDir = projectDirs
+          OutputPath = "../../bin/PaketPack"
+          Version = buildVersion
+          ReleaseNotes = toLines release.Notes
+      }
+    )
+  )
+)
+
 Target "NuGet" (fun _ ->        
     packages |> Seq.iter (fun package ->
     NuGet (fun p -> 
