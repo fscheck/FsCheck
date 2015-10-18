@@ -1,12 +1,12 @@
 language: csharp
-sudo : false
-before_script:
- - chmod +x build.sh
 
-script: 
-  - ./build.sh GenerateDocs
-  
+sudo : false
+
+script:
+  - ./build.sh CI
+
 cache:
   directories:
   - packages
   - $HOME/.local/share/NuGet
+

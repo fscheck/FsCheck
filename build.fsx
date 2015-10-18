@@ -329,6 +329,6 @@ Target "CI" DoNothing
   ==> "Release"
 
 "GenerateDocs" ==> "CI"
-"NuGet" ==> "CI"
+"PaketPack" ==> "CI"
 
 RunTargetOrDefault "RunTests"
