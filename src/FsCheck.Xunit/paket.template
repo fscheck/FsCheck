@@ -1,0 +1,29 @@
+type file
+id
+    FsCheck.Xunit
+authors
+    Kurt Schelfthout and contributors
+owners
+    Kurt Schelfthout and contributors
+projectUrl
+    https://github.com/fsharp/FsCheck
+licenseUrl
+    https://github.com/fsharp/FsCheck/blob/master/License.txt
+requireLicenseAcceptance
+    false
+copyright
+    Copyright 2015
+tags
+    test testing random fscheck quickcheck xunit xunit.net
+summary
+    Integrates FsCheck with xUnit.NET
+description
+    FsCheck.Xunit integrates FsCheck with xUnit.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.NET's FactAttribute.
+    
+    All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
+dependencies
+    FsCheck >= 2.1.0
+    xunit.extensibility.execution >= 2.1.0
+files
+    bin/Release/FsCheck.Xunit.dll
+

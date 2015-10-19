@@ -1,0 +1,36 @@
+type file
+id
+    FsCheck
+authors
+    Kurt Schelfthout and contributors
+owners
+    Kurt Schelfthout and contributors
+projectUrl
+    https://github.com/fsharp/FsCheck
+licenseUrl
+    https://github.com/fsharp/FsCheck/blob/master/License.txt
+requireLicenseAcceptance
+    false
+copyright
+    Copyright 2015
+tags
+    test testing random fscheck quickcheck
+summary
+    FsCheck is a tool for testing .NET programs automatically using randomly generated test cases.
+description
+    FsCheck is a tool for testing .NET programs automatically. The programmer provides
+    a specification of the program, in the form of properties which functions, methods
+    or objects should satisfy, and FsCheck then tests that the properties hold in a
+    large number of randomly generated cases.
+    
+    While writing the properties, you are actually writing a testable specification of your program.
+    
+    Specifications are expressed in F#, C# or VB, using combinators defined
+    in the FsCheck library. FsCheck provides combinators to define properties,
+    observe the distribution of test data, and define test data generators.
+    When a property fails, FsCheck automatically displays a minimal counter example.
+dependencies
+    FSharp.Core >= 3.1.2.5
+files
+    bin/Release/FsCheck.dll ==> lib/net45
+

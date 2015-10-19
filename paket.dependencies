@@ -8,6 +8,5 @@ nuget xunit
 nuget xunit.core
 nuget xunit.runner.console
 nuget xunit.runner.visualstudio version_in_path: true
-nuget NuGet.CommandLine
 nuget SourceLink.Fake
 nuget FSharp.Formatting

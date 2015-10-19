@@ -2,7 +2,6 @@
 // FAKE build script 
 // --------------------------------------------------------------------------------------
 
-#r @"./packages/FAKE/tools/NuGet.Core.dll"
 #r @"./packages/FAKE/tools/FakeLib.dll"
 #load "./packages/SourceLink.Fake/tools/SourceLink.fsx"
 
@@ -148,9 +147,8 @@ Target "AssemblyInfo" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
-// Clean build results & restore NuGet packages
+// Clean build results
 
-Target "RestorePackages" RestorePackages
 
 Target "Clean" (fun _ ->
     CleanDirs ["bin"; "temp"]
@@ -198,24 +196,19 @@ Target "SourceLink" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Build a NuGet package
 
-Target "NuGet" (fun _ ->        
-    packages |> Seq.iter (fun package ->
-    NuGet (fun p -> 
-        { p with   
-            Authors = package.Authors
-            Project = package.Name
-            Summary = package.Summary
-            Description = package.Description
-            Version = buildVersion
-            ReleaseNotes = String.Join(Environment.NewLine, release.Notes)
-            Tags = package.Tags
-            OutputPath = "bin"
-            AccessKey = getBuildParamOrDefault "nugetkey" ""
-            Publish = hasBuildParam "nugetkey"
-            Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
-        })
-        ("NuGet/" + package.Name + ".nuspec")
-   )
+Target "PaketPack" (fun _ ->
+    Paket.Pack (fun p ->
+      { p with
+          OutputPath = "../../bin/PaketPack"
+          Version = buildVersion
+          ReleaseNotes = toLines release.Notes
+      })
+)
+
+Target "PaketPush" (fun _ ->
+    Paket.Push (fun p -> 
+        { p with 
+            WorkingDir = "../../bin/PaketPack" }) 
 )
 
 // --------------------------------------------------------------------------------------
@@ -291,7 +284,6 @@ Target "CI" DoNothing
 
 "Clean"
   =?> ("BuildVersion", isAppVeyorBuild)
-  ==> "RestorePackages"
   ==> "AssemblyInfo"
   ==> "Build"
   ==> "RunTests"
@@ -305,10 +297,12 @@ Target "CI" DoNothing
 
 "RunTests"
   =?> ("SourceLink", isLocalBuild && not isLinux)
-  ==> "NuGet"
+  ==> "PaketPack" 
+  ==> "PaketPush"
   ==> "Release"
 
-"GenerateDocs" ==> "CI"
-"NuGet" ==> "CI"
+"GenerateDocs"
+  ==> "PaketPack" 
+  ==> "CI"
 
 RunTargetOrDefault "RunTests"
