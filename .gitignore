@@ -158,3 +158,5 @@ $RECYCLE.BIN/
 release.cmd
 .fake/
 docs/tools/FSharp.Formatting.svclog
+docs/tools/XmlWriter
+

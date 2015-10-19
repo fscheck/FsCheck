@@ -27,7 +27,11 @@ dependencies
     NUnit.Runners >= 2.6.4
 files
     bin/Release/FsCheck.NUnit.dll ==> lib/net45
+    bin/Release/FsCheck.NUnit.pdb ==> lib/net45
+    bin/Release/FsCheck.NUnit.xml ==> lib/net45
     ../FsCheck.NUnit.Addin/bin/Release/FsCheck.NUnit.Addin.dll ==> lib/net45
-    ../../NuGet/FsCheck.Nunit.nuspec.tools/install.ps1 ==> tools/install.ps1
-    ../../NuGet/FsCheck.Nunit.nuspec.tools/FsCheckAddin.fs ==> content/FsCheckAddin.fs
+    ../FsCheck.NUnit.Addin/bin/Release/FsCheck.NUnit.Addin.pdb ==> lib/net45
+    ../FsCheck.NUnit.Addin/bin/Release/FsCheck.NUnit.Addin.xml ==> lib/net45
+    ../../NuGet/install.ps1 ==> tools/install.ps1
+    ../../NuGet/FsCheckAddin.fs ==> content/FsCheckAddin.fs
 

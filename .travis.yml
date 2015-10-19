@@ -1,6 +1,6 @@
 language: csharp
 
-sudo : false
+sudo: false
 
 script:
   - ./build.sh CI
