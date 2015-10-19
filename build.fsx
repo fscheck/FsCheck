@@ -2,7 +2,6 @@
 // FAKE build script 
 // --------------------------------------------------------------------------------------
 
-#r @"./packages/FAKE/tools/NuGet.Core.dll"
 #r @"./packages/FAKE/tools/FakeLib.dll"
 #load "./packages/SourceLink.Fake/tools/SourceLink.fsx"
 
@@ -217,24 +216,10 @@ Target "PaketPack" (fun _ ->
   )
 )
 
-Target "NuGet" (fun _ ->        
-    packages |> Seq.iter (fun package ->
-    NuGet (fun p -> 
-        { p with   
-            Authors = package.Authors
-            Project = package.Name
-            Summary = package.Summary
-            Description = package.Description
-            Version = buildVersion
-            ReleaseNotes = String.Join(Environment.NewLine, release.Notes)
-            Tags = package.Tags
-            OutputPath = "bin"
-            AccessKey = getBuildParamOrDefault "nugetkey" ""
-            Publish = hasBuildParam "nugetkey"
-            Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
-        })
-        ("NuGet/" + package.Name + ".nuspec")
-   )
+Target "PaketPush" (fun _ ->
+    Paket.Push (fun p -> 
+        { p with 
+            WorkingDir = "../../bin/PaketPack" }) 
 )
 
 // --------------------------------------------------------------------------------------
@@ -323,10 +308,12 @@ Target "CI" DoNothing
 
 "RunTests"
   =?> ("SourceLink", isLocalBuild && not isLinux)
-  ==> "NuGet"
+  ==> "PaketPack" 
+  ==> "PaketPush"
   ==> "Release"
 
-"GenerateDocs" ==> "CI"
-"PaketPack" ==> "CI"
+"GenerateDocs"
+  ==> "PaketPack" 
+  ==> "CI"
 
 RunTargetOrDefault "RunTests"

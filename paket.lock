@@ -8,7 +8,6 @@ NUGET
       FSharpVSPowerTools.Core (1.9.0)
     FSharpVSPowerTools.Core (1.9.0)
       FSharp.Compiler.Service (>= 0.0.90)
-    NuGet.CommandLine (2.8.6)
     NUnit (2.6.4)
     NUnit.Runners (2.6.4)
     SourceLink.Fake (1.1.0)
