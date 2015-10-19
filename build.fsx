@@ -148,9 +148,8 @@ Target "AssemblyInfo" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
-// Clean build results & restore NuGet packages
+// Clean build results
 
-Target "RestorePackages" RestorePackages
 
 Target "Clean" (fun _ ->
     CleanDirs ["bin"; "temp"]
@@ -311,7 +310,6 @@ Target "CI" DoNothing
 
 "Clean"
   =?> ("BuildVersion", isAppVeyorBuild)
-  ==> "RestorePackages"
   ==> "AssemblyInfo"
   ==> "Build"
   ==> "RunTests"
