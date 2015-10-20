@@ -97,7 +97,7 @@ module Property =
     let private areSame (r0:Result) (r1:TestResult) =
         let testData =
             match r1 with 
-            | TestResult.True td -> td
+            | TestResult.True (td,_) -> td
             | TestResult.False (td,_,_,_,_) -> td
             | TestResult.Exhausted td -> td
 

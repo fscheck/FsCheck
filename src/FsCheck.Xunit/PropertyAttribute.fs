@@ -100,25 +100,25 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             |> Seq.append arbitrariesOnMethod
             |> Seq.toList
 
-        (factAttribute.GetNamedArgument("QuietOnSuccess"),
-         {Config.Default with
+        { Config.Default with
                 Replay = factAttribute.GetNamedArgument("ReplayStdGen")
                 MaxTest = factAttribute.GetNamedArgument("MaxTest")
                 MaxFail = factAttribute.GetNamedArgument("MaxFail")
                 StartSize = factAttribute.GetNamedArgument("StartSize")
                 EndSize = factAttribute.GetNamedArgument("EndSize")
+                QuietOnSuccess = factAttribute.GetNamedArgument("QuietOnSuccess")
                 Every = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.Every else Config.Quick.Every
                 EveryShrink = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
                 Arbitrary = arbitraries
                 Runner = new XunitRunner()
-            })
+            }
 
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
         let test = new XunitTest(this, this.DisplayName)
         let summary = new RunSummary(Total = 1);
 
         let testExec() =
-            let (quietOnSuccess,config) = this.Init()
+            let config = this.Init()
             let timer = ExecutionTimer()
             let result =
                 try
@@ -137,10 +137,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
                     match xunitRunner.Result with
                           | TestResult.True _ ->
-                            let output =
-                                if quietOnSuccess
-                                then ""
-                                else Runner.onFinishedToString "" xunitRunner.Result
+                            let output = Runner.onFinishedToString "" xunitRunner.Result
                             new TestPassed(test, timer.Total, output) :> TestResultMessage
                           | TestResult.Exhausted testdata ->
                             summary.Failed <- summary.Failed + 1
