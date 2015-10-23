@@ -22,6 +22,7 @@ type Configuration() =
     let mutable everyShrink = Config.Quick.EveryShrink
     let mutable startSize = Config.Quick.StartSize
     let mutable endSize = Config.Quick.EndSize
+    let mutable quietOnSuccess = Config.Quick.QuietOnSuccess
     let mutable runner = Config.Quick.Runner
     let mutable replay = Config.Quick.Replay
 
@@ -48,6 +49,9 @@ type Configuration() =
     ///The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.
     member __.EndSize with get() = endSize and set(v) = endSize <- v
 
+    ///If set, suppresses the output from the test if the test is successful.
+    member __.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
+
     ///A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit. 
     member __.Runner with get() = runner and set(v) = runner <- v
 
@@ -64,6 +68,7 @@ type Configuration() =
           EveryShrink = everyShrink
           StartSize = startSize
           EndSize = endSize
+          QuietOnSuccess = quietOnSuccess
           Runner = runner
           Replay = replay
           Arbitrary = []

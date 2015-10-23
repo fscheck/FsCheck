@@ -24,6 +24,7 @@ type TestData =
 [<NoEquality;NoComparison;RequireQualifiedAccess>]
 type TestResult = 
     | True of TestData
+                * bool(*suppress output*)
     | False of TestData 
                 * list<obj>(*the original arguments that produced the failed test*)
                 * list<obj>(*the shrunk arguments that produce a failed test*)
@@ -58,6 +59,8 @@ type Config =
       StartSize     : int
       ///The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.
       EndSize       : int
+      ///If set, suppresses the output from the test if the test is successful.
+      QuietOnSuccess: bool
       ///What to print when new arguments args are generated in test n
       Every         : int -> list<obj> -> string
       ///What to print every time a counter-example is succesfully shrunk
@@ -141,7 +144,7 @@ module Runner =
         let testResult =
             let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
             match testStep with
-                | Passed _ -> TestResult.True testData
+                | Passed _ -> TestResult.True (testData, config.QuietOnSuccess)
                 | Falsified result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
                 | Failed _ -> TestResult.Exhausted testData
                 | EndShrink result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
@@ -210,9 +213,10 @@ module Runner =
         let stamps_to_string s = s |> Seq.map entry |> Seq.toList |> display
         let name = if String.IsNullOrEmpty(name) then String.Empty else (name+"-")  
         match testResult with
-        | TestResult.True data -> 
-            sprintf "%sOk, passed %i test%s%s" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
+        | TestResult.True (data, suppressOutput) ->
+            if suppressOutput then ""
+            else sprintf "%sOk, passed %i test%s%s"
+                    name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string)
         | TestResult.False (data, originalArgs, args, Outcome.Exception exc, usedSeed) -> 
             onFailureToString name data originalArgs args usedSeed
             + sprintf "with exception:%s%O%s" newline exc newline
@@ -335,6 +339,7 @@ type Config with
               Name          = ""
               StartSize     = 1
               EndSize       = 100
+              QuietOnSuccess = false
               Every         = fun _ _ -> String.Empty
               EveryShrink   = fun _ -> String.Empty
               Arbitrary     = []
