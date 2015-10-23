@@ -256,4 +256,4 @@ Target "CI" DoNothing
   ==> "PaketPack" 
   ==> "CI"
 
-RunTargetOrDefault "CI"
+RunTargetOrDefault "RunTests"
