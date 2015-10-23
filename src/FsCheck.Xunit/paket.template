@@ -25,5 +25,7 @@ dependencies
     FsCheck >= 2.1.0
     xunit.extensibility.execution >= 2.1.0
 files
-    bin/Release/FsCheck.Xunit.dll
+    bin/Release/FsCheck.Xunit.dll ==> lib/net45
+    bin/Release/FsCheck.Xunit.pdb ==> lib/net45
+    bin/Release/FsCheck.Xunit.xml ==> lib/net45
 

@@ -30,16 +30,6 @@ type ProjectInfo =
     /// Short summary of the project
     /// (used as description in AssemblyInfo and as a short summary for NuGet package)
     Summary : string
-    /// Longer description of the project
-    /// (used as a description for NuGet package; line breaks are automatically cleaned up)
-    Description : string
-    /// List of author names (for NuGet package)
-    Authors : string list
-    /// Tags for your project (for NuGet package)
-    Tags : string
-    ///The projectfile (csproj or fsproj)
-    ProjectFile : list<string>
-    Dependencies : list<string * Lazy<string>>
   }
 
 //File that contains the release notes.
@@ -74,59 +64,16 @@ let buildVersion =
 
 let packages =
   [
-    {
-    Name = "FsCheck"
-    Summary = "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
-    Description = """
-FsCheck is a tool for testing .NET programs automatically. The programmer provides 
-a specification of the program, in the form of properties which functions, methods 
-or objects should satisfy, and FsCheck then tests that the properties hold in a 
-large number of randomly generated cases. 
- 
-While writing the properties, you are actually writing a testable specification of your program. 
- 
-Specifications are expressed in F#, C# or VB, using combinators defined 
-in the FsCheck library. FsCheck provides combinators to define properties, 
-observe the distribution of test data, and define test data generators. 
-When a property fails, FsCheck automatically displays a minimal counter example."""
-    Authors = [ "Kurt Schelfthout and contributors" ]
-    Tags = "test testing random fscheck quickcheck"
-    ProjectFile = ["src/FsCheck/FsCheck.fsproj" ]
-    Dependencies = ["FSharp.Core", lazy "3.1.2.5" ]
-    
+    { Name = "FsCheck"
+      Summary = "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
     }
-    { 
-    Name = "FsCheck.NUnit"
-    Summary = "Integrates FsCheck with NUnit"
-    Description = """FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute. 
-    All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
-    Authors = [ "Kurt Schelfthout and contributors" ]
-    Tags = "test testing random fscheck quickcheck nunit"
-    ProjectFile = ["src/FsCheck.NUnit/FsCheck.NUnit.fsproj";"src/FsCheck.NUnit.Addin/FsCheck.NUnit.Addin.fsproj"]
-    Dependencies = [ 
-                    "NUnit",    lazy GetPackageVersion "./packages/" "NUnit"  //delayed so only runs after package restore step
-                    "NUnit.Runners",    lazy GetPackageVersion "./packages/" "NUnit.Runners"
-                    "FsCheck",  lazy buildVersion
-                    ]     
+    { Name = "FsCheck.NUnit"
+      Summary = "Integrates FsCheck with NUnit"
     }
-    { 
-    Name = "FsCheck.Xunit"
-    Summary = "Integrates FsCheck with xUnit.NET"
-    Description = """
-FsCheck.Xunit integrates FsCheck with xUnit.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.NET's FactAttribute.
- 
-All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
-    Authors = [ "Kurt Schelfthout and contributors" ]
-    Tags = "test testing random fscheck quickcheck xunit xunit.net"
-    ProjectFile = ["src/FsCheck.Xunit/FsCheck.Xunit.fsproj"]
-    Dependencies = [ 
-                    "xunit.extensibility.execution", lazy GetPackageVersion "./packages/" "xunit.extensibility.execution"  //delayed so only runs after package restore step
-                    "FsCheck",  lazy buildVersion
-                     ]
-   }
+    { Name = "FsCheck.Xunit"
+      Summary = "Integrates FsCheck with xUnit.NET"
+    }
   ]
-
-
 
 Target "BuildVersion" (fun _ ->
     Shell.Exec("appveyor", sprintf "UpdateBuild -Version \"%s\"" buildVersion) |> ignore
@@ -199,16 +146,17 @@ Target "SourceLink" (fun _ ->
 Target "PaketPack" (fun _ ->
     Paket.Pack (fun p ->
       { p with
-          OutputPath = "../../bin/PaketPack"
+          OutputPath = "bin"
           Version = buildVersion
           ReleaseNotes = toLines release.Notes
       })
 )
 
 Target "PaketPush" (fun _ ->
-    Paket.Push (fun p -> 
+    Paket.Push (fun p ->
         { p with 
-            WorkingDir = "../../bin/PaketPack" }) 
+            WorkingDir = "bin"
+        })
 )
 
 // --------------------------------------------------------------------------------------
@@ -288,21 +236,24 @@ Target "CI" DoNothing
   ==> "Build"
   ==> "RunTests"
 
-"RunTests"  
+"RunTests"
   ==> "CleanDocs"
-  ==> "GenerateDocsJa"  
+  ==> "GenerateDocsJa"
   ==> "GenerateDocs"
   =?> ("ReleaseDocs", isLocalBuild)
   ==> "Release"
 
 "RunTests"
   =?> ("SourceLink", isLocalBuild && not isLinux)
-  ==> "PaketPack" 
+  ==> "PaketPack"
   ==> "PaketPush"
   ==> "Release"
 
 "GenerateDocs"
+  ==> "CI"
+
+"RunTests"
   ==> "PaketPack" 
   ==> "CI"
 
-RunTargetOrDefault "RunTests"
+RunTargetOrDefault "CI"
