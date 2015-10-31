@@ -925,6 +925,11 @@ module Arb =
                 return Guid((a: int),b,c,d,e,f,g,h,i,j,k)
             } |> fromGen
 
+        ///Arbitray instance for BigInteger.
+        static member BigInt() =
+            Default.Int32()
+            |> convert bigint int
+
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
         static member DontShrink() =
             generate |> Gen.map DontShrink |> fromGen
