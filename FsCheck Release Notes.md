@@ -1,4 +1,9 @@
-### 2.1.1 - To be released
+### 2.2.0 - 31 October 2015
+  * Add QuietOnSuccess option to vanilla runner.
+  * Add bigint generator.
+  * Deprecate some infrequently used and incorrectly named methods.
+  * Lots of internal and mostly syntactic code cleanup.
+  * Switch to paket for creating NuGet packages.
 
 ### 2.1.0 - 30 September 2015
   * Switch to xunit 2.1. Note: Needs -noshadow argument on Mono due to Mono bug. A fix for Mono
