@@ -1,6 +1,6 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
+**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
 **  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
@@ -34,10 +34,6 @@ module internal ReflectArbitrary =
            elems
 
     let private reflectObj getGenerator =
-        // Compute which types are possible children of this type
-        // Helps make union generation terminate quicker
-        let containedTypes (t : Type) : list<Type> = [] // TODO
-                
         Common.memoize (fun (t:Type) ->
             if isRecordType t then
                 let g = [ for pi in getRecordFields t do 
@@ -58,9 +54,10 @@ module internal ReflectArbitrary =
                 // figure out the "size" of a union
                 // 0 = nullary, 1 = non-recursive, 2 = recursive
                 let unionSize (ts : list<Type>) : int =
-                    if ts.IsEmpty then 0 else
-                        let tsStar = List.concat (ts :: List.map containedTypes ts) //containedTypes is not implemented, always returns[]
-                        if List.exists(fun (x : Type) -> x.ToString() = t.ToString()) tsStar then 2 else 1
+                    if ts.IsEmpty then 
+                        0 
+                    else
+                        if List.exists(fun (x : Type) -> x.ToString() = t.ToString()) ts then 2 else 1
                         
                 let unionGen create ts =
                     let productGen (ts : list<Type>) =

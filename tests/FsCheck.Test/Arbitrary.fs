@@ -151,7 +151,7 @@ module Arbitrary =
         (   generate<int*char*bool> |> sample 10 |> List.forall (fun _ -> true)
             //or the first value is shrunk, or the second, or the third
         ,   shrink value |> Seq.forall (fun (i,c,b) -> shrink valuei |> Seq.exists ((=) i) 
-                                                    || shrink valuec |> Seq.exists ((=) c)  
+                                                    || shrink valuec |> Seq.exists ((=) c)
                                                     || shrink valueb |> Seq.exists ((=) b))   )
      
     [<Property>]
@@ -176,11 +176,11 @@ module Arbitrary =
                                   else shrinks = Seq.empty))
 
     let testFunction (f: _ -> _) (vs: _ list) =
-        let tabledF = Function<_,_>.from f
+        let tabledF = Function<_,_>.From f
         (List.map tabledF.Value vs) = (List.map f vs)
         && List.forall (fun v -> List.tryFind (fst >> (=) v) tabledF.Table = Some (v,f v)) vs
         
-    [<Property>]  
+    [<Property>]
     let Function (f:int->char) (vs:list<int>) =
         testFunction f vs
     

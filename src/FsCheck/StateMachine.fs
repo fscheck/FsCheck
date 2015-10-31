@@ -1,6 +1,6 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
+**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
 **  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
@@ -15,8 +15,6 @@ open System.Reflection
 open System.Threading
 open System
 open FsCheck
-open FsCheck.Command
-open Microsoft.FSharp.Core.Operators.Unchecked
 
 [<AbstractClass>]
 type Setup<'Actual,'Model>() =
@@ -120,7 +118,7 @@ type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) =
     static let skipMethods = [ "GetType"; "Finalize"; "MemberwiseClone"; "Dispose"; "System-IDisposable-Dispose"] |> Set.ofList
     let methodFilter = defaultArg methodFilter (fun mi -> not <| Set.contains mi.Name skipMethods)
     let parameterGenerator (parameters:seq<ParameterInfo>) =
-        parameters |> Seq.map (fun p -> p.ParameterType) |> Seq.map Arb.getGenerator |> Gen.sequence
+        parameters |> Seq.map (fun p -> Arb.getGenerator p.ParameterType) |> Gen.sequence
 
     let ctors = 
         typeof<'Actual>.GetTypeInfo().DeclaredConstructors
@@ -139,7 +137,7 @@ type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) =
 
     override __.Setup = ctors |> Arb.fromGen
     override __.TearDown = upcast DisposeCall<'Actual>()
-    override __.Next model = instanceMethods
+    override __.Next _ = instanceMethods
 
 module StateMachine =
     open System
@@ -235,11 +233,11 @@ module StateMachine =
         |> Seq.append (Arb.toShrink spec.Setup (snd run.Setup) |> Seq.map (fun create -> { run with Setup = create.Model(), create }))
         
     let check { Setup = initialModel,setup; Operations = operations; TearDown = teardown } =
-        let rec run (actual,model) (cmds:list<'Model * Operation<'Actual,'Model>>) property =
+        let rec run (actual,_) (cmds:list<'Model * Operation<'Actual,'Model>>) property =
             match cmds with
             | [] -> teardown.Actual actual; property
             | ((newModel,c)::cs) -> 
-                let prop = c.Check(actual, newModel) |> Prop.ofTestable               
+                let prop = c.Check(actual, newModel) |> Prop.ofTestable
                 run (actual,newModel) cs (property .&. prop)
         run (setup.Actual(), initialModel) operations (Prop.ofTestable true)
 

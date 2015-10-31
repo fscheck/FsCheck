@@ -31,7 +31,7 @@ module Property =
             | 0 -> Gen.oneof [Gen.constant Unit; Gen.map (Bool) generate; Gen.constant Exception]
             | n when n>0 ->
                 let subProp = recGen (size/2)
-                Gen.oneof   
+                Gen.oneof
                         [ Gen.map2 (curry ForAll) generate (subProp)
                         ; Gen.map2 (curry Implies) generate (subProp)
                         ; Gen.map2 (curry Collect) generate (subProp)
@@ -82,7 +82,7 @@ module Property =
         | Unit -> Prop.ofTestable ()
         | Bool b -> Prop.ofTestable b
         | Exception -> Prop.ofTestable (lazy (raise <| InvalidOperationException()))
-        | ForAll (i,prop) -> Prop.forAll (Gen.constant i |> Arb.fromGen) (fun i -> toProperty prop)
+        | ForAll (i,prop) -> Prop.forAll (Gen.constant i |> Arb.fromGen) (fun _ -> toProperty prop)
         | Implies (b,prop) -> b ==> (toProperty prop)
         | Classify (b,stamp,prop) -> Prop.classify b stamp (toProperty prop)
         | Collect (i,prop) -> Prop.collect i (toProperty prop)
@@ -102,17 +102,17 @@ module Property =
             | TestResult.Exhausted td -> td
 
         match r0.Outcome, r1 with
-        | Outcome.Timeout i, TestResult.False(_,_,_,Outcome.Timeout j,_) when i = j -> true && r0.Labels = testData.Labels
-        | Outcome.Exception _, TestResult.False(_,_,_,Outcome.Exception _,_) -> true && r0.Labels = testData.Labels
-        | Outcome.False, TestResult.False(_,_,_,Outcome.False,_) -> true && r0.Labels = testData.Labels
-        | Outcome.True, TestResult.True _ -> true && (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
+        | Outcome.Timeout i, TestResult.False(_,_,_,Outcome.Timeout j,_) when i = j -> r0.Labels = testData.Labels
+        | Outcome.Exception _, TestResult.False(_,_,_,Outcome.Exception _,_) -> r0.Labels = testData.Labels
+        | Outcome.False, TestResult.False(_,_,_,Outcome.False,_) -> r0.Labels = testData.Labels
+        | Outcome.True, TestResult.True _ -> (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
         | Outcome.Rejected,TestResult.Exhausted _ -> true
         | _ -> false
     
     let rec private depth (prop:SymProp) =
         match prop with
         | Unit -> 0
-        | Bool b -> 0
+        | Bool _ -> 0
         | Exception -> 0
         | ForAll (_,prop) -> 1 + (depth prop)
         | Implies (_,prop) -> 1 + (depth prop)
@@ -129,14 +129,14 @@ module Property =
     //can not be an anonymous type because of let mutable.
     type private GetResultRunner() =
         let mutable result = None
-        member x.Result = result.Value
+        member __.Result = result.Value
         interface IRunner with
-            override x.OnStartFixture t = ()
-            override x.OnArguments (ntest,args, every) = 
+            override __.OnStartFixture _ = ()
+            override __.OnArguments (ntest,args, every) = 
                 printf "%s" (every ntest args)
-            override x.OnShrink(args, everyShrink) = 
+            override __.OnShrink(args, everyShrink) = 
                 printf "%s" (everyShrink args)
-            override x.OnFinished(name,testResult) = 
+            override __.OnFinished(_,testResult) = 
                 result <- Some testResult
 
     [<Property>]

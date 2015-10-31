@@ -5,7 +5,6 @@ module TypeClass =
     open System
     open Xunit
     open FsCheck
-    open FsCheck.Xunit
     open FsCheck.TypeClass
     open Swensen.Unquote
 
@@ -26,11 +25,11 @@ module TypeClass =
     type PrimitiveInstance() =
         static member Int() =
             { new ITypeClassUnderTest<int> with
-                override x.GetSomething = 1 }
+                override __.GetSomething = 1 }
         //to check that methods with arguments are ignored
         static member Int2(_:string) =
             { new ITypeClassUnderTest<int> with
-                override x.GetSomething = 3 }
+                override __.GetSomething = 3 }
 
     [<Fact>]
     let ``should discover primitive types``() = 
@@ -45,7 +44,7 @@ module TypeClass =
     type ArrayInstance() =
         static member Array2() =
             { new ITypeClassUnderTest<'a[,]> with
-                override x.GetSomething = 2 }
+                override __.GetSomething = 2 }
 
     [<Fact>]
     let ``should discover array types``() = 
@@ -59,7 +58,7 @@ module TypeClass =
     type CatchAllInstance() =
         static member CatchAll() =
             { new ITypeClassUnderTest<'a> with
-                override x.GetSomething = 3 }
+                override __.GetSomething = 3 }
 
     [<Fact>]
     let ``should discover catchall``() = 

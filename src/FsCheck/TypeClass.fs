@@ -151,7 +151,7 @@ module TypeClass =
                         if mi'.ContainsGenericParameters then (mi'.MakeGenericMethod(instance.GetTypeInfo().GenericTypeArguments)) else mi'
                     | (IsArray, MapContains (Array instance) mi') -> 
                         if mi'.ContainsGenericParameters then mi'.MakeGenericMethod([|instance.GetElementType()|]) else mi'
-                    | (_,MapContains (CatchAll instance) mi') ->  
+                    | (_,MapContains (CatchAll instance) mi') ->
                         mi'.MakeGenericMethod([|instance|])
                     | _ -> failwithf "No instances of class %A for type %A" x.Class instance
                 mi.Invoke(null, [||])) instance

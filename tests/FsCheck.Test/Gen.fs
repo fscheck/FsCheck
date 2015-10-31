@@ -94,7 +94,7 @@ module Gen =
         |> sample1
         |> ((=) (v,v))
      
-    [<Property>]  
+    [<Property>]
     let Three (v:int) =
         Gen.three (Gen.constant v)
         |> sample1
@@ -106,14 +106,14 @@ module Gen =
         |> sample1
         |> ((=) (v,v,v,v))
     
-    [<Property>]    
+    [<Property>]
     let Sequence (l:list<int>) =
         l |> List.map Gen.constant
         |> Gen.sequence
         |> sample1
         |> ((=) l)
      
-    [<Property>]   
+    [<Property>]
     let ListOfLength (v:char) (PositiveInt length) =
         Gen.listOfLength length (Gen.constant v)
         |> sample1
@@ -126,7 +126,7 @@ module Gen =
         |> sample1
         |> ((=) expected)
     
-    [<Property>]   
+    [<Property>]
     let SuchThat (v:int) =
         Gen.suchThat ((<=) 0) (Gen.elements [v;abs v])
         |> sample1
@@ -194,13 +194,13 @@ module Gen =
         |> fun l -> test <@ Seq.forall id l @>
 
     type FunctorLaws<'a,'b,'c when 'a:equality and 'b :equality and 'c:equality> =
-        static member identity (x :'a) =
+        static member Identity (x :'a) =
             let x' =  Gen.constant x
             let a = sample 10 (id x')
             let b = List.replicate 10 (id x)
             a = b
 
-        static member distribution (x:'a) (f:'b ->'c) (g:'a->'b) =
+        static member Distribution (x:'a) (f:'b ->'c) (g:'a->'b) =
             let a = Gen.map (f << g) (Gen.constant x)
             let b = (Gen.map f << Gen.map g) (Gen.constant x)
             sample 10 a = sample 10 b
@@ -212,23 +212,23 @@ module Gen =
     // Thank you mausch: http://bugsquash.blogspot.com/2010/12/zipping-with-applicative-functors-in-f.html
     type ApplicativeLaws<'a,'b,'c when 'a:equality and 'b:equality>() =
 
-        static member identity (v: 'a) = 
+        static member Identity (v: 'a) = 
             let a = Gen.constant v
             let x = Gen.constant id <*> a
             sample 10 x |> List.forall ((=) v)
 
-        static member composition (u: 'a -> 'b) (v: 'c -> 'a) (w: 'c) = 
+        static member Composition (u: 'a -> 'b) (v: 'c -> 'a) (w: 'c) = 
             let u',v',w' = Gen.constant u, Gen.constant v, Gen.constant w
             let a = Gen.constant (<<) <*> u' <*> v' <*> w'
             let b = u' <*> (v' <*> w')
             sample 10 a = sample 10 b
 
-        static member homomorphism (f: 'a -> 'b) x = 
+        static member Homomorphism (f: 'a -> 'b) x = 
             let a = Gen.constant f <*> Gen.constant x
             let b = Gen.constant (f x)
             sample 10 a = sample 10 b
 
-        static member interchange (u: 'a -> 'b) (y: 'a) = 
+        static member Interchange (u: 'a -> 'b) (y: 'a) = 
             let u' = Gen.constant u
             let a = u' <*> Gen.constant y
             let b = Gen.constant ((|>) y) <*> u'
@@ -279,7 +279,7 @@ module Gen =
         // same as Gen.constant n, just to test while
         let convolutedGenNumber n =
             gen { let s = ref 0
-                  for c in [1..n] do
+                  for _ in [1..n] do
                     s := !s + 1
                   return !s
                 }

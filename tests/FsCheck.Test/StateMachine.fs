@@ -28,7 +28,7 @@ module StateMachine =
         for { Setup = _,create; Operations = comms } in commands do
             typeof<SimpleModel> =! create.Actual().GetType()
             0 =! create.Model()
-            for m,comm in comms do
+            for _,comm in comms do
                 test <@ comm.Pre 5 @>
                 6 =! comm.Run 5
 
@@ -50,7 +50,7 @@ module StateMachine =
 
     let inline checkPreconditions initial (cmds:seq<_*Operation<_,_>>) =
         cmds 
-        |> Seq.fold (fun (model,pres) (m,cmd) -> cmd.Run model,pres && cmd.Pre model) (initial, true)
+        |> Seq.fold (fun (model,pres) (_,cmd) -> cmd.Run model,pres && cmd.Pre model) (initial, true)
         |> snd
 
     [<Fact>]

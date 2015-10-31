@@ -83,8 +83,6 @@ module Prop =
     let given condition (iftrue:'TestableIfTrue, ifFalse:'TestableIfFalse) = 
         if condition then property iftrue else property ifFalse
 
-    
-
     ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
     ///and a failure otherwise.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
@@ -120,7 +118,7 @@ module Prop =
     let within time (lazyProperty:Lazy<'Testable>) =
         try 
             let test = new Func<_>(fun () -> property lazyProperty.Value)
-            let asyncTest = Async.FromBeginEnd(test.BeginInvoke, test.EndInvoke)                     
+            let asyncTest = Async.FromBeginEnd(test.BeginInvoke, test.EndInvoke)
             Async.RunSynchronously(asyncTest, timeout = time)
         with
             :? TimeoutException -> 
