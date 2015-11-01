@@ -51,7 +51,7 @@ type Result =
         | (Outcome.False,_) -> r
         | (Outcome.True,_) -> l
         | (_,Outcome.True) -> r
-        | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever  
+        | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
 
 module internal Res =
 
@@ -120,12 +120,12 @@ module private Testable =
     
     type Testables = class end
      
-    let internal TestableTC = 
+    let internal testableTC = 
         (lazy
             let empty = TypeClass<Testable<obj>>.New()
             empty.DiscoverAndMerge(onlyPublic=false,instancesType=typeof<Testables>)).Force()
         
-    let property<'a> p = TestableTC.InstanceFor<'a,Testable<'a>>().Property p
+    let property<'a> p = testableTC.InstanceFor<'a,Testable<'a>>().Property p
 
     module internal Prop = 
     
@@ -145,7 +145,7 @@ module private Testable =
                 property body.Value
             with
             | :? DiscardException -> ofResult Res.rejected
-            | e -> ofResult (Res.exc e)    
+            | e -> ofResult (Res.exc e)
 
     let private shrinking shrink x pf =
         let promoteRose m = Gen (fun s r -> Rose.map (fun (Gen m') -> m' s r) m)
@@ -184,46 +184,46 @@ module private Testable =
     type Testables with
         static member Unit() =
             { new Testable<unit> with
-                member x.Property _ = Prop.ofResult Res.succeeded }
+                member __.Property _ = Prop.ofResult Res.succeeded }
         static member Bool() =
             { new Testable<bool> with
-                member x.Property b = Prop.ofBool b }
+                member __.Property b = Prop.ofBool b }
         static member Lazy() =
             { new Testable<Lazy<'a>> with
-                member x.Property b =
+                member __.Property b =
                     let promoteLazy (m:Lazy<_>) = 
                         Gen (fun s r -> Rose.join <| Rose.ofLazy (lazy (match m.Value with (Gen g) -> g s r)))
                     promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
         static member Result() =
             { new Testable<Result> with
-                member x.Property res = Prop.ofResult res }
+                member __.Property res = Prop.ofResult res }
         static member Property() =
             { new Testable<Property> with
-                member x.Property prop = prop }
+                member __.Property prop = prop }
         static member Gen() =
             { new Testable<Gen<'a>> with
-                member x.Property gena = gen { let! a = gena in return! property a |> Property.GetGen } |> Property }
+                member __.Property gena = gen { let! a = gena in return! property a |> Property.GetGen } |> Property }
         static member RoseResult() =
             { new Testable<Rose<Result>> with
-                member x.Property rosea = gen { return rosea } |> Property }
+                member __.Property rosea = gen { return rosea } |> Property }
         static member Arrow() =
             { new Testable<('a->'b)> with
-                member x.Property f = forAll Arb.from f }
+                member __.Property f = forAll Arb.from f }
         static member Tuple2() =
             { new Testable<'a*'b> with
-                member x.Property ((a,b)) = a .& b }
+                member __.Property ((a,b)) = a .& b }
         static member Tuple3() =
             { new Testable<'a*'b*'c> with
-                member x.Property ((a,b,c)) = a .& b .& c }
+                member __.Property ((a,b,c)) = a .& b .& c }
         static member Tuple4() =
             { new Testable<'a*'b*'c*'d> with
-                member x.Property ((a,b,c,d)) = a .& b .& c .& d }
+                member __.Property ((a,b,c,d)) = a .& b .& c .& d }
         static member Tuple5() =
             { new Testable<'a*'b*'c*'d*'e> with
-                member x.Property ((a,b,c,d,e)) = a .& b .& c .& d .& e }
+                member __.Property ((a,b,c,d,e)) = a .& b .& c .& d .& e }
         static member Tuple6() =
             { new Testable<'a*'b*'c*'d*'e*'f> with
-                member x.Property ((a,b,c,d,e,f)) = a .& b .& c .& d .& e .& f}
+                member __.Property ((a,b,c,d,e,f)) = a .& b .& c .& d .& e .& f}
         static member List() =
             { new Testable<list<'a>> with
-                member x.Property l = List.fold (.&) (property <| List.head l) (List.tail l) }
+                member __.Property l = List.fold (.&) (property <| List.head l) (List.tail l) }

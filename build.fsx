@@ -2,7 +2,6 @@
 // FAKE build script 
 // --------------------------------------------------------------------------------------
 
-#r @"./packages/FAKE/tools/NuGet.Core.dll"
 #r @"./packages/FAKE/tools/FakeLib.dll"
 #load "./packages/SourceLink.Fake/tools/SourceLink.fsx"
 
@@ -15,6 +14,7 @@ open Fake.Testing
 open SourceLink
 
 open System
+open System.IO
 open Fake.AppVeyor
 
 // Information about each project is used
@@ -30,16 +30,6 @@ type ProjectInfo =
     /// Short summary of the project
     /// (used as description in AssemblyInfo and as a short summary for NuGet package)
     Summary : string
-    /// Longer description of the project
-    /// (used as a description for NuGet package; line breaks are automatically cleaned up)
-    Description : string
-    /// List of author names (for NuGet package)
-    Authors : string list
-    /// Tags for your project (for NuGet package)
-    Tags : string
-    ///The projectfile (csproj or fsproj)
-    ProjectFile : list<string>
-    Dependencies : list<string * Lazy<string>>
   }
 
 //File that contains the release notes.
@@ -74,58 +64,16 @@ let buildVersion =
 
 let packages =
   [
-    {
-    Name = "FsCheck"
-    Summary = "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
-    Description = """
-FsCheck is a tool for testing .NET programs automatically. The programmer provides 
-a specification of the program, in the form of properties which functions, methods 
-or objects should satisfy, and FsCheck then tests that the properties hold in a 
-large number of randomly generated cases. 
- 
-While writing the properties, you are actually writing a testable specification of your program. 
- 
-Specifications are expressed in F#, C# or VB, using combinators defined 
-in the FsCheck library. FsCheck provides combinators to define properties, 
-observe the distribution of test data, and define test data generators. 
-When a property fails, FsCheck automatically displays a minimal counter example."""
-    Authors = [ "Kurt Schelfthout and contributors" ]
-    Tags = "test testing random fscheck quickcheck"
-    ProjectFile = ["src/FsCheck/FsCheck.fsproj" ]
-    Dependencies = ["FSharp.Core", lazy "3.1.2.5" ]
-    
+    { Name = "FsCheck"
+      Summary = "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
     }
-    { 
-    Name = "FsCheck.NUnit"
-    Summary = "Integrates FsCheck with NUnit"
-    Description = """FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute. 
-    All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
-    Authors = [ "Kurt Schelfthout and contributors" ]
-    Tags = "test testing random fscheck quickcheck nunit"
-    ProjectFile = ["src/FsCheck.NUnit/FsCheck.NUnit.fsproj"]
-    Dependencies = [ 
-                    "NUnit",    lazy GetPackageVersion "./packages/" "NUnit"  //delayed so only runs after package restore step
-                    "FsCheck",  lazy buildVersion
-                    ]     
+    { Name = "FsCheck.NUnit"
+      Summary = "Integrates FsCheck with NUnit"
     }
-    { 
-    Name = "FsCheck.Xunit"
-    Summary = "Integrates FsCheck with xUnit.NET"
-    Description = """
-FsCheck.Xunit integrates FsCheck with xUnit.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.NET's FactAttribute.
- 
-All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute."""
-    Authors = [ "Kurt Schelfthout and contributors" ]
-    Tags = "test testing random fscheck quickcheck xunit xunit.net"
-    ProjectFile = ["src/FsCheck.Xunit/FsCheck.Xunit.fsproj"]
-    Dependencies = [ 
-                    "xunit.extensibility.execution", lazy GetPackageVersion "./packages/" "xunit.extensibility.execution"  //delayed so only runs after package restore step
-                    "FsCheck",  lazy buildVersion
-                     ]
-   }
+    { Name = "FsCheck.Xunit"
+      Summary = "Integrates FsCheck with xUnit.NET"
+    }
   ]
-
-
 
 Target "BuildVersion" (fun _ ->
     Shell.Exec("appveyor", sprintf "UpdateBuild -Version \"%s\"" buildVersion) |> ignore
@@ -146,9 +94,8 @@ Target "AssemblyInfo" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
-// Clean build results & restore NuGet packages
+// Clean build results
 
-Target "RestorePackages" RestorePackages
 
 Target "Clean" (fun _ ->
     CleanDirs ["bin"; "temp"]
@@ -175,7 +122,10 @@ Target "RunTests" (fun _ ->
     |> xUnit2 (fun p ->
             {p with
                 ToolPath = "packages/xunit.runner.console/tools/xunit.console.exe"
-                NoAppDomain = true
+                //The NoAppDomain setting requires care.
+                //On mono, it needs to be true otherwise xunit won't work due to a Mono bug.
+                //On .NET, it needs to be false otherwise Unquote won't work because it won't be able to load the FsCheck assembly.
+                NoAppDomain = isMono
                 ShadowCopy = false })
 )
 
@@ -192,29 +142,21 @@ Target "SourceLink" (fun _ ->
 )
 // --------------------------------------------------------------------------------------
 // Build a NuGet package
-type OptionalString = string option
 
-open System
-open System.IO
+Target "PaketPack" (fun _ ->
+    Paket.Pack (fun p ->
+      { p with
+          OutputPath = "bin"
+          Version = buildVersion
+          ReleaseNotes = toLines release.Notes
+      })
+)
 
-Target "NuGet" (fun _ ->        
-    packages |> Seq.iter (fun package ->
-    NuGet (fun p -> 
-        { p with   
-            Authors = package.Authors
-            Project = package.Name
-            Summary = package.Summary
-            Description = package.Description
-            Version = buildVersion
-            ReleaseNotes = String.Join(Environment.NewLine, release.Notes)
-            Tags = package.Tags
-            OutputPath = "bin"
-            AccessKey = getBuildParamOrDefault "nugetkey" ""
-            Publish = hasBuildParam "nugetkey"
-            Dependencies = package.Dependencies |> List.map (fun (name,dep) -> (name,dep.Force()))
+Target "PaketPush" (fun _ ->
+    Paket.Push (fun p ->
+        { p with 
+            WorkingDir = "bin"
         })
-        ("nuget/" + package.Name + ".nuspec")
-   )
 )
 
 // --------------------------------------------------------------------------------------
@@ -236,7 +178,7 @@ let generateHelp fail =
     generateHelp' fail true
 
 
-Target "KeepRunning" (fun _ ->    
+Target "KeepRunning" (fun _ ->
     use watcher = new FileSystemWatcher(DirectoryInfo("docs/content").FullName,"*.fsx")
     watcher.EnableRaisingEvents <- true
     watcher.Changed.Add(fun e -> trace (sprintf "%A %A" e.Name e.ChangeType); generateHelp false)
@@ -290,22 +232,28 @@ Target "CI" DoNothing
 
 "Clean"
   =?> ("BuildVersion", isAppVeyorBuild)
-  ==> "RestorePackages"
   ==> "AssemblyInfo"
   ==> "Build"
   ==> "RunTests"
 
-"RunTests"  
+"RunTests"
   ==> "CleanDocs"
-  ==> "GenerateDocsJa"  
+  ==> "GenerateDocsJa"
   ==> "GenerateDocs"
-  ==> "CI"
   =?> ("ReleaseDocs", isLocalBuild)
   ==> "Release"
 
 "RunTests"
   =?> ("SourceLink", isLocalBuild && not isLinux)
-  ==> "NuGet"
+  ==> "PaketPack"
+  ==> "PaketPush"
   ==> "Release"
+
+"GenerateDocs"
+  ==> "CI"
+
+"RunTests"
+  ==> "PaketPack" 
+  ==> "CI"
 
 RunTargetOrDefault "RunTests"

@@ -36,24 +36,24 @@ module internal Reflect =
     /// Get information on the fields of a record type
     let getRecordFields (recordType: System.Type) = 
         if isRecordType recordType then 
-            FSharpType.GetRecordFields(recordType, true)//recordFieldBindingFlags)
+            FSharpType.GetRecordFields(recordType, true)
         else 
             failwithf "The input type must be a record type.  Got %A" recordType
 
     /// Get constructor for record type
     let getRecordConstructor recordType = 
-        FSharpValue.PreComputeRecordConstructor(recordType, true)//recordFieldBindingFlags)              
+        FSharpValue.PreComputeRecordConstructor(recordType, true)
 
     /// Get reader for record type
     let getRecordReader recordType = 
-        FSharpValue.PreComputeRecordReader(recordType, true)//recordFieldBindingFlags)
+        FSharpValue.PreComputeRecordReader(recordType, true)
 
     let getCSharpRecordFields (recordType: Type) =
         if isCSharpRecordType recordType then
             let ctor = getPublicCtors recordType |> Seq.head
             ctor.GetParameters() |> Seq.map (fun p -> p.ParameterType)
         else
-            failwith "The input type must be an immutable class with a single constructor. Got %A" recordType
+            failwithf "The input type must be an immutable class with a single constructor. Got %A" recordType
         
     let getCSharpRecordConstructor (recordType: Type) =
         let ctor = getPublicCtors recordType |> Seq.head
@@ -61,9 +61,9 @@ module internal Reflect =
 
     /// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
     let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list = 
-        [ for case in FSharpType.GetUnionCases(unionType, true) -> //recordFieldBindingFlags) -> 
-            let types =    [ for fld in case.GetFields() -> fld.PropertyType ]              
-            let ctorFn =   FSharpValue.PreComputeUnionConstructor(case, true)                           
+        [ for case in FSharpType.GetUnionCases(unionType, true) ->
+            let types =    [ for fld in case.GetFields() -> fld.PropertyType ]
+            let ctorFn =   FSharpValue.PreComputeUnionConstructor(case, true)
             let readerFn = FSharpValue.PreComputeUnionReader(case, true)
                 
             case.Name, (case.Tag, types, ctorFn, readerFn)]
@@ -86,7 +86,7 @@ module internal Reflect =
         let m = if m.ContainsGenericParameters then
                     let typeMap = new Dictionary<_,_>()
                     Array.zip args (m.GetParameters()) |> 
-                    Array.iter (fun (a,f) -> resolve typeMap (a.GetType(),f.ParameterType))  
+                    Array.iter (fun (a,f) -> resolve typeMap (a.GetType(),f.ParameterType))
                     let actuals = 
                         m.GetGenericArguments() |> 
                         Array.map (fun formal -> typeMap.[formal])
@@ -94,13 +94,3 @@ module internal Reflect =
                 else 
                     m
         match target with None -> m.Invoke(null, args) | Some t -> m.Invoke(t,args)
-
-//    let private _preserveInternalException =
-//        let preserveStackTrace = typeof<Exception>.GetMethod( "InternalPreserveStackTrace", BindingFlags.Instance ||| BindingFlags.NonPublic );
-//        Delegate.CreateDelegate( typeof<Action<Exception>>, preserveStackTrace ) :?> Action<Exception>
-//    
-//    let preserveStackTrace (ex:Exception) =
-//        _preserveInternalException.Invoke(ex)
-//        ex
-
-

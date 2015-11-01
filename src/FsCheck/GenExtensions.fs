@@ -1,6 +1,6 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
+**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
 **  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
@@ -30,7 +30,7 @@ type GenExtensions =
     static member Sample(generator, size, numberOfSamples) =
         sample size numberOfSamples generator
 
-    ///Map the given function to the value in the generator, yielding a new generator of the result type.  
+    ///Map the given function to the value in the generator, yielding a new generator of the result type.
     [<System.Runtime.CompilerServices.Extension>]
     static member Select(g:Gen<_>, selector : Func<_,_>) = g.Map(fun a -> selector.Invoke(a))
 

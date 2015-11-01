@@ -6,6 +6,7 @@ module Gen =
     open FsCheck
     open FsCheck.Xunit
     open Helpers
+    open Swensen.Unquote
 
     [<Property>]
     let Choose (Interval (l,h)) = 
@@ -93,7 +94,7 @@ module Gen =
         |> sample1
         |> ((=) (v,v))
      
-    [<Property>]  
+    [<Property>]
     let Three (v:int) =
         Gen.three (Gen.constant v)
         |> sample1
@@ -105,14 +106,14 @@ module Gen =
         |> sample1
         |> ((=) (v,v,v,v))
     
-    [<Property>]    
+    [<Property>]
     let Sequence (l:list<int>) =
         l |> List.map Gen.constant
         |> Gen.sequence
         |> sample1
         |> ((=) l)
      
-    [<Property>]   
+    [<Property>]
     let ListOfLength (v:char) (PositiveInt length) =
         Gen.listOfLength length (Gen.constant v)
         |> sample1
@@ -124,10 +125,8 @@ module Gen =
         Gen.suchThatOption predicate (Gen.constant v)
         |> sample1
         |> ((=) expected)
-//        |> classify expected.IsNone "None"
-//        |> classify expected.IsSome "Some"
     
-    [<Property>]   
+    [<Property>]
     let SuchThat (v:int) =
         Gen.suchThat ((<=) 0) (Gen.elements [v;abs v])
         |> sample1
@@ -143,8 +142,7 @@ module Gen =
     let NonEmptyListOf (NonNegativeInt size) (v:string) =
         let actual = Gen.resize size (Gen.nonEmptyListOf <| Gen.constant v) |> sample 10
         actual
-        |> List.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && List.forall ((=) v) l) 
-        //|> label (sprintf "Actual: %A" actual)
+        |> List.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && List.forall ((=) v) l)
     
     [<Property>]
     let SubListOf (l:list<int>) =
@@ -193,20 +191,16 @@ module Gen =
         generated
         |> Seq.pairwise
         |> Seq.map (fun (a,b) -> a = b)
-        |> fun l -> Assert.DoesNotContain(false, l)
-
-    //variant generators should be independent...this is not a good check for that.
-//    let Variant (v:char) =
-//        Gen.variant v (Gen.constant v) |> sample1 |>  ((=) v)
+        |> fun l -> test <@ Seq.forall id l @>
 
     type FunctorLaws<'a,'b,'c when 'a:equality and 'b :equality and 'c:equality> =
-        static member identity (x :'a) =
+        static member Identity (x :'a) =
             let x' =  Gen.constant x
             let a = sample 10 (id x')
             let b = List.replicate 10 (id x)
             a = b
 
-        static member distribution (x:'a) (f:'b ->'c) (g:'a->'b) =
+        static member Distribution (x:'a) (f:'b ->'c) (g:'a->'b) =
             let a = Gen.map (f << g) (Gen.constant x)
             let b = (Gen.map f << Gen.map g) (Gen.constant x)
             sample 10 a = sample 10 b
@@ -218,23 +212,23 @@ module Gen =
     // Thank you mausch: http://bugsquash.blogspot.com/2010/12/zipping-with-applicative-functors-in-f.html
     type ApplicativeLaws<'a,'b,'c when 'a:equality and 'b:equality>() =
 
-        static member identity (v: 'a) = 
+        static member Identity (v: 'a) = 
             let a = Gen.constant v
             let x = Gen.constant id <*> a
             sample 10 x |> List.forall ((=) v)
 
-        static member composition (u: 'a -> 'b) (v: 'c -> 'a) (w: 'c) = 
+        static member Composition (u: 'a -> 'b) (v: 'c -> 'a) (w: 'c) = 
             let u',v',w' = Gen.constant u, Gen.constant v, Gen.constant w
             let a = Gen.constant (<<) <*> u' <*> v' <*> w'
             let b = u' <*> (v' <*> w')
             sample 10 a = sample 10 b
 
-        static member homomorphism (f: 'a -> 'b) x = 
+        static member Homomorphism (f: 'a -> 'b) x = 
             let a = Gen.constant f <*> Gen.constant x
             let b = Gen.constant (f x)
             sample 10 a = sample 10 b
 
-        static member interchange (u: 'a -> 'b) (y: 'a) = 
+        static member Interchange (u: 'a -> 'b) (y: 'a) = 
             let u' = Gen.constant u
             let a = u' <*> Gen.constant y
             let b = Gen.constant ((|>) y) <*> u'
@@ -276,21 +270,19 @@ module Gen =
                     s := !s + 1
                   return !s
                 }
-        convolutedGenNumber 100 
-        |> Gen.sample 1 10
-        |> Seq.forall ((=) 100) 
-        |> Assert.True
+        test <@ convolutedGenNumber 100 
+                |> Gen.sample 1 10
+                |> Seq.forall ((=) 100) @>
 
     [<Fact>]
     let ``GenBuilder.For``() =
         // same as Gen.constant n, just to test while
         let convolutedGenNumber n =
             gen { let s = ref 0
-                  for c in [1..100] do
+                  for _ in [1..n] do
                     s := !s + 1
                   return !s
                 }
-        convolutedGenNumber 100 
-        |> Gen.sample 1 10
-        |> Seq.forall ((=) 100) 
-        |> Assert.True
+        test <@ convolutedGenNumber 100 
+                |> Gen.sample 1 10
+                |> Seq.forall ((=) 100) @>

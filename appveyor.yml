@@ -1,7 +1,7 @@
 init:
   - git config --global core.autocrlf input
 build_script:
-  - cmd: ./build.cmd NuGet
+  - cmd: ./build.cmd CI
 test: off
 version: '{build}'
 artifacts:

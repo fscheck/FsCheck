@@ -1,6 +1,6 @@
 (*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
+**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
 **  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
@@ -24,6 +24,7 @@ type TestData =
 [<NoEquality;NoComparison;RequireQualifiedAccess>]
 type TestResult = 
     | True of TestData
+                * bool(*suppress output*)
     | False of TestData 
                 * list<obj>(*the original arguments that produced the failed test*)
                 * list<obj>(*the shrunk arguments that produce a failed test*)
@@ -58,6 +59,8 @@ type Config =
       StartSize     : int
       ///The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.
       EndSize       : int
+      ///If set, suppresses the output from the test if the test is successful.
+      QuietOnSuccess: bool
       ///What to print when new arguments args are generated in test n
       Every         : int -> list<obj> -> string
       ///What to print every time a counter-example is succesfully shrunk
@@ -128,12 +131,12 @@ module Runner =
               yield! test newSize resize rnd1 gen
         }
 
-    let private testsDone config testStep origArgs ntest nshrinks usedSeed stamps  =    
+    let private testsDone config testStep origArgs ntest nshrinks usedSeed stamps  =
         let entry (n,xs) = (100 * n / ntest),xs
         let table = stamps 
                     |> Seq.filter (not << List.isEmpty)
                     |> Seq.sort
-                    |> Seq.groupBy (fun x -> x) 
+                    |> Seq.groupBy id
                     |> Seq.map (fun (l, ls) -> (Seq.length ls, l))
                     |> Seq.sortBy fst
                     |> Seq.map entry
@@ -141,7 +144,7 @@ module Runner =
         let testResult =
             let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
             match testStep with
-                | Passed _ -> TestResult.True testData
+                | Passed _ -> TestResult.True (testData, config.QuietOnSuccess)
                 | Falsified result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
                 | Failed _ -> TestResult.Exhausted testData
                 | EndShrink result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
@@ -162,7 +165,7 @@ module Runner =
             lastStep := step
             //printfn "%A" step
             match step with
-                | Generated args -> config.Runner.OnArguments(!testNb, args, config.Every); true//Console.Write(config.every !testNb args); true
+                | Generated args -> config.Runner.OnArguments(!testNb, args, config.Every); true
                 | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest //stop if we have enough tests
                 | Falsified result -> origArgs := result.Arguments; testNb := !testNb + 1; true //falsified, true to continue with shrinking
                 | Failed _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxFail //failed, stop if we have too much failed tests
@@ -185,13 +188,13 @@ module Runner =
 
     let private pluralize nb = if nb = 1 then String.Empty else "s"
 
-    let private labels_to_string l = String.concat newline l
+    let private labelsToString l = String.concat newline l
 
     let private maybePrintLabels (l:Set<_>) = 
         match l.Count with
         | 0 -> String.Empty
-        | 1 -> sprintf "Label of failing property: %s%s" (labels_to_string l) newline
-        | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labels_to_string l) newline
+        | 1 -> sprintf "Label of failing property: %s%s" (labelsToString l) newline
+        | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labelsToString l) newline
 
     let onFailureToString name data originalArgs args usedSeed =
         sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
@@ -207,12 +210,13 @@ module Runner =
                         | [x] -> sprintf " (%s).%s" x newline
                         | xs  -> sprintf ".%s%s" newline (List.fold (fun acc x -> x + "." + newline + acc) "" xs)
         let entry (p,xs) = sprintf "%A%s %s" p "%" (String.concat ", " xs)
-        let stamps_to_string s = s |> Seq.map entry |> Seq.toList |> display
-        let name = if String.IsNullOrEmpty(name) then String.Empty else (name+"-")  
+        let stampsToString s = s |> Seq.map entry |> Seq.toList |> display
+        let name = if String.IsNullOrEmpty(name) then String.Empty else (name+"-")
         match testResult with
-        | TestResult.True data -> 
-            sprintf "%sOk, passed %i test%s%s" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
+        | TestResult.True (data, suppressOutput) ->
+            if suppressOutput then ""
+            else sprintf "%sOk, passed %i test%s%s"
+                    name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stampsToString)
         | TestResult.False (data, originalArgs, args, Outcome.Exception exc, usedSeed) -> 
             onFailureToString name data originalArgs args usedSeed
             + sprintf "with exception:%s%O%s" newline exc newline
@@ -225,7 +229,7 @@ module Runner =
             onFailureToString name data originalArgs args usedSeed
         | TestResult.Exhausted data -> 
             sprintf "%sArguments exhausted after %i test%s%s" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stamps_to_string )
+                name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stampsToString )
 
     let onArgumentsToString n args = 
         sprintf "%i:%s%s%s" n newline (argumentsToString args) newline
@@ -261,20 +265,20 @@ module Runner =
 
     let private hasTestableReturnType (m:MethodInfo) =
         try
-            TestableTC.GetInstance m.ReturnType |> ignore
+            testableTC.GetInstance m.ReturnType |> ignore
             true
         with
             _ -> false
 
     let internal check config p = 
         //save so we can restore after the run
-        let defaultArbitrary = Arb.Arbitrary.Value
+        let defaultArbitrary = Arb.arbitrary.Value
         let merge newT (existingTC:TypeClass<_>) = existingTC.DiscoverAndMerge(onlyPublic=true,instancesType=newT)
-        Arb.Arbitrary.Value <- List.foldBack merge config.Arbitrary defaultArbitrary
+        Arb.arbitrary.Value <- List.foldBack merge config.Arbitrary defaultArbitrary
         try
             runner config (property p)
         finally
-            Arb.Arbitrary.Value <- defaultArbitrary
+            Arb.arbitrary.Value <- defaultArbitrary
 
     let private checkMethodInfo = 
         typeof<TestStep>.DeclaringType.GetTypeInfo().DeclaredMethods 
@@ -290,7 +294,7 @@ module Runner =
 
     let private tupleToArray types tvalue =
         match types with
-        | [||] -> Array.empty
+        | [||] -> [||]
         | [|_|] -> [|tvalue|]
         | _ -> FSharpValue.GetTupleFields(tvalue) 
 
@@ -315,7 +319,7 @@ module Runner =
         
 
     let internal checkAll config (t:Type) = 
-        config.Runner.OnStartFixture t  
+        config.Runner.OnStartFixture t
         t.GetRuntimeMethods() 
         |> Seq.filter (fun meth -> meth.IsStatic && meth.IsPublic)
         |> Seq.filter hasTestableReturnType 
@@ -324,17 +328,17 @@ module Runner =
 
 open Runner
 open System
-open System.Runtime.CompilerServices
 
 type Config with
     ///The quick configuration only prints a summary result at the end of the test.
-    static member Quick =  
+    static member Quick =
             { MaxTest       = 100
               MaxFail       = 1000
               Replay        = None
               Name          = ""
               StartSize     = 1
               EndSize       = 100
+              QuietOnSuccess = false
               Every         = fun _ _ -> String.Empty
               EveryShrink   = fun _ -> String.Empty
               Arbitrary     = []
@@ -387,7 +391,7 @@ type Check =
     ///Check the given property identified by the given MethodInfo.
     static member Method (config,methodInfo:Reflection.MethodInfo, ?target:obj) = checkMethod config methodInfo target
 
-    ///Check one property with the quick configuration.  
+    ///Check one property with the quick configuration.
     static member Quick (property:'Testable) = Check.One(Config.Quick,property)
 
     ///Check one property with the quick configuration, and using the given name.

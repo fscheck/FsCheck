@@ -1,10 +1,15 @@
-
-### 2.2.0-nunit3 - To Release
+### 2.3.0-nunit3 - To Release
   * Update FsCheck.NUnit to use NUnit 3.0. This (hopefully) solves a lot of issues with NUnit 2's wonky plugin model. 
   FsCheck.NUnit.Addin is no longer needed, for example, and neither is the install.ps1 in the FsCheck.NUnit package. Also,
   FsCheck.NUnit only needs a dependency on NUnit now, which should solve a bunch of install issues on its own. (another 
   heroic contribution by Jon Hamm.)
-  * Fix for AppVeryor NuGetfeed dependency problem.
+
+### 2.2.0 - 1 November 2015
+  * Add QuietOnSuccess option to vanilla runner.
+  * Add bigint generator.
+  * Deprecate some infrequently used and incorrectly named methods.
+  * Lots of internal and mostly syntactic code cleanup.
+  * Switch to paket for creating NuGet packages.
 
 ### 2.1.0 - 30 September 2015
   * Switch to xunit 2.1. Note: Needs -noshadow argument on Mono due to Mono bug. A fix for Mono

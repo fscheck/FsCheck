@@ -1,6 +1,6 @@
 ﻿(*** hide ***)
 #I "../../src/FsCheck/bin/Release"
-#r @"../../packages/xunit.1.9.2/lib/net20/xunit.dll"
+#r @"../../packages/xunit/lib/net20/xunit.dll"
 #r "FsCheck"
 #r "FsCheck.Xunit"
 
@@ -176,15 +176,35 @@ appears as normal.
 (**
 ## Using FsCheck.NUnit
 
-To use the integration install the FsCheck.NUnit nuget package. Then open FsCheck.NUnit.
+To use the integration install the FsCheck.NUnit nuget package.
+Make sure your project(s) has target .NET `4.5` or greater.
+Then open FsCheck.NUnit.
 
 You can now attribute tests with `PropertyAttribute` (a subclass of NUnit's `TestAttribute`). Unlike NUnit tests, these 
 methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
 type and the currently registered generators. Also, the `PropertyAttribute` allows you to customize how FsCheck will run for that
 method, similar to how you would use the `Config` type otherwise.
+*)
 
+open FsCheck.NUnit
+
+[<Property>]
+let ``Reverse of reverse of a list is the original list ``(xs:list<int>) =
+  List.rev(List.rev xs) = xs
+
+(**
 Note: the NUnit integration doesn't have the ability, like FsCheck.Xunit, to override `Arbitrary` instances on a per class
 or per module basis. Otherwise, it is very similar.
+
+#### Using `FsCheck.NUnit` installed by Paket ####
+Note that [Paket doesn't run any powershell scripts](https://fsprojects.github.io/Paket/faq.html#Does-Paket-run-install-ps1-scripts).
+So if you want to use `FsCheck.NUnit` that you installed via Paket, you have to perform this step manually.
+Add reference to the following assemblies in the apropriate project(s):
+
+```
+packages/NUnit.Runners/tools/lib/nunit.core.dll
+packages/NUnit.Runners/tools/lib/nunit.core.interfaces.dll
+```
 
 ## Implementing IRunner 
 

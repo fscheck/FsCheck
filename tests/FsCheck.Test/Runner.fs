@@ -6,7 +6,7 @@ module Runner =
     open Xunit
     open FsCheck
     open FsCheck.Xunit
-    open Helpers
+    open Swensen.Unquote
 
     type TestArbitrary1 =
         static member PositiveDouble() =
@@ -38,8 +38,6 @@ module Runner =
 
     [<Fact>]
     let ``should discard case with discardexception in test``() =
-        //let myArb = Arb.Default.Int32() |> Arb.filter (fun a -> a < 4)
-
         Check.QuickThrowOnFailure <| (fun a -> if a > 3 then Prop.discard() else true)
         
     [<Fact>]
@@ -51,45 +49,45 @@ module Runner =
             with e ->
                 e.Message
         let same =
-            Seq.initInfinite (fun i -> doOne(123,654321))
+            Seq.initInfinite (fun _ -> doOne(123,654321))
             |> Seq.take(5)
             |> Seq.distinct
-        Assert.Equal(1,Seq.length same)
-        Assert.NotEqual<string>("should have failed", Seq.head same)
-        Assert.Contains("(123,654321)", Seq.head same);
+        1 =! Seq.length same
+        "should have failed" <>! Seq.head same
+        test <@ (Seq.head same).Contains "(123,654321)" @>
 
     [<Fact>]
     let ``should replay property with complex set of generators``() =
         let doOne(s1,s2) =
             try
-                Check.One( {Config.QuickThrowOnFailure with Replay = Some <| Random.StdGen (s1,s2) }, fun a (b:list<char>, c:array<int*double>) (d:DateTime) -> a < 10)
+                Check.One( {Config.QuickThrowOnFailure with Replay = Some <| Random.StdGen (s1,s2) }, fun a (_:list<char>, _:array<int*double>) (_:DateTime) -> a < 10)
                 "should have failed"
             with e ->
                 e.Message
         let same =
-            Seq.initInfinite (fun i -> doOne(123,654321))
+            Seq.initInfinite (fun _ -> doOne(123,654321))
             |> Seq.take(5)
             |> Seq.distinct
-        Assert.Equal(1,Seq.length same)
-        Assert.NotEqual<string>("should have failed", Seq.head same)
-        Assert.Contains("(123,654321)", Seq.head same);
+        1 =! Seq.length same
+        "should have failed" <>! Seq.head same
+        test <@ (Seq.head same).Contains "(123,654321)" @>
 
     [<Property(Replay="54321,67584")>]
-    let ``should pick up replay seeds from PropertyAttribute without parens``(a:int, b:string) =
+    let ``should pick up replay seeds from PropertyAttribute without parens``(_:int, _:string) =
         //testing the replay separately in other tests - this just checks we can run
         //this test
-        Assert.True true
+        true =! true
 
     [<Property(Replay="(54321,67584)")>]
-    let ``should pick up replay seeds from PropertyAttribute with parens``(a:int, b:string) =
+    let ``should pick up replay seeds from PropertyAttribute with parens``(_:int, _:string) =
         //testing the replay separately in other tests - this just checks we can run
         //this test
-        Assert.True true
+        true =! true
 
     type TypeToInstantiate() =
         [<Property>]
-        let ``should run a property on an instance``(random:int) =
-            Assert.True true
+        member __.``Should run a property on an instance``(_:int) =
+            true =! true
 
     [<Arbitrary(typeof<TestArbitrary2>)>]
     module ModuleWithArbitrary =

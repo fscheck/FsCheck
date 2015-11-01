@@ -1,12 +1,12 @@
 language: csharp
-sudo : false
-before_script:
- - chmod +x build.sh
 
-script: 
+sudo: false
+
+script:
   - ./build.sh RunTests
-  
+
 cache:
   directories:
   - packages
   - $HOME/.local/share/NuGet
+

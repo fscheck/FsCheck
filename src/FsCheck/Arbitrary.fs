@@ -1,6 +1,6 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
+**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
 **  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
@@ -31,6 +31,7 @@ type NonZeroInt = NonZeroInt of int with
 type NormalFloat = NormalFloat of float with
     member x.Get = match x with NormalFloat f -> f
     static member op_Explicit(NormalFloat f) = f
+    [<Obsolete("Will be removed in a future version.")>]
     static member get (NormalFloat f) = f
 
 ///Represents a string that is not null or empty, and does not contain any null characters ('\000')
@@ -56,16 +57,19 @@ type IntWithMinMax = IntWithMinMax of int with
 ///Represents a non-empty Set.
 type NonEmptySet<'a when 'a : comparison> = NonEmptySet of Set<'a> with
     member x.Get = match x with NonEmptySet r -> r
+    [<Obsolete("Will be removed in a future version.")>]
     static member toSet(NonEmptySet s) = s
     
 ///Represents a non-empty array.
 type NonEmptyArray<'a> = NonEmptyArray of 'a[] with
     member x.Get = match x with NonEmptyArray r -> r
+    [<Obsolete("Will be removed in a future version.")>]
     static member toArray(NonEmptyArray a) = a
 
 ///Represents an array whose length does not change when shrinking.
 type FixedLengthArray<'a> = FixedLengthArray of 'a[] with
     member x.Get = match x with FixedLengthArray r -> r
+    [<Obsolete("Will be removed in a future version.")>]
     static member toArray(FixedLengthArray a) = a
 
 ///Wrap a type in NonNull to prevent null being generated for the wrapped type.
@@ -88,11 +92,11 @@ type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) 
         |> Seq.map layoutTuple 
         |> String.concat "; "
         |> sprintf "{ %s }"
-    static member from f = 
+    [<Obsolete("Will be removed in a future version. Use From instead.")>]
+    static member from f = Function<_,_>.From f
+    static member From f = 
         let table = ref []
-        F (table,fun x -> let y = f x in table := (x,y)::(!table); y)    
-
-
+        F (table,fun x -> let y = f x in table := (x,y)::(!table); y)
 
 ///Use the generator for 'a, but don't shrink.
 type DontShrink<'a> = DontShrink of 'a
@@ -128,14 +132,14 @@ module Arb =
         let empty = TypeClass<Arbitrary<obj>>.New()
         empty.Discover(onlyPublic=true,instancesType=typeof<Default>)
 
-    let internal Arbitrary = new ThreadLocal<TypeClass<Arbitrary<obj>>>(fun () -> defaultArbitrary)
+    let internal arbitrary = new ThreadLocal<TypeClass<Arbitrary<obj>>>(fun () -> defaultArbitrary)
 
     ///Register the generators that are static members of the given type.
     [<CompiledName("Register")>]
     let registerByType t = 
-        let newTypeClass = Arbitrary.Value.Discover(onlyPublic=true,instancesType=t)
-        let result = Arbitrary.Value.Compare newTypeClass
-        Arbitrary.Value <- Arbitrary.Value.Merge newTypeClass
+        let newTypeClass = arbitrary.Value.Discover(onlyPublic=true,instancesType=t)
+        let result = arbitrary.Value.Compare newTypeClass
+        arbitrary.Value <- arbitrary.Value.Merge newTypeClass
         result
 
     ///Register the generators that are static members of the type argument.
@@ -144,7 +148,7 @@ module Arb =
 
     ///Get the Arbitrary instance for the given type.
     [<CompiledName("From")>]
-    let from<'Value> = Arbitrary.Value.InstanceFor<'Value,Arbitrary<'Value>>()
+    let from<'Value> = arbitrary.Value.InstanceFor<'Value,Arbitrary<'Value>>()
 
     ///Returns a Gen<'Value>
     [<CompiledName("Generate")>]
@@ -165,9 +169,9 @@ module Arb =
                         |> Seq.takeWhile ((|>|) n) }
         |> Seq.distinct
 
-    let internal getGenerator t = Arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
+    let internal getGenerator t = arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
 
-    let internal getShrink t = Arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
+    let internal getShrink t = arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toGen (arb:Arbitrary<'Value>) = arb.Generator
@@ -224,7 +228,7 @@ module Arb =
         { new Arbitrary<'a>() with
            override __.Generator = a.Generator |> Gen.map mapper |> Gen.suchThat pred
            override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
-       }     
+       }
     
 //TODO
 //    /// Generate a subset of an existing set
@@ -267,15 +271,15 @@ module Arb =
                 override __.Generator = Gen.elements [true; false] 
             }
         ///Generates an arbitrary byte.
-        static member Byte() =   
-            { new Arbitrary<byte>() with  
+        static member Byte() =
+            { new Arbitrary<byte>() with
                 override __.Generator = 
                     Gen.choose (0,255) |> Gen.map byte //this is now size independent - 255 is not enough to not cover them all anyway 
                 override __.Shrinker n = n |> int |> shrink |> Seq.map byte
             }
         ///Generates an arbitrary signed byte.
-        static member SByte() =   
-            { new Arbitrary<sbyte>() with  
+        static member SByte() =
+            { new Arbitrary<sbyte>() with
                 override __.Generator = 
                     Gen.choose (-128,127) |> Gen.map sbyte 
                 override __.Shrinker n = 
@@ -345,7 +349,7 @@ module Arb =
         static member DontSizeInt64() =
             let gen =
                 Gen.two generate<DontSize<int32>>
-                |> Gen.map (fun (DontSize h, DontSize l) -> (int64 h <<< 32) ||| int64 l)                
+                |> Gen.map (fun (DontSize h, DontSize l) -> (int64 h <<< 32) ||| int64 l)
             fromGenShrink (gen,shrinkNumber)
             |> convert DontSize DontSize.Unwrap
         
@@ -358,7 +362,7 @@ module Arb =
         static member DontSizeUInt64() =
             let gen =
                 Gen.two generate<DontSize<uint32>>
-                |> Gen.map (fun (DontSize h, DontSize l) -> (uint64 h <<< 32) ||| uint64 l)                
+                |> Gen.map (fun (DontSize h, DontSize l) -> (uint64 h <<< 32) ||| uint64 l)
             fromGenShrink (gen,shrink)
             |> convert DontSize DontSize.Unwrap
 
@@ -457,7 +461,7 @@ module Arb =
         ///Generate a nullable value that is null 1/8 of the time.
         static member Nullable() = 
             { new Arbitrary<Nullable<'a>>() with
-                override __.Generator = Gen.frequency [(1, gen { return Nullable() }); (7, Gen.map (fun x -> Nullable x) generate)]
+                override __.Generator = Gen.frequency [(1, gen { return Nullable() }); (7, Gen.map Nullable generate)]
                 override __.Shrinker o =
                     if o.HasValue
                         then seq { yield Nullable(); for x' in shrink o.Value -> Nullable x' }
@@ -529,12 +533,12 @@ module Arb =
         ///where 'b has an Arbitrary instance.
         static member Function() =
             { new Arbitrary<Function<'a,'b>>() with
-                override __.Generator = Gen.map Function<'a,'b>.from generate
+                override __.Generator = Gen.map Function<'a,'b>.From generate
                 override __.Shrinker f = 
                     let update x' y' f x = if x = x' then y' else f x
                     seq { for (x,y) in f.Table do 
                             for y' in shrink y do 
-                                yield Function<'a,'b>.from (update x y' f.Value) }
+                                yield Function<'a,'b>.From (update x y' f.Value) }
             }
 
         ///Generates a Func'1.
@@ -924,6 +928,11 @@ module Arb =
                 let! k = generate
                 return Guid((a: int),b,c,d,e,f,g,h,i,j,k)
             } |> fromGen
+
+        ///Arbitray instance for BigInteger.
+        static member BigInt() =
+            Default.Int32()
+            |> convert bigint int
 
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
         static member DontShrink() =

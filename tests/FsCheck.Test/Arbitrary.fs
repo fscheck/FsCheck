@@ -11,6 +11,7 @@ module Arbitrary =
     open System.Collections.Generic
     open Helpers
     open Arb
+    open Swensen.Unquote
     
     let private addLabels (generator,shrinker) = ( generator |@ "Generator", shrinker |@ "Shrinker")
     
@@ -150,7 +151,7 @@ module Arbitrary =
         (   generate<int*char*bool> |> sample 10 |> List.forall (fun _ -> true)
             //or the first value is shrunk, or the second, or the third
         ,   shrink value |> Seq.forall (fun (i,c,b) -> shrink valuei |> Seq.exists ((=) i) 
-                                                    || shrink valuec |> Seq.exists ((=) c)  
+                                                    || shrink valuec |> Seq.exists ((=) c)
                                                     || shrink valueb |> Seq.exists ((=) b))   )
      
     [<Property>]
@@ -175,11 +176,11 @@ module Arbitrary =
                                   else shrinks = Seq.empty))
 
     let testFunction (f: _ -> _) (vs: _ list) =
-        let tabledF = Function<_,_>.from f
+        let tabledF = Function<_,_>.From f
         (List.map tabledF.Value vs) = (List.map f vs)
         && List.forall (fun v -> List.tryFind (fst >> (=) v) tabledF.Table = Some (v,f v)) vs
         
-    [<Property>]  
+    [<Property>]
     let Function (f:int->char) (vs:list<int>) =
         testFunction f vs
     
@@ -192,9 +193,9 @@ module Arbitrary =
 
     [<Property>]
     let ``Fun pattern works``(Fun (f:bool->bool)) =
-        let a = f true
-        let b = f false
-        Assert.True true
+        let _ = f true
+        let _ = f false
+        true =! true
 
     [<Property>]
     let SystemFunc (f: Func<int>) (vs: list<unit>) =
@@ -268,7 +269,7 @@ module Arbitrary =
         shrink value 
         |> Seq.forall (fun (KeyValue(k,v)) -> shrink value.Key |> Seq.exists ((=) k) || shrink value.Value |> Seq.exists ((=) v))
 
-    [<Property>]                       
+    [<Property>]
     let ``Array shrinks to shorter array or smaller elements`` (value:int[]) =
         shrink value 
         |> Seq.forall (fun v -> v.Length < value.Length || Array.exists2 (fun e1 e2 -> abs e1 <= abs e2) v value)
@@ -276,7 +277,7 @@ module Arbitrary =
         
     [<Property>]
     let ``Array2D shrinks to smaller array or smaller elements`` (value:int[,]) =
-        let existsSmallerElement arr v = 
+        let existsSmallerElement v = 
             let result = ref false
             Array2D.iteri (fun i j elem -> result := (!result || abs elem <= abs value.[i,j])) v
             !result
@@ -284,7 +285,7 @@ module Arbitrary =
         |> Seq.forall (fun v -> 
                 Array2D.length1 v < Array2D.length1 value
                 || Array2D.length2 v < Array2D.length2 value
-                || existsSmallerElement value v)
+                || existsSmallerElement v)
                 
     [<Property>]
     let ``NonNegativeInt generates non negative ints`` (NonNegativeInt value) =
@@ -364,18 +365,18 @@ module Arbitrary =
     let ``Map with string key``() =
         generate<Map<string, char>> |> sample 10 |> List.exists (fun x -> not x.IsEmpty)
 
-    [<Property>]
+    [<Fact>]
     let Decimal() =
-        generate<decimal> |> sample 10 |> List.forall (fun _ -> true)
+        generate<decimal> |> sample 10 |> ignore
 
     [<Property>]
     let ``Decimal shrinks`` (value: decimal) =
         shrink<decimal> value 
         |> Seq.forall (fun shrunkv -> shrunkv = 0m || shrunkv <= abs value)
 
-    [<Property>]
+    [<Fact>]
     let Culture() =
-        generate<CultureInfo> |> sample 10 |> List.forall (fun _ -> true)
+        generate<CultureInfo> |> sample 10 |> ignore
 
 //commented out as it keeps failing on AppVeyor with: ca-ES-valencia, pretty hard to repro.
 //    [<Property>]
@@ -383,27 +384,32 @@ module Arbitrary =
 //        shrink<CultureInfo> value
 //        |> Seq.forall (fun c -> c.IsNeutralCulture || c = CultureInfo.InvariantCulture)
 
+    [<Fact>]
+    let Guid () =
+        generate<Guid> |> sample 10 |> ignore
+
     [<Property>]
-    let Guid (value: Guid) =
-        generate<Guid> |> sample 10 |> List.forall (fun _ -> true)
+    let Bigint (value:bigint) =
+        generate<bigint> |> sample 10 |> Seq.forall (fun _ -> true)
+        && (shrink<bigint> value |> Seq.forall (fun shrunkv -> shrunkv <= abs value))
 
     type Empty() = class end
 
     [<Fact>]
     let ``Derive generator for concrete class with one constructor with no parameters``() =
-        generate<Empty> |> sample 10 |> List.forall (fun _ -> true)
+        generate<Empty> |> sample 10 |> ignore
 
-    type IntWrapper(a: int) = class end
+    type IntWrapper(a:int) = class end
 
     [<Fact>]
     let ``Derive generator for concrete class with one constructor with one parameter``() =
-        generate<IntWrapper> |> sample 10 |> List.forall (fun _ -> true)
+        generate<IntWrapper> |> sample 10 |> ignore
 
     type FakeRecord(a: int, b: string) =
-        member this.A = a
-        member this.B = b
+        member __.A = a
+        member __.B = b
 
     [<Fact>]
     let ``Derive generator for concrete class with one constructor with two parameters``() =
-        generate<FakeRecord> |> sample 10 |> List.forall (fun _ -> true)
+        generate<FakeRecord> |> sample 10 |> ignore
 

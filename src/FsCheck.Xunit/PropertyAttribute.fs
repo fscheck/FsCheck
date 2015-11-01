@@ -100,25 +100,25 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             |> Seq.append arbitrariesOnMethod
             |> Seq.toList
 
-        (factAttribute.GetNamedArgument("QuietOnSuccess"),
-         {Config.Default with
+        { Config.Default with
                 Replay = factAttribute.GetNamedArgument("ReplayStdGen")
                 MaxTest = factAttribute.GetNamedArgument("MaxTest")
                 MaxFail = factAttribute.GetNamedArgument("MaxFail")
                 StartSize = factAttribute.GetNamedArgument("StartSize")
                 EndSize = factAttribute.GetNamedArgument("EndSize")
+                QuietOnSuccess = factAttribute.GetNamedArgument("QuietOnSuccess")
                 Every = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.Every else Config.Quick.Every
                 EveryShrink = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
                 Arbitrary = arbitraries
                 Runner = new XunitRunner()
-            })
+            }
 
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
         let test = new XunitTest(this, this.DisplayName)
         let summary = new RunSummary(Total = 1);
 
         let testExec() =
-            let (quietOnSuccess,config) = this.Init()
+            let config = this.Init()
             let timer = ExecutionTimer()
             let result =
                 try
@@ -137,29 +137,23 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
                     match xunitRunner.Result with
                           | TestResult.True _ ->
-                            let output =
-                                if not quietOnSuccess then
-                                    let msg = Runner.onFinishedToString "" xunitRunner.Result
-                                    printf "%s%s" Environment.NewLine msg
-                                    msg
-                                else ""
-                            (0, new TestPassed(test, timer.Total, output) :> TestResultMessage)
+                            let output = Runner.onFinishedToString "" xunitRunner.Result
+                            new TestPassed(test, timer.Total, output) :> TestResultMessage
                           | TestResult.Exhausted testdata ->
                             summary.Failed <- summary.Failed + 1
-                            (1, upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                            upcast new TestFailed(test, timer.Total, "", new PropertyFailedException(xunitRunner.Result))
                           | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
                             let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
-                            (1, upcast new TestFailed(test, timer.Total, message, new PropertyFailedException(message, e)))
+                            upcast new TestFailed(test, timer.Total, "", new PropertyFailedException(message, e))
                           | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed)  ->
                             summary.Failed <- summary.Failed + 1
-                            (1, upcast new TestFailed(test, timer.Total, (sprintf "%s%s" Environment.NewLine (Runner.onFinishedToString "" xunitRunner.Result)), new PropertyFailedException(xunitRunner.Result)))
+                            upcast new TestFailed(test, timer.Total, "", new PropertyFailedException(xunitRunner.Result))
                 with
-                    | ex -> (1, upcast new TestFailed(test, timer.Total, "Exception during test:", ex))
+                    | ex -> upcast new TestFailed(test, timer.Total, "Exception during test:", ex)
 
-            let (failed, testMessage) = result
-            messageBus.QueueMessage(testMessage) |> ignore
-            summary.Time <- summary.Time + testMessage.ExecutionTime
-            if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, testMessage.Output))) then
+            messageBus.QueueMessage(result) |> ignore
+            summary.Time <- summary.Time + result.ExecutionTime
+            if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, result.Output))) then
                 cancellationTokenSource.Cancel() |> ignore
             summary
 

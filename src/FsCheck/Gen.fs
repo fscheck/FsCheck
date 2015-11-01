@@ -1,6 +1,6 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
+**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
 **  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
@@ -18,15 +18,15 @@ type internal IGen =
 ///Generator of a random value, based on a size parameter and a randomly generated int.
 and [<NoEquality;NoComparison>] Gen<'a> = 
     private Gen of (int -> StdGen -> 'a)
-        ///map the given function to the value in the generator, yielding a new generator of the result type.  
-        member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> f <| g n r)
+        ///map the given function to the value in the generator, yielding a new generator of the result type.
+        member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> f (g n r))
     interface IGen with
         member x.AsGenObject = x.Map box
 
 //private interface for reflection
 type internal IArbitrary =
     abstract GeneratorObj : Gen<obj>
-    abstract ShrinkerObj : obj -> seq<obj>   
+    abstract ShrinkerObj : obj -> seq<obj>
 
 [<AbstractClass>]
 type Arbitrary<'a>() =
@@ -75,7 +75,7 @@ module GenBuilder =
     ///The workflow type for generators.
     type GenBuilder internal() =
         member __.Return(a) : Gen<_> = result a
-        member __.Bind(m, k) : Gen<_> = bind m k                            
+        member __.Bind(m, k) : Gen<_> = bind m k
         member __.Delay(f) : Gen<_> = delay f
         member __.Combine(m1, m2) = bind m1 (fun () -> m2)
         member __.TryFinally(m, handler) = tryFinally m handler
@@ -97,7 +97,7 @@ module GenBuilder =
 [<NoComparison>]
 type WeightAndValue<'a> =
     { Weight: int
-      Value : 'a  
+      Value : 'a
     }
 
 ///Combinators to build custom random generators for any type.
@@ -418,19 +418,19 @@ module Gen =
                   return! array2DOfDim (rows,cols) g }
         
     ///Always generate the same instance v. See also fresh.
-    //[category: Creating generators]   
+    //[category: Creating generators]
     [<CompiledName("Constant")>]
     let constant v = gen.Return v
 
     ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
     ///See also constant.
-    //[category: Creating generators]   
+    //[category: Creating generators]
     [<CompiledName("Fresh"); EditorBrowsable(EditorBrowsableState.Never)>]
     let fresh fv = gen { let a = fv() in return a }
 
     ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
     ///See also constant.
-    //[category: Creating generators]   
+    //[category: Creating generators]
     [<CompiledName("Fresh"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false) >]
     let freshFunc (fv:Func<_>) = fresh fv.Invoke
 
@@ -459,7 +459,7 @@ module Gen =
                 else
                     toCounter.Add(value,!counter)
                     counter := !counter + 1
-                    !counter - 1   
+                    !counter - 1
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
         Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
 
