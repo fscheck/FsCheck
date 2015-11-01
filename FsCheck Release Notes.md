@@ -1,4 +1,4 @@
-### 2.2.0 - 31 October 2015
+### 2.2.0 - 1 November 2015
   * Add QuietOnSuccess option to vanilla runner.
   * Add bigint generator.
   * Deprecate some infrequently used and incorrectly named methods.
