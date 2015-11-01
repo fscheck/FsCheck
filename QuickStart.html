@@ -75,10 +75,8 @@ Prop.ForAll(revRevIsOrig).QuickCheck();</code></pre></td></tr></table>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (2 shrinks) (StdGen (1568738971,296063931)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (0 shrinks) (StdGen (785568219,296076652)):
 Original:
-[2; 1; 5]
-Shrunk:
 [1; 0]</code></pre></td></tr></table>
 
 <p>In C#:</p>
@@ -117,9 +115,9 @@ FsCheck to generate lists of floats:</p>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (1569049191,296063931)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (2 shrinks) (StdGen (785898454,296076652)):
 Original:
-[-1.0; 4.940656458e-324; nan]
+[1.797693135e+308; nan; -3.0]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 
@@ -179,7 +177,8 @@ be written more tersely as follows:</p>
 
 <p>xUnit now shows the test similarly to a regular test, and is able to run it directly.</p>
 
-<p>To learn more on how to use this integration, see <a href="RunningTests.html">Running Tests</a>.</p>
+<p>To learn more on how to use this integration or integration with other frameworks like NUnit,
+see <a href="RunningTests.html">Running Tests</a>.</p>
 
 <div class="tip" id="fs1">namespace FsCheck</div>
 <div class="tip" id="fs2">val revRevIsOrig : xs:int list -&gt; bool<br /><br />Full name: QuickStart.revRevIsOrig</div>

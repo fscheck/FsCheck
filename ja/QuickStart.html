@@ -70,9 +70,11 @@
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1360840146,296063931)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (7 shrinks) (StdGen (581614025,296076652)):
 Original:
-[0; 1]</code></pre></td></tr></table>
+[3; 2; -4; 3; 3]
+Shrunk:
+[1; 0]</code></pre></td></tr></table>
 
 <p>FsCheck は反例の <em>シュリンク</em> (訳註: 推定による絞り込みのこと)も行うので、テストケースを失敗させる最小の反例を見つけようとします。
 反例は確かに最小、つまりリストは少なくともテストを失敗するための２つの異なる要素を持っています。FsCheck はより小さな反例を
@@ -103,8 +105,10 @@ Original:
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (0 shrinks) (StdGen (1361280459,296063931)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 7 tests (1 shrink) (StdGen (584676370,296076652)):
 Original:
+[-1.0; nan]
+Shrunk:
 [nan]</code></pre></td></tr></table>
 
 <h2>FsCheck を他のテスティングフレームワークで使う</h2>

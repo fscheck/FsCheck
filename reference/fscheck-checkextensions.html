@@ -49,33 +49,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '255', 255)" onmouseover="showTip(event, '255', 255)">
+          <code onmouseout="hideTip(event, '256', 256)" onmouseover="showTip(event, '256', 256)">
             Check(property, config)
           </code>
-          <div class="tip" id="255">
+          <div class="tip" id="256">
             <strong>Signature:</strong> (property:Property * config:Configuration) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L76-76" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '256', 256)" onmouseover="showTip(event, '256', 256)">
-            QuickCheck(property, testName)
-          </code>
-          <div class="tip" id="256">
-            <strong>Signature:</strong> (property:Property * testName:string) -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L80-80" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L81-81" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -86,14 +68,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '257', 257)" onmouseover="showTip(event, '257', 257)">
-            QuickCheck(property)
+            QuickCheck(property, testName)
           </code>
           <div class="tip" id="257">
-            <strong>Signature:</strong> property:Property -&gt; unit<br />
+            <strong>Signature:</strong> (property:Property * testName:string) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L78-78" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L85-85" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -104,14 +86,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '258', 258)" onmouseover="showTip(event, '258', 258)">
-            QuickCheckThrowOnFailure(property)
+            QuickCheck(property)
           </code>
           <div class="tip" id="258">
             <strong>Signature:</strong> property:Property -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L82-82" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L83-83" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -122,14 +104,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '259', 259)" onmouseover="showTip(event, '259', 259)">
-            VerboseCheck(property, testName)
+            QuickCheckThrowOnFailure(property)
           </code>
           <div class="tip" id="259">
-            <strong>Signature:</strong> (property:Property * testName:string) -&gt; unit<br />
+            <strong>Signature:</strong> property:Property -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L86-86" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L87-87" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -140,14 +122,14 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '260', 260)" onmouseover="showTip(event, '260', 260)">
-            VerboseCheck(property)
+            VerboseCheck(property, testName)
           </code>
           <div class="tip" id="260">
-            <strong>Signature:</strong> property:Property -&gt; unit<br />
+            <strong>Signature:</strong> (property:Property * testName:string) -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L84-84" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L91-91" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -158,14 +140,32 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '261', 261)" onmouseover="showTip(event, '261', 261)">
-            VerboseCheckThrowOnFailure(property)
+            VerboseCheck(property)
           </code>
           <div class="tip" id="261">
             <strong>Signature:</strong> property:Property -&gt; unit<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L88-88" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L89-89" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '262', 262)" onmouseover="showTip(event, '262', 262)">
+            VerboseCheckThrowOnFailure(property)
+          </code>
+          <div class="tip" id="262">
+            <strong>Signature:</strong> property:Property -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/RunnerExtensions.fs#L93-93" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
