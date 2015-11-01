@@ -19,7 +19,7 @@ summary
     Integrates FsCheck with NUnit
 description
     FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute.
-
+    
     All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
 dependencies
     FsCheck >= CURRENTVERSION
