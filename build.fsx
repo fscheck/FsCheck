@@ -178,7 +178,7 @@ let generateHelp fail =
     generateHelp' fail true
 
 
-Target "KeepRunning" (fun _ ->    
+Target "KeepRunning" (fun _ ->
     use watcher = new FileSystemWatcher(DirectoryInfo("docs/content").FullName,"*.fsx")
     watcher.EnableRaisingEvents <- true
     watcher.Changed.Add(fun e -> trace (sprintf "%A %A" e.Name e.ChangeType); generateHelp false)
