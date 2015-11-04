@@ -1,3 +1,6 @@
+### 2.2.1 - To be released
+  * Bug fix: xUnit runner did not update failed count correctly in some cases.
+
 ### 2.2.0 - 1 November 2015
   * Add QuietOnSuccess option to vanilla runner.
   * Add bigint generator.
