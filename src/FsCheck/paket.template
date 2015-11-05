@@ -30,7 +30,7 @@ description
     observe the distribution of test data, and define test data generators.
     When a property fails, FsCheck automatically displays a minimal counter example.
 dependencies
-    FSharp.Core => 3.1.2.5
+    FSharp.Core >= 3.1.2.5
 files
     bin/Release/FsCheck.dll ==> lib/net45
     bin/Release/FsCheck.pdb ==> lib/net45
