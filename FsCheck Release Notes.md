@@ -1,5 +1,6 @@
-### 2.2.1 - To be released
+### 2.2.1 - 5 November 2015
   * Bug fix: xUnit runner did not update failed count correctly in some cases.
+  * Fix overly constrained FSharp.Core dependency in FsCheck NuGet package.
 
 ### 2.2.0 - 1 November 2015
   * Add QuietOnSuccess option to vanilla runner.
