@@ -1,3 +1,5 @@
+### 2.2.2 - To be released
+
 ### 2.2.1 - 5 November 2015
   * Bug fix: xUnit runner did not update failed count correctly in some cases.
   * Fix overly constrained FSharp.Core dependency in FsCheck NuGet package.
