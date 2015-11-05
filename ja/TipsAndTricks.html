@@ -56,9 +56,12 @@
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 42)" onmouseover="showTip(event, 'fs11', 42)" class="i">mapRec</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (639424948,296076652)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (5 shrinks) (StdGen (1068179796,296078417)):
 Original:
-{ 0-&gt;1 }
+{ 0-&gt;3; 2-&gt;3; 4-&gt;3 }
+[4; 2; 4]
+Shrunk:
+{ 0-&gt;3; 2-&gt;0; 4-&gt;0 }
 [0]</code></pre></td></tr></table>
 
 <p><code>Function&lt;'a,'b&gt;</code> 型は呼ばれていたすべての引数、および生成した結果の写像を記録します。
@@ -106,11 +109,11 @@ Function は関数を出力し、また関数をシュリンクするために�
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (640845959,296076652)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (1069780951,296078417)):
 Label of failing property: 1 = -1
 Original:
-1
-0
+3
+3
 Shrunk:
 0
 0</code></pre></td></tr></table>
