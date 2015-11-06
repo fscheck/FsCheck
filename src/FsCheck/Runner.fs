@@ -272,13 +272,13 @@ module Runner =
 
     let internal check config p = 
         //save so we can restore after the run
-        let defaultArbitrary = Arb.arbitrary.Value
+        let defaultArbitrary = Arb.getArbitrary()
         let merge newT (existingTC:TypeClass<_>) = existingTC.DiscoverAndMerge(onlyPublic=true,instancesType=newT)
-        Arb.arbitrary.Value <- List.foldBack merge config.Arbitrary defaultArbitrary
+        Arb.setArbitrary (List.foldBack merge config.Arbitrary defaultArbitrary)
         try
             runner config (property p)
         finally
-            Arb.arbitrary.Value <- defaultArbitrary
+            Arb.setArbitrary defaultArbitrary
 
     let private checkMethodInfo = 
         typeof<TestStep>.DeclaringType.GetTypeInfo().DeclaredMethods 

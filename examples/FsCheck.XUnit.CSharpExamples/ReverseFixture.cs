@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FsCheck.Xunit;
 
 namespace FsCheck.XUnit.CSharpExamples
@@ -45,6 +46,40 @@ namespace FsCheck.XUnit.CSharpExamples
 
         [Property]
         public bool ShouldFail_Exception(int[] xs)
+        {
+            throw new InvalidOperationException("Test failed!");
+        }
+
+        [Property]
+        public async Task<bool> ShouldFail_Async(int x)
+        {
+            await Task.Yield();
+            return false;
+        }
+
+        [Property]
+        public async Task<bool> ShouldSucceed_Async(int x)
+        {
+            await Task.Yield();
+            return true;
+        }
+
+        [Property]
+        public async Task ShouldFailException_Async(int x)
+        {
+            await Task.Yield();
+            throw new InvalidOperationException("Test failed!");
+        }
+
+
+        [Property]
+        public async Task ShouldSucceedNoException_Async(int x)
+        {
+            await Task.Yield();
+        }
+
+        [Property]
+        public async Task<bool> ShouldFailException2_Async(int x)
         {
             throw new InvalidOperationException("Test failed!");
         }
