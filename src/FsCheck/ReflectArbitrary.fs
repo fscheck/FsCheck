@@ -33,22 +33,24 @@ module internal ReflectArbitrary =
        else 
            elems
 
-    let private reflectObj getGenerator =
+    let private reflectObjGenerator =
         Common.memoize (fun (t:Type) ->
             if isRecordType t then
-                let g = [ for pi in getRecordFields t do 
-                            if pi.PropertyType = t then 
-                                failwithf "Recursive record types cannot be generated automatically: %A" t 
-                            else yield getGenerator pi.PropertyType ]
+                let fts = [|for pi in getRecordFields t do
+                                if pi.PropertyType = t then
+                                    failwithf "Recursive record types cannot be generated automatically: %A" t
+                                    else yield pi.PropertyType|]
                 let create = getRecordConstructor t
-                let result = g |> sequence |> map (List.toArray >> create)
-                box result
+                fun getGenerator ->
+                    let result = fts |> Seq.map getGenerator |> sequence |> map (List.toArray >> create)
+                    box result
 
             elif isTupleType t then
-                let g = [ for elem in FSharpType.GetTupleElements t do yield getGenerator elem ]
+                let fts = [| for elem in FSharpType.GetTupleElements t do yield elem |]
                 let create elems = FSharpValue.MakeTuple (elems,t)
-                let result = g |> sequence |> map (List.toArray >> create)
-                box result
+                fun getGenerator ->
+                    let result = fts |> Seq.map getGenerator |> sequence |> map (List.toArray >> create)
+                    box result
 
             elif isUnionType t then
                 // figure out the "size" of a union
@@ -59,39 +61,48 @@ module internal ReflectArbitrary =
                     else
                         if List.exists(fun (x : Type) -> x.ToString() = t.ToString()) ts then 2 else 1
                         
-                let unionGen create ts =
+                let unionGen create ts getGenerator =
                     let productGen (ts : list<Type>) =
-                        let gs = [ for t in ts -> getGenerator t ]
+                        let gs = ts |> List.map getGenerator
                         let n = gs.Length
-                        [ for g in gs -> sized (fun s -> resize ((s / n) - 1) g )]
+                        [| for g in gs -> sized (fun s -> resize ((s / n) - 1) g )|]
                     let g = productGen ts
                     let res = g |> sequence |> map (List.toArray >> create)
                     res
 
-                let gs = [ for _,(_,fields,create,_) in getUnionCases t -> unionSize fields, lazy (unionGen create fields) ]
-                let lowest = List.reduce min <| List.map fst gs
-                let small() = [ for i,g in gs do if i = lowest then yield g.Force() ]
-                let large() = [ for _,g in gs -> g.Force() ]
-                let getgs size = 
-                    if size <= 0 then small() else large() 
-                    |> oneof 
-                    |> resize (size - 1) 
-                sized getgs |> box
+                let gs = [| for _,(_,fields,create,_) in getUnionCases t -> unionSize fields, unionGen create fields |]
+                let lowest = Array.reduce min <| Array.map fst gs
+                let small getGenerator = [| for i,g in gs do if i = lowest then yield g getGenerator |]
+                let large getGenerator = [| for _,g in gs -> g getGenerator |]
+
+                fun getGenerator ->
+                  let getgs size =
+                      if size <= 0 then small getGenerator else large getGenerator
+                      |> oneof
+                      |> resize (size - 1)
+
+                  sized getgs |> box
                 
             elif t.GetTypeInfo().IsEnum then
+                fun getGenerator ->
                     enumOfType t |> box
 
             elif isCSharpRecordType t then
-                let g = [ for ft in getCSharpRecordFields t do 
-                            if ft = t then
-                                failwithf "Recursive record types cannot be generated automatically: %A" t 
-                            else yield getGenerator ft ]
+                let fts = [|  for ft in getCSharpRecordFields t do
+                                  if ft = t then
+                                      failwithf "Recursive record types cannot be generated automatically: %A" t
+                                        else yield ft|]
                 let create = getCSharpRecordConstructor t
-                let result = g |> sequence |> map (List.toArray >> create)
-                box result
+                fun getGenerator ->
+                    let result = fts |> Seq.map getGenerator |> sequence |> map (List.toArray >> create)
+                    box result
 
             else
                 failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing and registering a generator for it." t.FullName)
+
+    let private reflectObj getGenerator t =
+        let f = reflectObjGenerator t
+        f getGenerator
 
     let private reflectGenObj getGenerator (t:Type) = (reflectObj getGenerator t |> unbox<IGen>).AsGenObject
 
