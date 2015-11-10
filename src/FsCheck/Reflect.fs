@@ -60,13 +60,15 @@ module internal Reflect =
         ctor.Invoke
 
     /// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
-    let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list = 
+    let getUnionCases : Type -> (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list =
+        Common.memoize (fun (unionType:Type) ->
         [ for case in FSharpType.GetUnionCases(unionType, true) ->
             let types =    [ for fld in case.GetFields() -> fld.PropertyType ]
             let ctorFn =   FSharpValue.PreComputeUnionConstructor(case, true)
             let readerFn = FSharpValue.PreComputeUnionReader(case, true)
                 
             case.Name, (case.Tag, types, ctorFn, readerFn)]
+          )
 
     /// Get reader for union case name (aka tag)
     let getUnionTagReader unionType = 
