@@ -1,6 +1,6 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
+**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
 **  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
@@ -160,8 +160,8 @@ module private Testable =
         try 
             body a |> property
         with
-        | :? DiscardException -> Prop.ofResult Res.rejected
-        | e -> Prop.ofResult (Res.exc e)
+            | :? DiscardException -> Prop.ofResult Res.rejected
+            | e -> Prop.ofResult (Res.exc e)
         |> Property.GetGen 
         |> Gen.map (Rose.map (argument a))
 
