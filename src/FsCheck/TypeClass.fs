@@ -14,7 +14,6 @@ namespace FsCheck
 module TypeClass =
 
     open System
-    open System.Collections.Generic
     open System.Reflection
 
     open Common
@@ -101,7 +100,7 @@ module TypeClass =
 
         let instances = defaultArg instances Map.empty
         let keySet map = map |> Map.toSeq |> Seq.map fst |> Set.ofSeq
-        let memo = new Dictionary<_,_>() //should fix memo bug since the memo table is re-initialized when a new registration is done
+        let memo = memoizer() //should fix memo bug since the memo table is re-initialized when a new registration is done
          
         member __.Class = typedefof<'TypeClass>
         member __.Instances = instances |> keySet
