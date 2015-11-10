@@ -73,7 +73,6 @@
     <Compile Include="Commands.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="StateMachine.fs" />
-    <None Include="Script.fsx" />
     <None Include="paket.references" />
     <Content Include="App.config" />
   </ItemGroup>
