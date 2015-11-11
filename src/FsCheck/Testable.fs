@@ -167,8 +167,10 @@ module private Testable =
 
 
     let forAll (arb:Arbitrary<_>) body : Property =
-        gen{let! a = arb.Generator
-            return! shrinking arb.Shrinker a (fun a' -> evaluate body a')}
+        let generator = arb.Generator
+        let shrinker = arb.Shrinker
+        gen { let! a = generator
+              return! shrinking shrinker a (fun a' -> evaluate body a')}
         |> Property
 
     let private combine f a b:Property = 
