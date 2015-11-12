@@ -107,5 +107,5 @@ module StateMachine =
     [<Fact>]
     let ``should check Counter``() =
         let prop = StateMachine.toProperty spec
-        Check.Quick prop
+        Check.QuickThrowOnFailure prop
 
