@@ -943,8 +943,11 @@ module Arb =
         ///Also generates (but doesn't shrink) values for immutable classes 
         ///(i.e. single constructor, no mutable properties or fields).
         static member Derive() =
+            //taking out this generator makes sure that the memoization table in reflectGenObj
+            //is used properly.
+            let generator = ReflectArbitrary.reflectGenObj getGenerator
             { new Arbitrary<'a>() with
-                override __.Generator = ReflectArbitrary.reflectGen getGenerator
+                override __.Generator = generator typeof<'a> |> Gen.map unbox<'a>
                 override __.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
             
