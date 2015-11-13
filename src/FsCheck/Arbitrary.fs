@@ -262,31 +262,24 @@ module Arb =
         
         ///Generates (), of the unit type.
         static member Unit() = 
-            { new Arbitrary<unit>() with
-                override __.Generator = gen { return () } 
-            }
+            fromGen <| Gen.constant ()
+
         ///Generates an arbitrary bool.
         static member Bool() = 
-            { new Arbitrary<bool>() with
-                override __.Generator = Gen.elements [true; false] 
-            }
+            fromGen <| Gen.elements [true; false]
+
         ///Generates an arbitrary byte.
         static member Byte() =
-            { new Arbitrary<byte>() with
-                override __.Generator = 
-                    Gen.choose (0,255) |> Gen.map byte //this is now size independent - 255 is not enough to not cover them all anyway 
-                override __.Shrinker n = n |> int |> shrink |> Seq.map byte
-            }
+            fromGenShrink ( Gen.choose (0,255) |> Gen.map byte, //this is now size independent - 255 is not enough to not cover them all anyway 
+                            int >> shrink >> Seq.map byte)
+
         ///Generates an arbitrary signed byte.
         static member SByte() =
-            { new Arbitrary<sbyte>() with
-                override __.Generator = 
-                    Gen.choose (-128,127) |> Gen.map sbyte 
-                override __.Shrinker n = 
-                  n |> int |> shrink 
-                  |> Seq.filter (fun e -> -128 <= e && e <= 127) //the int shrinker shrinks -128 to 128 which overflows
-                  |> Seq.map sbyte
-            }
+            fromGenShrink ( Gen.choose (-128,127) |> Gen.map sbyte,
+                            int >> shrink 
+                            >> Seq.filter (fun e -> -128 <= e && e <= 127) //the int shrinker shrinks -128 to 128 which overflows
+                            >> Seq.map sbyte)
+
         ///Generate arbitrary int16 that is between -size and size.
         static member Int16() =
             from<int>
@@ -311,10 +304,8 @@ module Arb =
             
         ///Generate arbitrary int32 that is between -size and size.
         static member Int32() = 
-            { new Arbitrary<int>() with
-                override __.Generator = Gen.sized <| fun n -> Gen.choose (-n,n) 
-                override __.Shrinker n = shrinkNumber n
-            }
+            fromGenShrink ( Gen.sized (fun n -> Gen.choose (-n,n)),
+                            shrinkNumber)
 
         ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
         static member DontSizeInt32() =
@@ -368,40 +359,39 @@ module Arb =
 
         ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float() = 
-            { new Arbitrary<float>() with
-                override __.Generator = 
-                    Gen.frequency   [(6, Gen.map3 Default.fraction generate generate generate)
-                                    ;(1, Gen.elements [ Double.NaN; Double.NegativeInfinity; Double.PositiveInfinity])
-                                    ;(1, Gen.elements [ Double.MaxValue; Double.MinValue; Double.Epsilon])]
-                override __.Shrinker fl =
-                    let (|<|) x y = abs x < abs y
-                    seq {   if Double.IsInfinity fl || Double.IsNaN fl then 
-                                yield 0.0
-                            else
-                                if fl < 0.0 then yield -fl
-                                let truncated = truncate fl
-                                if truncated |<| fl then yield truncated }
-                    |> Seq.distinct
-            }
+            let generator =
+                Gen.frequency [(6, Gen.map3 Default.fraction generate generate generate)
+                              ;(1, Gen.elements [ Double.NaN; Double.NegativeInfinity; Double.PositiveInfinity])
+                              ;(1, Gen.elements [ Double.MaxValue; Double.MinValue; Double.Epsilon])]
+            let shrinker fl =
+                let (|<|) x y = abs x < abs y
+                seq {   if Double.IsInfinity fl || Double.IsNaN fl then 
+                            yield 0.0
+                        else
+                            if fl < 0.0 then yield -fl
+                            let truncated = truncate fl
+                            if truncated |<| fl then yield truncated }
+                |> Seq.distinct
+            fromGenShrink(generator, shrinker)
 
         ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float32() = 
-            { new Arbitrary<float32>() with
-                override __.Generator = 
-                    let fraction a b c = float32 (Default.fraction a b c)
-                    Gen.frequency   [(6, Gen.map3 fraction generate generate generate)
-                                    ;(1, Gen.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity])
-                                    ;(1, Gen.elements [ Single.MaxValue; Single.MinValue; Single.Epsilon])]
-                override __.Shrinker fl =
-                    let (|<|) x y = abs x < abs y
-                    seq {   if Single.IsInfinity fl || Single.IsNaN fl then 
-                                yield 0.0f
-                            else
-                                if fl < 0.0f then yield -fl
-                                let truncated = truncate fl
-                                if truncated |<| fl then yield truncated }
-                    |> Seq.distinct
-            }
+            let generator =
+                let fraction a b c = float32 (Default.fraction a b c)
+                Gen.frequency   [(6, Gen.map3 fraction generate generate generate)
+                                ;(1, Gen.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity])
+                                ;(1, Gen.elements [ Single.MaxValue; Single.MinValue; Single.Epsilon])]
+            let shrinker fl =
+                let (|<|) x y = abs x < abs y
+                seq {   if Single.IsInfinity fl || Single.IsNaN fl then 
+                            yield 0.0f
+                        else
+                            if fl < 0.0f then yield -fl
+                            let truncated = truncate fl
+                            if truncated |<| fl then yield truncated }
+                |> Seq.distinct
+            fromGenShrink (generator,shrinker)
+
         ///Generate arbitrary decimal.
         static member Decimal() =
             let genDecimal = 
@@ -424,20 +414,19 @@ module Arb =
             
         ///Generates arbitrary chars, between ASCII codes Char.MinValue and 127.
         static member Char() = 
-            { new Arbitrary<char>() with
-                override __.Generator = Gen.choose (int Char.MinValue, 127) |> Gen.map char
-                override __.Shrinker c =
-                    seq { for c' in ['a';'b';'c'] do if c' < c || not (Char.IsLower c) then yield c' }
-            }
+            let generator = Gen.choose (int Char.MinValue, 127) |> Gen.map char
+            let shrinker c = seq { for c' in ['a';'b';'c'] do if c' < c || not (Char.IsLower c) then yield c' }
+            fromGenShrink (generator, shrinker)
+
         ///Generates arbitrary strings, which are lists of chars generated by Char.
         static member String() = 
-            { new Arbitrary<string>() with
-                override __.Generator = Gen.frequency [(9, Gen.map (fun (chars:char[]) -> new String(chars)) generate);(1, Gen.constant null)]
-                override __.Shrinker s = 
+            let generator = Gen.frequency [(9, Gen.map (fun (chars:char[]) -> new String(chars)) generate);(1, Gen.constant null)]
+            let shrinker (s:string) = 
                     match s with
                     | null -> Seq.empty
                     | _ -> s.ToCharArray() |> Array.toList |> shrink |> Seq.map (fun chars -> new String(List.toArray chars))
-            }
+            fromGenShrink (generator,shrinker)
+
         ///Generate an option value that is 'None' 1/8 of the time.
         static member Option() = 
             { new Arbitrary<option<'a>>() with
@@ -691,11 +680,10 @@ module Arb =
 
         ///Generates an interval between two non-negative integers.
         static member Interval() =
-            { new Arbitrary<Interval>() with
-                override  __.Generator = 
+            fromGen <| 
                     gen { let! start,offset = Gen.two generate
-                          return Interval (abs start,abs start+abs offset) } //TODO: shrinker
-            }
+                          return Interval (abs start,abs start+abs offset) }//TODO: shrinker
+
 
         static member StringWithoutNullChars() =
             from<string>
