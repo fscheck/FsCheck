@@ -12,7 +12,12 @@ namespace FsCheck
 
 module internal Common =
 
+    open System
+#if PCL
     open System.Collections.Generic
+
+    ///Create the Memoizer
+    let memoizer () = new Dictionary<_,_>()
 
     ///Memoize the given function using the given dictionary
     let memoizeWith (memo:IDictionary<'a,'b>) (f: 'a -> 'b) =
@@ -25,12 +30,22 @@ module internal Common =
                         let res = f n
                         memo.Add(n,res)
                         res)
+#else
+    open System.Collections.Concurrent
+
+    ///Create the Memoizer
+    let memoizer () = new ConcurrentDictionary<_,_>()
+
+    ///Memoize the given function using the given dictionary
+    let memoizeWith (memo:ConcurrentDictionary<'a,'b>) (f: 'a -> 'b) =
+        let ff = Func<'a,'b>(f)
+        fun n ->
+            memo.GetOrAdd (n, ff)
+#endif
 
     ///Memoize the given function.
     let memoize f =
-        let t = new Dictionary<_,_>()
-        memoizeWith t f
-
+        memoizeWith (memoizer ()) f
     let flip f x y = f y x
 
     //the following three are from Don Syme's blog:
