@@ -61,11 +61,13 @@ module StateMachine =
 
     [<Fact>]
     let ``shrink commands should never violate precondition``() =
-        test <@ StateMachine.generate checkPreconditionSpec 
+        let counterexample = 
+                StateMachine.generate checkPreconditionSpec 
                 |> Gen.sample 100 10
                 |> Seq.map (StateMachine.shrink checkPreconditionSpec) 
                 |> Seq.concat
-                |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> checkPreconditions (c.Model()) cmds) @>
+                |> Seq.tryFind (fun { Setup = _,c; Operations = cmds } -> not <| checkPreconditions (c.Model()) cmds)
+        test <@ counterexample.IsNone @>
 
     //a counter that never goes below zero
     type Counter(?dontcare:int) =
