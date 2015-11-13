@@ -180,13 +180,13 @@ module Gen =
     ///given probabilities. The sum of the probabilities must be larger than zero.
     //[category: Creating generators from generators]
     [<CompiledName("Frequency")>]
-    let frequency xs = 
-        let xs = Seq.cache xs
-        let tot = Seq.sumBy fst xs
-        let rec pick n ys = 
-            let (k,x),xs = Seq.head ys,Seq.skip 1 ys
-            if n<=k then x else pick (n-k) xs
-        in gen.Bind(choose (1,tot), fun n -> pick n xs) 
+    let frequency xs =
+        let xs = Seq.toArray xs
+        let tot = Array.sumBy fst xs
+        let rec pick i n =
+            let k,x = xs.[i]
+            if n<=k then x else pick (i+1) (n-k)
+        gen.Bind(choose (1,tot), pick 0)
 
     let private frequencyOfWeighedSeq ws = 
         ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> frequency
