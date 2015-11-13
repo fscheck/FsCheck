@@ -6,6 +6,34 @@ open Microsoft.FSharp.Reflection
 open FsCheck
 open FsCheck.Experimental
 
+#time
+
+type UnionCase =
+    | Single
+    | One of int
+    | Two of string * int
+    | Three of string * char * int
+    | Rec of int * UnionCase
+
+let testProp (uc : UnionCase) (uc2:UnionCase) (uc3:UnionCase) =
+  true
+
+let testPerf () =
+  let config =
+    {
+      Config.Quick with
+        MaxTest = 1000
+    }
+  Check.One (config, testProp)
+
+testPerf()
+
+let run() =
+    let res = Arb.from<UnionCase>.Generator |> Gen.sample 100 100000
+    sprintf "%i" res.Length
+
+run()
+
 type Counter(initial:int) =
     let mutable c = initial
     member __.Inc() = c <- c + 1
