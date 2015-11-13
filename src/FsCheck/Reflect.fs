@@ -16,6 +16,7 @@ module internal Reflect =
     open System.Collections.Generic
     open Microsoft.FSharp.Reflection
     open System.Reflection
+    open System.Linq.Expressions
 
 //    let private recordFieldBindingFlags = 
 //        BindingFlags.GetProperty ||| BindingFlags.Instance 
@@ -55,9 +56,18 @@ module internal Reflect =
         else
             failwithf "The input type must be an immutable class with a single constructor. Got %A" recordType
         
-    let getCSharpRecordConstructor (recordType: Type) =
-        let ctor = getPublicCtors recordType |> Seq.head
-        ctor.Invoke
+    let getCSharpRecordConstructor (t:Type) =
+        let ctor  = getPublicCtors t |> Seq.head
+        let ctorps= ctor.GetParameters ()
+        let par   = Expression.Parameter (typeof<obj[]>, "args")
+        let pars  = ctorps |> Array.mapi (fun i p ->  Expression.Convert (
+                                                          Expression.ArrayIndex (par, Expression.Constant i),
+                                                          p.ParameterType)
+                                                      :> Expression)
+        let body  = Expression.New (ctor, pars)
+        let l     = Expression.Lambda<Func<obj[], obj>> (body, par)
+        let f     = l.Compile ()
+        f.Invoke
 
     /// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
     let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list = 
