@@ -56,10 +56,13 @@ Then FsCheck can even shrink your function. For example:</p>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 43)" onmouseover="showTip(event, 'fs11', 43)" class="i">mapRec</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1309397325,296078417)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (1 shrink) (StdGen (836695077,296082057)):
 Original:
-{ 0-&gt;1 }
-[0]</code></pre></td></tr></table>
+{ 0-&gt;0; 1-&gt;0; 2-&gt;0 }
+[2]
+Shrunk:
+{ 0-&gt;0; 1-&gt;0; 2-&gt;0 }
+[1]</code></pre></td></tr></table>
 
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> - 
 records a map of all the arguments it was called with, and the result it produced. 
@@ -109,7 +112,7 @@ define your own labelling equality combinator:</p>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1311078529,296078417)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (838035856,296082057)):
 Label of failing property: 3 = -1
 Original:
 1

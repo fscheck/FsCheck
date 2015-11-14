@@ -109,7 +109,7 @@ example, this may limit the expressiveness of properties - consider:</p>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">tooEager</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1200939871,296078417)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (761587060,296082057)):
 Original:
 0
 with exception:
@@ -229,7 +229,7 @@ are then summarized when testing is complete.</p>
 <p>Test cases for which the condition is true are classified as trivial, and the proportion of 
 trivial test cases in the total is reported:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 60 tests (41% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 50 tests (40% trivial).</code></pre></td></tr></table>
 
 <h3>Classifying Test Cases</h3>
 
@@ -254,10 +254,10 @@ trivial test cases in the total is reported:</p>
 <p>Test cases satisfying the condition are assigned the classification given, and the distribution of 
 classifications is reported after testing:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 65 tests.
-38% at-tail, at-head.
-24% at-tail.
-21% at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 53 tests.
+45% at-tail, at-head.
+30% at-head.
+22% at-tail.</code></pre></td></tr></table>
 
 <p>Note that a test case may fall into more than one classification.</p>
 
@@ -282,11 +282,12 @@ classifications is reported after testing:</p>
 <p>The argument of collect is evaluated in each test case, and the distribution of 
 values is reported. The type of this argument is printed using <code>sprintf "%A"</code>:</p>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 54 tests.
-44% 1.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 59 tests.
+49% 1.
 38% 0.
-11% 2.
-5% 3.</code></pre></td></tr></table>
+8% 2.
+1% 4.
+1% 3.</code></pre></td></tr></table>
 
 <h3>Combining Observations</h3>
 
@@ -310,18 +311,17 @@ reported. For example:</p>
         .Collect(<span class="s">"length "</span> <span class="o">+</span> xs.Count().ToString()))
     .QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 64 tests.
-35% 0, at-tail, at-head.
-15% 2, at-head.
-10% 1, at-head.
-9% 1, at-tail.
-7% 1, at-tail, at-head.
-6% 2.
-4% 2, at-tail.
-3% 4, at-head.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 61 tests.
+31% 1, at-head.
+29% 0, at-tail, at-head.
+8% 2, at-tail.
+6% 3, at-tail.
+6% 2, at-head.
+6% 1, at-tail, at-head.
+4% 1, at-tail.
 3% 3.
-1% 4, at-tail.
-1% 3, at-tail.</code></pre></td></tr></table>
+1% 4.
+1% 3, at-head.</code></pre></td></tr></table>
 
 <h2>And, Or and Labels</h2>
 
@@ -354,7 +354,7 @@ it finds a counter-example. This takes the form: <code>&lt;string&gt; @| &lt;pro
        .And(result <span class="o">&lt;</span> m <span class="o">+</span> n).Label(<span class="s">"result not sum"</span>);
 }).QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1209355879,296078417)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (768231604,296082057)):
 Label of failing property: result not sum
 Original:
 0
@@ -382,12 +382,12 @@ This is useful for displaying intermediate results, for example:</p>
       .Label(<span class="k">string</span>.Format(<span class="s">"evidence = {0}"</span>, res));
 }).QuickCheck();</code></pre></td></tr></table>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1210086384,296078417)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (3 shrinks) (StdGen (768731959,296082057)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
 Original:
-(0, 1)
+(1, -1)
 Shrunk:
 (0, 0)</code></pre></td></tr></table>
 
