@@ -1,4 +1,5 @@
-### 2.2.2 - To be released
+### 2.2.2 - 14 November 2015
+ * Major performance improvements in generators, particularly reflection-based generators. (with Mårten Rånge)
 
 ### 2.2.1 - 5 November 2015
   * Bug fix: xUnit runner did not update failed count correctly in some cases.
