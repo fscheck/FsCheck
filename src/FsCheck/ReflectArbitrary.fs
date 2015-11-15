@@ -33,8 +33,8 @@ module internal ReflectArbitrary =
        else 
            elems
 
-    let private reflectObj getGenerator =
-        Common.memoize (fun (t:Type) ->
+    let private reflectObj getGenerator t =
+
             if isRecordType t then
                 let g = [ for pi in getRecordFields t do 
                             if pi.PropertyType = t then 
@@ -91,12 +91,12 @@ module internal ReflectArbitrary =
                 box result
 
             else
-                failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing and registering a generator for it." t.FullName)
-
-    let private reflectGenObj getGenerator (t:Type) = (reflectObj getGenerator t |> unbox<IGen>).AsGenObject
-
-    ///Builds a generator for the given type based on reflection. Currently works for record and union types.
-    let reflectGen<'a> getGenerator = map unbox<'a> (reflectGenObj getGenerator typeof<'a>)
+                failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing and registering a generator for it." t.FullName
+                
+    ///Build a reflection-based generator for the given Type. Since we memoize based on type, can't use a
+    ///typed variant reflectGen<'a> much here, as we need to be able to partially apply on the getGenerator.
+    ///See also Default.Derive.
+    let reflectGenObj getGenerator = Common.memoize (fun (t:Type) ->(reflectObj getGenerator t |> unbox<IGen>).AsGenObject)
 
     let rec private children0 (seen : Set<string>) (tFind : Type) (t : Type) : (obj -> list<obj>) =
         if tFind = t then fun o -> [o]

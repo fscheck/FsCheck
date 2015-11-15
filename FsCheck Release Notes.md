@@ -4,6 +4,13 @@
   FsCheck.NUnit only needs a dependency on NUnit now, which should solve a bunch of install issues on its own. (another 
   heroic contribution by Jon Hamm.)
 
+### 2.2.2 - 14 November 2015
+ * Major performance improvements in generators, particularly reflection-based generators. (with Mårten Rånge)
+
+### 2.2.1 - 5 November 2015
+  * Bug fix: xUnit runner did not update failed count correctly in some cases.
+  * Fix overly constrained FSharp.Core dependency in FsCheck NuGet package.
+
 ### 2.2.0 - 1 November 2015
   * Add QuietOnSuccess option to vanilla runner.
   * Add bigint generator.

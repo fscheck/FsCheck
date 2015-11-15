@@ -1,6 +1,6 @@
 ﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **  
+**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
 **  https://github.com/fscheck/FsCheck                              **
 **                                                                          **
@@ -160,15 +160,17 @@ module private Testable =
         try 
             body a |> property
         with
-        | :? DiscardException -> Prop.ofResult Res.rejected
-        | e -> Prop.ofResult (Res.exc e)
+            | :? DiscardException -> Prop.ofResult Res.rejected
+            | e -> Prop.ofResult (Res.exc e)
         |> Property.GetGen 
         |> Gen.map (Rose.map (argument a))
 
 
     let forAll (arb:Arbitrary<_>) body : Property =
-        gen{let! a = arb.Generator
-            return! shrinking arb.Shrinker a (fun a' -> evaluate body a')}
+        let generator = arb.Generator
+        let shrinker = arb.Shrinker
+        gen { let! a = generator
+              return! shrinking shrinker a (fun a' -> evaluate body a')}
         |> Property
 
     let private combine f a b:Property = 

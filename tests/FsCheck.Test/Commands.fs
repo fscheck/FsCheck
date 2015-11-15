@@ -2,8 +2,8 @@
 
 module Commands =
 
+    open Xunit
     open FsCheck
-    open FsCheck.Xunit
 
     //a counter that never goes below zero
     type Counter() =
@@ -36,7 +36,7 @@ module Commands =
             member __.Next _ = Gen.frequency [ 2, inc //otherwise, args exhausted
                                                1, dec ] }
 
-    [<Property>]
+    [<Fact>]
     let ``should check Counter``() =
-        Command.toProperty spec
-
+        let prop = Command.toProperty spec
+        Check.QuickThrowOnFailure prop
