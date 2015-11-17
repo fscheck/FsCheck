@@ -44,10 +44,6 @@ nuget FsCheck 2.0.5-b247
 * [English](https://fscheck.github.io/FsCheck/)
 * [Japanese](https://fscheck.github.io/FsCheck/ja)
 
-### More reading ###
-* [Blog](http://fortysix-and-two.blogspot.com) for announcements, change logs and other posts more or less related to FsCheck. 
-* An interesting read about QuickCheck is in [Chapter 11](http://book.realworldhaskell.org/read/testing-and-quality-assurance.html) of the excellent [Real world Haskell](http://book.realworldhaskell.org) book. The book is freely available online, but do the authors a favor and buy it, it's really worth it  also for F# programmers.
-
 ### Contributing ###
 
 Pull requests very welcome! Check out the issues marked up-for-grabs if you need any inspiration.
