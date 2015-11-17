@@ -46,9 +46,15 @@ nuget FsCheck 2.0.5-b247
 
 ### Contributing ###
 
-Pull requests very welcome! Check out the issues marked up-for-grabs if you need any inspiration.
+Pull requests very welcome! 
 
-Checkout the project and run build.cmd on Windows or build.sh on Linux/OSX. That should pull in all the dependencies, build, run the tests and generate the documentation.
+Check out the issues marked up-for-grabs if you need any inspiration.
+
+It's very rare that we reject PRs. Generally, if you intend to make a bigger change, it's better to open an issue first to discuss.
+
+## Building ###
+
+Checkout the project and run build.cmd on Windows or build.sh on Linux/OSX. That should pull in all the dependencies, build and run the tests.
 
 Then, open FsCheck.sln in Visual Studio on Windows or FsCheck-mono.sln on Linux/OSX in and start coding or writing documentation. 
 
