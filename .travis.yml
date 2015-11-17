@@ -3,7 +3,7 @@ language: csharp
 sudo: false
 
 script:
-  - ./build.sh RunTests
+  - ./build.sh GenerateDocs
 
 cache:
   directories:
