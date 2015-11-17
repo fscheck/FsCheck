@@ -66,11 +66,13 @@ let buildReference () =
   CleanDir (output @@ "reference")
   for lib in referenceBinaries do
     MetadataFormat.Generate
-      ( bin @@ lib, output @@ "reference", layoutRoots, 
-        parameters = ("root", root)::info,
-        sourceRepo = githubLink @@ "tree/master",
-        sourceFolder = __SOURCE_DIRECTORY__ @@ ".." @@ "..",
-        publicOnly = true )
+      ( dllFile =       bin @@ lib, 
+        outDir =        output @@ "reference", 
+        layoutRoots =   layoutRoots, 
+        parameters =    ("root", root)::info,
+        sourceRepo =    githubLink @@ "tree/master",
+        sourceFolder =  __SOURCE_DIRECTORY__ @@ ".." @@ "..",
+        publicOnly =    true )
 
 // Build documentation from `fsx` and `md` files in `docs/content`
 let buildDocumentation () =
