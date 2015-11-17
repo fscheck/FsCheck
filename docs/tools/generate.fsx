@@ -78,7 +78,7 @@ let buildReference () =
 let buildDocumentation () =
   let subdirs = Directory.EnumerateDirectories(content, "*", SearchOption.AllDirectories)
   for dir in Seq.append [content] subdirs do
-    let sub = if dir.Length > content.Length then dir.Substring(content.Length + 1) else "."
+    let sub = if dir.Length > content.Length then dir.Substring(content.Length + 1) else ""
     Literate.ProcessDirectory
       ( dir, docTemplate, output @@ sub, replacements = ("root", root)::info,
         layoutRoots = layoutRoots, fsiEvaluator = new FsiEvaluator(), lineNumbers=false )
