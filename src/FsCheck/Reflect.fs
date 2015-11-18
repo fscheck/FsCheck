@@ -23,7 +23,7 @@ module internal Reflect =
 //        ||| BindingFlags.NonPublic ||| BindingFlags.Public
 
     let isRecordType (ty : Type) = FSharpType.IsRecord(ty, true) //recordFieldBindingFlags)
-    let isUnionType ty = FSharpType.IsUnion ty
+    let isUnionType ty = FSharpType.IsUnion(ty, true)
     let isTupleType ty = FSharpType.IsTuple ty
     let getPublicCtors (ty: Type) = ty.GetTypeInfo().DeclaredConstructors |> Seq.filter (fun c -> c.IsPublic)
     let isCSharpRecordType (ty: Type) = 
