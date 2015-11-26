@@ -22,9 +22,9 @@ type XunitRunner() =
     interface IRunner with
         override __.OnStartFixture _ = ()
         override __.OnArguments (ntest,args, every) =
-            printf "%s" (every ntest args)
+            every ntest args |> ignore
         override __.OnShrink(args, everyShrink) =
-            printf "%s" (everyShrink args)
+            everyShrink args |> ignore
         override __.OnFinished(_ ,testResult) =
             result <- Some testResult
 
@@ -87,7 +87,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
     new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, null)
 
-    member this.Init() =
+    member this.Init(output:TestOutputHelper) =
         let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
         let arbitrariesOnMethod = factAttribute.GetNamedArgument "Arbitrary"
         let arbitrariesOnClass =
@@ -107,8 +107,14 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                 StartSize = factAttribute.GetNamedArgument("StartSize")
                 EndSize = factAttribute.GetNamedArgument("EndSize")
                 QuietOnSuccess = factAttribute.GetNamedArgument("QuietOnSuccess")
-                Every = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.Every else Config.Quick.Every
-                EveryShrink = if factAttribute.GetNamedArgument("Verbose") then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
+                Every = if factAttribute.GetNamedArgument("Verbose") then 
+                            fun n args -> output.WriteLine (Config.Verbose.Every n args); ""
+                        else 
+                            Config.Quick.Every
+                EveryShrink = if factAttribute.GetNamedArgument("Verbose") then 
+                                fun args -> output.WriteLine (Config.Verbose.EveryShrink args); ""
+                                else 
+                                    Config.Quick.EveryShrink
                 Arbitrary = arbitraries
                 Runner = new XunitRunner()
             }
@@ -116,9 +122,11 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
         let test = new XunitTest(this, this.DisplayName)
         let summary = new RunSummary(Total = 1);
-
+        let outputHelper = new TestOutputHelper()
+        outputHelper.Initialize(messageBus, test)
         let testExec() =
-            let config = this.Init()
+            
+            let config = this.Init(outputHelper)
             let timer = ExecutionTimer()
             let result =
                 try
@@ -138,22 +146,23 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                     match xunitRunner.Result with
                           | TestResult.True _ ->
                             let output = Runner.onFinishedToString "" xunitRunner.Result
-                            new TestPassed(test, timer.Total, output) :> TestResultMessage
+                            new TestPassed(test, timer.Total, outputHelper.Output + output) :> TestResultMessage
                           | TestResult.Exhausted _ ->
                             summary.Failed <- summary.Failed + 1
-                            upcast new TestFailed(test, timer.Total, "", new PropertyFailedException(xunitRunner.Result))
+                            upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
                           | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
                             summary.Failed <- summary.Failed + 1
                             let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
-                            upcast new TestFailed(test, timer.Total, "", new PropertyFailedException(message, e))
+                            upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(message, e))
                           | TestResult.False _ ->
                             summary.Failed <- summary.Failed + 1
-                            upcast new TestFailed(test, timer.Total, "", new PropertyFailedException(xunitRunner.Result))
+                            upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
                 with
                     | ex ->
                       summary.Failed <- summary.Failed + 1
-                      upcast new TestFailed(test, timer.Total, "Exception during test:", ex)
+                      upcast new TestFailed(test, timer.Total, outputHelper.Output + "Exception during test:", ex)
 
+           
             messageBus.QueueMessage(result) |> ignore
             summary.Time <- summary.Time + result.ExecutionTime
             if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, result.Output))) then
