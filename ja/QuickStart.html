@@ -70,9 +70,9 @@
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (5 shrinks) (StdGen (600325947,296082057)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 6 tests (6 shrinks) (StdGen (1470009898,296086888)):
 Original:
-[3; -1; -1]
+[1; -4; 6; 2]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 
@@ -105,10 +105,10 @@ Shrunk:
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 10 tests (9 shrinks) (StdGen (600926373,296082057)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 25 tests (8 shrinks) (StdGen (1472942146,296086888)):
 Original:
-[-1.797693135e+308; nan; -7.0; -infinity; 4.777777778; 1.857142857;
- 4.940656458e-324; -3.333333333; 10.33333333; 4.940656458e-324]
+[-20.04347826; 4.940656458e-324; 18.35714286; nan; 13.90909091;
+ -1.797693135e+308; nan; 6.333333333; -2.555555556]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 
