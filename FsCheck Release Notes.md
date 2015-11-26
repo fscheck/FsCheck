@@ -1,3 +1,7 @@
+### 2.2.3 - 26 November 2015
+ * Now also reflectively generate union types with private constructors.
+ * Fix bug in xunit integration: Verbose didn't show any output.
+
 ### 2.2.2 - 14 November 2015
  * Major performance improvements in generators, particularly reflection-based generators. (with Mårten Rånge)
 
