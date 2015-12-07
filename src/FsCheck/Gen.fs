@@ -39,7 +39,18 @@ type Arbitrary<'a>() =
         Seq.empty
     interface IArbitrary with
         member x.GeneratorObj = (x.Generator :> IGen).AsGenObject
-        member x.ShrinkerObj o = (x.Shrinker (unbox o)) |> Seq.map box
+        member x.ShrinkerObj (o:obj) : seq<obj> =
+            let tryUnbox v =
+                try
+                    Some (unbox v)
+                with
+                    | _ -> None
+
+            match tryUnbox o with
+                | Some v -> x.Shrinker v |> Seq.map box
+                | None -> Seq.empty
+
+
 
 ///Computation expression builder for Gen.
 [<AutoOpen>]
