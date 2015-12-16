@@ -10,14 +10,12 @@
 
 namespace FsCheck
 
-open Random
-
 type internal IGen = 
     abstract AsGenObject : Gen<obj>
     
 ///Generator of a random value, based on a size parameter and a randomly generated int.
 and [<NoEquality;NoComparison>] Gen<'a> = 
-    private Gen of (int -> StdGen -> 'a)
+    private Gen of (int -> Random.Rnd -> 'a)
         ///map the given function to the value in the generator, yielding a new generator of the result type.
         member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> f (g n r))
     interface IGen with
@@ -48,7 +46,7 @@ module GenBuilder =
     let private result x = Gen (fun _ _ -> x)
 
     let private bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
-        Gen (fun n r0 -> let r1,r2 = split r0
+        Gen (fun n r0 -> let r1,r2 = Random.split r0
                          let (Gen m') = k (m n r1) 
                          m' n r2)
 
@@ -58,9 +56,9 @@ module GenBuilder =
     let rec private doWhile p (Gen m) =
         let rec go pred size rand =
             if pred() then
-                let r1,r2 = split rand
+                let r1,r2 = Random.split rand
                 m size r1 |> ignore
-                go pred size r2 
+                go pred size r2
             else
                 ()
         Gen (fun n r -> go p n r)
@@ -134,7 +132,7 @@ module Gen =
     //[category: Generating test values]
     [<CompiledName("Eval")>]
     let eval n rnd (Gen m) = 
-        let size,rnd' = range (0,n) rnd
+        let size,rnd' = rangeInt (0,n) rnd
         m size rnd'
 
     ///Generates n values of the given size.
@@ -143,13 +141,13 @@ module Gen =
     let sample size n gn  = 
         let rec sample i seed samples =
             if i = 0 then samples
-            else sample (i-1) (Random.stdSplit seed |> snd) (eval size seed gn :: samples)
-        sample n (Random.newSeed()) []
+            else sample (i-1) (Random.split seed |> snd) (eval size seed gn :: samples)
+        sample n (Random.create()) []
 
     ///Generates an integer between l and h, inclusive.
     //[category: Creating generators]
     [<CompiledName("Choose")>]
-    let choose (l, h) = Gen (fun _ r -> range (l,h) r |> fst) 
+    let choose (l,h) = Gen (fun _ r -> Random.rangeInt (l,h) r |> fst) 
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]

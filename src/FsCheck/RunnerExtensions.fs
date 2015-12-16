@@ -57,7 +57,7 @@ type Configuration() =
 
     ///If set, the seed to use to start testing. Allows reproduction of previous runs.
     member __.Replay 
-        with get() = (match replay with None -> Unchecked.defaultof<Random.StdGen> | Some s -> s)
+        with get() = (match replay with None -> Unchecked.defaultof<Random.Rnd> | Some s -> s)
         and set(v) = match box v with null -> () | _ -> replay <- Some v
 
     member internal __.ToConfig() =

@@ -10,7 +10,6 @@
 
 namespace FsCheck
 
-open Random
 open System
 
 [<NoEquality;NoComparison>]
@@ -29,7 +28,7 @@ type TestResult =
                 * list<obj>(*the original arguments that produced the failed test*)
                 * list<obj>(*the shrunk arguments that produce a failed test*)
                 * Outcome(*possibly exception or timeout that falsified the property*) 
-                * StdGen (*the seed used*)
+                * Random.Rnd (*the seed used*)
     | Exhausted of TestData
 
 
@@ -52,7 +51,7 @@ type Config =
       ///The maximum number of tests where values are rejected, e.g. as the result of ==>
       MaxFail       : int
       ///If set, the seed to use to start testing. Allows reproduction of previous runs.
-      Replay        : StdGen option
+      Replay        : Random.Rnd option
       ///Name of the test.
       Name          : string
       ///The size to use for the first test.
@@ -102,7 +101,7 @@ module Runner =
         }
         
     let rec private test initSize resize rnd0 gen =
-        seq { let rnd1,rnd2 = split rnd0
+        seq { let rnd1,rnd2 = Random.split rnd0
               let newSize = resize initSize
               //printfn "Before generate"
               //result forced here!
@@ -158,7 +157,7 @@ module Runner =
         let tryShrinkNb = ref 0
         let origArgs = ref []
         let lastStep = ref (Failed Res.rejected)
-        let seed = match config.Replay with None -> newSeed() | Some s -> s
+        let seed = match config.Replay with None -> Random.create() | Some s -> s
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
         test (float config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen) 
         |> Seq.takeWhile (fun step ->

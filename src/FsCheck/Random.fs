@@ -1,8 +1,8 @@
-(*--------------------------------------------------------------------------*\
+﻿(*--------------------------------------------------------------------------*\
 **  FsCheck                                                                 **
 **  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
-**  https://github.com/fscheck/FsCheck                              **
+**  https://github.com/fscheck/FsCheck                                      **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
@@ -10,77 +10,154 @@
 
 namespace FsCheck
 
-///Generate random numbers based on splitting seeds. Based Hugs' Random implementation.
+(*
+The implementation in this file is the implementation of SplitMix algorithm given in:
+
+Fast Splittable Pseudorandom Number Generators, Guy L. Steele Jr., Doug Lea and Christine H. Flood.
+
+It is also incorporated as such in JDK 8 in the class SplittableRandom.java.
+
+This algorithm has been tested by the authors and found to have reasonable statistical properties
+(as opposed to the algortihm used by FsCheck before, which was taken from Haskell and by its own admission
+has "no statistical basis") and is also pretty fast.
+
+The main difference with the paper is that I've chosen here to make an functional API, i.e. where
+all the functions are pure and the state is carried explicitly using the type Rnd. 
+This approach fits better with how FsCheck Generators work.
+*)
+
 module Random =
 
-    open System
+    let [<Literal>] private GOLDEN_GAMMA = 0x9e3779b97f4a7c15UL // must be an odd number
 
-    type StdGen = StdGen of int * int
+    //the positive difference between 1.0 and the smallest double value > 1.0
+    let [<Literal>] private DOUBLE_MULTIPLIER = 1.1102230246251565e-016 // 1.0 / double (1L <<< 53)
+  
+    [<Struct>]
+    type Rnd = 
+        val Seed: uint64
+        val Gamma: uint64 //an odd integer
+        new(seed, gamma) = { Seed = seed; Gamma = gamma }
+                         
+    let private next (state:Rnd) = 
+        Rnd(state.Seed + state.Gamma, state.Gamma)
+    
+    let private mix64 z =
+        let z = (z ^^^ (z >>> 33)) * 0xff51afd7ed558ccdUL
+        let z = (z ^^^ (z >>> 33)) * 0xc4ceb9fe1a85ec53UL
+        z ^^^ (z >>> 33)
 
-    //Haskell has mod,quot, en divMod. .NET has DivRem, % and /.
-    // Haskell              | F#
-    //---------------------------------
-    // rem                  | %
-    // mod                  | ?
-    // quot                 | /
-    // div                  | ?
-    // divMod               | ?
-    // quotRem              | divRem
+    let private mix32variant04 z =
+        let z = (z ^^^ (z >>> 33)) * 0x62a9d9ed799705f5UL
+        int (((z ^^^ (z >>> 28)) * 0xcb24d0a5c88c35b3UL) >>> 32)
 
-    //since the implementation uses divMod and mod, we need to reimplement these.
-    //fortunately that's fairly easy
-    let divMod64 (n:int64) d = 
-        let q = n / d
-        let r = n % d
-        if (Math.Sign(r) = -Math.Sign(d)) then (q-1L,r+d) else (q,r)
+    let private mix64variant13 z =
+        let z = (z ^^^ (z >>> 30)) * 0xbf58476d1ce4e5b9UL
+        let z = (z ^^^ (z >>> 27)) * 0x94d049bb133111ebUL
+        z ^^^ (z >>> 31)
 
-    let hMod64 n d = 
-        let _,r = divMod64 n d
-        r
+    let private bitCount i =
+        let i = i - ((i >>> 1) &&& 0x5555555555555555UL)
+        let i = (i &&& 0x3333333333333333UL) + ((i >>> 2) &&& 0x3333333333333333UL)
+        (((i + (i >>> 4)) &&& 0xF0F0F0F0F0F0F0FUL) * 0x101010101010101UL) >>> 56
 
-    let q1,q2 = 53668,52774
-    let a1,a2 = 40014,40692
-    let r1,r2 = 12211,3791
-    let m1,m2 = 2147483563,2147483399
+    let private mixGamma z =
+        let z = (mix64 z) ||| 1UL //make odd
+        let n = bitCount (z ^^^ (z >>> 1))
+        //Fig 16 in the paper contains a bug here - it does n >= 24.
+        if (n < 24UL) then z ^^^ 0xaaaaaaaaaaaaaaaaUL else z //This result is always odd.
 
-    let mkStdGen s = 
-        let s = if s < 0L then -s else s
-        let (q, s1) = divMod64 s (int64 (m1-1))  //2147483562L
-        let s2 = hMod64 q (int64 (m2-1)) //2147483398L
-        StdGen (int (s1+1L),int (s2+1L))
+    let private defaultGen = System.DateTime.Now.Ticks |> uint64 |> mix64variant13 |> ref
 
-    let stdNext (StdGen (s1,s2)) =
-        let k = s1 / q1
-        let s1' = a1 * (s1 - k * q1) - k * r1
-        let s1'' = if (s1' < 0) then s1 + m1 else s1'
-        let k' = s2 / q2
-        let s2' = a2 * (s2 - k' * q2) - k' * r2
-        let s2'' = if s2' < 0 then s2' + m2 else s2'
-        let z = s1'' - s2''
-        let z' = if z < 1 then z + m1 - 1 else z
-        (z', StdGen (s1'', s2''))
-        
-    let stdSplit ((StdGen (s1,s2)) as std) = 
-        let new_s1 = if s1 = (m1-1) then 1 else s1 + 1
-        let new_s2 = if s2 = 1 then (m2-1) else s2 - 1
-        let (StdGen (t1,t2)) = snd (stdNext std) 
-        let left = StdGen (new_s1, t2)
-        let right = StdGen (t1, new_s2)
-        (left,right)
+    ///Create a new random number generator with the given seed. Useful to reproduce a sequence.
+    let createWithSeed seed =
+        Rnd(seed, GOLDEN_GAMMA)
 
-    let rec private iLogBase b i = if i < b then 1 else 1 + iLogBase b (i / b)
+    ///Create a new random number generator that goes through some effort to generate a new seed
+    ///every time it's called, and also to generate different seeds on different machines, though
+    ///the latter is not at all guaranteed.
+    let create() =
+        let s = lock defaultGen (fun () -> let r = !defaultGen in defaultGen := r + 2UL * GOLDEN_GAMMA; r)
+        Rnd(mix64variant13 s, mixGamma(s + GOLDEN_GAMMA))
 
-    let rec stdRange (l,h) rng =
-        if l > h then stdRange (h,l) rng
+    let private nextUInt64 s =
+        let s' = next s
+        mix64variant13 s'.Seed, s'
+
+    ///Generate the next pseudo-random int64 in the sequence, and return the new Rnd.
+    let nextInt64 s =
+        let s' = next s
+        int64 <| mix64variant13 s'.Seed, s'
+
+    ///Generate the next pseudo-random int in the sequence, and return the new Rnd.
+    let nextInt s =
+        let s' = next s
+        mix32variant04 s'.Seed, s'
+
+    ///Generate the next pseudo-random float in the sequence in the interval [0, 1[ and return the new Rnd.
+    let nextFloat s =
+        let l,s' = nextUInt64 s
+        double (l >>> 11) * DOUBLE_MULTIPLIER, s'
+
+    ///Split this PRNG in two PRNGs that overlap with very small probability.
+    let split s0 =
+        let s1 = next s0
+        let s2 = next s1
+        s2, Rnd(mix64variant13 s1.Seed, mixGamma s2.Seed)
+
+    ///Generate the next pseudo-random int64 in the given range (inclusive l and h) and return the new Rnd.
+    let rec rangeInt64 (l,h) s =
+        if l > h then //swap l and h
+            rangeInt64 (h,l) s
         else
-            let k = h - l + 1
-            let b = 2147483561
-            let n = iLogBase b k
-            let rec f n acc g = 
-                if n = 0 then (acc,g) 
-                else let (x,g') = stdNext g in f (n-1) (x + acc * b) g'
-            match (f n 1 rng) with (v, rng') -> (l + abs( v % k ), rng')
+            let maybeResult = nextInt64 s
+            let m = h - l  //size of the exclusive range
+            let n = m + 1L //size of the inclusive range
+            if (n > 0L) then
+                //we have a range that is a positive int64, i.e. a "small" range relative to the total range - half of it or less.
+                //So we need to be a bit smart on how to find an int64 in that range.
+                let rec iter (cand,s) =
+                    //since the range is half or less, we create a positive int64 by shifting right.
+                    let pcand = int64 (uint64 cand >>> 1)
+                    //a good candidate offset from l, i.e. offset < n.
+                    let offset = pcand % n
+                    //
+                    if pcand + m - offset < 0L then
+                        iter (nextInt64 s)
+                    else
+                        l + offset, s
+                iter maybeResult
+            else 
+                //we have a range that is a negative int64, i.e. h -l overflowed and so we have "large" range - more than half the total range.
+                //we can just keep generating until we find a number in the desired range.
+                let rec iter (cand, s) =
+                    if cand < l || cand >= h then 
+                        iter (nextInt64 s)
+                    else
+                        cand, s
+                iter maybeResult
 
-    let range = stdRange
-    let split = stdSplit
-    let newSeed() = DateTime.Now.Ticks |> mkStdGen
+    ///Generate the next pseudo-random int in the given range (inclusive l and h) and returns the new Rnd.
+    let rec rangeInt (l,h) s =
+        if l > h then
+            rangeInt (h,l) s
+        else
+            let maybeResult = nextInt s
+            let m = h - l
+            let n = m + 1
+            if (n > 0) then
+                let rec iter (cand,s) =
+                    let pcand = int (uint32 cand >>> 1)
+                    let offset = pcand % n
+                    if pcand + m - offset < 0 then
+                        iter (nextInt s)
+                    else
+                        l + offset, s
+                iter maybeResult
+            else 
+                let rec iter (cand, s) =
+                    if cand < l || cand >= h then 
+                        iter (nextInt s)
+                    else
+                        cand, s
+                iter maybeResult
