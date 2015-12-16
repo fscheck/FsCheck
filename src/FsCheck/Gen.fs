@@ -15,9 +15,9 @@ type internal IGen =
     
 ///Generator of a random value, based on a size parameter and a randomly generated int.
 and [<NoEquality;NoComparison>] Gen<'a> = 
-    private Gen of (int -> Random.Rnd -> 'a)
+    private Gen of (int -> Random.Rnd -> 'a * Random.Rnd)
         ///map the given function to the value in the generator, yielding a new generator of the result type.
-        member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> f (g n r))
+        member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> let s,r =  g n r in f s,r)
     interface IGen with
         member x.AsGenObject = x.Map box
 
@@ -43,25 +43,24 @@ type Arbitrary<'a>() =
 [<AutoOpen>]
 module GenBuilder =
 
-    let private result x = Gen (fun _ _ -> x)
+    let private result x = Gen (fun _ r -> x,r)
 
     let private bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
-        Gen (fun n r0 -> let r1,r2 = Random.split r0
-                         let (Gen m') = k (m n r1) 
-                         m' n r2)
+        Gen (fun n r0 -> let v,r1 = m n r0
+                         let (Gen m') = k v
+                         m' n r1)
 
     let private delay (f : unit -> Gen<_>) : Gen<_> = 
         Gen (fun n r -> match f() with (Gen g) -> g n r)
 
     let rec private doWhile p (Gen m) =
-        let rec go pred size rand =
+        let rec go pred size r0 =
             if pred() then
-                let r1,r2 = Random.split rand
-                m size r1 |> ignore
-                go pred size r2
+                let _,r1 = m size r0
+                go pred size r1
             else
-                ()
-        Gen (fun n r -> go p n r)
+                r0
+        Gen (fun n r -> (),go p n r)
 
     let private tryFinally (Gen m) handler = 
         Gen (fun n r -> try m n r finally handler ())
@@ -77,7 +76,7 @@ module GenBuilder =
         member __.Delay(f) : Gen<_> = delay f
         member __.Combine(m1, m2) = bind m1 (fun () -> m2)
         member __.TryFinally(m, handler) = tryFinally m handler
-        member __.TryWith(Gen m, handler) = Gen (fun n r -> try m n r with e -> handler e)
+        member __.TryWith(Gen m, handler) = Gen (fun n r -> try m n r with e -> handler e,r)
         member __.Using (a, k) =  using a k
         member __.ReturnFrom (g:Gen<_>) = g
         member __.While(p, m:Gen<_>) = doWhile p m
@@ -133,7 +132,7 @@ module Gen =
     [<CompiledName("Eval")>]
     let eval n rnd (Gen m) = 
         let size,rnd' = rangeInt (0,n) rnd
-        m size rnd'
+        m size rnd' |> fst
 
     ///Generates n values of the given size.
     //[category: Generating test values]
@@ -147,7 +146,7 @@ module Gen =
     ///Generates an integer between l and h, inclusive.
     //[category: Creating generators]
     [<CompiledName("Choose")>]
-    let choose (l,h) = Gen (fun _ r -> Random.rangeInt (l,h) r |> fst) 
+    let choose (l,h) = Gen (fun _ r -> Random.rangeInt (l,h) r) 
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
@@ -276,11 +275,10 @@ module Gen =
     let sequence l = 
         let rec go gs acc size r0 = 
             match gs with
-            | [] -> List.rev acc
+            | [] -> List.rev acc,r0
             | (Gen g)::gs' ->
-                let r1,r2 = split r0
-                let y = g size r1
-                go gs' (y::acc) size r2
+                let y,r1 = g size r0
+                go gs' (y::acc) size r1
         Gen(fun n r -> go (Seq.toList l) [] n r)
 
     ///Sequence the given list of generators into a generator of a list.
@@ -441,7 +439,8 @@ module Gen =
               return f' gn' }
 
     ///Promote the given function f to a function generator. Only used for generating arbitrary functions.
-    let internal promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)
+    let internal promote f = Gen (fun n r -> let r1,r2 = Random.split r 
+                                             (fun a -> let (Gen m) = f a in m n r1 |> fst),r2)
 
     ///Basic co-arbitrary generator transformer, which is dependent on an int.
     ///Only used for generating arbitrary functions.
