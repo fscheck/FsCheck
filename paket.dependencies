@@ -1,8 +1,8 @@
 source https://www.nuget.org/api/v2
 
 nuget FAKE
-nuget NUnit
-nuget NUnit.Runners
+nuget NUnit < 3.0
+nuget NUnit.Runners < 3.0
 nuget Unquote
 nuget xunit
 nuget xunit.core
