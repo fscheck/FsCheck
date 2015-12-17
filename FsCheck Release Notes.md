@@ -1,3 +1,5 @@
+### 2.2.5 - To be released
+
 ### 2.2.4 - 17 December 2015
   * Fix output of FsCheck.Xunit - was not correctly reported in all runners (by Matt Ellis)
   * Allow shrinking null for C# compatibility (by William Pleasant-Ryan)
