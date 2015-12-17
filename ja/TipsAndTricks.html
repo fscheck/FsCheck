@@ -56,12 +56,12 @@
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 42)" onmouseover="showTip(event, 'fs11', 42)" class="i">mapRec</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (1534120312,296086888)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1449971349,296095338)):
 Original:
-{ 0-&gt;1; 1-&gt;1 }
-[0; 1]
+{ 0-&gt;2; 3-&gt;2 }
+[3]
 Shrunk:
-{ 0-&gt;1; 1-&gt;0 }
+{ 0-&gt;2; 3-&gt;0 }
 [0]</code></pre></td></tr></table>
 
 <p><code>Function&lt;'a,'b&gt;</code> 型は呼ばれていたすべての引数、および生成した結果の写像を記録します。
@@ -109,13 +109,13 @@ Function は関数を出力し、また関数をシュリンクするために�
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
 
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1535491293,296086888)):
-Label of failing property: 1 = -1
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1451502440,296095338)):
+Label of failing property: 3 = -1
 Original:
 2
-2
+1
 Shrunk:
-0
+1
 0</code></pre></td></tr></table>
 
 <p>もちろん、あなたがよく使用する任意の演算子や関数に対してこれを行うことが出来ます。</p>
