@@ -44,15 +44,17 @@ nuget FsCheck 2.0.5-b247
 * [English](https://fscheck.github.io/FsCheck/)
 * [Japanese](https://fscheck.github.io/FsCheck/ja)
 
-### More reading ###
-* [Blog](http://fortysix-and-two.blogspot.com) for announcements, change logs and other posts more or less related to FsCheck. 
-* An interesting read about QuickCheck is in [Chapter 11](http://book.realworldhaskell.org/read/testing-and-quality-assurance.html) of the excellent [Real world Haskell](http://book.realworldhaskell.org) book. The book is freely available online, but do the authors a favor and buy it, it's really worth it  also for F# programmers.
-
 ### Contributing ###
 
-Pull requests very welcome! Check out the issues marked up-for-grabs if you need any inspiration.
+Pull requests very welcome! 
 
-Checkout the project and run build.cmd on Windows or build.sh on Linux/OSX. That should pull in all the dependencies, build, run the tests and generate the documentation.
+Check out the issues marked up-for-grabs if you need any inspiration.
+
+It's very rare that we reject PRs. Generally, if you intend to make a bigger change, it's better to open an issue first to discuss.
+
+## Building ###
+
+Checkout the project and run build.cmd on Windows or build.sh on Linux/OSX. That should pull in all the dependencies, build and run the tests.
 
 Then, open FsCheck.sln in Visual Studio on Windows or FsCheck-mono.sln on Linux/OSX in and start coding or writing documentation. 
 

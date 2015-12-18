@@ -99,3 +99,23 @@ module Runner =
         [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
         let ``should use Arb instance on method preferentially``(underTest:float) =
             underTest >= 0.0
+
+module BugReproIssue195 =
+
+    open FsCheck
+    open FsCheck.Xunit
+    open System
+
+    let intStr = Arb.Default.Int32() |> Arb.toGen |> Gen.map string
+
+    // since this used to go via from<string>, it memoized the string generator, meaning at
+    // registration time for the string generator below, a duplicate key exception was thrown.
+    // this was fixed by using Default.String() in StringWithoutNullChars instead, and a bunch
+    // of other similar cases in the default generator was fixed as well.
+    let breaksIt = Arb.Default.StringWithoutNullChars() |> ignore
+
+    type BrokenGen = 
+        static member String() = intStr |> Arb.fromGen
+
+    [<Property(Arbitrary = [| typeof<BrokenGen> |])>]
+    let ``broken`` (s : String) = s |> ignore

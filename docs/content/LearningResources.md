@@ -5,9 +5,13 @@
 * "QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs" by Koen Claessen and John Hughes [pdf](http://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
 * "An introduction to property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing/)
 * "Choosing properties for property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing-2/)
+* An interesting read about QuickCheck is in [Chapter 11](http://book.realworldhaskell.org/read/testing-and-quality-assurance.html) of the excellent [Real world Haskell](http://book.realworldhaskell.org) book. The book is freely available online, but do the authors a favor and buy it, it's really worth it also for F# programmers.
 
 ## Videos
 
 * "The lazy programmer's guide to writing 1000's of tests: An introduction to property based testing" by Scott Wlaschin [video](https://skillsmatter.com/skillscasts/6432-the-lazy-programmers-guide-to-writing-1000s-of-tests-an-introduction-to-property-based-testing)
 * "Race Conditions, Distribution, Interactions - Testing the Hard Stuff and Staying Sane" by John Hughes [video](https://vimeo.com/68383317)
 * "Property-Based Testing for Better Code" by Jessica Kerr [video]https://www.youtube.com/watch?v=shngiiBfD80)
+
+## Blogs
+* Kurt's [Blog](http://fortysix-and-two.blogspot.com) for announcements, change logs and other posts more or less related to FsCheck. Now largely dormant.

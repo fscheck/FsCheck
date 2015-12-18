@@ -7,6 +7,7 @@ module Gen =
     open FsCheck.Xunit
     open Helpers
     open Swensen.Unquote
+    open System.Reflection
 
     [<Property>]
     let Choose (Interval (l,h)) = 
@@ -180,6 +181,29 @@ module Gen =
             (Array2D.length1 arr <= rows) 
             && (Array2D.length2 arr <= cols) 
             && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
+
+
+    type MaybeNull =
+        {
+            SomeField : int
+        }
+
+    [<CLIMutable>]
+    type MaybeHaveNull =
+        {
+             MightBeNull : MaybeNull
+        }
+
+    [<Fact>]
+    let ``should support null as a shrunken value even without AllowNullLiteral (for C# compatibility)``() =
+        let der = Arb.Default.Derive()
+        let mhn = { MightBeNull = { SomeField = 5 } }
+        let prop = mhn.GetType().GetProperty("MightBeNull", BindingFlags.Public ||| BindingFlags.Instance)
+        prop.SetValue(mhn, null)
+        // ensure that no exception occurs
+        der.Shrinker mhn
+          |> Seq.length
+          |> ignore
 
     [<Fact>]
     let ``should generate functions from nullable values``() =

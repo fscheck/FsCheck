@@ -1,8 +1,8 @@
 source https://www.nuget.org/api/v2
 
 nuget FAKE
-nuget NUnit beta
-nuget NUnit.Console beta
+nuget NUnit
+nuget NUnit.Console
 nuget NUnitTestAdapter version_in_path: true
 nuget Unquote
 nuget xunit

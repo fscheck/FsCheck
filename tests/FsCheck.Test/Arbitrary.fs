@@ -413,3 +413,14 @@ module Arbitrary =
     let ``Derive generator for concrete class with one constructor with two parameters``() =
         generate<FakeRecord> |> sample 10 |> ignore
 
+    type PrivateRecord = private { a: int; b: string }
+
+    [<Fact>]
+    let ``Derive generator for private two value record``() =
+        generate<PrivateRecord> |> sample 10 |> ignore
+
+    type PrivateUnion = private | Case1 | Case2 of string
+
+    [<Fact>]
+    let ``Derive generator for private two case union``() =
+        generate<PrivateUnion> |> sample 10 |> ignore
