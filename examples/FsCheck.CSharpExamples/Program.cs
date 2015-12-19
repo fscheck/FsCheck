@@ -184,7 +184,7 @@ namespace FsCheck.CSharpExamples
             // replay
             Prop.ForAll<string>(s => s == null)
                 .Label("Replay")
-                .Check(new Configuration { MaxNbOfTest = 1, Replay = Random.StdGen.NewStdGen(1, 1) });
+                .Check(new Configuration { MaxNbOfTest = 1, Replay = Tuple.Create(1UL, 1UL) });
 
             Console.WriteLine();
 

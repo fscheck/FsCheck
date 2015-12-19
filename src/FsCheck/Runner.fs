@@ -257,7 +257,7 @@ module Runner =
 
     ///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
     ///In any case, it can be forced any number of times without problem.
-    [<Obsolete("Calling this should no longer be necessary - though please file an issue if you find a case where it is :)")>]
+    [<Obsolete("Calling this should no longer be necessary - though please file an issue if you find a case where it is.")>]
     let init = 
         Arb.defaultArbitrary |> ignore
         lazy ()

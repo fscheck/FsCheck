@@ -51,13 +51,13 @@ type public PropertyAttribute() =
     let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
-    member __.Replay with get() = match replay with None -> String.Empty | Some (Random.StdGen (x,y)) -> sprintf "%A" (x,y)
+    member __.Replay with get() = match replay with None -> String.Empty | Some rnd -> sprintf "%A" (rnd.Seed,rnd.Gamma)
                      and set(v:string) =
                         //if someone sets this, we want it to throw if it fails
                         let split = v.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
-                        let elem1 = Int32.Parse(split.[0])
-                        let elem2 = Int32.Parse(split.[1])
-                        replay <- Some <| Random.StdGen (elem1,elem2)
+                        let elem1 = UInt64.Parse(split.[0])
+                        let elem2 = UInt64.Parse(split.[1])
+                        replay <- Some <| Random.createWithSeedAndGamma (elem1,elem2)
     member internal __.ReplayStdGen = replay //interestingly, although this member is unused, if you remove it tests will fail...?
     ///The maximum number of tests that are run.
     member __.MaxTest with get() = maxTest and set(v) = maxTest <- v

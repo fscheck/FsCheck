@@ -38,6 +38,7 @@ module Random =
         val Seed: uint64
         val Gamma: uint64 //an odd integer
         new(seed, gamma) = { Seed = seed; Gamma = gamma }
+        override t.ToString() = sprintf "%i,%i" t.Seed t.Gamma
                          
     let private next (state:Rnd) = 
         Rnd(state.Seed + state.Gamma, state.Gamma)
@@ -69,9 +70,16 @@ module Random =
 
     let private defaultGen = System.DateTime.Now.Ticks |> uint64 |> mix64variant13 |> ref
 
-    ///Create a new random number generator with the given seed. Useful to reproduce a sequence.
+    ///Create a new random number generator with the given seed and a "golden" gamma.
     let createWithSeed seed =
         Rnd(seed, GOLDEN_GAMMA)
+
+    ///Create a new random number generator with the given seed and gamma. Useful to faithfully reproduce a sequence
+    ///or part of it. gamma must be odd, or this throws invalid argument exception. For good pseudo-random properties,
+    ///please only use seeds and gamma that were generated as part of a sequence started with the default create function.
+    let createWithSeedAndGamma (seed, gamma) =
+        if (gamma % 2UL = 0UL) then invalidArg "gamma" "Gamma must be odd."
+        Rnd(seed, gamma)
 
     ///Create a new random number generator that goes through some effort to generate a new seed
     ///every time it's called, and also to generate different seeds on different machines, though

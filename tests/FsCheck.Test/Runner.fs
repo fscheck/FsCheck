@@ -44,12 +44,12 @@ module Runner =
     let ``should replay property with one generator``() =
         let doOne(s1,s2) =
             try
-                Check.One( {Config.QuickThrowOnFailure with Replay = Some <| Random.StdGen (s1,s2) }, fun a -> a < 5)
+                Check.One( {Config.QuickThrowOnFailure with Replay = Some <| Random.createWithSeedAndGamma (s1,s2) }, fun a -> a < 5)
                 "should have failed"
             with e ->
                 e.Message
         let same =
-            Seq.initInfinite (fun _ -> doOne(123,654321))
+            Seq.initInfinite (fun _ -> doOne(123UL,654321UL))
             |> Seq.take(5)
             |> Seq.distinct
         1 =! Seq.length same
@@ -60,25 +60,25 @@ module Runner =
     let ``should replay property with complex set of generators``() =
         let doOne(s1,s2) =
             try
-                Check.One( {Config.QuickThrowOnFailure with Replay = Some <| Random.StdGen (s1,s2) }, fun a (_:list<char>, _:array<int*double>) (_:DateTime) -> a < 10)
+                Check.One( {Config.QuickThrowOnFailure with Replay = Some <| Random.createWithSeedAndGamma (s1,s2) }, fun a (_:list<char>, _:array<int*double>) (_:DateTime) -> a < 10)
                 "should have failed"
             with e ->
                 e.Message
         let same =
-            Seq.initInfinite (fun _ -> doOne(123,654321))
+            Seq.initInfinite (fun _ -> doOne(123UL,654321UL))
             |> Seq.take(5)
             |> Seq.distinct
         1 =! Seq.length same
         "should have failed" <>! Seq.head same
         test <@ (Seq.head same).Contains "(123,654321)" @>
 
-    [<Property(Replay="54321,67584")>]
+    [<Property(Replay="54321,67583")>]
     let ``should pick up replay seeds from PropertyAttribute without parens``(_:int, _:string) =
         //testing the replay separately in other tests - this just checks we can run
         //this test
         true =! true
 
-    [<Property(Replay="(54321,67584)")>]
+    [<Property(Replay="(54321,67583)")>]
     let ``should pick up replay seeds from PropertyAttribute with parens``(_:int, _:string) =
         //testing the replay separately in other tests - this just checks we can run
         //this test

@@ -25,7 +25,7 @@
 
     [<Property>]
     let product (x:int, y:int) =
-        (x > 0 && y > 0) ==> (x*y > 0)        
+        (x > 0 && y > 0) ==> (x*y > 0)
 
     [<Property(QuietOnSuccess = true)>]
     let noOutputOnSuccess (x:char) = 

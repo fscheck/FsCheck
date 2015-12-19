@@ -148,7 +148,8 @@ module private Testable =
             | e -> ofResult (Res.exc e)
 
     let private shrinking shrink x pf =
-        let promoteRose m = Gen (fun s r -> Rose.map (fun (Gen m') -> m' s r) m)
+        let promoteRose (m:Rose<Gen<_>>) : Gen<Rose<_>> = 
+            Gen (fun s r -> let mr = Rose.map (fun (Gen m') -> m' s r |> fst) m in (mr,r))
         //cache is important here to avoid re-evaluation of property
         let rec props x = MkRose (lazy (property (pf x) |> Property.GetGen), shrink x |> Seq.map props |> Seq.cache)
         promoteRose (props x)
@@ -194,7 +195,7 @@ module private Testable =
             { new Testable<Lazy<'a>> with
                 member __.Property b =
                     let promoteLazy (m:Lazy<_>) = 
-                        Gen (fun s r -> Rose.join <| Rose.ofLazy (lazy (match m.Value with (Gen g) -> g s r)))
+                        Gen (fun s r -> (Rose.join <| Rose.ofLazy (lazy (match m.Value with (Gen g) -> g s r |> fst))), r)
                     promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
         static member Result() =
             { new Testable<Result> with
