@@ -282,7 +282,7 @@ module Arb =
 
         ///Generate arbitrary int16 that is between -size and size.
         static member Int16() =
-            from<int>
+            Default.Int32()
             |> convert int16 int
 
         ///Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.
@@ -293,7 +293,7 @@ module Arb =
 
         ///Generate arbitrary uint16 that is between 0 and size.
         static member UInt16() =
-            from<int>
+            Default.Int32()
             |> convert (abs >> uint16) int
 
         ///Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
@@ -319,7 +319,7 @@ module Arb =
 
         ///Generate arbitrary uint32 that is between 0 and size.
         static member UInt32() =
-            from<int>
+            Default.Int32()
             |> convert (abs >> uint32) int
 
         ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
@@ -650,23 +650,23 @@ module Arb =
             fromGenShrink(genKeyValuePair,shrinkKeyValuePair)
 
         static member NonNegativeInt() =
-           from<int> 
+           Default.Int32()
            |> mapFilter abs (fun i -> i >= 0)
            |> convert NonNegativeInt int
 
         static member PositiveInt() =
-            from<int>
+            Default.Int32()
             |> mapFilter abs (fun i -> i > 0)
             |> convert PositiveInt int
 
         static member NonZeroInt() =
-           from<int>
+           Default.Int32()
             |> filter ((<>) 0)
             |> convert NonZeroInt int
 
         /// Generates an Float (without NaN, Infinity)
         static member NormalFloat() =
-            from<float>
+            Default.Float()
             |> filter (fun f -> not <| System.Double.IsNaN(f) &&
                                 not <| System.Double.IsInfinity(f))
             |> convert NormalFloat float
@@ -680,36 +680,36 @@ module Arb =
 
         ///Generates an interval between two non-negative integers.
         static member Interval() =
-            fromGen <| 
-                    gen { let! start,offset = Gen.two generate
-                          return Interval (abs start,abs start+abs offset) }//TODO: shrinker
+            gen { let! start,offset = Gen.two generate
+                  return Interval (abs start,abs start+abs offset) }//TODO: shrinker
+            |> fromGen
 
 
         static member StringWithoutNullChars() =
-            from<string>
+            Default.String()
             |> filter (not << String.exists ((=) '\000'))
             |> convert StringNoNulls string
 
         static member NonEmptyString() =
-            from<string>
+            Default.String()
             |> filter (fun s -> not (String.IsNullOrEmpty s) && not (String.exists ((=) '\000') s))
             |> convert NonEmptyString string
 
         static member Set() = 
-            from<list<_>> 
+            Default.FsList()
             |> convert Set.ofList Set.toList
 
         static member Map() = 
-            from<list<_>> 
+            Default.FsList()
             |> convert Map.ofList Map.toList
 
         static member NonEmptyArray() =
-            from<_[]>
+            Default.Array()
             |> filter (fun a -> Array.length a > 0)
             |> convert NonEmptyArray (fun (NonEmptyArray s) -> s)
 
         static member NonEmptySet() =
-            from<Set<_>>
+            Default.Set()
             |> filter (not << Set.isEmpty) 
             |> convert NonEmptySet (fun (NonEmptySet s) -> s)
 
@@ -727,7 +727,7 @@ module Arb =
 
         /// Generate a System.Collections.Generic.List of values.
         static member List() =
-            from<list<_>> 
+            Default.FsList() 
             |> convert Enumerable.ToList Seq.toList
 
         /// Generate a System.Collections.Generic.IList of values.

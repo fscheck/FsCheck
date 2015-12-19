@@ -146,7 +146,8 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                     match xunitRunner.Result with
                           | TestResult.True _ ->
                             let output = Runner.onFinishedToString "" xunitRunner.Result
-                            new TestPassed(test, timer.Total, outputHelper.Output + output) :> TestResultMessage
+                            outputHelper.WriteLine(output)
+                            new TestPassed(test, timer.Total, outputHelper.Output) :> TestResultMessage
                           | TestResult.Exhausted _ ->
                             summary.Failed <- summary.Failed + 1
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
@@ -160,7 +161,8 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                 with
                     | ex ->
                       summary.Failed <- summary.Failed + 1
-                      upcast new TestFailed(test, timer.Total, outputHelper.Output + "Exception during test:", ex)
+                      outputHelper.WriteLine("Exception during test")
+                      upcast new TestFailed(test, timer.Total, outputHelper.Output, ex)
 
            
             messageBus.QueueMessage(result) |> ignore

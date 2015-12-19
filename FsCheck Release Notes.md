@@ -1,3 +1,10 @@
+### 2.2.5 - To be released
+
+### 2.2.4 - 17 December 2015
+  * Fix output of FsCheck.Xunit - was not correctly reported in all runners (by Matt Ellis)
+  * Allow shrinking null for C# compatibility (by William Pleasant-Ryan)
+  * Fix default generators to not rely on static dictionary - this caused some weird side-effects and behavior when overriding default generators.
+
 ### 2.2.3 - 26 November 2015
  * Now also reflectively generate union types with private constructors.
  * Fix bug in xunit integration: Verbose didn't show any output.
