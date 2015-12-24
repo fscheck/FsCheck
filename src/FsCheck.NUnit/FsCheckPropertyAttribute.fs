@@ -86,7 +86,7 @@ type PropertyAttribute() =
             {new Internal.Commands.TestCommand(command.Test) with
                 override x.Execute context = FsCheckTestMethod(command.Test.Method).RunTest(context) }
 
-and FsCheckTestMethod(mi : MethodInfo) =
+and FsCheckTestMethod(mi : IMethodInfo) =
     inherit TestMethod(mi)
 
     member x.RunTest context =
@@ -134,9 +134,8 @@ and FsCheckTestMethod(mi : MethodInfo) =
             | ex -> x.handleException ex testResult FailureSite.Test
 
     member private x.getFsCheckPropertyAttribute() =
-        x.Method.GetCustomAttributes(typeof<PropertyAttribute>, false)
+        x.Method.GetCustomAttributes<PropertyAttribute> false
         |> Seq.head
-        |> id :?> PropertyAttribute
 
     member private x.handleException ex testResult failureSite =
         match ex with
@@ -158,9 +157,9 @@ and FsCheckTestMethod(mi : MethodInfo) =
                         Runner = testRunner }
 
         let target = if x.Fixture <> null then Some x.Fixture
-                     elif x.Method.IsStatic then None
+                     elif x.Method.MethodInfo.IsStatic then None
                      else Some context.TestObject
-        Check.Method(config, x.Method, ?target = target)
+        Check.Method(config, x.Method.MethodInfo, ?target = target)
         match testRunner.Result with
         | TestResult.True _ ->
             if not attr.QuietOnSuccess then
