@@ -1,7 +1,6 @@
 ﻿namespace FsCheck.NUnit
 
 open System
-open System.Reflection
 open System.Threading
 
 open FsCheck
@@ -25,10 +24,10 @@ type FsCheckAddin() =
 //can not be an anonymous type because of let mutable.
 type private NunitRunner() =
     let mutable result = None
-    member x.Result = result.Value
+    member __.Result = result.Value
     interface IRunner with
-        override x.OnStartFixture t = ()
-        override x.OnArguments (ntest,args, every) =
+        override __.OnStartFixture _ = ()
+        override __.OnArguments (ntest,args, every) =
             let argsForOutput = every ntest args
             // Only write the args if there's something to write.
             // Although it may seem harmless to write an empty string, writing anything at this stage seems to
@@ -37,9 +36,9 @@ type private NunitRunner() =
             // when QuietOnSuccess is true, and the Property passed.
             if not (String.IsNullOrWhiteSpace argsForOutput) then
                 printfn "%s" argsForOutput
-        override x.OnShrink(args, everyShrink) =
+        override __.OnShrink(args, everyShrink) =
             printfn "%s" (everyShrink args)
-        override x.OnFinished(name,testResult) =
+        override __.OnFinished(_,testResult) =
             result <- Some testResult
 
 ///Run this method as an FsCheck test.
@@ -56,35 +55,35 @@ type PropertyAttribute() =
     let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
 
     ///The maximum number of tests that are run.
-    member x.MaxTest with get() = maxTest and set(v) = maxTest <- v
+    member __.MaxTest with get() = maxTest and set(v) = maxTest <- v
     ///The maximum number of tests where values are rejected, e.g. as the result of ==>
-    member x.MaxFail with get() = maxFail and set(v) = maxFail <- v
+    member __.MaxFail with get() = maxFail and set(v) = maxFail <- v
     ///The size to use for the first test.
-    member x.StartSize with get() = startSize and set(v) = startSize <- v
+    member __.StartSize with get() = startSize and set(v) = startSize <- v
     ///The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.
-    member x.EndSize with get() = endSize and set(v) = endSize <- v
+    member __.EndSize with get() = endSize and set(v) = endSize <- v
     ///Output all generated arguments.
-    member x.Verbose with get() = verbose and set(v) = verbose <- v
+    member __.Verbose with get() = verbose and set(v) = verbose <- v
     ///The Arbitrary instances to use for this test method. The Arbitrary instances
     ///are merged in back to front order i.e. instances for the same generated type
     ///at the front of the array will override those at the back.
-    member x.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v
+    member __.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v
     ///If set, suppresses the output from the test if the test is successful. This can be useful when running tests
     ///with TestDriven.net, because TestDriven.net pops up the Output window in Visual Studio if a test fails; thus,
     ///when conditioned to that behaviour, it's always a bit jarring to receive output from passing tests.
     ///The default is false, which means that FsCheck will also output test results on success, but if set to true,
     ///FsCheck will suppress output in the case of a passing test. This setting doesn't affect the behaviour in case of
     ///test failures.
-    member x.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
+    member __.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
 
     interface ISimpleTestBuilder with
-        override x.BuildFrom(mi, suite) =
+        override __.BuildFrom(mi, _) =
             FsCheckTestMethod(mi) :> TestMethod
 
     interface IWrapTestMethod with
-        override x.Wrap command:Internal.Commands.TestCommand =
+        override __.Wrap command:Internal.Commands.TestCommand =
             {new Internal.Commands.TestCommand(command.Test) with
-                override x.Execute context = FsCheckTestMethod(command.Test.Method).RunTest(context) }
+                override __.Execute context = FsCheckTestMethod(command.Test.Method).RunTest(context) }
 
 and FsCheckTestMethod(mi : IMethodInfo) =
     inherit TestMethod(mi)
@@ -94,57 +93,54 @@ and FsCheckTestMethod(mi : IMethodInfo) =
         TestExecutionContext.CurrentContext.CurrentResult <- testResult
         try
             try
-                x.runSetUp()
-                x.runTestCase context testResult
+                x.RunSetUp()
+                x.RunTestCase context testResult
             with
-                | ex -> x.handleException ex testResult FailureSite.SetUp
+                | ex -> x.HandleException ex testResult FailureSite.SetUp
         finally
-            x.runTearDown testResult
+            x.RunTearDown testResult
         testResult
 
-    member private x.runSetUp() =
+    member private x.RunSetUp() =
         if x.setUpMethods <> null then
-            x.setUpMethods |> Array.iter x.invokeMethodIgnore
+            x.setUpMethods |> Array.iter x.InvokeMethodIgnore
 
-    member private x.runTearDown testResult =
+    member private x.RunTearDown testResult =
         try
             if x.tearDownMethods <> null then
                 x.tearDownMethods
                 |> Array.rev
-                |> Array.iter x.invokeMethodIgnore
+                |> Array.iter x.InvokeMethodIgnore
         with
             | ex ->
-                testResult.RecordTearDownException(x.filterException ex)
+                testResult.RecordTearDownException(x.FilterException ex)
 
-    member private x.invokeMethodIgnore mi =
-        x.invokeMethod mi |> ignore
+    member private x.InvokeMethodIgnore mi =
+        Reflect.InvokeMethod(mi, if mi.IsStatic then null else x.Fixture) |> ignore
 
-    member private x.filterException ex =
+    member private __.FilterException ex =
         match ex with
         | :? NUnitException as nue when nue.InnerException <> null -> nue.InnerException
         | _ -> ex
 
-    member private x.invokeMethod (mi:MethodInfo) =
-        Reflect.InvokeMethod(mi, if mi.IsStatic then null else x.Fixture)
-
-    member private x.runTestCase context testResult =
+    member private x.RunTestCase context testResult =
         try
-            x.runTestMethod context testResult
+            x.RunTestMethod context testResult
         with
-            | ex -> x.handleException ex testResult FailureSite.Test
+            | ex -> x.HandleException ex testResult FailureSite.Test
 
-    member private x.getFsCheckPropertyAttribute() =
+    member private x.GetFsCheckPropertyAttribute() =
         x.Method.GetCustomAttributes<PropertyAttribute> false
-        |> Seq.head
+        |> Seq.head 
 
-    member private x.handleException ex testResult failureSite =
+    member private x.HandleException ex testResult failureSite =
         match ex with
         | :? ThreadAbortException -> Thread.ResetAbort()
         | _ -> ()
-        testResult.RecordException(x.filterException <| ex, failureSite)
+        testResult.RecordException(x.FilterException <| ex, failureSite)
 
-    member private x.runTestMethod context testResult =
-        let attr = x.getFsCheckPropertyAttribute()
+    member private x.RunTestMethod context testResult =
+        let attr = x.GetFsCheckPropertyAttribute()
         let testRunner = NunitRunner()
         let config = { Config.Default with
                         MaxTest = attr.MaxTest
@@ -165,7 +161,7 @@ and FsCheckTestMethod(mi : IMethodInfo) =
             if not attr.QuietOnSuccess then
                 printfn "%s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(ResultState(TestStatus.Passed))
-        | TestResult.Exhausted testdata ->
+        | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg))
         | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
