@@ -43,7 +43,7 @@
       <HintPath>$(MSBuildExtensionsPath32)\..\Reference Assemblies\Microsoft\FSharp\.NETCore\$(TargetFSharpCoreVersion)\FSharp.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <Compile Include="..\FsCheck\AssemblyInfo.fs">
       <Link>AssemblyInfo.fs</Link>
     </Compile>
