@@ -141,7 +141,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                             Some (test.CreateTestClass(testClass, constructorArguments, messageBus, timer, cancellationTokenSource))
                         else None
 
-                    Check.Method(config, runMethod, ?target=target)
+                    timer.Aggregate(fun () -> Check.Method(config, runMethod, ?target=target))
 
                     match xunitRunner.Result with
                           | TestResult.True _ ->
