@@ -163,7 +163,7 @@ module Gen =
     //[category: Creating generators]
     [<CompiledName("Elements")>]
     let elements xs = 
-        choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
+        choose (0, (Seq.length xs)-1) |> map (flip Seq.item xs)
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
@@ -459,7 +459,7 @@ module Gen =
         let counter = ref 1
         let toCounter = new Dictionary<'a,int>()
         let mapToInt (value:'a) =
-            if (box value) = null then 0
+            if isNull (box value) then 0
             else
                 let (found,result) = toCounter.TryGetValue value
                 if found then 
@@ -469,7 +469,7 @@ module Gen =
                     counter := !counter + 1
                     !counter - 1
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
-        Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
+        Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.
 type Gen with
