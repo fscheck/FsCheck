@@ -19,5 +19,17 @@ namespace FsCheck.MsTest.Examples
         {
             new CounterSpec().ToProperty().VerboseCheckThrowOnFailure();
         }
+
+        [TestMethod, ExpectedException(typeof(Exception))]
+        public void CheckCounterWithQuick()
+        {
+            new CounterSpec().ToProperty().Check(Configuration.QuickThrowOnFailure);
+        }
+
+        [TestMethod, ExpectedException(typeof(Exception))]
+        public void CheckCounterWithVerbose()
+        {
+            new CounterSpec().ToProperty().Check(Configuration.VerboseThrowOnFailure);
+        }
     }
 }
