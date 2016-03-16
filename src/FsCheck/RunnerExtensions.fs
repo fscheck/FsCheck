@@ -13,7 +13,7 @@ namespace FsCheck
 open System
 open System.Runtime.CompilerServices
 
-///Configure the test run.
+///Configure the test run with a quick configuration.
 type Configuration() =
     let mutable maxTest = Config.Quick.MaxTest
     let mutable maxFail = Config.Quick.MaxFail
@@ -26,7 +26,7 @@ type Configuration() =
     let mutable runner = Config.Quick.Runner
     let mutable replay = Config.Quick.Replay
 
-    ///val get initialitzed with Config.Quick anyway
+    ///The quick configuration only prints a summary result at the end of the test.
     static member Quick = new Configuration()
 
     ///The default configuration is the quick configuration.
