@@ -8,7 +8,7 @@ module Commands =
     //a counter that never goes below zero
     type Counter() =
       let mutable n = 0
-      member __.Inc() = n <- n + 1
+      member __.Inc() = n <- n + 1 //if n > 5 then n <- n + 2 else n <- n + 1
       member __.Dec() = if n = 0 then failwithf "Precondition fail" else n <- n - 1
       member __.Get = n
       member __.Reset() = n <- 0
@@ -39,4 +39,9 @@ module Commands =
     [<Fact>]
     let ``should check Counter``() =
         let prop = Command.toProperty spec
+        Check.QuickThrowOnFailure prop
+
+    [<Fact>]
+    let ``should check Counter no shrink``() =
+        let prop = Command.toPropertyWith spec (Command.generateCommands spec) (fun _ -> Seq.empty)
         Check.QuickThrowOnFailure prop
