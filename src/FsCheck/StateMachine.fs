@@ -66,6 +66,8 @@ type MachineRun<'Actual, 'Model> =
       Operations : list<Operation<'Actual,'Model> * 'Model>
       TearDown : TearDown<'Actual> }
 
+// ------------- create Machine from class definition ----------
+
 //a single assignment variable
 type OperationResult(?result,?name) =
     static let mutable resultCounter = 0
@@ -142,7 +144,6 @@ type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) =
 module StateMachine =
     open System
     open System.ComponentModel
-    open Prop
 
     [<CompiledName("Setup"); EditorBrowsable(EditorBrowsableState.Never)>]
     let setup actual model =
@@ -249,25 +250,33 @@ module StateMachine =
         //try to srhink the initial setup state
         |> Seq.append (Arb.toShrink spec.Setup (snd run.Setup) |> Seq.map (fun create -> { run with Setup = create.Model(), create }))
         
-    [<CompiledName("Check")>]
-    let check { Setup = _,setup; Operations = operations; TearDown = teardown } =
-        let rec run actual (operations:list<Operation<'Actual,'Model> * _>) property =
-            match operations with
-            | [] -> teardown.Actual actual; property
-            | ((op,model)::ops) -> 
-                let prop = op.Check(actual, model) |> Prop.ofTestable
-                run actual ops (property .&. prop) //not great: should stop generating once error is found
-        run (setup.Actual()) operations (Prop.ofTestable true)
+    /// Check one run, i.e. create a property from a single run.
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    let forOne { Setup = _:'Model,setup; Operations = operations; TearDown = teardown } =
+            let rec run actual (operations:list<Operation<'Actual,'Model> * _>) property =
+                match operations with
+                | [] -> teardown.Actual actual; property
+                | ((op,model)::ops) -> 
+                    let prop = op.Check(actual, model) |> Prop.ofTestable
+                    run actual ops (property .&. prop) //not great: should stop generating once error is found
+            run (setup.Actual()) operations (Prop.ofTestable true)
 
-    ///Turn a specification into a property.
+    ///Check all generated runs, i.e. create a property from an arbitrarily generated run.
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    let forAll (arb:Arbitrary<MachineRun<'Actual,'Model>>) = 
+        Prop.forAll arb forOne
+
+    ///Turn a machine specification into a property.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toProperty (spec:Machine<'Actual,'Model>) = 
-        forAll (Arb.fromGenShrink(generate spec, shrink spec)) check
-//                |> Prop.trivial (l.Length=0)
-//                |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
-//                |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" ))
+        forAll (Arb.fromGenShrink(generate spec, shrink spec))
 
 [<AbstractClass;Sealed;Extension>]
 type StateMachineExtensions =
     [<Extension>]
-    static member ToProperty(spec: Machine<'Actual,'Model>) = StateMachine.toProperty spec
+    static member ToProperty(specification: Machine<'Actual,'Model>) = StateMachine.toProperty specification
+    [<Extension>]
+    static member ToProperty(arbitraryRun:Arbitrary<MachineRun<'Actual,'Model>>) = StateMachine.forAll arbitraryRun
+    [<Extension>]
+    static member ToProperty(run: MachineRun<'Actual,'Model>) = StateMachine.forOne run
+
