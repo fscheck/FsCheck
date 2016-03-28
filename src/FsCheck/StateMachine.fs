@@ -63,8 +63,10 @@ type Machine<'Actual,'Model>() =
 
 type MachineRun<'Actual, 'Model> =
     { Setup : 'Model * Setup<'Actual,'Model> 
-      Operations : list<'Model * Operation<'Actual,'Model>>
+      Operations : list<Operation<'Actual,'Model> * 'Model>
       TearDown : TearDown<'Actual> }
+
+// ------------- create Machine from class definition ----------
 
 //a single assignment variable
 type OperationResult(?result,?name) =
@@ -142,7 +144,6 @@ type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) =
 module StateMachine =
     open System
     open System.ComponentModel
-    open Prop
 
     [<CompiledName("Setup"); EditorBrowsable(EditorBrowsableState.Never)>]
     let setup actual model =
@@ -193,63 +194,89 @@ module StateMachine =
     let operationAction<'Actual,'Model> name (runModel:Func<'Model,_>) (check:Action<'Actual,_>) =
         operation name runModel.Invoke (fun (a,b) -> Prop.ofTestable <| check.Invoke(a,b))
 
-
+    [<CompiledName("Generate")>]
     let generate (spec:Machine<'Actual,'Model>) = 
         let rec genCommandsS state size =
             gen {
                 if size > 0 then
-                    let nextState = spec.Next state
-                    let! command = nextState |> Gen.suchThat (fun command -> command.Pre state)
-                    let! states, commands = genCommandsS (command.Run state) (size-1)
-                    return state :: states, command :: commands
+                    let nextOperation = spec.Next state
+                    let! command = nextOperation |> Gen.suchThatOption (fun operation -> operation.Pre state)
+                    if Option.isNone command then return [state],[]
+                    else
+                        let! states, commands = genCommandsS (command.Value.Run state) (size-1)
+                        return state :: states, command.Value :: commands
                 else
                     return [state],[]
             }
         gen { let! setup = spec.Setup |> Arb.toGen
               let initialModel = setup.Model()
-              let! states,commands = genCommandsS initialModel |> Gen.sized
+              let! models,operations = genCommandsS initialModel |> Gen.sized
               return { Setup = initialModel, setup
-                       Operations = List.zip (List.tail states) commands //first state is actually the initial state; so drop it.
+                       Operations = List.zip operations (List.tail models) //first state is actually the initial state; so drop it.
                        TearDown = spec.TearDown }
         }
 
+    [<CompiledName("Shrink")>]
     let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
-        let runModels initial (commands:list<_ * Operation<_,_>>) =
-            let commands = commands |> List.unzip |> snd
-            let newModels = commands |> List.scan (fun model operation -> operation.Run model) initial |> List.tail
-            List.zip newModels commands
-
-        let preconditionsOk (commands:List<_ * Operation<_,_>>) = 
-            commands 
-            |> Seq.forall (fun (model,op) -> op.Pre model)
+        let runModels initial (operations:list<Operation<'Actual,'Model>>) =
+            operations 
+            |> Seq.scan (fun (_,model) operation -> (operation.Pre model, operation.Run model)) (true,initial) 
+            |> Seq.skip 1
+            |> Seq.zip operations
+            |> Seq.map (fun (op,(pre,model)) -> (pre, (op,model)))
             
-        Arb.Default.FsList().Shrinker run.Operations
+        let operationShrinker l =
+            let allSubsequences (l:list<_>) =
+                seq { for i in 1..l.Length do
+                        yield! Seq.windowed i l |> Seq.map Seq.toList
+                }
+            match l with
+            | [] -> Seq.empty
+            | x::xs -> 
+                seq { yield! allSubsequences xs
+                      yield! Seq.map (fun l -> x::l) (allSubsequences xs) |> Seq.where (fun l' -> List.length l' <> List.length l)
+                }
+
+        run.Operations 
+        |> List.map fst
+        |> operationShrinker
         //try to shrink the list of operations
-        |> Seq.choose (fun commands -> 
-                            let newModels = runModels (fst run.Setup) commands
-                            let ok = preconditionsOk newModels
-                            if ok then Some { run with Operations = newModels } else None)
+        |> Seq.choose (fun operations -> 
+                            let initialModel = fst run.Setup
+                            let transitions = runModels initialModel operations
+                            let ok = Seq.forall fst transitions
+                            let newOperations = transitions |> Seq.map snd |> Seq.toList
+                            if ok then Some { run with Operations = newOperations } else None)
         //try to srhink the initial setup state
         |> Seq.append (Arb.toShrink spec.Setup (snd run.Setup) |> Seq.map (fun create -> { run with Setup = create.Model(), create }))
         
-    let check { Setup = initialModel,setup; Operations = operations; TearDown = teardown } =
-        let rec run (actual,_) (cmds:list<'Model * Operation<'Actual,'Model>>) property =
-            match cmds with
-            | [] -> teardown.Actual actual; property
-            | ((newModel,c)::cs) -> 
-                let prop = c.Check(actual, newModel) |> Prop.ofTestable
-                run (actual,newModel) cs (property .&. prop)
-        run (setup.Actual(), initialModel) operations (Prop.ofTestable true)
+    /// Check one run, i.e. create a property from a single run.
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    let forOne { Setup = _:'Model,setup; Operations = operations; TearDown = teardown } =
+            let rec run actual (operations:list<Operation<'Actual,'Model> * _>) property =
+                match operations with
+                | [] -> teardown.Actual actual; property
+                | ((op,model)::ops) -> 
+                    let prop = op.Check(actual, model) |> Prop.ofTestable
+                    run actual ops (property .&. prop) //not great: should stop generating once error is found
+            run (setup.Actual()) operations (Prop.ofTestable true)
 
-    ///Turn a specification into a property.
+    ///Check all generated runs, i.e. create a property from an arbitrarily generated run.
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    let forAll (arb:Arbitrary<MachineRun<'Actual,'Model>>) = 
+        Prop.forAll arb forOne
+
+    ///Turn a machine specification into a property.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toProperty (spec:Machine<'Actual,'Model>) = 
-        forAll (Arb.fromGenShrink(generate spec, shrink spec)) check
-//                |> Prop.trivial (l.Length=0)
-//                |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
-//                |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" ))
+        forAll (Arb.fromGenShrink(generate spec, shrink spec))
 
 [<AbstractClass;Sealed;Extension>]
 type StateMachineExtensions =
     [<Extension>]
-    static member ToProperty(spec: Machine<'Actual,'Model>) = StateMachine.toProperty spec
+    static member ToProperty(specification: Machine<'Actual,'Model>) = StateMachine.toProperty specification
+    [<Extension>]
+    static member ToProperty(arbitraryRun:Arbitrary<MachineRun<'Actual,'Model>>) = StateMachine.forAll arbitraryRun
+    [<Extension>]
+    static member ToProperty(run: MachineRun<'Actual,'Model>) = StateMachine.forOne run
+

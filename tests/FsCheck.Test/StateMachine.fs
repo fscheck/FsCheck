@@ -28,7 +28,7 @@ module StateMachine =
         for { Setup = _,create; Operations = comms } in commands do
             typeof<SimpleModel> =! create.Actual().GetType()
             0 =! create.Model()
-            for _,comm in comms do
+            for comm,_ in comms do
                 test <@ comm.Pre 5 @>
                 6 =! comm.Run 5
 
@@ -48,9 +48,9 @@ module StateMachine =
             member __.Next _ = Gen.elements [setTrue; setFalse] }
 
 
-    let inline checkPreconditions initial (cmds:seq<_*Operation<_,_>>) =
-        cmds 
-        |> Seq.fold (fun (model,pres) (_,cmd) -> cmd.Run model,pres && cmd.Pre model) (initial, true)
+    let inline checkPreconditions initial (cmds:seq<Operation<_,_> * _>) =
+        cmds
+        |> Seq.fold (fun (model,pres) (cmd,_) -> cmd.Run model,pres && cmd.Pre model) (initial, true)
         |> snd
 
     [<Fact>]
@@ -72,7 +72,10 @@ module StateMachine =
     //a counter that never goes below zero
     type Counter(?dontcare:int) =
       let mutable n = 0
-      member __.Inc() = n <- n + 1; n 
+      member __.Inc() = 
+        //if n <= 3  then n <- n + 1 else n <- n + 2
+        n <- n + 1
+        n
       member __.Dec() = if n <= 0 then failwithf "Precondition fail" else n <- n - 1; n
       member __.Reset() = n <- 0
       override __.ToString() = sprintf "Counter = %i, don't care = %i" n (defaultArg dontcare 0)
@@ -85,7 +88,7 @@ module StateMachine =
                 member __.Check (c,m) = 
                     let res = c.Inc() 
                     m = res 
-                    |@ sprintf "model = %i, actual = %i" m res
+                    |@ sprintf "Inc: model = %i, actual = %i" m res
                 override __.ToString() = "inc"}
         let dec = 
             Gen.constant <|
@@ -96,7 +99,7 @@ module StateMachine =
                 member __.Check (c,m) = 
                     let res = c.Dec()
                     m = res 
-                    |@ sprintf "model = %i, actual = %i" m res
+                    |@ sprintf "Dec: model = %i, actual = %i" m res
                 override __.ToString() = "dec"}
         let create dontcare = 
             { new Setup<Counter,int>() with
@@ -110,4 +113,70 @@ module StateMachine =
     let ``should check Counter``() =
         let prop = StateMachine.toProperty spec
         Check.QuickThrowOnFailure prop
+
+    // "symbolic" model
+
+    type ActualState() =
+        let mutable state = "A"
+        member __.Set s = state <- s
+        member __.Get = state
+        override __.ToString() = state
+
+    type ModelState = A | B | C with
+        member t.Check (act:ActualState) =
+            match t with
+            | A -> act.Get = "A"
+            | B -> act.Get = "B"
+            | C -> act.Get = "C"
+    
+    let makeOperations failureState =
+         let makeOperation failureState actualNextState startState endState =
+            { new Operation<ActualState,ModelState>() with 
+                override __.Run m = endState
+                override __.Pre m = m = startState
+                override __.Check (act,model) = 
+                    act.Set actualNextState
+                    if failureState = act.Get then 
+                        false
+                        |@ sprintf "failurestate: model = %A, actual = %A" model act
+                    else 
+                        model.Check act
+                        |@ sprintf "model = %A, actual = %A" model act
+                override __.ToString() = sprintf "%A->%A" startState endState }
+
+         ( makeOperation failureState "B" A B
+         , makeOperation failureState "A" B A
+         , makeOperation failureState "C" B C
+         , makeOperation failureState "C" A C )
+
+    let setup = 
+            { new Setup<ActualState,ModelState>() with
+                member __.Actual() = ActualState()
+                member __.Model() =  A }
+
+    let specSymbolic failureState =
+        let (|GenConst|) x = Gen.constant x
+        let (GenConst ``a->b``, GenConst ``b->a``, GenConst ``b->c``, GenConst ``a->c``) = makeOperations failureState
+        
+        { new Machine<ActualState,ModelState>() with
+            member __.Setup = Gen.constant setup |> Arb.fromGen
+            member __.Next _ = Gen.frequency [ (10,``a->b``); (1,``b->c``);  (10, ``b->a``); (1,``a->c``) ] }
+
+    [<Fact>]
+    let ``should check specSymbolic``() =
+        let prop = StateMachine.toProperty (specSymbolic "nofail")
+        Check.QuickThrowOnFailure prop
+
+    [<Fact>]
+    let ``shrinker should remove loops``() =
+        //this to check that the shrinker can remove loops, or sequences of superfluous transitions "in the middle" of a run.
+        //the standard list shrinker does not do this.
+        let spec = specSymbolic "C"
+        let (``a->b``, ``b->a``, ``b->c``, ``a->c``) = makeOperations "C"
+        let run = { Setup = (A, setup)
+                    TearDown = spec.TearDown
+                    Operations = [(``a->b``,B); (``b->a``,A);(``a->b``,B); (``b->a``,A);(``a->c``,C)] }
+        let shrunk = StateMachine.shrink spec run
+        test <@ shrunk |> Seq.exists (fun e -> e.Operations = [(``a->c``,C)]) @>
+
 

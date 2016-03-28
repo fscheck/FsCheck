@@ -65,8 +65,10 @@ module Command =
     let createFuncBool (runActual:Func<'Actual,_>) (runModel:Func<'Model,_>) (postCondition:Func<_,_,bool>) =
         create None runActual.Invoke runModel.Invoke (fun (a,b) -> Prop.ofTestable <| postCondition.Invoke(a,b))
 
-
-    let private genCommands (spec:ICommandGenerator<_,_>) = 
+    ///Create a generator that generates a sequence of Command objects that
+    ///satisfies the given specification.
+    [<CompiledName("GenerateCommands")>]
+    let generateCommands (spec:ICommandGenerator<'Actual,'Model>) = 
         let rec genCommandsS state size =
             gen {
                 if size > 0 then
@@ -76,11 +78,11 @@ module Command =
                 else
                     return []
             }
-        spec.InitialModel |> genCommandsS |> Gen.sized
-     
-    ///Turn a specification into a property.
+        spec.InitialModel |> genCommandsS |> Gen.sized |> Gen.map (fun l -> l :> seq<_>)
+    
+    ///Turn a specification into a property, allowing you to specify generator and shrinker.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let toProperty (spec:ICommandGenerator<'Actual,'Model>) =
+    let toPropertyWith (spec:ICommandGenerator<'Actual,'Model>) (generator:Gen<Command<'Actual,'Model> seq>) shrinker =
         let rec applyCommands (actual,model) (cmds:list<Command<_,_>>) =
             match cmds with
             | [] -> Testable.property true
@@ -89,13 +91,27 @@ module Command =
                     let newModel = c.RunModel model
                     c.Post (newActual,newModel) .&. applyCommands (newActual,newModel) cs
                 
-        forAll (Arb.fromGenShrink(genCommands spec,shrink))  //note: this uses the list shrinker which is not correct - should take preconditions into accout for example
-                (fun l -> l |> applyCommands (spec.InitialActual, spec.InitialModel) 
-                            |> Prop.trivial (l.Length=0)
-                            |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
-                            |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" )
+        forAll (Arb.fromGenShrink(generator,shrinker))  //note: this uses the list shrinker which is not correct - should take preconditions into accout for example
+                (fun s -> let l = s |> Seq.toList
+                          l                            
+                          |> applyCommands (spec.InitialActual, spec.InitialModel) 
+                          |> Prop.trivial (l.Length=0)
+                          |> Prop.classify (l.Length > 1 && l.Length <=6) "short sequences (between 1-6 commands)" 
+                          |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" )
+     
+    ///Turn a specification into a property.
+    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    let toProperty (spec:ICommandGenerator<'Actual,'Model>) =   
+        toPropertyWith spec (generateCommands spec) (Seq.toList >> shrink >> Seq.map (fun l -> l :> seq<_>))
+    
 
 [<AbstractClass;Sealed;Extension>]
 type CommandExtensions =
+
+    ///Turn a specification into a property.
     [<Extension>]
     static member ToProperty(spec: ICommandGenerator<'Actual,'Model>) = Command.toProperty spec
+
+    ///Turn a specification into a property, allowing you to specify generator and shrinker.
+    [<Extension>]
+    static member ToProperty(spec: ICommandGenerator<'Actual,'Model>, generator, shrinker) = Command.toPropertyWith spec generator shrinker

@@ -1,4 +1,7 @@
 ### 2.2.5 - To be released
+  * Fix timing of xUnit runs.
+  * Add static factory methods to Configuration common cases.
+  * Add function and method to Command module to allow users to specify generator and shrinker explicitly.
 
 ### 2.2.4 - 17 December 2015
   * Fix output of FsCheck.Xunit - was not correctly reported in all runners (by Matt Ellis)
