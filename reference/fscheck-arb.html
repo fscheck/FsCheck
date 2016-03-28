@@ -85,7 +85,7 @@
 based on a Arbitrary instance for the source type and two mapping functions.</p>
 
 
-
+              <p>CompiledName: <code>Convert</code></p>
         </td>
       </tr>
       <tr>
@@ -107,7 +107,7 @@ based on a Arbitrary instance for the source type and two mapping functions.</p>
 The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter with the given predicate.</p>
 
 
-
+              <p>CompiledName: <code>Filter</code></p>
         </td>
       </tr>
       <tr>
@@ -128,7 +128,7 @@ The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter w
           <p>Get the Arbitrary instance for the given type.</p>
 
 
-
+              <p>CompiledName: <code>From</code></p>
         </td>
       </tr>
       <tr>
@@ -150,7 +150,7 @@ The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter w
 Shrink is not supported for this type.</p>
 
 
-
+              <p>CompiledName: <code>From</code></p>
         </td>
       </tr>
       <tr>
@@ -171,7 +171,7 @@ Shrink is not supported for this type.</p>
           <p>Construct an Arbitrary instance from a generator and shrinker.</p>
 
 
-
+              <p>CompiledName: <code>From</code></p>
         </td>
       </tr>
       <tr>
@@ -190,6 +190,7 @@ Shrink is not supported for this type.</p>
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>From</code></p>
         </td>
       </tr>
       <tr>
@@ -210,7 +211,7 @@ Shrink is not supported for this type.</p>
           <p>Returns a Gen<'Value></p>
 
 
-
+              <p>CompiledName: <code>Generate</code></p>
         </td>
       </tr>
       <tr>
@@ -229,13 +230,13 @@ Shrink is not supported for this type.</p>
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Return an Arbitrary instance that is a mapped and filtered version of an existing arbitrary instance.
- The generator uses Gen.map with the given mapper and then Gen.suchThat with the given predicate, 
- and the shrinks are filtered using Seq.filter with the given predicate.
+The generator uses Gen.map with the given mapper and then Gen.suchThat with the given predicate,
+and the shrinks are filtered using Seq.filter with the given predicate.
 This is sometimes useful if using just a filter would reduce the chance of getting a good value
 from the generator - and you can map the value instead. E.g. PositiveInt.</p>
 
 
-
+              <p>CompiledName: <code>MapFilter</code></p>
         </td>
       </tr>
       <tr>
@@ -256,7 +257,7 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
           <p>Register the generators that are static members of the type argument.</p>
 
 
-
+              <p>CompiledName: <code>Register</code></p>
         </td>
       </tr>
       <tr>
@@ -277,7 +278,7 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
           <p>Register the generators that are static members of the given type.</p>
 
 
-
+              <p>CompiledName: <code>Register</code></p>
         </td>
       </tr>
       <tr>
@@ -298,7 +299,7 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
           <p>Returns the immediate shrinks for the given value based on its type.</p>
 
 
-
+              <p>CompiledName: <code>Shrink</code></p>
         </td>
       </tr>
       <tr>
@@ -308,8 +309,8 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
             shrinkNumber n
           </code>
           <div class="tip" id="12">
-            <strong>Signature:</strong> n:^?131820 -&gt; seq&lt;^?131820&gt;<br />
-                          <strong>Type parameters:</strong> ^?131820, ^?131821, ^?131822, ^?131823          </div>
+            <strong>Signature:</strong> n:^?196805 -&gt; seq&lt;^?196805&gt;<br />
+                          <strong>Type parameters:</strong> ^?196805, ^?196806, ^?196807, ^?196808          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L163-163" class="github-link">
@@ -317,7 +318,6 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>A generic shrinker that should work for most number-like types.</p>
-
 
 
         </td>

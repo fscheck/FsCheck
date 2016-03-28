@@ -33,46 +33,31 @@
         <div class="span9" id="main">
           
 <h1>ヒントとコツ</h1>
-
 <h2>関数の性質</h2>
-
 <p>FsCheck はランダムな関数値を生成できるので、関数の性質を検査できます。
 例えば、次のように関数合成の結合性を検査できます:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">associativity</span> (<span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="t">int</span>) (<span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="f">f</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 7)" onmouseover="showTip(event, 'fs5', 7)" class="t">int</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs7', 8)" onmouseover="showTip(event, 'fs7', 8)" class="t">float</span>,<span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="f">g</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="t">float</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs9', 11)" onmouseover="showTip(event, 'fs9', 11)" class="t">char</span>,<span onmouseout="hideTip(event, 'fs10', 12)" onmouseover="showTip(event, 'fs10', 12)" class="f">h</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="t">char</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs5', 14)" onmouseover="showTip(event, 'fs5', 14)" class="t">int</span>) <span class="o">=</span> ((<span onmouseout="hideTip(event, 'fs6', 15)" onmouseover="showTip(event, 'fs6', 15)" class="f">f</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs8', 16)" onmouseover="showTip(event, 'fs8', 16)" class="f">g</span>) <span class="o">&gt;</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs10', 17)" onmouseover="showTip(event, 'fs10', 17)" class="f">h</span>) <span onmouseout="hideTip(event, 'fs4', 18)" onmouseover="showTip(event, 'fs4', 18)" class="i">x</span> <span class="o">=</span> (<span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="f">f</span> <span class="o">&gt;</span><span class="o">&gt;</span> (<span onmouseout="hideTip(event, 'fs8', 20)" onmouseover="showTip(event, 'fs8', 20)" class="f">g</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs10', 21)" onmouseover="showTip(event, 'fs10', 21)" class="f">h</span>)) <span onmouseout="hideTip(event, 'fs4', 22)" onmouseover="showTip(event, 'fs4', 22)" class="i">x</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs3', 23)" onmouseover="showTip(event, 'fs3', 23)" class="i">associativity</span>
 </code></pre>
-
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
-
 <p>Tree -&gt; <em>任意の型</em> を生成できます。反例が見つかった場合は、関数値が <func> として表示されます。</p>
-
 <p>しかしながら、 FsCheck は Function 型を使用することで、より詳細に生成された関数を表示することが出来ます。
 もしそれを使えば、 FsCheck は関数をシュリンクすることさえ可能です。例は以下の通りです:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 24)" onmouseover="showTip(event, 'fs11', 24)" class="f">mapRec</span> (<span class="i">F</span> (_,<span class="i">f</span>)) (<span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="i">l</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs5', 27)" onmouseover="showTip(event, 'fs5', 27)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span>
   <span onmouseout="hideTip(event, 'fs14', 28)" onmouseover="showTip(event, 'fs14', 28)" class="i">not</span> <span onmouseout="hideTip(event, 'fs12', 29)" onmouseover="showTip(event, 'fs12', 29)" class="i">l</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs15', 30)" onmouseover="showTip(event, 'fs15', 30)" class="i">IsEmpty</span> <span class="o">==&gt;</span>
       <span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs16', 31)" onmouseover="showTip(event, 'fs16', 31)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="i">map</span> <span class="i">f</span> <span onmouseout="hideTip(event, 'fs12', 33)" onmouseover="showTip(event, 'fs12', 33)" class="i">l</span> <span class="o">=</span> (<span class="c">(*f &lt;|*)</span> <span onmouseout="hideTip(event, 'fs16', 34)" onmouseover="showTip(event, 'fs16', 34)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 35)" onmouseover="showTip(event, 'fs18', 35)" class="i">head</span> <span onmouseout="hideTip(event, 'fs12', 36)" onmouseover="showTip(event, 'fs12', 36)" class="i">l</span>) <span class="o">::</span> <span onmouseout="hideTip(event, 'fs16', 37)" onmouseover="showTip(event, 'fs16', 37)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs17', 38)" onmouseover="showTip(event, 'fs17', 38)" class="i">map</span> <span class="i">f</span> (<span onmouseout="hideTip(event, 'fs16', 39)" onmouseover="showTip(event, 'fs16', 39)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs19', 40)" onmouseover="showTip(event, 'fs19', 40)" class="i">tail</span> <span onmouseout="hideTip(event, 'fs12', 41)" onmouseover="showTip(event, 'fs12', 41)" class="i">l</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 42)" onmouseover="showTip(event, 'fs11', 42)" class="i">mapRec</span>
 </code></pre>
-
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1449971349,296095338)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (935999736,296136380)):
 Original:
-{ 0-&gt;2; 3-&gt;2 }
-[3]
-Shrunk:
-{ 0-&gt;2; 3-&gt;0 }
+{ 0-&gt;1 }
 [0]</code></pre></td></tr></table>
-
 <p><code>Function&lt;'a,'b&gt;</code> 型は呼ばれていたすべての引数、および生成した結果の写像を記録します。
 性質では、例のようにパターンマッチによって実際の関数を抽出することが出来ます。
 Function は関数を出力し、また関数をシュリンクするために使用されます。</p>
-
 <h2>カスタムジェネレータを使うため forAll の代わりにパターンマッチを使用する</h2>
-
 <p>既存の型の普通の範囲の値の部分集合、例えばすべての偶数といったものを生成するジェネレータを定義するために、
 1ケースだけの共用体を定義して新しい型用のジェネレータを登録すれば、性質をより読みやすくするでしょう:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs20', 43)" onmouseover="showTip(event, 'fs20', 43)" class="t">EvenInt</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 44)" onmouseover="showTip(event, 'fs20', 44)" class="p">EvenInt</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs5', 45)" onmouseover="showTip(event, 'fs5', 45)" class="t">int</span> <span class="k">with</span>
   <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs21', 46)" onmouseover="showTip(event, 'fs21', 46)" class="f">op_Explicit</span>(<span onmouseout="hideTip(event, 'fs20', 47)" onmouseover="showTip(event, 'fs20', 47)" class="p">EvenInt</span> <span onmouseout="hideTip(event, 'fs22', 48)" onmouseover="showTip(event, 'fs22', 48)" class="i">i</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 49)" onmouseover="showTip(event, 'fs22', 49)" class="i">i</span>
 
@@ -87,51 +72,46 @@ Function は関数を出力し、また関数をシュリンクするために�
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs25', 56)" onmouseover="showTip(event, 'fs25', 56)" class="f">``generated even ints should be even``</span> (<span onmouseout="hideTip(event, 'fs20', 57)" onmouseover="showTip(event, 'fs20', 57)" class="p">EvenInt</span> <span onmouseout="hideTip(event, 'fs22', 58)" onmouseover="showTip(event, 'fs22', 58)" class="i">i</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 59)" onmouseover="showTip(event, 'fs22', 59)" class="i">i</span> <span class="o">%</span> <span class="n">2</span> <span class="o">=</span> <span class="n">0</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs25', 60)" onmouseover="showTip(event, 'fs25', 60)" class="i">``generated even ints should be even``</span>
 </code></pre>
-
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
-
 <p>同様に、今やカスタムシュリンク関数を定義することも簡単です。</p>
-
 <p>FsCheck は <code>NonNegativeInt</code> 、 <code>PositiveInt</code> 、 <code>StringWithoutNullChars</code> などでもこのパターンを使っています。
 <code>Arb.Default</code> 型にあるデフォルトの Arbitrary インスタンスを参照してください。</p>
-
 <p>また、この手のジェネレータにとって、 <code>Arb.filter</code> 、 <code>Arb.convert</code> そして <code>Arb.mapFilter</code> 関数は役に立つでしょう。</p>
-
 <h2>等式の左辺と右辺を出力する等価比較</h2>
-
 <p>性質は一般に等価性をチェックします。テストケースが失敗した場合、FsCheck は反例を出力しますが、
 特に最初に生成された引数でいくつかの複雑な計算を行う場合は、比較の左辺と右辺も出力すると便利なことがあります。
 これを簡単にするために、独自のラベル表示等価コンビネータを定義できます:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> (<span class="o">.</span><span class="o">=.</span>) <span onmouseout="hideTip(event, 'fs26', 61)" onmouseover="showTip(event, 'fs26', 61)" class="i">left</span> <span onmouseout="hideTip(event, 'fs27', 62)" onmouseover="showTip(event, 'fs27', 62)" class="i">right</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs26', 63)" onmouseover="showTip(event, 'fs26', 63)" class="i">left</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs27', 64)" onmouseover="showTip(event, 'fs27', 64)" class="i">right</span> <span class="o">|@</span> <span onmouseout="hideTip(event, 'fs28', 65)" onmouseover="showTip(event, 'fs28', 65)" class="f">sprintf</span> <span class="s">&quot;</span><span class="pf">%A</span><span class="s"> = </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs26', 66)" onmouseover="showTip(event, 'fs26', 66)" class="i">left</span> <span onmouseout="hideTip(event, 'fs27', 67)" onmouseover="showTip(event, 'fs27', 67)" class="i">right</span>
 
 <span class="k">let</span> <span class="i">testCompare</span> (<span onmouseout="hideTip(event, 'fs22', 68)" onmouseover="showTip(event, 'fs22', 68)" class="i">i</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 69)" onmouseover="showTip(event, 'fs5', 69)" class="t">int</span>) (<span onmouseout="hideTip(event, 'fs29', 70)" onmouseover="showTip(event, 'fs29', 70)" class="i">j</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 71)" onmouseover="showTip(event, 'fs5', 71)" class="t">int</span>) <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs22', 72)" onmouseover="showTip(event, 'fs22', 72)" class="i">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs29', 73)" onmouseover="showTip(event, 'fs29', 73)" class="i">j</span><span class="o">-</span><span class="n">1</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
-
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1451502440,296095338)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (937319827,296136380)):
 Label of failing property: 3 = -1
 Original:
-2
+1
 1
 Shrunk:
 1
 0</code></pre></td></tr></table>
-
 <p>もちろん、あなたがよく使用する任意の演算子や関数に対してこれを行うことが出来ます。</p>
-
 <h2>FsCheck のテストを実行するためのいくつかの方法</h2>
-
 <ul>
-<li>あなたのプロジェクトにある fsx ファイルに性質やジェネレータを追加する。実行するのは簡単で、ctrl-a を押してから alt-enter を押すだけで、
+<li>
+あなたのプロジェクトにある fsx ファイルに性質やジェネレータを追加する。実行するのは簡単で、ctrl-a を押してから alt-enter を押すだけで、
 結果が F# Interactive に表示されます。ソリューションに組み込まれている dll を参照するときは注意してください。 F# Interactive は
 セッションの残りの間はずっとそれらをロックし、セッションを終了するまでビルドすることが出来ません。1つの解決策は、dll の代わりにソースファイルを
-(ソリューションに)含めることですが、それは処理を遅くします。小規模なプロジェクトに有用です。デバッグするのは難しいですが。</li>
-<li>別のコンソールアプリケーションを作成する。デバッグは簡単ですし、アセンブリに迷惑なロックを行いません。テストのために FsCheck のみを使用し、
-性質が複数のアセンブリをまたぐような場合は、最良の選択肢です。</li>
-<li>別のユニットテストフレームワークを使用する。 FsCheck とユニットテストの手法が混在し(いくつかのものはユニットテストを使ってチェックした方が簡単ですし、
+(ソリューションに)含めることですが、それは処理を遅くします。小規模なプロジェクトに有用です。デバッグするのは難しいですが。
+</li>
+<li>
+別のコンソールアプリケーションを作成する。デバッグは簡単ですし、アセンブリに迷惑なロックを行いません。テストのために FsCheck のみを使用し、
+性質が複数のアセンブリをまたぐような場合は、最良の選択肢です。
+</li>
+<li>
+別のユニットテストフレームワークを使用する。 FsCheck とユニットテストの手法が混在し(いくつかのものはユニットテストを使ってチェックした方が簡単ですし、
 逆もまた然りです)、グラフィカルランナーを好む場合に便利です。あなたが使用しているユニットテストフレームワーク次第では、無料で Visual Studio と
-上手く統合できるでしょう。このシナリオで FsCheck をカスタマイズする方法は、上記を参照してください。</li>
+上手く統合できるでしょう。このシナリオで FsCheck をカスタマイズする方法は、上記を参照してください。
+</li>
 </ul>
 
 <div class="tip" id="fs1">namespace FsCheck</div>

@@ -33,12 +33,10 @@
         <div class="span9" id="main">
           
 <h1>モデルベースのテスト</h1>
-
 <p>たいていの場合オブジェクトは一連のメソッドによって内部状態がカプセル化されているわけですが、
 FsCheck ではこのようなオブジェクトを対象にしたテストを実行することもできます。
 FsCheck ではほんの少し手を加えるだけで、テスト対象となるクラスに対してモデルを基準とするような
 仕様を定義できます。たとえば以下のような人為的なバグが含まれているクラスがあるとします:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">Counter</span>() <span class="o">=</span>
   <span class="k">let</span> <span class="k">mutable</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="v">n</span> <span class="o">=</span> <span class="n">0</span>
   <span class="k">member</span> <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">x</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="f">Inc</span>() <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 7)" onmouseover="showTip(event, 'fs4', 7)" class="v">n</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs4', 8)" onmouseover="showTip(event, 'fs4', 8)" class="v">n</span> <span class="o">+</span> <span class="n">1</span>
@@ -47,10 +45,8 @@ FsCheck ではほんの少し手を加えるだけで、テスト対象となる
   <span class="k">member</span> <span onmouseout="hideTip(event, 'fs5', 19)" onmouseover="showTip(event, 'fs5', 19)" class="i">x</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 20)" onmouseover="showTip(event, 'fs9', 20)" class="f">Reset</span>() <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 21)" onmouseover="showTip(event, 'fs4', 21)" class="v">n</span> <span class="o">&lt;-</span> <span class="n">0</span>
   <span class="k">override</span> <span onmouseout="hideTip(event, 'fs5', 22)" onmouseover="showTip(event, 'fs5', 22)" class="i">x</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 23)" onmouseover="showTip(event, 'fs10', 23)" class="f">ToString</span>() <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 24)" onmouseover="showTip(event, 'fs4', 24)" class="v">n</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 25)" onmouseover="showTip(event, 'fs11', 25)" class="f">ToString</span>()
 </code></pre>
-
 <p>このクラスをテストするためのモデルとしては、オブジェクトの内部状態を表すのに役に立ちそうな int 値1つがふさわしいでしょう。
 それを踏まえると、以下のような仕様が作成できます:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 26)" onmouseover="showTip(event, 'fs1', 26)" class="i">FsCheck</span><span class="o">.</span><span class="i">Commands</span>
 
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 27)" onmouseover="showTip(event, 'fs12', 27)" class="i">spec</span> <span class="o">=</span>
@@ -70,24 +66,17 @@ FsCheck ではほんの少し手を加えるだけで、テスト対象となる
       <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">Initial</span>() <span class="o">=</span> (<span class="k">new</span> <span onmouseout="hideTip(event, 'fs3', 36)" onmouseover="showTip(event, 'fs3', 36)" class="i">Counter</span>(),<span class="n">0</span>)
       <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">GenCommand</span> _ <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">elements</span> [<span onmouseout="hideTip(event, 'fs13', 37)" onmouseover="showTip(event, 'fs13', 37)" class="i">inc</span>;<span onmouseout="hideTip(event, 'fs15', 38)" onmouseover="showTip(event, 'fs15', 38)" class="i">dec</span>] }
 </code></pre>
-
 <p>仕様は <code>ISpecification&lt;'typeUnderTest,'modelType&gt;</code> を実装したオブジェクトです。仕様は、初期状態のオブジェクトと、
 そのオブジェクトに対する初期状態のモデルを返さなくてはいけません。また ICommand オブジェクトのジェネレータも返す必要があります。</p>
-
 <p>それぞれの ICommand オブジェクトでは、一般的にはテスト対象のオブジェクトに対する1つのメソッド呼び出しに対応するようにして、
 コマンドを実行することでモデルとオブジェクトに対して起こることを定義します。また、コマンドを実行する前に満たすべき事前条件を
 アサートします。すなわち、もしも前提条件が一致しないのであれば FsCheck はそのコマンドを実行しません。コマンドの実行後は
 一致すべき事後条件もチェックされます。すなわち、事後条件が一致しない場合、FsCheck ではテストが失敗したものと判断されます。</p>
-
 <p>なお反例が表示できるように ToString をオーバーライドしておくとよいでしょう。</p>
-
 <p>仕様を以下のようにチェックできます:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">asProperty</span> <span onmouseout="hideTip(event, 'fs12', 39)" onmouseover="showTip(event, 'fs12', 39)" class="i">spec</span>)
 </code></pre>
-
 <table class="pre"><tr><td><pre><code>No output has been produced.</code></pre></td></tr></table>
-
 <p>FsCheck は「バグ」を発見しただけでなく、バグを発生させる最小のシーケンスも生成したことにも注目してください。</p>
 
 <div class="tip" id="fs1">namespace FsCheck</div>

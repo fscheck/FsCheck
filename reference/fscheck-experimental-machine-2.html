@@ -42,7 +42,6 @@
 <p>Defines the initial state for actual and model object, and allows to define the generator to use
 for the next state, based on the model.</p>
 
-
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -53,10 +52,10 @@ for the next state, based on the model.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '430', 430)" onmouseover="showTip(event, '430', 430)">
+          <code onmouseout="hideTip(event, '439', 439)" onmouseover="showTip(event, '439', 439)">
             new()
           </code>
-          <div class="tip" id="430">
+          <div class="tip" id="439">
             <strong>Signature:</strong> unit -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;<br />
                       </div>
         </td>
@@ -66,6 +65,7 @@ for the next state, based on the model.</p>
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>.ctor</code></p>
         </td>
       </tr>
     </tbody>
@@ -79,10 +79,10 @@ for the next state, based on the model.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '431', 431)" onmouseover="showTip(event, '431', 431)">
+          <code onmouseout="hideTip(event, '440', 440)" onmouseover="showTip(event, '440', 440)">
             Next(arg1)
           </code>
-          <div class="tip" id="431">
+          <div class="tip" id="440">
             <strong>Signature:</strong> &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -92,10 +92,9 @@ for the next state, based on the model.</p>
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a number of possible commands based on the current state of the model. 
+          <p>Generate a number of possible commands based on the current state of the model.
 Preconditions are still checked, so even if a Command is returned, it is not chosen
 if its precondition does not hold.</p>
-
 
 
         </td>
@@ -103,10 +102,10 @@ if its precondition does not hold.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '432', 432)" onmouseover="showTip(event, '432', 432)">
+          <code onmouseout="hideTip(event, '441', 441)" onmouseover="showTip(event, '441', 441)">
             Setup
           </code>
-          <div class="tip" id="432">
+          <div class="tip" id="441">
             <strong>Signature:</strong> Arbitrary&lt;Setup&lt;&#39;Actual,&#39;Model&gt;&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -117,15 +116,16 @@ if its precondition does not hold.</p>
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>get_Setup</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '433', 433)" onmouseover="showTip(event, '433', 433)">
+          <code onmouseout="hideTip(event, '442', 442)" onmouseover="showTip(event, '442', 442)">
             TearDown
           </code>
-          <div class="tip" id="433">
+          <div class="tip" id="442">
             <strong>Signature:</strong> TearDown&lt;&#39;Actual&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -136,6 +136,7 @@ if its precondition does not hold.</p>
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>get_TearDown</code></p>
         </td>
       </tr>
     </tbody>

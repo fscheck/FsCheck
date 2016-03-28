@@ -65,6 +65,7 @@
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>Create</code></p>
         </td>
       </tr>
       <tr>
@@ -83,6 +84,7 @@
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>Create</code></p>
         </td>
       </tr>
       <tr>
@@ -101,25 +103,67 @@
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>Create</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
-            toProperty spec
+            generateCommands spec
           </code>
           <div class="tip" id="19">
+            <strong>Signature:</strong> spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; Gen&lt;seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;&gt;<br />
+                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L71-71" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Create a generator that generates a sequence of Command objects that
+satisfies the given specification.</p>
+
+
+              <p>CompiledName: <code>GenerateCommands</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+            toProperty spec
+          </code>
+          <div class="tip" id="20">
             <strong>Signature:</strong> spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; Property<br />
                           <strong>Type parameters:</strong> 'Actual, 'Model          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L83-83" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L104-104" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Turn a specification into a property.</p>
 
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
+            toPropertyWith spec generator shrinker
+          </code>
+          <div class="tip" id="21">
+            <strong>Signature:</strong> spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; generator:Gen&lt;seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;&gt; -&gt; shrinker:(seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt; -&gt; seq&lt;seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;&gt;) -&gt; Property<br />
+                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L85-85" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Turn a specification into a property, allowing you to specify generator and shrinker.</p>
 
 
         </td>

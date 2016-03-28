@@ -42,7 +42,6 @@
 <p>Defines the initial state for actual and model object, and allows to define the generator to use
 for the next state, based on the model.</p>
 
-
 </div>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
@@ -53,10 +52,10 @@ for the next state, based on the model.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '341', 341)" onmouseover="showTip(event, '341', 341)">
+          <code onmouseout="hideTip(event, '350', 350)" onmouseover="showTip(event, '350', 350)">
             InitialActual
           </code>
-          <div class="tip" id="341">
+          <div class="tip" id="350">
             <strong>Signature:</strong> &#39;Actual<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -69,16 +68,16 @@ for the next state, based on the model.</p>
           <p>Initial state of actual object. Should correspond to initial state of model object.</p>
 
 
-
+              <p>CompiledName: <code>get_InitialActual</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '342', 342)" onmouseover="showTip(event, '342', 342)">
+          <code onmouseout="hideTip(event, '351', 351)" onmouseover="showTip(event, '351', 351)">
             InitialModel
           </code>
-          <div class="tip" id="342">
+          <div class="tip" id="351">
             <strong>Signature:</strong> &#39;Model<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -91,16 +90,16 @@ for the next state, based on the model.</p>
           <p>Initial state of model object. Should correspond to initial state of actual object.</p>
 
 
-
+              <p>CompiledName: <code>get_InitialModel</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '343', 343)" onmouseover="showTip(event, '343', 343)">
+          <code onmouseout="hideTip(event, '352', 352)" onmouseover="showTip(event, '352', 352)">
             Next(arg1)
           </code>
-          <div class="tip" id="343">
+          <div class="tip" id="352">
             <strong>Signature:</strong> &#39;Model -&gt; Gen&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -110,10 +109,9 @@ for the next state, based on the model.</p>
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a number of possible commands based on the current state of the model. 
+          <p>Generate a number of possible commands based on the current state of the model.
 Preconditions are still checked, so even if a Command is returned, it is not chosen
 if its precondition does not hold.</p>
-
 
 
         </td>

@@ -33,7 +33,6 @@
         <div class="span9" id="main">
           
 <h1>FsCheck</h1>
-
 <div class="row">
   <div class="span1"></div>
   <div class="span6">
@@ -46,43 +45,46 @@ PM> Install-Package FsCheck.Xunit</pre>
   </div> 
   <div class="span1"></div>
 </div>
-
-<p>Users have also created integrations with <a href="https://github.com/mausch/Fuchu">Fuchu</a> and 
-<a href="https://github.com/AutoFixture/AutoFixture">AutoFixture</a> that 
+<p>Users have also created integrations with <a href="https://github.com/mausch/Fuchu">Fuchu</a> and
+<a href="https://github.com/AutoFixture/AutoFixture">AutoFixture</a> that
 you can <a href="https://www.nuget.org/packages?q=fscheck">find on NuGet</a>.</p>
-
 <h2>Documentation</h2>
-
 <p>The documentation is also available in <a href="ja/index.html">Japanese</a>.</p>
-
 <ul>
 <li><p><a href="QuickStart.html">QuickStart</a> to get started.</p></li>
-<li><p><a href="Properties.html">Properties</a> descibes FsCheck's language to express tests - 
+<li>
+<p><a href="Properties.html">Properties</a> descibes FsCheck's language to express tests -
 in other frameworks these are often called parametrized tests or
-generative tests. FsCheck calls them properties.</p></li>
-<li><p><a href="TestData.html">Generating test data</a> describes how to guide FsCheck to
+generative tests. FsCheck calls them properties.</p>
+</li>
+<li>
+<p><a href="TestData.html">Generating test data</a> describes how to guide FsCheck to
 generate better data or to stop it from generating data that doesn't make
 sense for what you're trying to test. FsCheck has a flexible language to describe test
-value generators and shrinkers, and apply them to your properties.</p></li>
-<li><p><a href="StatefulTesting.html">Model based testing</a> is a particular testing approach
+value generators and shrinkers, and apply them to your properties.</p>
+</li>
+<li>
+<p><a href="StatefulTesting.html">Model based testing</a> is a particular testing approach
 where FsCheck generates a large number of random operations on an object or data
 structure, and the results of each operation are compared with a (much simpler)
-model.</p></li>
-<li><p><a href="RunningTests.html">Running Tests</a> explains various ways to run FsCheck tests and how to
-integrate with unit testing frameworks.</p></li>
+model.</p>
+</li>
+<li>
+<p><a href="RunningTests.html">Running Tests</a> explains various ways to run FsCheck tests and how to
+integrate with unit testing frameworks.</p>
+</li>
 <li><p><a href="TipsAndTricks.html">Tips and tricks</a></p></li>
-<li><p><a href="reference/index.html">API Reference</a> contains automatically generated documentation for all types, modules
-and functions.</p></li>
+<li>
+<p><a href="reference/index.html">API Reference</a> contains automatically generated documentation for all types, modules
+and functions.</p>
+</li>
 </ul>
-
 <h2>Contributing and copyright</h2>
-
-<p>The project is hosted on <a href="https://github.com/fscheck/FsCheck">GitHub</a> where you can <a href="https://github.com/fscheck/FsCheck/issues">report issues</a>, fork 
-the project and submit pull requests. If you're adding new public API, please also 
+<p>The project is hosted on <a href="https://github.com/fscheck/FsCheck">GitHub</a> where you can <a href="https://github.com/fscheck/FsCheck/issues">report issues</a>, fork
+the project and submit pull requests. If you're adding new public API, please also
 consider adding <a href="https://github.com/fscheck/FsCheck/tree/master/docs/content">samples</a> that can be turned into documentation.</p>
-
-<p>The library is available under the BSD license, which allows modification and 
-redistribution for both commercial and non-commercial purposes. For more information see the 
+<p>The library is available under the BSD license, which allows modification and
+redistribution for both commercial and non-commercial purposes. For more information see the
 <a href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License file</a> in the GitHub repository.</p>
 
 

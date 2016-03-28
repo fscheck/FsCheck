@@ -42,7 +42,6 @@
 <p>An operation describes pre and post conditions and the model for a single operation under test.
 The post-conditions are the invariants that will be checked; when these do not hold the test fails.</p>
 
-
 </div>
   <h3>Constructors</h3>
   <table class="table table-bordered member-list">
@@ -53,10 +52,10 @@ The post-conditions are the invariants that will be checked; when these do not h
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '440', 440)" onmouseover="showTip(event, '440', 440)">
+          <code onmouseout="hideTip(event, '449', 449)" onmouseover="showTip(event, '449', 449)">
             new()
           </code>
-          <div class="tip" id="440">
+          <div class="tip" id="449">
             <strong>Signature:</strong> unit -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
                       </div>
         </td>
@@ -66,6 +65,7 @@ The post-conditions are the invariants that will be checked; when these do not h
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>.ctor</code></p>
         </td>
       </tr>
     </tbody>
@@ -79,10 +79,10 @@ The post-conditions are the invariants that will be checked; when these do not h
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '441', 441)" onmouseover="showTip(event, '441', 441)">
+          <code onmouseout="hideTip(event, '450', 450)" onmouseover="showTip(event, '450', 450)">
             Check(arg1, arg2)
           </code>
-          <div class="tip" id="441">
+          <div class="tip" id="450">
             <strong>Signature:</strong> (&#39;Actual * &#39;Model) -&gt; Property<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -97,16 +97,15 @@ This property typically compares the state of the model with the state of the ob
 execution of the command.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '442', 442)" onmouseover="showTip(event, '442', 442)">
+          <code onmouseout="hideTip(event, '451', 451)" onmouseover="showTip(event, '451', 451)">
             Pre(arg1)
           </code>
-          <div class="tip" id="442">
+          <div class="tip" id="451">
             <strong>Signature:</strong> &#39;Model -&gt; bool<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -120,16 +119,15 @@ execution of the command.</p>
 but the command is not executed.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '443', 443)" onmouseover="showTip(event, '443', 443)">
+          <code onmouseout="hideTip(event, '452', 452)" onmouseover="showTip(event, '452', 452)">
             Run(arg1)
           </code>
-          <div class="tip" id="443">
+          <div class="tip" id="452">
             <strong>Signature:</strong> &#39;Model -&gt; &#39;Model<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -140,7 +138,6 @@ but the command is not executed.</p>
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Executes the command on the model of the object.</p>
-
 
 
         </td>

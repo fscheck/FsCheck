@@ -33,82 +33,68 @@
         <div class="span9" id="main">
           
 <h1>Running tests</h1>
-
 <p>This section describes the various ways in which you can run FsCheck tests:</p>
-
 <ul>
-<li><p>FsCheck has a built-in test runner that is easy to invoke from F# Interactive, commandline program or any test framework. 
-It writes the result of tests to standard output, and you can configure the FsCheck runner to throw an exception on test failure.</p></li>
-<li><p>FsCheck.Xunit integrates FsCheck with xUnit.NET to allow you to specify properties in a terse way. Tests written
-this way look like native xUnit.NET tests, except they can take arguments.</p></li>
-<li><p>FsCheck.NUnit integrates FsCheck with NUnit to allow you to specify properties in a terse way. Tests written
-this way look like native NUnit tests, except they can take arguments.</p></li>
-<li><p>FsCheck allows you to register an IRunner implementation that it calls on each outcome and each individual test it runs. This allows
-a tighter integration with a specific test framework, and offers more control over printing of results.</p></li>
+<li>
+<p>FsCheck has a built-in test runner that is easy to invoke from F# Interactive, commandline program or any test framework.
+It writes the result of tests to standard output, and you can configure the FsCheck runner to throw an exception on test failure.</p>
+</li>
+<li>
+<p>FsCheck.Xunit integrates FsCheck with xUnit.NET to allow you to specify properties in a terse way. Tests written
+this way look like native xUnit.NET tests, except they can take arguments.</p>
+</li>
+<li>
+<p>FsCheck.NUnit integrates FsCheck with NUnit to allow you to specify properties in a terse way. Tests written
+this way look like native NUnit tests, except they can take arguments.</p>
+</li>
+<li>
+<p>FsCheck allows you to register an IRunner implementation that it calls on each outcome and each individual test it runs. This allows
+a tighter integration with a specific test framework, and offers more control over printing of results.</p>
+</li>
 </ul>
-
 <h2>Using the built-in test runner</h2>
-
 <h3>From an fsx file or a command line runner</h3>
-
-<p>This method should by now be familiar to you if you've read the previous sections in this guide. Simply write your property as a 
+<p>This method should by now be familiar to you if you've read the previous sections in this guide. Simply write your property as a
 function, and invoke one of the methods on the <code>Check</code> type.</p>
-
 <p>There are basically two main variants of methods on <code>Check</code>: <code>Check.One</code> and <code>Check.All</code>.</p>
-
 <p><code>Check.One</code> runs the tests for a single property. It takes as argument an instance of the <code>Config</code> type, which allows you to configure
 many aspects of how the FsCheck test runner works, among others the size of the test data and the random seed used (so you can reproduce
-a run). Most of the methods on <code>Check</code> are a short-hand for running a test with a particular configuration. For example, <code>Check.Quick</code> 
+a run). Most of the methods on <code>Check</code> are a short-hand for running a test with a particular configuration. For example, <code>Check.Quick</code>
 is equivalent to <code>Check.One(Config.Quick, &lt;property&gt;)</code>.</p>
-
 <p>Take note of <code>Config.Verbose</code> and <code>Check.Verbose</code>. These will print the arguments for each test, and are useful for example if
 your test loops infinitely on some inputs.</p>
-
 <p>Also take note of <code>Check.QuickThrowOnFailure</code> and <code>Check.VerboseThrowOnFailure</code>. These are intended to be used from unit tests executed
 through another test framework's unit tests. They'll call the FsCheck runner directly and configure it such that is throws on failure;
-in all frameworks I'm aware of this signals that the test has failed and so is an easy way to integrate FsCheck tests with unit tests 
+in all frameworks I'm aware of this signals that the test has failed and so is an easy way to integrate FsCheck tests with unit tests
 you may already have.</p>
-
 <h3>Testing grouped properties with Check.All</h3>
-
 <p>Usually, you'll write more than one property to test. FsCheck allows you to group together properties as static members of a class:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">ListProperties</span> <span class="o">=</span>
   <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="f">``reverse of reverse is original``</span> (<span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs7', 7)" onmouseover="showTip(event, 'fs7', 7)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 8)" onmouseover="showTip(event, 'fs8', 8)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 9)" onmouseover="showTip(event, 'fs9', 9)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs8', 10)" onmouseover="showTip(event, 'fs8', 10)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 11)" onmouseover="showTip(event, 'fs9', 11)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs5', 12)" onmouseover="showTip(event, 'fs5', 12)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 13)" onmouseover="showTip(event, 'fs5', 13)" class="i">xs</span>
   <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="f">``reverse is original``</span> (<span onmouseout="hideTip(event, 'fs5', 15)" onmouseover="showTip(event, 'fs5', 15)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 16)" onmouseover="showTip(event, 'fs6', 16)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs7', 17)" onmouseover="showTip(event, 'fs7', 17)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 18)" onmouseover="showTip(event, 'fs8', 18)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 19)" onmouseover="showTip(event, 'fs9', 19)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs5', 20)" onmouseover="showTip(event, 'fs5', 20)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 21)" onmouseover="showTip(event, 'fs5', 21)" class="i">xs</span>
 </code></pre>
-
 <p>These can be checked at once using:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">QuickAll</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 22)" onmouseover="showTip(event, 'fs3', 22)" class="i">ListProperties</span><span class="o">&gt;</span>()
 </code></pre>
-
 <p>FsCheck now also prints the name of each test:</p>
-
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 4 tests (1 shrink) (StdGen (1627562341,296095338)):
+ListProperties.reverse is original-Falsifiable, after 8 tests (3 shrinks) (StdGen (1085450245,296136380)):
 Original:
-[-2; 1; 0]
+[-1; 2; -2]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
-
-<p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module, 
-you can also use Check.QuickAll to test all the top level functions in a certain module. 
+<p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
+you can also use Check.QuickAll to test all the top level functions in a certain module.
 However, the type of a module is not directly accessible via F#, so you can use the following trick:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">QuickAll</span> <span onmouseout="hideTip(event, 'fs11', 23)" onmouseover="showTip(event, 'fs11', 23)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 24)" onmouseover="showTip(event, 'fs3', 24)" class="i">ListProperties</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span>
 </code></pre>
-
 <p>Notice also the counterpart of <code>Check.Verbose</code>: <code>Check.VerboseAll</code>.</p>
-
 <h3>Running tests using only modules</h3>
-
-<p>Arbitrary instances are given as static members of classes, and properties can be grouped together 
-as static members of classes. Top level let functions are compiled as static member of their 
-enclosing module (which is compiled as a class), and so you can simply define your properties and generators as 
+<p>Arbitrary instances are given as static members of classes, and properties can be grouped together
+as static members of classes. Top level let functions are compiled as static member of their
+enclosing module (which is compiled as a class), and so you can simply define your properties and generators as
 top level let-bound functions, and then register all generators and and all properties at once using the following trick:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="f">myprop</span> (<span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="i">i</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs7', 27)" onmouseover="showTip(event, 'fs7', 27)" class="t">int</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs13', 28)" onmouseover="showTip(event, 'fs13', 28)" class="i">i</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 29)" onmouseover="showTip(event, 'fs14', 29)" class="i">mygen</span> <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">Default</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs15', 30)" onmouseover="showTip(event, 'fs15', 30)" class="i">Int32</span>() <span class="o">|&gt;</span> <span class="i">Arb</span><span class="o">.</span><span class="i">mapFilter</span> (<span class="k">fun</span> <span class="i">i</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs16', 31)" onmouseover="showTip(event, 'fs16', 31)" class="i">Math</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="i">Abs</span> <span class="i">i</span>) (<span class="k">fun</span> <span class="i">i</span> <span class="k">-&gt;</span> <span class="i">i</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span>)
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">helper</span> <span class="o">=</span> <span class="s">&quot;a string&quot;</span>
@@ -118,47 +104,37 @@ top level let-bound functions, and then register all generators and and all prop
 <span class="i">Arb</span><span class="o">.</span><span class="i">registerByType</span> (<span onmouseout="hideTip(event, 'fs11', 36)" onmouseover="showTip(event, 'fs11', 36)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs20', 37)" onmouseover="showTip(event, 'fs20', 37)" class="i">Marker</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">QuickAll</span> (<span onmouseout="hideTip(event, 'fs11', 38)" onmouseover="showTip(event, 'fs11', 38)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs20', 39)" onmouseover="showTip(event, 'fs20', 39)" class="i">Marker</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span>)
 </code></pre>
-
 <table class="pre"><tr><td><pre><code>--- Checking FSI_0124 ---
 FSI_0124.myprop-Ok, passed 100 tests.
 FSI_0124.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
-
-<p>The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way 
+<p>The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way
 to get to a module's Type directly.</p>
-
 <p>FsCheck determines the intent of the function based on its return type:</p>
-
 <ul>
-<li>Properties: public functions that return unit, bool, Property or function of any arguments to those types 
-or Lazy value of any of those types. So <code>myprop</code> is the only property that is run; <code>helper'</code> also returns bool but is private.</li>
+<li>
+Properties: public functions that return unit, bool, Property or function of any arguments to those types 
+or Lazy value of any of those types. So <code>myprop</code> is the only property that is run; <code>helper'</code> also returns bool but is private.
+</li>
 <li>Arbitrary instances: return Arbitrary<_></li>
 </ul>
-
-<p>All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will 
+<p>All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will
 do something with, but do not want them checked or registered, just make them private. FsCheck will ignore those functions.</p>
-
 <h2>Using FsCheck.Xunit</h2>
-
 <p>To use the integration install the FsCheck.Xunit nuget package. Then:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 40)" onmouseover="showTip(event, 'fs1', 40)" class="i">FsCheck</span>
 <span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 41)" onmouseover="showTip(event, 'fs1', 41)" class="i">FsCheck</span><span class="o">.</span><span class="i">Xunit</span>
 </code></pre>
-
-<p>You can now attribute tests with <code>PropertyAttribute</code> (a subclass of xUnit.NET's <code>FactAttribute</code>). Unlike xUnit.NET's facts, these 
+<p>You can now attribute tests with <code>PropertyAttribute</code> (a subclass of xUnit.NET's <code>FactAttribute</code>). Unlike xUnit.NET's facts, these
 methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
 type and the currently registered generators. Also, the <code>PropertyAttribute</code> allows you to customize how FsCheck will run for that
 method, similar to how you would use the <code>Config</code> type otherwise. For example:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp">[&lt;<span class="i">Property</span>&gt;]
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 42)" onmouseover="showTip(event, 'fs21', 42)" class="f">``abs(v) % k equals abs(v % k)``</span> <span onmouseout="hideTip(event, 'fs22', 43)" onmouseover="showTip(event, 'fs22', 43)" class="i">v</span> (<span class="i">NonZeroInt</span> <span onmouseout="hideTip(event, 'fs23', 44)" onmouseover="showTip(event, 'fs23', 44)" class="i">k</span>) <span class="o">=</span> 
     (<span onmouseout="hideTip(event, 'fs24', 45)" onmouseover="showTip(event, 'fs24', 45)" class="i">abs</span> <span onmouseout="hideTip(event, 'fs22', 46)" onmouseover="showTip(event, 'fs22', 46)" class="i">v</span>) <span class="o">%</span> <span class="i">k</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 47)" onmouseover="showTip(event, 'fs24', 47)" class="i">abs</span>(<span onmouseout="hideTip(event, 'fs22', 48)" onmouseover="showTip(event, 'fs22', 48)" class="i">v</span> <span class="o">%</span> <span class="i">k</span>)
 </code></pre>
-
 <p>Likely on of the most useful configuration options of <code>PropertyAttribute</code> is the ability to register or override an <code>Arbitrary</code>
-instance just for that test method. You can also use the <code>ArbitraryAttribute</code> to register or override <code>Abritrary</code> instances on 
+instance just for that test method. You can also use the <code>ArbitraryAttribute</code> to register or override <code>Abritrary</code> instances on
 a per class or per module basis. For example:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs25', 49)" onmouseover="showTip(event, 'fs25', 49)" class="t">Positive</span> <span class="o">=</span>
     <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs26', 50)" onmouseover="showTip(event, 'fs26', 50)" class="f">Double</span>() <span class="o">=</span>
         <span class="i">Arb</span><span class="o">.</span><span class="i">Default</span><span class="o">.</span><span class="i">Float</span>()
@@ -180,78 +156,60 @@ a per class or per module basis. For example:</p>
     <span class="k">let</span> <span onmouseout="hideTip(event, 'fs32', 63)" onmouseover="showTip(event, 'fs32', 63)" class="f">``should use Arb instance on method``</span>(<span onmouseout="hideTip(event, 'fs30', 64)" onmouseover="showTip(event, 'fs30', 64)" class="i">underTest</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs31', 65)" onmouseover="showTip(event, 'fs31', 65)" class="t">float</span>) <span class="o">=</span>
         <span onmouseout="hideTip(event, 'fs30', 66)" onmouseover="showTip(event, 'fs30', 66)" class="i">underTest</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0.0</span>
 </code></pre>
-
 <h3>Using FsCheck.Xunit with TestDriven.Net</h3>
-
 <p><a href="http://testdriven.net">TestDriven.Net</a> is a Visual Studio add-in that enables you to easily run a variety of tests
 while working with code in the IDE. Out of the box, TestDriven.Net can run tests written with FsCheck.Xunit.</p>
-
 <p>However, the user experience may, by default, be slightly less than optimal. TestDriven.Net outputs the state of the
 test run in an unobtrusive manner, but if test failures occur, it outputs the result of the failing tests to Visual
 Studio's Output window. If you have Visual Studio configured in such a way that the Output window only appears if there
 actually <em>is</em> any output, you may be used to interpret the appearance of the Output window as a test failure.</p>
-
 <p>Since the Output window also appears if anything is written to the console in general, this can produce false
 positives. If you're accustomed to interpret the appearance of the Output window as a sign of a test failure, it can be
 a little jarring that FsCheck by default always reports a bit of output on success.</p>
-
 <p>If, for that, or other reasons, you want to disable output on success, you can do so:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp">[&lt;<span class="i">Property</span>(<span class="i">QuietOnSuccess</span> <span class="o">=</span> <span class="k">true</span>)&gt;]
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs33', 67)" onmouseover="showTip(event, 'fs33', 67)" class="f">``abs(v) % k equals abs(v % k)``</span> <span onmouseout="hideTip(event, 'fs22', 68)" onmouseover="showTip(event, 'fs22', 68)" class="i">v</span> (<span class="i">NonZeroInt</span> <span onmouseout="hideTip(event, 'fs23', 69)" onmouseover="showTip(event, 'fs23', 69)" class="i">k</span>) <span class="o">=</span> 
     (<span onmouseout="hideTip(event, 'fs24', 70)" onmouseover="showTip(event, 'fs24', 70)" class="i">abs</span> <span onmouseout="hideTip(event, 'fs22', 71)" onmouseover="showTip(event, 'fs22', 71)" class="i">v</span>) <span class="o">%</span> <span class="i">k</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 72)" onmouseover="showTip(event, 'fs24', 72)" class="i">abs</span>(<span onmouseout="hideTip(event, 'fs22', 73)" onmouseover="showTip(event, 'fs22', 73)" class="i">v</span> <span class="o">%</span> <span class="i">k</span>)
 </code></pre>
-
 <p>Setting <code>QuietOnSuccess = true</code> only suppresses the output in case of success; in the case of test failures, output
 appears as normal.</p>
-
 <h2>Using FsCheck.NUnit</h2>
-
 <p>To use the integration install the FsCheck.NUnit nuget package.
 Make sure your project(s) has target .NET <code>4.5</code> or greater.
 Then open FsCheck.NUnit.</p>
-
-<p>You can now attribute tests with <code>PropertyAttribute</code> (a subclass of NUnit's <code>TestAttribute</code>). Unlike NUnit tests, these 
+<p>You can now attribute tests with <code>PropertyAttribute</code> (a subclass of NUnit's <code>TestAttribute</code>). Unlike NUnit tests, these
 methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
 type and the currently registered generators. Also, the <code>PropertyAttribute</code> allows you to customize how FsCheck will run for that
 method, similar to how you would use the <code>Config</code> type otherwise.</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 74)" onmouseover="showTip(event, 'fs1', 74)" class="i">FsCheck</span><span class="o">.</span><span class="i">NUnit</span>
 
 [&lt;<span class="i">Property</span>&gt;]
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs34', 75)" onmouseover="showTip(event, 'fs34', 75)" class="f">``Reverse of reverse of a list is the original list ``</span>(<span onmouseout="hideTip(event, 'fs5', 76)" onmouseover="showTip(event, 'fs5', 76)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 77)" onmouseover="showTip(event, 'fs6', 77)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs7', 78)" onmouseover="showTip(event, 'fs7', 78)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span>
   <span onmouseout="hideTip(event, 'fs8', 79)" onmouseover="showTip(event, 'fs8', 79)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 80)" onmouseover="showTip(event, 'fs9', 80)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs8', 81)" onmouseover="showTip(event, 'fs8', 81)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 82)" onmouseover="showTip(event, 'fs9', 82)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs5', 83)" onmouseover="showTip(event, 'fs5', 83)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 84)" onmouseover="showTip(event, 'fs5', 84)" class="i">xs</span>
 </code></pre>
-
 <p>Note: the NUnit integration doesn't have the ability, like FsCheck.Xunit, to override <code>Arbitrary</code> instances on a per class
 or per module basis. Otherwise, it is very similar.</p>
-
 <h4>Using <code>FsCheck.NUnit</code> installed by Paket</h4>
-
 <p>Note that <a href="https://fsprojects.github.io/Paket/faq.html#Does-Paket-run-install-ps1-scripts">Paket doesn't run any powershell scripts</a>.
 So if you want to use <code>FsCheck.NUnit</code> that you installed via Paket, you have to perform this step manually.
 Add reference to the following assemblies in the apropriate project(s):</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">packages</span><span class="o">/</span><span class="i">NUnit</span><span class="o">.</span><span class="i">Runners</span><span class="o">/</span><span class="i">tools</span><span class="o">/</span><span class="i">lib</span><span class="o">/</span><span class="i">nunit</span><span class="o">.</span><span class="i">core</span><span class="o">.</span><span class="i">dll</span>
 <span class="i">packages</span><span class="o">/</span><span class="i">NUnit</span><span class="o">.</span><span class="i">Runners</span><span class="o">/</span><span class="i">tools</span><span class="o">/</span><span class="i">lib</span><span class="o">/</span><span class="i">nunit</span><span class="o">.</span><span class="i">core</span><span class="o">.</span><span class="i">interfaces</span><span class="o">.</span><span class="i">dll</span>
 </code></pre>
-
 <h2>Implementing IRunner</h2>
-
 <h3>Example 1: to integrate FsCheck with other unit testing frameworks</h3>
-
 <p>The <code>Config</code> type that can be passed to the <code>Check.One</code> or <code>Check.All</code> methods takes an <code>IRunner</code> as argument. This i
 nterface has the following methods:</p>
-
 <ul>
 <li><code>OnStartFixture</code> is called when FsCheck is testing all the methods on a type, before starting any tests.</li>
 <li><code>OnArguments</code> is called after every test, passing the implementation the test number, the arguments and the every function.</li>
 <li><code>OnShrink</code> is called at every succesful shrink.</li>
-<li><code>OnFinished</code> is called with the name of the test and the outcome of the overall test run. This is used in the example below 
+<li>
+<code>OnFinished</code> is called with the name of the test and the outcome of the overall test run. This is used in the example below 
 to call Assert statements from a particular unit testing framework - allowing FsCheck to integrate easily. You can leverage
-another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.</li>
+another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.
+</li>
 </ul>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="i">Xunit</span>
 
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 85)" onmouseover="showTip(event, 'fs35', 85)" class="i">xUnitRunner</span> <span class="o">=</span>
@@ -267,15 +225,12 @@ another unit testing framework's ability to setup and tear down tests, have a ni
    
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 86)" onmouseover="showTip(event, 'fs36', 86)" class="i">withxUnitConfig</span> <span class="o">=</span> { <span class="i">Config</span><span class="o">.</span><span class="i">Default</span> <span class="k">with</span> <span class="i">Runner</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs35', 87)" onmouseover="showTip(event, 'fs35', 87)" class="i">xUnitRunner</span> }
 </code></pre>
-
 <h3>Example 2: to customize printing of generated arguments</h3>
-
-<p>By default, FsCheck prints generated arguments using <code>sprintf "%A"</code>, or structured formatting. This usually does what you expect, 
-i.e. for primitive types the value, for objects the ToString override and so on. If it does not (A motivating case is 
-testing with COM objects - overriding ToString is not an option and structured formatting does not do anything useful with it), 
-you can use the <code>label</code> combinator to solve this on a per property basis, but a more structured solution can be achieved by 
+<p>By default, FsCheck prints generated arguments using <code>sprintf "%A"</code>, or structured formatting. This usually does what you expect,
+i.e. for primitive types the value, for objects the ToString override and so on. If it does not (A motivating case is
+testing with COM objects - overriding ToString is not an option and structured formatting does not do anything useful with it),
+you can use the <code>label</code> combinator to solve this on a per property basis, but a more structured solution can be achieved by
 implementing <code>IRunner</code>. For example:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs37', 88)" onmouseover="showTip(event, 'fs37', 88)" class="f">formatterRunner</span> <span onmouseout="hideTip(event, 'fs38', 89)" onmouseover="showTip(event, 'fs38', 89)" class="i">formatter</span> <span class="o">=</span>
   { <span class="k">new</span> <span class="i">IRunner</span> <span class="k">with</span>
       <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">OnStartFixture</span> <span class="i">t</span> <span class="o">=</span>
@@ -292,28 +247,21 @@ implementing <code>IRunner</code>. For example:</p>
           <span onmouseout="hideTip(event, 'fs39', 105)" onmouseover="showTip(event, 'fs39', 105)" class="i">printf</span> <span class="s">&quot;%s&quot;</span> (<span class="i">Runner</span><span class="o">.</span><span class="i">onFinishedToString</span> <span class="i">name</span> <span class="i">testResult&#39;</span>) 
   }
 </code></pre>
-
 <h3>Using FsCheck.NUnit with TestDriven.Net</h3>
-
 <p><a href="http://testdriven.net">TestDriven.Net</a> is a Visual Studio add-in that enables you to easily run a variety of tests
 while working with code in the IDE. Out of the box, TestDriven.Net can run tests written with FsCheck.NUnit.</p>
-
 <p>However, the user experience may, by default, be slightly less than optimal. TestDriven.Net outputs the state of the
 test run in an unobtrusive manner, but if test failures occur, it outputs the result of the failing tests to Visual
 Studio's Output window. If you have Visual Studio configured in such a way that the Output window only appears if there
 actually <em>is</em> any output, you may be used to interpret the appearance of the Output window as a test failure.</p>
-
 <p>Since the Output window also appears if anything is written to the console in general, this can produce false
 positives. If you're accustomed to interpret the appearance of the Output window as a sign of a test failure, it can be
 a little jarring that FsCheck by default always reports a bit of output on success.</p>
-
 <p>If, for that, or other reasons, you want to disable output on success, you can do so:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp">[&lt;<span class="i">Property</span>(<span class="i">QuietOnSuccess</span> <span class="o">=</span> <span class="k">true</span>)&gt;]
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs41', 106)" onmouseover="showTip(event, 'fs41', 106)" class="f">revUnit</span> (<span onmouseout="hideTip(event, 'fs42', 107)" onmouseover="showTip(event, 'fs42', 107)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs43', 108)" onmouseover="showTip(event, 'fs43', 108)" class="t">char</span>) <span class="o">=</span> 
     <span onmouseout="hideTip(event, 'fs8', 109)" onmouseover="showTip(event, 'fs8', 109)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 110)" onmouseover="showTip(event, 'fs9', 110)" class="f">rev</span> [<span onmouseout="hideTip(event, 'fs42', 111)" onmouseover="showTip(event, 'fs42', 111)" class="i">x</span>] <span class="o">=</span> [<span onmouseout="hideTip(event, 'fs42', 112)" onmouseover="showTip(event, 'fs42', 112)" class="i">x</span>]
 </code></pre>
-
 <p>Setting <code>QuietOnSuccess = true</code> only suppresses the output in case of success; in the case of test failures, output
 appears as normal.</p>
 

@@ -33,45 +33,36 @@
         <div class="span9" id="main">
           
 <h1>Tips and Tricks</h1>
-
 <h2>Properties of functions</h2>
-
-<p>Since FsCheck can generate random function values, it can check properties of 
+<p>Since FsCheck can generate random function values, it can check properties of
 functions. For example, we can check associativity of function composition as follows:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">associativity</span> (<span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="t">int</span>) (<span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="f">f</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 7)" onmouseover="showTip(event, 'fs5', 7)" class="t">int</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs7', 8)" onmouseover="showTip(event, 'fs7', 8)" class="t">float</span>,<span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="f">g</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="t">float</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs9', 11)" onmouseover="showTip(event, 'fs9', 11)" class="t">char</span>,<span onmouseout="hideTip(event, 'fs10', 12)" onmouseover="showTip(event, 'fs10', 12)" class="f">h</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="t">char</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs5', 14)" onmouseover="showTip(event, 'fs5', 14)" class="t">int</span>) <span class="o">=</span> ((<span onmouseout="hideTip(event, 'fs6', 15)" onmouseover="showTip(event, 'fs6', 15)" class="f">f</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs8', 16)" onmouseover="showTip(event, 'fs8', 16)" class="f">g</span>) <span class="o">&gt;</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs10', 17)" onmouseover="showTip(event, 'fs10', 17)" class="f">h</span>) <span onmouseout="hideTip(event, 'fs4', 18)" onmouseover="showTip(event, 'fs4', 18)" class="i">x</span> <span class="o">=</span> (<span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="f">f</span> <span class="o">&gt;</span><span class="o">&gt;</span> (<span onmouseout="hideTip(event, 'fs8', 20)" onmouseover="showTip(event, 'fs8', 20)" class="f">g</span> <span class="o">&gt;</span><span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs10', 21)" onmouseover="showTip(event, 'fs10', 21)" class="f">h</span>)) <span onmouseout="hideTip(event, 'fs4', 22)" onmouseover="showTip(event, 'fs4', 22)" class="i">x</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs3', 23)" onmouseover="showTip(event, 'fs3', 23)" class="i">associativity</span>
 </code></pre>
-
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
-
 <p>We can generate functions Tree -&gt; <em>anything</em>. If a counter-example is found, function values will be displayed as <func>.</p>
-
-<p>However, FsCheck can show you the generated function in more detail, with the Function type. 
+<p>However, FsCheck can show you the generated function in more detail, with the Function type.
 Then FsCheck can even shrink your function. For example:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 24)" onmouseover="showTip(event, 'fs11', 24)" class="f">mapRec</span> (<span class="i">Fun</span> <span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="i">f</span>) (<span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="i">l</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs14', 27)" onmouseover="showTip(event, 'fs14', 27)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs5', 28)" onmouseover="showTip(event, 'fs5', 28)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span>
   <span onmouseout="hideTip(event, 'fs15', 29)" onmouseover="showTip(event, 'fs15', 29)" class="i">not</span> <span onmouseout="hideTip(event, 'fs13', 30)" onmouseover="showTip(event, 'fs13', 30)" class="i">l</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 31)" onmouseover="showTip(event, 'fs16', 31)" class="i">IsEmpty</span> <span class="o">==&gt;</span>
       <span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">map</span> <span class="i">f</span> <span onmouseout="hideTip(event, 'fs13', 34)" onmouseover="showTip(event, 'fs13', 34)" class="i">l</span> <span class="o">=</span> (<span class="c">(*f &lt;|*)</span> <span onmouseout="hideTip(event, 'fs17', 35)" onmouseover="showTip(event, 'fs17', 35)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs19', 36)" onmouseover="showTip(event, 'fs19', 36)" class="i">head</span> <span onmouseout="hideTip(event, 'fs13', 37)" onmouseover="showTip(event, 'fs13', 37)" class="i">l</span>) <span class="o">::</span> <span onmouseout="hideTip(event, 'fs17', 38)" onmouseover="showTip(event, 'fs17', 38)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 39)" onmouseover="showTip(event, 'fs18', 39)" class="i">map</span> <span class="i">f</span> (<span onmouseout="hideTip(event, 'fs17', 40)" onmouseover="showTip(event, 'fs17', 40)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 41)" onmouseover="showTip(event, 'fs20', 41)" class="i">tail</span> <span onmouseout="hideTip(event, 'fs13', 42)" onmouseover="showTip(event, 'fs13', 42)" class="i">l</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 43)" onmouseover="showTip(event, 'fs11', 43)" class="i">mapRec</span>
 </code></pre>
-
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1676575644,296095338)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (6 shrinks) (StdGen (1127236134,296136380)):
 Original:
-{ 0-&gt;1 }
+{ 0-&gt;4; 3-&gt;4; 4-&gt;4; 5-&gt;4 }
+[5; 3; 4]
+Shrunk:
+{ 0-&gt;4; 3-&gt;0; 4-&gt;0; 5-&gt;0 }
 [0]</code></pre></td></tr></table>
-
-<p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> - 
-records a map of all the arguments it was called with, and the result it produced. 
-In your properties, you can extract the actual function by pattern matching as in the example. 
+<p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
+records a map of all the arguments it was called with, and the result it produced.
+In your properties, you can extract the actual function by pattern matching as in the example.
 <code>Function</code> is used to print the function, and also to shrink it.</p>
-
 <h2>Use pattern matching instead of forAll to use custom generators</h2>
-
 <p>To define a generator that generates a subset of the normal range of values for an existing type,
 say all the even ints, it makes properties more readable if you define a single-case union
 case, and register a generator for the new type:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs21', 44)" onmouseover="showTip(event, 'fs21', 44)" class="t">EvenInt</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs21', 45)" onmouseover="showTip(event, 'fs21', 45)" class="p">EvenInt</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs5', 46)" onmouseover="showTip(event, 'fs5', 46)" class="t">int</span> <span class="k">with</span>
   <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs22', 47)" onmouseover="showTip(event, 'fs22', 47)" class="f">op_Explicit</span>(<span onmouseout="hideTip(event, 'fs21', 48)" onmouseover="showTip(event, 'fs21', 48)" class="p">EvenInt</span> <span onmouseout="hideTip(event, 'fs23', 49)" onmouseover="showTip(event, 'fs23', 49)" class="i">i</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs23', 50)" onmouseover="showTip(event, 'fs23', 50)" class="i">i</span>
 
@@ -86,30 +77,22 @@ case, and register a generator for the new type:</p>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs26', 57)" onmouseover="showTip(event, 'fs26', 57)" class="f">``generated even ints should be even``</span> (<span onmouseout="hideTip(event, 'fs21', 58)" onmouseover="showTip(event, 'fs21', 58)" class="p">EvenInt</span> <span onmouseout="hideTip(event, 'fs23', 59)" onmouseover="showTip(event, 'fs23', 59)" class="i">i</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs23', 60)" onmouseover="showTip(event, 'fs23', 60)" class="i">i</span> <span class="o">%</span> <span class="n">2</span> <span class="o">=</span> <span class="n">0</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs26', 61)" onmouseover="showTip(event, 'fs26', 61)" class="i">``generated even ints should be even``</span>
 </code></pre>
-
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
-
 <p>It's now easy to define custom shrink functions as well.</p>
-
 <p>FsCheck uses this pattern frequently, e.g. <code>NonNegativeInt</code>, <code>PositiveInt</code>, <code>StringWithoutNullChars</code> etc. See the
 default Arbitrary instances on the <code>Arb.Default</code> type.</p>
-
 <p>Also, for these kinds of generators, the <code>Arb.filter</code>, <code>Arb.convert</code> and <code>Arb.mapFilter</code> functions will come in handy.</p>
-
 <h2>An equality comparison that prints the left and right sides of the equality</h2>
-
-<p>Properties commonly check for equality. If a test case fails, FsCheck prints the counterexample, but 
-sometimes it is useful to print the left and right side of the comparison, especially if you 
-do some complicated calculations with the generated arguments first. To make this easier, you can 
+<p>Properties commonly check for equality. If a test case fails, FsCheck prints the counterexample, but
+sometimes it is useful to print the left and right side of the comparison, especially if you
+do some complicated calculations with the generated arguments first. To make this easier, you can
 define your own labelling equality combinator:</p>
-
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> (<span class="o">.</span><span class="o">=.</span>) <span onmouseout="hideTip(event, 'fs27', 62)" onmouseover="showTip(event, 'fs27', 62)" class="i">left</span> <span onmouseout="hideTip(event, 'fs28', 63)" onmouseover="showTip(event, 'fs28', 63)" class="i">right</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs27', 64)" onmouseover="showTip(event, 'fs27', 64)" class="i">left</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs28', 65)" onmouseover="showTip(event, 'fs28', 65)" class="i">right</span> <span class="o">|@</span> <span onmouseout="hideTip(event, 'fs29', 66)" onmouseover="showTip(event, 'fs29', 66)" class="f">sprintf</span> <span class="s">&quot;</span><span class="pf">%A</span><span class="s"> = </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs27', 67)" onmouseover="showTip(event, 'fs27', 67)" class="i">left</span> <span onmouseout="hideTip(event, 'fs28', 68)" onmouseover="showTip(event, 'fs28', 68)" class="i">right</span>
 
 <span class="k">let</span> <span class="i">testCompare</span> (<span onmouseout="hideTip(event, 'fs23', 69)" onmouseover="showTip(event, 'fs23', 69)" class="i">i</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 70)" onmouseover="showTip(event, 'fs5', 70)" class="t">int</span>) (<span onmouseout="hideTip(event, 'fs30', 71)" onmouseover="showTip(event, 'fs30', 71)" class="i">j</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 72)" onmouseover="showTip(event, 'fs5', 72)" class="t">int</span>) <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs23', 73)" onmouseover="showTip(event, 'fs23', 73)" class="i">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs30', 74)" onmouseover="showTip(event, 'fs30', 74)" class="i">j</span><span class="o">-</span><span class="n">1</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
-
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1678026686,296095338)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1128748634,296136380)):
 Label of failing property: 3 = -1
 Original:
 1
@@ -117,23 +100,26 @@ Original:
 Shrunk:
 1
 0</code></pre></td></tr></table>
-
 <p>Of course, you can do this for any operator or function that you often use.</p>
-
 <h2>Some ways to run FsCheck tests</h2>
-
 <ul>
-<li>By adding properties and generators to an fsx file in your project. It's easy to execute, just press 
+<li>
+By adding properties and generators to an fsx file in your project. It's easy to execute, just press 
 ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls
 that are built in your solution; Versions of F# Interactive earlier than 3.1.2 will lock those for the remainder of the session,
 and you won't be able to build unitl you quit the session. One solution is to include the source files
-instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug though.</li>
-<li>By making a separate console application. Easy to debug, and no annoying locks on assemblies. Your best option 
-if you use only FsCheck for testing and your properties span multiple assemblies.</li>
-<li>By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach 
+instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug though.
+</li>
+<li>
+By making a separate console application. Easy to debug, and no annoying locks on assemblies. Your best option 
+if you use only FsCheck for testing and your properties span multiple assemblies.
+</li>
+<li>
+By using another unit testing framework. Useful if you have a mixed FsCheck/unit testing approach 
 (some things are easier to check using unit tests, and vice versa), and you like a graphical runner.
 Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. Also have a look
-at some of the existing integrations with test runners like Xunit.NET, NUnit, Fuchu.</li>
+at some of the existing integrations with test runners like Xunit.NET, NUnit, Fuchu.
+</li>
 </ul>
 
 <div class="tip" id="fs1">namespace FsCheck</div>

@@ -49,10 +49,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '447', 447)" onmouseover="showTip(event, '447', 447)">
+          <code onmouseout="hideTip(event, '456', 456)" onmouseover="showTip(event, '456', 456)">
             new()
           </code>
-          <div class="tip" id="447">
+          <div class="tip" id="456">
             <strong>Signature:</strong> unit -&gt; Setup&lt;&#39;Actual,&#39;Model&gt;<br />
                       </div>
         </td>
@@ -62,6 +62,7 @@
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+              <p>CompiledName: <code>.ctor</code></p>
         </td>
       </tr>
     </tbody>
@@ -75,10 +76,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '448', 448)" onmouseover="showTip(event, '448', 448)">
+          <code onmouseout="hideTip(event, '457', 457)" onmouseover="showTip(event, '457', 457)">
             Actual()
           </code>
-          <div class="tip" id="448">
+          <div class="tip" id="457">
             <strong>Signature:</strong> unit -&gt; &#39;Actual<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -88,12 +89,11 @@
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Randomly generate the initial state of the actual object. Should still correspond to the 
+          <p>Randomly generate the initial state of the actual object. Should still correspond to the
 initial state of model object; so you should only randomly generate parameters to the instance
 that don't affect the model.
 Note:make sure that each value is truly a new instance if the commands change the state
 of the object. Gen.connstant in particular is a bad idea - use Gen.fresh instead.</p>
-
 
 
         </td>
@@ -101,10 +101,10 @@ of the object. Gen.connstant in particular is a bad idea - use Gen.fresh instead
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '449', 449)" onmouseover="showTip(event, '449', 449)">
+          <code onmouseout="hideTip(event, '458', 458)" onmouseover="showTip(event, '458', 458)">
             Model()
           </code>
-          <div class="tip" id="449">
+          <div class="tip" id="458">
             <strong>Signature:</strong> unit -&gt; &#39;Model<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -115,7 +115,6 @@ of the object. Gen.connstant in particular is a bad idea - use Gen.fresh instead
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Initial state of model object. Must correspond to initial state of actual object.</p>
-
 
 
         </td>

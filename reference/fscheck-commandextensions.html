@@ -49,19 +49,41 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '268', 268)" onmouseover="showTip(event, '268', 268)">
+          <code onmouseout="hideTip(event, '271', 271)" onmouseover="showTip(event, '271', 271)">
+            ToProperty(spec, generator, shrinker)
+          </code>
+          <div class="tip" id="271">
+            <strong>Signature:</strong> (spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; * generator:Gen&lt;seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;&gt; * shrinker:(seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt; -&gt; seq&lt;seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;&gt;)) -&gt; Property<br />
+                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L117-117" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Turn a specification into a property, allowing you to specify generator and shrinker.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '272', 272)" onmouseover="showTip(event, '272', 272)">
             ToProperty(spec)
           </code>
-          <div class="tip" id="268">
+          <div class="tip" id="272">
             <strong>Signature:</strong> spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; Property<br />
                           <strong>Type parameters:</strong> 'Actual, 'Model          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L101-101" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L113-113" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Turn a specification into a property.</p>
+
+
         </td>
       </tr>
     </tbody>

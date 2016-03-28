@@ -41,7 +41,6 @@
 <div class="xmldoc">
 <p>Extension methods to build generators - contains among other the Linq methods.</p>
 
-
 </div>
   <h3>Static members</h3>
   <table class="table table-bordered member-list">
@@ -52,12 +51,12 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '321', 321)" onmouseover="showTip(event, '321', 321)">
+          <code onmouseout="hideTip(event, '330', 330)" onmouseover="showTip(event, '330', 330)">
             Apply(generator, f)
           </code>
-          <div class="tip" id="321">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?130389&gt; * f:Gen&lt;Func&lt;&#39;?130389,&#39;?130390&gt;&gt;) -&gt; Gen&lt;&#39;?130390&gt;<br />
-                          <strong>Type parameters:</strong> '?130389, '?130390          </div>
+          <div class="tip" id="330">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?195356&gt; * f:Gen&lt;Func&lt;&#39;?195356,&#39;?195357&gt;&gt;) -&gt; Gen&lt;&#39;?195357&gt;<br />
+                          <strong>Type parameters:</strong> '?195356, '?195357          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L105-105" class="github-link">
@@ -67,18 +66,17 @@
           <p>Apply the given Gen function to this generator, aka the applicative <*> operator.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '322', 322)" onmouseover="showTip(event, '322', 322)">
+          <code onmouseout="hideTip(event, '331', 331)" onmouseover="showTip(event, '331', 331)">
             Array2DOf(generator)
           </code>
-          <div class="tip" id="322">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?130387&gt; -&gt; Gen&lt;&#39;?130387 [,]&gt;<br />
-                          <strong>Type parameters:</strong> '?130387          </div>
+          <div class="tip" id="331">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?195354&gt; -&gt; Gen&lt;&#39;?195354 [,]&gt;<br />
+                          <strong>Type parameters:</strong> '?195354          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L99-99" class="github-link">
@@ -88,18 +86,17 @@
           <p>Generates a 2D array. The square root of the size is the maximum number of rows and columns.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '323', 323)" onmouseover="showTip(event, '323', 323)">
+          <code onmouseout="hideTip(event, '332', 332)" onmouseover="showTip(event, '332', 332)">
             Array2DOf(generator, rows, cols)
           </code>
-          <div class="tip" id="323">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?130385&gt; * rows:int * cols:int) -&gt; Gen&lt;&#39;?130385 [,]&gt;<br />
-                          <strong>Type parameters:</strong> '?130385          </div>
+          <div class="tip" id="332">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?195352&gt; * rows:int * cols:int) -&gt; Gen&lt;&#39;?195352 [,]&gt;<br />
+                          <strong>Type parameters:</strong> '?195352          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L93-93" class="github-link">
@@ -109,27 +106,25 @@
           <p>Generates a 2D array of the given dimensions.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '324', 324)" onmouseover="showTip(event, '324', 324)">
+          <code onmouseout="hideTip(event, '333', 333)" onmouseover="showTip(event, '333', 333)">
             ArrayOf(generator)
           </code>
-          <div class="tip" id="324">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?130383&gt; -&gt; Gen&lt;&#39;?130383 []&gt;<br />
-                          <strong>Type parameters:</strong> '?130383          </div>
+          <div class="tip" id="333">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?195350&gt; -&gt; Gen&lt;&#39;?195350 []&gt;<br />
+                          <strong>Type parameters:</strong> '?195350          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L87-87" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an array using the specified generator. 
+          <p>Generates an array using the specified generator.
 The maximum length is size+1.</p>
-
 
 
         </td>
@@ -137,12 +132,12 @@ The maximum length is size+1.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '325', 325)" onmouseover="showTip(event, '325', 325)">
+          <code onmouseout="hideTip(event, '334', 334)" onmouseover="showTip(event, '334', 334)">
             ArrayOf(generator, length)
           </code>
-          <div class="tip" id="325">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?130381&gt; * length:int) -&gt; Gen&lt;&#39;?130381 []&gt;<br />
-                          <strong>Type parameters:</strong> '?130381          </div>
+          <div class="tip" id="334">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?195348&gt; * length:int) -&gt; Gen&lt;&#39;?195348 []&gt;<br />
+                          <strong>Type parameters:</strong> '?195348          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L80-80" class="github-link">
@@ -152,18 +147,17 @@ The maximum length is size+1.</p>
           <p>Generates an array of a specified length.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '326', 326)" onmouseover="showTip(event, '326', 326)">
+          <code onmouseout="hideTip(event, '335', 335)" onmouseover="showTip(event, '335', 335)">
             Eval(generator, size, random)
           </code>
-          <div class="tip" id="326">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?130359&gt; * size:int * random:StdGen) -&gt; &#39;?130359<br />
-                          <strong>Type parameters:</strong> '?130359          </div>
+          <div class="tip" id="335">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?195326&gt; * size:int * random:StdGen) -&gt; &#39;?195326<br />
+                          <strong>Type parameters:</strong> '?195326          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L24-24" class="github-link">
@@ -173,18 +167,17 @@ The maximum length is size+1.</p>
           <p>Generates a value with maximum size n.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '327', 327)" onmouseover="showTip(event, '327', 327)">
+          <code onmouseout="hideTip(event, '336', 336)" onmouseover="showTip(event, '336', 336)">
             Four(generator)
           </code>
-          <div class="tip" id="327">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?130402&gt; -&gt; Gen&lt;&#39;?130402 * &#39;?130402 * &#39;?130402 * &#39;?130402&gt;<br />
-                          <strong>Type parameters:</strong> '?130402          </div>
+          <div class="tip" id="336">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?195369&gt; -&gt; Gen&lt;&#39;?195369 * &#39;?195369 * &#39;?195369 * &#39;?195369&gt;<br />
+                          <strong>Type parameters:</strong> '?195369          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L140-140" class="github-link">
@@ -194,18 +187,17 @@ The maximum length is size+1.</p>
           <p>Build a generator that generates a 4-tuple of the values generated by the given generator.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '328', 328)" onmouseover="showTip(event, '328', 328)">
+          <code onmouseout="hideTip(event, '337', 337)" onmouseover="showTip(event, '337', 337)">
             ListOf(generator)
           </code>
-          <div class="tip" id="328">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?130377&gt; -&gt; Gen&lt;IList&lt;&#39;?130377&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?130377          </div>
+          <div class="tip" id="337">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?195344&gt; -&gt; Gen&lt;IList&lt;&#39;?195344&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?195344          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L65-65" class="github-link">
@@ -216,18 +208,17 @@ The maximum length is size+1.</p>
 size parameter.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '329', 329)" onmouseover="showTip(event, '329', 329)">
+          <code onmouseout="hideTip(event, '338', 338)" onmouseover="showTip(event, '338', 338)">
             ListOf(generator, nbOfElements)
           </code>
-          <div class="tip" id="329">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?130375&gt; * nbOfElements:int) -&gt; Gen&lt;IList&lt;&#39;?130375&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?130375          </div>
+          <div class="tip" id="338">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?195342&gt; * nbOfElements:int) -&gt; Gen&lt;IList&lt;&#39;?195342&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?195342          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L57-57" class="github-link">
@@ -237,16 +228,15 @@ size parameter.</p>
           <p>Generates a list of given length, containing values generated by the given generator.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '330', 330)" onmouseover="showTip(event, '330', 330)">
+          <code onmouseout="hideTip(event, '339', 339)" onmouseover="showTip(event, '339', 339)">
             NonEmptyListOf(generator)
           </code>
-          <div class="tip" id="330">
+          <div class="tip" id="339">
             <strong>Signature:</strong> generator:Gen&lt;&#39;a&gt; -&gt; Gen&lt;IList&lt;&#39;a&gt;&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
@@ -255,9 +245,8 @@ size parameter.</p>
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates a non-empty list of random length. The maximum length 
+          <p>Generates a non-empty list of random length. The maximum length
 depends on the size parameter.</p>
-
 
 
         </td>
@@ -265,12 +254,12 @@ depends on the size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '331', 331)" onmouseover="showTip(event, '331', 331)">
+          <code onmouseout="hideTip(event, '340', 340)" onmouseover="showTip(event, '340', 340)">
             Resize(generator, newSize)
           </code>
-          <div class="tip" id="331">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?130392&gt; * newSize:int) -&gt; Gen&lt;&#39;?130392&gt;<br />
-                          <strong>Type parameters:</strong> '?130392          </div>
+          <div class="tip" id="340">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?195359&gt; * newSize:int) -&gt; Gen&lt;&#39;?195359&gt;<br />
+                          <strong>Type parameters:</strong> '?195359          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L111-111" class="github-link">
@@ -280,18 +269,17 @@ depends on the size parameter.</p>
           <p>Override the current size of the test.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '332', 332)" onmouseover="showTip(event, '332', 332)">
+          <code onmouseout="hideTip(event, '341', 341)" onmouseover="showTip(event, '341', 341)">
             Sample(generator, size, numberOfSamples)
           </code>
-          <div class="tip" id="332">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?130361&gt; * size:int * numberOfSamples:int) -&gt; &#39;?130361 list<br />
-                          <strong>Type parameters:</strong> '?130361          </div>
+          <div class="tip" id="341">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?195328&gt; * size:int * numberOfSamples:int) -&gt; &#39;?195328 list<br />
+                          <strong>Type parameters:</strong> '?195328          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L30-30" class="github-link">
@@ -301,18 +289,17 @@ depends on the size parameter.</p>
           <p>Generates n values of the given size.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '333', 333)" onmouseover="showTip(event, '333', 333)">
+          <code onmouseout="hideTip(event, '342', 342)" onmouseover="showTip(event, '342', 342)">
             Select(g, selector)
           </code>
-          <div class="tip" id="333">
-            <strong>Signature:</strong> (g:Gen&lt;&#39;?130363&gt; * selector:Func&lt;&#39;?130363,&#39;?130364&gt;) -&gt; Gen&lt;&#39;?130364&gt;<br />
-                          <strong>Type parameters:</strong> '?130363, '?130364          </div>
+          <div class="tip" id="342">
+            <strong>Signature:</strong> (g:Gen&lt;&#39;?195330&gt; * selector:Func&lt;&#39;?195330,&#39;?195331&gt;) -&gt; Gen&lt;&#39;?195331&gt;<br />
+                          <strong>Type parameters:</strong> '?195330, '?195331          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L35-35" class="github-link">
@@ -322,18 +309,17 @@ depends on the size parameter.</p>
           <p>Map the given function to the value in the generator, yielding a new generator of the result type.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '334', 334)" onmouseover="showTip(event, '334', 334)">
+          <code onmouseout="hideTip(event, '343', 343)" onmouseover="showTip(event, '343', 343)">
             SelectMany(source, f, select)
           </code>
-          <div class="tip" id="334">
-            <strong>Signature:</strong> (source:Gen&lt;&#39;?130371&gt; * f:Func&lt;&#39;?130371,Gen&lt;&#39;?130372&gt;&gt; * select:Func&lt;&#39;?130371,&#39;?130372,&#39;?130373&gt;) -&gt; Gen&lt;&#39;?130373&gt;<br />
-                          <strong>Type parameters:</strong> '?130371, '?130372, '?130373          </div>
+          <div class="tip" id="343">
+            <strong>Signature:</strong> (source:Gen&lt;&#39;?195338&gt; * f:Func&lt;&#39;?195338,Gen&lt;&#39;?195339&gt;&gt; * select:Func&lt;&#39;?195338,&#39;?195339,&#39;?195340&gt;) -&gt; Gen&lt;&#39;?195340&gt;<br />
+                          <strong>Type parameters:</strong> '?195338, '?195339, '?195340          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L49-49" class="github-link">
@@ -346,12 +332,12 @@ depends on the size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '335', 335)" onmouseover="showTip(event, '335', 335)">
+          <code onmouseout="hideTip(event, '344', 344)" onmouseover="showTip(event, '344', 344)">
             SelectMany(source, f)
           </code>
-          <div class="tip" id="335">
-            <strong>Signature:</strong> (source:Gen&lt;&#39;?130368&gt; * f:Func&lt;&#39;?130368,Gen&lt;&#39;?130369&gt;&gt;) -&gt; Gen&lt;&#39;?130369&gt;<br />
-                          <strong>Type parameters:</strong> '?130368, '?130369          </div>
+          <div class="tip" id="344">
+            <strong>Signature:</strong> (source:Gen&lt;&#39;?195335&gt; * f:Func&lt;&#39;?195335,Gen&lt;&#39;?195336&gt;&gt;) -&gt; Gen&lt;&#39;?195336&gt;<br />
+                          <strong>Type parameters:</strong> '?195335, '?195336          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L44-44" class="github-link">
@@ -364,12 +350,12 @@ depends on the size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '336', 336)" onmouseover="showTip(event, '336', 336)">
+          <code onmouseout="hideTip(event, '345', 345)" onmouseover="showTip(event, '345', 345)">
             Three(generator)
           </code>
-          <div class="tip" id="336">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?130400&gt; -&gt; Gen&lt;&#39;?130400 * &#39;?130400 * &#39;?130400&gt;<br />
-                          <strong>Type parameters:</strong> '?130400          </div>
+          <div class="tip" id="345">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?195367&gt; -&gt; Gen&lt;&#39;?195367 * &#39;?195367 * &#39;?195367&gt;<br />
+                          <strong>Type parameters:</strong> '?195367          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L134-134" class="github-link">
@@ -379,18 +365,17 @@ depends on the size parameter.</p>
           <p>Build a generator that generates a 3-tuple of the values generated by the given generator.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '337', 337)" onmouseover="showTip(event, '337', 337)">
+          <code onmouseout="hideTip(event, '346', 346)" onmouseover="showTip(event, '346', 346)">
             ToArbitrary(generator, shrinker)
           </code>
-          <div class="tip" id="337">
-            <strong>Signature:</strong> (generator:Gen&lt;&#39;?130396&gt; * shrinker:(&#39;?130396 -&gt; seq&lt;&#39;?130396&gt;)) -&gt; Arbitrary&lt;&#39;?130396&gt;<br />
-                          <strong>Type parameters:</strong> '?130396          </div>
+          <div class="tip" id="346">
+            <strong>Signature:</strong> (generator:Gen&lt;&#39;?195363&gt; * shrinker:(&#39;?195363 -&gt; seq&lt;&#39;?195363&gt;)) -&gt; Arbitrary&lt;&#39;?195363&gt;<br />
+                          <strong>Type parameters:</strong> '?195363          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L122-122" class="github-link">
@@ -400,18 +385,17 @@ depends on the size parameter.</p>
           <p>Construct an Arbitrary instance from a generator and a shrinker.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '338', 338)" onmouseover="showTip(event, '338', 338)">
+          <code onmouseout="hideTip(event, '347', 347)" onmouseover="showTip(event, '347', 347)">
             ToArbitrary(generator)
           </code>
-          <div class="tip" id="338">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?130394&gt; -&gt; Arbitrary&lt;&#39;?130394&gt;<br />
-                          <strong>Type parameters:</strong> '?130394          </div>
+          <div class="tip" id="347">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?195361&gt; -&gt; Arbitrary&lt;&#39;?195361&gt;<br />
+                          <strong>Type parameters:</strong> '?195361          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L117-117" class="github-link">
@@ -422,18 +406,17 @@ depends on the size parameter.</p>
 Shrink is not supported for this type.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '339', 339)" onmouseover="showTip(event, '339', 339)">
+          <code onmouseout="hideTip(event, '348', 348)" onmouseover="showTip(event, '348', 348)">
             Two(generator)
           </code>
-          <div class="tip" id="339">
-            <strong>Signature:</strong> generator:Gen&lt;&#39;?130398&gt; -&gt; Gen&lt;&#39;?130398 * &#39;?130398&gt;<br />
-                          <strong>Type parameters:</strong> '?130398          </div>
+          <div class="tip" id="348">
+            <strong>Signature:</strong> generator:Gen&lt;&#39;?195365&gt; -&gt; Gen&lt;&#39;?195365 * &#39;?195365&gt;<br />
+                          <strong>Type parameters:</strong> '?195365          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L128-128" class="github-link">
@@ -443,18 +426,17 @@ Shrink is not supported for this type.</p>
           <p>Build a generator that generates a 2-tuple of the values generated by the given generator.</p>
 
 
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '340', 340)" onmouseover="showTip(event, '340', 340)">
+          <code onmouseout="hideTip(event, '349', 349)" onmouseover="showTip(event, '349', 349)">
             Where(g, predicate)
           </code>
-          <div class="tip" id="340">
-            <strong>Signature:</strong> (g:Gen&lt;&#39;?130366&gt; * predicate:Func&lt;&#39;?130366,bool&gt;) -&gt; Gen&lt;&#39;?130366&gt;<br />
-                          <strong>Type parameters:</strong> '?130366          </div>
+          <div class="tip" id="349">
+            <strong>Signature:</strong> (g:Gen&lt;&#39;?195333&gt; * predicate:Func&lt;&#39;?195333,bool&gt;) -&gt; Gen&lt;&#39;?195333&gt;<br />
+                          <strong>Type parameters:</strong> '?195333          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/GenExtensions.fs#L41-41" class="github-link">
@@ -462,9 +444,8 @@ Shrink is not supported for this type.</p>
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Generates a value that satisfies a predicate. This function keeps re-trying
-by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
+by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that
 the predicate is satisfied.</p>
-
 
 
         </td>
