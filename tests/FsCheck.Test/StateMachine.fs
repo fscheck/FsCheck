@@ -32,6 +32,34 @@ module StateMachine =
                 test <@ comm.Pre 5 @>
                 6 =! comm.Run 5
 
+    //only for specs with no preconditions
+    //if a precondition is not found in time None is returned and the length would be 0
+    [<Fact>] 
+    let ``without stop command length of commands should be Machine.MaxNumberOfCommands``() =
+        let specWithLength = 
+            checkSimpleModelSpec.MaxNumberOfCommands <- 3
+            checkSimpleModelSpec
+        let runs = StateMachine.generate specWithLength |> Gen.sample 100 10
+        test <@ runs |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> cmds.Length = 3) @>
+
+    //every tenth command is a stop
+    //used to see if it can terminate before reaching the MaxNumberOfCommands 
+    let checkStoppingSpec =
+        let inc = StateMachine.operation "inc" ((+) 1) (fun (actual:SimpleModel,model) -> actual.Get = model)
+        let stop = new StopOperation<SimpleModel,int>() :> Operation<SimpleModel,int>
+        let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
+        { new Machine<_,_>() with
+            member __.Setup = Gen.constant create |> Arb.fromGen
+            member __.Next _ = Gen.frequency [(9, inc |> Gen.constant);(1, stop |> Gen.constant)] }
+
+    [<Fact>] 
+    let ``stop command can terminate before MaxNumberOfCommands is reached``() =
+        let specWithLength = 
+            checkStoppingSpec.MaxNumberOfCommands <- 10
+            checkStoppingSpec
+        let runs = StateMachine.generate specWithLength |> Gen.sample 100 20
+        let len = List.fold (fun acc { Setup = _,c; Operations = cmds } -> acc + cmds.Length) 0 runs
+        test <@ len > 0 && len < 200 @>
 
     //this spec is created using preconditions such that the only valid sequence is setFalse,setTrue
     //repeated 0 or more times. To simplify the test it doesn't even use an actual object under test;

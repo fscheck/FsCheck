@@ -44,6 +44,12 @@ type Operation<'Actual,'Model>() =
     ///The default precondition is true.
     default __.Pre _ = true
 
+type StopOperation<'Actual,'Model>() =
+    inherit Operation<'Actual,'Model>()
+    override __.Check (a, m) = true.ToProperty()
+    override __.Run m = m
+
+
 type TearDown<'Actual>() =
     abstract Actual : 'Actual -> unit
     default __.Actual _ = ()
@@ -53,9 +59,13 @@ type TearDown<'Actual>() =
 ///for the next state, based on the model.
 [<AbstractClass>]
 type Machine<'Actual,'Model>() =
+    let mutable maxNum = -1
+    member __.MaxNumberOfCommands with get() = maxNum and set(v) = maxNum <- v
+
     abstract Setup : Arbitrary<Setup<'Actual,'Model>>
     abstract TearDown : TearDown<'Actual>
     default __.TearDown = TearDown<_>()
+ 
     ///Generate a number of possible commands based on the current state of the model. 
     ///Preconditions are still checked, so even if a Command is returned, it is not chosen
     ///if its precondition does not hold.
@@ -201,7 +211,7 @@ module StateMachine =
                 if size > 0 then
                     let nextOperation = spec.Next state
                     let! command = nextOperation |> Gen.suchThatOption (fun operation -> operation.Pre state)
-                    if Option.isNone command then return [state],[]
+                    if Option.isNone command || command.Value.GetType() = typeof<StopOperation<'Actual,'Model>> then return [state],[]
                     else
                         let! states, commands = genCommandsS (command.Value.Run state) (size-1)
                         return state :: states, command.Value :: commands
@@ -210,7 +220,10 @@ module StateMachine =
             }
         gen { let! setup = spec.Setup |> Arb.toGen
               let initialModel = setup.Model()
-              let! models,operations = genCommandsS initialModel |> Gen.sized
+              let! sized = Gen.constant |> Gen.sized
+              let maxNum = spec.MaxNumberOfCommands
+              let size = if maxNum < 0 then sized else maxNum
+              let! models,operations = genCommandsS initialModel size
               return { Setup = initialModel, setup
                        Operations = List.zip operations (List.tail models) //first state is actually the initial state; so drop it.
                        TearDown = spec.TearDown }
