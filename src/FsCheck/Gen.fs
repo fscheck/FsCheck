@@ -328,15 +328,22 @@ module Gen =
 
 
     ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
-    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
     ///the predicate is satisfied.
     //[category: Creating generators from generators]
     [<CompiledName("SuchThat")>]
-    let rec suchThat p gn =
-        gen {   let! mx = suchThatOption p gn
+    let rec suchThat predicate generator =
+        gen {   let! mx = suchThatOption predicate generator
                 match mx with
                 | Some x    -> return x
-                | None      -> return! sized (fun n -> resize (n+1) (suchThat p gn)) }
+                | None      -> return! sized (fun n -> resize (n+1) (suchThat predicate generator)) }
+
+    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
+    ///the predicate is satisfied.
+    //[category: Creating generators from generators]
+    [<CompiledName("Where");EditorBrowsable(EditorBrowsableState.Never)>]
+    let where predicate generator = suchThat predicate generator
 
 //    /// Takes a list of increasing size, and chooses
 //    /// among an initial segment of the list. The size of this initial
