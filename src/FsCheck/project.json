@@ -5,7 +5,6 @@
   },
   "compilerName": "fsc",
   "compileFiles": [
-    "Program.fs"
   ],
   "dependencies": {
     "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-160316",
