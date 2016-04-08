@@ -24,6 +24,9 @@
   ],
   "frameworks": {
     "net46": { 
+      "dependencies": {
+        "FSharp.Core": "4.0.0.1"
+      },
       "frameworkAssemblies": {
         "System": "",
         "System.Core": "",
