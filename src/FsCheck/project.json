@@ -23,7 +23,13 @@
     "RunnerExtensions.fs"
   ],
   "frameworks": {
-    "net46": { },
+    "net46": { 
+      "frameworkAssemblies": {
+        "System": "",
+        "System.Core": "",
+        "System.Numerics": ""
+      }
+    },
     "netstandard1.5": {
       "dependencies": {
         "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-160316",
