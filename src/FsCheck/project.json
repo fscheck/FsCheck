@@ -4,6 +4,23 @@
   },
   "compilerName": "fsc",
   "compileFiles": [
+    "AssemblyInfo.fs",
+    "Common.fs",
+    "Random.fs",
+    "Reflect.fs",
+    "TypeClass.fs",
+    "Gen.fs",
+    "ReflectArbitrary.fs",
+    "Arbitrary.fs",
+    "ArbitraryExtensions.fs",
+    "GenExtensions.fs",
+    "Testable.fs",
+    "Prop.fs",
+    "PropExtensions.fs",
+    "Commands.fs",
+    "StateMachine.fs",
+    "Runner.fs",
+    "RunnerExtensions.fs"
   ],
   "dependencies": {
     "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-160316",
