@@ -48,12 +48,12 @@ Then FsCheck can even shrink your function. For example:</p>
       <span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">map</span> <span class="i">f</span> <span onmouseout="hideTip(event, 'fs13', 34)" onmouseover="showTip(event, 'fs13', 34)" class="i">l</span> <span class="o">=</span> (<span class="c">(*f &lt;|*)</span> <span onmouseout="hideTip(event, 'fs17', 35)" onmouseover="showTip(event, 'fs17', 35)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs19', 36)" onmouseover="showTip(event, 'fs19', 36)" class="i">head</span> <span onmouseout="hideTip(event, 'fs13', 37)" onmouseover="showTip(event, 'fs13', 37)" class="i">l</span>) <span class="o">::</span> <span onmouseout="hideTip(event, 'fs17', 38)" onmouseover="showTip(event, 'fs17', 38)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 39)" onmouseover="showTip(event, 'fs18', 39)" class="i">map</span> <span class="i">f</span> (<span onmouseout="hideTip(event, 'fs17', 40)" onmouseover="showTip(event, 'fs17', 40)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 41)" onmouseover="showTip(event, 'fs20', 41)" class="i">tail</span> <span onmouseout="hideTip(event, 'fs13', 42)" onmouseover="showTip(event, 'fs13', 42)" class="i">l</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 43)" onmouseover="showTip(event, 'fs11', 43)" class="i">mapRec</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (6 shrinks) (StdGen (1127236134,296136380)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (7 shrinks) (StdGen (1628245169,296141611)):
 Original:
-{ 0-&gt;4; 3-&gt;4; 4-&gt;4; 5-&gt;4 }
-[5; 3; 4]
+{ 0-&gt;1; 1-&gt;1; 2-&gt;1; 3-&gt;1 }
+[2; 1; 3; 3]
 Shrunk:
-{ 0-&gt;4; 3-&gt;0; 4-&gt;0; 5-&gt;0 }
+{ 0-&gt;1; 1-&gt;0; 2-&gt;0; 3-&gt;0 }
 [0]</code></pre></td></tr></table>
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
 records a map of all the arguments it was called with, and the result it produced.
@@ -92,7 +92,7 @@ define your own labelling equality combinator:</p>
 <span class="k">let</span> <span class="i">testCompare</span> (<span onmouseout="hideTip(event, 'fs23', 69)" onmouseover="showTip(event, 'fs23', 69)" class="i">i</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 70)" onmouseover="showTip(event, 'fs5', 70)" class="t">int</span>) (<span onmouseout="hideTip(event, 'fs30', 71)" onmouseover="showTip(event, 'fs30', 71)" class="i">j</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 72)" onmouseover="showTip(event, 'fs5', 72)" class="t">int</span>) <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs23', 73)" onmouseover="showTip(event, 'fs23', 73)" class="i">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs30', 74)" onmouseover="showTip(event, 'fs30', 74)" class="i">j</span><span class="o">-</span><span class="n">1</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1128748634,296136380)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1629807486,296141611)):
 Label of failing property: 3 = -1
 Original:
 1
@@ -186,6 +186,10 @@ at some of the existing integrations with test runners like Xunit.NET, NUnit, Fu
             <li>
               <a href="/FsCheck/TipsAndTricks.html">Tips and Tricks</a>
             </li>
+              <li>
+                  <a href="/FsCheck/StatefulTestingNew.html">Model-based testing vNext (Experimental)</a>
+              </li>
+
             <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
           </ul>
         </div>

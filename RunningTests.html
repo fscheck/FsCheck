@@ -79,9 +79,9 @@ you may already have.</p>
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 8 tests (3 shrinks) (StdGen (1085450245,296136380)):
+ListProperties.reverse is original-Falsifiable, after 4 tests (4 shrinks) (StdGen (1572776811,296141611)):
 Original:
-[-1; 2; -2]
+[-2; -1]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
@@ -342,6 +342,10 @@ appears as normal.</p>
             <li>
               <a href="/FsCheck/TipsAndTricks.html">Tips and Tricks</a>
             </li>
+              <li>
+                  <a href="/FsCheck/StatefulTestingNew.html">Model-based testing vNext (Experimental)</a>
+              </li>
+
             <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
           </ul>
         </div>
