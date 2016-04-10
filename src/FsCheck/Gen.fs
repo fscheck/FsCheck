@@ -440,7 +440,7 @@ module Gen =
     [<CompiledName("Constant")>]
     let constant v = gen.Return v
 
-    ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
+    ///Generate a fresh instance every time the generator is called. Useful for mutable objects.
     ///See also constant.
     //[category: Creating generators]
     [<CompiledName("Fresh"); EditorBrowsable(EditorBrowsableState.Never)>]
