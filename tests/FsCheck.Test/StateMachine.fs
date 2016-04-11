@@ -13,17 +13,17 @@ module StateMachine =
         member __.Inc() = incr count
         member __.Get = !count
 
-    let checkSimpleModelSpec =
+    let checkSimpleModelSpec size =
         let inc = StateMachine.operation "inc" ((+) 1) (fun (actual:SimpleModel,model) -> actual.Get = model)
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
-        { new Machine<_,_>() with
+        { new Machine<_,_>(size) with
             member __.Setup = Gen.constant create |> Arb.fromGen
             member __.Next _ = Gen.constant inc }
 
     [<Fact>]
     let ``check generated commands``() =
         let commands =
-            StateMachine.generate checkSimpleModelSpec
+            StateMachine.generate (checkSimpleModelSpec -1)
             |> Gen.sample 10 10
         for { Setup = _,create; Operations = comms } in commands do
             typeof<SimpleModel> =! create.Actual().GetType()
@@ -36,27 +36,23 @@ module StateMachine =
     //if a precondition is not found in time None is returned and the length would be 0
     [<Fact>] 
     let ``without stop command length of commands should be Machine.MaxNumberOfCommands``() =
-        let specWithLength = 
-            checkSimpleModelSpec.MaxNumberOfCommands <- 3
-            checkSimpleModelSpec
+        let specWithLength = checkSimpleModelSpec 3
         let runs = StateMachine.generate specWithLength |> Gen.sample 100 10
         test <@ runs |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> cmds.Length = 3) @>
 
     //every tenth command is a stop
     //used to see if it can terminate before reaching the MaxNumberOfCommands 
-    let checkStoppingSpec =
+    let checkStoppingSpec size =
         let inc = StateMachine.operation "inc" ((+) 1) (fun (actual:SimpleModel,model) -> actual.Get = model)
         let stop = new StopOperation<SimpleModel,int>() :> Operation<SimpleModel,int>
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
-        { new Machine<_,_>() with
+        { new Machine<_,_>(size) with
             member __.Setup = Gen.constant create |> Arb.fromGen
             member __.Next _ = Gen.frequency [(9, inc |> Gen.constant);(1, stop |> Gen.constant)] }
 
     [<Fact>] 
     let ``stop command can terminate before MaxNumberOfCommands is reached``() =
-        let specWithLength = 
-            checkStoppingSpec.MaxNumberOfCommands <- 10
-            checkStoppingSpec
+        let specWithLength = checkStoppingSpec 10
         let runs = StateMachine.generate specWithLength |> Gen.sample 100 20
         let len = List.fold (fun acc { Setup = _,c; Operations = cmds } -> acc + cmds.Length) 0 runs
         test <@ len > 0 && len < 200 @>
