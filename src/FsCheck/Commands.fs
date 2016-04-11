@@ -86,7 +86,7 @@ module Command =
 
     ///Create a generator that generates a sequence of Command objects that
     ///satisfies the given specification.
-    [<CompiledName("GenerateCommands")>]
+    [<CompiledName("GenerateCommands"); Obsolete("Renamed to Command.generate or Command.Generate.")>]
     let generateCommands (spec:ICommandGenerator<'Actual,'Model>) = 
         //really deprecated, only here for backwards compatibility. Prefer generate.
         generate spec
