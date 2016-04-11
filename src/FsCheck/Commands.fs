@@ -72,9 +72,13 @@ module Command =
         let rec genCommandsS state size =
             gen {
                 if size > 0 then
-                    let! command = spec.Next state |> Gen.suchThat (fun command -> command.Pre state)
-                    let! commands = genCommandsS (command.RunModel state) (size-1)
-                    return command :: commands
+                    let! command = spec.Next state |> Gen.suchThatOption (fun command -> command.Pre state)
+                    match command with 
+                        | None -> 
+                            return []
+                        | Some command ->
+                            let! commands = genCommandsS (command.RunModel state) (size-1)
+                            return command :: commands
                 else
                     return []
             }
