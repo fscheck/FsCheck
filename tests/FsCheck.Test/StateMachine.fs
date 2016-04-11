@@ -110,7 +110,6 @@ module StateMachine =
 
     let spec =
         let inc = 
-            Gen.constant <|
             { new Operation<Counter,int>() with
                 member __.Run m = m + 1
                 member __.Check (c,m) = 
@@ -119,7 +118,6 @@ module StateMachine =
                     |@ sprintf "Inc: model = %i, actual = %i" m res
                 override __.ToString() = "inc"}
         let dec = 
-            Gen.constant <|
             { new Operation<Counter,int>() with
                 member __.Run m = m - 1
                 override __.Pre m = 
@@ -135,7 +133,7 @@ module StateMachine =
                 member __.Model() = 0 }
         { new Machine<Counter,int>() with
             member __.Setup = gen { let! dontcare = Gen.choose (0,100) in return create dontcare } |> Arb.fromGen
-            member __.Next _ = Gen.oneof [ inc; dec ] }
+            member __.Next _ = Gen.elements [ inc; dec ] }
 
     [<Fact>]
     let ``should check Counter``() =
@@ -160,7 +158,9 @@ module StateMachine =
     let makeOperations failureState =
          let makeOperation failureState actualNextState startState endState =
             { new Operation<ActualState,ModelState>() with 
-                override __.Run m = endState
+                override t.Run m = 
+                    if not (t.Pre m) then failwithf "Run should never be called if precondition not satisfied. m = %A" m
+                    endState
                 override __.Pre m = m = startState
                 override __.Check (act,model) = 
                     act.Set actualNextState

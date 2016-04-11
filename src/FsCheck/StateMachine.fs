@@ -233,7 +233,7 @@ module StateMachine =
     let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
         let runModels initial (operations:list<Operation<'Actual,'Model>>) =
             operations 
-            |> Seq.scan (fun (_,model) operation -> (operation.Pre model, operation.Run model)) (true,initial) 
+            |> Seq.scan (fun (_,Lazy model) operation -> (operation.Pre model, lazy operation.Run model)) (true, lazy initial) 
             |> Seq.skip 1
             |> Seq.zip operations
             |> Seq.map (fun (op,(pre,model)) -> (pre, (op,model)))
@@ -258,8 +258,8 @@ module StateMachine =
                             let initialModel = fst run.Setup
                             let transitions = runModels initialModel operations
                             let ok = Seq.forall fst transitions
-                            let newOperations = transitions |> Seq.map snd |> Seq.toList
-                            if ok then Some { run with Operations = newOperations } else None)
+                            let newOperations = transitions |> Seq.map (snd >> (fun (op,Lazy v) -> op,v)) 
+                            if ok then Some { run with Operations = newOperations |> Seq.toList } else None)
         //try to srhink the initial setup state
         |> Seq.append (Arb.toShrink spec.Setup (snd run.Setup) |> Seq.map (fun create -> { run with Setup = create.Model(), create }))
         
