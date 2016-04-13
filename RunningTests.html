@@ -32,7 +32,7 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h1>Running tests</h1>
+<h1><a name="Running-tests" class="anchor" href="#Running-tests">Running tests</a></h1>
 <p>This section describes the various ways in which you can run FsCheck tests:</p>
 <ul>
 <li>
@@ -52,8 +52,8 @@ this way look like native NUnit tests, except they can take arguments.</p>
 a tighter integration with a specific test framework, and offers more control over printing of results.</p>
 </li>
 </ul>
-<h2>Using the built-in test runner</h2>
-<h3>From an fsx file or a command line runner</h3>
+<h2><a name="Using-the-built-in-test-runner" class="anchor" href="#Using-the-built-in-test-runner">Using the built-in test runner</a></h2>
+<h3><a name="From-an-fsx-file-or-a-command-line-runner" class="anchor" href="#From-an-fsx-file-or-a-command-line-runner">From an fsx file or a command line runner</a></h3>
 <p>This method should by now be familiar to you if you've read the previous sections in this guide. Simply write your property as a
 function, and invoke one of the methods on the <code>Check</code> type.</p>
 <p>There are basically two main variants of methods on <code>Check</code>: <code>Check.One</code> and <code>Check.All</code>.</p>
@@ -67,7 +67,7 @@ your test loops infinitely on some inputs.</p>
 through another test framework's unit tests. They'll call the FsCheck runner directly and configure it such that is throws on failure;
 in all frameworks I'm aware of this signals that the test has failed and so is an easy way to integrate FsCheck tests with unit tests
 you may already have.</p>
-<h3>Testing grouped properties with Check.All</h3>
+<h3><a name="Testing-grouped-properties-with-Check-All" class="anchor" href="#Testing-grouped-properties-with-Check-All">Testing grouped properties with Check.All</a></h3>
 <p>Usually, you'll write more than one property to test. FsCheck allows you to group together properties as static members of a class:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">ListProperties</span> <span class="o">=</span>
   <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="f">``reverse of reverse is original``</span> (<span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs7', 7)" onmouseover="showTip(event, 'fs7', 7)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 8)" onmouseover="showTip(event, 'fs8', 8)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 9)" onmouseover="showTip(event, 'fs9', 9)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs8', 10)" onmouseover="showTip(event, 'fs8', 10)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 11)" onmouseover="showTip(event, 'fs9', 11)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs5', 12)" onmouseover="showTip(event, 'fs5', 12)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 13)" onmouseover="showTip(event, 'fs5', 13)" class="i">xs</span>
@@ -79,9 +79,9 @@ you may already have.</p>
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 3 tests (6 shrinks) (StdGen (1869136697,296142407)):
+ListProperties.reverse is original-Falsifiable, after 2 tests (1 shrink) (StdGen (649925843,296142800)):
 Original:
-[-1; -2; 0; 2; -4]
+[1; -1]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
@@ -90,7 +90,7 @@ However, the type of a module is not directly accessible via F#, so you can use 
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">QuickAll</span> <span onmouseout="hideTip(event, 'fs11', 23)" onmouseover="showTip(event, 'fs11', 23)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 24)" onmouseover="showTip(event, 'fs3', 24)" class="i">ListProperties</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span>
 </code></pre>
 <p>Notice also the counterpart of <code>Check.Verbose</code>: <code>Check.VerboseAll</code>.</p>
-<h3>Running tests using only modules</h3>
+<h3><a name="Running-tests-using-only-modules" class="anchor" href="#Running-tests-using-only-modules">Running tests using only modules</a></h3>
 <p>Arbitrary instances are given as static members of classes, and properties can be grouped together
 as static members of classes. Top level let functions are compiled as static member of their
 enclosing module (which is compiled as a class), and so you can simply define your properties and generators as
@@ -119,7 +119,7 @@ or Lazy value of any of those types. So <code>myprop</code> is the only property
 </ul>
 <p>All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will
 do something with, but do not want them checked or registered, just make them private. FsCheck will ignore those functions.</p>
-<h2>Using FsCheck.Xunit</h2>
+<h2><a name="Using-FsCheck-Xunit" class="anchor" href="#Using-FsCheck-Xunit">Using FsCheck.Xunit</a></h2>
 <p>To use the integration install the FsCheck.Xunit nuget package. Then:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 40)" onmouseover="showTip(event, 'fs1', 40)" class="i">FsCheck</span>
 <span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 41)" onmouseover="showTip(event, 'fs1', 41)" class="i">FsCheck</span><span class="o">.</span><span class="i">Xunit</span>
@@ -156,7 +156,7 @@ a per class or per module basis. For example:</p>
     <span class="k">let</span> <span onmouseout="hideTip(event, 'fs32', 63)" onmouseover="showTip(event, 'fs32', 63)" class="f">``should use Arb instance on method``</span>(<span onmouseout="hideTip(event, 'fs30', 64)" onmouseover="showTip(event, 'fs30', 64)" class="i">underTest</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs31', 65)" onmouseover="showTip(event, 'fs31', 65)" class="t">float</span>) <span class="o">=</span>
         <span onmouseout="hideTip(event, 'fs30', 66)" onmouseover="showTip(event, 'fs30', 66)" class="i">underTest</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0.0</span>
 </code></pre>
-<h3>Using FsCheck.Xunit with TestDriven.Net</h3>
+<h3><a name="Using-FsCheck-Xunit-with-TestDriven-Net" class="anchor" href="#Using-FsCheck-Xunit-with-TestDriven-Net">Using FsCheck.Xunit with TestDriven.Net</a></h3>
 <p><a href="http://testdriven.net">TestDriven.Net</a> is a Visual Studio add-in that enables you to easily run a variety of tests
 while working with code in the IDE. Out of the box, TestDriven.Net can run tests written with FsCheck.Xunit.</p>
 <p>However, the user experience may, by default, be slightly less than optimal. TestDriven.Net outputs the state of the
@@ -173,7 +173,7 @@ a little jarring that FsCheck by default always reports a bit of output on succe
 </code></pre>
 <p>Setting <code>QuietOnSuccess = true</code> only suppresses the output in case of success; in the case of test failures, output
 appears as normal.</p>
-<h2>Using FsCheck.NUnit</h2>
+<h2><a name="Using-FsCheck-NUnit" class="anchor" href="#Using-FsCheck-NUnit">Using FsCheck.NUnit</a></h2>
 <p>To use the integration install the FsCheck.NUnit nuget package.
 Make sure your project(s) has target .NET <code>4.5</code> or greater.
 Then open FsCheck.NUnit.</p>
@@ -189,15 +189,15 @@ method, similar to how you would use the <code>Config</code> type otherwise.</p>
 </code></pre>
 <p>Note: the NUnit integration doesn't have the ability, like FsCheck.Xunit, to override <code>Arbitrary</code> instances on a per class
 or per module basis. Otherwise, it is very similar.</p>
-<h4>Using <code>FsCheck.NUnit</code> installed by Paket</h4>
+<h4><a name="Using-installed-by-Paket" class="anchor" href="#Using-installed-by-Paket">Using <code>FsCheck.NUnit</code> installed by Paket</a></h4>
 <p>Note that <a href="https://fsprojects.github.io/Paket/faq.html#Does-Paket-run-install-ps1-scripts">Paket doesn't run any powershell scripts</a>.
 So if you want to use <code>FsCheck.NUnit</code> that you installed via Paket, you have to perform this step manually.
 Add reference to the following assemblies in the apropriate project(s):</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">packages</span><span class="o">/</span><span class="i">NUnit</span><span class="o">.</span><span class="i">Runners</span><span class="o">/</span><span class="i">tools</span><span class="o">/</span><span class="i">lib</span><span class="o">/</span><span class="i">nunit</span><span class="o">.</span><span class="i">core</span><span class="o">.</span><span class="i">dll</span>
 <span class="i">packages</span><span class="o">/</span><span class="i">NUnit</span><span class="o">.</span><span class="i">Runners</span><span class="o">/</span><span class="i">tools</span><span class="o">/</span><span class="i">lib</span><span class="o">/</span><span class="i">nunit</span><span class="o">.</span><span class="i">core</span><span class="o">.</span><span class="i">interfaces</span><span class="o">.</span><span class="i">dll</span>
 </code></pre>
-<h2>Implementing IRunner</h2>
-<h3>Example 1: to integrate FsCheck with other unit testing frameworks</h3>
+<h2><a name="Implementing-IRunner" class="anchor" href="#Implementing-IRunner">Implementing IRunner</a></h2>
+<h3><a name="Example-1-to-integrate-FsCheck-with-other-unit-testing-frameworks" class="anchor" href="#Example-1-to-integrate-FsCheck-with-other-unit-testing-frameworks">Example 1: to integrate FsCheck with other unit testing frameworks</a></h3>
 <p>The <code>Config</code> type that can be passed to the <code>Check.One</code> or <code>Check.All</code> methods takes an <code>IRunner</code> as argument. This i
 nterface has the following methods:</p>
 <ul>
@@ -225,7 +225,7 @@ another unit testing framework's ability to setup and tear down tests, have a ni
    
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 86)" onmouseover="showTip(event, 'fs36', 86)" class="i">withxUnitConfig</span> <span class="o">=</span> { <span class="i">Config</span><span class="o">.</span><span class="i">Default</span> <span class="k">with</span> <span class="i">Runner</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs35', 87)" onmouseover="showTip(event, 'fs35', 87)" class="i">xUnitRunner</span> }
 </code></pre>
-<h3>Example 2: to customize printing of generated arguments</h3>
+<h3><a name="Example-2-to-customize-printing-of-generated-arguments" class="anchor" href="#Example-2-to-customize-printing-of-generated-arguments">Example 2: to customize printing of generated arguments</a></h3>
 <p>By default, FsCheck prints generated arguments using <code>sprintf "%A"</code>, or structured formatting. This usually does what you expect,
 i.e. for primitive types the value, for objects the ToString override and so on. If it does not (A motivating case is
 testing with COM objects - overriding ToString is not an option and structured formatting does not do anything useful with it),
@@ -247,7 +247,7 @@ implementing <code>IRunner</code>. For example:</p>
           <span onmouseout="hideTip(event, 'fs39', 105)" onmouseover="showTip(event, 'fs39', 105)" class="i">printf</span> <span class="s">&quot;%s&quot;</span> (<span class="i">Runner</span><span class="o">.</span><span class="i">onFinishedToString</span> <span class="i">name</span> <span class="i">testResult&#39;</span>) 
   }
 </code></pre>
-<h3>Using FsCheck.NUnit with TestDriven.Net</h3>
+<h3><a name="Using-FsCheck-NUnit-with-TestDriven-Net" class="anchor" href="#Using-FsCheck-NUnit-with-TestDriven-Net">Using FsCheck.NUnit with TestDriven.Net</a></h3>
 <p><a href="http://testdriven.net">TestDriven.Net</a> is a Visual Studio add-in that enables you to easily run a variety of tests
 while working with code in the IDE. Out of the box, TestDriven.Net can run tests written with FsCheck.NUnit.</p>
 <p>However, the user experience may, by default, be slightly less than optimal. TestDriven.Net outputs the state of the

@@ -32,7 +32,7 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h1>Properties</h1>
+<h1><a name="Properties" class="anchor" href="#Properties">Properties</a></h1>
 <p>Properties are expressed as F# function definitions or C# lambdas or methods.
 Properties are universally quantified over their parameters, so</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">revRevIsOrig</span> (<span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs7', 7)" onmouseover="showTip(event, 'fs7', 7)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 8)" onmouseover="showTip(event, 'fs8', 8)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs7', 9)" onmouseover="showTip(event, 'fs7', 9)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 10)" onmouseover="showTip(event, 'fs8', 10)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs4', 11)" onmouseover="showTip(event, 'fs4', 11)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 12)" onmouseover="showTip(event, 'fs4', 12)" class="i">xs</span>
@@ -50,7 +50,7 @@ and are indicated in the API by a generic type called <code>'Testable</code>. A 
 be a function of any number of parameters that returns bool or unit. In the latter case,
 a test passes if it does not throw. The entry point to create properties is the Prop module.</p>
 <p>Like all of FsCheck's API, there are C# counterparts for all of the F# methods described.</p>
-<h2>Conditional Properties</h2>
+<h2><a name="Conditional-Properties" class="anchor" href="#Conditional-Properties">Conditional Properties</a></h2>
 <p>Properties may take the form <code>&lt;condition&gt; ==&gt; &lt;property&gt;</code></p>
 <p>For example,</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">insertKeepsOrder</span> (<span onmouseout="hideTip(event, 'fs17', 40)" onmouseover="showTip(event, 'fs17', 40)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 41)" onmouseover="showTip(event, 'fs6', 41)" class="t">int</span>) <span onmouseout="hideTip(event, 'fs10', 42)" onmouseover="showTip(event, 'fs10', 42)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 43)" onmouseover="showTip(event, 'fs9', 43)" class="f">ordered</span> <span onmouseout="hideTip(event, 'fs10', 44)" onmouseover="showTip(event, 'fs10', 44)" class="i">xs</span> <span class="o">==&gt;</span> <span onmouseout="hideTip(event, 'fs9', 45)" onmouseover="showTip(event, 'fs9', 45)" class="f">ordered</span> (<span onmouseout="hideTip(event, 'fs14', 46)" onmouseover="showTip(event, 'fs14', 46)" class="i">insert</span> <span onmouseout="hideTip(event, 'fs17', 47)" onmouseover="showTip(event, 'fs17', 47)" class="i">x</span> <span onmouseout="hideTip(event, 'fs10', 48)" onmouseover="showTip(event, 'fs10', 48)" class="i">xs</span>)
@@ -58,7 +58,7 @@ a test passes if it does not throw. The entry point to create properties is the 
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span> xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
     .QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 62 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 68 tests.</code></pre></td></tr></table>
 <p>Such a property holds if the property after <code>==&gt;</code> holds whenever the condition does.</p>
 <p>Testing discards test cases which do not satisfy the condition. Test case generation
 continues until 100 cases which do satisfy the condition have been found, or until
@@ -68,7 +68,7 @@ indicates that 97 test cases satisfying the condition were found, and that the p
 <p>Notice that in this case the generated values had to be restricted to int. This is because the generated
 values need to be comparable, but this is not reflected in the types. Therefore, without the explicit
 restriction, FsCheck could generate lists containing different types (subtypes of objects), and these are not mutually comparable.</p>
-<h2>Lazy Properties</h2>
+<h2><a name="Lazy-Properties" class="anchor" href="#Lazy-Properties">Lazy Properties</a></h2>
 <p>Since F# has eager evaluation by default, the above property does more work than necessary:
 it evaluates the property at the right of the condition no matter what the
 outcome of the condition on the left. While only a performance consideration in the above
@@ -76,7 +76,7 @@ example, this may limit the expressiveness of properties - consider:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">tooEager</span> <span onmouseout="hideTip(event, 'fs18', 49)" onmouseover="showTip(event, 'fs18', 49)" class="i">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs18', 50)" onmouseover="showTip(event, 'fs18', 50)" class="i">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> (<span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs18', 51)" onmouseover="showTip(event, 'fs18', 51)" class="i">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs18', 52)" onmouseover="showTip(event, 'fs18', 52)" class="i">a</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">tooEager</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (0 shrinks) (StdGen (1830830986,296142407)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (611850496,296142800)):
 Original:
 0
 with exception:
@@ -90,7 +90,7 @@ System.DivideByZeroException: Attempted to divide by zero.
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>&gt;(a <span class="o">=</span><span class="o">&gt;</span> <span class="k">new</span> Func&lt;<span class="k">bool</span>&gt;(() <span class="o">=</span><span class="o">&gt;</span> <span class="n">1</span> <span class="o">/</span> a <span class="o">=</span><span class="o">=</span> <span class="n">1</span> <span class="o">/</span> a).When(a <span class="o">!</span><span class="o">=</span> <span class="n">0</span>))
     .QuickCheck();</code></pre></td></tr></table>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
-<h2>Quantified Properties</h2>
+<h2><a name="Quantified-Properties" class="anchor" href="#Quantified-Properties">Quantified Properties</a></h2>
 <p>Properties may take the form <code>forAll &lt;arbitrary&gt;  (fun &lt;args&gt; -&gt; &lt;property&gt;)</code>.</p>
 <p>For example,</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 57)" onmouseover="showTip(event, 'fs19', 57)" class="i">orderedList</span> <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">from</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs5', 58)" onmouseover="showTip(event, 'fs5', 58)" class="i">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs6', 59)" onmouseover="showTip(event, 'fs6', 59)" class="i">int</span><span class="o">&gt;</span><span class="o">&gt;</span> <span class="o">|&gt;</span> <span class="i">Arb</span><span class="o">.</span><span class="i">mapFilter</span> <span onmouseout="hideTip(event, 'fs7', 60)" onmouseover="showTip(event, 'fs7', 60)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 61)" onmouseover="showTip(event, 'fs20', 61)" class="i">sort</span> <span onmouseout="hideTip(event, 'fs9', 62)" onmouseover="showTip(event, 'fs9', 62)" class="i">ordered</span>
@@ -111,7 +111,7 @@ the example, by supplying a custom generator for ordered lists, rather than
 filtering out test cases which are not ordered, we guarantee that 100 test
 cases can be generated without reaching the overall limit on test cases.
 Combinators for defining generators are described in <a href="TestData.html">Test Data</a>.</p>
-<h2>Expecting exceptions</h2>
+<h2><a name="Expecting-exceptions" class="anchor" href="#Expecting-exceptions">Expecting exceptions</a></h2>
 <p>You may want to test that a function or method throws an exception under certain circumstances.
 Use <code>throws&lt;'e :&gt; exn,'a&gt; Lazy&lt;'a&gt;</code> to achieve this. For example:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs23', 70)" onmouseover="showTip(event, 'fs23', 70)" class="f">expectDivideByZero</span>() <span class="o">=</span> <span class="i">Prop</span><span class="o">.</span><span class="i">throws</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs24', 71)" onmouseover="showTip(event, 'fs24', 71)" class="i">DivideByZeroException</span>,_<span class="o">&gt;</span> (<span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs25', 72)" onmouseover="showTip(event, 'fs25', 72)" class="i">raise</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs24', 73)" onmouseover="showTip(event, 'fs24', 73)" class="i">DivideByZeroException</span>()))
@@ -121,7 +121,7 @@ Use <code>throws&lt;'e :&gt; exn,'a&gt; Lazy&lt;'a&gt;</code> to achieve this. F
 <pre class="fssnip highlighted"><code lang="fsharp">  
 </code></pre>
 <p>This functionality is not available in the C# API.</p>
-<h2>Timed Properties</h2>
+<h2><a name="Timed-Properties" class="anchor" href="#Timed-Properties">Timed Properties</a></h2>
 <p>Properties may take the form <code>within &lt;timeout in ms&gt; &lt;Lazy&lt;property&gt;&gt;</code></p>
 <p>For example,</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs26', 75)" onmouseover="showTip(event, 'fs26', 75)" class="f">timesOut</span> (<span onmouseout="hideTip(event, 'fs18', 76)" onmouseover="showTip(event, 'fs18', 76)" class="i">a</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 77)" onmouseover="showTip(event, 'fs6', 77)" class="t">int</span>) <span class="o">=</span> 
@@ -139,7 +139,7 @@ FsCheck considers the test as failed. Otherwise, the outcome of the lazy propert
 the outcome of within. Note that, although within attempts to cancel the thread in which
 the property is executed, that may not succeed, and so the thread may actually continue to run until the process ends.</p>
 <p>This functionality is not available in the C# API.</p>
-<h2>Observing Test Case Distribution</h2>
+<h2><a name="Observing-Test-Case-Distribution" class="anchor" href="#Observing-Test-Case-Distribution">Observing Test Case Distribution</a></h2>
 <p>It is important to be aware of the distribution of test cases: if test data is not well
 distributed then conclusions drawn from the test results may be invalid. In particular,
 the <code>==&gt;</code> operator can skew the distribution of test data badly, since only test data which
@@ -148,7 +148,7 @@ satisfies the given condition is used.</p>
 making observations is incorporated into the statement of properties, each time
 the property is actually tested the observation is made, and the collected observations
 are then summarized when testing is complete.</p>
-<h3>Counting Trivial Cases</h3>
+<h3><a name="Counting-Trivial-Cases" class="anchor" href="#Counting-Trivial-Cases">Counting Trivial Cases</a></h3>
 <p>A property may take the form <code>trivial &lt;condition&gt; &lt;property&gt;</code></p>
 <p>For example,</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs30', 84)" onmouseover="showTip(event, 'fs30', 84)" class="f">insertTrivial</span> (<span onmouseout="hideTip(event, 'fs17', 85)" onmouseover="showTip(event, 'fs17', 85)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 86)" onmouseover="showTip(event, 'fs6', 86)" class="t">int</span>) <span onmouseout="hideTip(event, 'fs10', 87)" onmouseover="showTip(event, 'fs10', 87)" class="i">xs</span> <span class="o">=</span> 
@@ -163,8 +163,8 @@ are then summarized when testing is complete.</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>Test cases for which the condition is true are classified as trivial, and the proportion of
 trivial test cases in the total is reported:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 59 tests (33% trivial).</code></pre></td></tr></table>
-<h3>Classifying Test Cases</h3>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 45 tests (37% trivial).</code></pre></td></tr></table>
+<h3><a name="Classifying-Test-Cases" class="anchor" href="#Classifying-Test-Cases">Classifying Test Cases</a></h3>
 <p>A property may take the form <code>classify &lt;condition&gt; &lt;string&gt; &lt;property&gt;</code></p>
 <p>For example,</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs32', 98)" onmouseover="showTip(event, 'fs32', 98)" class="f">insertClassify</span> (<span onmouseout="hideTip(event, 'fs17', 99)" onmouseover="showTip(event, 'fs17', 99)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 100)" onmouseover="showTip(event, 'fs6', 100)" class="t">int</span>) <span onmouseout="hideTip(event, 'fs10', 101)" onmouseover="showTip(event, 'fs10', 101)" class="i">xs</span> <span class="o">=</span> 
@@ -181,12 +181,12 @@ trivial test cases in the total is reported:</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>Test cases satisfying the condition are assigned the classification given, and the distribution of
 classifications is reported after testing:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 61 tests.
-54% at-tail, at-head.
-21% at-tail.
-21% at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 44 tests.
+50% at-tail, at-head.
+27% at-head.
+18% at-tail.</code></pre></td></tr></table>
 <p>Note that a test case may fall into more than one classification.</p>
-<h3>Collecting Data Values</h3>
+<h3><a name="Collecting-Data-Values" class="anchor" href="#Collecting-Data-Values">Collecting Data Values</a></h3>
 <p>A property may take the form <code>collect &lt;expression&gt; &lt;property&gt;</code></p>
 <p>For example,</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs33', 115)" onmouseover="showTip(event, 'fs33', 115)" class="f">insertCollect</span> (<span onmouseout="hideTip(event, 'fs17', 116)" onmouseover="showTip(event, 'fs17', 116)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 117)" onmouseover="showTip(event, 'fs6', 117)" class="t">int</span>) <span onmouseout="hideTip(event, 'fs10', 118)" onmouseover="showTip(event, 'fs10', 118)" class="i">xs</span> <span class="o">=</span> 
@@ -201,13 +201,13 @@ classifications is reported after testing:</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>The argument of collect is evaluated in each test case, and the distribution of
 values is reported. The type of this argument is printed using <code>sprintf "%A"</code>:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 77 tests.
-41% 0.
-38% 1.
-11% 2.
-5% 3.
-2% 4.</code></pre></td></tr></table>
-<h3>Combining Observations</h3>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 46 tests.
+43% 1.
+32% 0.
+10% 3.
+10% 2.
+2% 5.</code></pre></td></tr></table>
+<h3><a name="Combining-Observations" class="anchor" href="#Combining-Observations">Combining Observations</a></h3>
 <p>The observations described here may be combined in any way. All the observations
 of each test case are combined, and the distribution of these combinations is
 reported. For example:</p>
@@ -226,17 +226,19 @@ reported. For example:</p>
         .Collect(<span class="s">"length "</span> <span class="o">+</span> xs.Count().ToString()))
     .QuickCheck();</code></pre></td></tr></table>
 <table class="pre"><tr><td><pre><code>Arguments exhausted after 63 tests.
-39% 0, at-tail, at-head.
-17% 1, at-tail.
-14% 1, at-head.
-9% 1, at-tail, at-head.
-6% 2, at-tail.
-3% 3, at-head.
-3% 3.
-3% 2, at-head.
-1% 4.
+38% 0, at-tail, at-head.
+19% 1, at-head.
+11% 1, at-tail.
+9% 2, at-head.
+4% 3, at-tail.
+4% 1, at-tail, at-head.
+3% 4.
+3% 2, at-tail.
+1% 5, at-tail.
+1% 3, at-head.
+1% 2, at-tail, at-head.
 1% 2.</code></pre></td></tr></table>
-<h2>And, Or and Labels</h2>
+<h2><a name="And-Or-and-Labels" class="anchor" href="#And-Or-and-Labels">And, Or and Labels</a></h2>
 <p>Properties may take the form</p>
 <ul>
 <li><code>&lt;property&gt; .&amp;. &lt;property&gt;</code> succeeds if both succeed, fails if one of the properties fails, and is rejected when both are rejected.</li>
@@ -260,9 +262,12 @@ it finds a counter-example. This takes the form: <code>&lt;string&gt; @| &lt;pro
        .And(result <span class="o">&gt;</span><span class="o">=</span> n).Label(<span class="s">"result &gt; #2"</span>)
        .And(result <span class="o">&lt;</span> m <span class="o">+</span> n).Label(<span class="s">"result not sum"</span>);
 }).QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1838113335,296142407)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (4 shrinks) (StdGen (618727287,296142800)):
 Label of failing property: result not sum
 Original:
+-1
+-2
+Shrunk:
 0
 0</code></pre></td></tr></table>
 <p>It's perfectly fine to apply more than one label to a property; FsCheck displays all the applicable labels.
@@ -284,11 +289,13 @@ This is useful for displaying intermediate results, for example:</p>
       .And((res <span class="o">&gt;</span> n).Label(<span class="s">"lt2"</span>))
       .Label(<span class="k">string</span>.Format(<span class="s">"evidence = {0}"</span>, res));
 }).QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1838582074,296142407)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (619352299,296142800)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
 Original:
+(2, 0)
+Shrunk:
 (0, 0)</code></pre></td></tr></table>
 <p>Notice that the above property combines subproperties by tupling them. This works for tuples up to length 6 and lists:</p>
 <ul>

@@ -32,7 +32,7 @@
       <div class="row">
         <div class="span9" id="main">
           
-<h1>Model-based Testing (Experimental)</h1>
+<h1><a name="Model-based-Testing-Experimental" class="anchor" href="#Model-based-Testing-Experimental">Model-based Testing (Experimental)</a></h1>
 <p>There is also a newer, experimental interface to do model-based testing.</p>
 <p><em>Caveat: since this is in the FsCheck.Experimental namespace for now, the rules of semantic versioning do
 not apply to this particular part of the API. In other words, minor version releases may break your code.</em></p>
@@ -103,15 +103,15 @@ so when we run this specification we can check that FsCheck does the right thing
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">StateMachine</span><span class="o">.</span><span class="i">toProperty</span> <span onmouseout="hideTip(event, 'fs16', 53)" onmouseover="showTip(event, 'fs16', 53)" class="i">spec</span>)
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (1 shrink) (StdGen (1893095372,296142407)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 6 tests (1 shrink) (StdGen (676560154,296142800)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
-{Setup = (2, Setup Counter);
- Operations = [(dec, 1); (inc, 2); (inc, 3); (inc, 4); (inc, 5)];
+{Setup = (3, Setup Counter);
+ Operations = [(inc, 4); (inc, 5); (dec, 4); (inc, 5)];
  TearDown = TearDown Counter;}
 Shrunk:
-{Setup = (2, Setup Counter);
- Operations = [(inc, 3); (inc, 4); (inc, 5)];
+{Setup = (3, Setup Counter);
+ Operations = [(inc, 4); (inc, 5)];
  TearDown = TearDown Counter;}</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence of operations that leads to it.</p>
 <p>But what has actually happened? Using the generators from the <code>Machine</code> methods, FsCheck tries to generate a random sequence of operations, for example:</p>
