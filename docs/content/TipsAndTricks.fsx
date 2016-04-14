@@ -105,27 +105,29 @@ at some of the existing integrations with test runners like Xunit.NET, NUnit, Fu
 ## Testing mutable types without using Command or StateMachine
 
 For some relatively simple mutable types you might feel more comfortable just writing straightforward FsCheck properties without
-using the `Command` or `StateMachine` API. This is certainly possible, but especially for shrinking FsCheck assumes that it can
+using the `Command` or `StateMachine` API. This is certainly possible, but for shrinking FsCheck assumes that it can
 re-execute the same test multiple times without the inputs changing. If you call methods or set properties on a generated object
 that affect its state, this assumption does not hold and you'll see some weird results.
 
 The simplest way to work around this is not to write a generator for your mutable object at all, but instead write an FsCheck property
-that takes all the values necessary to construct the object, and then simply construct the object. For example, suppose we want to test
+that takes all the values necessary to construct the object, and then simply construct the object in the beginning of your test. For example, suppose we want to test
 a mutable list:*)
 
-let testMutableList (capacity:PositiveInt) (itemsToAdd:int[]) =
-    let underTest = new System.Collections.Generic.List<int>(capacity.Get)
-    underTest.AddRange(itemsToAdd)
-    underTest.Count = itemsToAdd.Length
+let testMutableList =
+    Prop.forAll (Arb.fromGen(Gen.choose (1,10))) (fun capacity -> 
+        let underTest = new System.Collections.Generic.List<int>(capacity)
+        Prop.forAll Arb.from<int[]> (fun itemsToAdd ->
+            underTest.AddRange(itemsToAdd)
+            underTest.Count = itemsToAdd.Length))
 
 (**
     [lang=csharp,file=../csharp/TipsAndTricks.cs,key=testMutableList]
 
-This works well, as a bonus you get shrinking for free, and no need to write any custom generators.
+This works, as a bonus you get shrinking for free.
 
 If you do want to write a generator for your mutable type, this can be made to work but if
 you mutate a generated object during a test, either:
 
 * Disable shrinking, typically by wrapping all types into `DontShrink`; or
-* Clone or otherwise 'reset' the generated mutable object at the beginning or end of every test
+* Clone or otherwise 'reset' the generated mutable object at the beginning or end of every test.
 *)

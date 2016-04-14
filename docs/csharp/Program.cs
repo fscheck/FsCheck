@@ -11,6 +11,7 @@ namespace CSharp.DocSnippets
         static void Main(string[] args) {
             QuickStart.Samples();
             Properties.Samples();
+            TipsAndTricks.Samples();
         }
     }
 }
