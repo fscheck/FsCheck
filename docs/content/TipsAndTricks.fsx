@@ -9,7 +9,7 @@ open System
     
 ## Properties of functions
 
-Since FsCheck can generate random function values, it can check properties of 
+Perhaps surprisingly, FsCheck can generate random functions, `Func` and `Action`s. As a result, it can check properties of 
 functions. For example, we can check associativity of function composition as follows:*)
 
 (***define-output:associativity***)
@@ -19,10 +19,13 @@ Check.Quick associativity
 (***include-output:associativity***)
 
 (**
-We can generate functions Tree -> _anything_. If a counter-example is found, function values will be displayed as <func>.
+FsCheck can generate all functions with a target type that it can generate. In addition, the functions are pure and total -
+the former means that if you give a generated function the same value as input, it will keep returning that same value as output,
+no matter how many times you call it. The latter means that the function does not throw any exceptions and always terminates.
 
-However, FsCheck can show you the generated function in more detail, with the Function type. 
-Then FsCheck can even shrink your function. For example:*)
+If a counter-example is found, function values will be displayed as `<func>`. However, FsCheck can show 
+you the generated function in more detail, if you ask it to generate a `Function` type, which has an embedded "real" function. 
+FsCheck can even shrink `Function`s. For example:*)
 
 (***define-output:mapRec***)
 let mapRec (Fun f) (l:list<int>) =
