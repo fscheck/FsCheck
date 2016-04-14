@@ -60,9 +60,9 @@ Prop.ForAll(revRevIsOrig).QuickCheck();</code></pre></td></tr></table>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 13)" onmouseover="showTip(event, 'fs8', 13)" class="f">revIsOrig</span> (<span onmouseout="hideTip(event, 'fs3', 14)" onmouseover="showTip(event, 'fs3', 14)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs4', 15)" onmouseover="showTip(event, 'fs4', 15)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs5', 16)" onmouseover="showTip(event, 'fs5', 16)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 17)" onmouseover="showTip(event, 'fs6', 17)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 18)" onmouseover="showTip(event, 'fs7', 18)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs3', 19)" onmouseover="showTip(event, 'fs3', 19)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 20)" onmouseover="showTip(event, 'fs3', 20)" class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (627957817,296142800)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1830019348,296143230)):
 Original:
-[-1; -1; 0]
+[-1; 1]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>In C#:</p>
@@ -83,17 +83,14 @@ the one in which the loop or error arises.</p>
 <h2><a name="FsCheck-teaches-us-a-lesson" class="anchor" href="#FsCheck-teaches-us-a-lesson">FsCheck teaches us a lesson</a></h2>
 <p>The property above (the reverse of the reverse of a list is the list itself) is not always correct.
 Consider a list of floats that contains <code>NaN</code> (not a number). Since <code>NaN &lt;&gt; NaN</code>, the reverse of
-the reverse of <code>[NaN]</code> is not actually equal to <code>[NaN]</code> if you use straightforward element by element
-comparison. FsCheck has a knack for finding this kind of specification problem. However, since this
-behavior is seldom what you want, FsCheck only generates values that are 'neatly' comparable when you leave
-the type generic (currently, unit, bool, char and string values). To see this error, force
-FsCheck to generate lists of floats:</p>
+the reverse of <code>[NaN]</code> is not actually equal to <code>[NaN]</code>. FsCheck has a knack for finding this kind of specification problem.
+To see this error, ask FsCheck to generate lists of floats:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 22)" onmouseover="showTip(event, 'fs9', 22)" class="f">revRevIsOrigFloat</span> (<span onmouseout="hideTip(event, 'fs10', 23)" onmouseover="showTip(event, 'fs10', 23)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs4', 24)" onmouseover="showTip(event, 'fs4', 24)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs11', 25)" onmouseover="showTip(event, 'fs11', 25)" class="t">float</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 26)" onmouseover="showTip(event, 'fs6', 26)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 27)" onmouseover="showTip(event, 'fs7', 27)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs6', 28)" onmouseover="showTip(event, 'fs6', 28)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 29)" onmouseover="showTip(event, 'fs7', 29)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs10', 30)" onmouseover="showTip(event, 'fs10', 30)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs10', 31)" onmouseover="showTip(event, 'fs10', 31)" class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 8 tests (4 shrinks) (StdGen (628270339,296142800)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1830489678,296143230)):
 Original:
-[-2.0; 2.8; -0.6; nan; -infinity]
+[0.0; -1.797693135e+308; nan]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <p>That said, the example in C# using floats actually works!</p>
@@ -102,7 +99,7 @@ Shrunk:
 <p>This is because SequenceEquals uses the default equality comparer under the hood, which uses <code>Double</code>'s <code>Equals</code> method, which
 has a special provision for <code>NaN</code>, as you can see in the <a href="http://referencesource.microsoft.com/#mscorlib/system/double.cs,152">reference source</a>.
 If we pass an <code>EqualityComparer</code> that uses <code>==</code> to <code>SequenceEquals</code>, the C# example also fails.</p>
-<p>As this seeminly trivial example shows, FsCheck helps you discover interesting properties of your code - and so ultimately,
+<p>As this seemingly trivial example shows, FsCheck helps you discover interesting properties of your code - and so ultimately,
 more bugs!</p>
 <h2><a name="Using-FsCheck-with-other-testing-frameworks" class="anchor" href="#Using-FsCheck-with-other-testing-frameworks">Using FsCheck with other testing frameworks</a></h2>
 <p>Once you have finished your initial exploration of FsCheck, you'll probably want to use it with your existing
