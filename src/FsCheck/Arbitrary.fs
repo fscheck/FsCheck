@@ -512,10 +512,17 @@ module Arb =
             fromGenShrink (Gen.array2DOf generate,shrinkArray2D)
 
          ///Generate a function value. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
-         ///THere is no shrinking function values.
+         ///There is no shrinking for function values.
         static member Arrow() = 
+            let gen = let vfun = Gen.variant in Gen.promote (fun a -> vfun a generate)
             { new Arbitrary<'a->'b>() with
-                override __.Generator = Gen.promote (fun a -> Gen.variant a generate)
+                override __.Generator = gen
+            }
+
+        ///Generate a function value. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
+         ///There is no shrinking for function values.
+        [<CompiledName("FSharpFun")>]
+        static member Fun() = Default.Arrow()
             }
 
         ///Generate a Function value that can be printed and shrunk. Function values can be generated for types 'a->'b 
@@ -532,42 +539,42 @@ module Arb =
 
         ///Generates a Func'1.
         static member SystemFunc() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Func<_>(f)) (fun f -> f.Invoke)
 
         ///Generates a Func'2.
         static member SystemFunc1() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Func<_,_>(f)) (fun f -> f.Invoke)
 
         ///Generates a Func'3.
         static member SystemFunc2() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Func<_,_,_>(f)) (fun f a b -> f.Invoke(a,b))
 
         ///Generates a Func'4.
         static member SystemFunc3() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Func<_,_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
 
         ///Generates an Action'0
         static member SystemAction() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Action(f)) (fun f -> f.Invoke)
 
         ///Generates an Action'1
         static member SystemAction1() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Action<_>(f)) (fun f -> f.Invoke)
 
         ///Generates an Action'2
         static member SystemAction2() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Action<_,_>(f)) (fun f a b -> f.Invoke(a,b))
 
         ///Generates an Action'3
         static member SystemAction3() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Action<_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
 
         ///Generates an arbitrary DateTime between 1900 and 2100. 
