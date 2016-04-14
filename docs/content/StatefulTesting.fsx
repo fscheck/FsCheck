@@ -31,14 +31,22 @@ With this idea in mind, you can write a specification of the Counter class using
 in C# below):*)
 
 let spec =
-  let inc = Command.fromFun "inc" (fun x -> x + 1) 
-                            (fun (counter:Counter, count) -> counter.Inc(); counter.Get = count |@ sprintf "model: %i <> %A" count counter)
-  let dec = Command.fromFun "dec" (fun x -> x - 1) 
-                            (fun (counter:Counter, count) -> counter.Dec(); counter.Get = count |@ sprintf "model: %i <> %A" count counter)
+  let inc = { new Command<Counter, int>() with
+                    override __.RunActual counter = counter.Inc(); counter
+                    override __.RunModel m = m + 1
+                    override __.Post(counter, m) = counter.Get = m |@ sprintf "model: %i <> %A" m counter
+                    override __.ToString() = "inc" }
+                           
+  let dec = { new Command<Counter, int>() with
+                    override __.RunActual counter = counter.Dec(); counter
+                    override __.RunModel m = m - 1
+                    override __.Post(counter, m) = counter.Get = m |@ sprintf "model: %i <> %A" m counter
+                    override __.ToString() = "dec" }
   
-  { new CommandGenerator<Counter,int>() with
-      member __.Create = Gen.constant <| Command.create (fun () -> Counter()) (fun () -> 0) |> Arb.fromGen
-      member __.Next model = Gen.elements [inc;dec] |> Arb.fromGen}
+  { new ICommandGenerator<Counter,int> with
+      member __.InitialActual = Counter()
+      member __.InitialModel = 0
+      member __.Next model = Gen.elements [inc;dec] }
 
 (**
 A specification is put together for FsCheck as an object that implementents `ICommandGenerator<'typeUnderTest,'modelType>`. It should return 
