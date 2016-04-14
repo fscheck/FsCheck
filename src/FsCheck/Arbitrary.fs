@@ -76,6 +76,9 @@ type FixedLengthArray<'a> = FixedLengthArray of 'a[] with
 type NonNull<'a when 'a : null> = NonNull of 'a with
     member x.Get = match x with NonNull r -> r
 
+type ThrowingFunction<'a,'b> = ThrowingFunction of ('a -> 'b) with
+    member x.Get = match x with ThrowingFunction f -> f
+
 ///A function (F# function) that can be displayed and shrunk.
 [<StructuredFormatDisplay("{StructuredDisplayAsTable}")>]
 [<NoEquality;NoComparison>]
@@ -519,11 +522,62 @@ module Arb =
                 override __.Generator = gen
             }
 
-        ///Generate a function value. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
+        ///Generate a F# function value. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
          ///There is no shrinking for function values.
         [<CompiledName("FSharpFun")>]
         static member Fun() = Default.Arrow()
+
+        ///Generate am F# function value that generates an instance of the function result type about half the time. The other 
+        ///times it generates one of the given exceptions.
+        [<CompiledName("ThrowingFSharpFun")>]
+        static member ThrowingFunction(exceptions:Exception seq) = 
+            let exc = exceptions |> Seq.toArray
+            let throwExc = Gen.elements exc |> Gen.map raise
+            let gen = let vfun = Gen.variant
+                      Gen.promote (fun a -> vfun a (Gen.frequency [(exc.Length, generate);(exc.Length, throwExc)]))
+                      |> Gen.map ThrowingFunction
+            { new Arbitrary<ThrowingFunction<'a,'b>>() with
+                override __.Generator = gen
             }
+
+        ///Generate an F# function value that generates an instance of the function result type about half the time. The other 
+        ///times it generates one of a list of common .NET exceptions, including Exception, ArgumentException, ArithmeticException,
+        ///IOException, NotImplementedException, OUtOfMemoryException and others.
+        [<CompiledName("ThrowingFSharpFun")>]
+        static member ThrowingFunction() = 
+            Default.ThrowingFunction [| Exception()
+
+                                        ArgumentException()
+                                        ArgumentNullException()
+                                        ArgumentOutOfRangeException()
+                                        
+                                        ArithmeticException()
+                                        DivideByZeroException()
+                                        OverflowException()
+                                        FormatException()
+                                        IndexOutOfRangeException()
+                                        InvalidCastException()
+                                        InvalidOperationException()
+                                        
+                                        IO.IOException()
+                                        IO.EndOfStreamException()
+                                        IO.FileNotFoundException()
+
+                                        NotImplementedException()
+                                        NotSupportedException()
+
+                                        NullReferenceException()
+                                        OutOfMemoryException()
+#if PCL
+#else
+                                        NotFiniteNumberException()
+                                        IO.DirectoryNotFoundException()
+                                        IO.FileLoadException()
+                                        StackOverflowException()
+                                        KeyNotFoundException()
+                                        IO.PathTooLongException()
+#endif
+                                     |]
 
         ///Generate a Function value that can be printed and shrunk. Function values can be generated for types 'a->'b 
         ///where 'b has an Arbitrary instance.
