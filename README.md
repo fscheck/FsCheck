@@ -17,7 +17,7 @@ Releases:
 * [FsCheck with xUnit.NET integration](http://nuget.org/List/Packages/FsCheck.Xunit)
 * [FsCheck with NUnit integration](http://www.nuget.org/packages/FsCheck.Nunit/)
  
-FsCheck follows [Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html).
+FsCheck follows [Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html), except for the API exposed in `FsCheck.Experimental` which is subject to change to any time.
 
 All AppVeyor builds are available using the NuGet feed: https://ci.appveyor.com/nuget/fscheck
 
