@@ -15,6 +15,7 @@ open System.Reflection
 open System.Threading
 open System
 open FsCheck
+open System.Collections.Generic
 
 [<AbstractClass>]
 type Setup<'Actual,'Model>() =
@@ -28,10 +29,48 @@ type Setup<'Actual,'Model>() =
     abstract Model : unit -> 'Model
     override __.ToString() = sprintf "Setup %s" typeof<'Actual>.Name
 
+type IOperation =
+    abstract Gets : IOperationResult -> unit
+    abstract Sets : IOperationResult -> unit
+    abstract Needs : ISet<IOperationResult>
+    abstract Provides : ISet<IOperationResult>
+    abstract ClearDependencies : unit -> unit
+
+and IOperationResult = interface end
+
+//a single assignment variable
+type OperationResult<'a>(?name) =
+    static let mutable resultCounter = 0
+    static let nextCounter() = Interlocked.Increment &resultCounter
+    let name = defaultArg name "var"
+    let counter = nextCounter()
+    let mutable result :'a option = None
+
+    interface IOperationResult
+
+    member __.Counter = counter
+    member res.V with get (operation:IOperation) = operation.Gets res;  result.Value
+                 and  set (operation:IOperation) v = match result with None -> operation.Sets res; result <- Some v | Some _ -> invalidOp "Result already set to value."
+    override __.ToString() = sprintf "%s_%i" name counter
+    override __.GetHashCode() = counter
+    override __.Equals other = 
+        match other with
+        | :? OperationResult<'a> as oth -> oth.Counter = counter
+        | _ -> false
+    
+
 ///An operation describes pre and post conditions and the model for a single operation under test.
 ///The post-conditions are the invariants that will be checked; when these do not hold the test fails.
 [<AbstractClass>]
 type Operation<'Actual,'Model>() =
+    let sets = HashSet<IOperationResult>()
+    let gets = HashSet<IOperationResult>()
+    interface IOperation with
+        override __.Gets opResult = gets.Add opResult |> ignore
+        override __.Sets opResult = sets.Add opResult |> ignore
+        override __.Needs = upcast gets
+        override __.Provides = upcast sets
+        override __.ClearDependencies() = gets.Clear();sets.Clear()
     ///Excecutes the command on the object under test, and returns a property that must hold.
     ///This property typically compares the state of the model with the state of the object after
     ///execution of the command.
@@ -46,14 +85,15 @@ type Operation<'Actual,'Model>() =
 
 type StopOperation<'Actual,'Model>() =
     inherit Operation<'Actual,'Model>()
-    override __.Check (a, m) = true.ToProperty()
+    override __.Check (_, _) = true.ToProperty()
     override __.Run m = m
+    override __.ToString() = "Stop"
 
 
 type TearDown<'Actual>() =
     abstract Actual : 'Actual -> unit
     default __.Actual _ = ()
-    override __.ToString() = sprintf "TearDown %s" typeof<'Actual>.Name
+    override __.ToString() = ""
 
 ///Defines the initial state for actual and model object, and allows to define the generator to use
 ///for the next state, based on the model.
@@ -71,25 +111,19 @@ type Machine<'Actual,'Model>(maxNumberOfCommands:int) =
     ///if its precondition does not hold.
     abstract Next : 'Model -> Gen<Operation<'Actual,'Model>>
 
+[<StructuredFormatDisplayAttribute("{StructuredToString}")>]
 type MachineRun<'Actual, 'Model> =
     { Setup : 'Model * Setup<'Actual,'Model> 
       Operations : list<Operation<'Actual,'Model> * 'Model>
-      TearDown : TearDown<'Actual> }
+      TearDown : TearDown<'Actual> } with
+    override t.ToString() =
+        sprintf "%A\n%s\n%A" t.Setup (String.Join("\n", t.Operations |> Seq.map (fun (op,m) -> sprintf "%O -> %A" op m ))) t.TearDown
+    member t.StructuredToString = t.ToString()
 
 // ------------- create Machine from class definition ----------
 
-//a single assignment variable
-type OperationResult(?result,?name) =
-    static let mutable resultCounter = 0
-    static let nextCounter() = Interlocked.Increment &resultCounter
-    let name = defaultArg name "result"
-    let mutable counter = nextCounter()
-    let mutable result = result
-    member __.Get = result
-    member __.Set v = match result with None -> result <- Some v | Some _ -> invalidOp "Result already set to value."
-    override __.ToString() = sprintf "%s_%i" name counter
 
-type ObjectMachineModel = OperationResult * OperationResult * string
+type ObjectMachineModel = OperationResult<obj> * OperationResult<obj> * string //objectUndertest * operationResult * methodname
 
 type New<'Actual>(ctor:ConstructorInfo, parameters:array<obj>) =
     inherit Setup<'Actual,ObjectMachineModel>()
@@ -101,7 +135,7 @@ type New<'Actual>(ctor:ConstructorInfo, parameters:array<obj>) =
     override __.Model() = 
         let result = OperationResult()
         let str = sprintf "let %O = new %s(%s)" result typeof<'Actual>.Name paramstring
-        result, result, str
+        (result, result, str)
 
 type MethodCall<'Actual>(meth:MethodInfo, parameters:array<obj>) =
     inherit Operation<'Actual,ObjectMachineModel>()
@@ -113,10 +147,10 @@ type MethodCall<'Actual>(meth:MethodInfo, parameters:array<obj>) =
         let result = OperationResult()
         let str = sprintf "let %O = %O.%s(%s)" result objectUnderTest meth.Name paramstring
         objectUnderTest, result, str
-    override __.Check(actual, (_, modelResult, _)) =
+    override op.Check(actual, (_, operationResult, _)) =
         let result = lazy let result = meth.Invoke(actual, parameters)
-                          modelResult.Set result
-        Prop.ofTestable result
+                          operationResult.V op = result 
+        Prop.ofTestable result //basically just check it doesn't throw
     override __.ToString() =
         sprintf "%s(%s)" meth.Name paramstring
 
@@ -229,24 +263,32 @@ module StateMachine =
 
     [<CompiledName("Shrink")>]
     let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
-        let runModels initial (operations:list<Operation<'Actual,'Model>>) =
-            operations 
-            |> Seq.scan (fun (_,Lazy model) operation -> (operation.Pre model, lazy operation.Run model)) (true, lazy initial) 
+        let runModels initial (operations:seq<Operation<'Actual,'Model>>) =
+            let addProvided (set:HashSet<_>) (op:IOperation) =
+                set.UnionWith op.Provides
+                set
+            let hasNeeds (op:IOperation) (provided:HashSet<_>) =
+                let r = provided.IsSupersetOf op.Needs
+                r
+
+            operations
+            |> Seq.scan (fun (_,provided,Lazy model) operation -> 
+                (hasNeeds operation provided && operation.Pre model, 
+                 addProvided provided operation, 
+                 lazy operation.Run model)) 
+                (true, 
+                 HashSet<IOperationResult>(), 
+                 lazy initial)
             |> Seq.skip 1
             |> Seq.zip operations
-            |> Seq.map (fun (op,(pre,model)) -> (pre, (op,model)))
+            |> Seq.map (fun (op,(pre,_,model)) -> (pre, (op,model)))
             
         let operationShrinker l =
             let allSubsequences (l:list<_>) =
                 seq { for i in 1..l.Length do
-                        yield! Seq.windowed i l |> Seq.map Seq.toList
+                        yield! Seq.windowed i l //|> Seq.map Seq.toList
                 }
-            match l with
-            | [] -> Seq.empty
-            | x::xs -> 
-                seq { yield! allSubsequences xs
-                      yield! Seq.map (fun l -> x::l) (allSubsequences xs) |> Seq.where (fun l' -> List.length l' <> List.length l)
-                }
+            allSubsequences l
 
         run.Operations 
         |> List.map fst
@@ -257,7 +299,11 @@ module StateMachine =
                             let transitions = runModels initialModel operations
                             let ok = Seq.forall fst transitions
                             let newOperations = transitions |> Seq.map (snd >> (fun (op,Lazy v) -> op,v)) 
-                            if ok then Some { run with Operations = newOperations |> Seq.toList } else None)
+                            if ok then 
+                                let newOperations = newOperations |> Seq.toList
+                                Some { run with Operations = newOperations } 
+                            else 
+                                None)
         //try to srhink the initial setup state
         |> Seq.append (Arb.toShrink spec.Setup (snd run.Setup) |> Seq.map (fun create -> { run with Setup = create.Model(), create }))
         
@@ -268,7 +314,8 @@ module StateMachine =
                 match operations with
                 | [] -> teardown.Actual actual; property
                 | ((op,model)::ops) -> 
-                    let prop = op.Check(actual, model) |> Prop.ofTestable
+                    (op :> IOperation).ClearDependencies() //side-effect :(
+                    let prop = op.Check(actual, model)
                     run actual ops (property .&. prop) //not great: should stop generating once error is found
             run (setup.Actual()) operations (Prop.ofTestable true)
 
