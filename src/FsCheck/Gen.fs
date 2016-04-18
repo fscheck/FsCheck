@@ -313,6 +313,7 @@ module Gen =
     [<CompiledName("ListOf")>]
     let listOfLength n arb = sequence [ for _ in 1..n -> arb ]
 
+    [<CompiledName("Shuffle")>]
     let shuffle xs =
         gen {
             let h = 922337203
