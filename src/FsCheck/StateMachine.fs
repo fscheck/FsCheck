@@ -285,10 +285,10 @@ module StateMachine =
             
         let operationShrinker l =
             let allSubsequences (l:list<_>) =
-                seq { for i in 1..l.Length do
+                seq { for i in 1..l.Length-1 do
                         yield! Seq.windowed i l //|> Seq.map Seq.toList
                 }
-            allSubsequences l
+            allSubsequences l |> Seq.distinct
 
         run.Operations 
         |> List.map fst
