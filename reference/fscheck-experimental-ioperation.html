@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>OperationResult - FsCheck</title>
+    <title>IOperation - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,39 +34,12 @@
 
 
 
-<h1>OperationResult</h1>
+<h1>IOperation</h1>
 <p>
   <span>Namespace: FsCheck.Experimental</span><br />
 </p>
 <div class="xmldoc">
 </div>
-  <h3>Constructors</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Constructor</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '463', 463)" onmouseover="showTip(event, '463', 463)">
-            new(result, name)
-          </code>
-          <div class="tip" id="463">
-            <strong>Signature:</strong> (result:obj option * name:string option) -&gt; OperationResult<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L82-82" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-              <p>CompiledName: <code>.ctor</code></p>
-        </td>
-      </tr>
-    </tbody>
-  </table>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
     <thead>
@@ -76,34 +49,94 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '464', 464)" onmouseover="showTip(event, '464', 464)">
-            Get
+          <code onmouseout="hideTip(event, '447', 447)" onmouseover="showTip(event, '447', 447)">
+            ClearDependencies()
           </code>
-          <div class="tip" id="464">
-            <strong>Signature:</strong> obj option<br />
+          <div class="tip" id="447">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L88-88" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L37-37" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
-              <p>CompiledName: <code>get_Get</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '465', 465)" onmouseover="showTip(event, '465', 465)">
-            Set(v)
+          <code onmouseout="hideTip(event, '448', 448)" onmouseover="showTip(event, '448', 448)">
+            Gets(arg1)
           </code>
-          <div class="tip" id="465">
-            <strong>Signature:</strong> v:obj -&gt; unit<br />
+          <div class="tip" id="448">
+            <strong>Signature:</strong> IOperationResult -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L89-89" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L33-33" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '449', 449)" onmouseover="showTip(event, '449', 449)">
+            Needs
+          </code>
+          <div class="tip" id="449">
+            <strong>Signature:</strong> ISet&lt;IOperationResult&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L35-35" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>get_Needs</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '450', 450)" onmouseover="showTip(event, '450', 450)">
+            Provides
+          </code>
+          <div class="tip" id="450">
+            <strong>Signature:</strong> ISet&lt;IOperationResult&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L36-36" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>get_Provides</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '451', 451)" onmouseover="showTip(event, '451', 451)">
+            Sets(arg1)
+          </code>
+          <div class="tip" id="451">
+            <strong>Signature:</strong> IOperationResult -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L34-34" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

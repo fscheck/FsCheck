@@ -103,19 +103,20 @@ so when we run this specification we can check that FsCheck does the right thing
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">StateMachine</span><span class="o">.</span><span class="i">toProperty</span> <span onmouseout="hideTip(event, 'fs16', 53)" onmouseover="showTip(event, 'fs16', 53)" class="i">spec</span>)
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 16 tests (1 shrink) (StdGen (1879858579,296143230)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 11 tests (0 shrinks) (StdGen (600931207,296144817)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
-{Setup = (1, Setup Counter);
- Operations =
-  [(inc, 2); (dec, 1); (inc, 2); (dec, 1); (dec, 0); (inc, 1); (inc, 2);
-   (inc, 3); (inc, 4); (inc, 5); (inc, 6); (dec, 5); (dec, 4); (inc, 5);
-   (dec, 4); (dec, 3); (inc, 4)];
- TearDown = TearDown Counter;}
-Shrunk:
-{Setup = (1, Setup Counter);
- Operations = [(inc, 2); (inc, 3); (inc, 4); (inc, 5)];
- TearDown = TearDown Counter;}</code></pre></td></tr></table>
+(1, Setup Counter)
+inc -&gt; 2
+inc -&gt; 3
+inc -&gt; 4
+dec -&gt; 3
+dec -&gt; 2
+inc -&gt; 3
+inc -&gt; 4
+dec -&gt; 3
+inc -&gt; 4
+inc -&gt; 5</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence of operations that leads to it.</p>
 <p>But what has actually happened? Using the generators from the <code>Machine</code> methods, FsCheck tries to generate a random sequence of operations, for example:</p>
 <pre class="fssnip highlighted"><code lang="fsharp">{<span class="i">Setup</span> <span class="o">=</span> (<span class="n">0</span>, <span class="i">Setup</span> <span class="i">Counter</span>);

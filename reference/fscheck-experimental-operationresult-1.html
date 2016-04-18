@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>PropOperators - FsCheck</title>
+    <title>OperationResult<'a> - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,147 +34,100 @@
 
 
 
-<h1>PropOperators</h1>
+<h1>OperationResult<'a></h1>
 <p>
-  <span>Namespace: FsCheck</span><br />
+  <span>Namespace: FsCheck.Experimental</span><br />
 </p>
 <div class="xmldoc">
-<p>Operators for Prop.</p>
-
 </div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
+  <h3>Constructors</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
+      <tr><td>Constructor</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '96', 96)" onmouseover="showTip(event, '96', 96)">
-            ( %&gt; ) 
+          <code onmouseout="hideTip(event, '469', 469)" onmouseover="showTip(event, '469', 469)">
+            new(name)
           </code>
-          <div class="tip" id="96">
-            <strong>Signature:</strong> &#39;?222494 -&gt; string -&gt; Property<br />
-                          <strong>Type parameters:</strong> '?222494          </div>
+          <div class="tip" id="469">
+            <strong>Signature:</strong> (name:string option) -&gt; OperationResult&lt;&#39;a&gt;<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L154-154" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L42-42" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Add the given label to the property. Property on the left hand side, label on the right.</p>
+          
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
 
-
-              <p>CompiledName: <code>op_PercentGreater</code></p>
+          <code onmouseout="hideTip(event, '470', 470)" onmouseover="showTip(event, '470', 470)">
+            Counter
+          </code>
+          <div class="tip" id="470">
+            <strong>Signature:</strong> int<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L51-51" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>get_Counter</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '97', 97)" onmouseover="showTip(event, '97', 97)">
-            ( .&amp;. ) l r
+          <code onmouseout="hideTip(event, '471', 471)" onmouseover="showTip(event, '471', 471)">
+            V(operation)
           </code>
-          <div class="tip" id="97">
-            <strong>Signature:</strong> l:&#39;LeftTestable -&gt; r:&#39;RightTestable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'LeftTestable, 'RightTestable          </div>
+          <div class="tip" id="471">
+            <strong>Signature:</strong> operation:IOperation -&gt; &#39;a<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L157-157" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L53-53" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Construct a property that succeeds if both succeed. (cfr 'and')</p>
-
-
-              <p>CompiledName: <code>op_DotAmpDot</code></p>
+          
+              <p>CompiledName: <code>set_V</code></p>
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '98', 98)" onmouseover="showTip(event, '98', 98)">
-            ( .|. ) l r
+          <code onmouseout="hideTip(event, '472', 472)" onmouseover="showTip(event, '472', 472)">
+            V()
           </code>
-          <div class="tip" id="98">
-            <strong>Signature:</strong> l:&#39;LeftTestable -&gt; r:&#39;RightTestable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'LeftTestable, 'RightTestable          </div>
+          <div class="tip" id="472">
+            <strong>Signature:</strong> unit -&gt; IOperation<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L162-162" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L52-52" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Construct a property that fails if both fail. (cfr 'or')</p>
-
-
-              <p>CompiledName: <code>op_DotBarDot</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '99', 99)" onmouseover="showTip(event, '99', 99)">
-            ( @| ) 
-          </code>
-          <div class="tip" id="99">
-            <strong>Signature:</strong> string -&gt; &#39;?222492 -&gt; Property<br />
-                          <strong>Type parameters:</strong> '?222492          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L151-151" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Add the given label to the property. label on the left hand side, property on the right.</p>
-
-
-              <p>CompiledName: <code>op_AtBar</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '100', 100)" onmouseover="showTip(event, '100', 100)">
-            ( |@ ) x y
-          </code>
-          <div class="tip" id="100">
-            <strong>Signature:</strong> x:&#39;?222490 -&gt; y:string -&gt; Property<br />
-                          <strong>Type parameters:</strong> '?222490          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L148-148" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Add the given label to the property. Property on the left hand side, label on the right.</p>
-
-
-              <p>CompiledName: <code>op_BarAt</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '101', 101)" onmouseover="showTip(event, '101', 101)">
-            ( ==&gt; ) condition assertion
-          </code>
-          <div class="tip" id="101">
-            <strong>Signature:</strong> condition:bool -&gt; assertion:&#39;Testable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Testable          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L145-145" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Conditional property combinator. Resulting property holds if the property after ==&gt; holds whenever the condition does.</p>
-
-
-              <p>CompiledName: <code>op_EqualsEqualsGreater</code></p>
+          
+              <p>CompiledName: <code>get_V</code></p>
         </td>
       </tr>
     </tbody>

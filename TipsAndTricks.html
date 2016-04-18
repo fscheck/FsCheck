@@ -51,13 +51,13 @@ FsCheck can even shrink <code>Function</code>s. For example:</p>
       <span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">map</span> <span class="i">f</span> <span onmouseout="hideTip(event, 'fs13', 34)" onmouseover="showTip(event, 'fs13', 34)" class="i">l</span> <span class="o">=</span> (<span class="c">(*f &lt;|*)</span> <span onmouseout="hideTip(event, 'fs17', 35)" onmouseover="showTip(event, 'fs17', 35)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs19', 36)" onmouseover="showTip(event, 'fs19', 36)" class="i">head</span> <span onmouseout="hideTip(event, 'fs13', 37)" onmouseover="showTip(event, 'fs13', 37)" class="i">l</span>) <span class="o">::</span> <span onmouseout="hideTip(event, 'fs17', 38)" onmouseover="showTip(event, 'fs17', 38)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 39)" onmouseover="showTip(event, 'fs18', 39)" class="i">map</span> <span class="i">f</span> (<span onmouseout="hideTip(event, 'fs17', 40)" onmouseover="showTip(event, 'fs17', 40)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 41)" onmouseover="showTip(event, 'fs20', 41)" class="i">tail</span> <span onmouseout="hideTip(event, 'fs13', 42)" onmouseover="showTip(event, 'fs13', 42)" class="i">l</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 43)" onmouseover="showTip(event, 'fs11', 43)" class="i">mapRec</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (4 shrinks) (StdGen (1918626760,296143230)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (637997374,296144817)):
 Original:
-{ 0-&gt;0; 1-&gt;2; 2-&gt;2 }
-[1; 2]
+{ 0-&gt;1; 1-&gt;0 }
+[1]
 Shrunk:
-{ 0-&gt;0; 1-&gt;0; 2-&gt;0 }
-[1]</code></pre></td></tr></table>
+{ 0-&gt;1; 1-&gt;0 }
+[0]</code></pre></td></tr></table>
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
 records a map of all the arguments it was called with, and the result it produced.
 In your properties, you can extract the actual function by pattern matching as in the example.
@@ -95,7 +95,7 @@ define your own labelling equality combinator:</p>
 <span class="k">let</span> <span class="i">testCompare</span> (<span onmouseout="hideTip(event, 'fs23', 69)" onmouseover="showTip(event, 'fs23', 69)" class="i">i</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 70)" onmouseover="showTip(event, 'fs5', 70)" class="t">int</span>) (<span onmouseout="hideTip(event, 'fs30', 71)" onmouseover="showTip(event, 'fs30', 71)" class="i">j</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 72)" onmouseover="showTip(event, 'fs5', 72)" class="t">int</span>) <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs23', 73)" onmouseover="showTip(event, 'fs23', 73)" class="i">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs30', 74)" onmouseover="showTip(event, 'fs30', 74)" class="i">j</span><span class="o">-</span><span class="n">1</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1920368037,296143230)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (639608511,296144817)):
 Label of failing property: 3 = -1
 Original:
 1
@@ -152,6 +152,15 @@ you mutate a generated object during a test, either:</p>
 <li>Disable shrinking, typically by wrapping all types into <code>DontShrink</code>; or</li>
 <li>Clone or otherwise 'reset' the generated mutable object at the beginning or end of every test.</li>
 </ul>
+<h2><a name="Replaying-a-failed-test" class="anchor" href="#Replaying-a-failed-test">Replaying a failed test</a></h2>
+<p>When you have a failed test, it's often useful for debugging to be able to replay exactly those inputs. For this reason, FsCheck displays the
+seed of its pseudo-random number generator when a test fails. Look for the bit of text that looks like: <code>(StdGen (1145655947,296144285))</code>.</p>
+<p>To replay this test, which should have the exact same output, use the <code>Replay</code> field on <code>Config</code>:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">One</span>({ <span class="i">Config</span><span class="o">.</span><span class="i">Quick</span> <span class="k">with</span> <span class="i">Replay</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs35', 82)" onmouseover="showTip(event, 'fs35', 82)" class="i">Some</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs36', 83)" onmouseover="showTip(event, 'fs36', 83)" class="i">Random</span><span class="o">.</span><span class="i">StdGen</span> (<span class="n">1145655947</span>,<span class="n">296144285</span>) }, <span class="k">fun</span> <span class="i">x</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs37', 84)" onmouseover="showTip(event, 'fs37', 84)" class="i">abs</span> <span class="i">x</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span>)
+</code></pre>
+<p>In C#:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll((<span class="k">int</span> x) <span class="o">=</span><span class="o">&gt;</span> Math.Abs(x) <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span>)
+    .Check(<span class="k">new</span> Configuration { Replay <span class="o">=</span> FsCheck.Random.StdGen.NewStdGen(<span class="n">1145655947</span>, <span class="n">296144285</span>)});</code></pre></td></tr></table>
 
 <div class="tip" id="fs1">namespace FsCheck</div>
 <div class="tip" id="fs2">namespace System</div>
@@ -187,6 +196,9 @@ you mutate a generated object during a test, either:</p>
 <div class="tip" id="fs32">namespace System.Collections</div>
 <div class="tip" id="fs33">namespace System.Collections.Generic</div>
 <div class="tip" id="fs34">Multiple items<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; List&lt;&#39;T&gt; + 2 overloads<br />&#160;&#160;member Add : item:&#39;T -&gt; unit<br />&#160;&#160;member AddRange : collection:IEnumerable&lt;&#39;T&gt; -&gt; unit<br />&#160;&#160;member AsReadOnly : unit -&gt; ReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;member BinarySearch : item:&#39;T -&gt; int + 2 overloads<br />&#160;&#160;member Capacity : int with get, set<br />&#160;&#160;member Clear : unit -&gt; unit<br />&#160;&#160;member Contains : item:&#39;T -&gt; bool<br />&#160;&#160;member ConvertAll&lt;&#39;TOutput&gt; : converter:Converter&lt;&#39;T, &#39;TOutput&gt; -&gt; List&lt;&#39;TOutput&gt;<br />&#160;&#160;member CopyTo : array:&#39;T[] -&gt; unit + 2 overloads<br />&#160;&#160;...<br />&#160;&#160;nested type Enumerator<br /><br />Full name: System.Collections.Generic.List&lt;_&gt;<br /><br />--------------------<br />Collections.Generic.List() : unit<br />Collections.Generic.List(capacity: int) : unit<br />Collections.Generic.List(collection: Collections.Generic.IEnumerable&lt;&#39;T&gt;) : unit</div>
+<div class="tip" id="fs35">union case Option.Some: Value: &#39;T -&gt; Option&lt;&#39;T&gt;</div>
+<div class="tip" id="fs36">Multiple items<br />type Random =<br />&#160;&#160;new : unit -&gt; Random + 1 overload<br />&#160;&#160;member Next : unit -&gt; int + 2 overloads<br />&#160;&#160;member NextBytes : buffer:byte[] -&gt; unit<br />&#160;&#160;member NextDouble : unit -&gt; float<br /><br />Full name: System.Random<br /><br />--------------------<br />Random() : unit<br />Random(Seed: int) : unit</div>
+<div class="tip" id="fs37">val abs : value:&#39;T -&gt; &#39;T (requires member Abs)<br /><br />Full name: Microsoft.FSharp.Core.Operators.abs</div>
 
         </div>
         <div class="span3">

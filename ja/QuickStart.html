@@ -56,11 +56,11 @@
 <p>を定義すると、このような結果を確認できるでしょう:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1581069001,296143230)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (6 shrinks) (StdGen (355957845,296144817)):
 Original:
-[0; -1]
+[-2; 4; 1; 2; -2; 0]
 Shrunk:
-[0; 1]</code></pre></td></tr></table>
+[1; 0]</code></pre></td></tr></table>
 <p>FsCheck は反例の <em>シュリンク</em> (訳註: 推定による絞り込みのこと)も行うので、テストケースを失敗させる最小の反例を見つけようとします。
 反例は確かに最小、つまりリストは少なくともテストを失敗するための２つの異なる要素を持っています。FsCheck はより小さな反例を
 (何らかの方法で)何回見つけてシュリンクを進めたかを表示します。</p>
@@ -81,11 +81,9 @@ Shrunk:
 </code></pre>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 25 tests (14 shrinks) (StdGen (1581799710,296143230)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (5 shrinks) (StdGen (356588127,296144817)):
 Original:
-[-infinity; 11.83333333; 14.81818182; -13.22222222; 1.797693135e+308;
- -1.142857143; 6.0; 14.6; -2.0; nan; 4.285714286; 12.81818182; 1.797693135e+308;
- -0.5; -1.5]
+[1.0; 4.940656458e-324; infinity; infinity; -2.8; nan]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <h2>FsCheck を他のテスティングフレームワークで使う</h2>
