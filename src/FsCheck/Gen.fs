@@ -313,6 +313,8 @@ module Gen =
     [<CompiledName("ListOf")>]
     let listOfLength n arb = sequence [ for _ in 1..n -> arb ]
 
+    ///Generates a random permutation of the given sequence.
+    //[category: Creating generators]
     [<CompiledName("Shuffle")>]
     let shuffle xs =
         gen {
