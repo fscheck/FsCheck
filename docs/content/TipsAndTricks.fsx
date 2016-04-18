@@ -133,4 +133,18 @@ you mutate a generated object during a test, either:
 
 * Disable shrinking, typically by wrapping all types into `DontShrink`; or
 * Clone or otherwise 'reset' the generated mutable object at the beginning or end of every test.
+
+## Replaying a failed test
+
+When you have a failed test, it's often useful for debugging to be able to replay exactly those inputs. For this reason, FsCheck displays the
+seed of its pseudo-random number generator when a test fails. Look for the bit of text that looks like: `(StdGen (1145655947,296144285))`.
+
+To replay this test, which should have the exact same output, use the `Replay` field on `Config`:*)
+
+Check.One({ Config.Quick with Replay = Some <| Random.StdGen (1145655947,296144285) }, fun x -> abs x >= 0)
+
+(**
+In C#:
+
+    [lang=csharp,file=../csharp/TipsAndTricks.cs,key=replay]
 *)

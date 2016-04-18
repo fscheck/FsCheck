@@ -16,6 +16,11 @@ namespace CSharp.DocSnippets
             })
             .QuickCheck();
             //[/testMutableList]
+
+            //[replay]
+            Prop.ForAll((int x) => Math.Abs(x) >= 0)
+                .Check(new Configuration { Replay = FsCheck.Random.StdGen.NewStdGen(1145655947, 296144285)});
+            //[/replay]
         }
     }
 }
