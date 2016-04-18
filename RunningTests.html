@@ -79,9 +79,9 @@ you may already have.</p>
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 6 tests (5 shrinks) (StdGen (573261538,296144817)):
+ListProperties.reverse is original-Falsifiable, after 5 tests (1 shrink) (StdGen (1082490404,296144818)):
 Original:
-[-5; 2]
+[1; 2]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
