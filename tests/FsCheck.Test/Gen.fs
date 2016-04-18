@@ -124,7 +124,7 @@ module Gen =
     let Shuffle (NonEmptySet (xs:Set<int>)) =
         Gen.shuffle xs
         |> sample 10
-        |> List.forall ((<>) (Set.toSeq xs))
+        |> List.exists ((<>) (Set.toSeq xs))
    
     [<Property>]
     let SuchThatOption (v:int) (predicate:int -> bool) =
