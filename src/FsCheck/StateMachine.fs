@@ -36,7 +36,8 @@ type IOperation =
     abstract Provides : ISet<IOperationResult>
     abstract ClearDependencies : unit -> unit
 
-and IOperationResult = interface end
+and IOperationResult = 
+    abstract Reset : unit -> unit
 
 //a single assignment variable
 type OperationResult<'a>(?name) =
@@ -46,11 +47,13 @@ type OperationResult<'a>(?name) =
     let counter = nextCounter()
     let mutable result :'a option = None
 
-    interface IOperationResult
+    interface IOperationResult with
+        override __.Reset() = result <- None
 
     member __.Counter = counter
     member res.V with get (operation:IOperation) = operation.Gets res;  result.Value
                  and  set (operation:IOperation) v = match result with None -> operation.Sets res; result <- Some v | Some _ -> invalidOp "Result already set to value."
+    
     override __.ToString() = sprintf "%s_%i" name counter
     override __.GetHashCode() = counter
     override __.Equals other = 
@@ -70,7 +73,10 @@ type Operation<'Actual,'Model>() =
         override __.Sets opResult = sets.Add opResult |> ignore
         override __.Needs = upcast gets
         override __.Provides = upcast sets
-        override __.ClearDependencies() = gets.Clear();sets.Clear()
+        override __.ClearDependencies() = 
+            sets |> Seq.iter (fun s -> s.Reset())
+            gets.Clear()
+            sets.Clear()
     ///Excecutes the command on the object under test, and returns a property that must hold.
     ///This property typically compares the state of the model with the state of the object after
     ///execution of the command.
@@ -272,23 +278,30 @@ module StateMachine =
                 r
 
             operations
-            |> Seq.scan (fun (_,provided,Lazy model) operation -> 
-                (hasNeeds operation provided && operation.Pre model, 
-                 addProvided provided operation, 
-                 lazy operation.Run model)) 
-                (true, 
-                 HashSet<IOperationResult>(), 
+            |> Seq.scan (fun (provided, _, Lazy model) operation -> 
+                 if hasNeeds operation provided && operation.Pre model then
+                    addProvided provided operation, Some operation, lazy operation.Run model
+                 else 
+                    provided, None, lazy model)
+                (HashSet<IOperationResult>(), 
+                 None,
                  lazy initial)
-            |> Seq.skip 1
-            |> Seq.zip operations
-            |> Seq.map (fun (op,(pre,_,model)) -> (pre, (op,model)))
-            
+            |> Seq.choose (fun (_, op, Lazy model) -> op |> Option.map (fun op -> (op,model)))
+            //|> Seq.distinct
+
         let operationShrinker l =
             let allSubsequences (l:list<_>) =
                 seq { for i in 1..l.Length-1 do
                         yield! Seq.windowed i l //|> Seq.map Seq.toList
                 }
-            allSubsequences l |> Seq.distinct
+
+//            allSubsequences l |> Seq.distinct
+
+            let skipOne (l:list<_>) =
+                seq { for i in 0..l.Length-1 do 
+                        yield List.foldBack (fun e (c,r) -> c+1, if i <> c then e::r else r) l (0,[]) |> snd
+                }
+            skipOne l
 
         run.Operations 
         |> List.map fst
@@ -296,11 +309,14 @@ module StateMachine =
         //try to shrink the list of operations
         |> Seq.choose (fun operations -> 
                             let initialModel = fst run.Setup
-                            let transitions = runModels initialModel operations
-                            let ok = Seq.forall fst transitions
-                            let newOperations = transitions |> Seq.map (snd >> (fun (op,Lazy v) -> op,v)) 
+                            let transitions = runModels initialModel operations |> Seq.toList
+                            //printf "transitions %A" transitions
+                            let ok = not <| List.isEmpty transitions
+                            //let newOperations = transitions |> Seq.map (snd >> (fun (op,Lazy v) -> op,v)) 
                             if ok then 
-                                let newOperations = newOperations |> Seq.toList
+                                let newOps = transitions //|> Seq.toList
+                                //printf "newops %A" newOps
+                                let newOperations = newOps
                                 Some { run with Operations = newOperations } 
                             else 
                                 None)
