@@ -199,7 +199,7 @@ module StateMachine =
         let (``a->b``, ``b->a``, ``b->c``, ``a->c``) = makeOperations "C"
         let run = { Setup = (A, setup)
                     TearDown = spec.TearDown
-                    Operations = [(``a->b``,B); (``b->a``,A);(``a->b``,B); (``b->a``,A);(``a->c``,C)] }
+                    Operations = [(``a->b``,B); (``b->a``,A);(``a->c``,C)] }
         let shrunk = StateMachine.shrink spec run
         test <@ shrunk |> Seq.exists (fun e -> e.Operations = [(``a->c``,C)]) @>
 
