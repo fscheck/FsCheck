@@ -313,6 +313,17 @@ module Gen =
     [<CompiledName("ListOf")>]
     let listOfLength n arb = sequence [ for _ in 1..n -> arb ]
 
+    let shuffle xs =
+        gen {
+            let h = 922337203
+            let gn = choose (-h, h)
+            let! ns = listOfLength (Seq.length xs) gn
+            return xs
+                   |> Seq.zip ns
+                   |> Seq.sortBy fst
+                   |> Seq.map snd
+        }
+
     ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
     ///if the given original generator did not generate any values that satisfied the predicate, after trying to
     ///get values from by increasing its size.
