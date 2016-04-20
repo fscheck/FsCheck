@@ -120,11 +120,21 @@ module Gen =
         |> sample1
         |> ((=) (List.init length (fun _ -> v)))
 
+    // This property is non-deterministic, and may rarely fail. The chance of
+    // this property not holding in case of a uniform shuffle - in other words,
+    // the chance of producing 10 times the same input list of length 5 - is
+    // (1/5!)^10, which should be small enough.
+    // In this case, relying on the statistical attribute of a test being
+    // exceedingly unlikely to produce a False Positive is sometimes the only
+    // option. See also: https://github.com/fscheck/FsCheck/pull/221/
     [<Property>]
-    let Shuffle (NonEmptySet (xs:Set<int>)) =
-        Gen.shuffle xs
+    let Shuffle (s:Set<int>) =
+        s.Count > 1 ==> lazy
+        let l = Set.toList s
+        Gen.shuffle l
         |> sample 10
-        |> List.exists ((<>) (Set.toSeq xs))
+        |> List.map Seq.toList
+        |> List.exists ((<>) l)
    
     [<Property>]
     let SuchThatOption (v:int) (predicate:int -> bool) =
