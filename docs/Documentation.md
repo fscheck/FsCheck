@@ -414,6 +414,7 @@ If g is a generator for type t, then
 - `constant v` generates the value v.
 - `suchThat p g` generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
 - `suchThatOption p g` generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')
+- If xs is a sequence, then `shuffle xs` generates a random permutation of xs.
 
 All the generator combinators are functions on the Gen module.
 #### Default Generators and Shrinkers based on type
