@@ -60,9 +60,9 @@ Prop.ForAll(revRevIsOrig).QuickCheck();</code></pre></td></tr></table>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 13)" onmouseover="showTip(event, 'fs8', 13)" class="f">revIsOrig</span> (<span onmouseout="hideTip(event, 'fs3', 14)" onmouseover="showTip(event, 'fs3', 14)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs4', 15)" onmouseover="showTip(event, 'fs4', 15)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs5', 16)" onmouseover="showTip(event, 'fs5', 16)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 17)" onmouseover="showTip(event, 'fs6', 17)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 18)" onmouseover="showTip(event, 'fs7', 18)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs3', 19)" onmouseover="showTip(event, 'fs3', 19)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 20)" onmouseover="showTip(event, 'fs3', 20)" class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (5 shrinks) (StdGen (1059464028,296144818)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (3 shrinks) (StdGen (2077567646,296145610)):
 Original:
-[-4; -3]
+[-2; -2; 0]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>In C#:</p>
@@ -88,8 +88,11 @@ To see this error, ask FsCheck to generate lists of floats:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 22)" onmouseover="showTip(event, 'fs9', 22)" class="f">revRevIsOrigFloat</span> (<span onmouseout="hideTip(event, 'fs10', 23)" onmouseover="showTip(event, 'fs10', 23)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs4', 24)" onmouseover="showTip(event, 'fs4', 24)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs11', 25)" onmouseover="showTip(event, 'fs11', 25)" class="t">float</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 26)" onmouseover="showTip(event, 'fs6', 26)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 27)" onmouseover="showTip(event, 'fs7', 27)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs6', 28)" onmouseover="showTip(event, 'fs6', 28)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 29)" onmouseover="showTip(event, 'fs7', 29)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs10', 30)" onmouseover="showTip(event, 'fs10', 30)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs10', 31)" onmouseover="showTip(event, 'fs10', 31)" class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 7 tests (0 shrinks) (StdGen (1059844480,296144818)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 17 tests (12 shrinks) (StdGen (2077928068,296145610)):
 Original:
+[5.4; -1.797693135e+308; nan; -6.1875; 14.5; 12.2; -0.8; -1.222222222;
+ -13.90909091; 1.797693135e+308; infinity; 6.636363636; -6.1875]
+Shrunk:
 [nan]</code></pre></td></tr></table>
 <p>That said, the example in C# using floats actually works!</p>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">double</span>[]<span class="o">&gt;</span>(xs <span class="o">=</span><span class="o">&gt;</span> xs.Reverse().Reverse().SequenceEqual(xs))

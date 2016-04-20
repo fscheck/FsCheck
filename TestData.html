@@ -175,6 +175,7 @@ recursive generators should always use the size control mechanis:</p>
 <li><code>constant v</code> generates the value v.</li>
 <li><code>suchThat p g</code> generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.</li>
 <li><code>suchThatOption p g</code> generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')</li>
+<li>If xs is a sequence, then <code>shuffle xs</code> generates a random permutation of xs.</li>
 </ul>
 <p>All the generator combinators are functions on the Gen module. In C#, the names are the same just capitalized differently.</p>
 <h2><a name="Default-Generators-and-Shrinkers-based-on-type" class="anchor" href="#Default-Generators-and-Shrinkers-based-on-type">Default Generators and Shrinkers based on type</a></h2>
