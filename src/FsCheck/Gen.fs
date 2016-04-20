@@ -313,10 +313,11 @@ module Gen =
     [<CompiledName("ListOf")>]
     let listOfLength n arb = sequence [ for _ in 1..n -> arb ]
 
-    ///Generates a random permutation of the given sequence using the Fisher-Yates shuffle algorithm.
+    ///Generates a random permutation of the given sequence.
     //[category: Creating generators]
     [<CompiledName("Shuffle")>]
     let shuffle xs =
+        // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
         let xs = xs |> Seq.toArray
         let swap (arr : _ array) i j =
             let v = arr.[j]
