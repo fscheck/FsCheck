@@ -17,7 +17,7 @@ Releases:
 * [FsCheck with xUnit.NET integration](http://nuget.org/List/Packages/FsCheck.Xunit)
 * [FsCheck with NUnit integration](http://www.nuget.org/packages/FsCheck.Nunit/)
  
-FsCheck follows [Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html).
+FsCheck follows [Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html), except for the API exposed in `FsCheck.Experimental` which is subject to change at any time.
 
 All AppVeyor builds are available using the NuGet feed: https://ci.appveyor.com/nuget/fscheck
 
@@ -56,9 +56,12 @@ It's very rare that we reject PRs. Generally, if you intend to make a bigger cha
 
 Checkout the project and run build.cmd on Windows or build.sh on Linux/OSX. That should pull in all the dependencies, build and run the tests.
 
-Then, open FsCheck.sln in Visual Studio on Windows or FsCheck-mono.sln on Linux/OSX in and start coding or writing documentation. 
+For Visual Studio/MonoDevelop/Xamarin Studio: open FsCheck.sln in Visual Studio on Windows or FsCheck-mono.sln on Linux/OSX in and start coding. 
 
-Building and testing from Visual Studio also works, to re-generate documentation quickly, execute docs/tools/generate.fsx in FSI. This should also work in Monodevelop and Xamarin, though I have not tested.
+For all other editors, FsCheck uses FAKE, targets for building are `Build` and for testing `RunTests`.
+
+Documentation uses FSharp.Formatting, so literate fsx files. To generate the html files, run `build.[cmd|sh] generatedocs`. 
+Then run `build.[cmd|sh] keeprunning` and just edit any documentation fsx file, on save it should be picked up and re-generated.
 
 - Windows on .NET:[![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036/branch/master)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
 - Linux on Mono: [![Build Status](https://travis-ci.org/fscheck/FsCheck.svg?branch=master)](https://travis-ci.org/fscheck/FsCheck)

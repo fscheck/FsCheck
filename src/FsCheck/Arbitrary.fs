@@ -76,6 +76,9 @@ type FixedLengthArray<'a> = FixedLengthArray of 'a[] with
 type NonNull<'a when 'a : null> = NonNull of 'a with
     member x.Get = match x with NonNull r -> r
 
+type ThrowingFunction<'a,'b> = ThrowingFunction of ('a -> 'b) with
+    member x.Get = match x with ThrowingFunction f -> f
+
 ///A function (F# function) that can be displayed and shrunk.
 [<StructuredFormatDisplay("{StructuredDisplayAsTable}")>]
 [<NoEquality;NoComparison>]
@@ -512,11 +515,69 @@ module Arb =
             fromGenShrink (Gen.array2DOf generate,shrinkArray2D)
 
          ///Generate a function value. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
-         ///THere is no shrinking function values.
+         ///There is no shrinking for function values.
         static member Arrow() = 
+            let gen = let vfun = Gen.variant in Gen.promote (fun a -> vfun a generate)
             { new Arbitrary<'a->'b>() with
-                override __.Generator = Gen.promote (fun a -> Gen.variant a generate)
+                override __.Generator = gen
             }
+
+        ///Generate a F# function value. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
+         ///There is no shrinking for function values.
+        [<CompiledName("FSharpFun")>]
+        static member Fun() = Default.Arrow()
+
+        ///Generate am F# function value that generates an instance of the function result type about half the time. The other 
+        ///times it generates one of the given exceptions.
+        [<CompiledName("ThrowingFSharpFun")>]
+        static member ThrowingFunction(exceptions:Exception seq) = 
+            let exc = exceptions |> Seq.toArray
+            let throwExc = Gen.elements exc |> Gen.map raise
+            let gen = let vfun = Gen.variant
+                      Gen.promote (fun a -> vfun a (Gen.frequency [(exc.Length, generate);(exc.Length, throwExc)]))
+                      |> Gen.map ThrowingFunction
+            { new Arbitrary<ThrowingFunction<'a,'b>>() with
+                override __.Generator = gen
+            }
+
+        ///Generate an F# function value that generates an instance of the function result type about half the time. The other 
+        ///times it generates one of a list of common .NET exceptions, including Exception, ArgumentException, ArithmeticException,
+        ///IOException, NotImplementedException, OUtOfMemoryException and others.
+        [<CompiledName("ThrowingFSharpFun")>]
+        static member ThrowingFunction() = 
+            Default.ThrowingFunction [| Exception()
+
+                                        ArgumentException()
+                                        ArgumentNullException()
+                                        ArgumentOutOfRangeException()
+                                        
+                                        ArithmeticException()
+                                        DivideByZeroException()
+                                        OverflowException()
+                                        FormatException()
+                                        IndexOutOfRangeException()
+                                        InvalidCastException()
+                                        InvalidOperationException()
+                                        
+                                        IO.IOException()
+                                        IO.EndOfStreamException()
+                                        IO.FileNotFoundException()
+
+                                        NotImplementedException()
+                                        NotSupportedException()
+
+                                        NullReferenceException()
+                                        OutOfMemoryException()
+#if PCL
+#else
+                                        NotFiniteNumberException()
+                                        IO.DirectoryNotFoundException()
+                                        IO.FileLoadException()
+                                        StackOverflowException()
+                                        KeyNotFoundException()
+                                        IO.PathTooLongException()
+#endif
+                                     |]
 
         ///Generate a Function value that can be printed and shrunk. Function values can be generated for types 'a->'b 
         ///where 'b has an Arbitrary instance.
@@ -532,42 +593,42 @@ module Arb =
 
         ///Generates a Func'1.
         static member SystemFunc() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Func<_>(f)) (fun f -> f.Invoke)
 
         ///Generates a Func'2.
         static member SystemFunc1() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Func<_,_>(f)) (fun f -> f.Invoke)
 
         ///Generates a Func'3.
         static member SystemFunc2() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Func<_,_,_>(f)) (fun f a b -> f.Invoke(a,b))
 
         ///Generates a Func'4.
         static member SystemFunc3() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Func<_,_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
 
         ///Generates an Action'0
         static member SystemAction() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Action(f)) (fun f -> f.Invoke)
 
         ///Generates an Action'1
         static member SystemAction1() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Action<_>(f)) (fun f -> f.Invoke)
 
         ///Generates an Action'2
         static member SystemAction2() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Action<_,_>(f)) (fun f a b -> f.Invoke(a,b))
 
         ///Generates an Action'3
         static member SystemAction3() =
-            Default.Arrow()
+            Default.Fun()
             |> convert (fun f -> Action<_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
 
         ///Generates an arbitrary DateTime between 1900 and 2100. 

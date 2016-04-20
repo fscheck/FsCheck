@@ -43,7 +43,7 @@ a random choice between the elements of a list, use*)
 
 let chooseFromList xs = 
   gen { let! i = Gen.choose (0, List.length xs-1) 
-        return (List.nth xs i) }
+        return List.item i xs }
 
 (**
     [lang=csharp,file=../csharp/TestData.cs,key=chooseFrom]

@@ -9,7 +9,7 @@ open System
     
 ## Properties of functions
 
-Since FsCheck can generate random function values, it can check properties of 
+Perhaps surprisingly, FsCheck can generate random functions, `Func` and `Action`s. As a result, it can check properties of 
 functions. For example, we can check associativity of function composition as follows:*)
 
 (***define-output:associativity***)
@@ -19,10 +19,13 @@ Check.Quick associativity
 (***include-output:associativity***)
 
 (**
-We can generate functions Tree -> _anything_. If a counter-example is found, function values will be displayed as <func>.
+FsCheck can generate all functions with a target type that it can generate. In addition, the functions are pure and total -
+the former means that if you give a generated function the same value as input, it will keep returning that same value as output,
+no matter how many times you call it. The latter means that the function does not throw any exceptions and always terminates.
 
-However, FsCheck can show you the generated function in more detail, with the Function type. 
-Then FsCheck can even shrink your function. For example:*)
+If a counter-example is found, function values will be displayed as `<func>`. However, FsCheck can show 
+you the generated function in more detail, if you ask it to generate a `Function` type, which has an embedded "real" function. 
+FsCheck can even shrink `Function`s. For example:*)
 
 (***define-output:mapRec***)
 let mapRec (Fun f) (l:list<int>) =
@@ -101,4 +104,47 @@ if you use only FsCheck for testing and your properties span multiple assemblies
 (some things are easier to check using unit tests, and vice versa), and you like a graphical runner. 
 Depending on what unit testing framework you use, you may get good integration with Visual Studio for free. Also have a look
 at some of the existing integrations with test runners like Xunit.NET, NUnit, Fuchu.
+
+## Testing mutable types without using Command or StateMachine
+
+For some relatively simple mutable types you might feel more comfortable just writing straightforward FsCheck properties without
+using the `Command` or `StateMachine` API. This is certainly possible, but for shrinking FsCheck assumes that it can
+re-execute the same test multiple times without the inputs changing. If you call methods or set properties on a generated object
+that affect its state, this assumption does not hold and you'll see some weird results.
+
+The simplest way to work around this is not to write a generator for your mutable object at all, but instead write an FsCheck property
+that takes all the values necessary to construct the object, and then simply construct the object in the beginning of your test. For example, suppose we want to test
+a mutable list:*)
+
+let testMutableList =
+    Prop.forAll (Arb.fromGen(Gen.choose (1,10))) (fun capacity -> 
+        let underTest = new System.Collections.Generic.List<int>(capacity)
+        Prop.forAll Arb.from<int[]> (fun itemsToAdd ->
+            underTest.AddRange(itemsToAdd)
+            underTest.Count = itemsToAdd.Length))
+
+(**
+    [lang=csharp,file=../csharp/TipsAndTricks.cs,key=testMutableList]
+
+This works, as a bonus you get shrinking for free.
+
+If you do want to write a generator for your mutable type, this can be made to work but if
+you mutate a generated object during a test, either:
+
+* Disable shrinking, typically by wrapping all types into `DontShrink`; or
+* Clone or otherwise 'reset' the generated mutable object at the beginning or end of every test.
+
+## Replaying a failed test
+
+When you have a failed test, it's often useful for debugging to be able to replay exactly those inputs. For this reason, FsCheck displays the
+seed of its pseudo-random number generator when a test fails. Look for the bit of text that looks like: `(StdGen (1145655947,296144285))`.
+
+To replay this test, which should have the exact same output, use the `Replay` field on `Config`:*)
+
+Check.One({ Config.Quick with Replay = Some <| Random.StdGen (1145655947,296144285) }, fun x -> abs x >= 0)
+
+(**
+In C#:
+
+    [lang=csharp,file=../csharp/TipsAndTricks.cs,key=replay]
 *)

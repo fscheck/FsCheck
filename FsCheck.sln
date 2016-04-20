@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{0B883240-C311-4AA9-92EF-0E3C471B0077}"
 	ProjectSection(SolutionItems) = preProject
@@ -49,6 +49,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D
 		Docs\content\QuickStart.fsx = Docs\content\QuickStart.fsx
 		Docs\content\RunningTests.fsx = Docs\content\RunningTests.fsx
 		Docs\content\StatefulTesting.fsx = Docs\content\StatefulTesting.fsx
+		docs\content\StatefulTestingNew.fsx = docs\content\StatefulTestingNew.fsx
 		docs\tools\templates\template.cshtml = docs\tools\templates\template.cshtml
 		Docs\content\TestData.fsx = Docs\content\TestData.fsx
 		Docs\content\TipsAndTricks.fsx = Docs\content\TipsAndTricks.fsx

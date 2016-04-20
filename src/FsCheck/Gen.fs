@@ -346,15 +346,22 @@ module Gen =
 
 
     ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
-    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
     ///the predicate is satisfied.
     //[category: Creating generators from generators]
     [<CompiledName("SuchThat")>]
-    let rec suchThat p gn =
-        gen {   let! mx = suchThatOption p gn
+    let rec suchThat predicate generator =
+        gen {   let! mx = suchThatOption predicate generator
                 match mx with
                 | Some x    -> return x
-                | None      -> return! sized (fun n -> resize (n+1) (suchThat p gn)) }
+                | None      -> return! sized (fun n -> resize (n+1) (suchThat predicate generator)) }
+
+    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
+    ///the predicate is satisfied.
+    //[category: Creating generators from generators]
+    [<CompiledName("Where");EditorBrowsable(EditorBrowsableState.Never)>]
+    let where predicate generator = suchThat predicate generator
 
 //    /// Takes a list of increasing size, and chooses
 //    /// among an initial segment of the list. The size of this initial
@@ -451,7 +458,7 @@ module Gen =
     [<CompiledName("Constant")>]
     let constant v = gen.Return v
 
-    ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
+    ///Generate a fresh instance every time the generator is called. Useful for mutable objects.
     ///See also constant.
     //[category: Creating generators]
     [<CompiledName("Fresh"); EditorBrowsable(EditorBrowsableState.Never)>]
@@ -476,7 +483,7 @@ module Gen =
 
     ///Basic co-arbitrary generator transformer, which is dependent on an int.
     ///Only used for generating arbitrary functions.
-    let internal variant (v:'a) (Gen m) =
+    let internal variant<'a,'b when 'a:equality>  =
         let counter = ref 1
         let toCounter = new Dictionary<'a,int>()
         let mapToInt (value:'a) =
@@ -490,7 +497,7 @@ module Gen =
                     counter := !counter + 1
                     !counter - 1
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
-        Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
+        fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.
 type Gen with
