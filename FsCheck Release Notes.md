@@ -1,4 +1,17 @@
-### 2.2.5 - To be released
+### 2.3.1 - To be released
+
+### 2.3.0 - 11 April 2016
+  * Command shrinker now takes preconditions into account. Behavior could be slightly different, overall should be a clear improvement.
+  * Command generator now stops after trying a number of times when it can't find a command that satisfies the preconditions. Previously, it would loop forever.
+  * Exposed Command.generate and Command.shrink. Obsoleted Command.generateCommands in favour of Command.generate.
+  * Added Gen.where as a synonym for Gen.suchThat.
+  * Expanded StateMachine with stop command and max number of commands, better shrinking that also removes loops, and lots of bugfixes.
+
+### 2.2.5 - 28 March 2016
+  * Fix timing of xUnit runs.
+  * Add static factory methods to Configuration like Config.
+  * Add function and method to Command module to allow users to specify generator and shrinker explicitly.
+  * Improvements to Experimental.StateMachine: better shrinking, expose some more API.
 
 ### 2.2.4 - 17 December 2015
   * Fix output of FsCheck.Xunit - was not correctly reported in all runners (by Matt Ellis)

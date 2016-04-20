@@ -52,6 +52,11 @@ The documentation is also available in [Japanese](ja/index.html).
 
  * [API Reference](reference/index.html) contains automatically generated documentation for all types, modules
    and functions.
+
+ * [Model based testing vNext (Experimental)](StatefulTestingNew.html) is a relatively new addition for
+   a more powerful model based testing. It's still a bit rough around the edges, some things may not
+   work, and it is subject to change (i.e. no promises regarding semantic versioning and breaking changes). Regardless,
+   feedback is very much appreciated!
  
 Contributing and copyright
 --------------------------

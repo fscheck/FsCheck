@@ -309,6 +309,25 @@ module Gen =
     [<CompiledName("ListOf")>]
     let listOfLength n arb = sequence [ for _ in 1..n -> arb ]
 
+    ///Generates a random permutation of the given sequence.
+    //[category: Creating generators]
+    [<CompiledName("Shuffle")>]
+    let shuffle xs =
+        // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+        let xs = xs |> Seq.toArray
+        let swap (arr : _ array) i j =
+            let v = arr.[j]
+            arr.[j] <- arr.[i]
+            arr.[i] <- v
+        gen {
+            let copy = Array.copy xs
+            let maxI = copy.Length - 1
+            let! indexes = [ for i in 0..maxI - 1 -> choose (i, maxI) ]
+                           |> sequence
+            indexes |> List.iteri (swap copy)
+            return copy
+        }
+
     ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
     ///if the given original generator did not generate any values that satisfied the predicate, after trying to
     ///get values from by increasing its size.
@@ -324,15 +343,22 @@ module Gen =
 
 
     ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
-    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
     ///the predicate is satisfied.
     //[category: Creating generators from generators]
     [<CompiledName("SuchThat")>]
-    let rec suchThat p gn =
-        gen {   let! mx = suchThatOption p gn
+    let rec suchThat predicate generator =
+        gen {   let! mx = suchThatOption predicate generator
                 match mx with
                 | Some x    -> return x
-                | None      -> return! sized (fun n -> resize (n+1) (suchThat p gn)) }
+                | None      -> return! sized (fun n -> resize (n+1) (suchThat predicate generator)) }
+
+    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
+    ///the predicate is satisfied.
+    //[category: Creating generators from generators]
+    [<CompiledName("Where");EditorBrowsable(EditorBrowsableState.Never)>]
+    let where predicate generator = suchThat predicate generator
 
 //    /// Takes a list of increasing size, and chooses
 //    /// among an initial segment of the list. The size of this initial
@@ -429,7 +455,7 @@ module Gen =
     [<CompiledName("Constant")>]
     let constant v = gen.Return v
 
-    ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
+    ///Generate a fresh instance every time the generator is called. Useful for mutable objects.
     ///See also constant.
     //[category: Creating generators]
     [<CompiledName("Fresh"); EditorBrowsable(EditorBrowsableState.Never)>]
@@ -455,7 +481,7 @@ module Gen =
 
     ///Basic co-arbitrary generator transformer, which is dependent on an int.
     ///Only used for generating arbitrary functions.
-    let internal variant (v:'a) (Gen m) =
+    let internal variant<'a,'b when 'a:equality>  =
         let counter = ref 1
         let toCounter = new Dictionary<'a,int>()
         let mapToInt (value:'a) =
@@ -469,7 +495,7 @@ module Gen =
                     counter := !counter + 1
                     !counter - 1
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
-        Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
+        fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.
 type Gen with
