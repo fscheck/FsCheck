@@ -313,6 +313,24 @@ module Gen =
     [<CompiledName("ListOf")>]
     let listOfLength n arb = sequence [ for _ in 1..n -> arb ]
 
+    ///Generates a random permutation of the given sequence using the Fisher-Yates shuffle algorithm.
+    //[category: Creating generators]
+    [<CompiledName("Shuffle")>]
+    let shuffle xs =
+        let xs = xs |> Seq.toArray
+        let swap (arr : _ array) i j =
+            let v = arr.[j]
+            arr.[j] <- arr.[i]
+            arr.[i] <- v
+        gen {
+            let copy = Array.copy xs
+            let maxI = copy.Length - 1
+            let! indexes = [ for i in 0..maxI - 1 -> choose (i, maxI) ]
+                           |> sequence
+            indexes |> List.iteri (swap copy)
+            return copy
+        }
+
     ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
     ///if the given original generator did not generate any values that satisfied the predicate, after trying to
     ///get values from by increasing its size.
