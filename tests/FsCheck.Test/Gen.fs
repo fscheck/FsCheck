@@ -120,6 +120,13 @@ module Gen =
         |> sample1
         |> ((=) (List.init length (fun _ -> v)))
 
+    [<Property>]
+    let ``shuffle is isomorphic`` (xs : int array) =
+        Gen.shuffle xs
+        |> sample1
+        |> Array.sort
+        |> ((=) (Array.sort xs))
+
     // This property is non-deterministic, and may rarely fail. The chance of
     // this property not holding in case of a uniform shuffle - in other words,
     // the chance of producing 10 times the same input list of length 5 - is
