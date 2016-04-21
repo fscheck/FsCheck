@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0-*",
+  "compilationOptions": {
+  },
+  "compilerName": "fsc",
+  "compileFiles": [
+    "AssemblyInfo.fs",
+    "Common.fs",
+    "Random.fs",
+    "Reflect.fs",
+    "TypeClass.fs",
+    "Gen.fs",
+    "ReflectArbitrary.fs",
+    "Arbitrary.fs",
+    "ArbitraryExtensions.fs",
+    "GenExtensions.fs",
+    "Testable.fs",
+    "Prop.fs",
+    "PropExtensions.fs",
+    "Commands.fs",
+    "StateMachine.fs",
+    "Runner.fs",
+    "RunnerExtensions.fs"
+  ],
+  "frameworks": {
+    "net46": { 
+      "dependencies": {
+        "FSharp.Core": "4.0.0.1"
+      },
+      "frameworkAssemblies": {
+        "System": "",
+        "System.Core": "",
+        "System.Numerics": ""
+      }
+    },
+    "netstandard1.5": {
+      "dependencies": {
+        "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-160316",
+        "NETStandard.Library": "1.5.0-rc2-23925"
+      },
+      "imports": [
+        "portable-net45+win8",
+        "dnxcore50"
+      ]
+    }
+  }
+}

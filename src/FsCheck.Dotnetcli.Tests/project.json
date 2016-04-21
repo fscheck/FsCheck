@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0-*",
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+  "compilerName": "fsc",
+  "compileFiles": [
+    "Program.fs"
+  ],
+  "frameworks": {
+    "netstandard1.5" : { 
+      "dependencies": {
+        "FsCheck":  { "version": "1.0.0", "type": "build" },
+        "Microsoft.NETCore.App": {
+        "type": "platform",
+        "version": "1.0.0-rc2-23925"
+        }
+      },
+      "imports": [
+        "portable-net45+win8",
+        "dnxcore50"
+      ]
+    },
+    "net46" : {
+      "dependencies": {
+        "FsCheck":  { "version": "1.0.0", "type": "build" }
+      }
+    }
+  }
+}

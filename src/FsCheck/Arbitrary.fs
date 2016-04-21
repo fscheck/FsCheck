@@ -827,7 +827,7 @@ module Arb =
             |> convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
 
         static member Culture() =
-#if PCL
+#if PCL || NETSTANDARD1_5
             let cultureNames = [
                 "af"; "af-ZA";
                 "am"; "am-ET";
