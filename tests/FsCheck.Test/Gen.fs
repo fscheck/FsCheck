@@ -121,7 +121,7 @@ module Gen =
         |> ((=) (List.init length (fun _ -> v)))
 
     [<Property>]
-    let ``shuffle is isomorphic`` (xs : int array) =
+    let ``shuffle generates a permutation`` (xs : int array) =
         Gen.shuffle xs
         |> sample1
         |> Array.sort
