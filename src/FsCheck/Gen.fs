@@ -168,6 +168,7 @@ module Gen =
     let elements xs = 
         choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
 
+    [<CompiledName("GrowingElements")>]
     let growingElements xs =
         let l = Seq.length xs
         sized (fun s ->
