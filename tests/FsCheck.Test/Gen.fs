@@ -22,14 +22,13 @@ module Gen =
                 |> sample 50
                 |> List.forall (isIn l))
 
-    [<Property>]
-    let GrowingElements (PositiveInt i) =
-        let sizes = [ 1..i ]
+    [<Fact>]
+    let GrowingElements () =
+        let sizes = [ 1..100 ]
         let run g =
-            [ for s in sizes ->
-                  g
-                  |> Gen.resize s
-                  |> Gen.eval   s (Random.newSeed()) ]
+            [ for s in sizes -> Gen.resize s g ]
+            |> Gen.sequence
+            |> sample1
 
         let actual = Gen.growingElements sizes |> run
 

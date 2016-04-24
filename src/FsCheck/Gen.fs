@@ -175,11 +175,11 @@ module Gen =
     ///generator is Gen.elements but taking also the runtime size into account.
     //[category: Creating generators]
     let growingElements xs =
-        let l = Seq.length xs
+        let arr = Seq.toArray xs
         sized (fun s ->
             let s' = max 1 s
-            let n  = min l s'
-            elements (xs |> Seq.take n))
+            let n  = min arr.Length s'
+            elements (arr |> Seq.take n))
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
