@@ -169,6 +169,11 @@ module Gen =
         choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
 
     [<CompiledName("GrowingElements")>]
+    ///Build a generator that takes a non-empty sequence and randomly generates
+    ///one of the values among an initial segment of that sequence. The size of
+    ///this initial segment increases with the size parameter. Essentially this
+    ///generator is Gen.elements but taking also the runtime size into account.
+    //[category: Creating generators]
     let growingElements xs =
         let l = Seq.length xs
         sized (fun s ->
