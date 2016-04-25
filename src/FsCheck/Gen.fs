@@ -168,6 +168,19 @@ module Gen =
     let elements xs = 
         choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
 
+    [<CompiledName("GrowingElements")>]
+    ///Build a generator that takes a non-empty sequence and randomly generates
+    ///one of the values among an initial segment of that sequence. The size of
+    ///this initial segment increases with the size parameter. Essentially this
+    ///generator is Gen.elements but taking also the runtime size into account.
+    //[category: Creating generators]
+    let growingElements xs =
+        let arr = Seq.toArray xs
+        sized (fun s ->
+            let s' = max 1 s
+            let n  = min arr.Length s'
+            elements (arr |> Seq.take n))
+
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
     [<CompiledName("Elements"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]

@@ -21,7 +21,19 @@ module Gen =
         lazy (  Gen.elements l
                 |> sample 50
                 |> List.forall (isIn l))
-    
+
+    [<Fact>]
+    let GrowingElements () =
+        let sizes = [ 1..100 ]
+        let run g =
+            [ for s in sizes -> Gen.resize s g ]
+            |> Gen.sequence
+            |> sample1
+
+        let actual = Gen.growingElements sizes |> run
+
+        test <@ List.forall2 (>=) sizes actual @>
+
     [<Property>]
     let constant (v : (int * char)) =
         Gen.constant v
