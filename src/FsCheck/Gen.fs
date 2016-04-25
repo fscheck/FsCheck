@@ -377,23 +377,6 @@ module Gen =
     [<CompiledName("Where");EditorBrowsable(EditorBrowsableState.Never)>]
     let where predicate generator = suchThat predicate generator
 
-//    /// Takes a list of increasing size, and chooses
-//    /// among an initial segment of the list. The size of this initial
-//    /// segment increases with the size parameter.
-//    /// The input list must be non-empty.
-//    let growingElements xs =
-//        match xs with
-//        | [] -> failwith "subListOf used with empty list"
-//        | xs ->
-//            let k = List.length xs |> float
-//            let mx = 100.0
-//            let log' = round << log
-//            let size n = ((log' (float n) + 1.0) * k ) / (log' mx) |> int
-//            sized (fun n -> elements (xs |> Seq.take (max 1 (size n)) |> Seq.toList))
-//    //     TODO check that this does not try choose from segments longer than the original
-//    //     it seems that mx indicates the maximum size that the resulting generator can be called with
-
-
     /// Generates a list of random length. The maximum length depends on the
     /// size parameter.
     //[category: Creating generators from generators]
