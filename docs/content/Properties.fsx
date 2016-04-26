@@ -8,38 +8,27 @@ open System
 (**
 # Properties
 
-Properties are expressed as F# function definitions or C# lamdas or methods. 
+Properties are expressed as F# function definitions or C# lambdas or methods. 
 Properties are universally quantified over their parameters, so *)
 
-let revRevIsOrig xs = List.rev(List.rev xs) = xs
+let revRevIsOrig (xs:list<int>) = List.rev(List.rev xs) = xs
 
 (**
     [lang=csharp,file=../csharp/Properties.cs,key=revRevIsOrig]
 
 means that the equality holds for all lists xs.
 
-Properties must not necessarily have generic types.
-Generic properties, such as the one above will be tested 
-by FsCheck as if the generic arguments are of type object; this means, 
-that values of various simple types (bool, char, string,...) are generated. 
-It may even be the case that one generated list contains more than one type, e.g. `{['r', "1a", true]}`
-would be a list that can be used to check the property above.
-The generated values are based on the type however, so you may change this behavior 
-simply by giving xs a different inferred or explicit type: *)
-
-let revRevIsOrigInt (xs:list<int>) = List.rev(List.rev xs) = xs
-
-(** 
-    [lang=csharp,file=../csharp/Properties.cs,key=revRevIsOrigInt]
-
-is only checked with lists of int.
+Properties must not have generic types - because there can be so many different
+kinds of constraints on generic types, some of which may not even be visible from the
+type signature, we currently think allowing FsCheck to generate a generic type is not worth the added complexity. 
+It's very simple to fix any types anyway simply by adding some type annotations.
 
 FsCheck can check properties of various forms - these forms are called testable, 
 and are indicated in the API by a generic type called `'Testable`. A `'Testable` may 
 be a function of any number of parameters that returns bool or unit. In the latter case, 
  a test passes if it does not throw. The entry point to create properties is the Prop module.
 
- Like all of FsChek's API, there are C# counterparts for all of the F# methods described.
+ Like all of FsCheck's API, there are C# counterparts for all of the F# methods described.
     
 ## Conditional Properties
 

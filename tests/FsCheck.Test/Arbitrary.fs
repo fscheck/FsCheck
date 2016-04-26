@@ -181,7 +181,7 @@ module Arbitrary =
         && List.forall (fun v -> List.tryFind (fst >> (=) v) tabledF.Table = Some (v,f v)) vs
         
     [<Property>]
-    let Function (f:int->char) (vs:list<int>) =
+    let Function (f:int->int) (vs:list<int>) =
         testFunction f vs
     
     [<Property>]
@@ -196,6 +196,32 @@ module Arbitrary =
         let _ = f true
         let _ = f false
         true =! true
+
+    [<Property>]
+    let ``ThrowingFunction throws exceptions from list`` (vs:list<int>) =
+        let exceptions : Exception list = 
+            [ NullReferenceException("exc1")
+              ArgumentNullException("exc2") ]
+        let catch (ThrowingFunction f) v = 
+            try
+                let a = f v 
+                true
+            with 
+            | :? NullReferenceException as e -> e.Message = "exc1"
+            | :? ArgumentNullException as e -> e.ParamName = "exc2"
+
+        Prop.forAll (Arb.Default.ThrowingFunction<int,int>(exceptions)) (fun f -> vs |> Seq.forall (catch f))
+
+    [<Property>]
+    let ``ThrowingFunction throws exceptions`` (vs:list<int>) (ThrowingFunction f) =
+        let catch f v = 
+            try
+                let a : int = f v 
+                true
+            with 
+            | _ -> true
+
+        vs |> Seq.forall (catch f)
 
     [<Property>]
     let SystemFunc (f: Func<int>) (vs: list<unit>) =

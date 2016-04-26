@@ -42,17 +42,12 @@ namespace CSharp.DocSnippets
     }
 
     class Properties {
+
         //[revRevIsOrig]
-        public static bool RevRevIsOriginal<T>(T[] ts) {
+        public static bool RevRevIsOriginal(int[] ts) {
             return ts.Reverse().Reverse().SequenceEqual(ts);
         }
         //[/revRevIsOrig]
-
-        //[revRevIsOrigInt]
-        public static bool RevRevIsOriginalInt(int[] ts) {
-            return ts.Reverse().Reverse().SequenceEqual(ts);
-        }
-        //[/revRevIsOrigInt]
 
         public static void Samples([CallerFilePath] string file = "") {
 

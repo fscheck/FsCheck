@@ -1,8 +1,28 @@
-### 2.3.0-nunit3 - To Release
+### 2.5.0-nunit3 - To Release
   * Update FsCheck.NUnit to use NUnit 3.0. This (hopefully) solves a lot of issues with NUnit 2's wonky plugin model. 
   FsCheck.NUnit.Addin is no longer needed, for example, and neither is the install.ps1 in the FsCheck.NUnit package. Also,
   FsCheck.NUnit only needs a dependency on NUnit now, which should solve a bunch of install issues on its own. (another 
   heroic contribution by Jon Hamm.)
+
+### 2.4.0 - 20 April 2016
+  * Fix bug in function generator - previously generated functions were constant functions.
+  * Add ThrowingFunction and Arb.Default.ThrowingFunction which generates a pure function, but that also throws exceptions.
+  * Add Gen.shuffle which generates random permutations of a given input sequence.
+  * Improvements and new features for FsCheck.Experimental.StateMachine: allow tracking of results of operations through the OperationResult type. The implicit
+  dependencies encoded by one operation using the result of another, are taken into account by the shrinker.
+
+### 2.3.0 - 11 April 2016
+  * Command shrinker now takes preconditions into account. Behavior could be slightly different, overall should be a clear improvement.
+  * Command generator now stops after trying a number of times when it can't find a command that satisfies the preconditions. Previously, it would loop forever.
+  * Exposed Command.generate and Command.shrink. Obsoleted Command.generateCommands in favour of Command.generate.
+  * Added Gen.where as a synonym for Gen.suchThat.
+  * Expanded StateMachine with stop command and max number of commands, better shrinking that also removes loops, and lots of bugfixes.
+
+### 2.2.5 - 28 March 2016
+  * Fix timing of xUnit runs.
+  * Add static factory methods to Configuration like Config.
+  * Add function and method to Command module to allow users to specify generator and shrinker explicitly.
+  * Improvements to Experimental.StateMachine: better shrinking, expose some more API.
 
 ### 2.2.4 - 17 December 2015
   * Fix output of FsCheck.Xunit - was not correctly reported in all runners (by Matt Ellis)

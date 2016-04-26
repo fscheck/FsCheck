@@ -13,7 +13,7 @@ namespace FsCheck
 open System
 open System.Runtime.CompilerServices
 
-///Configure the test run.
+///Configure the test run with a quick configuration.
 type Configuration() =
     let mutable maxTest = Config.Quick.MaxTest
     let mutable maxFail = Config.Quick.MaxFail
@@ -25,6 +25,33 @@ type Configuration() =
     let mutable quietOnSuccess = Config.Quick.QuietOnSuccess
     let mutable runner = Config.Quick.Runner
     let mutable replay = Config.Quick.Replay
+
+    ///The quick configuration only prints a summary result at the end of the test.
+    static member Quick = new Configuration()
+
+    ///The default configuration is the quick configuration.
+    static member Default = new Configuration()
+
+    ///The verbose configuration prints each generated argument.
+    static member Verbose =
+        let config = new Configuration()
+        config.Every <- new Func<int,obj array,string>(fun i arr -> Config.Verbose.Every i (Array.toList arr)) 
+        config.EveryShrink <- new Func<obj array,string>(Array.toList >> Config.Verbose.EveryShrink)
+        config
+
+    ///Like the Quick configuration, only throws an exception with the error message if the test fails or is exhausted.
+    ///Useful for use within other unit testing frameworks that usually adopt this methodolgy to signal failure.
+    static member QuickThrowOnFailure = 
+        let config = new Configuration()
+        config.Runner <- Config.QuickThrowOnFailure.Runner
+        config
+
+    ///Like the Verbose configuration, only throws an exception with the error message if the test fails or is exhausted.
+    ///Useful for use within other unit testing frameworks that usually adopt this methodolgy to signal failure.
+    static member VerboseThrowOnFailure = 
+        let config = Configuration.Verbose
+        config.Runner <- Config.VerboseThrowOnFailure.Runner
+        config
 
     ///The maximum number of tests that are run.
     member __.MaxNbOfTest with get() = maxTest and set(v) = maxTest <- v

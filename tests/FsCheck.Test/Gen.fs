@@ -21,7 +21,19 @@ module Gen =
         lazy (  Gen.elements l
                 |> sample 50
                 |> List.forall (isIn l))
-    
+
+    [<Fact>]
+    let GrowingElements () =
+        let sizes = [ 1..100 ]
+        let run g =
+            [ for s in sizes -> Gen.resize s g ]
+            |> Gen.sequence
+            |> sample1
+
+        let actual = Gen.growingElements sizes |> run
+
+        test <@ List.forall2 (>=) sizes actual @>
+
     [<Property>]
     let constant (v : (int * char)) =
         Gen.constant v
@@ -119,6 +131,29 @@ module Gen =
         Gen.listOfLength length (Gen.constant v)
         |> sample1
         |> ((=) (List.init length (fun _ -> v)))
+
+    [<Property>]
+    let ``shuffle generates a permutation`` (xs : int array) =
+        Gen.shuffle xs
+        |> sample1
+        |> Array.sort
+        |> ((=) (Array.sort xs))
+
+    // This property is non-deterministic, and may rarely fail. The chance of
+    // this property not holding in case of a uniform shuffle - in other words,
+    // the chance of producing 10 times the same input list of length 5 - is
+    // (1/5!)^10, which should be small enough.
+    // In this case, relying on the statistical attribute of a test being
+    // exceedingly unlikely to produce a False Positive is sometimes the only
+    // option. See also: https://github.com/fscheck/FsCheck/pull/221/
+    [<Property>]
+    let Shuffle (s:Set<int>) =
+        s.Count > 1 ==> lazy
+        let l = Set.toList s
+        Gen.shuffle l
+        |> sample 10
+        |> List.map Seq.toList
+        |> List.exists ((<>) l)
    
     [<Property>]
     let SuchThatOption (v:int) (predicate:int -> bool) =
