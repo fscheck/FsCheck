@@ -158,6 +158,7 @@ If `g` is a generator for type `t`, then
 - `three g` generates a triple of t's, 
 - `four g` generates a quadruple of t's, 
 - If xs is a list, then `elements xs` generates an arbitrary element of xs.
+- If xs is a list, then `growingElements xs` generates an arbitrary element among an initial segment of xs. The size of this initial segment increases with the size parameter.
 - `listOfLength n g` generates a list of exactly n t's. 
 - `listOf g` generates a list of t's whose length is determined by the size parameter
 - `nonEmptyListOf g` generates a non-empty list of t's whose length is determined by the size parameter.
