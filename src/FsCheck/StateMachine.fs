@@ -294,15 +294,14 @@ module StateMachine =
 //                seq { for i in 1..l.Length-1 do
 //                        yield! Seq.windowed i l //|> Seq.map Seq.toList
 //                }
-//
+////
 //            allSubsequences l |> Seq.distinct
 //
 //            let skipOne (l:list<_>) =
 //                seq { for i in 0..l.Length-1 do 
 //                        yield List.foldBack (fun e (c,r) -> c+1, if i <> c then e::r else r) l (0,[]) |> snd
-//                }
-            let defaultListShrinker = Arb.Default.FsList().Shrinker l
-            defaultListShrinker
+//                    }
+            l |> Arb.Default.FsList().Shrinker
 
         run.Operations 
         |> List.map fst

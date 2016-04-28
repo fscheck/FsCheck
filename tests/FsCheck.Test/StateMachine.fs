@@ -56,8 +56,15 @@ module StateMachine =
 
     [<Fact>]
     let ``should check faulty command spec and find minimum counterexample``() =
-        Arb.register<faultyCmd>() |> ignore
-        Check.QuickThrowOnFailure (StateMachine.toProperty (checkFaultyCommandModelSpec -1))
+        let arb = Arb.register<faultyCmd>() |> ignore
+        let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
+        let spec = checkFaultyCommandModelSpec -1
+        let run = { Setup = (0,create)
+                    TearDown = spec.TearDown
+                    Operations = [(new faultyInc(5) :> Operation<SimpleModel,int>,5)] }
+        //should contain an element smaller than 5 since they can't be generated but only shrunk
+        let shrunk = StateMachine.shrink spec run
+        test <@ shrunk |> Seq.exists (fun e -> (e.Operations.Head |> fst :?> faultyInc).n < 5 ) @>
 
 
     //only for specs with no preconditions
@@ -230,5 +237,3 @@ module StateMachine =
                     Operations = [(``a->b``,B); (``b->a``,A);(``a->c``,C)] }
         let shrunk = StateMachine.shrink spec run
         test <@ shrunk |> Seq.exists (fun e -> e.Operations = [(``a->c``,C)]) @>
-
-
