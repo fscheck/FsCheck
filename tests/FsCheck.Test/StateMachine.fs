@@ -32,6 +32,34 @@ module StateMachine =
                 test <@ comm.Pre 5 @>
                 6 =! comm.Run 5
 
+
+    type faultyInc(n:int) =
+        inherit Operation<SimpleModel,int>()
+        member val n = n with get
+        override __.Check (a, m) = if m > 2 then false.ToProperty() else true.ToProperty()
+        override __.Run m = m + n
+        override __.ToString() = "faultyInc"
+
+    type faultyCmd = 
+        static member arb = 
+            // make sure that minimum counterexample cannot be found with generator .. therefore 5
+            let generator = Gen.constant (new faultyInc(5) :> Operation<SimpleModel,int>)
+            // should be able to find minimum counterexample
+            let shrinker (op:Operation<SimpleModel,int>) = seq { for i in 1 .. (op :?> faultyInc).n - 1 do yield faultyInc i :> Operation<SimpleModel,int>} 
+            Arb.fromGenShrink(generator,shrinker)
+        
+    let checkFaultyCommandModelSpec size =
+        let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
+        { new Machine<_,_>(size) with
+            member __.Setup = Gen.constant create |> Arb.fromGen
+            member __.Next _ = faultyCmd.arb.Generator }
+
+    [<Fact>]
+    let ``should check faulty command spec and find minimum counterexample``() =
+        Arb.register<faultyCmd>() |> ignore
+        Check.QuickThrowOnFailure (StateMachine.toProperty (checkFaultyCommandModelSpec -1))
+
+
     //only for specs with no preconditions
     //if a precondition is not found in time None is returned and the length would be 0
     [<Fact>] 

@@ -2,7 +2,7 @@
 **  FsCheck                                                                 **
 **  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
-**  https://github.com/fscheck/FsCheck                              **
+**  https://github.com/fscheck/FsCheck                                      **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
@@ -290,18 +290,19 @@ module StateMachine =
             //|> Seq.distinct
 
         let operationShrinker l =
-            let allSubsequences (l:list<_>) =
-                seq { for i in 1..l.Length-1 do
-                        yield! Seq.windowed i l //|> Seq.map Seq.toList
-                }
-
+//            let allSubsequences (l:list<_>) =
+//                seq { for i in 1..l.Length-1 do
+//                        yield! Seq.windowed i l //|> Seq.map Seq.toList
+//                }
+//
 //            allSubsequences l |> Seq.distinct
-
-            let skipOne (l:list<_>) =
-                seq { for i in 0..l.Length-1 do 
-                        yield List.foldBack (fun e (c,r) -> c+1, if i <> c then e::r else r) l (0,[]) |> snd
-                }
-            skipOne l
+//
+//            let skipOne (l:list<_>) =
+//                seq { for i in 0..l.Length-1 do 
+//                        yield List.foldBack (fun e (c,r) -> c+1, if i <> c then e::r else r) l (0,[]) |> snd
+//                }
+            let defaultListShrinker = Arb.Default.FsList().Shrinker l
+            defaultListShrinker
 
         run.Operations 
         |> List.map fst
