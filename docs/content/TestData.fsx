@@ -168,6 +168,54 @@ If `g` is a generator for type `t`, then
 - If xs is a sequence, then `shuffle xs` generates a random permutation of xs.
 
 All the generator combinators are functions on the Gen module. In C#, the names are the same just capitalized differently.
+
+### Generator examples
+
+The following examples use `Gen.sample` in order to show example output. In
+general, you shouldn't use `Gen.sample` when writing properties, but it can be
+helpful when developing or troubleshooting a useful custom generator.
+
+Please be aware that due to the non-deterministic nature of FsCheck, the output
+of calling `Gen.sample` will, in most cases, differ between calls.
+
+Most examples below use `Gen.sample` to generate a small list of example
+values, for example a list of ten generated values.
+
+#### Elements
+
+You can use the `Gen.elements` function to create a generator of singular
+values drawn from a collection of possible values. The collection is inclusive,
+which means that both the first and last element, as well as all elements
+between, can be drawn.
+
+In the following example, the numbers from 0 to 9 define the collection of
+possible values. The result is a generator that creates `int` values guaranteed
+to be between 0 and 9 (both included).*)
+
+(***define-output:ElementsExample***)
+Gen.elements [0..9] |> Gen.sample 1000 10 |> Seq.toList
+
+(**The result of this expression is a list of ten sample values. Each value is
+a single integer drawn from the collection of numbers from 0 to 9:*)
+
+(***include-it:ElementsExample***)
+
+(**All elements are equally likely to be drawn from the collection; we say that
+the random function has a uniform distribution. One easy way to affect the
+distribution is to put more than one identical element into the collection:*)
+
+(***define-output:SkewedElementsExample***)
+Gen.elements ["foo"; "foo"; "bar"] |> Gen.sample 1000 10 |> Seq.toList
+
+(**In the above example, the value `"foo"` appears twice, so is twice as likely
+to be drawn from the collection:*)
+
+(***include-it:SkewedElementsExample***)
+
+(**The above examples all use `list` values as input, but you can use any `seq`
+expression, including `list` and `array` values.*)
+
+(**
     
 ## Default Generators and Shrinkers based on type
 
