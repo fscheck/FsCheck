@@ -464,12 +464,15 @@ module Arb =
         static member FsList() = 
             { new Arbitrary<list<'a>>() with
                 override __.Generator = Gen.listOf generate
-                override __.Shrinker l =
-                    match l with
-                    | [] ->         Seq.empty
-                    | (x::xs) ->    seq { yield xs
-                                          for xs' in shrink xs -> x::xs'
-                                          for x' in shrink x -> x'::xs }
+                override __.Shrinker (l:'a list) =
+                    let rec inner cl pre = 
+                        match cl with
+                        | [] -> Seq.empty
+                        | [x] -> seq { yield pre; for x' in shrink x -> x'::pre |> List.rev}
+                        | x::xs -> seq { yield pre @ xs //skip current element
+                                         for x' in shrink x -> pre @ (x'::xs) //shrink current element
+                                         yield! inner xs (x::pre |> List.rev) }
+                    inner l []
             }
 
         ///Generate an object - a boxed char, string or boolean value.

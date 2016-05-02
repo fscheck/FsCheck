@@ -349,6 +349,14 @@ module Arbitrary =
         List.exists (fun e -> e = int value) [0;1;2;3;4;5;6;7]
 
     [<Fact>]
+    let ``FsList shrunk is at minimum n-1``() =
+        let prop (l:int list) = 
+            let shrunk = Arb.Default.FsList().Shrinker l |> List.ofSeq
+            let result = l.Length = 0 || (shrunk |> Seq.forall (fun s -> s.Length = l.Length || s.Length = l.Length - 1))
+            result
+        Check.QuickThrowOnFailure prop
+
+    [<Fact>]
     let ``Generic List``() =
         generate<List<int>> |> sample 10 |> List.forall (fun _ -> true)
 
