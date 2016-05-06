@@ -181,6 +181,25 @@ of calling `Gen.sample` will, in most cases, differ between calls.
 Most examples below use `Gen.sample` to generate a small list of example
 values, for example a list of ten generated values.
 
+#### Constant
+
+The `Gen.constant` function is perhaps the simplest, and easiest, generator to
+understand. Even though it's part of a system that generates random values,
+this particular generator always returns the same value:*)
+
+(***define-output:ConstantExample***)
+Gen.constant (1, "Foo") |> Gen.sample 1000 10 |> Seq.toList
+
+(**In this example, the constant is a complex value (a tuple); it can also be a
+simple value, as for example as string or an integer. As you can see from the
+return value, all singular elements returned is the same tuple.*)
+
+(***include-it:ConstantExample***)
+
+(**Since the purpose of FsCheck is to generate random values, you shouldn't
+need to use `Gen.constant` often. Still, it can come in handy if you need to
+keep the value of a particular type constant while you vary other values.
+
 #### Elements
 
 You can use the `Gen.elements` function to create a generator of singular
