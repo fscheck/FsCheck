@@ -178,8 +178,13 @@ helpful when developing or troubleshooting a useful custom generator.
 Please be aware that due to the non-deterministic nature of FsCheck, the output
 of calling `Gen.sample` will, in most cases, differ between calls.
 
-Most examples below use `Gen.sample` to generate a small list of example
-values, for example a list of ten generated values.
+The `Gen.sample` function takes two arguments, in addition to the generator
+from which it samples. The first argument is the [size](#The-size-of-test-data)
+of the generated data.
+
+The second argument is the number of sample values to generate. Most examples
+below use `Gen.sample` to generate a small list of example values, for example
+a list of ten generated values.
 
 #### Constant
 
