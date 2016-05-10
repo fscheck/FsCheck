@@ -172,7 +172,7 @@ module Gen =
     let ListOf (NonNegativeInt size) (v:char) =
         Gen.resize size (Gen.listOf <| Gen.constant v)
         |> sample 10
-        |> List.forall (fun l -> l.Length <= size+1 && List.forall ((=) v) l)
+        |> List.forall (fun l -> l.Length <= size && List.forall ((=) v) l)
     
     [<Property>]
     let NonEmptyListOf (NonNegativeInt size) (v:string) =

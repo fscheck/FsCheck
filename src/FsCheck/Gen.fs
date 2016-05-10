@@ -382,9 +382,11 @@ module Gen =
     //[category: Creating generators from generators]
     [<CompiledName("ListOf")>]
     let listOf gn =
-        sized <| fun n ->
-            gen {   let! k = choose (0,n+1) //decrease chance of empty list
-                    return! listOfLength k gn }
+        sized <| fun n -> gen {
+            let! k = choose (min 1 n, n)
+            return! frequency [
+                (2 + n, listOfLength k gn); // 2 + n seems to give a good distribution of non-empty
+                (1    , gen.Return []) ] }  // vs empty lists
 
     /// Generates a non-empty list of random length. The maximum length 
     /// depends on the size parameter.
