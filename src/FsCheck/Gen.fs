@@ -376,6 +376,13 @@ module Gen =
     //[category: Creating generators from generators]
     [<CompiledName("Where");EditorBrowsable(EditorBrowsableState.Never)>]
     let where predicate generator = suchThat predicate generator
+    
+    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
+    ///the predicate is satisfied.
+    //[category: Creating generators from generators]
+    [<CompiledName("Filter")>]
+    let filter = suchThat
 
     /// Generates a list of random length. The maximum length depends on the
     /// size parameter.
