@@ -180,7 +180,8 @@ of calling `Gen.sample` will, in most cases, differ between calls.
 
 The `Gen.sample` function takes two arguments, in addition to the generator
 from which it samples. The first argument is the [size](#The-size-of-test-data)
-of the generated data.
+of the generated data. Some generators (like `Gen.constant` and `Gen.elements`)
+don't use the `size` argument. For these generators, any integer value will do.
 
 The second argument is the number of sample values to generate. Most examples
 below use `Gen.sample` to generate a small list of example values, for example
@@ -193,11 +194,13 @@ understand. Even though it's part of a system that generates random values,
 this particular generator always returns the same value:*)
 
 (***define-output:ConstantExample***)
-Gen.constant (1, "Foo") |> Gen.sample 1000 10 |> Seq.toList
+Gen.constant (1, "Foo") |> Gen.sample 0 10 |> Seq.toList
 
 (**In this example, the constant is a complex value (a tuple); it can also be a
-simple value, as for example as string or an integer. As you can see from the
-return value, all singular elements returned is the same tuple.*)
+simple value, as for example a string or an integer. Since `Gen.constant`
+doesn't rely on the `size` argument, it's `0` in this example, but any value
+would do; it wouldn't change the result. As you can see from the return value,
+all singular elements returned is the same tuple.*)
 
 (***include-it:ConstantExample***)
 
@@ -214,10 +217,12 @@ between, can be drawn.
 
 In the following example, the numbers from 0 to 9 define the collection of
 possible values. The result is a generator that creates `int` values guaranteed
-to be between 0 and 9 (both included).*)
+to be between 0 and 9 (both included). Since `Gen.elements` doesn't rely on the
+`size` argument, it's `0` in this example, but any value would do; it wouldn't
+ change the result.*)
 
 (***define-output:ElementsExample***)
-Gen.elements [0..9] |> Gen.sample 1000 10 |> Seq.toList
+Gen.elements [0..9] |> Gen.sample 0 10 |> Seq.toList
 
 (**The result of this expression is a list of ten sample values. Each value is
 a single integer drawn from the collection of numbers from 0 to 9:*)
@@ -229,7 +234,7 @@ the random function has a uniform distribution. One easy way to affect the
 distribution is to put more than one identical element into the collection:*)
 
 (***define-output:SkewedElementsExample***)
-Gen.elements ["foo"; "foo"; "bar"] |> Gen.sample 1000 10 |> Seq.toList
+Gen.elements ["foo"; "foo"; "bar"] |> Gen.sample 0 10 |> Seq.toList
 
 (**In the above example, the value `"foo"` appears twice, so is twice as likely
 to be drawn from the collection:*)
