@@ -242,7 +242,8 @@ to be drawn from the collection:*)
 (***include-it:SkewedElementsExample***)
 
 (**The above examples all use `list` values as input, but you can use any `seq`
-expression, including `list` and `array` values.*)
+expression, including `list` and `array` values, as long as the sequence is
+finite. *)
 
 (**
     
