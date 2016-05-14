@@ -11,6 +11,7 @@
 namespace FsCheck
 
 open System
+open System.Net
 
 ///Represents an int >= 0
 type NonNegativeInt = NonNegativeInt of int with
@@ -977,6 +978,15 @@ module Arb =
                 let! k = generate
                 return Guid((a: int),b,c,d,e,f,g,h,i,j,k)
             } |> fromGen
+
+#if PCL
+#else
+        static member IPAddress() =
+            let generator = generate |> Gen.arrayOfLength 4 |> Gen.map IPAddress
+            let shrinker (a:IPAddress) = a.GetAddressBytes() |> shrink |> Seq.filter (fun x -> Seq.length x = 4) |> Seq.map IPAddress
+        
+            fromGenShrink (generator, shrinker)
+#endif
 
         ///Arbitray instance for BigInteger.
         static member BigInt() =

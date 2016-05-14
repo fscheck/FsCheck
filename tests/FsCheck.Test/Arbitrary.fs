@@ -9,6 +9,7 @@ module Arbitrary =
     open System
     open System.Globalization
     open System.Collections.Generic
+    open System.Net
     open Helpers
     open Arb
     open Swensen.Unquote
@@ -413,6 +414,17 @@ module Arbitrary =
     [<Fact>]
     let Guid () =
         generate<Guid> |> sample 10 |> ignore
+
+    [<Fact>]
+    let IPAddress () =
+        generate<IPAddress> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``IPAddress shrinks`` (value: IPAddress) =
+        let bytesSum (x: IPAddress) = x.GetAddressBytes() |> Array.sumBy int
+
+        shrink value
+        |> Seq.forall (fun shrunkv -> bytesSum shrunkv = 0 || bytesSum shrunkv < bytesSum value)
 
     [<Property>]
     let Bigint (value:bigint) =
