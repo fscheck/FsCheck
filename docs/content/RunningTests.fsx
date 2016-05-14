@@ -113,7 +113,12 @@ open FsCheck.Xunit
 (**
 You can now attribute tests with `PropertyAttribute` (a subclass of xUnit.NET's `FactAttribute`). Unlike xUnit.NET's facts, these 
 methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
-type and the currently registered generators. Also, the `PropertyAttribute` allows you to customize how FsCheck will run for that
+type and the currently registered generators. 
+
+An FsCheck test fails from xUnit.NET's perspective if it finds a counter-example, or if the arguments are exhausted. It
+passes when FsCheck can execute 100 tests (or whatever the configured number of tests is) succesfully.
+
+The `PropertyAttribute` allows you to customize how FsCheck will run for that
 method, similar to how you would use the `Config` type otherwise. For example:*)
 
 [<Property>]
@@ -182,7 +187,12 @@ Then open FsCheck.NUnit.
 
 You can now attribute tests with `PropertyAttribute` (a subclass of NUnit's `TestAttribute`). Unlike NUnit tests, these 
 methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
-type and the currently registered generators. Also, the `PropertyAttribute` allows you to customize how FsCheck will run for that
+type and the currently registered generators. 
+
+An FsCheck test fails from NUnit's perspective if it finds a counter-example, or if the arguments are exhausted. It
+passes when FsCheck can execute 100 tests (or whatever the configured number of tests is) succesfully.
+
+The `PropertyAttribute` allows you to customize how FsCheck will run for that
 method, similar to how you would use the `Config` type otherwise.
 *)
 
