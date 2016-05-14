@@ -208,6 +208,40 @@ all singular elements returned is the same tuple.*)
 need to use `Gen.constant` often. Still, it can come in handy if you need to
 keep the value of a particular type constant while you vary other values.
 
+#### Choose
+
+You can use the `Gen.choose` function to create a generator of singular integer
+values between a minimum and maximum value, both inclusive:*)
+
+(***define-output:ChooseBetweenZeroAndNineExample***)
+Gen.choose (0, 9) |> Gen.sample 0 10
+
+(**This example generates a single integer value between 0 and 9. Since
+`Gen.constant` doesn't rely on the `size` argument, it's `0` in this example,
+but any value would do; it wouldn't change the result.
+
+While `Gen.choose (0, 9)` generates a single integer value, `Gen.sample 0 10`
+generates 10 sample values:*)
+
+(***include-it:ChooseBetweenZeroAndNineExample***)
+
+(**If you supply values in the 'wrong order', `Gen.choose` will follow
+[Postel's law](https://en.wikipedia.org/wiki/Robustness_principle) and 'know
+what you meant':*)
+
+(***define-output:ChooseWhenLowIsHigherThanHigh***)
+Gen.choose (99, 42) |> Gen.sample 0 10
+
+(**In this example, the first value is greater than the second value, but
+`Gen.choose` will happily interpret this as a range, and produce values between
+42 and 99, both included:*)
+
+(***include-it:ChooseWhenLowIsHigherThanHigh***)
+
+(**Since both values are included, if you set both to the same value, you'll
+effectively constrain the generator to that single value, and it'll behave like
+`Gen.constant`.
+
 #### Elements
 
 You can use the `Gen.elements` function to create a generator of singular
