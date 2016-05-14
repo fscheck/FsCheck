@@ -250,22 +250,28 @@ finite.
 You can use the `Gen.shuffle` function to create a generator that generates a
 random permutation of a given finite sequence.
 
-In the following example, the numbers from 0 to 9 define the input sequence:*)
+In the following example, the
+[metasyntactic variables](https://en.wikipedia.org/wiki/Metasyntactic_variable)
+"foo", "bar", "baz", and "qux" define the input sequence:*)
 
 (***define-output:ShuffleExample***)
-Gen.shuffle [0..9] |> Gen.sample 0 1 |> List.head
+Gen.shuffle ["foo"; "bar"; "baz"; "qux"] |> Gen.sample 0 6
 
 (**Since `Gen.shuffle` doesn't rely on the `size` argument, it's `0` in this
 example, but any value would do; it wouldn't change the result.
 
-The result of this expression is a list of one sample, which is a random
-permutation of the input sequence:*)
+The result of this expression is a list of lists, where each list contains
+the original input list, but shuffled:*)
 
 (***include-it:ShuffleExample***)
 
-(**The above examples all use `list` values as input, but you can use any `seq`
+(**The above example uses a `list` value as input, but you can use any `seq`
 expression, including `list` and `array` values, as long as the sequence is
-finite. *)
+finite.
+
+All shuffles are equally likely; the input order isn't excluded, so the
+output may be the same as the input. Due to the nature of combinatorics, this
+is more likely to happen the smaller the input list is.*)
 
 (**
     
