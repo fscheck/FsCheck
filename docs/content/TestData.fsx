@@ -243,6 +243,28 @@ to be drawn from the collection:*)
 
 (**The above examples all use `list` values as input, but you can use any `seq`
 expression, including `list` and `array` values, as long as the sequence is
+finite.
+
+#### Shuffle
+
+You can use the `Gen.shuffle` function to create a generator that generates a
+random permutation of a given finite sequence.
+
+In the following example, the numbers from 0 to 9 define the input sequence:*)
+
+(***define-output:ShuffleExample***)
+Gen.shuffle [0..9] |> Gen.sample 0 1 |> List.head
+
+(**Since `Gen.shuffle` doesn't rely on the `size` argument, it's `0` in this
+example, but any value would do; it wouldn't change the result.
+
+The result of this expression is a list of one sample, which is a random
+permutation of the input sequence:*)
+
+(***include-it:ShuffleExample***)
+
+(**The above examples all use `list` values as input, but you can use any `seq`
+expression, including `list` and `array` values, as long as the sequence is
 finite. *)
 
 (**
