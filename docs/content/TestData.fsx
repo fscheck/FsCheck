@@ -217,7 +217,7 @@ values between a minimum and maximum value, both inclusive:*)
 Gen.choose (0, 9) |> Gen.sample 0 10
 
 (**This example generates a single integer value between 0 and 9. Since
-`Gen.constant` doesn't rely on the `size` argument, it's `0` in this example,
+`Gen.choose` doesn't rely on the `size` argument, it's `0` in this example,
 but any value would do; it wouldn't change the result.
 
 While `Gen.choose (0, 9)` generates a single integer value, `Gen.sample 0 10`
