@@ -194,7 +194,7 @@ understand. Even though it's part of a system that generates random values,
 this particular generator always returns the same value:*)
 
 (***define-output:ConstantExample***)
-Gen.constant (1, "Foo") |> Gen.sample 0 10 |> Seq.toList
+Gen.constant (1, "Foo") |> Gen.sample 0 10
 
 (**In this example, the constant is a complex value (a tuple); it can also be a
 simple value, as for example a string or an integer. Since `Gen.constant`
@@ -222,7 +222,7 @@ to be between 0 and 9 (both included). Since `Gen.elements` doesn't rely on the
  change the result.*)
 
 (***define-output:ElementsExample***)
-Gen.elements [0..9] |> Gen.sample 0 10 |> Seq.toList
+Gen.elements [0..9] |> Gen.sample 0 10
 
 (**The result of this expression is a list of ten sample values. Each value is
 a single integer drawn from the collection of numbers from 0 to 9:*)
@@ -234,7 +234,7 @@ the random function has a uniform distribution. One easy way to affect the
 distribution is to put more than one identical element into the collection:*)
 
 (***define-output:SkewedElementsExample***)
-Gen.elements ["foo"; "foo"; "bar"] |> Gen.sample 0 10 |> Seq.toList
+Gen.elements ["foo"; "foo"; "bar"] |> Gen.sample 0 10
 
 (**In the above example, the value `"foo"` appears twice, so is twice as likely
 to be drawn from the collection:*)
