@@ -279,6 +279,57 @@ to be drawn from the collection:*)
 expression, including `list` and `array` values, as long as the sequence is
 finite.
 
+#### Lists
+
+You can generate lists from individual value generators using `Gen.listOf`,
+`Gen.listOfLength`, and `Gen.nonEmptyListOf`. These functions are
+*combinators*, which means that they don't generate individual values
+themselves, but rather use another generator to build values. For instance,
+you can use `Gen.constant` to generate lists that all contain the same value:*)
+
+(***define-output:ConstantListOfExample***)
+Gen.constant 42 |> Gen.listOf |> Gen.sample 1 10
+
+(**This combination uses `Gen.constant 42` as an individual generator, and then
+generates lists containing the the number 42. While the value(s) in the list is
+always 42, the length of the generated lists varies.*)
+
+(***include-it:ConstantListOfExample***)
+
+(**The length of the generated list is determined by the `size` argument. In
+this example, the `size` argument is `1`, so the generated lists are short.
+Note that while there's a correlation beteen `size` and the length of the
+lists, you can't rely on a deterministic length. For that, there's
+`Gen.listOfLength`:*)
+
+(***define-output:ListOfLengthExample***)
+Gen.choose (24, 42) |> Gen.listOfLength 5 |> Gen.sample 0 10
+
+(**This example uses `Gen.choose (24, 42)` in order to generate individual
+integer values between 24 and 42. It then pipes this generator into
+`Gen.listOfLength 5` in order to generate lists with exactly five elements:*)
+
+(***include-it:ListOfLengthExample***)
+
+(**Notice that all sample lists have exactly five elements.
+
+You can also use `Gen.nonEmptyListOf` to create lists that are guaranteed to
+have at least one element. Like the other list generators, it uses a
+single-value generator to generate its elements:*)
+
+(***define-output:NonEmptyListExample***)
+Gen.elements ["foo"; "bar"; "baz"] |> Gen.nonEmptyListOf |> Gen.sample 20 4
+
+(**Like `Gen.listOf`, `Gen.nonEmptyListOf` uses `size` to control the length
+of the generated lists. They may still be small, but the larger the `size`
+argument, the larger the lists may become.*)
+
+(***include-it:NonEmptyListExample***)
+
+(**In this example, each element is drawn from the small set "foo", "bar", and
+"baz". The lists are guaranteed to have at least a single element, but may be
+longer.
+
 #### Shuffle
 
 You can use the `Gen.shuffle` function to create a generator that generates a
@@ -305,9 +356,7 @@ finite.
 
 All shuffles are equally likely; the input order isn't excluded, so the
 output may be the same as the input. Due to the nature of combinatorics, this
-is more likely to happen the smaller the input list is.*)
-
-(**
+is more likely to happen the smaller the input list is.
     
 ## Default Generators and Shrinkers based on type
 
