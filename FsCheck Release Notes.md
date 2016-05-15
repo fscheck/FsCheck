@@ -1,3 +1,5 @@
+### 2.5.0 - To be released
+
 ### 2.4.0 - 20 April 2016
   * Fix bug in function generator - previously generated functions were constant functions.
   * Add ThrowingFunction and Arb.Default.ThrowingFunction which generates a pure function, but that also throws exceptions.
