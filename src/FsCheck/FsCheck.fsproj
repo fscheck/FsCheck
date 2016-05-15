@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Common.fs" />
+    <Compile Include="Data.fs" />
     <Compile Include="Random.fs" />
     <Compile Include="Reflect.fs" />
     <Compile Include="TypeClass.fs" />

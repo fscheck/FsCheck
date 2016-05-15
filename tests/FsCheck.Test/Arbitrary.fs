@@ -10,6 +10,7 @@ module Arbitrary =
     open System.Globalization
     open System.Collections.Generic
     open System.Net
+    open System.Net.Mail
     open Helpers
     open Arb
     open Swensen.Unquote
@@ -433,6 +434,15 @@ module Arbitrary =
 
         shrink value
         |> Seq.forall (fun shrunkv -> bytesSum shrunkv = 0 || bytesSum shrunkv < bytesSum value)
+
+    [<Fact>]
+    let MailAddress () =
+        generate<MailAddress> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``MailAddress shrinks`` (value: MailAddress) =
+        shrink value
+        |> Seq.forall (fun shrunkv -> shrunkv.ToString().Length < value.ToString().Length || shrunkv.Host <> value.Host)
 
     [<Property>]
     let Bigint (value:bigint) =
