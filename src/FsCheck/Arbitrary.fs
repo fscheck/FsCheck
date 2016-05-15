@@ -218,7 +218,7 @@ module Arb =
     [<CompiledName("Filter"); EditorBrowsable(EditorBrowsableState.Never)>]
     let filter pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
-           override __.Generator = a.Generator |> Gen.suchThat pred
+           override __.Generator = a.Generator |> Gen.where pred
            override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
 
@@ -230,7 +230,7 @@ module Arb =
     [<CompiledName("MapFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
     let mapFilter mapper pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
-           override __.Generator = a.Generator |> Gen.map mapper |> Gen.suchThat pred
+           override __.Generator = a.Generator |> Gen.map mapper |> Gen.where pred
            override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
     
@@ -446,7 +446,7 @@ module Arb =
             let inline notNull x = not (LanguagePrimitives.PhysicalEquality null x)
             { new Arbitrary<NonNull<'a>>() with
                 override __.Generator = 
-                    generate |> Gen.suchThat notNull |> Gen.map NonNull
+                    generate |> Gen.where notNull |> Gen.map NonNull
                 override __.Shrinker (NonNull o) = 
                     shrink o |> Seq.where notNull |> Seq.map NonNull
             }

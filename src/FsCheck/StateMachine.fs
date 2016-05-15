@@ -250,7 +250,7 @@ module StateMachine =
             gen {
                 if size > 0 then
                     let nextOperation = spec.Next state
-                    let! command = nextOperation |> Gen.suchThatOption (fun operation -> operation.Pre state)
+                    let! command = nextOperation |> Gen.tryWhere (fun operation -> operation.Pre state)
                     if Option.isNone command || command.Value.GetType() = typeof<StopOperation<'Actual,'Model>> then return [state],[]
                     else
                         let! states, commands = genCommandsS (command.Value.Run state) (size-1)

@@ -163,8 +163,8 @@ If `g` is a generator for type `t`, then
 - `listOf g` generates a list of t's whose length is determined by the size parameter
 - `nonEmptyListOf g` generates a non-empty list of t's whose length is determined by the size parameter.
 - `constant v` generates the value v.
-- `suchThat p g` generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
-- `suchThatOption p g` generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')
+- `where p g` or `filter p g` generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
+- `tryWhere p g` or `tryFilter p g` generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')
 - If xs is a sequence, then `shuffle xs` generates a random permutation of xs.
 
 All the generator combinators are functions on the Gen module. In C#, the names are the same just capitalized differently.

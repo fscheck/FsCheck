@@ -347,56 +347,55 @@ module Gen =
 
     ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
     ///if the given original generator did not generate any values that satisfied the predicate, after trying to
-    ///get values from by increasing its size.
+    ///get values by increasing its size.
     //[category: Creating generators from generators]
-    [<CompiledName("SuchThatOption"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let suchThatOption p gn =
+    [<CompiledName("TryWhere"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let tryWhere predicate generator = 
         let rec tryValue k n =
             match (k,n) with 
-            | (_,0) -> gen {return None }
-            | (k,n) -> gen {let! x = resize (2*k+n) gn
-                            if p x then return Some x else return! tryValue (k+1) (n-1) }
+            | (_,0) -> gen { return None }
+            | (k,n) -> gen { let! x = resize (2*k+n) generator
+                             if predicate x then return Some x else return! tryValue (k+1) (n-1) }
         sized (tryValue 0 << max 1)
 
-
-    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
-    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
-    ///the predicate is satisfied.
+    ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
+    ///if the given original generator did not generate any values that satisfied the predicate, after trying to
+    ///get values by increasing its size.
     //[category: Creating generators from generators]
-    [<CompiledName("SuchThat")>]
-    let rec suchThat predicate generator =
-        gen {   let! mx = suchThatOption predicate generator
-                match mx with
-                | Some x    -> return x
-                | None      -> return! sized (fun n -> resize (n+1) (suchThat predicate generator)) }
+    [<CompiledName("TryFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let tryFilter predicate generator = tryWhere predicate generator
+
+    ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
+    ///if the given original generator did not generate any values that satisfied the predicate, after trying to
+    ///get values by increasing its size.
+    //[category: Creating generators from generators]
+    [<Obsolete("This function will be removed in a future version of FsCheck. Please use the synonyms tryWhere or tryFilter instead.");CompiledName("SuchThatOption"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let suchThatOption = tryWhere
 
     ///Generates a value that satisfies a predicate. Contrary to tryWhere, this function keeps re-trying
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
     ///the predicate is satisfied.
     //[category: Creating generators from generators]
     [<CompiledName("Where");EditorBrowsable(EditorBrowsableState.Never)>]
-    let where predicate generator = suchThat predicate generator
-
-    ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
-    ///if the given original generator did not generate any values that satisfied the predicate, after trying to
-    ///get values from by increasing its size.
-    //[category: Creating generators from generators]
-    [<CompiledName("TryWhere"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let tryWhere = suchThatOption
+    let rec where predicate generator = 
+        gen { let! mx = tryWhere predicate generator
+              match mx with
+              | Some x    -> return x
+              | None      -> return! sized (fun n -> resize (n+1) (where predicate generator)) }
     
     ///Generates a value that satisfies a predicate. Contrary to tryFilter, this function keeps re-trying
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
     ///the predicate is satisfied.
     //[category: Creating generators from generators]
-    [<CompiledName("Filter")>]
-    let filter = suchThat
+    [<CompiledName("Filter");EditorBrowsable(EditorBrowsableState.Never)>]
+    let filter predicate generator = where predicate generator
 
-    ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
-    ///if the given original generator did not generate any values that satisfied the predicate, after trying to
-    ///get values from by increasing its size.
+    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
+    ///the predicate is satisfied.
     //[category: Creating generators from generators]
-    [<CompiledName("TryFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let tryFilter = suchThatOption
+    [<Obsolete("This function will be removed in a future version of FsCheck. Please use the synonyms where or filter instead.");CompiledName("SuchThat")>]
+    let rec suchThat = where
 
     /// Generates a list of random length. The maximum length depends on the
     /// size parameter.

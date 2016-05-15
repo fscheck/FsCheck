@@ -72,7 +72,7 @@ module Command =
         let rec genCommandsS state size =
             gen {
                 if size > 0 then
-                    let! command = spec.Next state |> Gen.suchThatOption (fun command -> command.Pre state)
+                    let! command = spec.Next state |> Gen.tryWhere (fun command -> command.Pre state)
                     match command with 
                         | None -> 
                             return []
