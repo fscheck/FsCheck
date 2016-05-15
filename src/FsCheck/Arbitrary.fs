@@ -983,7 +983,16 @@ module Arb =
 #else
         static member IPAddress() =
             let generator = generate |> Gen.arrayOfLength 4 |> Gen.map IPAddress
-            let shrinker (a:IPAddress) = a.GetAddressBytes() |> shrink |> Seq.filter (fun x -> Seq.length x = 4) |> Seq.map IPAddress
+            let shrinker (a:IPAddress) = 
+                let bytes = a.GetAddressBytes()
+
+                seq {
+                    for b0 in seq {yield bytes.[0]; yield! shrink bytes.[0]} do
+                    for b1 in seq {yield bytes.[1]; yield! shrink bytes.[1]} do
+                    for b2 in seq {yield bytes.[2]; yield! shrink bytes.[2]} do
+                    for b3 in seq {yield bytes.[3]; yield! shrink bytes.[3]} do
+                        yield IPAddress [|b0;b1;b2;b3|]
+                } |> Seq.skip 1
         
             fromGenShrink (generator, shrinker)
 #endif
