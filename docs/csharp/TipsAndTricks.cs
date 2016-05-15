@@ -21,6 +21,13 @@ namespace CSharp.DocSnippets
             Prop.ForAll((int x) => Math.Abs(x) >= 0)
                 .Check(new Configuration { Replay = FsCheck.Random.StdGen.NewStdGen(1145655947, 296144285)});
             //[/replay]
+
+            //[configuration]
+            var configuration = Configuration.Quick;
+            configuration.MaxNbOfTest = 1000;
+            configuration.QuietOnSuccess = true;
+            true.ToProperty().Check(configuration);
+            //[/configuration]
         }
     }
 }

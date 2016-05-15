@@ -49,6 +49,7 @@
     <Compile Include="Properties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuickStart.cs" />
+    <Compile Include="RunningTests.cs" />
     <Compile Include="StatefulTesting.cs" />
     <Compile Include="TestData.cs" />
     <Compile Include="TipsAndTricks.cs" />

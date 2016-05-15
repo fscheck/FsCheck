@@ -12,8 +12,9 @@ open System
 
 This section describes the various ways in which you can run FsCheck tests:
 
-* FsCheck has a built-in test runner that is easy to invoke from F# Interactive, commandline program or any test framework. 
-It writes the result of tests to standard output, and you can configure the FsCheck runner to throw an exception on test failure.
+* FsCheck has a built-in test runner that is easy to invoke from F#/C# Interactive, commandline program or any test framework. 
+It writes the result of tests to standard output, and you can configure the FsCheck runner to throw an exception on test failure
+to signal the failure to whichever test runner you use.
 
 * FsCheck.Xunit integrates FsCheck with xUnit.NET to allow you to specify properties in a terse way. Tests written
 this way look like native xUnit.NET tests, except they can take arguments.
@@ -26,27 +27,37 @@ a tighter integration with a specific test framework, and offers more control ov
 
 ## Using the built-in test runner
 
-### From an fsx file or a command line runner
+### Running a single property from an fsx/csx file or a command line runner
 
-This method should by now be familiar to you if you've read the previous sections in this guide. Simply write your property as a 
-function, and invoke one of the methods on the `Check` type.
+From F# the preferred way of running a property is to use the methods on `Check`; for C# the preferred way is to use the extension
+methods on the `Property` type.
 
-There are basically two main variants of methods on `Check`: `Check.One` and `Check.All`. 
+`Check.One` or `<property.Check>` runs the tests for a single property. It takes as argument an instance of the `Config` type
+or `Configuration` type respectively, which allows you to configure many aspects of how the FsCheck test runner works, 
+among others the size of the test data and the random seed used (so you can reproduce a run). The `Config` type is an F# 
+record type so is the preferred way to use from F#; for other languages `Configuration` is a mutable
+version of it so is easier to use.
 
-`Check.One` runs the tests for a single property. It takes as argument an instance of the `Config` type, which allows you to configure
-many aspects of how the FsCheck test runner works, among others the size of the test data and the random seed used (so you can reproduce
-a run). Most of the methods on `Check` are a short-hand for running a test with a particular configuration. For example, `Check.Quick` 
-is equivalent to `Check.One(Config.Quick, <property>)`.
+Most of the methods on `Check` and the extension methods like `QuickCheck()` are a short-hand for running a test with a particular configuration. For example, `Check.Quick` 
+is equivalent to `Check.One(Config.Quick, <property>)`; respectively `<property>.QuickCheck()` is a shorthand for `<property>.Check(Configuration.Quick)`.
 
-Take note of `Config.Verbose` and `Check.Verbose`. These will print the arguments for each test, and are useful for example if
+Take note of `Config(uration).Verbose` and `Check.Verbose`/`VerboseCheck`. These will print the arguments for each test, and are useful for example if
 your test loops infinitely on some inputs.
 
-Also take note of `Check.QuickThrowOnFailure` and `Check.VerboseThrowOnFailure`. These are intended to be used from unit tests executed
-through another test framework's unit tests. They'll call the FsCheck runner directly and configure it such that is throws on failure;
-in all frameworks I'm aware of this signals that the test has failed and so is an easy way to integrate FsCheck tests with unit tests 
-you may already have.
+Also take note of `Check.QuickThrowOnFailure`/`QuickCheckThrowOnFailure()` and `Check.VerboseThrowOnFailure`/`VerboseThrowOnFailure()`. 
+These are intended to be used from unit tests executed through an existing test runner. They'll call the FsCheck runner 
+and configure it such that is throws on failure; in all frameworks we are aware of this signals that the test has failed 
+and so is an easy way to integrate FsCheck tests with unit tests you may already have.
 
-### Testing grouped properties with Check.All
+Here is an example of how to run a test with a similar configuration to Quick, but that runs 1000 tests and does not print to
+the output on success:*)
+
+Check.One({ Config.Quick with MaxTest = 1000; QuietOnSuccess=true }, fun _ -> true)
+
+(**
+    [lang=csharp, file=../csharp/RunningTests.cs,key=configuration]
+
+### Running many properties at once with Check.All
 
 Usually, you'll write more than one property to test. FsCheck allows you to group together properties as static members of a class: *)
 type ListProperties =
