@@ -64,6 +64,12 @@ module Gen =
                 |> Gen.frequency
                 |> sample 100
                 |> List.forall (isIn generatedValues)))
+
+    [<Fact>]
+    let ``frequency should realize if no element can be generated``() =
+        let prop = lazy (Gen.frequency [(0,Gen.constant 1)]) //used lazy since unqoute couldn't handle generator directly
+        raises<System.ArgumentException> <@ prop.Value @>
+        
     
     [<Property>]
     let Map (f:string -> int) v =

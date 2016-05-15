@@ -202,11 +202,14 @@ module Gen =
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
+    ///<exception cref="System.ArgumentException">Thrown when the sum of the propabilites is smaller or equal 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency")>]
     let frequency xs =
         let xs = Seq.toArray xs
         let tot = Array.sumBy fst xs
+        let throwIfInvalid = 
+            if tot <= 0 then invalidArg "xs" "Frequency was called with a sum of propabilites smaller or equal 0. No elements can be generated." 
         let rec pick i n =
             let k,x = xs.[i]
             if n<=k then x else pick (i+1) (n-k)
