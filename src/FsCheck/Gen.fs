@@ -166,7 +166,7 @@ module Gen =
     //[category: Creating generators]
     [<CompiledName("Elements")>]
     let elements xs = 
-        choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
+        choose (0, (Seq.length xs)-1) |> map (flip Seq.item xs)
 
     [<CompiledName("GrowingElements")>]
     ///Build a generator that takes a non-empty sequence and randomly generates
@@ -518,7 +518,7 @@ module Gen =
                     counter := !counter + 1
                     !counter - 1
         let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
-        fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
+        fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.
 type Gen with
