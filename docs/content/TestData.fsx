@@ -297,7 +297,7 @@ Gen.choose (0, 127) |> Gen.map byte |> Gen.sample 0 10
 
 (**This is only a basic example of the concept of `Gen.map`. In this particular
 example, you could also have used `Gen.elements [0uy..127uy]` to achieve the
-same result without without using `Gen.map`, so let's consider a second
+same result without using `Gen.map`, so let's consider a second
 example.
 
 Assume that you need to create a date in a particular month; e.g. November
