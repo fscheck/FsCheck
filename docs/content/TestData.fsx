@@ -279,6 +279,44 @@ to be drawn from the collection:*)
 expression, including `list` and `array` values, as long as the sequence is
 finite.
 
+#### Map
+
+Sometimes, you need to use a generator of one type in order to create a
+generator of another type. For instance, you may need a `byte` value between 0
+and 127. That sounds just like a job for `Gen.choose`, but unfortunately,
+`Gen.choose (0, 127)` is a `Gen<int>`, and not a `Gen<byte>`. One way to
+produce a `Gen<byte>` from a `Gen<int>` is to use `Gen.map`:*)
+
+(***define-output:IntToByteMapExample***)
+Gen.choose (0, 127) |> Gen.map byte |> Gen.sample 0 10
+
+(**This example uses the `byte` _function_ to cast any `int` created by
+`Gen.choose (0, 127)` to a `byte` value:*)
+
+(***include-it:IntToByteMapExample***)
+
+(**This is only a basic example of the concept of `Gen.map`. In this particular
+example, you could also have used `Gen.elements [0uy..127uy]` to achieve the
+same result without without using `Gen.map`, so let's consider a second
+example.
+
+Assume that you need to create a date in a particular month; e.g. November
+2019. You can do that by creating an integer for the day of the month, and then
+combine `Gen.map` with an anymous function to get the desired date:*)
+
+(***define-output:MapIntToDateExample***)
+Gen.choose (1, 30)
+|> Gen.map (fun i -> DateTime(2019, 11, i).ToString "u")
+|> Gen.sample 0 10
+
+(**In this example, the generated `DateTime` value is immediately formatted as
+a `string`, so that the output is more readable:*)
+
+(***include-it:MapIntToDateExample***)
+
+(**This causes the resulting generator to have the type `Gen<string>`, but if
+you omit calling `ToString "u"`, its type would have been `Gen<DateTime>`.
+
 #### Lists
 
 You can generate lists from individual value generators using `Gen.listOf`,
