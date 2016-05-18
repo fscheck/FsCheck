@@ -202,6 +202,7 @@ module Gen =
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///given probabilities. The sum of the probabilities must be larger than zero.
+    ///<exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency")>]
     let frequency xs =
@@ -210,7 +211,10 @@ module Gen =
         let rec pick i n =
             let k,x = xs.[i]
             if n<=k then x else pick (i+1) (n-k)
-        gen.Bind(choose (1,tot), pick 0)
+        if tot <= 0 then 
+            invalidArg "xs" "Frequency was called with a sum of probabilities less than or equal to 0. No elements can be generated."
+        else
+            gen.Bind(choose (1,tot), pick 0)
 
     let private frequencyOfWeighedSeq ws = 
         ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> frequency
