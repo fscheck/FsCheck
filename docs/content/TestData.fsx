@@ -395,6 +395,71 @@ finite.
 All shuffles are equally likely; the input order isn't excluded, so the
 output may be the same as the input. Due to the nature of combinatorics, this
 is more likely to happen the smaller the input list is.
+
+#### Tuples
+
+Sometimes you need to generate tuples of values. You can use the functions
+`Gen.two`, `Gen.three`, and `Gen.four` to turn a single-value generator into a
+generator of tuples.
+
+Imagine that you need to generate two-dimensional points; you may, for
+instance, be implementing
+[Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
+Points can be modelled as tuples of numbers. If you're modelling a grid, you
+can use integers:*)
+
+(***define-output:GenTwoIntegerExample***)
+Gen.choose (-100, 100) |> Gen.two |> Gen.sample 0 10
+
+(**`Gen.two` uses a single-value generator to create a generator of two-element
+tuples. This example generates 10 sample points, where each coordinate is
+between -100 and 100:*)
+
+(***include-it:GenTwoIntegerExample***)
+
+(**If you want to model a coordinate system in three-dimensional space, you may
+decide to use floating points instead:*)
+
+(***define-output:GenThreeFloatExample***)
+Gen.elements [-10.0..0.01..10.0] |> Gen.three |> Gen.sample 0 10
+
+(**In this example, you first use `Gen.elements` to draw a floating point value
+from between -10 and 10, with two decimals; that defines a `Gen<float>`.
+Second, `Gen.three` takes that `Gen<float>` and turns it into a
+`Gen<float * float * float>`:*)
+
+(***include-it:GenThreeFloatExample***)
+
+(**Finally, `Gen.four` transforms a single-value generator into a generator of
+four-element tuples. As all the other *combinators* in the `Gen` module, you
+can combine it with other functions to define more specific values. Imagine,
+for instance, that you need to create `System.Version` values. This type, which
+captures a version of something, for example an operating system, or a library,
+models version numbers as a composite of four numbers: *major*, *minor*,
+*build*, and *revision* - all integers. One of the constructor overloads of
+this class takes all four numbers, so you can combine `Gen.four` with `Gen.map`
+to create Version values:*)
+
+(***define-output:GenFourVersionExample***)
+Gen.choose (0, 9)
+|> Gen.four
+|> Gen.map (System.Version >> string)
+|> Gen.sample 0 10
+
+(**This example starts with `Gen.choose (0, 9)` to define a `Gen<int>` that
+creates integer values betwen 0 and 9 (both included). Second, you pipe the
+`Gen<int>` value into `Gen.four`, which returns a `Gen<int * int * int * int>`.
+Third, you can pipe that generator into `Gen.map`, using the constructor
+overload of `Version` that takes four integers; in F# 4, constructors can be
+treated as functions, and a constructor with four arguments can be treated as a
+function that takes a four-element tuple.*)
+
+(***include-it:GenFourVersionExample***)
+
+(**This example composes the `Version` constructor with the `string` function,
+in order to produce a more readable output. The resulting generator has the
+type `Gen<string>`, but if you remove the `string` composition, the type would
+be `Gen<Version>.`
     
 ## Default Generators and Shrinkers based on type
 
