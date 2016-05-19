@@ -200,9 +200,12 @@ module Gen =
     let oneOfArr ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
         generators |> oneof
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
-    ///<exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
+    /// <summary>
+    /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    /// given probabilities. The sum of the probabilities must be larger than zero.
+    /// </summary>
+    /// <param name="xs">Sequence of tuples where each tuple contains a weight and a generator.</param>
+    /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency")>]
     let frequency xs =
@@ -219,22 +222,34 @@ module Gen =
     let private frequencyOfWeighedSeq ws = 
         ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> frequency
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
+    /// <summary>
+    /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    /// given probabilities. The sum of the probabilities must be larger than zero.
+    /// </summary>
+    /// <param name="weightedValues">Sequence of weighted generators.</param>
+    /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let frequencySeqWeightAndValue ( weightedValues : seq<WeightAndValue<Gen<'a>>> ) =
         weightedValues |> frequencyOfWeighedSeq
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
+    /// <summary>
+    /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    /// given probabilities. The sum of the probabilities must be larger than zero.
+    /// </summary>
+    /// <param name="weightedValues">Array of weighted generators.</param>
+    /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let frequencyWeightAndValueArr ( [<ParamArrayAttribute>] weightedValues : WeightAndValue<Gen<'a>>[] ) =
         weightedValues |> frequencyOfWeighedSeq
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
+    /// <summary>
+    /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    /// given probabilities. The sum of the probabilities must be larger than zero.
+    /// </summary>
+    /// <param name="weightedValues">Array of tuples where each tuple contains a weight and a generator.</param>
+    /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let frequencyTupleArr ( [<ParamArrayAttribute>] weightedValues : (int * Gen<'a>)[] ) =
