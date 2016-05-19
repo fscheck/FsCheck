@@ -62,7 +62,7 @@
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L477-477" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L512-512" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -83,7 +83,7 @@
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L450-450" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L485-485" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -104,7 +104,7 @@
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L443-443" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L478-478" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -125,7 +125,7 @@
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L435-435" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L470-470" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -146,7 +146,7 @@
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L430-430" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L465-465" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -188,7 +188,7 @@
                           <strong>Type parameters:</strong> 'a17          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L460-460" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L495-495" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -226,11 +226,11 @@
             elementsArr values
           </code>
           <div class="tip" id="32">
-            <strong>Signature:</strong> values:&#39;?222320 array -&gt; Gen&lt;&#39;?222320&gt;<br />
-                          <strong>Type parameters:</strong> '?222320          </div>
+            <strong>Signature:</strong> values:&#39;?230649 array -&gt; Gen&lt;&#39;?230649&gt;<br />
+                          <strong>Type parameters:</strong> '?230649          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L174-174" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L187-187" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -265,14 +265,37 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
-            four g
+            filter predicate generator
           </code>
           <div class="tip" id="34">
+            <strong>Signature:</strong> predicate:(&#39;?230719 -&gt; bool) -&gt; generator:Gen&lt;&#39;?230719&gt; -&gt; Gen&lt;&#39;?230719&gt;<br />
+                          <strong>Type parameters:</strong> '?230719          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L410-410" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates a value that satisfies a predicate. Contrary to tryFilter, this function keeps re-trying
+by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that
+the predicate is satisfied.</p>
+
+
+              <p>CompiledName: <code>Filter</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
+            four g
+          </code>
+          <div class="tip" id="35">
             <strong>Signature:</strong> g:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b * &#39;b * &#39;b * &#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L263-263" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L295-295" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -285,37 +308,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
+          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
             frequency xs
           </code>
-          <div class="tip" id="35">
+          <div class="tip" id="36">
             <strong>Signature:</strong> xs:seq&lt;int * Gen&lt;&#39;a17&gt;&gt; -&gt; Gen&lt;&#39;a17&gt;<br />
                           <strong>Type parameters:</strong> 'a17          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L194-194" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Build a generator that generates a value from one of the generators in the given non-empty seq, with
-given probabilities. The sum of the probabilities must be larger than zero.</p>
-
-
-              <p>CompiledName: <code>Frequency</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
-            frequencySeqWeightAndValue (...)
-          </code>
-          <div class="tip" id="36">
-            <strong>Signature:</strong> weightedValues:seq&lt;WeightAndValue&lt;Gen&lt;&#39;a&gt;&gt;&gt; -&gt; Gen&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L209-209" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L211-211" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -330,14 +331,14 @@ given probabilities. The sum of the probabilities must be larger than zero.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
-            frequencyTupleArr weightedValues
+            frequencySeqWeightAndValue (...)
           </code>
           <div class="tip" id="37">
-            <strong>Signature:</strong> weightedValues:(int * Gen&lt;&#39;a&gt;) [] -&gt; Gen&lt;&#39;a&gt;<br />
+            <strong>Signature:</strong> weightedValues:seq&lt;WeightAndValue&lt;Gen&lt;&#39;a&gt;&gt;&gt; -&gt; Gen&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L223-223" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L233-233" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -352,14 +353,14 @@ given probabilities. The sum of the probabilities must be larger than zero.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
-            frequencyWeightAndValueArr (...)
+            frequencyTupleArr weightedValues
           </code>
           <div class="tip" id="38">
-            <strong>Signature:</strong> weightedValues:WeightAndValue&lt;Gen&lt;&#39;a&gt;&gt; [] -&gt; Gen&lt;&#39;a&gt;<br />
+            <strong>Signature:</strong> weightedValues:(int * Gen&lt;&#39;a&gt;) [] -&gt; Gen&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L216-216" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L255-255" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -374,14 +375,36 @@ given probabilities. The sum of the probabilities must be larger than zero.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
-            fresh fv
+            frequencyWeightAndValueArr (...)
           </code>
           <div class="tip" id="39">
-            <strong>Signature:</strong> fv:(unit -&gt; &#39;?222408) -&gt; Gen&lt;&#39;?222408&gt;<br />
-                          <strong>Type parameters:</strong> '?222408          </div>
+            <strong>Signature:</strong> weightedValues:WeightAndValue&lt;Gen&lt;&#39;a&gt;&gt; [] -&gt; Gen&lt;&#39;a&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L466-466" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L244-244" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that generates a value from one of the generators in the given non-empty seq, with
+given probabilities. The sum of the probabilities must be larger than zero.</p>
+
+
+              <p>CompiledName: <code>Frequency</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
+            fresh fv
+          </code>
+          <div class="tip" id="40">
+            <strong>Signature:</strong> fv:(unit -&gt; &#39;?230743) -&gt; Gen&lt;&#39;?230743&gt;<br />
+                          <strong>Type parameters:</strong> '?230743          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L501-501" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -395,15 +418,15 @@ See also constant.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
+          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
             freshFunc fv
           </code>
-          <div class="tip" id="40">
-            <strong>Signature:</strong> fv:Func&lt;&#39;?222410&gt; -&gt; Gen&lt;&#39;?222410&gt;<br />
-                          <strong>Type parameters:</strong> '?222410          </div>
+          <div class="tip" id="41">
+            <strong>Signature:</strong> fv:Func&lt;&#39;?230745&gt; -&gt; Gen&lt;&#39;?230745&gt;<br />
+                          <strong>Type parameters:</strong> '?230745          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L472-472" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L507-507" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -417,15 +440,39 @@ See also constant.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
+          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
+            growingElements xs
+          </code>
+          <div class="tip" id="42">
+            <strong>Signature:</strong> xs:seq&lt;&#39;?230647&gt; -&gt; Gen&lt;&#39;?230647&gt;<br />
+                          <strong>Type parameters:</strong> '?230647          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L177-177" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Build a generator that takes a non-empty sequence and randomly generates
+one of the values among an initial segment of that sequence. The size of
+this initial segment increases with the size parameter. Essentially this
+generator is Gen.elements but taking also the runtime size into account.</p>
+
+
+              <p>CompiledName: <code>GrowingElements</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
             listOf gn
           </code>
-          <div class="tip" id="41">
+          <div class="tip" id="43">
             <strong>Signature:</strong> gn:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a list&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L388-388" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L423-423" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -439,15 +486,15 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
+          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
             listOfLength n arb
           </code>
-          <div class="tip" id="42">
+          <div class="tip" id="44">
             <strong>Signature:</strong> n:int -&gt; arb:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b list&gt;<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L314-314" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L346-346" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -460,10 +507,10 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
+          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
             map f gen
           </code>
-          <div class="tip" id="43">
+          <div class="tip" id="45">
             <strong>Signature:</strong> f:(&#39;a -&gt; &#39;b) -&gt; gen:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b          </div>
         </td>
@@ -481,15 +528,15 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
+          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
             map2 f a b
           </code>
-          <div class="tip" id="44">
+          <div class="tip" id="46">
             <strong>Signature:</strong> f:(&#39;c -&gt; &#39;d -&gt; &#39;e) -&gt; a:Gen&lt;&#39;c&gt; -&gt; b:Gen&lt;&#39;d&gt; -&gt; Gen&lt;&#39;e&gt;<br />
                           <strong>Type parameters:</strong> 'c, 'd, 'e          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L229-229" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L261-261" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -502,15 +549,15 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
+          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
             map3 f a b c
           </code>
-          <div class="tip" id="45">
+          <div class="tip" id="47">
             <strong>Signature:</strong> f:(&#39;a17 -&gt; &#39;a18 -&gt; &#39;a19 -&gt; &#39;a20) -&gt; a:Gen&lt;&#39;a17&gt; -&gt; b:Gen&lt;&#39;a18&gt; -&gt; c:Gen&lt;&#39;a19&gt; -&gt; Gen&lt;&#39;a20&gt;<br />
                           <strong>Type parameters:</strong> 'a17, 'a18, 'a19, 'a20          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L241-241" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L273-273" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -523,15 +570,15 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
+          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
             map4 f a b c d
           </code>
-          <div class="tip" id="46">
-            <strong>Signature:</strong> f:(&#39;?222349 -&gt; &#39;?222350 -&gt; &#39;?222351 -&gt; &#39;?222352 -&gt; &#39;?222353) -&gt; a:Gen&lt;&#39;?222349&gt; -&gt; b:Gen&lt;&#39;?222350&gt; -&gt; c:Gen&lt;&#39;?222351&gt; -&gt; d:Gen&lt;&#39;?222352&gt; -&gt; Gen&lt;&#39;?222353&gt;<br />
-                          <strong>Type parameters:</strong> '?222349, '?222350, '?222351, '?222352, '?222353          </div>
+          <div class="tip" id="48">
+            <strong>Signature:</strong> f:(&#39;?230678 -&gt; &#39;?230679 -&gt; &#39;?230680 -&gt; &#39;?230681 -&gt; &#39;?230682) -&gt; a:Gen&lt;&#39;?230678&gt; -&gt; b:Gen&lt;&#39;?230679&gt; -&gt; c:Gen&lt;&#39;?230680&gt; -&gt; d:Gen&lt;&#39;?230681&gt; -&gt; Gen&lt;&#39;?230682&gt;<br />
+                          <strong>Type parameters:</strong> '?230678, '?230679, '?230680, '?230681, '?230682          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L254-254" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L286-286" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -544,15 +591,15 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
+          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
             map5 f a b c d e
           </code>
-          <div class="tip" id="47">
-            <strong>Signature:</strong> f:(&#39;?222357 -&gt; &#39;?222358 -&gt; &#39;?222359 -&gt; &#39;?222360 -&gt; &#39;?222361 -&gt; &#39;?222362) -&gt; a:Gen&lt;&#39;?222357&gt; -&gt; b:Gen&lt;&#39;?222358&gt; -&gt; c:Gen&lt;&#39;?222359&gt; -&gt; d:Gen&lt;&#39;?222360&gt; -&gt; e:Gen&lt;&#39;?222361&gt; -&gt; Gen&lt;&#39;?222362&gt;<br />
-                          <strong>Type parameters:</strong> '?222357, '?222358, '?222359, '?222360, '?222361, '?222362          </div>
+          <div class="tip" id="49">
+            <strong>Signature:</strong> f:(&#39;?230686 -&gt; &#39;?230687 -&gt; &#39;?230688 -&gt; &#39;?230689 -&gt; &#39;?230690 -&gt; &#39;?230691) -&gt; a:Gen&lt;&#39;?230686&gt; -&gt; b:Gen&lt;&#39;?230687&gt; -&gt; c:Gen&lt;&#39;?230688&gt; -&gt; d:Gen&lt;&#39;?230689&gt; -&gt; e:Gen&lt;&#39;?230690&gt; -&gt; Gen&lt;&#39;?230691&gt;<br />
+                          <strong>Type parameters:</strong> '?230686, '?230687, '?230688, '?230689, '?230690, '?230691          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L268-268" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L300-300" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -565,15 +612,15 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
+          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
             map6 f a b c d e g
           </code>
-          <div class="tip" id="48">
-            <strong>Signature:</strong> f:(&#39;?222364 -&gt; &#39;?222365 -&gt; &#39;?222366 -&gt; &#39;?222367 -&gt; &#39;?222368 -&gt; &#39;?222369 -&gt; &#39;?222370) -&gt; a:Gen&lt;&#39;?222364&gt; -&gt; b:Gen&lt;&#39;?222365&gt; -&gt; c:Gen&lt;&#39;?222366&gt; -&gt; d:Gen&lt;&#39;?222367&gt; -&gt; e:Gen&lt;&#39;?222368&gt; -&gt; g:Gen&lt;&#39;?222369&gt; -&gt; Gen&lt;&#39;?222370&gt;<br />
-                          <strong>Type parameters:</strong> '?222364, '?222365, '?222366, '?222367, '?222368, '?222369, '?222370          </div>
+          <div class="tip" id="50">
+            <strong>Signature:</strong> f:(&#39;?230693 -&gt; &#39;?230694 -&gt; &#39;?230695 -&gt; &#39;?230696 -&gt; &#39;?230697 -&gt; &#39;?230698 -&gt; &#39;?230699) -&gt; a:Gen&lt;&#39;?230693&gt; -&gt; b:Gen&lt;&#39;?230694&gt; -&gt; c:Gen&lt;&#39;?230695&gt; -&gt; d:Gen&lt;&#39;?230696&gt; -&gt; e:Gen&lt;&#39;?230697&gt; -&gt; g:Gen&lt;&#39;?230698&gt; -&gt; Gen&lt;&#39;?230699&gt;<br />
+                          <strong>Type parameters:</strong> '?230693, '?230694, '?230695, '?230696, '?230697, '?230698, '?230699          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L278-278" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L310-310" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -586,15 +633,15 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
+          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
             nonEmptyListOf gn
           </code>
-          <div class="tip" id="49">
+          <div class="tip" id="51">
             <strong>Signature:</strong> gn:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b list&gt;<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L397-397" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L432-432" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -608,15 +655,15 @@ depends on the size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
+          <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
             oneof gens
           </code>
-          <div class="tip" id="50">
+          <div class="tip" id="52">
             <strong>Signature:</strong> gens:seq&lt;Gen&lt;&#39;a&gt;&gt; -&gt; Gen&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L181-181" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L194-194" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -630,15 +677,15 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
+          <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
             oneOfArr generators
           </code>
-          <div class="tip" id="51">
-            <strong>Signature:</strong> generators:Gen&lt;&#39;?222324&gt; array -&gt; Gen&lt;&#39;?222324&gt;<br />
-                          <strong>Type parameters:</strong> '?222324          </div>
+          <div class="tip" id="53">
+            <strong>Signature:</strong> generators:Gen&lt;&#39;?230653&gt; array -&gt; Gen&lt;&#39;?230653&gt;<br />
+                          <strong>Type parameters:</strong> '?230653          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L187-187" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L200-200" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -652,10 +699,10 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
+          <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
             resize newSize arg2
           </code>
-          <div class="tip" id="52">
+          <div class="tip" id="54">
             <strong>Signature:</strong> newSize:int -&gt; Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
@@ -673,10 +720,10 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
+          <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
             sample size n gn
           </code>
-          <div class="tip" id="53">
+          <div class="tip" id="55">
             <strong>Signature:</strong> size:int -&gt; n:int -&gt; gn:Gen&lt;&#39;b&gt; -&gt; &#39;b list<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
@@ -694,15 +741,15 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
+          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
             sequence l
           </code>
-          <div class="tip" id="54">
+          <div class="tip" id="56">
             <strong>Signature:</strong> l:seq&lt;Gen&lt;&#39;a&gt;&gt; -&gt; Gen&lt;&#39;a list&gt;<br />
                           <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L289-289" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L321-321" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -715,15 +762,15 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
+          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
             sequenceToArr generators
           </code>
-          <div class="tip" id="55">
-            <strong>Signature:</strong> generators:Gen&lt;&#39;?222376&gt; array -&gt; Gen&lt;&#39;?222376 []&gt;<br />
-                          <strong>Type parameters:</strong> '?222376          </div>
+          <div class="tip" id="57">
+            <strong>Signature:</strong> generators:Gen&lt;&#39;?230705&gt; array -&gt; Gen&lt;&#39;?230705 []&gt;<br />
+                          <strong>Type parameters:</strong> '?230705          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L308-308" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L340-340" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -736,15 +783,15 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
+          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
             sequenceToSeq generators
           </code>
-          <div class="tip" id="56">
-            <strong>Signature:</strong> generators:seq&lt;Gen&lt;&#39;?222374&gt;&gt; -&gt; Gen&lt;seq&lt;&#39;?222374&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?222374          </div>
+          <div class="tip" id="58">
+            <strong>Signature:</strong> generators:seq&lt;Gen&lt;&#39;?230703&gt;&gt; -&gt; Gen&lt;seq&lt;&#39;?230703&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?230703          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L302-302" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L334-334" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -757,15 +804,15 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
+          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
             shuffle xs
           </code>
-          <div class="tip" id="57">
-            <strong>Signature:</strong> xs:seq&lt;&#39;?222380&gt; -&gt; Gen&lt;&#39;?222380 []&gt;<br />
-                          <strong>Type parameters:</strong> '?222380          </div>
+          <div class="tip" id="59">
+            <strong>Signature:</strong> xs:seq&lt;&#39;?230709&gt; -&gt; Gen&lt;&#39;?230709 []&gt;<br />
+                          <strong>Type parameters:</strong> '?230709          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L319-319" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L351-351" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -778,10 +825,10 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
+          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
             sized fgen
           </code>
-          <div class="tip" id="58">
+          <div class="tip" id="60">
             <strong>Signature:</strong> fgen:(int -&gt; Gen&lt;&#39;b&gt;) -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
@@ -799,12 +846,12 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
+          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
             sizedFunc sizedGen
           </code>
-          <div class="tip" id="59">
-            <strong>Signature:</strong> sizedGen:Func&lt;int,Gen&lt;&#39;?222309&gt;&gt; -&gt; Gen&lt;&#39;?222309&gt;<br />
-                          <strong>Type parameters:</strong> '?222309          </div>
+          <div class="tip" id="61">
+            <strong>Signature:</strong> sizedGen:Func&lt;int,Gen&lt;&#39;?230636&gt;&gt; -&gt; Gen&lt;&#39;?230636&gt;<br />
+                          <strong>Type parameters:</strong> '?230636          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L136-136" class="github-link">
@@ -820,15 +867,15 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
+          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
             subListOf l
           </code>
-          <div class="tip" id="60">
-            <strong>Signature:</strong> l:seq&lt;&#39;?222392&gt; -&gt; Gen&lt;&#39;?222392 list&gt;<br />
-                          <strong>Type parameters:</strong> '?222392          </div>
+          <div class="tip" id="62">
+            <strong>Signature:</strong> l:seq&lt;&#39;?230727&gt; -&gt; Gen&lt;&#39;?230727 list&gt;<br />
+                          <strong>Type parameters:</strong> '?230727          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L405-405" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L440-440" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -841,15 +888,15 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
+          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
             subListOfArr s
           </code>
-          <div class="tip" id="61">
-            <strong>Signature:</strong> s:&#39;?222396 array -&gt; Gen&lt;IList&lt;&#39;?222396&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?222396          </div>
+          <div class="tip" id="63">
+            <strong>Signature:</strong> s:&#39;?230731 array -&gt; Gen&lt;IList&lt;&#39;?230731&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?230731          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L423-423" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L458-458" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -862,15 +909,15 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
+          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
             subListOfToIList s
           </code>
-          <div class="tip" id="62">
-            <strong>Signature:</strong> s:seq&lt;&#39;?222394&gt; -&gt; Gen&lt;IList&lt;&#39;?222394&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?222394          </div>
+          <div class="tip" id="64">
+            <strong>Signature:</strong> s:seq&lt;&#39;?230729&gt; -&gt; Gen&lt;IList&lt;&#39;?230729&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?230729          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L416-416" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L451-451" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -883,15 +930,15 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
-            suchThat predicate generator
+          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+            suchThat 
           </code>
-          <div class="tip" id="63">
-            <strong>Signature:</strong> predicate:(&#39;b -&gt; bool) -&gt; generator:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'b          </div>
+          <div class="tip" id="65">
+            <strong>Signature:</strong> (&#39;?230721 -&gt; bool) -&gt; Gen&lt;&#39;?230721&gt; -&gt; Gen&lt;&#39;?230721&gt;<br />
+                          <strong>Type parameters:</strong> '?230721          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L354-354" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L417-417" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -906,21 +953,21 @@ the predicate is satisfied.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
-            suchThatOption p gn
+          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+            suchThatOption 
           </code>
-          <div class="tip" id="64">
-            <strong>Signature:</strong> p:(&#39;a -&gt; bool) -&gt; gn:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a option&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+          <div class="tip" id="66">
+            <strong>Signature:</strong> (&#39;?230715 -&gt; bool) -&gt; Gen&lt;&#39;?230715&gt; -&gt; Gen&lt;&#39;?230715 option&gt;<br />
+                          <strong>Type parameters:</strong> '?230715          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L340-340" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L392-392" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
 if the given original generator did not generate any values that satisfied the predicate, after trying to
-get values from by increasing its size.</p>
+get values by increasing its size.</p>
 
 
               <p>CompiledName: <code>SuchThatOption</code></p>
@@ -929,15 +976,15 @@ get values from by increasing its size.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
             three g
           </code>
-          <div class="tip" id="65">
+          <div class="tip" id="67">
             <strong>Signature:</strong> g:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b * &#39;b * &#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L249-249" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L281-281" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -950,15 +997,61 @@ get values from by increasing its size.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
+            tryFilter predicate generator
+          </code>
+          <div class="tip" id="68">
+            <strong>Signature:</strong> predicate:(&#39;?230713 -&gt; bool) -&gt; generator:Gen&lt;&#39;?230713&gt; -&gt; Gen&lt;&#39;?230713 option&gt;<br />
+                          <strong>Type parameters:</strong> '?230713          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L385-385" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
+if the given original generator did not generate any values that satisfied the predicate, after trying to
+get values by increasing its size.</p>
+
+
+              <p>CompiledName: <code>TryFilter</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
+            tryWhere predicate generator
+          </code>
+          <div class="tip" id="69">
+            <strong>Signature:</strong> predicate:(&#39;a -&gt; bool) -&gt; generator:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a option&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L372-372" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
+if the given original generator did not generate any values that satisfied the predicate, after trying to
+get values by increasing its size.</p>
+
+
+              <p>CompiledName: <code>TryWhere</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
             two g
           </code>
-          <div class="tip" id="66">
+          <div class="tip" id="70">
             <strong>Signature:</strong> g:Gen&lt;&#39;a17&gt; -&gt; Gen&lt;&#39;a17 * &#39;a17&gt;<br />
                           <strong>Type parameters:</strong> 'a17          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L236-236" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L268-268" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -971,19 +1064,19 @@ get values from by increasing its size.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
+          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
             where predicate generator
           </code>
-          <div class="tip" id="67">
-            <strong>Signature:</strong> predicate:(&#39;?222386 -&gt; bool) -&gt; generator:Gen&lt;&#39;?222386&gt; -&gt; Gen&lt;&#39;?222386&gt;<br />
-                          <strong>Type parameters:</strong> '?222386          </div>
+          <div class="tip" id="71">
+            <strong>Signature:</strong> predicate:(&#39;b -&gt; bool) -&gt; generator:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L365-365" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L399-399" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
+          <p>Generates a value that satisfies a predicate. Contrary to tryWhere, this function keeps re-trying
 by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that
 the predicate is satisfied.</p>
 
