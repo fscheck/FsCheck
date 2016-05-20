@@ -246,7 +246,7 @@ effectively constrain the generator to that single value, and it'll behave like
 
 You can use the `Gen.elements` function to create a generator of singular
 values drawn from a collection of possible values. The collection is inclusive,
-which means that both the first and last element, as well as all elements
+which means that both the first and last elements, as well as all elements
 between, can be drawn.
 
 In the following example, a list of arbitrary integers define the collection of
