@@ -279,6 +279,42 @@ to be drawn from the collection:*)
 expression, including `list` and `array` values, as long as the sequence is
 finite.
 
+#### GrowingElements
+
+Essentially `Gen.growingElements` is like `Gen.elements` but also taking `size` into account.
+
+You can use the `Gen.growingElements` function to create a generator of singular
+values drawn *among an initial segment* of possible values. The size of this
+initial segment increases with the `size` parameter.
+
+In the following example, a list of ten characters define the collection of
+possible values. The result is a generator that creates `char` values guaranteed
+to be one of these values. Since `Gen.growingElements` relies on the `size`
+argument, it's `3` in this example, which means only values from the segment
+`['a'; 'b'; 'c']` will be returned.*)
+
+(***define-output:GrowingElementsExample***)
+Gen.growingElements ['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'] |> Gen.sample 3 10
+
+(**The result of this expression is a list of ten sample values. Each value is
+a single character drawn from the segment `['a'; 'b'; 'c']`:*)
+
+(***include-it:GrowingElementsExample***)
+
+(**Let's run `Gen.growingElements` again, with the same input but with size `7`:*)
+
+(***define-output:GrowingElementsAnotherExample***)
+Gen.growingElements ['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'] |> Gen.sample 7 10
+
+(**The result of this expression is a list of ten sample values. Each value is
+now a single character drawn from the segment `['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g']`:*)
+
+(***include-it:GrowingElementsAnotherExample***)
+
+(**The above examples all use `list` values as input, but you can use any `seq`
+expression, including `list` and `array` values, as long as the sequence is
+finite.
+
 #### Map
 
 Sometimes, you need to use a generator of one type in order to create a
