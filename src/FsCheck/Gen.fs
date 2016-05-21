@@ -141,20 +141,19 @@ module Gen =
     [<CompiledName("Resize")>]
     let resize newSize (Gen m) = Gen (fun _ r -> m newSize r)
 
-    ///Generates a value with maximum size n.
+    ///Generates a value of the give size with the given seed.
     //[category: Generating test values]
     [<CompiledName("Eval")>]
-    let eval n rnd (Gen m) = 
-        let size,rnd' = range (0,n) rnd
-        m size rnd'
+    let eval size seed (Gen m) =
+        m size seed
 
     ///Generates n values of the given size.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sample size n gn  = 
+    let sample size n generator  = 
         let rec sample i seed samples =
             if i = 0 then samples
-            else sample (i-1) (Random.stdSplit seed |> snd) (eval size seed gn :: samples)
+            else sample (i-1) (Random.stdSplit seed |> snd) (eval size seed generator :: samples)
         sample n (Random.newSeed()) []
 
     ///Generates an integer between l and h, inclusive.
@@ -422,7 +421,7 @@ module Gen =
     [<CompiledName("ListOf")>]
     let listOf gn =
         sized <| fun n ->
-            gen {   let! k = choose (0,n+1) //decrease chance of empty list
+            gen {   let! k = choose (0,n)
                     return! listOfLength k gn }
 
     /// Generates a non-empty list of random length. The maximum length 

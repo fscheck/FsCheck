@@ -7,6 +7,16 @@ open FsCheck
 open FsCheck.Experimental
 open System.Collections.Generic
 
+let l = Gen.listOf (Gen.constant 1)
+l 
+|> Gen.sample 10 1000
+|> Seq.map Seq.length 
+|> Seq.groupBy id 
+|> Seq.map (fun (l,gr) -> (l, Seq.length gr))
+|> Seq.sortBy fst
+|> Seq.toArray
+
+
 type Pid = int
 type Name = string
 type ProcessRegistry() =
