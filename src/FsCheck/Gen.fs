@@ -15,7 +15,7 @@ type internal IGen =
     
 ///Generator of a random value, based on a size parameter and a randomly generated int.
 and [<NoEquality;NoComparison>] Gen<'a> = 
-    private Gen of (int -> Random.Rnd -> 'a * Random.Rnd)
+    private Gen of (int -> Rnd -> 'a * Rnd)
         ///map the given function to the value in the generator, yielding a new generator of the result type.
         member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> let s,r =  g n r in f s,r)
     interface IGen with
@@ -112,7 +112,6 @@ type WeightAndValue<'a> =
 module Gen =
 
     open Common
-    open Random
     open System
     open System.Collections.Generic
     open System.ComponentModel
@@ -142,7 +141,7 @@ module Gen =
     //[category: Generating test values]
     [<CompiledName("Eval")>]
     let eval n rnd (Gen m) = 
-        let size,rnd' = rangeInt (0,n) rnd
+        let size,rnd' = Random.rangeInt (0, n, rnd)
         m size rnd' |> fst
 
     ///Generates n values of the given size.
@@ -157,7 +156,7 @@ module Gen =
     ///Generates an integer between l and h, inclusive.
     //[category: Creating generators]
     [<CompiledName("Choose")>]
-    let choose (l,h) = Gen (fun _ r -> Random.rangeInt (l,h) r) 
+    let choose (l,h) = Gen (fun _ r -> Random.rangeInt (l,h,r))
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
@@ -468,7 +467,7 @@ module Gen =
                     toCounter.Add(value,!counter)
                     counter := !counter + 1
                     !counter - 1
-        let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
+        let rec rands r0 = seq { let r1,r2 = Random.split r0 in yield r1; yield! (rands r2) }
         Gen (fun n r -> m n (Seq.nth ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.
