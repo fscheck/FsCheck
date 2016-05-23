@@ -9,6 +9,7 @@ module Arbitrary =
     open System
     open System.Globalization
     open System.Collections.Generic
+    open System.Net
     open Helpers
     open Arb
     open Swensen.Unquote
@@ -349,6 +350,14 @@ module Arbitrary =
         List.exists (fun e -> e = int value) [0;1;2;3;4;5;6;7]
 
     [<Fact>]
+    let ``FsList shrunk is at minimum n-1``() =
+        let prop (l:int list) = 
+            let shrunk = Arb.Default.FsList().Shrinker l |> List.ofSeq
+            let result = l.Length = 0 || (shrunk |> Seq.forall (fun s -> s.Length = l.Length || s.Length = l.Length - 1))
+            result
+        Check.QuickThrowOnFailure prop
+
+    [<Fact>]
     let ``Generic List``() =
         generate<List<int>> |> sample 10 |> List.forall (fun _ -> true)
 
@@ -413,6 +422,17 @@ module Arbitrary =
     [<Fact>]
     let Guid () =
         generate<Guid> |> sample 10 |> ignore
+
+    [<Fact>]
+    let IPAddress () =
+        generate<IPAddress> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``IPAddress shrinks`` (value: IPAddress) =
+        let bytesSum (x: IPAddress) = x.GetAddressBytes() |> Array.sumBy int
+
+        shrink value
+        |> Seq.forall (fun shrunkv -> bytesSum shrunkv = 0 || bytesSum shrunkv < bytesSum value)
 
     [<Property>]
     let Bigint (value:bigint) =

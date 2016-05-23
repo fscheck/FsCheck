@@ -2,7 +2,7 @@
 **  FsCheck                                                                 **
 **  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
 **  All rights reserved.                                                    **
-**  https://github.com/fscheck/FsCheck                              **
+**  https://github.com/fscheck/FsCheck                                      **
 **                                                                          **
 **  This software is released under the terms of the Revised BSD License.   **
 **  See the file License.txt for the full text.                             **
@@ -250,7 +250,7 @@ module StateMachine =
             gen {
                 if size > 0 then
                     let nextOperation = spec.Next state
-                    let! command = nextOperation |> Gen.suchThatOption (fun operation -> operation.Pre state)
+                    let! command = nextOperation |> Gen.tryWhere (fun operation -> operation.Pre state)
                     if Option.isNone command || command.Value.GetType() = typeof<StopOperation<'Actual,'Model>> then return [state],[]
                     else
                         let! states, commands = genCommandsS (command.Value.Run state) (size-1)
@@ -289,23 +289,9 @@ module StateMachine =
             |> Seq.choose (fun (_, op, Lazy model) -> op |> Option.map (fun op -> (op,model)))
             //|> Seq.distinct
 
-        let operationShrinker l =
-            let allSubsequences (l:list<_>) =
-                seq { for i in 1..l.Length-1 do
-                        yield! Seq.windowed i l //|> Seq.map Seq.toList
-                }
-
-//            allSubsequences l |> Seq.distinct
-
-            let skipOne (l:list<_>) =
-                seq { for i in 0..l.Length-1 do 
-                        yield List.foldBack (fun e (c,r) -> c+1, if i <> c then e::r else r) l (0,[]) |> snd
-                }
-            skipOne l
-
         run.Operations 
         |> List.map fst
-        |> operationShrinker
+        |> Arb.Default.FsList().Shrinker
         //try to shrink the list of operations
         |> Seq.choose (fun operations -> 
                             let initialModel = fst run.Setup

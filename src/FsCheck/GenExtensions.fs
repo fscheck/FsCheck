@@ -38,7 +38,7 @@ type GenExtensions =
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
     ///the predicate is satisfied.
     [<System.Runtime.CompilerServices.Extension>]
-    static member Where(g:Gen<_>, predicate : Func<_,_>) = suchThat (fun a -> predicate.Invoke(a)) g
+    static member Where(g:Gen<_>, predicate : Func<_,_>) = where (fun a -> predicate.Invoke(a)) g
     
     [<System.Runtime.CompilerServices.Extension>]
     static member SelectMany(source:Gen<_>, f:Func<_, Gen<_>>) = 

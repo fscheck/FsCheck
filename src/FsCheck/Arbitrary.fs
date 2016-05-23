@@ -11,6 +11,7 @@
 namespace FsCheck
 
 open System
+open System.Net
 
 ///Represents an int >= 0
 type NonNegativeInt = NonNegativeInt of int with
@@ -217,7 +218,7 @@ module Arb =
     [<CompiledName("Filter"); EditorBrowsable(EditorBrowsableState.Never)>]
     let filter pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
-           override __.Generator = a.Generator |> Gen.suchThat pred
+           override __.Generator = a.Generator |> Gen.where pred
            override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
 
@@ -229,7 +230,7 @@ module Arb =
     [<CompiledName("MapFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
     let mapFilter mapper pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
-           override __.Generator = a.Generator |> Gen.map mapper |> Gen.suchThat pred
+           override __.Generator = a.Generator |> Gen.map mapper |> Gen.where pred
            override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
     
@@ -445,7 +446,7 @@ module Arb =
             let inline notNull x = not (LanguagePrimitives.PhysicalEquality null x)
             { new Arbitrary<NonNull<'a>>() with
                 override __.Generator = 
-                    generate |> Gen.suchThat notNull |> Gen.map NonNull
+                    generate |> Gen.where notNull |> Gen.map NonNull
                 override __.Shrinker (NonNull o) = 
                     shrink o |> Seq.where notNull |> Seq.map NonNull
             }
@@ -977,6 +978,15 @@ module Arb =
                 let! k = generate
                 return Guid((a: int),b,c,d,e,f,g,h,i,j,k)
             } |> fromGen
+
+#if PCL
+#else
+        static member IPAddress() =
+            let generator = generate |> Gen.arrayOfLength 4 |> Gen.map IPAddress
+            let shrinker (a:IPAddress) = a.GetAddressBytes() |> shrink |> Seq.filter (fun x -> Seq.length x = 4) |> Seq.map IPAddress
+        
+            fromGenShrink (generator, shrinker)
+#endif
 
         ///Arbitray instance for BigInteger.
         static member BigInt() =

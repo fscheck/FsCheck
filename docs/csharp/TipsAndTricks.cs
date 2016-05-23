@@ -21,6 +21,13 @@ namespace CSharp.DocSnippets
             Prop.ForAll((int x) => Math.Abs(x) >= 0)
                 .Check(new Configuration { Replay = Tuple.Create(1145655947UL, 296144285UL)});
             //[/replay]
+
+            //[configuration]
+            var configuration = Configuration.Quick;
+            configuration.MaxNbOfTest = 1000;
+            configuration.QuietOnSuccess = true;
+            true.ToProperty().Check(configuration);
+            //[/configuration]
         }
     }
 }

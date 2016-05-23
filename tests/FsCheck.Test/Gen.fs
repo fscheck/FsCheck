@@ -21,7 +21,19 @@ module Gen =
         lazy (  Gen.elements l
                 |> sample 50
                 |> List.forall (isIn l))
-    
+
+    [<Fact>]
+    let GrowingElements () =
+        let sizes = [ 1..100 ]
+        let run g =
+            [ for s in sizes -> Gen.resize s g ]
+            |> Gen.sequence
+            |> sample1
+
+        let actual = Gen.growingElements sizes |> run
+
+        test <@ List.forall2 (>=) sizes actual @>
+
     [<Property>]
     let constant (v : (int * char)) =
         Gen.constant v
@@ -52,6 +64,12 @@ module Gen =
                 |> Gen.frequency
                 |> sample 100
                 |> List.forall (isIn generatedValues)))
+
+    [<Fact>]
+    let ``frequency should throw argument exception if no element can be generated``() =
+        let prop = lazy (Gen.frequency [(0,Gen.constant 1)]) //used lazy since unqoute couldn't handle generator directly
+        raises<System.ArgumentException> <@ prop.Value @>
+        
     
     [<Property>]
     let Map (f:string -> int) v =
@@ -120,6 +138,13 @@ module Gen =
         |> sample1
         |> ((=) (List.init length (fun _ -> v)))
 
+    [<Property>]
+    let ``shuffle generates a permutation`` (xs : int array) =
+        Gen.shuffle xs
+        |> sample1
+        |> Array.sort
+        |> ((=) (Array.sort xs))
+
     // This property is non-deterministic, and may rarely fail. The chance of
     // this property not holding in case of a uniform shuffle - in other words,
     // the chance of producing 10 times the same input list of length 5 - is
@@ -137,15 +162,15 @@ module Gen =
         |> List.exists ((<>) l)
    
     [<Property>]
-    let SuchThatOption (v:int) (predicate:int -> bool) =
+    let TryWhere (v:int) (predicate:int -> bool) =
         let expected = if predicate v then Some v else None
-        Gen.suchThatOption predicate (Gen.constant v)
+        Gen.tryWhere predicate (Gen.constant v)
         |> sample1
         |> ((=) expected)
     
     [<Property>]
-    let SuchThat (v:int) =
-        Gen.suchThat ((<=) 0) (Gen.elements [v;abs v])
+    let Where (v:int) =
+        Gen.where ((<=) 0) (Gen.elements [v;abs v])
         |> sample1
         |> ((=) (abs v))
     
