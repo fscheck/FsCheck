@@ -496,6 +496,34 @@ function that takes a four-element tuple.*)
 in order to produce a more readable output. The resulting generator has the
 type `Gen<string>`, but if you remove the `string` composition, the type would
 be `Gen<Version>.`
+
+#### Filter
+
+While you can use the above generators and combinators to define various custom
+rules for generating values, occasionally you have a requirement where the
+easiest solution is to throw away some generated candidates. `Gen.filter` gives
+you that opportunity.
+
+Imagine, for example, that you have to create lists with two elements, but with
+the restriction that the two elements must be different. One way to do that
+could be to first generate a pair of values, and then use `Gen.filter` to
+remove all pairs where the elements are equal. Subsequently, you can use
+`Gen.map` to convert the pair to a list:*)
+
+(***define-output:GenFilterExample***)
+Gen.choose (1, 100)
+|> Gen.two
+|> Gen.filter (fun (x, y) -> x <> y)
+|> Gen.map (fun (x, y) -> [x; y])
+|> Gen.sample 0 10
+
+(**This expression generates 10 sample lists, each containing two different
+numbers:*)
+
+(***include-it:GenFilterExample***)
+
+(**When using `Gen.filter`, be sure to provide a predicate with a high chance
+of returning `true`.
     
 ## Default Generators and Shrinkers based on type
 
