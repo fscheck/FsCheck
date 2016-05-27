@@ -523,7 +523,9 @@ numbers:*)
 (***include-it:GenFilterExample***)
 
 (**When using `Gen.filter`, be sure to provide a predicate with a high chance
-of returning `true`.
+of returning `true`. If the predicate discards 'too many' candidates, it may
+cause tests to run slower, or to not terminate at all. If your filter is
+aggressive, consider using `Gen.tryFilter` instead of `Gen.filter`.
     
 ## Default Generators and Shrinkers based on type
 
