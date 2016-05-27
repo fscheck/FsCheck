@@ -366,6 +366,9 @@ module Gen =
     ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
     ///if the given original generator did not generate any values that satisfied the predicate, after trying to
     ///get values by increasing its size.
+    ///
+    ///The `tryWhere` function is also aliased as `tryFilter`. These two functions are identical, but co-exist
+    ///so that you can choose the word that makes your code most readable in your given context.
     //[category: Creating generators from generators]
     [<CompiledName("TryWhere"); EditorBrowsable(EditorBrowsableState.Never)>]
     let tryWhere predicate generator = 
@@ -379,6 +382,9 @@ module Gen =
     ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
     ///if the given original generator did not generate any values that satisfied the predicate, after trying to
     ///get values by increasing its size.
+    ///
+    ///The `tryFilter` function is an alias for the `tryWhere` function. These two functions are identical, but co-exist
+    ///so that you can choose the word that makes your code most readable in your given context.
     //[category: Creating generators from generators]
     [<CompiledName("TryFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
     let tryFilter predicate generator = tryWhere predicate generator
@@ -393,6 +399,9 @@ module Gen =
     ///Generates a value that satisfies a predicate. Contrary to tryWhere, this function keeps re-trying
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
     ///the predicate is satisfied.
+    ///
+    ///The `where` function is also aliased as `filter`. These two functions are identical, but co-exist
+    ///so that you can choose the word that makes your code most readable in your given context.
     //[category: Creating generators from generators]
     [<CompiledName("Where");EditorBrowsable(EditorBrowsableState.Never)>]
     let rec where predicate generator = 
@@ -404,6 +413,9 @@ module Gen =
     ///Generates a value that satisfies a predicate. Contrary to tryFilter, this function keeps re-trying
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
     ///the predicate is satisfied.
+    ///
+    ///The `filter` function is an alias for the `where` function. These two functions are identical, but co-exist
+    ///so that you can choose the word that makes your code most readable in your given context.
     //[category: Creating generators from generators]
     [<CompiledName("Filter");EditorBrowsable(EditorBrowsableState.Never)>]
     let filter predicate generator = where predicate generator
