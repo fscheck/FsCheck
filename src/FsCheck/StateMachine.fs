@@ -246,14 +246,25 @@ module StateMachine =
 
     [<CompiledName("Generate")>]
     let generate (spec:Machine<'Actual,'Model>) = 
-        let rec genCommandsS state size =
+        let retryNumber = 100
+        let rec genCommandsS state size retries =
             gen {
                 if size > 0 then
                     let nextOperation = spec.Next state
                     let! command = nextOperation |> Gen.tryWhere (fun operation -> operation.Pre state)
-                    if Option.isNone command || command.Value.GetType() = typeof<StopOperation<'Actual,'Model>> then return [state],[]
+                    if Option.isNone command then
+                        if retries > 0 then
+                            let! states, commands = genCommandsS state size (retries-1) //retry command generation
+                            return states, commands
+                        else
+                            let message = sprintf "It was not possible to generate a command after %d retries. \
+                                                  Maybe no precondition could be satisfied." retryNumber
+                            invalidArg "command" message
+                            return [],[] //is neeeded by the type checker, even though exception is thrown beforehand
+                    elif command.Value.GetType() = typeof<StopOperation<'Actual,'Model>> then 
+                        return [state],[]
                     else
-                        let! states, commands = genCommandsS (command.Value.Run state) (size-1)
+                        let! states, commands = genCommandsS (command.Value.Run state) (size-1) retryNumber
                         return state :: states, command.Value :: commands
                 else
                     return [state],[]
@@ -261,7 +272,7 @@ module StateMachine =
         gen { let! setup = spec.Setup |> Arb.toGen
               let initialModel = setup.Model()
               let maxNum = spec.MaxNumberOfCommands
-              let! models,operations = Gen.sized (fun s -> let size = if maxNum < 0 then s else maxNum in genCommandsS initialModel size)
+              let! models,operations = Gen.sized (fun s -> let size = if maxNum < 0 then s else maxNum in genCommandsS initialModel size retryNumber)
               return { Setup = initialModel, setup
                        Operations = List.zip operations (List.tail models) //first state is actually the initial state; so drop it.
                        TearDown = spec.TearDown }

@@ -128,6 +128,39 @@ module StateMachine =
                 |> Seq.tryFind (fun { Setup = _,c; Operations = cmds } -> not <| checkPreconditions (c.Model()) cmds)
         test <@ counterexample.IsNone @>
 
+    //preconditions always return false and therefore no command can be generated.
+    let checkInvalidPreconditionSpec =
+        let setFalse = 
+            StateMachine.operationWithPrecondition "setFalse" id (fun _ -> false) (fun (_, _) -> true)
+        let create =
+            StateMachine.setup id (fun () -> true)
+        { new Machine<_,_>() with
+            member __.Setup = Gen.constant create |> Arb.fromGen
+            member __.Next _ = Gen.elements [setFalse] }
+
+    [<Fact>]
+    let ``should throw exception if no precondition is met``() =
+        let gen = StateMachine.generate checkInvalidPreconditionSpec
+        raises<System.ArgumentException> <@ gen |> Gen.sample 100 1@>
+
+    //used to see if correct states can be found in certain number of retries. Therefore, faulty
+    //commands are created more often than succeeding ones.
+    let checkFrequencyPreconditionSpec =
+        let setTrue = 
+            StateMachine.operationWithPrecondition "setTrue" not (fun _ -> true) (fun (_, _) -> true)
+        let setFalse = 
+            StateMachine.operationWithPrecondition "setFalse" id (fun _ -> false) (fun (_, _) -> true)
+        let create =
+            StateMachine.setup id (fun () -> true)
+        { new Machine<_,_>() with
+            member __.Setup = Gen.constant create |> Arb.fromGen
+            member __.Next _ = Gen.frequency [(1,Gen.constant setTrue); (5,Gen.constant setFalse)] }
+
+    [<Fact>]
+    let ``should find operations that satisfy preconditions``() =
+        let prop = StateMachine.toProperty checkFrequencyPreconditionSpec
+        Check.QuickThrowOnFailure prop
+
     //a counter that never goes below zero
     type Counter(?dontcare:int) =
       let mutable n = 0
@@ -206,7 +239,8 @@ module StateMachine =
          ( makeOperation failureState "B" A B
          , makeOperation failureState "A" B A
          , makeOperation failureState "C" B C
-         , makeOperation failureState "C" A C )
+         , makeOperation failureState "C" A C
+         , makeOperation failureState "C" C C )
 
     let setup = 
             { new Setup<ActualState,ModelState>() with
@@ -215,11 +249,11 @@ module StateMachine =
 
     let specSymbolic failureState =
         let (|GenConst|) x = Gen.constant x
-        let (GenConst ``a->b``, GenConst ``b->a``, GenConst ``b->c``, GenConst ``a->c``) = makeOperations failureState
+        let (GenConst ``a->b``, GenConst ``b->a``, GenConst ``b->c``, GenConst ``a->c``, GenConst ``c->c``) = makeOperations failureState
         
         { new Machine<ActualState,ModelState>() with
             member __.Setup = Gen.constant setup |> Arb.fromGen
-            member __.Next _ = Gen.frequency [ (10,``a->b``); (1,``b->c``);  (10, ``b->a``); (1,``a->c``) ] }
+            member __.Next _ = Gen.frequency [ (10,``a->b``); (1,``b->c``);  (10, ``b->a``); (1,``a->c``); (1,``c->c``) ] }
 
     [<Fact>]
     let ``should check specSymbolic``() =
@@ -231,7 +265,7 @@ module StateMachine =
         //this to check that the shrinker can remove loops, or sequences of superfluous transitions "in the middle" of a run.
         //the standard list shrinker does not do this.
         let spec = specSymbolic "C"
-        let (``a->b``, ``b->a``, ``b->c``, ``a->c``) = makeOperations "C"
+        let (``a->b``, ``b->a``, ``b->c``, ``a->c``, ``c->c``) = makeOperations "C"
         let run = { Setup = (A, setup)
                     TearDown = spec.TearDown
                     Operations = [(``a->b``,B); (``b->a``,A);(``a->c``,C)] }
