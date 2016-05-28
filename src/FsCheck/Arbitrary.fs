@@ -103,7 +103,11 @@ type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) 
         F (table,fun x -> let y = f x in table := (x,y)::(!table); y)
 
 ///Use the generator for 'a, but don't shrink.
+[<Obsolete("Renamed to DoNotShrink.")>]
 type DontShrink<'a> = DontShrink of 'a
+
+///Use the generator for 'a, but don't shrink.
+type DoNotShrink<'a> = DoNotShrink of 'a
 
 ///Whereas most types are restricted by a size that grows
 ///as the test gets further, by applying this type the underlying
@@ -995,7 +999,7 @@ module Arb =
 
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
         static member DontShrink() =
-            generate |> Gen.map DontShrink |> fromGen
+            generate |> Gen.map DoNotShrink |> fromGen
             
         ///Try to derive an arbitrary instance for the given type reflectively. 
         ///Generates and shrinks values for record, union, tuple and enum types.
