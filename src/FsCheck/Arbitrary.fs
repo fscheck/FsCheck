@@ -294,7 +294,14 @@ module Arb =
             |> convert int16 int
 
         ///Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.
+        [<Obsolete("Renamed to DoNotSizeInt16.")>]
         static member DontSizeInt16() =
+            let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (int16 >> DontSize) (DontSize.Unwrap >> int)
+
+        ///Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.
+        static member DoNotSizeInt16() =
             let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
             fromGenShrink(gen, shrink)
             |> convert (int16 >> DontSize) (DontSize.Unwrap >> int)
@@ -305,7 +312,14 @@ module Arb =
             |> convert (abs >> uint16) int
 
         ///Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
+        [<Obsolete("Renamed to DoNotSizeUInt16.")>]
         static member DontSizeUInt16() =
+            let gen = Gen.choose(0, int UInt16.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (uint16 >> DontSize) (DontSize.Unwrap >> int)
+
+        ///Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
+        static member DoNotSizeUInt16() =
             let gen = Gen.choose(0, int UInt16.MaxValue)
             fromGenShrink(gen, shrink)
             |> convert (uint16 >> DontSize) (DontSize.Unwrap >> int)
@@ -316,7 +330,18 @@ module Arb =
                             shrinkNumber)
 
         ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
+        [<Obsolete("Renamed to DoNotSizeInt32.")>]
         static member DontSizeInt32() =
+            //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
+            //so using this trick instead
+            let gen =
+                Gen.two generate<DontSize<int16>>
+                |> Gen.map (fun (DontSize h,DontSize l) -> int ((uint32 h <<< 16) ||| uint32 l))
+            fromGenShrink(gen, shrink)
+            |> convert DontSize DontSize.Unwrap
+
+        ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
+        static member DoNotSizeInt32() =
             //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
             //so using this trick instead
             let gen =
@@ -331,7 +356,14 @@ module Arb =
             |> convert (abs >> uint32) int
 
         ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        [<Obsolete("Renamed to DoNotSizeUInt32.")>]
         static member DontSizeUInt32() =
+            let gen = Gen.choose(0, int UInt32.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (uint32 >> DontSize) (DontSize.Unwrap >> int)
+
+        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        static member DoNotSizeUInt32() =
             let gen = Gen.choose(0, int UInt32.MaxValue)
             fromGenShrink(gen, shrink)
             |> convert (uint32 >> DontSize) (DontSize.Unwrap >> int)
@@ -345,7 +377,16 @@ module Arb =
             |> convert int64 int32
 
         ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        [<Obsolete("Renamed to DoNotSizeInt64.")>]
         static member DontSizeInt64() =
+            let gen =
+                Gen.two generate<DontSize<int32>>
+                |> Gen.map (fun (DontSize h, DontSize l) -> (int64 h <<< 32) ||| int64 l)
+            fromGenShrink (gen,shrinkNumber)
+            |> convert DontSize DontSize.Unwrap
+
+        ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        static member DoNotSizeInt64() =
             let gen =
                 Gen.two generate<DontSize<int32>>
                 |> Gen.map (fun (DontSize h, DontSize l) -> (int64 h <<< 32) ||| int64 l)
@@ -358,7 +399,16 @@ module Arb =
             |> convert (abs >> uint64) int
 
         ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        [<Obsolete("Renamed to DoNotSizeUInt64.")>]
         static member DontSizeUInt64() =
+            let gen =
+                Gen.two generate<DontSize<uint32>>
+                |> Gen.map (fun (DontSize h, DontSize l) -> (uint64 h <<< 32) ||| uint64 l)
+            fromGenShrink (gen,shrink)
+            |> convert DontSize DontSize.Unwrap
+        
+        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        static member DoNotSizeUInt64() =
             let gen =
                 Gen.two generate<DontSize<uint32>>
                 |> Gen.map (fun (DontSize h, DontSize l) -> (uint64 h <<< 32) ||| uint64 l)
