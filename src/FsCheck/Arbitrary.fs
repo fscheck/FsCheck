@@ -294,7 +294,14 @@ module Arb =
             |> convert int16 int
 
         ///Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.
+        [<Obsolete("Renamed to DoNotSizeInt16.")>]
         static member DontSizeInt16() =
+            let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (int16 >> DontSize) (DontSize.Unwrap >> int)
+
+        ///Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.
+        static member DoNotSizeInt16() =
             let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
             fromGenShrink(gen, shrink)
             |> convert (int16 >> DontSize) (DontSize.Unwrap >> int)
@@ -305,7 +312,14 @@ module Arb =
             |> convert (abs >> uint16) int
 
         ///Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
+        [<Obsolete("Renamed to DoNotSizeUInt16.")>]
         static member DontSizeUInt16() =
+            let gen = Gen.choose(0, int UInt16.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (uint16 >> DontSize) (DontSize.Unwrap >> int)
+
+        ///Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
+        static member DoNotSizeUInt16() =
             let gen = Gen.choose(0, int UInt16.MaxValue)
             fromGenShrink(gen, shrink)
             |> convert (uint16 >> DontSize) (DontSize.Unwrap >> int)
