@@ -998,7 +998,12 @@ module Arb =
             |> convert bigint int
 
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
+        [<Obsolete("Renamed to DoNotShrink.")>]
         static member DontShrink() =
+            generate |> Gen.map DoNotShrink |> fromGen
+
+        ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
+        static member DoNotShrink() =
             generate |> Gen.map DoNotShrink |> fromGen
             
         ///Try to derive an arbitrary instance for the given type reflectively. 
