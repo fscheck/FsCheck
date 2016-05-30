@@ -316,7 +316,18 @@ module Arb =
                             shrinkNumber)
 
         ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
+        [<Obsolete("Renamed to DoNotSizeInt32.")>]
         static member DontSizeInt32() =
+            //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
+            //so using this trick instead
+            let gen =
+                Gen.two generate<DontSize<int16>>
+                |> Gen.map (fun (DontSize h,DontSize l) -> int ((uint32 h <<< 16) ||| uint32 l))
+            fromGenShrink(gen, shrink)
+            |> convert DontSize DontSize.Unwrap
+
+        ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
+        static member DoNotSizeInt32() =
             //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
             //so using this trick instead
             let gen =
