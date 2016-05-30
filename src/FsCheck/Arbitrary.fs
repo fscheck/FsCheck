@@ -331,7 +331,14 @@ module Arb =
             |> convert (abs >> uint32) int
 
         ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        [<Obsolete("Renamed to DoNotSizeUInt32.")>]
         static member DontSizeUInt32() =
+            let gen = Gen.choose(0, int UInt32.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (uint32 >> DontSize) (DontSize.Unwrap >> int)
+
+        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        static member DoNotSizeUInt32() =
             let gen = Gen.choose(0, int UInt32.MaxValue)
             fromGenShrink(gen, shrink)
             |> convert (uint32 >> DontSize) (DontSize.Unwrap >> int)
