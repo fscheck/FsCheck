@@ -345,7 +345,16 @@ module Arb =
             |> convert int64 int32
 
         ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        [<Obsolete("Renamed to DoNotSizeInt64.")>]
         static member DontSizeInt64() =
+            let gen =
+                Gen.two generate<DontSize<int32>>
+                |> Gen.map (fun (DontSize h, DontSize l) -> (int64 h <<< 32) ||| int64 l)
+            fromGenShrink (gen,shrinkNumber)
+            |> convert DontSize DontSize.Unwrap
+
+        ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        static member DoNotSizeInt64() =
             let gen =
                 Gen.two generate<DontSize<int32>>
                 |> Gen.map (fun (DontSize h, DontSize l) -> (int64 h <<< 32) ||| int64 l)
