@@ -358,7 +358,16 @@ module Arb =
             |> convert (abs >> uint64) int
 
         ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        [<Obsolete("Renamed to DoNotSizeUInt64.")>]
         static member DontSizeUInt64() =
+            let gen =
+                Gen.two generate<DontSize<uint32>>
+                |> Gen.map (fun (DontSize h, DontSize l) -> (uint64 h <<< 32) ||| uint64 l)
+            fromGenShrink (gen,shrink)
+            |> convert DontSize DontSize.Unwrap
+        
+        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        static member DoNotSizeUInt64() =
             let gen =
                 Gen.two generate<DontSize<uint32>>
                 |> Gen.map (fun (DontSize h, DontSize l) -> (uint64 h <<< 32) ||| uint64 l)
