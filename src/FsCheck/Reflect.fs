@@ -66,7 +66,15 @@ module internal Reflect =
                                                       :> Expression)
         let body  = Expression.New (ctor, pars)
         let l     = Expression.Lambda<Func<obj[], obj>> (body, par)
-        let f     = l.Compile ()
+
+        let f     =
+#if PCL
+            l.Compile ()
+#else
+            let debugInfoGen = System.Runtime.CompilerServices.DebugInfoGenerator.CreatePdbGenerator ()
+            l.Compile (debugInfoGen)
+#endif
+
         f.Invoke
 
     /// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
