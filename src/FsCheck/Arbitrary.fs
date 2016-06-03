@@ -237,31 +237,6 @@ module Arb =
            override __.Generator = a.Generator |> Gen.map mapper |> Gen.where pred
            override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
-    
-//TODO
-//    /// Generate a subset of an existing set
-//    let subsetOf (s: Set<'a>) : Gen<Set<'a>> =
-//       gen { // Convert the set into an array
-//             let setElems: 'a[] = Array.ofSeq s
-//             // Generate indices into the array (up to the number of elements)
-//             let! size = Gen.choose(0, s.Count)
-//             let! indices = Gen.arrayOfSize (Gen.choose(0, s.Count-1)) size
-//             // Extract the elements
-//             let arr: 'a[] = indices |> Array.map (fun i -> setElems.[i])
-//             // Construct a set (which eliminates dups)
-//             return Set.ofArray arr }
-//
-//    /// Generate a non-empty subset of an existing (non-empty) set
-//    let nonEmptySubsetOf (s: Set<'a>) : Gen<Set<'a>> =
-//       gen { // Convert the set into an array
-//             let setElems: 'a[] = Array.ofSeq s
-//             // Generate indices into the array (up to the number of elements)
-//             let! size = Gen.choose(1, s.Count)
-//             let! indices = Gen.arrayOfLength (Gen.choose(0, s.Count-1)) size
-//             // Extract the elements
-//             let arr: 'a[] = indices |> Array.map (fun i -> setElems.[i])
-//             // Construct a set (which eliminates dups)
-//             return Set.ofArray arr }
   
     ///A collection of default generators.
     type Default with
