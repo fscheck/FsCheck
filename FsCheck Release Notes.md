@@ -1,3 +1,5 @@
+### 2.5.1 - To be released
+
 ### 2.5.0 - 7 June 2016
   * Add Gen.growingElements.
   * Add default generator and shrinker for IPAddress and MailAddress.
