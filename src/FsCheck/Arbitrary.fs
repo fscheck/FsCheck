@@ -11,7 +11,12 @@
 namespace FsCheck
 
 open System
+
+#if PCL
+#else
 open System.Net
+open System.Net.Mail
+#endif
 
 ///Represents an int >= 0
 type NonNegativeInt = NonNegativeInt of int with
@@ -129,9 +134,14 @@ module Arb =
     open System.Globalization
     open System.Collections.Generic
     open System.Linq
-    open TypeClass
+    open TypeClass    
     open System.ComponentModel
     open System.Threading
+
+#if PCL
+#else
+    open Data
+#endif
 
     [<AbstractClass;Sealed>]
     type Default = class end
@@ -1013,6 +1023,114 @@ module Arb =
         static member IPAddress() =
             let generator = generate |> Gen.arrayOfLength 4 |> Gen.map IPAddress
             let shrinker (a:IPAddress) = a.GetAddressBytes() |> shrink |> Seq.filter (fun x -> Seq.length x = 4) |> Seq.map IPAddress
+        
+            fromGenShrink (generator, shrinker)
+
+        static member MailAddress() =
+            let isValidUser (user: string) = 
+                String.IsNullOrWhiteSpace user |> not &&
+                not (user.StartsWith("\"")) && 
+                not (user.EndsWith("\"")) && 
+                not (user.StartsWith(".")) && 
+                not (user.EndsWith(".")) && 
+                not (user.Contains(".."))
+            let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
+            let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
+
+            let split (str: string) = 
+                if String.IsNullOrWhiteSpace str || str.Length <= 1 then 
+                    Seq.empty
+                else seq {
+                     yield str.[0 .. str.Length / 2 - 1]
+                     yield str.[str.Length / 2 ..]
+                }
+
+            let createMailAddress name user host =
+                if String.IsNullOrWhiteSpace name then
+                    MailAddress (sprintf "%s@%s" user host)
+                else 
+                    MailAddress (sprintf "%s <%s@%s>" name user host)      
+
+            let name = 
+                gen {
+                    let! localLength = Gen.choose (1, 63)
+
+                    return! Gen.elements "abcdefghijklmnopqrstuvwxyz0123456789!#$%&'*+-/=?^_`.{|}~,:;[] "
+                            |> Gen.arrayOfLength (localLength - 2) 
+                            |> Gen.map String
+                }
+
+            let subdomain = 
+                gen {
+                    let subdomainCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-"
+                    let! subdomainLength = Gen.choose (1, 63)
+                    return! 
+                        Gen.elements subdomainCharacters 
+                        |> Gen.arrayOfLength subdomainLength 
+                        |> Gen.map String
+                        |> Gen.filter isValidSubdomain
+                }
+
+            let host = 
+                gen {
+                    let! tld = Gen.elements topLevelDomains
+                    let! numberOfSubdomains = Gen.frequency [(20, Gen.constant 0); (4, Gen.constant 1); (2, Gen.constant 2); (1, Gen.constant 3)]
+                
+                    return! 
+                        Gen.listOfLength numberOfSubdomains subdomain
+                        |> Gen.map (fun x -> x @ [tld] |> String.concat ".")
+                        |> Gen.filter isValidHost
+                }
+
+            let user = 
+                gen {
+                    let userChars = "abcdefghijklmnopqrstuvwxyz0123456789!#$%&'*+-/=?^_`{|}~"
+                    let! localLength = Gen.choose (1, 63)
+
+                    return! Gen.elements userChars
+                            |> Gen.arrayOfLength localLength
+                            |> Gen.map String
+                            |> Gen.filter isValidUser
+                }
+            
+            let generator = 
+                gen {
+                    let! name = name
+                    let! user = user
+                    let! host = host
+                    return createMailAddress name user host
+                }
+
+            let shrinkDisplayName (a:MailAddress) =
+                if String.IsNullOrWhiteSpace a.DisplayName then
+                    Seq.empty
+                else seq {
+                    yield! a.DisplayName |> split |> Seq.map (fun displayName -> createMailAddress displayName a.User a.Host)
+                    yield createMailAddress "" a.User a.Host
+                }
+
+            let shrinkUser (a:MailAddress) = 
+                a.User |> split |> Seq.map (fun user -> createMailAddress a.DisplayName user a.Host)
+
+            let shrinkHost (a:MailAddress) = 
+                let parts = a.Host.Split('.')    
+                let topLevelDomain = parts.[parts.Length - 1]
+
+                seq {
+                    if parts.Length > 1 then
+                        yield createMailAddress a.DisplayName a.User (parts.[1 ..] |> String.concat ".")
+
+                    if Seq.exists (fun tld -> tld = topLevelDomain) commonTopLevelDomains |> not then
+                        yield! commonTopLevelDomains 
+                               |> Seq.map (fun tld -> createMailAddress a.DisplayName a.User (Array.append parts.[0 .. parts.Length - 2] [|tld|] |> String.concat "."))
+                }
+            
+            let shrinker (a:MailAddress) = 
+                seq {
+                    yield! shrinkDisplayName a
+                    yield! shrinkUser a
+                    yield! shrinkHost a
+                } |> Seq.distinct
         
             fromGenShrink (generator, shrinker)
 #endif
