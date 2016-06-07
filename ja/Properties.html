@@ -57,7 +57,7 @@ bool または unit を返す任意個のパラメータを取る関数となる
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">insertKeepsOrder</span> (<span onmouseout="hideTip(event, 'fs19', 48)" onmouseover="showTip(event, 'fs19', 48)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs10', 49)" onmouseover="showTip(event, 'fs10', 49)" class="t">int</span>) <span onmouseout="hideTip(event, 'fs12', 50)" onmouseover="showTip(event, 'fs12', 50)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 51)" onmouseover="showTip(event, 'fs11', 51)" class="f">ordered</span> <span onmouseout="hideTip(event, 'fs12', 52)" onmouseover="showTip(event, 'fs12', 52)" class="i">xs</span> <span class="o">==&gt;</span> <span onmouseout="hideTip(event, 'fs11', 53)" onmouseover="showTip(event, 'fs11', 53)" class="f">ordered</span> (<span onmouseout="hideTip(event, 'fs16', 54)" onmouseover="showTip(event, 'fs16', 54)" class="i">insert</span> <span onmouseout="hideTip(event, 'fs19', 55)" onmouseover="showTip(event, 'fs19', 55)" class="i">x</span> <span onmouseout="hideTip(event, 'fs12', 56)" onmouseover="showTip(event, 'fs12', 56)" class="i">xs</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertKeepsOrder</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 68 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 16 tests.</code></pre></td></tr></table>
 <p>条件が成り立つときはいつでも <code>==&gt;</code> の後の性質が成り立つのなら、このような性質は成り立ちます。</p>
 <p>テストは条件を満たさないテストケースを切り捨てます。条件を満たすテストケースが100件見つかるまで、
 あるいはテストケース数の限度に達する(条件が決して成り立たないループを避けるため)まで、テストケースの生成は続けられます。
@@ -73,7 +73,7 @@ FsCheck は異なる型(object の派生型)を含むリストを生成したか
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">tooEager</span> <span onmouseout="hideTip(event, 'fs20', 57)" onmouseover="showTip(event, 'fs20', 57)" class="i">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 58)" onmouseover="showTip(event, 'fs20', 58)" class="i">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> (<span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs20', 59)" onmouseover="showTip(event, 'fs20', 59)" class="i">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs20', 60)" onmouseover="showTip(event, 'fs20', 60)" class="i">a</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">tooEager</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (0 shrinks) (StdGen (889421532,296157276)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (0 shrinks) (StdGen (990108993,296164921)):
 Original:
 0
 with exception:
@@ -141,7 +141,7 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs32', 105)" onmouseover="showTip(event, 'fs32', 105)" class="i">insertTrivial</span>
 </code></pre>
 <p>この条件が真になるテストケースは自明であると分類され、全体における自明なテストケースの比率が報告されます:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 54 tests (37% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 17 tests (29% trivial).</code></pre></td></tr></table>
 <h3>テストケースの分類</h3>
 <p>性質は <code>classify &lt;condition&gt; &lt;string&gt; &lt;property&gt;</code> という形式を取ることがあります。</p>
 <p>例えば、</p>
@@ -152,10 +152,10 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs34', 122)" onmouseover="showTip(event, 'fs34', 122)" class="i">insertClassify</span>
 </code></pre>
 <p>条件を満足するテストケースは与えられた分類に割り当てられ、分類の分布はテスト後に報告されます:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 54 tests.
-61% at-tail, at-head.
-20% at-tail.
-14% at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 14 tests.
+42% at-tail.
+28% at-head.
+21% at-tail, at-head.</code></pre></td></tr></table>
 <p>1つのテストケースは複数の分類に当てはまる場合があることに注意してください。</p>
 <h3>データの値の収集</h3>
 <p>性質は <code>collect &lt;expression&gt; &lt;property&gt;</code> という形式を取ることがあります。</p>
@@ -167,10 +167,11 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 </code></pre>
 <p>collect の引数はテストケースごとに評価され、値の分布が報告されます。
 この引数の型は <code>sprintf "%A"</code> を用いて出力されます:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 46 tests.
-41% 1.
-34% 0.
-23% 2.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 15 tests.
+46% 1.
+26% 2.
+20% 0.
+6% 3.</code></pre></td></tr></table>
 <h3>観測の連結</h3>
 <p>ここで説明した観測は何らかの方法で連結されるかもしれません。テストケースそれぞれにおける
 全ての観測は連結されており、これらの連結の分布は報告されます。例えば</p>
@@ -181,17 +182,15 @@ within が、性質が実行されているスレッドをキャンセルしよ�
     <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">collect</span> (<span onmouseout="hideTip(event, 'fs5', 153)" onmouseover="showTip(event, 'fs5', 153)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 154)" onmouseover="showTip(event, 'fs33', 154)" class="i">length</span> <span onmouseout="hideTip(event, 'fs12', 155)" onmouseover="showTip(event, 'fs12', 155)" class="i">xs</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs36', 156)" onmouseover="showTip(event, 'fs36', 156)" class="i">insertCombined</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 57 tests.
-43% 0, at-tail, at-head.
-19% 1, at-head.
-14% 1, at-tail.
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 17 tests.
+35% 0, at-tail, at-head.
+23% 1, at-tail.
+11% 2, at-head.
+5% 4.
+5% 3, at-head.
+5% 2, at-tail, at-head.
 5% 2, at-tail.
-3% 3, at-head.
-3% 3.
-3% 2, at-head.
-3% 2.
-1% 4, at-head.
-1% 1, at-tail, at-head.</code></pre></td></tr></table>
+5% 1, at-head.</code></pre></td></tr></table>
 <h2>And, Or およびラベル</h2>
 <p>性質は</p>
 <ul>
@@ -210,11 +209,11 @@ within が、性質が実行されているスレッドをキャンセルしよ�
   (<span onmouseout="hideTip(event, 'fs40', 169)" onmouseover="showTip(event, 'fs40', 169)" class="i">res</span> <span class="o">&lt;</span> <span onmouseout="hideTip(event, 'fs38', 170)" onmouseover="showTip(event, 'fs38', 170)" class="i">m</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs39', 171)" onmouseover="showTip(event, 'fs39', 171)" class="i">n</span>) <span class="o">|@</span> <span class="s">&quot;result not sum&quot;</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs37', 172)" onmouseover="showTip(event, 'fs37', 172)" class="i">complex</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (896846991,296157276)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (998817967,296164921)):
 Label of failing property: result not sum
 Original:
-0
 -1
+2
 Shrunk:
 0
 0</code></pre></td></tr></table>
@@ -229,12 +228,12 @@ Shrunk:
       <span class="s">&quot;lt2&quot;</span>  <span class="o">@|</span> (<span onmouseout="hideTip(event, 'fs40', 192)" onmouseover="showTip(event, 'fs40', 192)" class="i">res</span> <span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs39', 193)" onmouseover="showTip(event, 'fs39', 193)" class="i">n</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">multiply</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (897467246,296157276)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (999286911,296164921)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
 Original:
-(-2, 0)
+(-2, 2)
 Shrunk:
 (0, 0)</code></pre></td></tr></table>
 <p>上記の性質は従属性質をタプルにすることで連結していることに注意しましょう。これは長さ6のタプルまで上手くいきます:</p>

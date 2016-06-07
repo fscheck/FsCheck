@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>StdGen - FsCheck</title>
+    <title>DoNotSize<'a> - FsCheck</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Kurt Schelfthout and contributors"/>
@@ -34,12 +34,19 @@
 
 
 
-<h1>StdGen</h1>
+<h1>DoNotSize<'a></h1>
 <p>
   <span>Namespace: FsCheck</span><br />
-  <span>Parent Module: <a href="fscheck-random.html">Random</a></span>
 </p>
 <div class="xmldoc">
+<p>Whereas most types are restricted by a size that grows
+as the test gets further, by applying this type the underlying
+type will ignore this size and always generate from the full range.
+Note that this only makes a difference for types that have a range -
+currently Int16, Int32, Int64 have DoNotSize Arbitrary instances.
+This is typically (and at least currently) only applicable for value types
+that are comparable, hence the type constraints.</p>
+
 </div>
   <h3>Union Cases</h3>
   <table class="table table-bordered member-list">
@@ -50,15 +57,41 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '234', 234)" onmouseover="showTip(event, '234', 234)">
-            StdGen(int,int)
+          <code onmouseout="hideTip(event, '336', 336)" onmouseover="showTip(event, '336', 336)">
+            DoNotSize(&#39;a)
           </code>
-          <div class="tip" id="234">
-            <strong>Signature:</strong> int * int<br />
+          <div class="tip" id="336">
+            <strong>Signature:</strong> &#39;a<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Random.fs#L18-18" class="github-link">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L125-125" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Static members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Static member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '337', 337)" onmouseover="showTip(event, '337', 337)">
+            Unwrap(arg1)
+          </code>
+          <div class="tip" id="337">
+            <strong>Signature:</strong> DoNotSize&lt;&#39;a&gt; -&gt; &#39;a<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L126-126" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
