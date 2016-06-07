@@ -1,4 +1,12 @@
-### 2.5.0 - To be released
+### 2.5.0 - 7 June 2016
+  * Add Gen.growingElements.
+  * Add default generator and shrinker for IPAddress and MailAddress.
+  * Gen.eval now uses the given size directly to generate an element of that size, instead of randomly choosing a size up to the given size. This means that on average
+    test case sizes are bigger.
+  * Gen.frequency now throws a clearer exeption if no element can be generated.
+  * Renamed Gen.suchThat and Gen.suchThatOption to Gen.where or Gen.filter and Gen.tryWhere or Gen.tryFilter. (The functions/methods with the old names are still there, they are just marked Obsolete and will be removed in a future version.)
+  * Renamed DontSize to DoNotSize, DontShrink to DoNotShrink, DontSizeInt16 to DoNotSizeInt16 etc. (The types with the old names are still there, they are just marked Obsolete and will be removed in a future version.)
+  * StateMachine: operation shrinker shrinks operations too, not just the list of operations.
 
 ### 2.4.0 - 20 April 2016
   * Fix bug in function generator - previously generated functions were constant functions.
