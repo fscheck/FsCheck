@@ -161,7 +161,7 @@ module Runner =
         let seed = match config.Replay with None -> newSeed() | Some s -> s
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
         test (float config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen) 
-        |> Seq.takeWhile (fun step ->
+        |> Common.takeWhilePlusLast (fun step ->
             lastStep := step
             //printfn "%A" step
             match step with
