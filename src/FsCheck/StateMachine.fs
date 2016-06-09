@@ -287,11 +287,10 @@ module StateMachine =
                  None,
                  lazy initial)
             |> Seq.choose (fun (_, op, Lazy model) -> op |> Option.map (fun op -> (op,model)))
-            //|> Seq.distinct
-
+        let shrinker = Arb.from<list<_>>.Shrinker
         run.Operations 
         |> List.map fst
-        |> Arb.Default.FsList().Shrinker
+        |> shrinker
         //try to shrink the list of operations
         |> Seq.choose (fun operations -> 
                             let initialModel = fst run.Setup
