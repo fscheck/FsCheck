@@ -36,6 +36,19 @@ type ArbitraryAttribute(types:Type[]) =
     new(typ:Type) = ArbitraryAttribute([|typ|])
     member __.Arbitrary = types
 
+[<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
+type public GeneralAttribute() =
+    inherit Attribute()
+    let mutable replay = Config.Default.Replay
+
+    member __.Replay with get() = match replay with None -> String.Empty | Some (Random.StdGen (x,y)) -> sprintf "%A" (x,y)
+                     and set(v:string) =
+                        //if someone sets this, we want it to throw if it fails
+                        let split = v.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
+                        let elem1 = Int32.Parse(split.[0])
+                        let elem2 = Int32.Parse(split.[1])
+                        replay <- Some <| Random.StdGen (elem1,elem2)
+
 ///Run this method as an FsCheck test.
 [<AttributeUsage(AttributeTargets.Method ||| AttributeTargets.Property, AllowMultiple = false)>]
 [<XunitTestCaseDiscoverer("FsCheck.Xunit.PropertyDiscoverer", "FsCheck.Xunit")>]
