@@ -36,37 +36,71 @@ type ArbitraryAttribute(types:Type[]) =
     new(typ:Type) = ArbitraryAttribute([|typ|])
     member __.Arbitrary = types
 
-[<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
-type public GeneralAttribute() =
-    inherit Attribute()
-    let mutable replay = Config.Default.Replay
-    member internal __.ReplayStdGen = replay //interestingly, although this member is unused, if you remove it tests will fail...?
+type internal PropertyConfig =
+    { MaxTest        : Option<int>
+      MaxFail        : Option<int>
+      Replay         : Option<Random.StdGen>
+      StartSize      : Option<int>
+      EndSize        : Option<int>
+      Verbose        : Option<bool>
+      QuietOnSuccess : Option<bool>
+      Arbitrary      : Type[] }
 
-    member __.Replay with get() = match replay with None -> String.Empty | Some (Random.StdGen (x,y)) -> sprintf "%A" (x,y)
-                     and set(v:string) =
-                        //if someone sets this, we want it to throw if it fails
-                        let split = v.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
-                        let elem1 = Int32.Parse(split.[0])
-                        let elem2 = Int32.Parse(split.[1])
-                        replay <- Some <| Random.StdGen (elem1,elem2)
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module internal PropertyConfig = 
+    let orElse y = function
+        | Some x -> Some x
+        | None   -> y
+
+    let orDefault x y = defaultArg y x
+
+    let combine extra original =
+        { MaxTest        = extra.MaxTest        |> orElse original.MaxTest
+          MaxFail        = extra.MaxFail        |> orElse original.MaxFail
+          Replay         = extra.Replay         |> orElse original.Replay
+          StartSize      = extra.StartSize      |> orElse original.StartSize
+          EndSize        = extra.EndSize        |> orElse original.EndSize
+          Verbose        = extra.Verbose        |> orElse original.Verbose
+          QuietOnSuccess = extra.QuietOnSuccess |> orElse original.QuietOnSuccess
+          Arbitrary      = Array.append original.Arbitrary extra.Arbitrary }
+    
+    let toConfig (output : TestOutputHelper) propertyConfig =
+        { Config.Default with
+              Replay         = propertyConfig.Replay         |> orElse    Config.Default.Replay
+              MaxTest        = propertyConfig.MaxTest        |> orDefault Config.Default.MaxTest
+              MaxFail        = propertyConfig.MaxFail        |> orDefault Config.Default.MaxFail
+              StartSize      = propertyConfig.StartSize      |> orDefault Config.Default.StartSize
+              EndSize        = propertyConfig.EndSize        |> orDefault Config.Default.EndSize
+              QuietOnSuccess = propertyConfig.QuietOnSuccess |> orDefault Config.Default.QuietOnSuccess
+              Arbitrary      = Seq.toList propertyConfig.Arbitrary
+              Runner         = new XunitRunner()
+              Every          = 
+                  if propertyConfig.Verbose |> Option.exists id then 
+                      fun n args -> output.WriteLine (Config.Verbose.Every n args); ""
+                  else 
+                      Config.Quick.Every
+              EveryShrink    = 
+                  if propertyConfig.Verbose |> Option.exists id then 
+                      fun args -> output.WriteLine (Config.Verbose.EveryShrink args); ""
+                  else 
+                      Config.Quick.EveryShrink }
 
 ///Run this method as an FsCheck test.
 [<AttributeUsage(AttributeTargets.Method ||| AttributeTargets.Property, AllowMultiple = false)>]
 [<XunitTestCaseDiscoverer("FsCheck.Xunit.PropertyDiscoverer", "FsCheck.Xunit")>]
 type public PropertyAttribute() =
     inherit FactAttribute()
-    let mutable maxTest = Config.Default.MaxTest
-    let mutable maxFail = Config.Default.MaxFail
-    let mutable replay = Config.Default.Replay
-    let mutable startSize = Config.Default.StartSize
-    let mutable endSize = Config.Default.EndSize
-    let mutable verbose = false
-    let mutable quietOnSuccess = false
-    let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
+    let mutable maxTest        = None
+    let mutable maxFail        = None
+    let mutable replay         = None
+    let mutable startSize      = None
+    let mutable endSize        = None
+    let mutable verbose        = None
+    let mutable quietOnSuccess = None
+    let mutable arbitrary      = [||]
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
-    member __.Replay with get() = match replay with None -> String.Empty | Some (Random.StdGen (x,y)) -> sprintf "%A" (x,y)
-                     and set(v:string) =
+    member __.Replay with set(v:string) =
                         //if someone sets this, we want it to throw if it fails
                         let split = v.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
                         let elem1 = Int32.Parse(split.[0])
@@ -74,26 +108,39 @@ type public PropertyAttribute() =
                         replay <- Some <| Random.StdGen (elem1,elem2)
     member internal __.ReplayStdGen = replay //interestingly, although this member is unused, if you remove it tests will fail...?
     ///The maximum number of tests that are run.
-    member __.MaxTest with get() = maxTest and set(v) = maxTest <- v
+    member __.MaxTest with set(v) = maxTest <- Some v
     ///The maximum number of tests where values are rejected, e.g. as the result of ==>
-    member __.MaxFail with get() = maxFail and set(v) = maxFail <- v
+    member __.MaxFail with set(v) = maxFail <- Some v
     ///The size to use for the first test.
-    member __.StartSize with get() = startSize and set(v) = startSize <- v
+    member __.StartSize with set(v) = startSize <- Some v
     ///The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.
-    member __.EndSize with get() = endSize and set(v) = endSize <- v
+    member __.EndSize with set(v) = endSize <- Some v
     ///Output all generated arguments.
-    member __.Verbose with get() = verbose and set(v) = verbose <- v
+    member __.Verbose with set(v) = verbose <- Some v
     ///The Arbitrary instances to use for this test method. The Arbitrary instances
     ///are merged in back to front order i.e. instances for the same generated type
     ///at the front of the array will override those at the back.
-    member __.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v
+    member __.Arbitrary with set(v) = arbitrary <- v
     ///If set, suppresses the output from the test if the test is successful. This can be useful when running tests
     ///with TestDriven.net, because TestDriven.net pops up the Output window in Visual Studio if a test fails; thus,
     ///when conditioned to that behaviour, it's always a bit jarring to receive output from passing tests.
     ///The default is false, which means that FsCheck will also output test results on success, but if set to true,
     ///FsCheck will suppress output in the case of a passing test. This setting doesn't affect the behaviour in case of
     ///test failures.
-    member __.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
+    member __.QuietOnSuccess with set(v) = quietOnSuccess <- Some v
+
+    member internal __.Config =
+        { MaxTest        = maxTest
+          MaxFail        = maxFail
+          Replay         = replay
+          StartSize      = startSize
+          EndSize        = endSize
+          Verbose        = verbose
+          QuietOnSuccess = quietOnSuccess
+          Arbitrary      = arbitrary }
+
+[<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
+type public GeneralAttribute() = inherit PropertyAttribute()
 
 /// The xUnit2 test runner for the PropertyAttribute that executes the test via FsCheck
 type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
@@ -103,40 +150,25 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
     member this.Init(output:TestOutputHelper) =
         let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
-        let arbitrariesOnMethod = factAttribute.GetNamedArgument "Arbitrary"
         let arbitrariesOnClass =
             this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<ArbitraryAttribute>)
                 |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
+                |> Seq.toArray
         let generalAttribute = 
             this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<GeneralAttribute>) 
                 |> Seq.tryFind (fun _ -> true)
 
-        let arbitraries =
-            Config.Default.Arbitrary
-            |> Seq.append arbitrariesOnClass
-            |> Seq.append arbitrariesOnMethod
-            |> Seq.toList
-
-        { Config.Default with
-                Replay = 
-                    let attr = defaultArg generalAttribute factAttribute
-                    attr.GetNamedArgument("ReplayStdGen")
-                MaxTest = factAttribute.GetNamedArgument("MaxTest")
-                MaxFail = factAttribute.GetNamedArgument("MaxFail")
-                StartSize = factAttribute.GetNamedArgument("StartSize")
-                EndSize = factAttribute.GetNamedArgument("EndSize")
-                QuietOnSuccess = factAttribute.GetNamedArgument("QuietOnSuccess")
-                Every = if factAttribute.GetNamedArgument("Verbose") then 
-                            fun n args -> output.WriteLine (Config.Verbose.Every n args); ""
-                        else 
-                            Config.Quick.Every
-                EveryShrink = if factAttribute.GetNamedArgument("Verbose") then 
-                                fun args -> output.WriteLine (Config.Verbose.EveryShrink args); ""
-                                else 
-                                    Config.Quick.EveryShrink
-                Arbitrary = arbitraries
-                Runner = new XunitRunner()
-            }
+        let config =
+            match generalAttribute with
+            | Some generalAttribute ->
+                PropertyConfig.combine
+                    (factAttribute.GetNamedArgument "Config")
+                    (generalAttribute.GetNamedArgument "Config")
+            | None ->
+                factAttribute.GetNamedArgument "Config"
+        
+        { config with Arbitrary = Array.append config.Arbitrary arbitrariesOnClass }
+        |> PropertyConfig.toConfig output 
 
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
         let test = new XunitTest(this, this.DisplayName)
