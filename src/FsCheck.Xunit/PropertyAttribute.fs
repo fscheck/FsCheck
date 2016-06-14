@@ -40,6 +40,7 @@ type ArbitraryAttribute(types:Type[]) =
 type public GeneralAttribute() =
     inherit Attribute()
     let mutable replay = Config.Default.Replay
+    member internal __.ReplayStdGen = replay //interestingly, although this member is unused, if you remove it tests will fail...?
 
     member __.Replay with get() = match replay with None -> String.Empty | Some (Random.StdGen (x,y)) -> sprintf "%A" (x,y)
                      and set(v:string) =
@@ -106,6 +107,9 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
         let arbitrariesOnClass =
             this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<ArbitraryAttribute>)
                 |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
+        let generalAttribute = 
+            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<GeneralAttribute>) 
+                |> Seq.tryFind (fun _ -> true)
 
         let arbitraries =
             Config.Default.Arbitrary
@@ -114,7 +118,9 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             |> Seq.toList
 
         { Config.Default with
-                Replay = factAttribute.GetNamedArgument("ReplayStdGen")
+                Replay = 
+                    let attr = defaultArg generalAttribute factAttribute
+                    attr.GetNamedArgument("ReplayStdGen")
                 MaxTest = factAttribute.GetNamedArgument("MaxTest")
                 MaxFail = factAttribute.GetNamedArgument("MaxFail")
                 StartSize = factAttribute.GetNamedArgument("StartSize")
