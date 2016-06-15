@@ -39,7 +39,7 @@ type ArbitraryAttribute(types:Type[]) =
 type internal PropertyConfig =
     { MaxTest        : Option<int>
       MaxFail        : Option<int>
-      Replay         : Option<Random.StdGen>
+      Replay         : Option<string>
       StartSize      : Option<int>
       EndSize        : Option<int>
       Verbose        : Option<bool>
@@ -54,6 +54,16 @@ module internal PropertyConfig =
 
     let orDefault x y = defaultArg y x
 
+    let zero =
+        { MaxTest        = None
+          MaxFail        = None
+          Replay         = None
+          StartSize      = None
+          EndSize        = None
+          Verbose        = None
+          QuietOnSuccess = None
+          Arbitrary      = [||] }
+
     let combine extra original =
         { MaxTest        = extra.MaxTest        |> orElse original.MaxTest
           MaxFail        = extra.MaxFail        |> orElse original.MaxFail
@@ -63,10 +73,19 @@ module internal PropertyConfig =
           Verbose        = extra.Verbose        |> orElse original.Verbose
           QuietOnSuccess = extra.QuietOnSuccess |> orElse original.QuietOnSuccess
           Arbitrary      = Array.append original.Arbitrary extra.Arbitrary }
-    
+
+    let parseStdGen (str: string) =
+        //if someone sets this, we want it to throw if it fails
+        let split = str.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
+        let elem1 = Int32.Parse(split.[0])
+        let elem2 = Int32.Parse(split.[1])
+        Random.StdGen (elem1,elem2)
+
     let toConfig (output : TestOutputHelper) propertyConfig =
         { Config.Default with
-              Replay         = propertyConfig.Replay         |> orElse    Config.Default.Replay
+              Replay         = propertyConfig.Replay 
+                               |> Option.map parseStdGen 
+                               |> orElse Config.Default.Replay
               MaxTest        = propertyConfig.MaxTest        |> orDefault Config.Default.MaxTest
               MaxFail        = propertyConfig.MaxFail        |> orDefault Config.Default.MaxFail
               StartSize      = propertyConfig.StartSize      |> orDefault Config.Default.StartSize
@@ -90,54 +109,42 @@ module internal PropertyConfig =
 [<XunitTestCaseDiscoverer("FsCheck.Xunit.PropertyDiscoverer", "FsCheck.Xunit")>]
 type public PropertyAttribute() =
     inherit FactAttribute()
-    let mutable maxTest        = None
-    let mutable maxFail        = None
-    let mutable replay         = None
-    let mutable startSize      = None
-    let mutable endSize        = None
-    let mutable verbose        = None
-    let mutable quietOnSuccess = None
-    let mutable arbitrary      = [||]
+    let mutable config = PropertyConfig.zero
+    let mutable replay = null
+    let mutable maxTest = -1
+    let mutable maxFail = -1
+    let mutable startSize = -1
+    let mutable endSize = -1
+    let mutable verbose = false
+    let mutable arbitrary = [||]
+    let mutable quietOnSuccess = false
+
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
-    member __.Replay with set(v:string) =
-                        //if someone sets this, we want it to throw if it fails
-                        let split = v.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
-                        let elem1 = Int32.Parse(split.[0])
-                        let elem2 = Int32.Parse(split.[1])
-                        replay <- Some <| Random.StdGen (elem1,elem2)
-    member internal __.ReplayStdGen = replay //interestingly, although this member is unused, if you remove it tests will fail...?
+    member __.Replay with get() = replay and set(v) = replay <- v; config <- {config with Replay = Some v}
     ///The maximum number of tests that are run.
-    member __.MaxTest with set(v) = maxTest <- Some v
+    member __.MaxTest with get() = maxTest and set(v) = maxTest <- v; config <- {config with MaxTest = Some v}
     ///The maximum number of tests where values are rejected, e.g. as the result of ==>
-    member __.MaxFail with set(v) = maxFail <- Some v
+    member __.MaxFail with get() = maxFail and set(v) = maxFail <- v; config <- {config with MaxFail = Some v}
     ///The size to use for the first test.
-    member __.StartSize with set(v) = startSize <- Some v
+    member __.StartSize with get() = startSize and set(v) = startSize <- v; config <- {config with StartSize = Some v}
     ///The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.
-    member __.EndSize with set(v) = endSize <- Some v
+    member __.EndSize with get() = endSize and set(v) = endSize <- v; config <- {config with EndSize = Some v}
     ///Output all generated arguments.
-    member __.Verbose with set(v) = verbose <- Some v
+    member __.Verbose with get() = verbose and set(v) = verbose <- v; config <- {config with Verbose = Some v}
     ///The Arbitrary instances to use for this test method. The Arbitrary instances
     ///are merged in back to front order i.e. instances for the same generated type
     ///at the front of the array will override those at the back.
-    member __.Arbitrary with set(v) = arbitrary <- v
+    member __.Arbitrary with get() = arbitrary and set(v) = arbitrary <- v; config <- {config with Arbitrary = v}
     ///If set, suppresses the output from the test if the test is successful. This can be useful when running tests
     ///with TestDriven.net, because TestDriven.net pops up the Output window in Visual Studio if a test fails; thus,
     ///when conditioned to that behaviour, it's always a bit jarring to receive output from passing tests.
     ///The default is false, which means that FsCheck will also output test results on success, but if set to true,
     ///FsCheck will suppress output in the case of a passing test. This setting doesn't affect the behaviour in case of
     ///test failures.
-    member __.QuietOnSuccess with set(v) = quietOnSuccess <- Some v
+    member __.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v; config <- {config with QuietOnSuccess = Some v}
 
-    member internal __.Config =
-        { MaxTest        = maxTest
-          MaxFail        = maxFail
-          Replay         = replay
-          StartSize      = startSize
-          EndSize        = endSize
-          Verbose        = verbose
-          QuietOnSuccess = quietOnSuccess
-          Arbitrary      = arbitrary }
+    member internal __.Config = config
 
 [<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
 type public GeneralAttribute() = inherit PropertyAttribute()
