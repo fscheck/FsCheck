@@ -73,7 +73,7 @@ module TypeClass =
             | _ -> acc
         let addMethods (t:Type) =
             t.GetRuntimeMethods()
-            |> Seq.where(fun meth -> meth.IsStatic && (meth.IsPublic || not onlyPublic) && meth.GetParameters().Length = 0)
+            |> Seq.where(fun meth -> meth.IsStatic && (meth.IsPublic || not onlyPublic))
             |> Seq.fold addMethod []
         let instances = addMethods instancesType
         if instances.Length = 0 then 
