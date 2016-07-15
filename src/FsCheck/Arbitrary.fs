@@ -21,21 +21,25 @@ open System.Net.Mail
 ///Represents an int >= 0
 type NonNegativeInt = NonNegativeInt of int with
     member x.Get = match x with NonNegativeInt r -> r
+    override x.ToString() = x.Get.ToString()
     static member op_Explicit(NonNegativeInt i) = i
 
 ///Represents an int > 0
 type PositiveInt = PositiveInt of int with
     member x.Get = match x with PositiveInt r -> r
+    override x.ToString() = x.Get.ToString()
     static member op_Explicit(PositiveInt i) = i
 
 ///Represents an int <> 0
 type NonZeroInt = NonZeroInt of int with
     member x.Get = match x with NonZeroInt r -> r
+    override x.ToString() = x.Get.ToString()
     static member op_Explicit(NonZeroInt i) = i
 
 ///Represents a float that is not NaN or Infinity.
 type NormalFloat = NormalFloat of float with
     member x.Get = match x with NormalFloat f -> f
+    override x.ToString() = x.Get.ToString()
     static member op_Explicit(NormalFloat f) = f
     [<Obsolete("Will be removed in a future version.")>]
     static member get (NormalFloat f) = f
@@ -58,6 +62,7 @@ type Interval = Interval of int * int with
 ///Represents an int that can include int.MinValue and int.MaxValue.
 type IntWithMinMax = IntWithMinMax of int with
     member x.Get = match x with IntWithMinMax r -> r
+    override x.ToString() = x.Get.ToString()
     static member op_Explicit(IntWithMinMax i) = i
 
 ///Represents a non-empty Set.
