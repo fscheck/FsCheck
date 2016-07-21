@@ -7,6 +7,7 @@
       "includeFiles": [
         "Helpers.fs",
         "Random.fs",
+        "Property.fs",
       ]
     }
   },
