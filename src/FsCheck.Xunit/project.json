@@ -26,6 +26,7 @@
     "dotnet-compile-fsc": {
       "version": "1.0.0-preview2-*",
       "imports": "dnxcore50"
-    }
+    },
+    "dotnet-mergenupkg": { "target": "package", "version": "1.0.*" }
   }
 }
