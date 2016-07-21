@@ -5,7 +5,23 @@
     "compilerName": "fsc",
     "compile": {
       "includeFiles": [
-        "Library.fs"
+        "AssemblyInfo.fs",
+        "Common.fs",
+        "Random.fs",
+        "Reflect.fs",
+        "TypeClass.fs",
+        "Gen.fs",
+        "ReflectArbitrary.fs",
+        "Arbitrary.fs",
+        "ArbitraryExtensions.fs",
+        "GenExtensions.fs",
+        "Testable.fs",
+        "Prop.fs",
+        "PropExtensions.fs",
+        "Commands.fs",
+        "StateMachine.fs",
+        "Runner.fs",
+        "RunnerExtensions.fs"
       ]
     }
   },
