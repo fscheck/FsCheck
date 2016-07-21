@@ -10,6 +10,10 @@
 
 namespace FsCheck
 
+// Disable warnings about calling certain FsCheck functions from F#.
+// Using them internally within FsCheck is important for performance reasons.
+#nowarn "10001"
+
 open System
 
 #if PCL
@@ -468,7 +472,7 @@ module Arb =
             let shrinker (s:string) = 
                     match s with
                     | null -> Seq.empty
-                    | _ -> s.ToCharArray() |> Array.toList |> shrink |> Seq.map (fun chars -> new String(List.toArray chars))
+                    | _ -> s.ToCharArray() |> shrink |> Seq.map (fun chars -> new String(chars))
             fromGenShrink (generator,shrinker)
 
         ///Generate an option value that is 'None' 1/8 of the time.
@@ -506,11 +510,13 @@ module Arb =
             { new Arbitrary<list<'a>>() with
                 override __.Generator = Gen.listOf generate
                 override __.Shrinker l =
-                    match l with
-                    | [] ->         Seq.empty
-                    | (x::xs) ->    seq { yield xs
-                                          for xs' in shrink xs -> x::xs'
-                                          for x' in shrink x -> x'::xs }
+                    let rec shrinkList l =
+                        match l with
+                        | [] ->         Seq.empty
+                        | (x::xs) ->    seq { yield xs
+                                              for xs' in shrinkList xs -> x::xs'
+                                              for x' in shrink x -> x'::xs }
+                    shrinkList l
             }
 
         ///Generate an object - a boxed char, string or boolean value.
@@ -529,11 +535,39 @@ module Arb =
                             | _ -> failwith "Unknown type in shrink of obj"
                         }
             }
+
         ///Generate a rank 1 array.
         static member Array() =
             { new Arbitrary<'a[]>() with
                 override __.Generator = Gen.arrayOf generate
-                override __.Shrinker a = a |> Array.toList |> shrink |> Seq.map List.toArray
+                override __.Shrinker arr =
+                    // Implementation is similar to this:
+                    //      arr |> Array.toList |> shrink |> Seq.map List.toArray
+                    // but specialized to arrays to eliminate intermediate list allocations.
+
+                    /// Given an element and an array, creates a new array by prepending
+                    /// the element to the array and returning the combined result.
+                    let prepend x (arr : _[]) =
+                        let len = arr.Length
+                        if len = 0 then [| x |]
+                        else
+                            let result = Array.zeroCreate (len + 1)
+                            result.[0] <- x
+                            Array.blit arr 0 result 1 len
+                            result
+
+                    let rec shrinkArray (arr : 'T[]) =
+                        if Array.isEmpty arr then Seq.empty else
+                        seq {
+                            let x = arr.[0]
+                            let xs = arr.[1..]
+                            yield xs
+
+                            for xs' in shrinkArray xs -> prepend x xs'
+                            for x' in shrink x -> prepend x' xs
+                        }
+
+                    shrinkArray arr
             }
 
         ///Generate a rank 2, zero based array.
