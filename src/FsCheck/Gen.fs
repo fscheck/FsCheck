@@ -10,6 +10,10 @@
 
 namespace FsCheck
 
+// Disable warnings about calling certain FsCheck functions from F#.
+// Using them internally within FsCheck is important for performance reasons.
+#nowarn "10001"
+
 open Random
 
 type internal IGen = 
@@ -163,28 +167,34 @@ module Gen =
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
-    [<CompiledName("Elements")>]
-    let elements xs = 
-        choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
+    [<CompiledName("Elements"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let elementsArr ([<ParamArrayAttribute>] values : array<_>) =
+        // Similar to `elements` but specialized to arrays for performance reasons.
+        choose (0, values.Length - 1) |> map (Array.get values)
 
-    [<CompiledName("GrowingElements")>]
+    ///Build a generator that randomly generates one of the values in the given non-empty seq.
+    //[category: Creating generators]
+    [<CompiledName("Elements")>]
+    let elements (xs : seq<_>) =
+        // If the sequence is an array, use the implementation specialized for arrays.
+        match xs with
+        | :? array<_> as arr ->
+            elementsArr arr
+        | _ ->
+            choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
+
     ///Build a generator that takes a non-empty sequence and randomly generates
     ///one of the values among an initial segment of that sequence. The size of
     ///this initial segment increases with the size parameter. Essentially this
     ///generator is Gen.elements but taking also the runtime size into account.
     //[category: Creating generators]
+    [<CompiledName("GrowingElements")>]
     let growingElements xs =
         let arr = Seq.toArray xs
         sized (fun s ->
             let s' = max 1 s
             let n  = min arr.Length s'
             elements (arr |> Seq.take n))
-
-    ///Build a generator that randomly generates one of the values in the given non-empty seq.
-    //[category: Creating generators]
-    [<CompiledName("Elements"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let elementsArr ([<ParamArrayAttribute>] values : array<_>) = 
-        values |> elements
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///equal probability.
@@ -197,7 +207,10 @@ module Gen =
     //[category: Creating generators from generators]
     [<CompiledName("OneOf"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let oneOfArr ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
-        generators |> oneof
+        // Effectively the same as:
+        //  generators |> oneof
+        // but specialized to arrays for performance.
+        gen.Bind(elementsArr generators, id)
 
     /// <summary>
     /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
@@ -331,13 +344,37 @@ module Gen =
     //[category: Creating generators from generators]
     [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let sequenceToSeq generators = 
-        generators |> sequence |> map List.toSeq
+        // This implementation is similar to that for arrays and lists but is specialized
+        // to sequences to avoid intermediate conversion to an intermediate list.
+        Gen <| fun size rnd ->
+            seq {
+            let mutable r' = rnd
+            for (Gen g) in generators do
+                let r1, r2 = split r'
+                r' <- r2
+                yield g size r1
+            }
 
     ///Sequence the given list of generators into a generator of a list.
     //[category: Creating generators from generators]
     [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let sequenceToArr ([<ParamArrayAttribute>]generators:array<Gen<_>>) = 
-        generators |> sequence |> map List.toArray
+        if Object.ReferenceEquals (null, generators) then
+            nullArg "generators"
+
+        // This implementation is the same as that used for lists and sequences,
+        // but is specialized for arrays (to avoid intermediate allocations which
+        // would otherwise be caused by conversion to/from list or seq).
+        Gen <| fun size rnd ->
+            let result = Array.zeroCreate generators.Length
+            let mutable r' = rnd
+            for i = 0 to generators.Length - 1 do
+                let (Gen g) = generators.[i]
+                let r1, r2 = split r'
+                r' <- r2
+                result.[i] <- g size r1
+
+            result
 
     ///Generates a list of given length, containing values generated by the given generator.
     //[category: Creating generators from generators]
@@ -357,9 +394,10 @@ module Gen =
         gen {
             let copy = Array.copy xs
             let maxI = copy.Length - 1
-            let! indexes = [ for i in 0..maxI - 1 -> choose (i, maxI) ]
-                           |> sequence
-            indexes |> List.iteri (swap copy)
+            let! indexes =
+                [| for i in 0..maxI - 1 -> choose (i, maxI) |]
+                |> sequenceToArr
+            indexes |> Array.iteri (swap copy)
             return copy
         }
 
@@ -473,7 +511,11 @@ module Gen =
     /// Generates an array of a specified length.
     //[category: Creating generators from generators]
     [<CompiledName("ArrayOf")>]
-    let arrayOfLength n (g: Gen<'a>) : Gen<'a[]> = listOfLength n g |> map Array.ofList
+    let arrayOfLength n (g: Gen<'a>) : Gen<'a[]> =
+        // For compatibility with the way `listOfLength` is implemented,
+        // if the length is negative we just return an empty array.
+        if n < 1 then Array.empty else Array.create n g
+        |> sequenceToArr
 
     /// Generates an array using the specified generator. The maximum length is the size+1.
     //[category: Creating generators from generators]
