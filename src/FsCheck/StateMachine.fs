@@ -118,10 +118,12 @@ type Machine<'Actual,'Model>(maxNumberOfCommands:int) =
     abstract Next : 'Model -> Gen<Operation<'Actual,'Model>>
 
 [<StructuredFormatDisplayAttribute("{StructuredToString}")>]
-type MachineRun<'Actual, 'Model> =
-    { Setup : 'Model * Setup<'Actual,'Model> 
-      Operations : list<Operation<'Actual,'Model> * 'Model>
-      TearDown : TearDown<'Actual> } with
+type MachineRun<'Actual, 'Model>(setup, operations, tearDown) =
+    member val internal Setup : 'Model * Setup<'Actual,'Model> = setup with get, set
+    member val internal Operations : list<Operation<'Actual,'Model> * 'Model> = operations with get, set
+    member val internal TearDown : TearDown<'Actual> = tearDown with get, set
+    member val internal UsedSize = -1 with get, set
+    member this.Clone() = this.MemberwiseClone() :?> MachineRun<'Actual, 'Model>
     override t.ToString() =
         sprintf "%A\n%s\n%A" t.Setup (String.Join("\n", t.Operations |> Seq.map (fun (op,m) -> sprintf "%O -> %A" op m ))) t.TearDown
     member t.StructuredToString = t.ToString()
@@ -261,11 +263,11 @@ module StateMachine =
         gen { let! setup = spec.Setup |> Arb.toGen
               let initialModel = setup.Model()
               let maxNum = spec.MaxNumberOfCommands
-              let! models,operations = Gen.sized (fun s -> let size = if maxNum < 0 then s else maxNum in genCommandsS initialModel size)
-              return { Setup = initialModel, setup
-                       Operations = List.zip operations (List.tail models) //first state is actually the initial state; so drop it.
-                       TearDown = spec.TearDown }
-        }
+              let! size = Gen.sized (fun s -> Gen.constant (if maxNum < 0 then s else maxNum))
+              let! models,operations = genCommandsS initialModel size
+              let mutable run = MachineRun((initialModel, setup), List.zip operations (List.tail models), spec.TearDown) //first state is actually the initial state; so drop it.
+              run.UsedSize <- size
+              return run }
 
     [<CompiledName("Shrink")>]
     let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
@@ -302,24 +304,35 @@ module StateMachine =
                             if ok then 
                                 let newOps = transitions //|> Seq.toList
                                 //printf "newops %A" newOps
-                                let newOperations = newOps
-                                Some { run with Operations = newOperations } 
+                                let newRun = run.Clone() in newRun.Operations <- newOps
+                                Some newRun
                             else 
                                 None)
         //try to srhink the initial setup state
-        |> Seq.append (Arb.toShrink spec.Setup (snd run.Setup) |> Seq.map (fun create -> { run with Setup = create.Model(), create }))
+        |> Seq.append (Arb.toShrink spec.Setup (snd run.Setup) |> Seq.map (fun create -> 
+            let newRun = run.Clone() in newRun.Setup <- (create.Model(), create) 
+            newRun))
         
     /// Check one run, i.e. create a property from a single run.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let forOne { Setup = _:'Model,setup; Operations = operations; TearDown = teardown } =
+    let forOne (machineRun: MachineRun<'Actual,'Model>) =
+//            let size = Gen.sized(fun s -> Gen.constant s) |> Gen.sample 1 1 |> List.head
+//            machineRun.UsedSize <- size
             let rec run actual (operations:list<Operation<'Actual,'Model> * _>) property =
                 match operations with
-                | [] -> teardown.Actual actual; property
+                | [] -> machineRun.TearDown.Actual actual; property
                 | ((op,model)::ops) -> 
                     (op :> IOperation).ClearDependencies() //side-effect :(
                     let prop = op.Check(actual, model)
                     run actual ops (property .&. prop) //not great: should stop generating once error is found
-            run (setup.Actual()) operations (Prop.ofTestable true)
+            let prop = run (snd(machineRun.Setup).Actual()) machineRun.Operations (Prop.ofTestable true)
+            let l = machineRun.Operations.Length
+            prop |> Prop.trivial (l = 0)
+                 |> Prop.classify (l > 1 && l <=6) "short sequences (between 1-6 commands)"
+                 |> Prop.classify (l > 6) "long sequences (>6 commands)"
+                 |> Prop.classify (-1 <> machineRun.UsedSize && l < machineRun.UsedSize) "aborted sequences"
+                 |> Prop.classify (-1 <> machineRun.UsedSize && l > machineRun.UsedSize) "longer than used size sequences (should not occur)"
+                 |> Prop.classify (-1 = machineRun.UsedSize) "artificial sequences"
 
     ///Check all generated runs, i.e. create a property from an arbitrarily generated run.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
@@ -339,4 +352,3 @@ type StateMachineExtensions =
     static member ToProperty(arbitraryRun:Arbitrary<MachineRun<'Actual,'Model>>) = StateMachine.forAll arbitraryRun
     [<Extension>]
     static member ToProperty(run: MachineRun<'Actual,'Model>) = StateMachine.forOne run
-

@@ -25,12 +25,12 @@ module StateMachine =
         let commands =
             StateMachine.generate (checkSimpleModelSpec -1)
             |> Gen.sample 10 10
-        for { Setup = _,create; Operations = comms } in commands do
-            typeof<SimpleModel> =! create.Actual().GetType()
-            0 =! create.Model()
-            for comm,_ in comms do
-                test <@ comm.Pre 5 @>
-                6 =! comm.Run 5
+        for run in commands do
+            typeof<SimpleModel> =! (snd(run.Setup).Actual()).GetType()
+            0 =! (snd(run.Setup).Model())
+            for op,_ in run.Operations do
+                test <@ op.Pre 5 @>
+                6 =! op.Run 5
 
 
     type faultyInc(n:int) =
@@ -59,9 +59,7 @@ module StateMachine =
         let arb = Arb.register<faultyCmd>() |> ignore
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
         let spec = checkFaultyCommandModelSpec -1
-        let run = { Setup = (0,create)
-                    TearDown = spec.TearDown
-                    Operations = [(new faultyInc(5) :> Operation<SimpleModel,int>,5)] }
+        let run = MachineRun((0,create), [(new faultyInc(5) :> Operation<SimpleModel,int>,5)], spec.TearDown)
         //should contain an element smaller than 5 since they can't be generated but only shrunk
         let shrunk = StateMachine.shrink spec run
         test <@ shrunk |> Seq.exists (fun e -> (e.Operations.Head |> fst :?> faultyInc).n < 5 ) @>
@@ -73,7 +71,7 @@ module StateMachine =
     let ``without stop command length of commands should be Machine.MaxNumberOfCommands``() =
         let specWithLength = checkSimpleModelSpec 3
         let runs = StateMachine.generate specWithLength |> Gen.sample 100 10
-        test <@ runs |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> cmds.Length = 3) @>
+        test <@ runs |> Seq.forall (fun run -> run.Operations.Length = 3) @>
 
     //every tenth command is a stop
     //used to see if it can terminate before reaching the MaxNumberOfCommands 
@@ -89,7 +87,7 @@ module StateMachine =
     let ``stop command can terminate before MaxNumberOfCommands is reached``() =
         let specWithLength = checkStoppingSpec 10
         let runs = StateMachine.generate specWithLength |> Gen.sample 100 20
-        let len = List.fold (fun acc { Setup = _,c; Operations = cmds } -> acc + cmds.Length) 0 runs
+        let len = List.fold (fun acc (run:MachineRun<_,_>) -> acc + run.Operations.Length) 0 runs
         test <@ len > 0 && len < 200 @>
 
     //this spec is created using preconditions such that the only valid sequence is setFalse,setTrue
@@ -116,7 +114,7 @@ module StateMachine =
     let ``generate commands should never violate precondition``() =
         test <@ StateMachine.generate checkPreconditionSpec
                 |> Gen.sample 100 10
-                |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> checkPreconditions (c.Model()) cmds) @>
+                |> Seq.forall (fun run -> checkPreconditions (snd(run.Setup).Model()) run.Operations) @>
 
     [<Fact>]
     let ``shrink commands should never violate precondition``() =
@@ -125,7 +123,7 @@ module StateMachine =
                 |> Gen.sample 100 10
                 |> Seq.map (StateMachine.shrink checkPreconditionSpec) 
                 |> Seq.concat
-                |> Seq.tryFind (fun { Setup = _,c; Operations = cmds } -> not <| checkPreconditions (c.Model()) cmds)
+                |> Seq.tryFind (fun run -> not <| checkPreconditions (snd(run.Setup).Model()) run.Operations)
         test <@ counterexample.IsNone @>
 
     //a counter that never goes below zero
@@ -232,8 +230,6 @@ module StateMachine =
         //the standard list shrinker does not do this.
         let spec = specSymbolic "C"
         let (``a->b``, ``b->a``, ``b->c``, ``a->c``) = makeOperations "C"
-        let run = { Setup = (A, setup)
-                    TearDown = spec.TearDown
-                    Operations = [(``a->b``,B); (``b->a``,A);(``a->c``,C)] }
+        let run = MachineRun((A, setup), [(``a->b``,B); (``b->a``,A);(``a->c``,C)], spec.TearDown)
         let shrunk = StateMachine.shrink spec run
         test <@ shrunk |> Seq.exists (fun e -> e.Operations = [(``a->c``,C)]) @>
