@@ -235,6 +235,7 @@ Target "Build.NetCore" (fun _ ->
     Shell.Exec("dotnet", "restore") |> assertExitCodeZero
     Shell.Exec("dotnet", "--verbose pack --configuration Release", "src/FsCheck") |> assertExitCodeZero
     Shell.Exec("dotnet", "--verbose pack --configuration Release", "src/FsCheck.Xunit") |> assertExitCodeZero
+    Shell.Exec("dotnet", "--verbose pack --configuration Release", "src/FsCheck.NUnit") |> assertExitCodeZero
 )
 
 Target "RunTests.NetCore" (fun _ ->
@@ -249,10 +250,16 @@ Target "Nuget.AddNetCore" (fun _ ->
       Shell.Exec("dotnet", sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg, "src/FsCheck/") |> assertExitCodeZero
 
     do
+      let nupkg = sprintf "../../bin/FsCheck.NUnit.%s.nupkg" (release.NugetVersion)
+      let netcoreNupkg = sprintf "bin/Release/FsCheck.NUnit.%s.nupkg" (release.NugetVersion)
+
+      Shell.Exec("dotnet", sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg, "src/FsCheck.NUnit/") |> assertExitCodeZero
+
+    do
       let nupkg = sprintf "../../bin/FsCheck.Xunit.%s.nupkg" (release.NugetVersion)
       let netcoreNupkg = sprintf "bin/Release/FsCheck.Xunit.%s.nupkg" (release.NugetVersion)
 
-      Shell.Exec("dotnet", sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg, "src/FsCheck.Xunit/") |> assertExitCodeZero      
+      Shell.Exec("dotnet", sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg, "src/FsCheck.Xunit/") |> assertExitCodeZero
 )
 
 // --------------------------------------------------------------------------------------
