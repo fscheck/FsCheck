@@ -56,7 +56,7 @@ module StateMachine =
 
     [<Fact>]
     let ``should check faulty command spec and find minimum counterexample``() =
-        let arb = Arb.register<faultyCmd>() |> ignore
+        Arb.register<faultyCmd>() |> ignore
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
         let spec = checkFaultyCommandModelSpec -1
         let run = { Setup = (0,create)
@@ -66,6 +66,26 @@ module StateMachine =
         let shrunk = StateMachine.shrink spec run
         test <@ shrunk |> Seq.exists (fun e -> (e.Operations.Head |> fst :?> faultyInc).n < 5 ) @>
 
+    type disabledListShrinker =
+        //only take generator for arbitrary(no shrinker)
+        static member arb() = Arb.fromGen (Arb.Default.FsList().Generator)
+    type enabledListShrinker = 
+        static member arb() = Arb.Default.FsList()
+
+    [<Fact>]
+    let ``should not shrink if shrinking is disabled``() =
+        Arb.register<disabledListShrinker>() |> ignore
+        let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
+        let spec = checkFaultyCommandModelSpec -1
+        let run = { Setup = (0,create)
+                    TearDown = spec.TearDown
+                    Operations = [(new faultyInc(1) :> Operation<SimpleModel,int>,1)
+                                 ;(new faultyInc(2) :> Operation<SimpleModel,int>,2)] }
+
+        //since shrinker is disabled should not generate values through shrinking
+        let shrunk = StateMachine.shrink spec run |> List.ofSeq
+        Arb.register<enabledListShrinker>() |> ignore //restore default shrinker
+        test <@ shrunk.Length = 0 @>
 
     //only for specs with no preconditions
     //if a precondition is not found in time None is returned and the length would be 0
