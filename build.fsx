@@ -230,6 +230,10 @@ Target "Release" (fun _ ->
 
 let assertExitCodeZero x = if x = 0 then () else failwithf "Command failed with exit code %i" x
 let isDotnetSDKInstalled = try Shell.Exec("dotnet", "--version") = 0 with _ -> false
+let shellExec cmd args dir =
+    printfn "%s %s" cmd args
+    Shell.Exec(cmd, args, dir) |> assertExitCodeZero
+
 
 Target "SetVersionInProjectJSON" (fun _ ->
     !! "./src/**/project.json"
@@ -237,14 +241,14 @@ Target "SetVersionInProjectJSON" (fun _ ->
 )
 
 Target "Build.NetCore" (fun _ ->
-    Shell.Exec("dotnet", "restore") |> assertExitCodeZero
-    Shell.Exec("dotnet", "--verbose pack --configuration Release", "src/FsCheck") |> assertExitCodeZero
-    Shell.Exec("dotnet", "--verbose pack --configuration Release", "src/FsCheck.Xunit") |> assertExitCodeZero
-    Shell.Exec("dotnet", "--verbose pack --configuration Release", "src/FsCheck.NUnit") |> assertExitCodeZero
+    shellExec "dotnet" "restore" "."
+    shellExec "dotnet" "--verbose pack --configuration Release" "src/FsCheck"
+    shellExec "dotnet" "--verbose pack --configuration Release" "src/FsCheck.Xunit"
+    shellExec "dotnet" "--verbose pack --configuration Release" "src/FsCheck.NUnit"
 )
 
 Target "RunTests.NetCore" (fun _ ->
-    Shell.Exec("dotnet", "--verbose test --configuration Release", "tests/FsCheck.Test") |> assertExitCodeZero
+    shellExec "dotnet" "--verbose test --configuration Release" "tests/FsCheck.Test"
 )
 
 Target "Nuget.AddNetCore" (fun _ ->
@@ -253,8 +257,7 @@ Target "Nuget.AddNetCore" (fun _ ->
         let nupkg = sprintf "../../bin/%s.%s.nupkg" name buildVersion
         let netcoreNupkg = sprintf "bin/Release/%s.%s.nupkg" name buildVersion
 
-        Shell.Exec("dotnet", sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg, (sprintf "src/%s/" name))
-        |> assertExitCodeZero
+        shellExec "dotnet" (sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg) (sprintf "src/%s/" name)
 
 )
 
