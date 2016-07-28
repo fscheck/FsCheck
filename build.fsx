@@ -231,6 +231,11 @@ Target "Release" (fun _ ->
 let assertExitCodeZero x = if x = 0 then () else failwithf "Command failed with exit code %i" x
 let isDotnetSDKInstalled = try Shell.Exec("dotnet", "--version") = 0 with _ -> false
 
+Target "SetVersionInProjectJSON" (fun _ ->
+    !! "./src/**/project.json"
+    |> Seq.iter (DotNetCli.SetVersionInProjectJson release.NugetVersion)
+)
+
 Target "Build.NetCore" (fun _ ->
     Shell.Exec("dotnet", "restore") |> assertExitCodeZero
     Shell.Exec("dotnet", "--verbose pack --configuration Release", "src/FsCheck") |> assertExitCodeZero
@@ -270,6 +275,7 @@ Target "CI" DoNothing
 "Clean"
   =?> ("BuildVersion", isAppVeyorBuild)
   ==> "AssemblyInfo"
+  ==> "SetVersionInProjectJSON"
   ==> "Build"
   =?> ("Build.NetCore", isDotnetSDKInstalled)
   =?> ("RunTests.NetCore", isDotnetSDKInstalled)
