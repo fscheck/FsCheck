@@ -294,6 +294,7 @@ Target "CI" DoNothing
 
 "RunTests"
   ==> "PaketPack" 
+  =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
   ==> "CI"
 
 RunTargetOrDefault "RunTests"
