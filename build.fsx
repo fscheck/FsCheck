@@ -233,7 +233,7 @@ let isDotnetSDKInstalled = try Shell.Exec("dotnet", "--version") = 0 with _ -> f
 
 Target "SetVersionInProjectJSON" (fun _ ->
     !! "./src/**/project.json"
-    |> Seq.iter (DotNetCli.SetVersionInProjectJson release.NugetVersion)
+    |> Seq.iter (DotNetCli.SetVersionInProjectJson buildVersion)
 )
 
 Target "Build.NetCore" (fun _ ->
@@ -248,23 +248,14 @@ Target "RunTests.NetCore" (fun _ ->
 )
 
 Target "Nuget.AddNetCore" (fun _ ->
-    do
-      let nupkg = sprintf "../../bin/FsCheck.%s.nupkg" (release.NugetVersion)
-      let netcoreNupkg = sprintf "bin/Release/FsCheck.%s.nupkg" (release.NugetVersion)
 
-      Shell.Exec("dotnet", sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg, "src/FsCheck/") |> assertExitCodeZero
+    for name in [ "FsCheck"; "FsCheck.NUnit"; "FsCheck.Xunit" ] do
+        let nupkg = sprintf "../../bin/%s.%s.nupkg" name buildVersion
+        let netcoreNupkg = sprintf "bin/Release/%s.%s.nupkg" name buildVersion
 
-    do
-      let nupkg = sprintf "../../bin/FsCheck.NUnit.%s.nupkg" (release.NugetVersion)
-      let netcoreNupkg = sprintf "bin/Release/FsCheck.NUnit.%s.nupkg" (release.NugetVersion)
+        Shell.Exec("dotnet", sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg, (sprintf "src/%s/" name))
+        |> assertExitCodeZero
 
-      Shell.Exec("dotnet", sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg, "src/FsCheck.NUnit/") |> assertExitCodeZero
-
-    do
-      let nupkg = sprintf "../../bin/FsCheck.Xunit.%s.nupkg" (release.NugetVersion)
-      let netcoreNupkg = sprintf "bin/Release/FsCheck.Xunit.%s.nupkg" (release.NugetVersion)
-
-      Shell.Exec("dotnet", sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg, "src/FsCheck.Xunit/") |> assertExitCodeZero
 )
 
 // --------------------------------------------------------------------------------------
