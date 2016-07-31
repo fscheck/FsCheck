@@ -3,6 +3,7 @@ namespace FsCheck.Test
 
 module Property =
 
+    open Xunit
     open FsCheck
     open FsCheck.Xunit
     open System
@@ -28,7 +29,7 @@ module Property =
     let rec private symPropGen =
         let rec recGen size =
             match size with
-            | 0 -> Gen.oneof [Gen.constant Unit; Gen.map (Bool) generate; Gen.constant Exception]
+            | 0 -> Gen.oneof [Gen.constant Unit; Gen.map Bool generate; Gen.constant Exception]
             | n when n>0 ->
                 let subProp = recGen (size/2)
                 Gen.oneof
@@ -151,6 +152,12 @@ module Property =
             |> Prop.label (sprintf "expected = %A - actual = %A" expected actual)
             |> Prop.collect (depth symprop)
         )
+
+    [<Property(MaxTest=1)>]
+    let ``Or of exception and success should be success``() =
+        let a = Prop.ofTestable <| lazy failwith "crash"
+        let b =  Prop.ofTestable true
+        a .|. b
             
         
         
