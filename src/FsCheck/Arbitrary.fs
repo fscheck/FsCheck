@@ -10,27 +10,40 @@
 
 namespace FsCheck
 
+// Disable warnings about calling certain FsCheck functions from F#.
+// Using them internally within FsCheck is important for performance reasons.
+#nowarn "10001"
+
 open System
+
+#if PCL
+#else
 open System.Net
+open System.Net.Mail
+#endif
 
 ///Represents an int >= 0
 type NonNegativeInt = NonNegativeInt of int with
     member x.Get = match x with NonNegativeInt r -> r
+    override x.ToString() = x.Get.ToString()
     static member op_Explicit(NonNegativeInt i) = i
 
 ///Represents an int > 0
 type PositiveInt = PositiveInt of int with
     member x.Get = match x with PositiveInt r -> r
+    override x.ToString() = x.Get.ToString()
     static member op_Explicit(PositiveInt i) = i
 
 ///Represents an int <> 0
 type NonZeroInt = NonZeroInt of int with
     member x.Get = match x with NonZeroInt r -> r
+    override x.ToString() = x.Get.ToString()
     static member op_Explicit(NonZeroInt i) = i
 
 ///Represents a float that is not NaN or Infinity.
 type NormalFloat = NormalFloat of float with
     member x.Get = match x with NormalFloat f -> f
+    override x.ToString() = x.Get.ToString()
     static member op_Explicit(NormalFloat f) = f
     [<Obsolete("Will be removed in a future version.")>]
     static member get (NormalFloat f) = f
@@ -53,6 +66,7 @@ type Interval = Interval of int * int with
 ///Represents an int that can include int.MinValue and int.MaxValue.
 type IntWithMinMax = IntWithMinMax of int with
     member x.Get = match x with IntWithMinMax r -> r
+    override x.ToString() = x.Get.ToString()
     static member op_Explicit(IntWithMinMax i) = i
 
 ///Represents a non-empty Set.
@@ -103,18 +117,22 @@ type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) 
         F (table,fun x -> let y = f x in table := (x,y)::(!table); y)
 
 ///Use the generator for 'a, but don't shrink.
+[<Obsolete("Renamed to DoNotShrink.")>]
 type DontShrink<'a> = DontShrink of 'a
+
+///Use the generator for 'a, but don't shrink.
+type DoNotShrink<'a> = DoNotShrink of 'a
 
 ///Whereas most types are restricted by a size that grows
 ///as the test gets further, by applying this type the underlying
 ///type will ignore this size and always generate from the full range.
 ///Note that this only makes a difference for types that have a range -
-///currently Int16, Int32, Int64 have DontSize Arbitrary instances.
+///currently Int16, Int32, Int64 have DoNotSize Arbitrary instances.
 ///This is typically (and at least currently) only applicable for value types
 ///that are comparable, hence the type constraints.
-type DontSize<'a when 'a : struct and 'a : comparison> = 
-    DontSize of 'a with
-    static member Unwrap(DontSize a) : 'a = a
+type DoNotSize<'a when 'a : struct and 'a : comparison> = 
+    DoNotSize of 'a with
+    static member Unwrap(DoNotSize a) : 'a = a
 
 [<AutoOpen>]
 module ArbPatterns =
@@ -125,9 +143,10 @@ module Arb =
     open System.Globalization
     open System.Collections.Generic
     open System.Linq
-    open TypeClass
+    open TypeClass    
     open System.ComponentModel
     open System.Threading
+    open Data
 
     [<AbstractClass;Sealed>]
     type Default = class end
@@ -233,31 +252,6 @@ module Arb =
            override __.Generator = a.Generator |> Gen.map mapper |> Gen.where pred
            override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
-    
-//TODO
-//    /// Generate a subset of an existing set
-//    let subsetOf (s: Set<'a>) : Gen<Set<'a>> =
-//       gen { // Convert the set into an array
-//             let setElems: 'a[] = Array.ofSeq s
-//             // Generate indices into the array (up to the number of elements)
-//             let! size = Gen.choose(0, s.Count)
-//             let! indices = Gen.arrayOfSize (Gen.choose(0, s.Count-1)) size
-//             // Extract the elements
-//             let arr: 'a[] = indices |> Array.map (fun i -> setElems.[i])
-//             // Construct a set (which eliminates dups)
-//             return Set.ofArray arr }
-//
-//    /// Generate a non-empty subset of an existing (non-empty) set
-//    let nonEmptySubsetOf (s: Set<'a>) : Gen<Set<'a>> =
-//       gen { // Convert the set into an array
-//             let setElems: 'a[] = Array.ofSeq s
-//             // Generate indices into the array (up to the number of elements)
-//             let! size = Gen.choose(1, s.Count)
-//             let! indices = Gen.arrayOfLength (Gen.choose(0, s.Count-1)) size
-//             // Extract the elements
-//             let arr: 'a[] = indices |> Array.map (fun i -> setElems.[i])
-//             // Construct a set (which eliminates dups)
-//             return Set.ofArray arr }
   
     ///A collection of default generators.
     type Default with
@@ -290,10 +284,17 @@ module Arb =
             |> convert int16 int
 
         ///Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.
+        [<Obsolete("Renamed to DoNotSizeInt16.")>]
         static member DontSizeInt16() =
             let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
             fromGenShrink(gen, shrink)
-            |> convert (int16 >> DontSize) (DontSize.Unwrap >> int)
+            |> convert (int16 >> DoNotSize) (DoNotSize.Unwrap >> int)
+
+        ///Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.
+        static member DoNotSizeInt16() =
+            let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (int16 >> DoNotSize) (DoNotSize.Unwrap >> int)
 
         ///Generate arbitrary uint16 that is between 0 and size.
         static member UInt16() =
@@ -301,10 +302,17 @@ module Arb =
             |> convert (abs >> uint16) int
 
         ///Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
+        [<Obsolete("Renamed to DoNotSizeUInt16.")>]
         static member DontSizeUInt16() =
             let gen = Gen.choose(0, int UInt16.MaxValue)
             fromGenShrink(gen, shrink)
-            |> convert (uint16 >> DontSize) (DontSize.Unwrap >> int)
+            |> convert (uint16 >> DoNotSize) (DoNotSize.Unwrap >> int)
+
+        ///Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
+        static member DoNotSizeUInt16() =
+            let gen = Gen.choose(0, int UInt16.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (uint16 >> DoNotSize) (DoNotSize.Unwrap >> int)
             
         ///Generate arbitrary int32 that is between -size and size.
         static member Int32() = 
@@ -312,14 +320,25 @@ module Arb =
                             shrinkNumber)
 
         ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
+        [<Obsolete("Renamed to DoNotSizeInt32.")>]
         static member DontSizeInt32() =
             //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
             //so using this trick instead
             let gen =
-                Gen.two generate<DontSize<int16>>
-                |> Gen.map (fun (DontSize h,DontSize l) -> int ((uint32 h <<< 16) ||| uint32 l))
+                Gen.two generate<DoNotSize<int16>>
+                |> Gen.map (fun (DoNotSize h,DoNotSize l) -> int ((uint32 h <<< 16) ||| uint32 l))
             fromGenShrink(gen, shrink)
-            |> convert DontSize DontSize.Unwrap
+            |> convert DoNotSize DoNotSize.Unwrap
+
+        ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
+        static member DoNotSizeInt32() =
+            //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
+            //so using this trick instead
+            let gen =
+                Gen.two generate<DoNotSize<int16>>
+                |> Gen.map (fun (DoNotSize h,DoNotSize l) -> int ((uint32 h <<< 16) ||| uint32 l))
+            fromGenShrink(gen, shrink)
+            |> convert DoNotSize DoNotSize.Unwrap
 
         ///Generate arbitrary uint32 that is between 0 and size.
         static member UInt32() =
@@ -327,26 +346,42 @@ module Arb =
             |> convert (abs >> uint32) int
 
         ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        [<Obsolete("Renamed to DoNotSizeUInt32.")>]
         static member DontSizeUInt32() =
             let gen = Gen.choose(0, int UInt32.MaxValue)
             fromGenShrink(gen, shrink)
-            |> convert (uint32 >> DontSize) (DontSize.Unwrap >> int)
+            |> convert (uint32 >> DoNotSize) (DoNotSize.Unwrap >> int)
+
+        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        static member DoNotSizeUInt32() =
+            let gen = Gen.choose(0, int UInt32.MaxValue)
+            fromGenShrink(gen, shrink)
+            |> convert (uint32 >> DoNotSize) (DoNotSize.Unwrap >> int)
 
         ///Generate arbitrary int64 that is between -size and size.
         ///Note that since the size is an int32, this does not actually cover the full
-        ///range of int64. See DontSize<int64> instead.
+        ///range of int64. See DoNotSize<int64> instead.
         static member Int64() =
             //we can be relaxed here, for the above reasons.
             from<int32>
             |> convert int64 int32
 
         ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        [<Obsolete("Renamed to DoNotSizeInt64.")>]
         static member DontSizeInt64() =
             let gen =
-                Gen.two generate<DontSize<int32>>
-                |> Gen.map (fun (DontSize h, DontSize l) -> (int64 h <<< 32) ||| int64 l)
+                Gen.two generate<DoNotSize<int32>>
+                |> Gen.map (fun (DoNotSize h, DoNotSize l) -> (int64 h <<< 32) ||| int64 l)
             fromGenShrink (gen,shrinkNumber)
-            |> convert DontSize DontSize.Unwrap
+            |> convert DoNotSize DoNotSize.Unwrap
+
+        ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        static member DoNotSizeInt64() =
+            let gen =
+                Gen.two generate<DoNotSize<int32>>
+                |> Gen.map (fun (DoNotSize h, DoNotSize l) -> (int64 h <<< 32) ||| int64 l)
+            fromGenShrink (gen,shrinkNumber)
+            |> convert DoNotSize DoNotSize.Unwrap
         
         ///Generate arbitrary uint64 that is between 0 and size.
         static member UInt64() =
@@ -354,12 +389,21 @@ module Arb =
             |> convert (abs >> uint64) int
 
         ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        [<Obsolete("Renamed to DoNotSizeUInt64.")>]
         static member DontSizeUInt64() =
             let gen =
-                Gen.two generate<DontSize<uint32>>
-                |> Gen.map (fun (DontSize h, DontSize l) -> (uint64 h <<< 32) ||| uint64 l)
+                Gen.two generate<DoNotSize<uint32>>
+                |> Gen.map (fun (DoNotSize h, DoNotSize l) -> (uint64 h <<< 32) ||| uint64 l)
             fromGenShrink (gen,shrink)
-            |> convert DontSize DontSize.Unwrap
+            |> convert DoNotSize DoNotSize.Unwrap
+        
+        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        static member DoNotSizeUInt64() =
+            let gen =
+                Gen.two generate<DoNotSize<uint32>>
+                |> Gen.map (fun (DoNotSize h, DoNotSize l) -> (uint64 h <<< 32) ||| uint64 l)
+            fromGenShrink (gen,shrink)
+            |> convert DoNotSize DoNotSize.Unwrap
 
         ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float() = 
@@ -428,7 +472,7 @@ module Arb =
             let shrinker (s:string) = 
                     match s with
                     | null -> Seq.empty
-                    | _ -> s.ToCharArray() |> Array.toList |> shrink |> Seq.map (fun chars -> new String(List.toArray chars))
+                    | _ -> s.ToCharArray() |> shrink |> Seq.map (fun chars -> new String(chars))
             fromGenShrink (generator,shrinker)
 
         ///Generate an option value that is 'None' 1/8 of the time.
@@ -466,11 +510,13 @@ module Arb =
             { new Arbitrary<list<'a>>() with
                 override __.Generator = Gen.listOf generate
                 override __.Shrinker l =
-                    match l with
-                    | [] ->         Seq.empty
-                    | (x::xs) ->    seq { yield xs
-                                          for xs' in shrink xs -> x::xs'
-                                          for x' in shrink x -> x'::xs }
+                    let rec shrinkList l =
+                        match l with
+                        | [] ->         Seq.empty
+                        | (x::xs) ->    seq { yield xs
+                                              for xs' in shrinkList xs -> x::xs'
+                                              for x' in shrink x -> x'::xs }
+                    shrinkList l
             }
 
         ///Generate an object - a boxed char, string or boolean value.
@@ -489,11 +535,39 @@ module Arb =
                             | _ -> failwith "Unknown type in shrink of obj"
                         }
             }
+
         ///Generate a rank 1 array.
         static member Array() =
             { new Arbitrary<'a[]>() with
                 override __.Generator = Gen.arrayOf generate
-                override __.Shrinker a = a |> Array.toList |> shrink |> Seq.map List.toArray
+                override __.Shrinker arr =
+                    // Implementation is similar to this:
+                    //      arr |> Array.toList |> shrink |> Seq.map List.toArray
+                    // but specialized to arrays to eliminate intermediate list allocations.
+
+                    /// Given an element and an array, creates a new array by prepending
+                    /// the element to the array and returning the combined result.
+                    let prepend x (arr : _[]) =
+                        let len = arr.Length
+                        if len = 0 then [| x |]
+                        else
+                            let result = Array.zeroCreate (len + 1)
+                            result.[0] <- x
+                            Array.blit arr 0 result 1 len
+                            result
+
+                    let rec shrinkArray (arr : 'T[]) =
+                        if Array.isEmpty arr then Seq.empty else
+                        seq {
+                            let x = arr.[0]
+                            let xs = arr.[1..]
+                            yield xs
+
+                            for xs' in shrinkArray xs -> prepend x xs'
+                            for x' in shrink x -> prepend x' xs
+                        }
+
+                    shrinkArray arr
             }
 
         ///Generate a rank 2, zero based array.
@@ -655,7 +729,7 @@ module Arb =
 
         ///Generates an arbitrary TimeSpan. A TimeSpan is shrunk by removing days, hours, minutes, second and milliseconds.
         static member TimeSpan() =
-            let genTimeSpan = generate |> Gen.map (fun (DontSize ticks) -> TimeSpan ticks)
+            let genTimeSpan = generate |> Gen.map (fun (DoNotSize ticks) -> TimeSpan ticks)
             let shrink (t: TimeSpan) = 
                 if t.Days > 0 then
                     seq { yield TimeSpan(0, t.Hours, t.Minutes, t.Seconds, t.Milliseconds) }
@@ -828,124 +902,7 @@ module Arb =
             |> convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
 
         static member Culture() =
-#if PCL
-            let cultureNames = [
-                "af"; "af-ZA";
-                "am"; "am-ET";
-                "ar"; "ar-AE"; "ar-BH"; "ar-DZ"; "ar-EG"; "ar-IQ"; "ar-JO"; "ar-KW"; "ar-LB"; "ar-LY"; "ar-MA"; "ar-OM"; "ar-QA"; "ar-SA"; "ar-SY"; "ar-TN"; "ar-YE"; "arn"; "arn-CL";
-                "as"; "as-IN";
-                "az"; "az-Cyrl"; "az-Cyrl-AZ"; "az-Latn"; "az-Latn-AZ";
-                "ba"; "ba-RU";
-                "be"; "be-BY";
-                "bg"; "bg-BG";
-                "bn"; "bn-BD"; "bn-IN";
-                "bo"; "bo-CN";
-                "br"; "br-FR";
-                "bs"; "bs-Cyrl"; "bs-Cyrl-BA"; "bs-Latn"; "bs-Latn-BA";
-                "ca"; "ca-ES";
-                "co"; "co-FR";
-                "cs"; "cs-CZ";
-                "cy"; "cy-GB";
-                "da"; "da-DK";
-                "de"; "de-AT"; "de-CH"; "de-DE"; "de-LI"; "de-LU";
-                "dsb"; "dsb-DE";
-                "dv"; "dv-MV";
-                "el"; "el-GR";
-                "en"; "en-029"; "en-AU"; "en-BZ"; "en-CA"; "en-GB"; "en-IE"; "en-IN"; "en-JM"; "en-MY"; "en-NZ"; "en-PH"; "en-SG"; "en-TT"; "en-US"; "en-ZA"; "en-ZW";
-                "es"; "es-AR"; "es-BO"; "es-CL"; "es-CO"; "es-CR"; "es-DO"; "es-EC"; "es-ES"; "es-GT"; "es-HN"; "es-MX"; "es-NI"; "es-PA"; "es-PE"; "es-PR"; "es-PY"; "es-SV"; "es-US"; "es-UY"; "es-VE";
-                "et"; "et-EE";
-                "eu"; "eu-ES";
-                "fa"; "fa-IR";
-                "fi"; "fi-FI"; "fil"; "fil-PH";
-                "fo"; "fo-FO";
-                "fr"; "fr-BE"; "fr-CA"; "fr-CH"; "fr-FR"; "fr-LU"; "fr-MC";
-                "fy"; "fy-NL";
-                "ga"; "ga-IE";
-                "gd"; "gd-GB";
-                "gl"; "gl-ES";
-                "gsw"; "gsw-FR";
-                "gu"; "gu-IN";
-                "ha"; "ha-Latn"; "ha-Latn-NG";
-                "he"; "he-IL";
-                "hi"; "hi-IN";
-                "hr"; "hr-BA"; "hr-HR";
-                "hsb"; "hsb-DE";
-                "hu"; "hu-HU";
-                "hy"; "hy-AM";
-                "id"; "id-ID";
-                "ig"; "ig-NG";
-                "ii"; "ii-CN";
-                "is"; "is-IS";
-                "it"; "it-CH"; "it-IT";
-                "iu"; "iu-Cans"; "iu-Cans-CA"; "iu-Latn"; "iu-Latn-CA";
-                "ja"; "ja-JP";
-                "ka"; "ka-GE";
-                "kk"; "kk-KZ";
-                "kl"; "kl-GL";
-                "km"; "km-KH";
-                "kn"; "kn-IN";
-                "ko"; "ko-KR"; "kok"; "kok-IN";
-                "ky"; "ky-KG";
-                "lb"; "lb-LU";
-                "lo"; "lo-LA";
-                "lt"; "lt-LT";
-                "lv"; "lv-LV";
-                "mi"; "mi-NZ";
-                "mk"; "mk-MK";
-                "ml"; "ml-IN";
-                "mn"; "mn-Cyrl"; "mn-MN"; "mn-Mong"; "mn-Mong-CN";
-                "moh"; "moh-CA";
-                "mr"; "mr-IN";
-                "ms"; "ms-BN"; "ms-MY";
-                "mt"; "mt-MT";
-                "nb"; "nb-NO";
-                "ne"; "ne-NP";
-                "nl"; "nl-BE"; "nl-NL";
-                "nn"; "nn-NO";
-                "no";
-                "nso"; "nso-ZA";
-                "oc"; "oc-FR";
-                "or"; "or-IN";
-                "pa"; "pa-IN";
-                "pl"; "pl-PL";
-                "prs"; "prs-AF";
-                "ps"; "ps-AF";
-                "pt"; "pt-BR"; "pt-PT";
-                "qut"; "qut-GT"; "quz"; "quz-BO"; "quz-EC"; "quz-PE";
-                "rm"; "rm-CH";
-                "ro"; "ro-RO";
-                "ru"; "ru-RU";
-                "rw"; "rw-RW";
-                "sa"; "sa-IN"; "sah"; "sah-RU";
-                "se"; "se-FI"; "se-NO"; "se-SE";
-                "si"; "si-LK";
-                "sk"; "sk-SK";
-                "sl"; "sl-SI";
-                "sma"; "sma-NO"; "sma-SE"; "smj"; "smj-NO"; "smj-SE"; "smn"; "smn-FI"; "sms"; "sms-FI";
-                "sq"; "sq-AL";
-                "sr"; "sr-Cyrl"; "sr-Cyrl-BA"; "sr-Cyrl-CS"; "sr-Cyrl-ME"; "sr-Cyrl-RS"; "sr-Latn"; "sr-Latn-BA"; "sr-Latn-CS"; "sr-Latn-ME"; "sr-Latn-RS";
-                "sv"; "sv-FI"; "sv-SE";
-                "sw"; "sw-KE";
-                "syr"; "syr-SY";
-                "ta"; "ta-IN";
-                "te"; "te-IN";
-                "tg"; "tg-Cyrl"; "tg-Cyrl-TJ";
-                "th"; "th-TH";
-                "tk"; "tk-TM";
-                "tn"; "tn-ZA";
-                "tr"; "tr-TR";
-                "tt"; "tt-RU";
-                "tzm"; "tzm-Latn"; "tzm-Latn-DZ";
-                "ug"; "ug-CN";
-                "uk"; "uk-UA";
-                "ur"; "ur-PK";
-                "uz"; "uz-Cyrl"; "uz-Cyrl-UZ"; "uz-Latn"; "uz-Latn-UZ";
-                "vi"; "vi-VN";
-                "wo"; "wo-SN";
-                "xh"; "xh-ZA";
-                "yo"; "yo-NG";
-                "zh"; "zh-CN"; "zh-HK"; "zh-Hans"; "zh-Hant"; "zh-MO"; "zh-SG"; "zh-TW";
-                "zu"; "zu-ZA";]
+#if PCL            
             let cultures = 
                 cultureNames |> Seq.choose (fun name -> try Some (CultureInfo name) with _ -> None)
                       |> Seq.append [ CultureInfo.InvariantCulture; 
@@ -986,6 +943,114 @@ module Arb =
             let shrinker (a:IPAddress) = a.GetAddressBytes() |> shrink |> Seq.filter (fun x -> Seq.length x = 4) |> Seq.map IPAddress
         
             fromGenShrink (generator, shrinker)
+
+        static member MailAddress() =
+            let isValidUser (user: string) = 
+                String.IsNullOrWhiteSpace user |> not &&
+                not (user.StartsWith("\"")) && 
+                not (user.EndsWith("\"")) && 
+                not (user.StartsWith(".")) && 
+                not (user.EndsWith(".")) && 
+                not (user.Contains(".."))
+            let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
+            let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
+
+            let split (str: string) = 
+                if String.IsNullOrWhiteSpace str || str.Length <= 1 then 
+                    Seq.empty
+                else seq {
+                     yield str.[0 .. str.Length / 2 - 1]
+                     yield str.[str.Length / 2 ..]
+                }
+
+            let createMailAddress name user host =
+                if String.IsNullOrWhiteSpace name then
+                    MailAddress (sprintf "%s@%s" user host)
+                else 
+                    MailAddress (sprintf "%s <%s@%s>" name user host)      
+
+            let name = 
+                gen {
+                    let! localLength = Gen.choose (1, 63)
+
+                    return! Gen.elements "abcdefghijklmnopqrstuvwxyz0123456789!#$%&'*+-/=?^_`.{|}~,:;[] "
+                            |> Gen.arrayOfLength (localLength - 2) 
+                            |> Gen.map String
+                }
+
+            let subdomain = 
+                gen {
+                    let subdomainCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-"
+                    let! subdomainLength = Gen.choose (1, 63)
+                    return! 
+                        Gen.elements subdomainCharacters 
+                        |> Gen.arrayOfLength subdomainLength 
+                        |> Gen.map String
+                        |> Gen.filter isValidSubdomain
+                }
+
+            let host = 
+                gen {
+                    let! tld = Gen.elements topLevelDomains
+                    let! numberOfSubdomains = Gen.frequency [(20, Gen.constant 0); (4, Gen.constant 1); (2, Gen.constant 2); (1, Gen.constant 3)]
+                
+                    return! 
+                        Gen.listOfLength numberOfSubdomains subdomain
+                        |> Gen.map (fun x -> x @ [tld] |> String.concat ".")
+                        |> Gen.filter isValidHost
+                }
+
+            let user = 
+                gen {
+                    let userChars = "abcdefghijklmnopqrstuvwxyz0123456789!#$%&'*+-/=?^_`{|}~"
+                    let! localLength = Gen.choose (1, 63)
+
+                    return! Gen.elements userChars
+                            |> Gen.arrayOfLength localLength
+                            |> Gen.map String
+                            |> Gen.filter isValidUser
+                }
+            
+            let generator = 
+                gen {
+                    let! name = name
+                    let! user = user
+                    let! host = host
+                    return createMailAddress name user host
+                }
+
+            let shrinkDisplayName (a:MailAddress) =
+                if String.IsNullOrWhiteSpace a.DisplayName then
+                    Seq.empty
+                else seq {
+                    yield! a.DisplayName |> split |> Seq.map (fun displayName -> createMailAddress displayName a.User a.Host)
+                    yield createMailAddress "" a.User a.Host
+                }
+
+            let shrinkUser (a:MailAddress) = 
+                a.User |> split |> Seq.map (fun user -> createMailAddress a.DisplayName user a.Host)
+
+            let shrinkHost (a:MailAddress) = 
+                let parts = a.Host.Split('.')    
+                let topLevelDomain = parts.[parts.Length - 1]
+
+                seq {
+                    if parts.Length > 1 then
+                        yield createMailAddress a.DisplayName a.User (parts.[1 ..] |> String.concat ".")
+
+                    if Seq.exists (fun tld -> tld = topLevelDomain) commonTopLevelDomains |> not then
+                        yield! commonTopLevelDomains 
+                               |> Seq.map (fun tld -> createMailAddress a.DisplayName a.User (Array.append parts.[0 .. parts.Length - 2] [|tld|] |> String.concat "."))
+                }
+            
+            let shrinker (a:MailAddress) = 
+                seq {
+                    yield! shrinkDisplayName a
+                    yield! shrinkUser a
+                    yield! shrinkHost a
+                } |> Seq.distinct
+        
+            fromGenShrink (generator, shrinker)
 #endif
 
         ///Arbitray instance for BigInteger.
@@ -994,8 +1059,13 @@ module Arb =
             |> convert bigint int
 
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
+        [<Obsolete("Renamed to DoNotShrink.")>]
         static member DontShrink() =
-            generate |> Gen.map DontShrink |> fromGen
+            generate |> Gen.map DoNotShrink |> fromGen
+
+        ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
+        static member DoNotShrink() =
+            generate |> Gen.map DoNotShrink |> fromGen
             
         ///Try to derive an arbitrary instance for the given type reflectively. 
         ///Generates and shrinks values for record, union, tuple and enum types.
@@ -1010,5 +1080,21 @@ module Arb =
                 override __.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
             
+// Compiler warning FS0044 occurs when a construct is deprecated.
+// This warning suppression has to sit in the end of the file, because once a
+// warning type is suppressed in a file, it can't be turned back on. There's a
+// feature request for that, though: 
+// https://fslang.uservoice.com/forums/245727-f-language/suggestions/6085102-allow-f-compiler-directives-like-nowarn-to-span
+#nowarn"44"
 
-    
+///Whereas most types are restricted by a size that grows
+///as the test gets further, by applying this type the underlying
+///type will ignore this size and always generate from the full range.
+///Note that this only makes a difference for types that have a range -
+///currently Int16, Int32, Int64 have DontSize Arbitrary instances.
+///This is typically (and at least currently) only applicable for value types
+///that are comparable, hence the type constraints.
+[<Obsolete("Renamed to DoNotSize.")>]
+type DontSize<'a when 'a : struct and 'a : comparison> = 
+    DontSize of 'a with
+    static member Unwrap(DontSize a) : 'a = a

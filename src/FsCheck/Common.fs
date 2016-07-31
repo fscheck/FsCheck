@@ -49,3 +49,24 @@ module internal Common =
 
     let (|MapContains|_|) key value =
         Map.tryFind key value
+
+
+    // The following function is taken from Tomas Petricek's stackoverflow answer:
+    // http://stackoverflow.com/a/12564899/2219351
+    /// Returns a sequence that, when iterated, 
+    /// yields elements of the underlying sequence while the given predicate returns true, 
+    /// and then returns the last element, but none further.
+    let takeWhilePlusLast predicate (s:seq<_>) = 
+        /// Iterates over the enumerator, yielding elements and
+        /// stops after an element for which the predicate does not hold
+        let rec loop (en:System.Collections.Generic.IEnumerator<_>) = seq {
+            if en.MoveNext() then
+                // Always yield the current, stop if predicate does not hold
+                yield en.Current
+            if predicate en.Current then
+                yield! loop en }
+
+        // Get enumerator of the sequence and yield all results
+        // (making sure that the enumerator gets disposed)
+        seq { use en = s.GetEnumerator()
+            yield! loop en }
