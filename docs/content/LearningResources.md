@@ -6,6 +6,7 @@
 * "An introduction to property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing/)
 * "Choosing properties for property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing-2/)
 * An interesting read about QuickCheck is in [Chapter 11](http://book.realworldhaskell.org/read/testing-and-quality-assurance.html) of the excellent [Real world Haskell](http://book.realworldhaskell.org) book. The book is freely available online, but do the authors a favor and buy it, it's really worth it also for F# programmers.
+* [This section](http://opcoast.com/demos/fsharp/part3.html) of the [Learning F#: Case study with Branch and Bound](http://opcoast.com/demos/fsharp/index.html) article demonstrates uses of FsCheck to test functions that arise in development of a branch and bound algorithm.
 
 ## Videos
 
