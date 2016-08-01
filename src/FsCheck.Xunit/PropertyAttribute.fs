@@ -31,6 +31,7 @@ type XunitRunner() =
 ///Override Arbitrary instances for FsCheck tests within the attributed class
 ///or module.
 [<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
+[<Obsolete("Please use PropertiesAttribute instead.")>]
 type ArbitraryAttribute(types:Type[]) =
     inherit Attribute()
     new(typ:Type) = ArbitraryAttribute([|typ|])
