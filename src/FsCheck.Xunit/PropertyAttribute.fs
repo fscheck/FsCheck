@@ -146,8 +146,9 @@ type public PropertyAttribute() =
 
     member internal __.Config = config
 
+///Set common configuration for all properties within this class or module
 [<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
-type public GeneralAttribute() = inherit PropertyAttribute()
+type public PropertiesAttribute() = inherit PropertyAttribute()
 
 /// The xUnit2 test runner for the PropertyAttribute that executes the test via FsCheck
 type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
@@ -162,7 +163,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                 |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
                 |> Seq.toArray
         let generalAttribute = 
-            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<GeneralAttribute>) 
+            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<PropertiesAttribute>) 
                 |> Seq.tryFind (fun _ -> true)
 
         let config =
