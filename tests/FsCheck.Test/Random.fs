@@ -6,7 +6,6 @@ module Random =
     open Xunit
     open FsCheck
     open FsCheck.Xunit
-    open FsCheck.Random
 
     
 //    for some reason, this test has started failing on AppVeyor. 

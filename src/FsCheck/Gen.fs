@@ -14,16 +14,36 @@ namespace FsCheck
 // Using them internally within FsCheck is important for performance reasons.
 #nowarn "10001"
 
-open Random
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="T">The type of the generated value.</typeparam>
+/// <typeparam name="TState">The type of the generator's state value.</typeparam>
+[<Struct>]
+type GeneratedValue<'T, 'TState> (value : 'T, newState : 'TState) =
+    member __.Value = value
+    member __.UpdatedState = newState
 
-type internal IGen = 
+[<Interface>]
+type internal IGen =
     abstract AsGenObject : Gen<obj>
-    
+
 ///Generator of a random value, based on a size parameter and a randomly generated int.
-and [<NoEquality;NoComparison>] Gen<'a> = 
-    private Gen of (int -> Random.Rnd -> 'a * Random.Rnd)
+and [<NoEquality;NoComparison>] Gen<'a> =
+    private Gen of (int -> Rnd -> GeneratedValue<'a, Rnd>)
         ///map the given function to the value in the generator, yielding a new generator of the result type.
-        member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> let s,r =  g n r in f s,r)
+        member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> =
+            let (Gen g) = x
+            Gen (fun size rngState ->
+                // Use the generator to generate a random value.
+                let generatedValue = g size rngState
+
+                // Apply the mapping to the generated value.
+                let mappedValue = f generatedValue.Value
+
+                // Return the generated+mapped value and the updated PRNG state.
+                GeneratedValue (mappedValue, generatedValue.UpdatedState))
+
     interface IGen with
         member x.AsGenObject = x.Map box
 
@@ -60,12 +80,13 @@ type Arbitrary<'a>() =
 [<AutoOpen>]
 module GenBuilder =
 
-    let private result x = Gen (fun _ r -> x,r)
+    let private result x = Gen (fun _ r -> GeneratedValue(x,r))
 
     let private bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
-        Gen (fun n r0 -> let v,r1 = m n r0
-                         let (Gen m') = k v
-                         m' n r1)
+        Gen (fun n r0 ->
+            let v_r1 = m n r0
+            let (Gen m') = k v_r1.Value
+            m' n v_r1.UpdatedState)
 
     let private delay (f : unit -> Gen<_>) : Gen<_> = 
         Gen (fun n r -> match f() with (Gen g) -> g n r)
@@ -73,11 +94,12 @@ module GenBuilder =
     let rec private doWhile p (Gen m) =
         let rec go pred size r0 =
             if pred() then
-                let _,r1 = m size r0
+                let r1 = (m size r0).UpdatedState
                 go pred size r1
             else
                 r0
-        Gen (fun n r -> (),go p n r)
+        Gen (fun n r ->
+            GeneratedValue ((), go p n r))
 
     let private tryFinally (Gen m) handler = 
         Gen (fun n r -> try m n r finally handler ())
@@ -93,7 +115,7 @@ module GenBuilder =
         member __.Delay(f) : Gen<_> = delay f
         member __.Combine(m1, m2) = bind m1 (fun () -> m2)
         member __.TryFinally(m, handler) = tryFinally m handler
-        member __.TryWith(Gen m, handler) = Gen (fun n r -> try m n r with e -> handler e,r)
+        member __.TryWith(Gen m, handler) = Gen (fun n r -> try m n r with e -> GeneratedValue(handler e,r))
         member __.Using (a, k) =  using a k
         member __.ReturnFrom (g:Gen<_>) = g
         member __.While(p, m:Gen<_>) = doWhile p m
@@ -118,7 +140,6 @@ type WeightAndValue<'a> =
 module Gen =
 
     open Common
-    open Random
     open System
     open System.Collections.Generic
     open System.ComponentModel
@@ -147,8 +168,9 @@ module Gen =
     ///Generates a value of the give size with the given seed.
     //[category: Generating test values]
     [<CompiledName("Eval")>]
-    let eval size seed (Gen m) =
-        m size seed |> fst
+    let eval n rnd (Gen m) = 
+        let size,rnd' = Random.rangeInt (0, n, rnd)
+        (m size rnd').Value
 
     ///Generates n values of the given size.
     //[category: Generating test values]
@@ -162,7 +184,9 @@ module Gen =
     ///Generates an integer between l and h, inclusive.
     //[category: Creating generators]
     [<CompiledName("Choose")>]
-    let choose (l,h) = Gen (fun _ r -> Random.rangeInt (l,h) r) 
+    let choose (l,h) = Gen (fun _ r ->
+        let x, r = Random.rangeInt (l,h,r)
+        GeneratedValue (x, r))
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
@@ -332,10 +356,11 @@ module Gen =
     let sequence l = 
         let rec go gs acc size r0 = 
             match gs with
-            | [] -> List.rev acc,r0
+            | [] ->
+                GeneratedValue (List.rev acc, r0)
             | (Gen g)::gs' ->
-                let y,r1 = g size r0
-                go gs' (y::acc) size r1
+                let y_r1 = g size r0
+                go gs' (y_r1.Value::acc) size y_r1.UpdatedState
         Gen(fun n r -> go (Seq.toList l) [] n r)
 
     ///Sequence the given list of generators into a generator of a list.
@@ -549,7 +574,7 @@ module Gen =
 
     ///Promote the given function f to a function generator. Only used for generating arbitrary functions.
     let internal promote f = Gen (fun n r -> let r1,r2 = Random.split r 
-                                             (fun a -> let (Gen m) = f a in m n r1 |> fst),r2)
+                                             GeneratedValue ((fun a -> let (Gen m) = f a in (m n r1).Value),r2))
 
     ///Basic co-arbitrary generator transformer, which is dependent on an int.
     ///Only used for generating arbitrary functions.
@@ -566,7 +591,7 @@ module Gen =
                     toCounter.Add(value,!counter)
                     counter := !counter + 1
                     !counter - 1
-        let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
+        let rec rands r0 = seq { let r1,r2 = Random.split r0 in yield r1; yield! (rands r2) }
         fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.

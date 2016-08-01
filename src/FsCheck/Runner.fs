@@ -28,7 +28,7 @@ type TestResult =
                 * list<obj>(*the original arguments that produced the failed test*)
                 * list<obj>(*the shrunk arguments that produce a failed test*)
                 * Outcome(*possibly exception or timeout that falsified the property*) 
-                * Random.Rnd (*the seed used*)
+                * Rnd (*the seed used*)
     | Exhausted of TestData
 
 
@@ -51,7 +51,7 @@ type Config =
       ///The maximum number of tests where values are rejected, e.g. as the result of ==>
       MaxFail       : int
       ///If set, the seed to use to start testing. Allows reproduction of previous runs.
-      Replay        : Random.Rnd option
+      Replay        : Rnd option
       ///Name of the test.
       Name          : string
       ///The size to use for the first test.
