@@ -43,8 +43,8 @@ type Result =
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
     static member (|||) (l,r) =
         match (l.Outcome, r.Outcome) with
-        | (Outcome.Exception _,_) -> l //here a potential exception in r is thrown away...
-        | (_,Outcome.Exception _) -> r
+        | (Outcome.Exception _,_) -> r
+        | (_,Outcome.Exception _) -> l
         | (Outcome.Timeout _,_) -> l
         | (_,Outcome.Timeout _) -> r
         | (_,Outcome.False) -> l

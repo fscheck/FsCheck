@@ -10,6 +10,10 @@
 
 namespace FsCheck
 
+// Disable warnings about calling certain FsCheck functions from F#.
+// Using them internally within FsCheck is important for performance reasons.
+#nowarn "10001"
+
 open Random
 
 type internal IGen = 
@@ -141,20 +145,19 @@ module Gen =
     [<CompiledName("Resize")>]
     let resize newSize (Gen m) = Gen (fun _ r -> m newSize r)
 
-    ///Generates a value with maximum size n.
+    ///Generates a value of the give size with the given seed.
     //[category: Generating test values]
     [<CompiledName("Eval")>]
-    let eval n rnd (Gen m) = 
-        let size,rnd' = range (0,n) rnd
-        m size rnd'
+    let eval size seed (Gen m) =
+        m size seed
 
     ///Generates n values of the given size.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sample size n gn  = 
+    let sample size n generator  = 
         let rec sample i seed samples =
             if i = 0 then samples
-            else sample (i-1) (Random.stdSplit seed |> snd) (eval size seed gn :: samples)
+            else sample (i-1) (Random.stdSplit seed |> snd) (eval size seed generator :: samples)
         sample n (Random.newSeed()) []
 
     ///Generates an integer between l and h, inclusive.
@@ -164,28 +167,34 @@ module Gen =
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
-    [<CompiledName("Elements")>]
-    let elements xs = 
-        choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
+    [<CompiledName("Elements"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let elementsArr ([<ParamArrayAttribute>] values : array<_>) =
+        // Similar to `elements` but specialized to arrays for performance reasons.
+        choose (0, values.Length - 1) |> map (Array.get values)
 
-    [<CompiledName("GrowingElements")>]
+    ///Build a generator that randomly generates one of the values in the given non-empty seq.
+    //[category: Creating generators]
+    [<CompiledName("Elements")>]
+    let elements (xs : seq<_>) =
+        // If the sequence is an array, use the implementation specialized for arrays.
+        match xs with
+        | :? array<_> as arr ->
+            elementsArr arr
+        | _ ->
+            choose (0, (Seq.length xs)-1) |> map (flip Seq.nth xs)
+
     ///Build a generator that takes a non-empty sequence and randomly generates
     ///one of the values among an initial segment of that sequence. The size of
     ///this initial segment increases with the size parameter. Essentially this
     ///generator is Gen.elements but taking also the runtime size into account.
     //[category: Creating generators]
+    [<CompiledName("GrowingElements")>]
     let growingElements xs =
         let arr = Seq.toArray xs
         sized (fun s ->
             let s' = max 1 s
             let n  = min arr.Length s'
             elements (arr |> Seq.take n))
-
-    ///Build a generator that randomly generates one of the values in the given non-empty seq.
-    //[category: Creating generators]
-    [<CompiledName("Elements"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let elementsArr ([<ParamArrayAttribute>] values : array<_>) = 
-        values |> elements
 
     ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
     ///equal probability.
@@ -198,10 +207,17 @@ module Gen =
     //[category: Creating generators from generators]
     [<CompiledName("OneOf"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let oneOfArr ([<ParamArrayAttribute>]  generators : array<Gen<_>>) = 
-        generators |> oneof
+        // Effectively the same as:
+        //  generators |> oneof
+        // but specialized to arrays for performance.
+        gen.Bind(elementsArr generators, id)
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
+    /// <summary>
+    /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    /// given probabilities. The sum of the probabilities must be larger than zero.
+    /// </summary>
+    /// <param name="xs">Sequence of tuples where each tuple contains a weight and a generator.</param>
+    /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency")>]
     let frequency xs =
@@ -210,27 +226,42 @@ module Gen =
         let rec pick i n =
             let k,x = xs.[i]
             if n<=k then x else pick (i+1) (n-k)
-        gen.Bind(choose (1,tot), pick 0)
+        if tot <= 0 then 
+            invalidArg "xs" "Frequency was called with a sum of probabilities less than or equal to 0. No elements can be generated."
+        else
+            gen.Bind(choose (1,tot), pick 0)
 
     let private frequencyOfWeighedSeq ws = 
         ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> frequency
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
+    /// <summary>
+    /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    /// given probabilities. The sum of the probabilities must be larger than zero.
+    /// </summary>
+    /// <param name="weightedValues">Sequence of weighted generators.</param>
+    /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let frequencySeqWeightAndValue ( weightedValues : seq<WeightAndValue<Gen<'a>>> ) =
         weightedValues |> frequencyOfWeighedSeq
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
+    /// <summary>
+    /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    /// given probabilities. The sum of the probabilities must be larger than zero.
+    /// </summary>
+    /// <param name="weightedValues">Array of weighted generators.</param>
+    /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let frequencyWeightAndValueArr ( [<ParamArrayAttribute>] weightedValues : WeightAndValue<Gen<'a>>[] ) =
         weightedValues |> frequencyOfWeighedSeq
 
-    ///Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    ///given probabilities. The sum of the probabilities must be larger than zero.
+    /// <summary>
+    /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
+    /// given probabilities. The sum of the probabilities must be larger than zero.
+    /// </summary>
+    /// <param name="weightedValues">Array of tuples where each tuple contains a weight and a generator.</param>
+    /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let frequencyTupleArr ( [<ParamArrayAttribute>] weightedValues : (int * Gen<'a>)[] ) =
@@ -313,13 +344,37 @@ module Gen =
     //[category: Creating generators from generators]
     [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let sequenceToSeq generators = 
-        generators |> sequence |> map List.toSeq
+        // This implementation is similar to that for arrays and lists but is specialized
+        // to sequences to avoid intermediate conversion to an intermediate list.
+        Gen <| fun size rnd ->
+            seq {
+            let mutable r' = rnd
+            for (Gen g) in generators do
+                let r1, r2 = split r'
+                r' <- r2
+                yield g size r1
+            }
 
     ///Sequence the given list of generators into a generator of a list.
     //[category: Creating generators from generators]
     [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let sequenceToArr ([<ParamArrayAttribute>]generators:array<Gen<_>>) = 
-        generators |> sequence |> map List.toArray
+        if Object.ReferenceEquals (null, generators) then
+            nullArg "generators"
+
+        // This implementation is the same as that used for lists and sequences,
+        // but is specialized for arrays (to avoid intermediate allocations which
+        // would otherwise be caused by conversion to/from list or seq).
+        Gen <| fun size rnd ->
+            let result = Array.zeroCreate generators.Length
+            let mutable r' = rnd
+            for i = 0 to generators.Length - 1 do
+                let (Gen g) = generators.[i]
+                let r1, r2 = split r'
+                r' <- r2
+                result.[i] <- g size r1
+
+            result
 
     ///Generates a list of given length, containing values generated by the given generator.
     //[category: Creating generators from generators]
@@ -339,43 +394,76 @@ module Gen =
         gen {
             let copy = Array.copy xs
             let maxI = copy.Length - 1
-            let! indexes = [ for i in 0..maxI - 1 -> choose (i, maxI) ]
-                           |> sequence
-            indexes |> List.iteri (swap copy)
+            let! indexes =
+                [| for i in 0..maxI - 1 -> choose (i, maxI) |]
+                |> sequenceToArr
+            indexes |> Array.iteri (swap copy)
             return copy
         }
 
     ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
     ///if the given original generator did not generate any values that satisfied the predicate, after trying to
-    ///get values from by increasing its size.
+    ///get values by increasing its size.
+    ///
+    ///The `tryWhere` function is also aliased as `tryFilter`. These two functions are identical, but co-exist
+    ///so that you can choose the word that makes your code most readable in your given context.
     //[category: Creating generators from generators]
-    [<CompiledName("SuchThatOption"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let suchThatOption p gn =
+    [<CompiledName("TryWhere"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let tryWhere predicate generator = 
         let rec tryValue k n =
             match (k,n) with 
-            | (_,0) -> gen {return None }
-            | (k,n) -> gen {let! x = resize (2*k+n) gn
-                            if p x then return Some x else return! tryValue (k+1) (n-1) }
+            | (_,0) -> gen { return None }
+            | (k,n) -> gen { let! x = resize (2*k+n) generator
+                             if predicate x then return Some x else return! tryValue (k+1) (n-1) }
         sized (tryValue 0 << max 1)
 
-
-    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
-    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
-    ///the predicate is satisfied.
+    ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
+    ///if the given original generator did not generate any values that satisfied the predicate, after trying to
+    ///get values by increasing its size.
+    ///
+    ///The `tryFilter` function is an alias for the `tryWhere` function. These two functions are identical, but co-exist
+    ///so that you can choose the word that makes your code most readable in your given context.
     //[category: Creating generators from generators]
-    [<CompiledName("SuchThat")>]
-    let rec suchThat predicate generator =
-        gen {   let! mx = suchThatOption predicate generator
-                match mx with
-                | Some x    -> return x
-                | None      -> return! sized (fun n -> resize (n+1) (suchThat predicate generator)) }
+    [<CompiledName("TryFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let tryFilter predicate generator = tryWhere predicate generator
 
-    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
+    ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
+    ///if the given original generator did not generate any values that satisfied the predicate, after trying to
+    ///get values by increasing its size.
+    //[category: Creating generators from generators]
+    [<Obsolete("This function will be removed in a future version of FsCheck. Please use the synonyms tryWhere or tryFilter instead.");CompiledName("SuchThatOption"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let suchThatOption = tryWhere
+
+    ///Generates a value that satisfies a predicate. Contrary to tryWhere, this function keeps re-trying
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
     ///the predicate is satisfied.
+    ///
+    ///The `where` function is also aliased as `filter`. These two functions are identical, but co-exist
+    ///so that you can choose the word that makes your code most readable in your given context.
     //[category: Creating generators from generators]
     [<CompiledName("Where");EditorBrowsable(EditorBrowsableState.Never)>]
-    let where predicate generator = suchThat predicate generator
+    let rec where predicate generator = 
+        gen { let! mx = tryWhere predicate generator
+              match mx with
+              | Some x    -> return x
+              | None      -> return! sized (fun n -> resize (n+1) (where predicate generator)) }
+    
+    ///Generates a value that satisfies a predicate. Contrary to tryFilter, this function keeps re-trying
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
+    ///the predicate is satisfied.
+    ///
+    ///The `filter` function is an alias for the `where` function. These two functions are identical, but co-exist
+    ///so that you can choose the word that makes your code most readable in your given context.
+    //[category: Creating generators from generators]
+    [<CompiledName("Filter");EditorBrowsable(EditorBrowsableState.Never)>]
+    let filter predicate generator = where predicate generator
+
+    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
+    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
+    ///the predicate is satisfied.
+    //[category: Creating generators from generators]
+    [<Obsolete("This function will be removed in a future version of FsCheck. Please use the synonyms where or filter instead.");CompiledName("SuchThat")>]
+    let rec suchThat = where
 
     /// Generates a list of random length. The maximum length depends on the
     /// size parameter.
@@ -383,7 +471,7 @@ module Gen =
     [<CompiledName("ListOf")>]
     let listOf gn =
         sized <| fun n ->
-            gen {   let! k = choose (0,n+1) //decrease chance of empty list
+            gen {   let! k = choose (0,n)
                     return! listOfLength k gn }
 
     /// Generates a non-empty list of random length. The maximum length 
@@ -423,7 +511,11 @@ module Gen =
     /// Generates an array of a specified length.
     //[category: Creating generators from generators]
     [<CompiledName("ArrayOf")>]
-    let arrayOfLength n (g: Gen<'a>) : Gen<'a[]> = listOfLength n g |> map Array.ofList
+    let arrayOfLength n (g: Gen<'a>) : Gen<'a[]> =
+        // For compatibility with the way `listOfLength` is implemented,
+        // if the length is negative we just return an empty array.
+        if n < 1 then Array.empty else Array.create n g
+        |> sequenceToArr
 
     /// Generates an array using the specified generator. The maximum length is the size+1.
     //[category: Creating generators from generators]

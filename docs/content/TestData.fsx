@@ -158,15 +158,374 @@ If `g` is a generator for type `t`, then
 - `three g` generates a triple of t's, 
 - `four g` generates a quadruple of t's, 
 - If xs is a list, then `elements xs` generates an arbitrary element of xs.
+- If xs is a list, then `growingElements xs` generates an arbitrary element among an initial segment of xs. The size of this initial segment increases with the size parameter.
 - `listOfLength n g` generates a list of exactly n t's. 
 - `listOf g` generates a list of t's whose length is determined by the size parameter
 - `nonEmptyListOf g` generates a non-empty list of t's whose length is determined by the size parameter.
 - `constant v` generates the value v.
-- `suchThat p g` generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
-- `suchThatOption p g` generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')
+- `where p g` or `filter p g` generates t's that satisfy the predicate p. Make sure there is a high chance that the predicate is satisfied.
+- `tryWhere p g` or `tryFilter p g` generates Some t's that satisfy the predicate p, and None if none are found. (After 'trying hard')
 - If xs is a sequence, then `shuffle xs` generates a random permutation of xs.
 
 All the generator combinators are functions on the Gen module. In C#, the names are the same just capitalized differently.
+
+### Generator examples
+
+The following examples use `Gen.sample` in order to show example output. In
+general, you shouldn't use `Gen.sample` when writing properties, but it can be
+helpful when developing or troubleshooting a useful custom generator.
+
+Please be aware that due to the non-deterministic nature of FsCheck, the output
+of calling `Gen.sample` will, in most cases, differ between calls.
+
+The `Gen.sample` function takes two arguments, in addition to the generator
+from which it samples. The first argument is the [size](#The-size-of-test-data)
+of the generated data. Some generators (like `Gen.constant` and `Gen.elements`)
+don't use the `size` argument. For these generators, any integer value will do.
+
+The second argument is the number of sample values to generate. Most examples
+below use `Gen.sample` to generate a small list of example values, for example
+a list of ten generated values.
+
+#### Constant
+
+The `Gen.constant` function is perhaps the simplest, and easiest, generator to
+understand. Even though it's part of a system that generates random values,
+this particular generator always returns the same value:*)
+
+(***define-output:ConstantExample***)
+Gen.constant (1, "Foo") |> Gen.sample 0 10
+
+(**In this example, the constant is a complex value (a tuple); it can also be a
+simple value, as for example a string or an integer. Since `Gen.constant`
+doesn't rely on the `size` argument, it's `0` in this example, but any value
+would do; it wouldn't change the result. As you can see from the return value,
+all singular elements returned is the same tuple.*)
+
+(***include-it:ConstantExample***)
+
+(**Since the purpose of FsCheck is to generate random values, you shouldn't
+need to use `Gen.constant` often. Still, it can come in handy if you need to
+keep the value of a particular type constant while you vary other values.
+
+#### Choose
+
+You can use the `Gen.choose` function to create a generator of singular integer
+values between a minimum and maximum value, both inclusive:*)
+
+(***define-output:ChooseBetweenZeroAndNineExample***)
+Gen.choose (0, 9) |> Gen.sample 0 10
+
+(**This example generates a single integer value between 0 and 9. Since
+`Gen.choose` doesn't rely on the `size` argument, it's `0` in this example,
+but any value would do; it wouldn't change the result.
+
+While `Gen.choose (0, 9)` generates a single integer value, `Gen.sample 0 10`
+generates 10 sample values:*)
+
+(***include-it:ChooseBetweenZeroAndNineExample***)
+
+(**If you supply values in the 'wrong order', `Gen.choose` will follow
+[Postel's law](https://en.wikipedia.org/wiki/Robustness_principle) and 'know
+what you meant':*)
+
+(***define-output:ChooseWhenLowIsHigherThanHigh***)
+Gen.choose (99, 42) |> Gen.sample 0 10
+
+(**In this example, the first value is greater than the second value, but
+`Gen.choose` will happily interpret this as a range, and produce values between
+42 and 99, both included:*)
+
+(***include-it:ChooseWhenLowIsHigherThanHigh***)
+
+(**Since both values are included, if you set both to the same value, you'll
+effectively constrain the generator to that single value, and it'll behave like
+`Gen.constant`.
+
+#### Elements
+
+You can use the `Gen.elements` function to create a generator of singular
+values drawn from a collection of possible values. The collection is inclusive,
+which means that both the first and last element, as well as all elements
+between, can be drawn.
+
+In the following example, a list of arbitrary integers define the collection of
+possible values. The result is a generator that creates `int` values guaranteed
+to be one of these values. Since `Gen.elements` doesn't rely on the `size`
+argument, it's `0` in this example, but any value would do; it wouldn't change
+the result.*)
+
+(***define-output:ElementsExample***)
+Gen.elements [42; 1337; 7; -100; 1453; -273] |> Gen.sample 0 10
+
+(**The result of this expression is a list of ten sample values. Each value is
+a single integer drawn from the collection of numbers:*)
+
+(***include-it:ElementsExample***)
+
+(**All elements are equally likely to be drawn from the collection; we say that
+the random function has a uniform distribution. One easy way to affect the
+distribution is to put more than one identical element into the collection:*)
+
+(***define-output:SkewedElementsExample***)
+Gen.elements ["foo"; "foo"; "bar"] |> Gen.sample 0 10
+
+(**In the above example, the value `"foo"` appears twice, so is twice as likely
+to be drawn from the collection:*)
+
+(***include-it:SkewedElementsExample***)
+
+(**The above examples all use `list` values as input, but you can use any `seq`
+expression, including `list` and `array` values, as long as the sequence is
+finite.
+
+#### GrowingElements
+
+Essentially `Gen.growingElements` is like `Gen.elements` but also taking `size` into account.
+
+You can use the `Gen.growingElements` function to create a generator of singular
+values drawn *among an initial segment* of possible values. The size of this
+initial segment increases with the `size` parameter.
+
+In the following example, a list of ten characters define the collection of
+possible values. The result is a generator that creates `char` values guaranteed
+to be one of these values. Since `Gen.growingElements` relies on the `size`
+argument, it's `3` in this example, which means only values from the segment
+`['a'; 'b'; 'c']` will be returned.*)
+
+(***define-output:GrowingElementsExample***)
+Gen.growingElements ['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'] |> Gen.sample 3 10
+
+(**The result of this expression is a list of ten sample values. Each value is
+a single character drawn from the segment `['a'; 'b'; 'c']`:*)
+
+(***include-it:GrowingElementsExample***)
+
+(**Let's run `Gen.growingElements` again, with the same input but with size `7`:*)
+
+(***define-output:GrowingElementsAnotherExample***)
+Gen.growingElements ['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'] |> Gen.sample 7 10
+
+(**The result of this expression is a list of ten sample values. Each value is
+now a single character drawn from the segment `['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g']`:*)
+
+(***include-it:GrowingElementsAnotherExample***)
+
+(**The above examples all use `list` values as input, but you can use any `seq`
+expression, including `list` and `array` values, as long as the sequence is
+finite.
+
+#### Map
+
+Sometimes, you need to use a generator of one type in order to create a
+generator of another type. For instance, you may need a `byte` value between 0
+and 127. That sounds just like a job for `Gen.choose`, but unfortunately,
+`Gen.choose (0, 127)` is a `Gen<int>`, and not a `Gen<byte>`. One way to
+produce a `Gen<byte>` from a `Gen<int>` is to use `Gen.map`:*)
+
+(***define-output:IntToByteMapExample***)
+Gen.choose (0, 127) |> Gen.map byte |> Gen.sample 0 10
+
+(**This example uses the `byte` _function_ to cast any `int` created by
+`Gen.choose (0, 127)` to a `byte` value:*)
+
+(***include-it:IntToByteMapExample***)
+
+(**This is only a basic example of the concept of `Gen.map`. In this particular
+example, you could also have used `Gen.elements [0uy..127uy]` to achieve the
+same result without using `Gen.map`, so let's consider a second
+example.
+
+Assume that you need to create a date in a particular month; e.g. November
+2019. You can do that by creating an integer for the day of the month, and then
+combine `Gen.map` with an anymous function to get the desired date:*)
+
+(***define-output:MapIntToDateExample***)
+Gen.choose (1, 30)
+|> Gen.map (fun i -> DateTime(2019, 11, i).ToString "u")
+|> Gen.sample 0 10
+
+(**In this example, the generated `DateTime` value is immediately formatted as
+a `string`, so that the output is more readable:*)
+
+(***include-it:MapIntToDateExample***)
+
+(**This causes the resulting generator to have the type `Gen<string>`, but if
+you omit calling `ToString "u"`, its type would have been `Gen<DateTime>`.
+
+#### Lists
+
+You can generate lists from individual value generators using `Gen.listOf`,
+`Gen.listOfLength`, and `Gen.nonEmptyListOf`. These functions are
+*combinators*, which means that they don't generate individual values
+themselves, but rather use another generator to build values. For instance,
+you can use `Gen.constant` to generate lists that all contain the same value:*)
+
+(***define-output:ConstantListOfExample***)
+Gen.constant 42 |> Gen.listOf |> Gen.sample 1 10
+
+(**This combination uses `Gen.constant 42` as an individual generator, and then
+generates lists containing the the number 42. While the value(s) in the list is
+always 42, the length of the generated lists varies.*)
+
+(***include-it:ConstantListOfExample***)
+
+(**The length of the generated list is determined by the `size` argument. In
+this example, the `size` argument is `1`, so the generated lists are short.
+Note that while there's a correlation beteen `size` and the length of the
+lists, you can't rely on a deterministic length. For that, there's
+`Gen.listOfLength`:*)
+
+(***define-output:ListOfLengthExample***)
+Gen.choose (24, 42) |> Gen.listOfLength 5 |> Gen.sample 0 10
+
+(**This example uses `Gen.choose (24, 42)` in order to generate individual
+integer values between 24 and 42. It then pipes this generator into
+`Gen.listOfLength 5` in order to generate lists with exactly five elements:*)
+
+(***include-it:ListOfLengthExample***)
+
+(**Notice that all sample lists have exactly five elements.
+
+You can also use `Gen.nonEmptyListOf` to create lists that are guaranteed to
+have at least one element. Like the other list generators, it uses a
+single-value generator to generate its elements:*)
+
+(***define-output:NonEmptyListExample***)
+Gen.elements ["foo"; "bar"; "baz"] |> Gen.nonEmptyListOf |> Gen.sample 20 4
+
+(**Like `Gen.listOf`, `Gen.nonEmptyListOf` uses `size` to control the length
+of the generated lists. They may still be small, but the larger the `size`
+argument, the larger the lists may become.*)
+
+(***include-it:NonEmptyListExample***)
+
+(**In this example, each element is drawn from the small set "foo", "bar", and
+"baz". The lists are guaranteed to have at least a single element, but may be
+longer.
+
+#### Shuffle
+
+You can use the `Gen.shuffle` function to create a generator that generates a
+random permutation of a given finite sequence.
+
+In the following example, the
+[metasyntactic variables](https://en.wikipedia.org/wiki/Metasyntactic_variable)
+"foo", "bar", "baz", and "qux" define the input sequence:*)
+
+(***define-output:ShuffleExample***)
+Gen.shuffle ["foo"; "bar"; "baz"; "qux"] |> Gen.sample 0 6
+
+(**Since `Gen.shuffle` doesn't rely on the `size` argument, it's `0` in this
+example, but any value would do; it wouldn't change the result.
+
+The result of this expression is a list of lists, where each list contains
+the original input list, but shuffled:*)
+
+(***include-it:ShuffleExample***)
+
+(**The above example uses a `list` value as input, but you can use any `seq`
+expression, including `list` and `array` values, as long as the sequence is
+finite.
+
+All shuffles are equally likely; the input order isn't excluded, so the
+output may be the same as the input. Due to the nature of combinatorics, this
+is more likely to happen the smaller the input list is.
+
+#### Tuples
+
+Sometimes you need to generate tuples of values. You can use the functions
+`Gen.two`, `Gen.three`, and `Gen.four` to turn a single-value generator into a
+generator of tuples.
+
+Imagine that you need to generate two-dimensional points; you may, for
+instance, be implementing
+[Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
+Points can be modelled as tuples of numbers. If you're modelling a grid, you
+can use integers:*)
+
+(***define-output:GenTwoIntegerExample***)
+Gen.choose (-100, 100) |> Gen.two |> Gen.sample 0 10
+
+(**`Gen.two` uses a single-value generator to create a generator of two-element
+tuples. This example generates 10 sample points, where each coordinate is
+between -100 and 100:*)
+
+(***include-it:GenTwoIntegerExample***)
+
+(**If you want to model a coordinate system in three-dimensional space, you may
+decide to use floating points instead:*)
+
+(***define-output:GenThreeFloatExample***)
+Gen.elements [-10.0..0.01..10.0] |> Gen.three |> Gen.sample 0 10
+
+(**In this example, you first use `Gen.elements` to draw a floating point value
+from between -10 and 10, with two decimals; that defines a `Gen<float>`.
+Second, `Gen.three` takes that `Gen<float>` and turns it into a
+`Gen<float * float * float>`:*)
+
+(***include-it:GenThreeFloatExample***)
+
+(**Finally, `Gen.four` transforms a single-value generator into a generator of
+four-element tuples. As all the other *combinators* in the `Gen` module, you
+can combine it with other functions to define more specific values. Imagine,
+for instance, that you need to create `System.Version` values. This type, which
+captures a version of something, for example an operating system, or a library,
+models version numbers as a composite of four numbers: *major*, *minor*,
+*build*, and *revision* - all integers. One of the constructor overloads of
+this class takes all four numbers, so you can combine `Gen.four` with `Gen.map`
+to create Version values:*)
+
+(***define-output:GenFourVersionExample***)
+Gen.choose (0, 9)
+|> Gen.four
+|> Gen.map (System.Version >> string)
+|> Gen.sample 0 10
+
+(**This example starts with `Gen.choose (0, 9)` to define a `Gen<int>` that
+creates integer values betwen 0 and 9 (both included). Second, you pipe the
+`Gen<int>` value into `Gen.four`, which returns a `Gen<int * int * int * int>`.
+Third, you can pipe that generator into `Gen.map`, using the constructor
+overload of `Version` that takes four integers; in F# 4, constructors can be
+treated as functions, and a constructor with four arguments can be treated as a
+function that takes a four-element tuple.*)
+
+(***include-it:GenFourVersionExample***)
+
+(**This example composes the `Version` constructor with the `string` function,
+in order to produce a more readable output. The resulting generator has the
+type `Gen<string>`, but if you remove the `string` composition, the type would
+be `Gen<Version>.`
+
+#### Filter
+
+While you can use the above generators and combinators to define various custom
+rules for generating values, occasionally you have a requirement where the
+easiest solution is to throw away some generated candidates. `Gen.filter` gives
+you that opportunity.
+
+Imagine, for example, that you have to create lists with two elements, but with
+the restriction that the two elements must be different. One way to do that
+could be to first generate a pair of values, and then use `Gen.filter` to
+remove all pairs where the elements are equal. Subsequently, you can use
+`Gen.map` to convert the pair to a list:*)
+
+(***define-output:GenFilterExample***)
+Gen.choose (1, 100)
+|> Gen.two
+|> Gen.filter (fun (x, y) -> x <> y)
+|> Gen.map (fun (x, y) -> [x; y])
+|> Gen.sample 0 10
+
+(**This expression generates 10 sample lists, each containing two different
+numbers:*)
+
+(***include-it:GenFilterExample***)
+
+(**When using `Gen.filter`, be sure to provide a predicate with a high chance
+of returning `true`. If the predicate discards 'too many' candidates, it may
+cause tests to run slower, or to not terminate at all. If your filter is
+aggressive, consider using `Gen.tryFilter` instead of `Gen.filter`.
     
 ## Default Generators and Shrinkers based on type
 

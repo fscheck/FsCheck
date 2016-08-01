@@ -50,6 +50,9 @@
     <Compile Include="..\FsCheck\Common.fs">
       <Link>Common.fs</Link>
     </Compile>
+    <Compile Include="..\FsCheck\Data.fs">
+      <Link>Data.fs</Link>
+    </Compile>
     <Compile Include="..\FsCheck\Random.fs">
       <Link>Random.fs</Link>
     </Compile>

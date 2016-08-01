@@ -64,6 +64,12 @@ module Gen =
                 |> Gen.frequency
                 |> sample 100
                 |> List.forall (isIn generatedValues)))
+
+    [<Fact>]
+    let ``frequency should throw argument exception if no element can be generated``() =
+        let prop = lazy (Gen.frequency [(0,Gen.constant 1)]) //used lazy since unqoute couldn't handle generator directly
+        raises<System.ArgumentException> <@ prop.Value @>
+        
     
     [<Property>]
     let Map (f:string -> int) v =
@@ -156,15 +162,15 @@ module Gen =
         |> List.exists ((<>) l)
    
     [<Property>]
-    let SuchThatOption (v:int) (predicate:int -> bool) =
+    let TryWhere (v:int) (predicate:int -> bool) =
         let expected = if predicate v then Some v else None
-        Gen.suchThatOption predicate (Gen.constant v)
+        Gen.tryWhere predicate (Gen.constant v)
         |> sample1
         |> ((=) expected)
     
     [<Property>]
-    let SuchThat (v:int) =
-        Gen.suchThat ((<=) 0) (Gen.elements [v;abs v])
+    let Where (v:int) =
+        Gen.where ((<=) 0) (Gen.elements [v;abs v])
         |> sample1
         |> ((=) (abs v))
     
