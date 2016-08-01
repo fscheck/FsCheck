@@ -99,6 +99,17 @@ module Runner =
         let ``should use Arb instance on method preferentially``(underTest:float) =
             underTest >= 0.0
 
+    [<Properties(Arbitrary = [| typeof<TestArbitrary2> |])>]
+    module ModuleWithProperties =
+
+        [<Property>]
+        let ``should use Arb instances from enclosing module``(underTest:float) =
+            underTest <= 0.0
+
+        [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
+        let ``should use Arb instance on method preferentially``(underTest:float) =
+            underTest >= 0.0
+
 module BugReproIssue195 =
 
     open FsCheck

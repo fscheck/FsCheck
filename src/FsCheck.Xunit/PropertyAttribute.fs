@@ -72,7 +72,7 @@ module internal PropertyConfig =
           EndSize        = extra.EndSize        |> orElse original.EndSize
           Verbose        = extra.Verbose        |> orElse original.Verbose
           QuietOnSuccess = extra.QuietOnSuccess |> orElse original.QuietOnSuccess
-          Arbitrary      = Array.append original.Arbitrary extra.Arbitrary }
+          Arbitrary      = Array.append extra.Arbitrary original.Arbitrary }
 
     let parseStdGen (str: string) =
         //if someone sets this, we want it to throw if it fails
