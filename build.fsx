@@ -89,7 +89,8 @@ Target "AssemblyInfo" (fun _ ->
           Attribute.Description package.Summary
           Attribute.Version release.AssemblyVersion
           Attribute.FileVersion release.AssemblyVersion
-        ] @ (if package.Name = "FsCheck" then [Attribute.InternalsVisibleTo("FsCheck.Test")] else []))
+        ] @ (if package.Name = "FsCheck" || package.Name = "FsCheck.Xunit"
+             then [Attribute.InternalsVisibleTo("FsCheck.Test")] else []))
     )
 )
 
