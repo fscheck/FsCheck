@@ -76,18 +76,17 @@ module Runner =
     let ``should pick up replay seeds from PropertyAttribute without parens``(_:int, _:string) =
         //testing the replay separately in other tests - this just checks we can run
         //this test
-        true =! true
+        ()
 
     [<Property(Replay="(54321,67584)")>]
     let ``should pick up replay seeds from PropertyAttribute with parens``(_:int, _:string) =
         //testing the replay separately in other tests - this just checks we can run
         //this test
-        true =! true
+        ()
 
     type TypeToInstantiate() =
         [<Property>]
-        member __.``Should run a property on an instance``(_:int) =
-            true =! true
+        member __.``Should run a property on an instance``(_:int) = ()
 
     [<Arbitrary(typeof<TestArbitrary2>)>]
     module ModuleWithArbitrary =

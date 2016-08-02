@@ -2,10 +2,10 @@
 namespace FsCheck.Test
 
 module Arbitrary =
-    
+
+    open Xunit    
     open FsCheck
     open FsCheck.Xunit
-    open global.Xunit
     open System
     open System.Globalization
     open System.Collections.Generic
@@ -206,7 +206,7 @@ module Arbitrary =
               ArgumentNullException("exc2") ]
         let catch (ThrowingFunction f) v = 
             try
-                let a = f v 
+                let _ = f v 
                 true
             with 
             | :? NullReferenceException as e -> e.Message = "exc1"
@@ -218,7 +218,7 @@ module Arbitrary =
     let ``ThrowingFunction throws exceptions`` (vs:list<int>) (ThrowingFunction f) =
         let catch f v = 
             try
-                let a : int = f v 
+                let _ : int = f v 
                 true
             with 
             | _ -> true

@@ -33,38 +33,38 @@ module StateMachine =
                 6 =! comm.Run 5
 
 
-    type faultyInc(n:int) =
+    type FaultyInc(n:int) =
         inherit Operation<SimpleModel,int>()
-        member val n = n with get
-        override __.Check (a, m) = if m > 2 then false.ToProperty() else true.ToProperty()
+        member __.N = n
+        override __.Check (_, m) = if m > 2 then false.ToProperty() else true.ToProperty()
         override __.Run m = m + n
         override __.ToString() = "faultyInc"
 
-    type faultyCmd = 
-        static member arb = 
+    type FaultyCmd = 
+        static member Arb = 
             // make sure that minimum counterexample cannot be found with generator .. therefore 5
-            let generator = Gen.constant (new faultyInc(5) :> Operation<SimpleModel,int>)
+            let generator = Gen.constant (new FaultyInc(5) :> Operation<SimpleModel,int>)
             // should be able to find minimum counterexample
-            let shrinker (op:Operation<SimpleModel,int>) = seq { for i in 1 .. (op :?> faultyInc).n - 1 do yield faultyInc i :> Operation<SimpleModel,int>} 
+            let shrinker (op:Operation<SimpleModel,int>) = seq { for i in 1 .. (op :?> FaultyInc).N - 1 do yield FaultyInc i :> Operation<SimpleModel,int>} 
             Arb.fromGenShrink(generator,shrinker)
         
     let checkFaultyCommandModelSpec size =
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
         { new Machine<_,_>(size) with
             member __.Setup = Gen.constant create |> Arb.fromGen
-            member __.Next _ = faultyCmd.arb.Generator }
+            member __.Next _ = FaultyCmd.Arb.Generator }
 
     [<Fact>]
     let ``should check faulty command spec and find minimum counterexample``() =
-        let arb = Arb.register<faultyCmd>() |> ignore
+        Arb.register<FaultyCmd>() |> ignore
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
         let spec = checkFaultyCommandModelSpec -1
         let run = { Setup = (0,create)
                     TearDown = spec.TearDown
-                    Operations = [(new faultyInc(5) :> Operation<SimpleModel,int>,5)] }
+                    Operations = [(new FaultyInc(5) :> Operation<SimpleModel,int>,5)] }
         //should contain an element smaller than 5 since they can't be generated but only shrunk
         let shrunk = StateMachine.shrink spec run
-        test <@ shrunk |> Seq.exists (fun e -> (e.Operations.Head |> fst :?> faultyInc).n < 5 ) @>
+        test <@ shrunk |> Seq.exists (fun e -> (e.Operations.Head |> fst :?> FaultyInc).N < 5 ) @>
 
 
     //only for specs with no preconditions
@@ -73,7 +73,7 @@ module StateMachine =
     let ``without stop command length of commands should be Machine.MaxNumberOfCommands``() =
         let specWithLength = checkSimpleModelSpec 3
         let runs = StateMachine.generate specWithLength |> Gen.sample 100 10
-        test <@ runs |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> cmds.Length = 3) @>
+        test <@ runs |> Seq.forall (fun { Operations = cmds } -> cmds.Length = 3) @>
 
     //every tenth command is a stop
     //used to see if it can terminate before reaching the MaxNumberOfCommands 
@@ -89,7 +89,7 @@ module StateMachine =
     let ``stop command can terminate before MaxNumberOfCommands is reached``() =
         let specWithLength = checkStoppingSpec 10
         let runs = StateMachine.generate specWithLength |> Gen.sample 100 20
-        let len = List.fold (fun acc { Setup = _,c; Operations = cmds } -> acc + cmds.Length) 0 runs
+        let len = List.fold (fun acc { Operations = cmds } -> acc + cmds.Length) 0 runs
         test <@ len > 0 && len < 200 @>
 
     //this spec is created using preconditions such that the only valid sequence is setFalse,setTrue
