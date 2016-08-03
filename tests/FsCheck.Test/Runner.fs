@@ -90,15 +90,31 @@ module Runner =
         let extra    = { PropertyConfig.zero with Arbitrary = [| typeof<TestArbitrary2> |] }
         let combined = PropertyConfig.combine extra original
 
-        test <@ combined.Arbitrary.[0] = typeof<TestArbitrary2> @>
+        combined.Arbitrary.[0] =! typeof<TestArbitrary2>
 
-    [<Fact>]
-    let ``PropertyConfig combine should favor extra config``() =
-        let original = { PropertyConfig.zero with MaxTest = Some 1 }
-        let extra    = { PropertyConfig.zero with MaxTest = Some 2 }
+    [<Property>]
+    let ``PropertyConfig combine should favor extra config``(orignalMaxTest, extraMaxTest) =
+        let original = { PropertyConfig.zero with MaxTest = Some orignalMaxTest }
+        let extra    = { PropertyConfig.zero with MaxTest = Some extraMaxTest }
         let combined = PropertyConfig.combine extra original
 
-        test <@ combined.MaxTest = Some 2 @>
+        combined.MaxTest =! Some extraMaxTest
+
+    [<Property>]
+    let ``PropertyConfig toConfig should favor specified setting``(maxTest) =
+        let propertyConfig = { PropertyConfig.zero with MaxTest = Some maxTest }
+        let testOutputHelper = new Sdk.TestOutputHelper()
+        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
+
+        config.MaxTest =! maxTest
+
+    [<Fact>]
+    let ``PropertyConfig toConfig should use defaults as a fallback``() =
+        let propertyConfig = PropertyConfig.zero
+        let testOutputHelper = new Sdk.TestOutputHelper()
+        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
+
+        config.MaxTest =! Config.Default.MaxTest
 
     type TypeToInstantiate() =
         [<Property>]
