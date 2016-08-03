@@ -1,4 +1,9 @@
-### 2.5.1 - To be released
+### 2.6.0 - 3 August 2016
+  * In FsCheck.Xunit, allow configuration on module level of all settings using PropertiesAttribute. Deprecated ArbitraryAttribute. (by Tomasz Heimowski)
+  * Add ToString for number wrappers so that output shows the underlying number (by Mauricio Scheffer)
+  * Faster array generation and shrinking (by Jack Pappas)
+  * Bug fix: Prop.classify did not take the last test into account. (by Silvio Marcovic)
+  * Bug fix: or property combinator failed overall test if an exception was thrown.
 
 ### 2.5.0 - 7 June 2016
   * Add Gen.growingElements.
