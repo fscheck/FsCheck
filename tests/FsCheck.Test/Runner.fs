@@ -84,6 +84,38 @@ module Runner =
         //this test
         ()
 
+    [<Fact>]
+    let ``PropertyConfig combine should prepend extra Arbitrary``() =
+        let original = { PropertyConfig.zero with Arbitrary = [| typeof<TestArbitrary1> |] }
+        let extra    = { PropertyConfig.zero with Arbitrary = [| typeof<TestArbitrary2> |] }
+        let combined = PropertyConfig.combine extra original
+
+        combined.Arbitrary.[0] =! typeof<TestArbitrary2>
+
+    [<Property>]
+    let ``PropertyConfig combine should favor extra config``(orignalMaxTest, extraMaxTest) =
+        let original = { PropertyConfig.zero with MaxTest = Some orignalMaxTest }
+        let extra    = { PropertyConfig.zero with MaxTest = Some extraMaxTest }
+        let combined = PropertyConfig.combine extra original
+
+        combined.MaxTest =! Some extraMaxTest
+
+    [<Property>]
+    let ``PropertyConfig toConfig should favor specified setting``(maxTest) =
+        let propertyConfig = { PropertyConfig.zero with MaxTest = Some maxTest }
+        let testOutputHelper = new Sdk.TestOutputHelper()
+        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
+
+        config.MaxTest =! maxTest
+
+    [<Fact>]
+    let ``PropertyConfig toConfig should use defaults as a fallback``() =
+        let propertyConfig = PropertyConfig.zero
+        let testOutputHelper = new Sdk.TestOutputHelper()
+        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
+
+        config.MaxTest =! Config.Default.MaxTest
+
     type TypeToInstantiate() =
         [<Property>]
         member __.``Should run a property on an instance``(_:int) = ()
@@ -98,6 +130,30 @@ module Runner =
         [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
         let ``should use Arb instance on method preferentially``(underTest:float) =
             underTest >= 0.0
+
+    [<Properties(Arbitrary = [| typeof<TestArbitrary2> |])>]
+    module ModuleWithPropertiesArb =
+
+        [<Property>]
+        let ``should use Arb instances from enclosing module``(underTest:float) =
+            underTest <= 0.0
+
+        [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
+        let ``should use Arb instance on method preferentially``(underTest:float) =
+            underTest >= 0.0
+
+    [<Properties( MaxTest = 1, StartSize = 100, EndSize = 100, Replay = "01234,56789")>]
+    module ModuleWithPropertiesConfig =
+
+        [<Property>]
+        let ``should use configuration from enclosing module``(x:int) =
+            // checking if the generated value is always the same (-59) from "01234,56789" Replay
+            x =! -59
+
+        [<Property( Replay = "12345,67890")>]
+        let ``should use configuration on method preferentially``(x:int) =
+            // checking if the generated value is always the same (18) from "12345,67890" Replay
+            x =! 18
 
 module BugReproIssue195 =
 
