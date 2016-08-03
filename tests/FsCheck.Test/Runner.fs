@@ -84,6 +84,22 @@ module Runner =
         //this test
         ()
 
+    [<Fact>]
+    let ``PropertyConfig combine should prepend extra Arbitrary``() =
+        let original = { PropertyConfig.zero with Arbitrary = [| typeof<TestArbitrary1> |] }
+        let extra    = { PropertyConfig.zero with Arbitrary = [| typeof<TestArbitrary2> |] }
+        let combined = PropertyConfig.combine extra original
+
+        test <@ combined.Arbitrary.[0] = typeof<TestArbitrary2> @>
+
+    [<Fact>]
+    let ``PropertyConfig combine should favor extra config``() =
+        let original = { PropertyConfig.zero with MaxTest = Some 1 }
+        let extra    = { PropertyConfig.zero with MaxTest = Some 2 }
+        let combined = PropertyConfig.combine extra original
+
+        test <@ combined.MaxTest = Some 2 @>
+
     type TypeToInstantiate() =
         [<Property>]
         member __.``Should run a property on an instance``(_:int) = ()
