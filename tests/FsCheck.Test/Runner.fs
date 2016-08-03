@@ -100,7 +100,7 @@ module Runner =
             underTest >= 0.0
 
     [<Properties(Arbitrary = [| typeof<TestArbitrary2> |])>]
-    module ModuleWithProperties =
+    module ModuleWithPropertiesArb =
 
         [<Property>]
         let ``should use Arb instances from enclosing module``(underTest:float) =
@@ -109,6 +109,19 @@ module Runner =
         [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
         let ``should use Arb instance on method preferentially``(underTest:float) =
             underTest >= 0.0
+
+    [<Properties( MaxTest = 1, StartSize = 100, EndSize = 100, Replay = "01234,56789")>]
+    module ModuleWithPropertiesConfig =
+
+        [<Property>]
+        let ``should use configuration from enclosing module``(x:int) =
+            // checking if the generated value is always the same (-59) from "01234,56789" Replay
+            x =! -59
+
+        [<Property( Replay = "12345,67890")>]
+        let ``should use configuration on method preferentially``(x:int) =
+            // checking if the generated value is always the same (18) from "12345,67890" Replay
+            x =! 18
 
 module BugReproIssue195 =
 
