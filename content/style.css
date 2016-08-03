@@ -54,6 +54,7 @@ div.tip {
 	padding:6px 8px 6px 8px;
 	display:none;
   color:#d1d1d1;
+  pointer-events:none;
 }
 table.pre pre {
   padding:0px;
