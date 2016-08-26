@@ -20,16 +20,32 @@ module internal ReflectArbitrary =
     open Reflect
     open Gen
 
+    let inline private orElems<'a when 'a : (static member (|||) : 'a * 'a -> 'a) and 'a : (static member Zero : 'a)>
+        t
+        (els : Enum list) =
+
+        let v : 'a =
+            els
+            |> List.map (box >> unbox)
+            |> List.fold (|||) LanguagePrimitives.GenericZero
+        Enum.ToObject (t, v) :?> Enum    
+
     /// Generate a random enum of the type specified by the System.Type
     let enumOfType (t: System.Type) : Gen<Enum> =
        let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
-       let vals: Array = System.Enum.GetValues(t) 
+       let vals: Array = System.Enum.GetValues(t)
        let elems = elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> System.Enum] 
-       if isFlags then 
-           let orElems (els:Enum list) = 
-               let v:int = els |> List.map (box >> unbox) |> List.fold (|||) 0 
-               Enum.ToObject(t,v) :?> Enum 
-           listOf elems |> map orElems 
+       if isFlags then
+           let elementType = System.Enum.GetUnderlyingType t
+           if   elementType = typeof<byte>   then listOf elems |> map (orElems<byte>   t)
+           elif elementType = typeof<sbyte>  then listOf elems |> map (orElems<sbyte>  t)
+           elif elementType = typeof<uint16> then listOf elems |> map (orElems<uint16> t)
+           elif elementType = typeof<int16>  then listOf elems |> map (orElems<int16>  t)
+           elif elementType = typeof<uint32> then listOf elems |> map (orElems<uint32> t)
+           elif elementType = typeof<int>    then listOf elems |> map (orElems<int>    t)
+           elif elementType = typeof<uint64> then listOf elems |> map (orElems<uint64> t)
+           elif elementType = typeof<int64>  then listOf elems |> map (orElems<int64>  t)
+           else invalidArg "t" (sprintf "Unexpected underlying enum type: %O" elementType)
        else 
            elems
 

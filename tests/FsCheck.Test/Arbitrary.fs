@@ -341,14 +341,66 @@ module Arbitrary =
         List.exists (fun e -> e = int value) [0;3;4]
 
     [<Flags>]
-    type TestFlags =
-        | A = 1
-        | B = 2
-        | C = 4
+    type ByteFlags = A = 1uy | B = 2uy | C = 4uy
 
     [<Property>]
-    let Flags (value:TestFlags) =
-        List.exists (fun e -> e = int value) [0;1;2;3;4;5;6;7]
+    let ``Can create unsigned byte flags enumeration`` (value : ByteFlags) =
+        List.exists (fun e -> e = byte value) [0uy..7uy]
+
+    [<Flags>]
+    type SByteFlags = A = 1y | B = 2y | C = 4y
+
+    [<Property>]
+    let ``Can create signed byte flags enumeration`` (value : SByteFlags) =
+        List.exists (fun e -> e = sbyte value) [0y..7y]
+
+    [<Flags>]
+    type UShortFlags = A = 1us | B = 2us | C = 4us
+
+    [<Property>]
+    let ``Can create 16-bit unsigned integer flags enumeration``
+        (value : UShortFlags) =
+        
+        List.exists (fun e -> e = uint16 value) [0us..7us]
+
+    [<Flags>]
+    type ShortFlags = A = 1s | B = 2s | C = 4s
+
+    [<Property>]
+    let ``Can create 16-bit integer flags enumeration`` (value : ShortFlags) =
+        List.exists (fun e -> e = int16 value) [0s..7s]
+
+    [<Flags>]
+    type UIntFlags = A = 1u | B = 2u | C = 4u
+
+    [<Property>]
+    let ``Can create 32-bit unsigned integer flags enumeration``
+        (value : UIntFlags) =
+        
+        List.exists (fun e -> e = uint32 value) [0u..7u]
+
+    [<Flags>]
+    type IntFlags = A = 1 | B = 2 | C = 4
+
+    [<Property>]
+    let ``Can create 32-bit integer flags enumeration`` (value : IntFlags) =
+        List.exists (fun e -> e = int value) [0..7]
+
+    [<Flags>]
+    type ULongFlags = A = 1UL | B = 2UL | C = 4UL
+
+    [<Property>]
+    let ``Can create 64-bit unsigned integer flags enumeration``
+        (value : ULongFlags) =
+        
+        List.exists (fun e -> e = uint64 value) [0UL..7UL]
+
+    [<Flags>]
+    type LongFlags = A = 1L | B = 2L | C = 4L
+
+    [<Property>]
+    let ``Can create 64-bit integer flags enumeration`` (value : LongFlags) =
+        List.exists (fun e -> e = int64 value) [0L..7L]
 
     [<Fact>]
     let ``FsList shrunk is at minimum n-1``() =
