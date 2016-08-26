@@ -96,7 +96,7 @@ Of course, you can do this for any operator or function that you often use.
 * By adding properties and generators to an fsx file in your project. It's easy to execute, just press 
 ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls 
 that are built in your solution; Versions of F# Interactive earlier than 3.1.2 will lock those for the remainder of the session, 
-and you won't be able to build unitl you quit the session. One solution is to include the source files 
+and you won't be able to build until you quit the session. One solution is to include the source files 
 instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug though.
 * By making a separate console application. Easy to debug, and no annoying locks on assemblies. Your best option 
 if you use only FsCheck for testing and your properties span multiple assemblies.
