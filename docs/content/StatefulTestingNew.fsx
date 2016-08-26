@@ -65,9 +65,9 @@ under test (in this case, a simple object) and a model of the system under test.
 
 The methods you override on `Machine` are `Setup`, `Next`, and optionally `TearDown`. 
 
-`Machine.Setup` is a property that returns an `Arbitrary` instance that generates (and optionally shrinks) a `Setup<TypeUnderTest, ModelType>` object. This in turn has two methods
+`Machine.Setup` is a property that returns an `Arbitrary` instance that generates (and optionally shrinks) a `Setup<'TypeUnderTest, 'ModelType>` object. This in turn has two methods
 to override: `Actual()` which should return a new, fresh instance of the system under test every time it is called, and `Model()` which should return the corresponding
-instance of the model object each time it is called. In the example, there is only one subclass of `Setup<Counter,int>` (in more complex cases, there might be more). Our
+instance of the model object each time it is called. In the example, there is only one subclass of `Setup<'Counter,int>` (in more complex cases, there might be more). Our
 `Setup` instance takes as argument the initial counter value, and returns a fresh `Counter` as the SUT. The model is in this case simply the initial value.
 
 `Machine.Next` is a method that takes a model and generates the possible operations that are possible from the state represented by the model. Each operation
