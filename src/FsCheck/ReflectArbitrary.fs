@@ -45,6 +45,7 @@ module internal ReflectArbitrary =
            elif elementType = typeof<int>    then listOf elems |> map (orElems<int>    t)
            elif elementType = typeof<uint64> then listOf elems |> map (orElems<uint64> t)
            elif elementType = typeof<int64>  then listOf elems |> map (orElems<int64>  t)
+           elif elementType = typeof<char>   then elems // Binary 'or' not defined for char enums
            else invalidArg "t" (sprintf "Unexpected underlying enum type: %O" elementType)
        else 
            elems
