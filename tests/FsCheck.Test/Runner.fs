@@ -120,17 +120,6 @@ module Runner =
         [<Property>]
         member __.``Should run a property on an instance``(_:int) = ()
 
-    [<Arbitrary(typeof<TestArbitrary2>)>]
-    module ModuleWithArbitrary =
-
-        [<Property>]
-        let ``should use Arb instances from enclosing module``(underTest:float) =
-            underTest <= 0.0
-
-        [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
-        let ``should use Arb instance on method preferentially``(underTest:float) =
-            underTest >= 0.0
-
     [<Properties(Arbitrary = [| typeof<TestArbitrary2> |])>]
     module ModuleWithPropertiesArb =
 
@@ -174,3 +163,26 @@ module BugReproIssue195 =
 
     [<Property(Arbitrary = [| typeof<BrokenGen> |])>]
     let ``broken`` (s : String) = s |> ignore
+
+// Compiler warning FS0044 occurs when a construct is deprecated.
+// This warning suppression has to sit in the end of the file, because once a
+// warning type is suppressed in a file, it can't be turned back on. There's a
+// feature request for that, though: 
+// https://fslang.uservoice.com/forums/245727-f-language/suggestions/6085102-allow-f-compiler-directives-like-nowarn-to-span
+#nowarn"44"
+
+module Deprecated =
+
+    open FsCheck.Xunit
+    open Runner
+    
+    [<Arbitrary(typeof<TestArbitrary2>)>]
+    module ModuleWithArbitrary =
+
+        [<Property>]
+        let ``should use Arb instances from enclosing module``(underTest:float) =
+            underTest <= 0.0
+
+        [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
+        let ``should use Arb instance on method preferentially``(underTest:float) =
+            underTest >= 0.0
