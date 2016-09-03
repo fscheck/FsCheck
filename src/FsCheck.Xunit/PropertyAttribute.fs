@@ -160,7 +160,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
     member this.Init(output:TestOutputHelper) =
         let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
         let arbitrariesOnClass =
-            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<ArbitraryAttribute>)
+            this.TestMethod.TestClass.Class.GetCustomAttributes(Type.GetType("FsCheck.Xunit.ArbitraryAttribute"))
                 |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
                 |> Seq.toArray
         let generalAttribute = 
