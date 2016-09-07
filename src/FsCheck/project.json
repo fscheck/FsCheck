@@ -1,5 +1,5 @@
 {
-  "version": "2.3.1",
+  "version": "3.0.0-alpha",
   "buildOptions": {
     "debugType": "portable",
     "compilerName": "fsc",
@@ -7,6 +7,7 @@
       "includeFiles": [
         "AssemblyInfo.fs",
         "Common.fs",
+        "Data.fs",
         "Random.fs",
         "Reflect.fs",
         "TypeClass.fs",

@@ -161,4 +161,5 @@ release.cmd
 docs/tools/FSharp.Formatting.svclog
 docs/tools/XmlWriter
 project.lock.json
+.vscode
 
