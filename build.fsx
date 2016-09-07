@@ -245,7 +245,7 @@ Target "CI" DoNothing
   ==> "Release"
 
 "RunTests"
-  =?> ("SourceLink", isLocalBuild && not isLinux)
+  =?> ("SourceLink", isLocalBuild && not isLinux && not isMacOS)
   ==> "PaketPack"
   ==> "PaketPush"
   ==> "Release"
