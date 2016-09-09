@@ -57,7 +57,7 @@ type Arbitrary<'a>() =
 
 
 ///Computation expression builder for Gen.
-[<AutoOpen>]
+[<AutoOpen; CompiledNameAttribute("Gen"); CompilationRepresentationAttribute(CompilationRepresentationFlags.None)>]
 module GenBuilder =
 
     let private result x = Gen (fun _ _ -> x)
