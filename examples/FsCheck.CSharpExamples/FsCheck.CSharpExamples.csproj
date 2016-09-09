@@ -32,6 +32,7 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
+    <ResolveNuGetPackages>false</ResolveNuGetPackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
