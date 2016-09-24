@@ -975,7 +975,11 @@ module Arb =
                 let! byteLength = Gen.elements [4; 16]
                 let! bytes = generate |> Gen.arrayOfLength byteLength
                 return IPAddress bytes }
-            let shrinker (a:IPAddress) = a.GetAddressBytes() |> shrink |> Seq.filter (fun x -> Seq.length x = 4) |> Seq.map IPAddress
+            let shrinker (a:IPAddress) =
+                a.GetAddressBytes()
+                |> shrink
+                |> Seq.filter (fun x -> Seq.length x = 4 || Seq.length x = 16)
+                |> Seq.map IPAddress
         
             fromGenShrink (generator, shrinker)
 
