@@ -142,6 +142,7 @@ type IPv6Address = IPv6Address of IPAddress
 
 type HostName = HostName of string with
     override x.ToString () = match x with HostName s -> s
+type UriScheme = UriScheme of string
 
 [<AutoOpen>]
 module ArbPatterns =
@@ -1108,6 +1109,43 @@ module Arb =
         
             fromGenShrink (generator, shrinker)
 #endif
+
+        static member UriScheme() =
+            let letters = ['a'..'z'] @ ['A'..'Z']
+            let otherValidChars = ['0'..'9'] @ ['+'; '.'; '-']
+            let randomSchemeGen = gen {
+                let! firstChar = Gen.elements letters
+                let! chars =
+                    letters @ otherValidChars |> Gen.elements |> Gen.listOf
+                return  firstChar :: chars
+                        |> List.toArray
+                        |> System.String
+                        |> UriScheme }
+            // While these well-known scheme are available in the full BCL as
+            // Uri.UriSchemeFile, Uri.UriSchemeFtp, etceterat, they aren't
+            // available in PCL, so instead are hard-coded to their string
+            // values
+            let knownSchemeGen =
+                [
+                    "file"
+                    "ftp"
+                    "gopher"
+                    "http"
+                    "https"
+                    "mailto"
+                    "net.pipe"
+                    "net.tcp"
+                    "news"
+                    "nntp"
+                ]
+                |> Gen.elements
+                |> Gen.map UriScheme
+            let s (UriScheme candidate) = seq {
+                if candidate.Length > 0 then
+                    let shrunk = candidate.Substring(0, candidate.Length - 1)
+                    yield shrunk.ToLowerInvariant () |> UriScheme
+                    yield shrunk |> UriScheme }
+            fromGenShrink (Gen.oneof [randomSchemeGen; knownSchemeGen], s)
 
         ///Arbitray instance for BigInteger.
         static member BigInt() =

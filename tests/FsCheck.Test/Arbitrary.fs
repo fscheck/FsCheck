@@ -513,6 +513,11 @@ module Arbitrary =
         |> Seq.forall (fun shrunkv -> shrunkv.ToString().Length < value.ToString().Length || shrunkv.Host <> value.Host)
 
     [<Property>]
+    let ``UriScheme can be used in a URI`` (UriScheme scheme) =
+        Uri.TryCreate (sprintf "%s://example.com" scheme, UriKind.Absolute)
+        |> fst
+
+    [<Property>]
     let Bigint (value:bigint) =
         generate<bigint> |> sample 10 |> Seq.forall (fun _ -> true)
         && (shrink<bigint> value |> Seq.forall (fun shrunkv -> shrunkv <= abs value))
