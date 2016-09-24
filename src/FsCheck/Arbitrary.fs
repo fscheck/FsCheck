@@ -137,6 +137,7 @@ type DoNotSize<'a when 'a : struct and 'a : comparison> =
 #if PCL
 #else
 type IPv4Address = IPv4Address of IPAddress
+type IPv6Address = IPv6Address of IPAddress
 #endif
 
 [<AutoOpen>]
@@ -953,6 +954,19 @@ module Arb =
                 |> shrink
                 |> Seq.filter (fun x -> Seq.length x = 4)
                 |> Seq.map (IPAddress >> IPv4Address)
+        
+            fromGenShrink (generator, shrinker)
+
+        static member IPv6Address() =
+            let generator =
+                generate
+                |> Gen.arrayOfLength 16
+                |> Gen.map (IPAddress >> IPv6Address)
+            let shrinker (IPv6Address a) =
+                a.GetAddressBytes()
+                |> shrink
+                |> Seq.filter (fun x -> Seq.length x = 16)
+                |> Seq.map (IPAddress >> IPv6Address)
         
             fromGenShrink (generator, shrinker)
 
