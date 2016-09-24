@@ -487,6 +487,10 @@ module Arbitrary =
         shrink value
         |> Seq.forall (fun shrunkv -> bytesSum shrunkv = 0 || bytesSum shrunkv < bytesSum value)
 
+    [<Property>]
+    let ``IPv4Address is only IPv4`` (IPv4Address address) =
+        address.AddressFamily = System.Net.Sockets.AddressFamily.InterNetwork
+
     [<Fact>]
     let MailAddress () =
         generate<MailAddress> |> sample 10 |> ignore

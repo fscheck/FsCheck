@@ -134,6 +134,11 @@ type DoNotSize<'a when 'a : struct and 'a : comparison> =
     DoNotSize of 'a with
     static member Unwrap(DoNotSize a) : 'a = a
 
+#if PCL
+#else
+type IPv4Address = IPv4Address of IPAddress
+#endif
+
 [<AutoOpen>]
 module ArbPatterns =
     let (|Fun|) (f:Function<'a,'b>) = f.Value
@@ -938,6 +943,19 @@ module Arb =
 
 #if PCL
 #else
+        static member IPv4Address() =
+            let generator =
+                generate
+                |> Gen.arrayOfLength 4
+                |> Gen.map (IPAddress >> IPv4Address)
+            let shrinker (IPv4Address a) =
+                a.GetAddressBytes()
+                |> shrink
+                |> Seq.filter (fun x -> Seq.length x = 4)
+                |> Seq.map (IPAddress >> IPv4Address)
+        
+            fromGenShrink (generator, shrinker)
+
         static member IPAddress() =
             let generator = gen {
                 let! byteLength = Gen.elements [4; 16]
