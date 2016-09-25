@@ -82,9 +82,9 @@ after each such operation, the model and the actual instance should still be equ
 What you're actually defining is a state machine which can simultaneously apply operations, or state transitions, to the actual system
 under test (in this case, a simple object) and a model of the system under test.</p>
 <p>The methods you override on <code>Machine</code> are <code>Setup</code>, <code>Next</code>, and optionally <code>TearDown</code>.</p>
-<p><code>Machine.Setup</code> is a property that returns an <code>Arbitrary</code> instance that generates (and optionally shrinks) a <code>Setup&lt;</code>TypeUnderTest, <code>ModelType&gt;</code> object. This in turn has two methods
+<p><code>Machine.Setup</code> is a property that returns an <code>Arbitrary</code> instance that generates (and optionally shrinks) a <code>Setup&lt;'TypeUnderTest, 'ModelType&gt;</code> object. This in turn has two methods
 to override: <code>Actual()</code> which should return a new, fresh instance of the system under test every time it is called, and <code>Model()</code> which should return the corresponding
-instance of the model object each time it is called. In the example, there is only one subclass of <code>Setup&lt;Counter,int&gt;</code> (in more complex cases, there might be more). Our
+instance of the model object each time it is called. In the example, there is only one subclass of <code>Setup&lt;'Counter,int&gt;</code> (in more complex cases, there might be more). Our
 <code>Setup</code> instance takes as argument the initial counter value, and returns a fresh <code>Counter</code> as the SUT. The model is in this case simply the initial value.</p>
 <p><code>Machine.Next</code> is a method that takes a model and generates the possible operations that are possible from the state represented by the model. Each operation
 is represented by an <code>Operation</code> subclass.</p>
@@ -103,26 +103,27 @@ so when we run this specification we can check that FsCheck does the right thing
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">StateMachine</span><span class="o">.</span><span class="i">toProperty</span> <span onmouseout="hideTip(event, 'fs16', 53)" onmouseover="showTip(event, 'fs16', 53)" class="i">spec</span>)
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (5 shrinks) (StdGen (853945262,296187863)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 13 tests (12 shrinks) (StdGen (1966046144,296209059)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
-(0, Setup Counter)
-inc -&gt; 1
-inc -&gt; 2
-inc -&gt; 3
-dec -&gt; 2
-inc -&gt; 3
-dec -&gt; 2
-inc -&gt; 3
+(3, Setup Counter)
+inc -&gt; 4
+dec -&gt; 3
+inc -&gt; 4
+dec -&gt; 3
+inc -&gt; 4
+dec -&gt; 3
+inc -&gt; 4
+dec -&gt; 3
+inc -&gt; 4
+dec -&gt; 3
 inc -&gt; 4
 inc -&gt; 5
-inc -&gt; 6
+dec -&gt; 4
+inc -&gt; 5
 
 Shrunk:
-(0, Setup Counter)
-inc -&gt; 1
-inc -&gt; 2
-inc -&gt; 3
+(3, Setup Counter)
 inc -&gt; 4
 inc -&gt; 5</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence of operations that leads to it.</p>

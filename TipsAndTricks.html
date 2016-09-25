@@ -51,12 +51,12 @@ FsCheck can even shrink <code>Function</code>s. For example:</p>
       <span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">map</span> <span class="i">f</span> <span onmouseout="hideTip(event, 'fs13', 34)" onmouseover="showTip(event, 'fs13', 34)" class="i">l</span> <span class="o">=</span> (<span class="c">(*f &lt;|*)</span> <span onmouseout="hideTip(event, 'fs17', 35)" onmouseover="showTip(event, 'fs17', 35)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs19', 36)" onmouseover="showTip(event, 'fs19', 36)" class="i">head</span> <span onmouseout="hideTip(event, 'fs13', 37)" onmouseover="showTip(event, 'fs13', 37)" class="i">l</span>) <span class="o">::</span> <span onmouseout="hideTip(event, 'fs17', 38)" onmouseover="showTip(event, 'fs17', 38)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 39)" onmouseover="showTip(event, 'fs18', 39)" class="i">map</span> <span class="i">f</span> (<span onmouseout="hideTip(event, 'fs17', 40)" onmouseover="showTip(event, 'fs17', 40)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 41)" onmouseover="showTip(event, 'fs20', 41)" class="i">tail</span> <span onmouseout="hideTip(event, 'fs13', 42)" onmouseover="showTip(event, 'fs13', 42)" class="i">l</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs11', 43)" onmouseover="showTip(event, 'fs11', 43)" class="i">mapRec</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (911816399,296187863)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (4 shrinks) (StdGen (2042191729,296209059)):
 Original:
-{ 0-&gt;1; 1-&gt;2 }
-[1]
+{ 0-&gt;1; 2-&gt;3; 3-&gt;2 }
+[2; 3]
 Shrunk:
-{ 0-&gt;1; 1-&gt;0 }
+{ 0-&gt;1; 2-&gt;0; 3-&gt;0 }
 [0]</code></pre></td></tr></table>
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
 records a map of all the arguments it was called with, and the result it produced.
@@ -95,13 +95,13 @@ define your own labelling equality combinator:</p>
 <span class="k">let</span> <span class="i">testCompare</span> (<span onmouseout="hideTip(event, 'fs23', 69)" onmouseover="showTip(event, 'fs23', 69)" class="i">i</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 70)" onmouseover="showTip(event, 'fs5', 70)" class="t">int</span>) (<span onmouseout="hideTip(event, 'fs30', 71)" onmouseover="showTip(event, 'fs30', 71)" class="i">j</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs5', 72)" onmouseover="showTip(event, 'fs5', 72)" class="t">int</span>) <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs23', 73)" onmouseover="showTip(event, 'fs23', 73)" class="i">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs30', 74)" onmouseover="showTip(event, 'fs30', 74)" class="i">j</span><span class="o">-</span><span class="n">1</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (913517802,296187863)):
-Label of failing property: 3 = -1
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (2044379263,296209059)):
+Label of failing property: 1 = -1
 Original:
-1
-1
+3
+2
 Shrunk:
-1
+0
 0</code></pre></td></tr></table>
 <p>Of course, you can do this for any operator or function that you often use.</p>
 <h2><a name="Some-ways-to-run-FsCheck-tests" class="anchor" href="#Some-ways-to-run-FsCheck-tests">Some ways to run FsCheck tests</a></h2>
@@ -110,7 +110,7 @@ Shrunk:
 By adding properties and generators to an fsx file in your project. It's easy to execute, just press 
 ctrl-a and alt-enter, and the results are displayed in F# Interactive. Be careful when referencing dlls
 that are built in your solution; Versions of F# Interactive earlier than 3.1.2 will lock those for the remainder of the session,
-and you won't be able to build unitl you quit the session. One solution is to include the source files
+and you won't be able to build until you quit the session. One solution is to include the source files
 instead of the dlls, but that makes the process slower. Useful for smaller projects. Difficult to debug though.
 </li>
 <li>
