@@ -57,7 +57,7 @@ type public PropertyAttribute() =
                         let split = v.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
                         let elem1 = UInt64.Parse(split.[0])
                         let elem2 = UInt64.Parse(split.[1])
-                        replay <- Some <| Random.createWithSeedAndGamma (elem1,elem2)
+                        replay <- Some <| Rnd (seed = elem1, gamma = elem2)
     member internal __.ReplayStdGen = replay //interestingly, although this member is unused, if you remove it tests will fail...?
     ///The maximum number of tests that are run.
     member __.MaxTest with get() = maxTest and set(v) = maxTest <- v
