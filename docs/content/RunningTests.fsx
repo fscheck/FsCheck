@@ -209,6 +209,38 @@ let ``abs(v) % k equals abs(v % k)`` v (NonZeroInt k) =
 (**
 Setting `QuietOnSuccess = true` only suppresses the output in case of success; in the case of test failures, output
 appears as normal.
+
+### Capturing output when using `FactAttribute`
+
+xUnit 2 doesn't capture messages written to the console but instead provides `ITestOutputHelper` to [capture output](https://xunit.github.io/docs/capturing-output.html).
+`ITestOutputHelper` has a single method `WriteLine` and xUnit will automatically pass it in as a constructor argument.
+FsCheck.Xunit provides overloads for `Property.QuickCheck`, `Property.QuickCheckThrowOnFailure`, `Property.VerboseCheck` and `Property.VerboseCheckThrowOnFailure`
+that you can pass an `ITestOutputHelper` so that xUnit captures FsCheck messages:
+
+```
+using System;
+using FsCheck;
+using FsCheck.Xunit;
+using Xunit;
+using Xunit.Abstractions;
+
+public class Test
+{
+    private readonly ITestOutputHelper _TestOutputHelper;
+    public Test(ITestOutputHelper testOutputHelper)
+    {
+        _TestOutputHelper = testOutputHelper;
+    }
+
+    [Fact]
+    public void Test1()
+    {
+        Prop
+            .ForAll(...)
+            .VerboseCheckThrowOnFailure(_TestOutputHelper);
+    }
+}
+```
 *)
 
 (**
