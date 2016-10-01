@@ -1033,8 +1033,6 @@ module Arb =
                 not (user.StartsWith(".")) && 
                 not (user.EndsWith(".")) && 
                 not (user.Contains(".."))
-            let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
-            let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
 
             let split (str: string) = 
                 if String.IsNullOrWhiteSpace str || str.Length <= 1 then 
