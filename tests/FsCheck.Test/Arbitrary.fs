@@ -495,6 +495,10 @@ module Arbitrary =
     let ``IPv6Address is only IPv6`` (IPv6Address address) =
         address.AddressFamily = System.Net.Sockets.AddressFamily.InterNetworkV6
 
+    [<Property>]
+    let ``HostName is useful in an Uri`` (HostName host) =
+        Uri.TryCreate (sprintf "http://%s" host, UriKind.Absolute) |> fst
+
     [<Fact>]
     let MailAddress () =
         generate<MailAddress> |> sample 10 |> ignore

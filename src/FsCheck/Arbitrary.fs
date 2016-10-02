@@ -140,6 +140,8 @@ type IPv4Address = IPv4Address of IPAddress
 type IPv6Address = IPv6Address of IPAddress
 #endif
 
+type HostName = HostName of string
+
 [<AutoOpen>]
 module ArbPatterns =
     let (|Fun|) (f:Function<'a,'b>) = f.Value
@@ -983,6 +985,46 @@ module Arb =
         
             fromGenShrink (generator, shrinker)
 
+        static member HostName() =
+            let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
+            let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
+            let subdomain = 
+                gen {
+                    let subdomainCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-"
+                    let! subdomainLength = Gen.choose (1, 63)
+                    return! 
+                        Gen.elements subdomainCharacters 
+                        |> Gen.arrayOfLength subdomainLength 
+                        |> Gen.map String
+                        |> Gen.filter isValidSubdomain
+                }
+
+            let host = 
+                gen {
+                    let! tld = Gen.elements topLevelDomains
+                    let! numberOfSubdomains = Gen.frequency [(20, Gen.constant 0); (4, Gen.constant 1); (2, Gen.constant 2); (1, Gen.constant 3)]
+                
+                    return! 
+                        Gen.listOfLength numberOfSubdomains subdomain
+                        |> Gen.map (fun x -> x @ [tld] |> String.concat ".")
+                        |> Gen.filter isValidHost
+                        |> Gen.map HostName
+                }
+
+            let shrinkHost (HostName host) =
+                let parts = host.Split '.'
+                let topLevelDomain = parts.[parts.Length - 1]
+
+                seq {
+                    if parts.Length > 1 then
+                        yield parts.[1 ..] |> String.concat "."
+                    if Seq.exists (fun tld -> tld = topLevelDomain) commonTopLevelDomains |> not then
+                        yield! commonTopLevelDomains
+                                |> Seq.map (fun tld -> Array.append parts.[0 .. parts.Length - 2] [|tld|] |> String.concat ".") }
+                |> Seq.map HostName
+
+            fromGenShrink (host, shrinkHost)
+
         static member MailAddress() =
             let isValidUser (user: string) = 
                 String.IsNullOrWhiteSpace user |> not &&
@@ -991,8 +1033,6 @@ module Arb =
                 not (user.StartsWith(".")) && 
                 not (user.EndsWith(".")) && 
                 not (user.Contains(".."))
-            let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
-            let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
 
             let split (str: string) = 
                 if String.IsNullOrWhiteSpace str || str.Length <= 1 then 
@@ -1017,27 +1057,9 @@ module Arb =
                             |> Gen.map String
                 }
 
-            let subdomain = 
-                gen {
-                    let subdomainCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-"
-                    let! subdomainLength = Gen.choose (1, 63)
-                    return! 
-                        Gen.elements subdomainCharacters 
-                        |> Gen.arrayOfLength subdomainLength 
-                        |> Gen.map String
-                        |> Gen.filter isValidSubdomain
-                }
-
             let host = 
-                gen {
-                    let! tld = Gen.elements topLevelDomains
-                    let! numberOfSubdomains = Gen.frequency [(20, Gen.constant 0); (4, Gen.constant 1); (2, Gen.constant 2); (1, Gen.constant 3)]
-                
-                    return! 
-                        Gen.listOfLength numberOfSubdomains subdomain
-                        |> Gen.map (fun x -> x @ [tld] |> String.concat ".")
-                        |> Gen.filter isValidHost
-                }
+                Default.HostName().Generator
+                |> Gen.map (fun (HostName h) -> h)
 
             let user = 
                 gen {
@@ -1070,17 +1092,8 @@ module Arb =
                 a.User |> split |> Seq.map (fun user -> createMailAddress a.DisplayName user a.Host)
 
             let shrinkHost (a:MailAddress) = 
-                let parts = a.Host.Split('.')    
-                let topLevelDomain = parts.[parts.Length - 1]
-
-                seq {
-                    if parts.Length > 1 then
-                        yield createMailAddress a.DisplayName a.User (parts.[1 ..] |> String.concat ".")
-
-                    if Seq.exists (fun tld -> tld = topLevelDomain) commonTopLevelDomains |> not then
-                        yield! commonTopLevelDomains 
-                               |> Seq.map (fun tld -> createMailAddress a.DisplayName a.User (Array.append parts.[0 .. parts.Length - 2] [|tld|] |> String.concat "."))
-                }
+                Default.HostName().Shrinker (HostName a.Host)
+                |> Seq.map (fun (HostName h) -> createMailAddress a.DisplayName a.User h)
             
             let shrinker (a:MailAddress) = 
                 seq {
