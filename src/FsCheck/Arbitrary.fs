@@ -985,6 +985,9 @@ module Arb =
         
             fromGenShrink (generator, shrinker)
 
+#if PCL
+#else
+
         static member HostName() =
             let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
             let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
@@ -1024,6 +1027,8 @@ module Arb =
                 |> Seq.map HostName
 
             fromGenShrink (host, shrinkHost)
+
+#endif
 
         static member MailAddress() =
             let isValidUser (user: string) = 
