@@ -984,16 +984,14 @@ module Arb =
                 |> Seq.map IPAddress
         
             fromGenShrink (generator, shrinker)
-
-#if PCL
-#else
+#endif
 
         static member HostName() =
             let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
             let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
             let subdomain = 
                 gen {
-                    let subdomainCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-"
+                    let subdomainCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-".ToCharArray()
                     let! subdomainLength = Gen.choose (1, 63)
                     return! 
                         Gen.elements subdomainCharacters 
@@ -1028,8 +1026,8 @@ module Arb =
 
             fromGenShrink (host, shrinkHost)
 
-#endif
-
+#if PCL
+#else
         static member MailAddress() =
             let isValidUser (user: string) = 
                 String.IsNullOrWhiteSpace user |> not &&
