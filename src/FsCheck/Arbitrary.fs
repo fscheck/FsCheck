@@ -143,6 +143,7 @@ type IPv6Address = IPv6Address of IPAddress
 type HostName = HostName of string with
     override x.ToString () = match x with HostName s -> s
 type UriScheme = UriScheme of string
+type UriHost = UriHost of string
 
 [<AutoOpen>]
 module ArbPatterns =
@@ -1146,6 +1147,24 @@ module Arb =
                     yield shrunk.ToLowerInvariant () |> UriScheme
                     yield shrunk |> UriScheme }
             fromGenShrink (Gen.oneof [randomSchemeGen; knownSchemeGen], s)
+
+        static member UriHost() =
+            let genHostName =
+                Default.HostName().Generator |> Gen.map (fun (HostName h) -> h)
+#if PCL
+            let genUriHost = genHostName |> Gen.map UriHost
+#else
+            let genIPv4Address =
+                Default.IPv4Address().Generator
+                |> Gen.map (fun (IPv4Address ip) -> string ip)
+            let genIPv6Address =
+                Default.IPv6Address().Generator
+                |> Gen.map (fun (IPv6Address ip) -> sprintf "[%O]" ip)
+            let genUriHost =
+                Gen.oneof [genHostName; genIPv4Address; genIPv6Address]
+                |> Gen.map UriHost
+#endif
+            fromGen genUriHost
 
         ///Arbitray instance for BigInteger.
         static member BigInt() =

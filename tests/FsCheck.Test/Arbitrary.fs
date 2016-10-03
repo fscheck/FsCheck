@@ -518,6 +518,10 @@ module Arbitrary =
         |> fst
 
     [<Property>]
+    let ``UriHost can be used in a URI`` (UriHost host) =
+        Uri.TryCreate (sprintf "http://%s" host, UriKind.Absolute) |> fst
+
+    [<Property>]
     let Bigint (value:bigint) =
         generate<bigint> |> sample 10 |> Seq.forall (fun _ -> true)
         && (shrink<bigint> value |> Seq.forall (fun shrunkv -> shrunkv <= abs value))
