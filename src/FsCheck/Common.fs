@@ -70,3 +70,11 @@ module internal Common =
         // (making sure that the enumerator gets disposed)
         seq { use en = s.GetEnumerator()
             yield! loop en }
+
+
+    //  !!! NOTE !!!
+    //  ----------------
+    //  This attribute is required to properly expose extension methods to VB consumers. 
+    //  It only needs to appear _once_ in the entire assembly -- but it is needed.
+    [<assembly: System.Runtime.CompilerServices.Extension>]
+    do ()
