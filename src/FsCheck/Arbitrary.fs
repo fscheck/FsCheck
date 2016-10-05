@@ -140,7 +140,8 @@ type IPv4Address = IPv4Address of IPAddress
 type IPv6Address = IPv6Address of IPAddress
 #endif
 
-type HostName = HostName of string
+type HostName = HostName of string with
+    override x.ToString () = match x with HostName s -> s
 
 [<AutoOpen>]
 module ArbPatterns =
