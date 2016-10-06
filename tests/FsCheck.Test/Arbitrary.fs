@@ -499,6 +499,10 @@ module Arbitrary =
     let ``HostName is useful in an Uri`` (HostName host) =
         Uri.TryCreate (sprintf "http://%s" host, UriKind.Absolute) |> fst
 
+    [<Property>]
+    let ``HostName correctly turns to string`` (HostName expected as value) =
+        expected = string value
+
     [<Fact>]
     let MailAddress () =
         generate<MailAddress> |> sample 10 |> ignore
