@@ -142,8 +142,10 @@ type IPv6Address = IPv6Address of IPAddress
 
 type HostName = HostName of string with
     override x.ToString () = match x with HostName s -> s
-type UriScheme = UriScheme of string
-type UriHost = UriHost of string
+type UriScheme = UriScheme of string with
+    override x.ToString () = match x with UriScheme s -> s
+type UriHost = UriHost of string with
+    override x.ToString () = match x with UriHost s -> s
 
 [<AutoOpen>]
 module ArbPatterns =

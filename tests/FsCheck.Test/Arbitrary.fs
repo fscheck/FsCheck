@@ -518,8 +518,16 @@ module Arbitrary =
         |> fst
 
     [<Property>]
+    let ``UriScheme correctly turns to string`` (UriScheme expected as value) =
+        expected = string value
+
+    [<Property>]
     let ``UriHost can be used in a URI`` (UriHost host) =
         Uri.TryCreate (sprintf "http://%s" host, UriKind.Absolute) |> fst
+
+    [<Property>]
+    let ``UriHost correctly turns to string`` (UriHost expected as value) =
+        expected = string value
 
     [<Property>]
     let Bigint (value:bigint) =
