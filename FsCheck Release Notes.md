@@ -1,3 +1,8 @@
+### 2.6.2 - 7 October 2016
+ * Add VB.NET support back. (by Paulmichael Blasucci)
+ * Add HostName generator. (by Mark Seemann)
+ * Add Check extenions to output FsCheck output to xUnit's output helper. (by Johannes Egger)
+
 ### 2.6.1 - 25 Septemer 2016
  * Also generate and shrink IPV6 addresses in IPAddress generator. (by Mark Seemann)
  * Add generators for Flags enums with non-int elements - previously only int elements were supported. (by Mark Seemann)
