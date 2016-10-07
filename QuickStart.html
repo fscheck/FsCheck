@@ -60,9 +60,9 @@ Prop.ForAll(revRevIsOrig).QuickCheck();</code></pre></td></tr></table>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 13)" onmouseover="showTip(event, 'fs8', 13)" class="f">revIsOrig</span> (<span onmouseout="hideTip(event, 'fs3', 14)" onmouseover="showTip(event, 'fs3', 14)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs4', 15)" onmouseover="showTip(event, 'fs4', 15)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs5', 16)" onmouseover="showTip(event, 'fs5', 16)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 17)" onmouseover="showTip(event, 'fs6', 17)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 18)" onmouseover="showTip(event, 'fs7', 18)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs3', 19)" onmouseover="showTip(event, 'fs3', 19)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 20)" onmouseover="showTip(event, 'fs3', 20)" class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (7 shrinks) (StdGen (1894252582,296209059)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (1591604123,296214011)):
 Original:
-[2; 5; -5; -4; 2]
+[-2; 1; 3]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>In C#:</p>
@@ -88,9 +88,11 @@ To see this error, ask FsCheck to generate lists of floats:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 22)" onmouseover="showTip(event, 'fs9', 22)" class="f">revRevIsOrigFloat</span> (<span onmouseout="hideTip(event, 'fs10', 23)" onmouseover="showTip(event, 'fs10', 23)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs4', 24)" onmouseover="showTip(event, 'fs4', 24)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs11', 25)" onmouseover="showTip(event, 'fs11', 25)" class="t">float</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 26)" onmouseover="showTip(event, 'fs6', 26)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 27)" onmouseover="showTip(event, 'fs7', 27)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs6', 28)" onmouseover="showTip(event, 'fs6', 28)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 29)" onmouseover="showTip(event, 'fs7', 29)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs10', 30)" onmouseover="showTip(event, 'fs10', 30)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs10', 31)" onmouseover="showTip(event, 'fs10', 31)" class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 8 tests (4 shrinks) (StdGen (1894721301,296209059)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 14 tests (13 shrinks) (StdGen (1592072886,296214011)):
 Original:
-[4.940656458e-324; 0.25; 4.555555556; -2.5; nan]
+[-3.384615385; infinity; -7.909090909; 11.66666667; 15.0; -3.0;
+ -1.797693135e+308; nan; -14.5; 6.428571429; 7.5; -7.285714286; -11.61538462;
+ -9.285714286]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <p>That said, the example in C# using floats actually works!</p>
@@ -128,9 +130,9 @@ as above.</p>
 be written more tersely as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 45)" onmouseover="showTip(event, 'fs1', 45)" class="i">FsCheck</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 46)" onmouseover="showTip(event, 'fs14', 46)" class="i">Xunit</span>
 
-[&lt;<span onmouseout="hideTip(event, 'fs15', 47)" onmouseover="showTip(event, 'fs15', 47)" class="t">Property</span>&gt;]
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 48)" onmouseover="showTip(event, 'fs15', 48)" class="f">``Reverse of reverse of a list is the original list ``</span>(<span onmouseout="hideTip(event, 'fs15', 49)" onmouseover="showTip(event, 'fs15', 49)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs15', 50)" onmouseover="showTip(event, 'fs15', 50)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs15', 51)" onmouseover="showTip(event, 'fs15', 51)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span>
-  <span onmouseout="hideTip(event, 'fs15', 52)" onmouseover="showTip(event, 'fs15', 52)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 53)" onmouseover="showTip(event, 'fs7', 53)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs15', 54)" onmouseover="showTip(event, 'fs15', 54)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 55)" onmouseover="showTip(event, 'fs7', 55)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs15', 56)" onmouseover="showTip(event, 'fs15', 56)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 57)" onmouseover="showTip(event, 'fs15', 57)" class="i">xs</span>
+[&lt;<span class="i">Property</span>&gt;]
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 47)" onmouseover="showTip(event, 'fs15', 47)" class="f">``Reverse of reverse of a list is the original list ``</span>(<span onmouseout="hideTip(event, 'fs3', 48)" onmouseover="showTip(event, 'fs3', 48)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs4', 49)" onmouseover="showTip(event, 'fs4', 49)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs5', 50)" onmouseover="showTip(event, 'fs5', 50)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs6', 51)" onmouseover="showTip(event, 'fs6', 51)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 52)" onmouseover="showTip(event, 'fs7', 52)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs6', 53)" onmouseover="showTip(event, 'fs6', 53)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 54)" onmouseover="showTip(event, 'fs7', 54)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs3', 55)" onmouseover="showTip(event, 'fs3', 55)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 56)" onmouseover="showTip(event, 'fs3', 56)" class="i">xs</span>
   
 </code></pre>
 <p>xUnit now shows the test similarly to a regular test, and is able to run it directly.</p>
@@ -151,7 +153,7 @@ see <a href="RunningTests.html">Running Tests</a>.</p>
 <div class="tip" id="fs12">val ( Reverse of reverse of a list is the original list ) : unit -&gt; &#39;a<br /><br />Full name: QuickStart.( Reverse of reverse of a list is the original list )</div>
 <div class="tip" id="fs13">val revRevIsOrig : (int list -&gt; bool)</div>
 <div class="tip" id="fs14">namespace FsCheck.Xunit</div>
-<div class="tip" id="fs15"></div>
+<div class="tip" id="fs15">val ( Reverse of reverse of a list is the original list  ) : xs:int list -&gt; bool<br /><br />Full name: QuickStart.( Reverse of reverse of a list is the original list  )</div>
 
         </div>
         <div class="span3">

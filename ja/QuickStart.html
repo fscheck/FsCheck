@@ -56,9 +56,11 @@
 <p>を定義すると、このような結果を確認できるでしょう:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1661637753,296209059)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (5 shrinks) (StdGen (1357542981,296214011)):
 Original:
-[0; 1]</code></pre></td></tr></table>
+[1; -2; -3]
+Shrunk:
+[1; 0]</code></pre></td></tr></table>
 <p>FsCheck は反例の <em>シュリンク</em> (訳註: 推定による絞り込みのこと)も行うので、テストケースを失敗させる最小の反例を見つけようとします。
 反例は確かに最小、つまりリストは少なくともテストを失敗するための２つの異なる要素を持っています。FsCheck はより小さな反例を
 (何らかの方法で)何回見つけてシュリンクを進めたかを表示します。</p>
@@ -79,9 +81,10 @@ Original:
 </code></pre>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (6 shrinks) (StdGen (1662419007,296209059)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 7 tests (7 shrinks) (StdGen (1358167981,296214011)):
 Original:
-[2.0; -2.545454545; 8.090909091; 6.6; -2.5; nan; -9.636363636]
+[nan; 7.444444444; -3.75; 4.166666667; -4.0; 0.3333333333; -7.555555556;
+ 1.797693135e+308]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <h2>FsCheck を他のテスティングフレームワークで使う</h2>
@@ -105,9 +108,9 @@ Shrunk:
 いまや次のようにより簡潔に書くことが出来ます:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 45)" onmouseover="showTip(event, 'fs1', 45)" class="i">FsCheck</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 46)" onmouseover="showTip(event, 'fs14', 46)" class="i">Xunit</span>
 
-[&lt;<span onmouseout="hideTip(event, 'fs15', 47)" onmouseover="showTip(event, 'fs15', 47)" class="t">Property</span>&gt;]
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 48)" onmouseover="showTip(event, 'fs15', 48)" class="f">``Reverse of reverse of a list is the original list ``</span>(<span onmouseout="hideTip(event, 'fs15', 49)" onmouseover="showTip(event, 'fs15', 49)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs15', 50)" onmouseover="showTip(event, 'fs15', 50)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs15', 51)" onmouseover="showTip(event, 'fs15', 51)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span>
-  <span onmouseout="hideTip(event, 'fs15', 52)" onmouseover="showTip(event, 'fs15', 52)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 53)" onmouseover="showTip(event, 'fs7', 53)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs15', 54)" onmouseover="showTip(event, 'fs15', 54)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 55)" onmouseover="showTip(event, 'fs7', 55)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs15', 56)" onmouseover="showTip(event, 'fs15', 56)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 57)" onmouseover="showTip(event, 'fs15', 57)" class="i">xs</span>
+[&lt;<span class="i">Property</span>&gt;]
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 47)" onmouseover="showTip(event, 'fs15', 47)" class="f">``Reverse of reverse of a list is the original list ``</span>(<span onmouseout="hideTip(event, 'fs3', 48)" onmouseover="showTip(event, 'fs3', 48)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs4', 49)" onmouseover="showTip(event, 'fs4', 49)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs5', 50)" onmouseover="showTip(event, 'fs5', 50)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs6', 51)" onmouseover="showTip(event, 'fs6', 51)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 52)" onmouseover="showTip(event, 'fs7', 52)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs6', 53)" onmouseover="showTip(event, 'fs6', 53)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 54)" onmouseover="showTip(event, 'fs7', 54)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs3', 55)" onmouseover="showTip(event, 'fs3', 55)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 56)" onmouseover="showTip(event, 'fs3', 56)" class="i">xs</span>
   
 </code></pre>
 <p>xUnit はこのテストが今やいつものテストに似ていることを示しており、これを直接実行することが出来ます。</p>
@@ -127,7 +130,7 @@ Shrunk:
 <div class="tip" id="fs12">val ( Reverse of reverse of a list is the original list ) : unit -&gt; &#39;a<br /><br />Full name: QuickStart.( Reverse of reverse of a list is the original list )</div>
 <div class="tip" id="fs13">val revRevIsOrig : (int list -&gt; bool)</div>
 <div class="tip" id="fs14">namespace FsCheck.Xunit</div>
-<div class="tip" id="fs15"></div>
+<div class="tip" id="fs15">val ( Reverse of reverse of a list is the original list  ) : xs:int list -&gt; bool<br /><br />Full name: QuickStart.( Reverse of reverse of a list is the original list  )</div>
 
         </div>
         <div class="span3">
