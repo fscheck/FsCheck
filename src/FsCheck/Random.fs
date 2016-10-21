@@ -130,7 +130,7 @@ type internal Random () =
         s' <- s.Next()
         Rnd.mix32variant04 s'.Seed
 
-    ///Generate the next pseudo-random float in the sequence in the interval [0, 1[ and return the new Rnd.
+    ///Generate the next pseudo-random float in the sequence in the interval [0, 1] and return the new Rnd.
     static member nextFloat (s : Rnd, [<Out>] s' : byref<Rnd>) =
         let l = Random.nextUInt64 (s, &s')
         double (l >>> 11) * RandomConstants.DOUBLE_MULTIPLIER
