@@ -106,7 +106,18 @@ module Gen =
         Gen.map6 f (Gen.constant a) (Gen.constant b) (Gen.constant c) (Gen.constant d) (Gen.constant e) (Gen.constant g)
         |> sample1
         |> ((=) (f a b c d e g))
-    
+
+    [<Property>]
+    let Zip (a : int) (b : char) =
+        Gen.zip (Gen.constant a) (Gen.constant b)
+        |> sample1
+        |> ((=) (a, b))
+
+    [<Property>]
+    let Unzip (a : char) (b : int) =
+        let f, g = Gen.constant (a, b) |> Gen.unzip
+        (sample1 f, sample1 g) = (a, b)
+
     [<Property>]
     let Two (v:int) =
         Gen.two (Gen.constant v)
@@ -222,7 +233,6 @@ module Gen =
             (Array2D.length1 arr <= rows) 
             && (Array2D.length2 arr <= cols) 
             && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
-
 
     type MaybeNull =
         {
