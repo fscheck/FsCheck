@@ -1,3 +1,12 @@
+### 2.6.2 - 7 October 2016
+ * Add VB.NET support back. (by Paulmichael Blasucci)
+ * Add HostName generator. (by Mark Seemann)
+ * Add Check extenions to output FsCheck output to xUnit's output helper. (by Johannes Egger)
+
+### 2.6.1 - 25 Septemer 2016
+ * Also generate and shrink IPV6 addresses in IPAddress generator. (by Mark Seemann)
+ * Add generators for Flags enums with non-int elements - previously only int elements were supported. (by Mark Seemann)
+
 ### 2.6.0 - 3 August 2016
   * In FsCheck.Xunit, allow configuration on module level of all settings using PropertiesAttribute. Deprecated ArbitraryAttribute. (by Tomasz Heimowski)
   * Add ToString for number wrappers so that output shows the underlying number (by Mauricio Scheffer)

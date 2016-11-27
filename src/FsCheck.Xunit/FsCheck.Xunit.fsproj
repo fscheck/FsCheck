@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="PropertyAttribute.fs" />
+    <Compile Include="CheckExtensions.fs" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>

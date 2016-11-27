@@ -131,8 +131,8 @@ module internal Data =
                 "yo"; "yo-NG";
                 "zh"; "zh-CN"; "zh-HK"; "zh-Hans"; "zh-Hant"; "zh-MO"; "zh-SG"; "zh-TW";
                 "zu"; "zu-ZA";]
-
 #else
+#endif
 
     // All valid top-level domains, taken from: http://data.iana.org/TLD/tlds-alpha-by-domain.txt
     let topLevelDomains = [| 
@@ -1452,5 +1452,3 @@ module internal Data =
         "info";
         "edu";
         "gov" |]
-
-#endif    

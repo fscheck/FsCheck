@@ -487,6 +487,22 @@ module Arbitrary =
         shrink value
         |> Seq.forall (fun shrunkv -> bytesSum shrunkv = 0 || bytesSum shrunkv < bytesSum value)
 
+    [<Property>]
+    let ``IPv4Address is only IPv4`` (IPv4Address address) =
+        address.AddressFamily = System.Net.Sockets.AddressFamily.InterNetwork
+
+    [<Property>]
+    let ``IPv6Address is only IPv6`` (IPv6Address address) =
+        address.AddressFamily = System.Net.Sockets.AddressFamily.InterNetworkV6
+
+    [<Property>]
+    let ``HostName is useful in an Uri`` (HostName host) =
+        Uri.TryCreate (sprintf "http://%s" host, UriKind.Absolute) |> fst
+
+    [<Property>]
+    let ``HostName correctly turns to string`` (HostName expected as value) =
+        expected = string value
+
     [<Fact>]
     let MailAddress () =
         generate<MailAddress> |> sample 10 |> ignore

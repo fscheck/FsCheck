@@ -327,6 +327,25 @@ module Gen =
                                             let! g' = g
                                             return f a' b' c' d' e' g'}
 
+    ///Combine two generators into a generator of pairs.
+    //[category: Creating generators from generators]
+    let zip f g = map2 (fun x y -> x, y) f g
+
+    ///Combine three generators into a generator of 3-tuples.
+    //[category: Creating generators from generators]
+    let zip3 f g h = map3 (fun x y z -> x, y, z) f g h
+
+    ///Split a generator of pairs into a pair of generators.
+    //[category: Creating generators from generators]
+    let unzip g = map fst g, map snd g
+
+    ///Split a generator of 3-tuples into a 3-tuple of generators.
+    //[category: Creating generators from generators]
+    let unzip3 g =
+        map (fun (x, _, _) -> x) g,
+        map (fun (_, y, _) -> y) g,
+        map (fun (_, _, z) -> z) g
+
     ///Sequence the given seq of generators into a generator of a list.
     //[category: Creating generators from generators]
     [<CompiledName("SequenceToList"); EditorBrowsable(EditorBrowsableState.Never)>]
