@@ -144,8 +144,23 @@ type HostName = HostName of string with
     override x.ToString () = match x with HostName s -> s
 type UriScheme = UriScheme of string with
     override x.ToString () = match x with UriScheme s -> s
-type UriHost = UriHost of string with
-    override x.ToString () = match x with UriHost s -> s
+
+#if PCL
+type UriHost = UriHostName of HostName with
+    override x.ToString () = match x with UriHostName (HostName s) -> s
+#else
+type UriHost =
+| UriHostName of HostName
+| UriIPHost of IPAddress
+with
+    override x.ToString () =
+        match x with
+        | UriHostName (HostName s) -> s
+        | UriIPHost ip ->
+            if ip.AddressFamily = Sockets.AddressFamily.InterNetworkV6
+            then sprintf "[%O]" ip
+            else string ip
+#endif
 
 [<AutoOpen>]
 module ArbPatterns =
@@ -1151,20 +1166,15 @@ module Arb =
             fromGenShrink (Gen.oneof [randomSchemeGen; knownSchemeGen], s)
 
         static member UriHost() =
-            let genHostName =
-                Default.HostName().Generator |> Gen.map (fun (HostName h) -> h)
+            let genUriHostName =
+                Default.HostName().Generator |> Gen.map UriHostName
 #if PCL
-            let genUriHost = genHostName |> Gen.map UriHost
+            let genUriHost = genUriHostName
 #else
-            let genIPv4Address =
-                Default.IPv4Address().Generator
-                |> Gen.map (fun (IPv4Address ip) -> string ip)
-            let genIPv6Address =
-                Default.IPv6Address().Generator
-                |> Gen.map (fun (IPv6Address ip) -> sprintf "[%O]" ip)
+            let genIPAddressHostName =
+                Default.IPAddress().Generator |> Gen.map UriIPHost
             let genUriHost =
-                Gen.oneof [genHostName; genIPv4Address; genIPv6Address]
-                |> Gen.map UriHost
+                Gen.oneof [genUriHostName; genIPAddressHostName]
 #endif
             fromGen genUriHost
 
