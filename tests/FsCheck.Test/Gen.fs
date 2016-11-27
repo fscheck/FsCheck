@@ -114,9 +114,20 @@ module Gen =
         |> ((=) (a, b))
 
     [<Property>]
+    let Zip3 (a : int) (b : char) (c : bool) =
+        Gen.zip3 (Gen.constant a) (Gen.constant b) (Gen.constant c)
+        |> sample1
+        |> ((=) (a, b, c))
+
+    [<Property>]
     let Unzip (a : char) (b : int) =
         let f, g = Gen.constant (a, b) |> Gen.unzip
         (sample1 f, sample1 g) = (a, b)
+
+    [<Property>]
+    let Unzip3 (a : char) (b : int) (c : bool) =
+        let f, g, h = Gen.constant (a, b, c) |> Gen.unzip3
+        (sample1 f, sample1 g, sample1 h) = (a, b, c)
 
     [<Property>]
     let Two (v:int) =
