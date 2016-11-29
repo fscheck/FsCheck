@@ -1168,15 +1168,23 @@ module Arb =
         static member UriHost() =
             let genUriHostName =
                 Default.HostName().Generator |> Gen.map UriHostName
+            let shrinkUriHostName = Default.HostName().Shrinker
 #if PCL
             let genUriHost = genUriHostName
+            let shrinkUriHost (UriHostName hn) =
+                shrinkUriHostName hn |> Seq.map UriHostName
 #else
             let genIPAddressHostName =
                 Default.IPAddress().Generator |> Gen.map UriIPHost
+            let shrinkIPAddressHost = Default.IPAddress().Shrinker
+
             let genUriHost =
                 Gen.oneof [genUriHostName; genIPAddressHostName]
+            let shrinkUriHost = function
+                | UriHostName hn -> shrinkUriHostName hn |> Seq.map UriHostName
+                | UriIPHost ip -> shrinkIPAddressHost ip |> Seq.map UriIPHost
 #endif
-            fromGen genUriHost
+            fromGenShrink (genUriHost, shrinkUriHost)
 
         ///Arbitray instance for BigInteger.
         static member BigInt() =
