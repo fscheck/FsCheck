@@ -526,6 +526,12 @@ module Arbitrary =
         Uri.TryCreate (sprintf "http://%O" host, UriKind.Absolute) |> fst
 
     [<Property>]
+    let ``UriPathSegments can be used in a URI`` (segments : UriPathSegment list) =
+        let ss = System.String.Join ("/", segments)
+        Uri.TryCreate (sprintf "http://example.com/%s" ss, UriKind.Absolute)
+        |> fst
+
+    [<Property>]
     let Bigint (value:bigint) =
         generate<bigint> |> sample 10 |> Seq.forall (fun _ -> true)
         && (shrink<bigint> value |> Seq.forall (fun shrunkv -> shrunkv <= abs value))

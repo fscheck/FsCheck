@@ -162,6 +162,9 @@ with
             else string ip
 #endif
 
+type UriPathSegment = UriPathSegment of string with
+    override x.ToString () = match x with UriPathSegment s -> s
+
 [<AutoOpen>]
 module ArbPatterns =
     let (|Fun|) (f:Function<'a,'b>) = f.Value
@@ -1185,6 +1188,14 @@ module Arb =
                 | UriIPHost ip -> shrinkIPAddressHost ip |> Seq.map UriIPHost
 #endif
             fromGenShrink (genUriHost, shrinkUriHost)
+
+        static member UriPathSegment() =
+            let g =
+                ['a'..'z'] @ ['A'..'Z'] @ ['0'..'9'] @ ['-'; '.'; '_'; '~']
+                |> Gen.elements
+                |> Gen.nonEmptyListOf
+                |> Gen.map (List.toArray >> String >> UriPathSegment)
+            fromGen g
 
         ///Arbitray instance for BigInteger.
         static member BigInt() =
