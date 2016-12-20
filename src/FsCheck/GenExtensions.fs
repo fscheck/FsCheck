@@ -30,6 +30,10 @@ type GenExtensions =
     static member Sample(generator, size, numberOfSamples) =
         sample size numberOfSamples generator
 
+    /// Allows type annotations in LINQ expressions
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Cast(g:Gen<_>) = g
+
     ///Map the given function to the value in the generator, yielding a new generator of the result type.
     [<System.Runtime.CompilerServices.Extension>]
     static member Select(g:Gen<_>, selector : Func<_,_>) = g.Map(fun a -> selector.Invoke(a))
