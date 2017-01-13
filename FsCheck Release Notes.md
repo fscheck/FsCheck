@@ -1,3 +1,7 @@
+### 2.6.3 - 13 January 2017
+ * Add Gen.zip, Gen.unzip, Gen.zip3 and Gen.unzip3. (by Mark Seemann)
+ * Add Cast() to enable type annotations in LINQ expressions. (by Mauricio Scheffer) 
+
 ### 2.6.2 - 7 October 2016
  * Add VB.NET support back. (by Paulmichael Blasucci)
  * Add HostName generator. (by Mark Seemann)
