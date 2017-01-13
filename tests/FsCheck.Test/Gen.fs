@@ -106,7 +106,29 @@ module Gen =
         Gen.map6 f (Gen.constant a) (Gen.constant b) (Gen.constant c) (Gen.constant d) (Gen.constant e) (Gen.constant g)
         |> sample1
         |> ((=) (f a b c d e g))
-    
+
+    [<Property>]
+    let Zip (a : int) (b : char) =
+        Gen.zip (Gen.constant a) (Gen.constant b)
+        |> sample1
+        |> ((=) (a, b))
+
+    [<Property>]
+    let Zip3 (a : int) (b : char) (c : bool) =
+        Gen.zip3 (Gen.constant a) (Gen.constant b) (Gen.constant c)
+        |> sample1
+        |> ((=) (a, b, c))
+
+    [<Property>]
+    let Unzip (a : char) (b : int) =
+        let f, g = Gen.constant (a, b) |> Gen.unzip
+        (sample1 f, sample1 g) = (a, b)
+
+    [<Property>]
+    let Unzip3 (a : char) (b : int) (c : bool) =
+        let f, g, h = Gen.constant (a, b, c) |> Gen.unzip3
+        (sample1 f, sample1 g, sample1 h) = (a, b, c)
+
     [<Property>]
     let Two (v:int) =
         Gen.two (Gen.constant v)
@@ -147,17 +169,17 @@ module Gen =
 
     // This property is non-deterministic, and may rarely fail. The chance of
     // this property not holding in case of a uniform shuffle - in other words,
-    // the chance of producing 10 times the same input list of length 5 - is
-    // (1/5!)^10, which should be small enough.
+    // the chance of producing 10 times the same input list of length 3 - is
+    // (1/3!)^20, which should be small enough.
     // In this case, relying on the statistical attribute of a test being
     // exceedingly unlikely to produce a False Positive is sometimes the only
     // option. See also: https://github.com/fscheck/FsCheck/pull/221/
     [<Property>]
     let Shuffle (s:Set<int>) =
-        s.Count > 1 ==> lazy
+        s.Count > 2 ==> lazy
         let l = Set.toList s
         Gen.shuffle l
-        |> sample 10
+        |> sample 20
         |> List.map Seq.toList
         |> List.exists ((<>) l)
    
@@ -222,7 +244,6 @@ module Gen =
             (Array2D.length1 arr <= rows) 
             && (Array2D.length2 arr <= cols) 
             && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
-
 
     type MaybeNull =
         {

@@ -1,6 +1,5 @@
 NUGET
   remote: https://www.nuget.org/api/v2
-  specs:
     FAKE (4.25.4)
     FSharp.Compiler.Service (2.0.0.6)
     FSharp.Formatting (2.14.2)

@@ -1,9 +1,29 @@
-
-### 2.6.0-nunit3 - To Release
+### 2.7.0-nunit3 - To Release
   * Update FsCheck.NUnit to use NUnit 3.0. This (hopefully) solves a lot of issues with NUnit 2's wonky plugin model. 
   FsCheck.NUnit.Addin is no longer needed, for example, and neither is the install.ps1 in the FsCheck.NUnit package. Also,
   FsCheck.NUnit only needs a dependency on NUnit now, which should solve a bunch of install issues on its own. (another 
   heroic contribution by Jon Hamm.)
+
+### 2.6.3 - 13 January 2017
+ * Add Gen.zip, Gen.unzip, Gen.zip3 and Gen.unzip3. (by Mark Seemann)
+ * Add Cast() to enable type annotations in LINQ expressions. (by Mauricio Scheffer) 
+
+### 2.6.2 - 7 October 2016
+ * Add VB.NET support back. (by Paulmichael Blasucci)
+ * Add HostName generator. (by Mark Seemann)
+ * Add Check extenions to output FsCheck output to xUnit's output helper. (by Johannes Egger)
+
+### 2.6.1 - 25 Septemer 2016
+ * Also generate and shrink IPV6 addresses in IPAddress generator. (by Mark Seemann)
+ * Add generators for Flags enums with non-int elements - previously only int elements were supported. (by Mark Seemann)
+
+### 2.6.0 - 3 August 2016
+  * In FsCheck.Xunit, allow configuration on module level of all settings using PropertiesAttribute. Deprecated ArbitraryAttribute. (by Tomasz Heimowski)
+  * Add ToString for number wrappers so that output shows the underlying number (by Mauricio Scheffer)
+  * Faster array generation and shrinking (by Jack Pappas)
+  * Bug fix: Prop.classify did not take the last test into account. (by Silvio Marcovic)
+  * Bug fix: or property combinator failed overall test if an exception was thrown.
+>>>>>>> refs/remotes/origin/master
 
 ### 2.5.0 - 7 June 2016
   * Add Gen.growingElements.

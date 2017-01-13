@@ -1,14 +1,4 @@
-﻿(*--------------------------------------------------------------------------*\
-**  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
-**  All rights reserved.                                                    **
-**  https://github.com/fscheck/FsCheck                              **
-**                                                                          **
-**  This software is released under the terms of the Revised BSD License.   **
-**  See the file License.txt for the full text.                             **
-\*--------------------------------------------------------------------------*)
-
-namespace FsCheck
+﻿namespace FsCheck
 
 open Gen
 open System
@@ -29,6 +19,10 @@ type GenExtensions =
     [<System.Runtime.CompilerServices.Extension>]
     static member Sample(generator, size, numberOfSamples) =
         sample size numberOfSamples generator
+
+    /// Allows type annotations in LINQ expressions
+    [<System.Runtime.CompilerServices.Extension>]
+    static member Cast(g:Gen<_>) = g
 
     ///Map the given function to the value in the generator, yielding a new generator of the result type.
     [<System.Runtime.CompilerServices.Extension>]
