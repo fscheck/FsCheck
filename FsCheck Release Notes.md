@@ -23,7 +23,6 @@
   * Faster array generation and shrinking (by Jack Pappas)
   * Bug fix: Prop.classify did not take the last test into account. (by Silvio Marcovic)
   * Bug fix: or property combinator failed overall test if an exception was thrown.
->>>>>>> refs/remotes/origin/master
 
 ### 2.5.0 - 7 June 2016
   * Add Gen.growingElements.
@@ -34,7 +33,6 @@
   * Renamed Gen.suchThat and Gen.suchThatOption to Gen.where or Gen.filter and Gen.tryWhere or Gen.tryFilter. (The functions/methods with the old names are still there, they are just marked Obsolete and will be removed in a future version.)
   * Renamed DontSize to DoNotSize, DontShrink to DoNotShrink, DontSizeInt16 to DoNotSizeInt16 etc. (The types with the old names are still there, they are just marked Obsolete and will be removed in a future version.)
   * StateMachine: operation shrinker shrinks operations too, not just the list of operations.
->>>>>>> refs/remotes/origin/master
 
 ### 2.4.0 - 20 April 2016
   * Fix bug in function generator - previously generated functions were constant functions.
@@ -82,7 +80,7 @@
 ### 2.1.0 - 30 September 2015
   * Switch to xunit 2.1. Note: Needs -noshadow argument on Mono due to Mono bug. A fix for Mono
   is submitted and is expected in Mono 4.3. (heroic achievement by Jon Hamm - thanks to all who tested early versions and found bugs.)
-  * xunit versions before 2.1 are no longer supported. The latest FsCheck version that supports xunit 1.9.2 is currently FsCheck.Xunit 2.0.7.
+  * xunit versions < 2.1 are no longer supported. The latest FsCheck version that supports xunit 1.9.2 is currently FsCheck.Xunit 2.0.7.
   * Made Arbitrary overrides (e.g. using Arb.register, passing arbitrary to Config, or setting them
   in PropertyAttribute) thread-local. This is mainly to support xunit2: it runs tests in the same class
   in parallel by default. Not making the overrides thread local causes overrides from one test to mistakenly apply
