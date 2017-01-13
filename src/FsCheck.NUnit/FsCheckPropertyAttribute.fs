@@ -77,16 +77,18 @@ type PropertyAttribute() =
     member __.QuietOnSuccess with get() = quietOnSuccess and set(v) = quietOnSuccess <- v
 
     interface ISimpleTestBuilder with
-        override __.BuildFrom(mi, _) =
-            FsCheckTestMethod(mi) :> TestMethod
+        override __.BuildFrom(mi, suite) =
+            FsCheckTestMethod(mi, suite) :> TestMethod
 
     interface IWrapTestMethod with
         override __.Wrap command:Internal.Commands.TestCommand =
             {new Internal.Commands.TestCommand(command.Test) with
-                override __.Execute context = FsCheckTestMethod(command.Test.Method).RunTest(context) }
+                override __.Execute context = match command.Test with
+                                              | :? FsCheckTestMethod as testMethod -> testMethod.RunTest(context)
+                                              | _ -> command.Execute(context) }
 
-and FsCheckTestMethod(mi : IMethodInfo) =
-    inherit TestMethod(mi)
+and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
+    inherit TestMethod(mi, parentSuite)
 
     member x.RunTest context =
         let testResult = x.MakeTestResult()
