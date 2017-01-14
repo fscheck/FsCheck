@@ -1,3 +1,9 @@
+### 2.7.0-nunit3 - To Release
+  * Update FsCheck.NUnit to use NUnit 3.0. This (hopefully) solves a lot of issues with NUnit 2's wonky plugin model. 
+  FsCheck.NUnit.Addin is no longer needed, for example, and neither is the install.ps1 in the FsCheck.NUnit package. Also,
+  FsCheck.NUnit only needs a dependency on NUnit now, which should solve a bunch of install issues on its own. (another 
+  heroic contribution by Jon Hamm.)
+
 ### 2.6.3 - 13 January 2017
  * Add Gen.zip, Gen.unzip, Gen.zip3 and Gen.unzip3. (by Mark Seemann)
  * Add Cast() to enable type annotations in LINQ expressions. (by Mauricio Scheffer) 
