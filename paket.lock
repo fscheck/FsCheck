@@ -61,20 +61,7 @@ NUGET
     NUnit (3.6)
       NETStandard.Library (>= 1.6) - framework: >= net463, >= netstandard16
       System.Runtime.Loader (>= 4.0) - framework: >= net463, >= netstandard16
-    NUnit.Console (3.5)
-      NUnit.ConsoleRunner (>= 3.5)
-      NUnit.Extension.NUnitProjectLoader (>= 3.5)
-      NUnit.Extension.NUnitV2Driver (>= 3.5)
-      NUnit.Extension.NUnitV2ResultWriter (>= 3.5)
-      NUnit.Extension.TeamCityEventListener (>= 1.0.2)
-      NUnit.Extension.VSProjectLoader (>= 3.5)
-    NUnit.ConsoleRunner (3.5)
-    NUnit.Extension.NUnitProjectLoader (3.5)
-    NUnit.Extension.NUnitV2Driver (3.6)
-    NUnit.Extension.NUnitV2ResultWriter (3.5)
-    NUnit.Extension.TeamCityEventListener (1.0.2)
-    NUnit.Extension.VSProjectLoader (3.5)
-    NUnitTestAdapter (2.0.0) - version_in_path: true
+    NUnit3TestAdapter (3.6.0) - version_in_path: true
     runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - framework: >= net463, >= netstandard16
     runtime.fedora.23-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - framework: >= net463, >= netstandard16
     runtime.fedora.24-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - framework: >= net463, >= netstandard16
