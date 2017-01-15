@@ -90,9 +90,9 @@ configuration.QuietOnSuccess <span class="o">=</span> <span class="k">true</span
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 2 tests (5 shrinks) (StdGen (120952904,296253441)):
+ListProperties.reverse is original-Falsifiable, after 1 test (2 shrinks) (StdGen (1218141204,296254228)):
 Original:
-[3; -2; -1]
+[-1; 2]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
@@ -236,7 +236,7 @@ that you can pass an <code>ITestOutputHelper</code> so that xUnit captures FsChe
 }
 </code></pre>
 <h2><a name="Using-FsCheck-NUnit" class="anchor" href="#Using-FsCheck-NUnit">Using FsCheck.NUnit</a></h2>
-<p>To use the integration install the FsCheck.NUnit nuget package.
+<p>To use the integration with NUnit 3 install the FsCheck.NUnit nuget package.
 Make sure your project(s) has target .NET <code>4.5</code> or greater.
 Then open FsCheck.NUnit.</p>
 <p>You can now attribute tests with <code>PropertyAttribute</code> (a subclass of NUnit's <code>TestAttribute</code>). Unlike NUnit tests, these
@@ -254,13 +254,6 @@ method, similar to how you would use the <code>Config</code> type otherwise.</p>
 </code></pre>
 <p>Note: the NUnit integration doesn't have the ability, like FsCheck.Xunit, to override <code>Arbitrary</code> instances on a per class
 or per module basis. Otherwise, it is very similar.</p>
-<h4><a name="Using-installed-by-Paket" class="anchor" href="#Using-installed-by-Paket">Using <code>FsCheck.NUnit</code> installed by Paket</a></h4>
-<p>Note that <a href="https://fsprojects.github.io/Paket/faq.html#Does-Paket-run-install-ps1-scripts">Paket doesn't run any powershell scripts</a>.
-So if you want to use <code>FsCheck.NUnit</code> that you installed via Paket, you have to perform this step manually.
-Add reference to the following assemblies in the apropriate project(s):</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">packages</span><span class="o">/</span><span class="i">NUnit</span><span class="o">.</span><span class="i">Runners</span><span class="o">/</span><span class="i">tools</span><span class="o">/</span><span class="i">lib</span><span class="o">/</span><span class="i">nunit</span><span class="o">.</span><span class="i">core</span><span class="o">.</span><span class="i">dll</span>
-<span class="i">packages</span><span class="o">/</span><span class="i">NUnit</span><span class="o">.</span><span class="i">Runners</span><span class="o">/</span><span class="i">tools</span><span class="o">/</span><span class="i">lib</span><span class="o">/</span><span class="i">nunit</span><span class="o">.</span><span class="i">core</span><span class="o">.</span><span class="i">interfaces</span><span class="o">.</span><span class="i">dll</span>
-</code></pre>
 <h2><a name="Implementing-IRunner" class="anchor" href="#Implementing-IRunner">Implementing IRunner</a></h2>
 <h3><a name="Example-1-to-integrate-FsCheck-with-other-unit-testing-frameworks" class="anchor" href="#Example-1-to-integrate-FsCheck-with-other-unit-testing-frameworks">Example 1: to integrate FsCheck with other unit testing frameworks</a></h3>
 <p>The <code>Config</code> type that can be passed to the <code>Check.One</code> or <code>Check.All</code> methods takes an <code>IRunner</code> as argument. This i
