@@ -246,7 +246,7 @@ public class Test
 (**
 ## Using FsCheck.NUnit
 
-To use the integration install the FsCheck.NUnit nuget package.
+To use the integration with NUnit 3 install the FsCheck.NUnit nuget package.
 Make sure your project(s) has target .NET `4.5` or greater.
 Then open FsCheck.NUnit.
 
@@ -270,16 +270,6 @@ let ``Reverse of reverse of a list is the original list ``(xs:list<int>) =
 (**
 Note: the NUnit integration doesn't have the ability, like FsCheck.Xunit, to override `Arbitrary` instances on a per class
 or per module basis. Otherwise, it is very similar.
-
-#### Using `FsCheck.NUnit` installed by Paket ####
-Note that [Paket doesn't run any powershell scripts](https://fsprojects.github.io/Paket/faq.html#Does-Paket-run-install-ps1-scripts).
-So if you want to use `FsCheck.NUnit` that you installed via Paket, you have to perform this step manually.
-Add reference to the following assemblies in the apropriate project(s):
-
-```
-packages/NUnit.Runners/tools/lib/nunit.core.dll
-packages/NUnit.Runners/tools/lib/nunit.core.interfaces.dll
-```
 
 ## Implementing IRunner 
 
