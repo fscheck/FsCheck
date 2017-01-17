@@ -137,9 +137,8 @@ let ``abs(v) % k equals abs(v % k)`` v (NonZeroInt k) =
     (abs v) % k = abs(v % k)
 
 (**
-Likely on of the most useful configuration options of `PropertyAttribute` is the ability to register or override an `Arbitrary`
-instance just for that test method. You can also use the `ArbitraryAttribute` to register or override `Abritrary` instances on 
-a per class or per module basis. For example:*)
+Likely one of the most useful configuration options of `PropertyAttribute` is the ability to register or override an `Arbitrary`
+instance just for that test method. You can also use the `PropertiesAttribute` (note the plural form) to set custom configuration options per class or per module basis. For example:*)
 
 type Positive =
     static member Double() =
@@ -151,8 +150,8 @@ type Negative =
         Arb.Default.Float()
         |> Arb.mapFilter (abs >> ((-) 0.0)) (fun t -> t <= 0.0)
 
-[<Arbitrary(typeof<Negative>)>]
-module ModuleWithArbitrary =
+[<Properties( Arbitrary=[| typeof<Negative> |] )>]
+module ModuleWithProperties =
 
     [<Property>]
     let ``should use Arb instances from enclosing module``(underTest:float) =
@@ -161,6 +160,29 @@ module ModuleWithArbitrary =
     [<Property( Arbitrary=[| typeof<Positive> |] )>]
     let ``should use Arb instance on method``(underTest:float) =
         underTest >= 0.0
+
+(**
+Using `PropertiesAttribute` and `PropertyAttribute` you can set any configuration. For example in following module:
+
+* property 1 would use default config + overriden MaxTest = 10 and EndSize = 10 from `Properties` attribute
+* property 2 would use default config + overriden EndSize = 10 from `Properties` attribute and MaxTest = 500 from `Property` attribute
+* property 3 would use default config + overriden MaxTest = 10 and EndSize = 10 from `Properties` attribute and Replay = "123,456" from `Property` attribute 
+*)
+
+[<Properties(MaxTest = 10, EndSize = 10)>] 
+module Properties =
+
+    [<Property>]
+    let ``property 1`` input =
+        true
+
+    [<Property(MaxTest = 500)>]
+    let ``property 2`` input =
+        true
+
+    [<Property(Replay = "123,456")>]
+    let ``property 3`` input =
+        true
 
 (**
 ### Using FsCheck.Xunit with TestDriven.Net
@@ -187,12 +209,44 @@ let ``abs(v) % k equals abs(v % k)`` v (NonZeroInt k) =
 (**
 Setting `QuietOnSuccess = true` only suppresses the output in case of success; in the case of test failures, output
 appears as normal.
+
+### Capturing output when using `FactAttribute`
+
+xUnit 2 doesn't capture messages written to the console but instead provides `ITestOutputHelper` to [capture output](https://xunit.github.io/docs/capturing-output.html).
+`ITestOutputHelper` has a single method `WriteLine` and xUnit will automatically pass it in as a constructor argument.
+FsCheck.Xunit provides overloads for `Property.QuickCheck`, `Property.QuickCheckThrowOnFailure`, `Property.VerboseCheck` and `Property.VerboseCheckThrowOnFailure`
+that you can pass an `ITestOutputHelper` so that xUnit captures FsCheck messages:
+
+```
+using System;
+using FsCheck;
+using FsCheck.Xunit;
+using Xunit;
+using Xunit.Abstractions;
+
+public class Test
+{
+    private readonly ITestOutputHelper _TestOutputHelper;
+    public Test(ITestOutputHelper testOutputHelper)
+    {
+        _TestOutputHelper = testOutputHelper;
+    }
+
+    [Fact]
+    public void Test1()
+    {
+        Prop
+            .ForAll(...)
+            .VerboseCheckThrowOnFailure(_TestOutputHelper);
+    }
+}
+```
 *)
 
 (**
 ## Using FsCheck.NUnit
 
-To use the integration install the FsCheck.NUnit nuget package.
+To use the integration with NUnit 3 install the FsCheck.NUnit nuget package.
 Make sure your project(s) has target .NET `4.5` or greater.
 Then open FsCheck.NUnit.
 
@@ -216,16 +270,6 @@ let ``Reverse of reverse of a list is the original list ``(xs:list<int>) =
 (**
 Note: the NUnit integration doesn't have the ability, like FsCheck.Xunit, to override `Arbitrary` instances on a per class
 or per module basis. Otherwise, it is very similar.
-
-#### Using `FsCheck.NUnit` installed by Paket ####
-Note that [Paket doesn't run any powershell scripts](https://fsprojects.github.io/Paket/faq.html#Does-Paket-run-install-ps1-scripts).
-So if you want to use `FsCheck.NUnit` that you installed via Paket, you have to perform this step manually.
-Add reference to the following assemblies in the apropriate project(s):
-
-```
-packages/NUnit.Runners/tools/lib/nunit.core.dll
-packages/NUnit.Runners/tools/lib/nunit.core.interfaces.dll
-```
 
 ## Implementing IRunner 
 

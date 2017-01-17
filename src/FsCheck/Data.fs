@@ -1,14 +1,4 @@
-﻿(*--------------------------------------------------------------------------*\
-**  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
-**  All rights reserved.                                                    **
-**  https://github.com/fscheck/FsCheck                              **
-**                                                                          **
-**  This software is released under the terms of the Revised BSD License.   **
-**  See the file License.txt for the full text.                             **
-\*--------------------------------------------------------------------------*)
-
-namespace FsCheck
+﻿namespace FsCheck
 
 module internal Data =
 
@@ -131,8 +121,8 @@ module internal Data =
                 "yo"; "yo-NG";
                 "zh"; "zh-CN"; "zh-HK"; "zh-Hans"; "zh-Hant"; "zh-MO"; "zh-SG"; "zh-TW";
                 "zu"; "zu-ZA";]
-
 #else
+#endif
 
     // All valid top-level domains, taken from: http://data.iana.org/TLD/tlds-alpha-by-domain.txt
     let topLevelDomains = [| 
@@ -1452,5 +1442,3 @@ module internal Data =
         "info";
         "edu";
         "gov" |]
-
-#endif    

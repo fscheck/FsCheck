@@ -1,14 +1,4 @@
-﻿(*--------------------------------------------------------------------------*\
-**  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
-**  All rights reserved.                                                    **
-**  https://github.com/fscheck/FsCheck                              **
-**                                                                          **
-**  This software is released under the terms of the Revised BSD License.   **
-**  See the file License.txt for the full text.                             **
-\*--------------------------------------------------------------------------*)
-
-namespace FsCheck
+﻿namespace FsCheck
 
 module internal Common =
 
@@ -70,3 +60,11 @@ module internal Common =
         // (making sure that the enumerator gets disposed)
         seq { use en = s.GetEnumerator()
             yield! loop en }
+
+
+    //  !!! NOTE !!!
+    //  ----------------
+    //  This attribute is required to properly expose extension methods to VB consumers. 
+    //  It only needs to appear _once_ in the entire assembly -- but it is needed.
+    [<assembly: System.Runtime.CompilerServices.Extension>]
+    do ()

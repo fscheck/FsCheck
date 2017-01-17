@@ -1,14 +1,4 @@
-﻿(*--------------------------------------------------------------------------*\
-**  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
-**  All rights reserved.                                                    **
-**  https://github.com/fscheck/FsCheck                              **
-**                                                                          **
-**  This software is released under the terms of the Revised BSD License.   **
-**  See the file License.txt for the full text.                             **
-\*--------------------------------------------------------------------------*)
-
-namespace FsCheck
+﻿namespace FsCheck
 
 [<NoComparison; RequireQualifiedAccess>]
 type Outcome = 
@@ -43,8 +33,8 @@ type Result =
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
     static member (|||) (l,r) =
         match (l.Outcome, r.Outcome) with
-        | (Outcome.Exception _,_) -> l //here a potential exception in r is thrown away...
-        | (_,Outcome.Exception _) -> r
+        | (Outcome.Exception _,_) -> r
+        | (_,Outcome.Exception _) -> l
         | (Outcome.Timeout _,_) -> l
         | (_,Outcome.Timeout _) -> r
         | (_,Outcome.False) -> l

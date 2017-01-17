@@ -1,14 +1,4 @@
-﻿(*--------------------------------------------------------------------------*\
-**  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
-**  All rights reserved.                                                    **
-**  https://github.com/fscheck/FsCheck                              **
-**                                                                          **
-**  This software is released under the terms of the Revised BSD License.   **
-**  See the file License.txt for the full text.                             **
-\*--------------------------------------------------------------------------*)
-
-namespace FsCheck
+﻿namespace FsCheck
 
 // Disable warnings about calling certain FsCheck functions from F#.
 // Using them internally within FsCheck is important for performance reasons.
@@ -133,6 +123,15 @@ type DoNotShrink<'a> = DoNotShrink of 'a
 type DoNotSize<'a when 'a : struct and 'a : comparison> = 
     DoNotSize of 'a with
     static member Unwrap(DoNotSize a) : 'a = a
+
+#if PCL
+#else
+type IPv4Address = IPv4Address of IPAddress
+type IPv6Address = IPv6Address of IPAddress
+#endif
+
+type HostName = HostName of string with
+    override x.ToString () = match x with HostName s -> s
 
 [<AutoOpen>]
 module ArbPatterns =
@@ -319,7 +318,7 @@ module Arb =
             fromGenShrink ( Gen.sized (fun n -> Gen.choose (-n,n)),
                             shrinkNumber)
 
-        ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
+        ///Generate arbitrary int32 that is unrestricted by size.
         [<Obsolete("Renamed to DoNotSizeInt32.")>]
         static member DontSizeInt32() =
             //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
@@ -330,7 +329,7 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
+        ///Generate arbitrary int32 that is unrestricted by size.
         static member DoNotSizeInt32() =
             //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
             //so using this trick instead
@@ -345,14 +344,14 @@ module Arb =
             Default.Int32()
             |> convert (abs >> uint32) int
 
-        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        ///Generate arbitrary uint32 that is unrestricted by size.
         [<Obsolete("Renamed to DoNotSizeUInt32.")>]
         static member DontSizeUInt32() =
             let gen = Gen.choose(0, int UInt32.MaxValue)
             fromGenShrink(gen, shrink)
             |> convert (uint32 >> DoNotSize) (DoNotSize.Unwrap >> int)
 
-        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        ///Generate arbitrary uint32 that is unrestricted by size.
         static member DoNotSizeUInt32() =
             let gen = Gen.choose(0, int UInt32.MaxValue)
             fromGenShrink(gen, shrink)
@@ -366,7 +365,7 @@ module Arb =
             from<int32>
             |> convert int64 int32
 
-        ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        ///Generate arbitrary int64 that is unrestricted by size.
         [<Obsolete("Renamed to DoNotSizeInt64.")>]
         static member DontSizeInt64() =
             let gen =
@@ -375,7 +374,7 @@ module Arb =
             fromGenShrink (gen,shrinkNumber)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        ///Generate arbitrary int64 that is unrestricted by size.
         static member DoNotSizeInt64() =
             let gen =
                 Gen.two generate<DoNotSize<int32>>
@@ -388,7 +387,7 @@ module Arb =
             from<int>
             |> convert (abs >> uint64) int
 
-        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        ///Generate arbitrary uint64 that is unrestricted by size.
         [<Obsolete("Renamed to DoNotSizeUInt64.")>]
         static member DontSizeUInt64() =
             let gen =
@@ -397,7 +396,7 @@ module Arb =
             fromGenShrink (gen,shrink)
             |> convert DoNotSize DoNotSize.Unwrap
         
-        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        ///Generate arbitrary uint64 that is unrestricted by size.
         static member DoNotSizeUInt64() =
             let gen =
                 Gen.two generate<DoNotSize<uint32>>
@@ -938,12 +937,88 @@ module Arb =
 
 #if PCL
 #else
-        static member IPAddress() =
-            let generator = generate |> Gen.arrayOfLength 4 |> Gen.map IPAddress
-            let shrinker (a:IPAddress) = a.GetAddressBytes() |> shrink |> Seq.filter (fun x -> Seq.length x = 4) |> Seq.map IPAddress
+        static member IPv4Address() =
+            let generator =
+                generate
+                |> Gen.arrayOfLength 4
+                |> Gen.map (IPAddress >> IPv4Address)
+            let shrinker (IPv4Address a) =
+                a.GetAddressBytes()
+                |> shrink
+                |> Seq.filter (fun x -> Seq.length x = 4)
+                |> Seq.map (IPAddress >> IPv4Address)
         
             fromGenShrink (generator, shrinker)
 
+        static member IPv6Address() =
+            let generator =
+                generate
+                |> Gen.arrayOfLength 16
+                |> Gen.map (IPAddress >> IPv6Address)
+            let shrinker (IPv6Address a) =
+                a.GetAddressBytes()
+                |> shrink
+                |> Seq.filter (fun x -> Seq.length x = 16)
+                |> Seq.map (IPAddress >> IPv6Address)
+        
+            fromGenShrink (generator, shrinker)
+
+        static member IPAddress() =
+            let generator = gen {
+                let! byteLength = Gen.elements [4; 16]
+                let! bytes = generate |> Gen.arrayOfLength byteLength
+                return IPAddress bytes }
+            let shrinker (a:IPAddress) =
+                a.GetAddressBytes()
+                |> shrink
+                |> Seq.filter (fun x -> Seq.length x = 4 || Seq.length x = 16)
+                |> Seq.map IPAddress
+        
+            fromGenShrink (generator, shrinker)
+#endif
+
+        static member HostName() =
+            let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
+            let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
+            let subdomain = 
+                gen {
+                    let subdomainCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-".ToCharArray()
+                    let! subdomainLength = Gen.choose (1, 63)
+                    return! 
+                        Gen.elements subdomainCharacters 
+                        |> Gen.arrayOfLength subdomainLength 
+                        |> Gen.map String
+                        |> Gen.filter isValidSubdomain
+                }
+
+            let host = 
+                gen {
+                    let! tld = Gen.elements topLevelDomains
+                    let! numberOfSubdomains = Gen.frequency [(20, Gen.constant 0); (4, Gen.constant 1); (2, Gen.constant 2); (1, Gen.constant 3)]
+                
+                    return! 
+                        Gen.listOfLength numberOfSubdomains subdomain
+                        |> Gen.map (fun x -> x @ [tld] |> String.concat ".")
+                        |> Gen.filter isValidHost
+                        |> Gen.map HostName
+                }
+
+            let shrinkHost (HostName host) =
+                let parts = host.Split '.'
+                let topLevelDomain = parts.[parts.Length - 1]
+
+                seq {
+                    if parts.Length > 1 then
+                        yield parts.[1 ..] |> String.concat "."
+                    if Seq.exists (fun tld -> tld = topLevelDomain) commonTopLevelDomains |> not then
+                        yield! commonTopLevelDomains
+                                |> Seq.map (fun tld -> Array.append parts.[0 .. parts.Length - 2] [|tld|] |> String.concat ".") }
+                |> Seq.map HostName
+
+            fromGenShrink (host, shrinkHost)
+
+#if PCL
+#else
         static member MailAddress() =
             let isValidUser (user: string) = 
                 String.IsNullOrWhiteSpace user |> not &&
@@ -952,8 +1027,6 @@ module Arb =
                 not (user.StartsWith(".")) && 
                 not (user.EndsWith(".")) && 
                 not (user.Contains(".."))
-            let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
-            let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
 
             let split (str: string) = 
                 if String.IsNullOrWhiteSpace str || str.Length <= 1 then 
@@ -978,27 +1051,9 @@ module Arb =
                             |> Gen.map String
                 }
 
-            let subdomain = 
-                gen {
-                    let subdomainCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-"
-                    let! subdomainLength = Gen.choose (1, 63)
-                    return! 
-                        Gen.elements subdomainCharacters 
-                        |> Gen.arrayOfLength subdomainLength 
-                        |> Gen.map String
-                        |> Gen.filter isValidSubdomain
-                }
-
             let host = 
-                gen {
-                    let! tld = Gen.elements topLevelDomains
-                    let! numberOfSubdomains = Gen.frequency [(20, Gen.constant 0); (4, Gen.constant 1); (2, Gen.constant 2); (1, Gen.constant 3)]
-                
-                    return! 
-                        Gen.listOfLength numberOfSubdomains subdomain
-                        |> Gen.map (fun x -> x @ [tld] |> String.concat ".")
-                        |> Gen.filter isValidHost
-                }
+                Default.HostName().Generator
+                |> Gen.map (fun (HostName h) -> h)
 
             let user = 
                 gen {
@@ -1031,17 +1086,8 @@ module Arb =
                 a.User |> split |> Seq.map (fun user -> createMailAddress a.DisplayName user a.Host)
 
             let shrinkHost (a:MailAddress) = 
-                let parts = a.Host.Split('.')    
-                let topLevelDomain = parts.[parts.Length - 1]
-
-                seq {
-                    if parts.Length > 1 then
-                        yield createMailAddress a.DisplayName a.User (parts.[1 ..] |> String.concat ".")
-
-                    if Seq.exists (fun tld -> tld = topLevelDomain) commonTopLevelDomains |> not then
-                        yield! commonTopLevelDomains 
-                               |> Seq.map (fun tld -> createMailAddress a.DisplayName a.User (Array.append parts.[0 .. parts.Length - 2] [|tld|] |> String.concat "."))
-                }
+                Default.HostName().Shrinker (HostName a.Host)
+                |> Seq.map (fun (HostName h) -> createMailAddress a.DisplayName a.User h)
             
             let shrinker (a:MailAddress) = 
                 seq {

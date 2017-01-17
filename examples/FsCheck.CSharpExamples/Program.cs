@@ -162,7 +162,7 @@ namespace FsCheck.CSharpExamples
 
             //generators support select, selectmany and where
             var gen = from x in Arb.Generate<int>()
-                      from y in Gen.Choose(5, 10)
+                      from int y in Gen.Choose(5, 10)
                       where x > 5
                       select new { Fst = x, Snd = y };
 
