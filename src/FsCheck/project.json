@@ -1,0 +1,49 @@
+{
+  "version": "3.0.0-alpha",
+  "buildOptions": {
+    "debugType": "portable",
+    "compilerName": "fsc",
+    "compile": {
+      "includeFiles": [
+        "AssemblyInfo.fs",
+        "Common.fs",
+        "Data.fs",
+        "Random.fs",
+        "Reflect.fs",
+        "TypeClass.fs",
+        "Gen.fs",
+        "ReflectArbitrary.fs",
+        "Arbitrary.fs",
+        "ArbitraryExtensions.fs",
+        "GenExtensions.fs",
+        "Testable.fs",
+        "Prop.fs",
+        "PropExtensions.fs",
+        "Commands.fs",
+        "StateMachine.fs",
+        "Runner.fs",
+        "RunnerExtensions.fs"
+      ]
+    }
+  },
+  "dependencies": {
+    "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-*"
+  },
+  "frameworks": {
+    "netstandard1.6": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
+    }
+  },
+  "tools": {
+    "dotnet-compile-fsc": {
+      "version": "1.0.0-preview2-*",
+      "imports": "dnxcore50"
+    },
+    "dotnet-mergenupkg": {
+      "target": "package",
+      "version": "1.0.*"
+    }
+  }
+}

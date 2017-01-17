@@ -160,4 +160,6 @@ release.cmd
 .fake/
 docs/tools/FSharp.Formatting.svclog
 docs/tools/XmlWriter
+project.lock.json
+.vscode
 
