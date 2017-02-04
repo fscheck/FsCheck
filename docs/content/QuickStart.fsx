@@ -124,7 +124,8 @@ let properties =
   ]
 
 Tests.run defaultConfig properties
-(*
+
+(**
 ### Integration with xUnit
 
 Another frequently used runner is xUnit.NET. Here is how to write 
