@@ -23,26 +23,12 @@ namespace FsCheck.CSharpExamples
             return result;
         }
 
+	///<returns> true iff source is strictly decreasing </returns>
         public static bool IsOrdered<T>(this IEnumerable<T> source)
         {
-            //by Jon Skeet
-            //I was too lazy to write it myself, and wondered whether a prettier 
-            //solution might exist in C# than the one I had in mind.
-            //Here's your answer...
             var comparer = Comparer<T>.Default;
-            T previous = default(T);
-            bool first = true;
-
-            foreach (T element in source)
-            {
-                if (!first && comparer.Compare(previous, element) > 0)
-                {
-                    return false;
-                }
-                first = false;
-                previous = element;
-            }
-            return true;
+            return source.Zip(source.Skip(1), (a,b) => comparer.Compare(a,b) > 0)
+		    .Aggregate((a,b) => a && b);
         }
     }
 

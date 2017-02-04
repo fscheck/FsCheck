@@ -36,8 +36,6 @@ Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.Test", "tests\FsChe
 EndProject
 Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.NUnit", "src\FsCheck.NUnit\FsCheck.NUnit.fsproj", "{6B1B9FF5-8E6D-4461-9D77-CD1619403684}"
 EndProject
-Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.NUnit.Addin", "src\FsCheck.NUnit.Addin\FsCheck.NUnit.Addin.fsproj", "{BF24DE38-C529-4638-BE50-A937EA3E6876}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D4E0-4CF4-840D-3F3016653F85}"
 	ProjectSection(SolutionItems) = preProject
 		Docs\content\index.fsx = Docs\content\index.fsx
@@ -75,10 +73,6 @@ Global
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BF24DE38-C529-4638-BE50-A937EA3E6876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF24DE38-C529-4638-BE50-A937EA3E6876}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF24DE38-C529-4638-BE50-A937EA3E6876}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF24DE38-C529-4638-BE50-A937EA3E6876}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
