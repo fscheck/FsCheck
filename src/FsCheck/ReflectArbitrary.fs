@@ -40,70 +40,84 @@ module internal ReflectArbitrary =
 
     let private reflectObj getGenerator t =
 
-            if isRecordType t then
-                let g = [ for pi in getRecordFields t do 
-                            if pi.PropertyType = t then 
-                                failwithf "Recursive record types cannot be generated automatically: %A" t 
-                            else yield getGenerator pi.PropertyType ]
-                let create = getRecordConstructor t
-                let result = g |> sequence |> map (List.toArray >> create)
-                box result
+        // is there a path via the fieldType back to the containingType?
+        let rec isRecursive (fieldType:Type) (containingType:Type) (seen:Set<string>) =
+            let children t =
+                if isRecordType t then
+                    getRecordFieldTypes t :> seq<_>
+                elif isUnionType t then
+                    FSharpType.GetUnionCases(t, true) 
+                    |> Seq.collect (fun uc -> uc.GetFields() |> Seq.map (fun pi -> pi.PropertyType))
+                else
+                    Seq.empty
 
-            elif isTupleType t then
-                let g = [ for elem in FSharpType.GetTupleElements t do yield getGenerator elem ]
-                let create elems = FSharpValue.MakeTuple (elems,t)
-                let result = g |> sequence |> map (List.toArray >> create)
-                box result
+            fieldType = containingType
+            || seen.Contains(fieldType.FullName)
+            || (let fields = children fieldType
+                let newSeen = seen.Add fieldType.FullName
+                fields |> Seq.exists (fun field -> isRecursive field containingType newSeen))
 
-            elif isUnionType t then
-                // figure out the "size" of a union
-                // 0 = nullary, 1 = non-recursive, 2 = recursive
-                let unionSize (ts : list<Type>) : int =
-                    if ts.IsEmpty then 
-                        0 
-                    else
-                        if List.exists(fun (x : Type) -> x.ToString() = t.ToString()) ts then 2 else 1
-                        
-                let unionGen create ts =
-                    let productGen (ts : list<Type>) =
-                        let gs = [ for t in ts -> getGenerator t ]
-                        let n = gs.Length
-                        [ for g in gs -> sized (fun s -> resize ((s / n) - 1) g )]
-                    let g = productGen ts
-                    let res = g |> sequence |> map (List.toArray >> create)
-                    res
-
-                let gs = [ for _,(_,fields,create,_) in getUnionCases t -> unionSize fields, lazy (unionGen create fields) ]
-                let lowest = List.reduce min <| List.map fst gs
-                let small() = [ for i,g in gs do if i = lowest then yield g.Force() ]
-                let large() = [ for _,g in gs -> g.Force() ]
-                let getgs size = 
-                    if size <= 0 then small() else large() 
-                    |> oneof 
-                    |> resize (size - 1) 
-                sized getgs |> box
-                
-            elif t.GetTypeInfo().IsEnum then
-                    enumOfType t |> box
-
-            elif isCSharpRecordType t then
-                let g = [ for ft in getCSharpRecordFields t do 
-                            if ft = t then
-                                failwithf "Recursive record types cannot be generated automatically: %A" t 
-                            else yield getGenerator ft ]
-                let create = getCSharpRecordConstructor t
-                let result = g |> sequence |> map (List.toArray >> create)
-                box result
-
+        let productGen (ts : seq<Type>) create =
+            let gs = [ for t in ts -> getGenerator t ]
+            let n = gs.Length
+            if n = 0 then
+                Gen.constant (create [||])
             else
-                failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing and registering a generator for it." t.FullName
+                sized (fun s -> resize ((s / n) - 1) (sequence gs))
+                |> map (List.toArray >> create)
+
+        if isRecordType t then
+            let fields = getRecordFieldTypes t
+            if fields |> Seq.exists ((=) t) then 
+                failwithf "Recursive record types cannot be generated automatically: %A" t 
+            let create = getRecordConstructor t
+            let g = productGen fields create
+            box g
+
+        elif isTupleType t then
+            let fields = FSharpType.GetTupleElements t
+            let create elems = FSharpValue.MakeTuple (elems,t)
+            let g = productGen fields create
+            box g
+
+        elif isUnionType t then
+            // figure out the "size" of a union
+            // 0 = nullary, 1 = non-recursive, 2 = recursive
+            let unionSize (ts : list<Type>) : int =
+                if ts.IsEmpty then 0 
+                elif List.exists(fun x -> isRecursive x t Set.empty) ts then 2
+                else 1
+
+            let gs = [ for _,(_,fields,create,_) in getUnionCases t -> unionSize fields, lazy (productGen fields create) ]
+            let lowest = List.reduce min <| List.map fst gs
+            let small() = [ for i,g in gs do if i = lowest then yield g.Force() ]
+            let large() = [ for _,g in gs -> g.Force() ]
+            let getgs size = 
+                if size <= 0 then small() else large() 
+                |> oneof 
+                |> resize (size - 1) 
+            sized getgs |> box
+                
+        elif t.GetTypeInfo().IsEnum then
+            enumOfType t |> box
+
+        elif isCSharpRecordType t then
+            let fields = getCSharpRecordFields t
+            if fields |> Seq.exists ((=) t) then 
+                failwithf "Recursive record types cannot be generated automatically: %A" t 
+            let create = getCSharpRecordConstructor t
+            let g = productGen fields create
+            box g
+
+        else
+            failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing and registering a generator for it." t.FullName
                 
     ///Build a reflection-based generator for the given Type. Since we memoize based on type, can't use a
     ///typed variant reflectGen<'a> much here, as we need to be able to partially apply on the getGenerator.
     ///See also Default.Derive.
     let reflectGenObj getGenerator = Common.memoize (fun (t:Type) ->(reflectObj getGenerator t |> unbox<IGen>).AsGenObject)
 
-    let rec private children0 (seen : Set<string>) (tFind : Type) (t : Type) : (obj -> list<obj>) =
+    let rec private children0 (seen:Set<string>) (tFind:Type) (t:Type) : (obj -> list<obj>) =
         if tFind = t then fun o -> [o]
         else children1 seen tFind t
 
@@ -127,9 +141,9 @@ module internal ReflectArbitrary =
                     |]
             fun o -> mp.[read o] o
         elif isRecordType t then
-            let destroy = getRecordReader t
-            let cs = [ for i in getRecordFields t -> children0 seen2 tFind i.PropertyType ]
-            fun o -> List.concat <| List.map2 (<|) cs (List.ofArray <| destroy o)
+            let read = getRecordReader t
+            let cs = [ for fieldType in getRecordFieldTypes t -> children0 seen2 tFind fieldType ]
+            fun o -> List.concat <| List.map2 (<|) cs (List.ofArray <| read o)
         else
             fun _ -> []
 
@@ -138,22 +152,24 @@ module internal ReflectArbitrary =
         let split3 l =
             let rec split3' front m back =
                 seq { match back with
-                        | [] -> yield (front, m, back)
-                        | x::xs -> yield (front,m,back); yield! split3' (front @ [m]) x xs }
+                      | [] -> yield (front, m, back)
+                      | x::xs -> yield (front, m, back)
+                                 yield! split3' (front @ [m]) x xs }
             split3' [] (List.head l) (List.tail l)
         let shrinkChildren read make o childrenTypes =
             seq{ for (front,(childVal,childType),back) in Seq.zip (read o) childrenTypes |> Seq.toList |> split3 do
                     for childShrink in getShrink childType childVal do
                         yield make ( (List.map fst front) @ childShrink :: (List.map fst back) |> List.toArray)}
+
         if isUnionType t then
             let unionSize (t:Type) children =
                 if Seq.isEmpty children then 0 
-                elif Seq.exists ((=) t)(*(fun x -> x.ToString() = t.ToString())*) children then 2 
+                elif Seq.exists ((=) t) children then 2 
                 else 1
             let info,_ = FSharpValue.GetUnionFields(o,t)
             let makeCase = FSharpValue.PreComputeUnionConstructor info
             let readCase = FSharpValue.PreComputeUnionReader info
-            let childrenTypes = info.GetFields() |> Array.map ( fun x -> x.PropertyType ) //|> Array.toList
+            let childrenTypes = info.GetFields() |> Array.map ( fun x -> x.PropertyType )
             let partitionCase t s0 (_,(_,children,make,_)) =
                 match unionSize t children with
                 | 0 -> (make::s0)
@@ -172,16 +188,19 @@ module internal ReflectArbitrary =
                       yield! children()
                       yield! shrunkChildren }
             | _ -> failwith "Unxpected union size" 
+
         elif isRecordType t then 
             let make = getRecordConstructor t
             let read = getRecordReader t
-            let childrenTypes = FSharpType.GetRecordFields t |> Array.map (fun pi -> pi.PropertyType)
+            let childrenTypes = getRecordFieldTypes t
             shrinkChildren read make o childrenTypes
+
         elif isTupleType t then
             let childrenTypes = FSharpType.GetTupleElements t
             let make = fun tuple -> FSharpValue.MakeTuple(tuple,t)
             let read = FSharpValue.GetTupleFields
             shrinkChildren read make o childrenTypes
+
         else
             Seq.empty
 

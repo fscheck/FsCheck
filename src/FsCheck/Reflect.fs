@@ -8,14 +8,14 @@ module internal Reflect =
     open System.Reflection
     open System.Linq.Expressions
 
-//    let private recordFieldBindingFlags = 
-//        BindingFlags.GetProperty ||| BindingFlags.Instance 
-//        ||| BindingFlags.NonPublic ||| BindingFlags.Public
+    let isRecordType (ty : Type) = FSharpType.IsRecord(ty, true)
 
-    let isRecordType (ty : Type) = FSharpType.IsRecord(ty, true) //recordFieldBindingFlags)
     let isUnionType ty = FSharpType.IsUnion(ty, true)
+
     let isTupleType ty = FSharpType.IsTuple ty
+
     let getPublicCtors (ty: Type) = ty.GetTypeInfo().DeclaredConstructors |> Seq.filter (fun c -> c.IsPublic)
+
     let isCSharpRecordType (ty: Type) = 
         let typeinfo = ty.GetTypeInfo()
         typeinfo.IsClass && not typeinfo.IsAbstract
@@ -25,9 +25,10 @@ module internal Reflect =
         && ty.GetRuntimeFields() |> Seq.filter (fun m -> not m.IsStatic && m.IsPublic) |> Seq.forall (fun f -> f.IsInitOnly)
 
     /// Get information on the fields of a record type
-    let getRecordFields (recordType: System.Type) = 
+    let getRecordFieldTypes (recordType: System.Type) = 
         if isRecordType recordType then 
             FSharpType.GetRecordFields(recordType, true)
+            |> Array.map (fun pi -> pi.PropertyType)
         else 
             failwithf "The input type must be a record type.  Got %A" recordType
 
@@ -79,8 +80,8 @@ module internal Reflect =
             if not (acc.ContainsKey(f)) then acc.Add(f,a)
         else 
             if a.HasElementType then resolve acc (a.GetElementType(), f.GetElementType())
-            Array.zip (a.GenericTypeArguments) (f.GenericTypeArguments) |>
-            Array.iter (resolve acc)
+            Array.zip (a.GenericTypeArguments) (f.GenericTypeArguments) 
+            |> Array.iter (resolve acc)
 
     let invokeMethod (m:MethodInfo) target args =
         let m = if m.ContainsGenericParameters then
@@ -93,4 +94,6 @@ module internal Reflect =
                     m.MakeGenericMethod(actuals)
                 else 
                     m
-        match target with None -> m.Invoke(null, args) | Some t -> m.Invoke(t,args)
+        match target with 
+        | None -> m.Invoke(null, args)
+        | Some t -> m.Invoke(t, args)

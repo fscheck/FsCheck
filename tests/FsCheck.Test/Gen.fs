@@ -372,3 +372,31 @@ module Gen =
         test <@ convolutedGenNumber 100 
                 |> Gen.sample 1 10
                 |> Seq.forall ((=) 100) @>
+
+
+    type MyRecord =
+        { FieldA    : int
+          FieldB    : MyUnion
+          FieldC    : MyUnion }
+
+    and MyUnion = 
+    | NonRec of int
+    | Rec    of MyRecord
+    | Rec2   of MyOtherUnion
+
+    and MyOtherUnion =
+    | NonRec2 of int
+    | Rec2 of MyUnion * MyRecord
+
+    [<Fact>]
+    let ``should generate recursive types``() =
+        // this should just not stack overflow.
+        // It used to, because the detection of whether a union case
+        // is recursive or not, was limited to self-recursion (i.e. 
+        // type Tree = T of Tree * Tree |  Branch of int
+        // whereas as the example demonstrates recursion can be
+        // more involved.
+        let r1 = Gen.sample 100 100 (Arb.Default.Derive<MyRecord>().Generator)
+        let r2 = Gen.sample 100 100 (Arb.Default.Derive<MyUnion>().Generator)
+        let r3 = Gen.sample 100 100 (Arb.Default.Derive<MyOtherUnion>().Generator)
+        test <@ r1.Length + r2.Length + r3.Length = 300 @>
