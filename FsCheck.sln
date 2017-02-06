@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{0B883240-C311-4AA9-92EF-0E3C471B0077}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docs\tools\generate.fsx = docs\tools\generate.fsx
 		docs\tools\generate.ja.fsx = docs\tools\generate.ja.fsx
 		License.txt = License.txt
+		paket.dependencies = paket.dependencies
 		README.md = README.md
 	EndProjectSection
 EndProject
