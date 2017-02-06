@@ -1,3 +1,6 @@
+### 2.7.1 - To be released
+ * Improve reflection based generator for union cases - now also detect if a union case is recursive via any number of other types.
+
 ### 2.7.0 - 15 January 2017
   * Switch FsCheck.NUnit to use NUnit 3. This solves a lot of issues with NUnit 2's wonky plugin model. 
   FsCheck.NUnit.Addin is no longer needed, for example, and neither is the install.ps1 in the FsCheck.NUnit package. Also,
