@@ -64,6 +64,7 @@ type Config =
 
 module Runner =
 
+    open System.Collections.Generic
     open System.Reflection
 
     open Microsoft.FSharp.Reflection
@@ -81,12 +82,12 @@ module Runner =
         | EndShrink of Result       //gave up shrinking; (possibly) shrunk result is given
 
  
-    let rec private shrinkResult (result:Result) (shrinks:seq<Rose<Result>>) =
-        seq { if not (Seq.isEmpty shrinks) then
+    let rec private shrinkResult (result:Result) (shrinks:IEnumerator<Rose<Result>>) =
+        seq { if (shrinks.MoveNext()) then
                 //result forced here
-                let (MkRose ((Lazy result'),shrinks')) = Seq.head shrinks 
-                if result'.Outcome.Shrink then yield Shrink result'; yield! shrinkResult result' shrinks'
-                else yield NoShrink result'; yield! shrinkResult result <| Seq.skip 1 shrinks
+                let (MkRose ((Lazy result'),shrinks')) = shrinks.Current
+                if result'.Outcome.Shrink then yield Shrink result'; yield! shrinkResult result' (shrinks'.GetEnumerator())
+                else yield NoShrink result'; yield! shrinkResult result shrinks
               else
                 yield EndShrink result
         }
@@ -114,7 +115,7 @@ module Runner =
                     yield Passed result
                 | o when o.Shrink -> 
                     yield Falsified result
-                    yield! shrinkResult result shrinks
+                    yield! shrinkResult result (shrinks.GetEnumerator())
                 | _ ->
                     yield Falsified result
                     yield EndShrink result
