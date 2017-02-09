@@ -279,25 +279,29 @@ module StateMachine =
             |> Seq.choose (fun (_, op, Lazy model) -> op |> Option.map (fun op -> (op,model)))
             //|> Seq.distinct
 
-        run.Operations 
-        |> List.map fst
-        |> Arb.Default.FsList().Shrinker
+        let chooseModels setup operations =
+            let initialModel = fst setup
+            let transitions = runModels initialModel operations |> Seq.toList
+            //printf "transitions %A" transitions
+            let ok = not <| List.isEmpty transitions
+            if ok then 
+                Some { run with Operations = transitions; Setup = setup } 
+            else 
+                None 
+
         //try to shrink the list of operations
-        |> Seq.choose (fun operations -> 
-                            let initialModel = fst run.Setup
-                            let transitions = runModels initialModel operations |> Seq.toList
-                            //printf "transitions %A" transitions
-                            let ok = not <| List.isEmpty transitions
-                            //let newOperations = transitions |> Seq.map (snd >> (fun (op,Lazy v) -> op,v)) 
-                            if ok then 
-                                let newOps = transitions //|> Seq.toList
-                                //printf "newops %A" newOps
-                                let newOperations = newOps
-                                Some { run with Operations = newOperations } 
-                            else 
-                                None)
+        let shrinkOps =
+            run.Operations 
+            |> List.map fst
+            |> Arb.Default.FsList().Shrinker
+            |> Seq.choose (chooseModels run.Setup)
+
         //try to srhink the initial setup state
-        |> Seq.append (Arb.toShrink spec.Setup (snd run.Setup) |> Seq.map (fun create -> { run with Setup = create.Model(), create }))
+        let shrinkSetup =
+            Arb.toShrink spec.Setup (snd run.Setup) 
+            |> Seq.choose (fun setup -> chooseModels (setup.Model(),setup) (List.map fst run.Operations)) //{ run with Setup = setup.Model(), setup })
+
+        Seq.append shrinkOps shrinkSetup
         
     /// Check one run, i.e. create a property from a single run.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
