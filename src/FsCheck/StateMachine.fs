@@ -106,6 +106,8 @@ type Machine<'Actual,'Model>(maxNumberOfCommands:int) =
     ///Preconditions are still checked, so even if a Command is returned, it is not chosen
     ///if its precondition does not hold.
     abstract Next : 'Model -> Gen<Operation<'Actual,'Model>>
+    abstract ShrinkOperations : list<Operation<'Actual,'Model>> -> seq<list<Operation<'Actual,'Model>>>
+    default __.ShrinkOperations s = Arb.Default.FsList().Shrinker s
 
 [<StructuredFormatDisplayAttribute("{StructuredToString}")>]
 type MachineRun<'Actual, 'Model> =
@@ -293,7 +295,7 @@ module StateMachine =
         let shrinkOps =
             run.Operations 
             |> List.map fst
-            |> Arb.Default.FsList().Shrinker
+            |> spec.ShrinkOperations
             |> Seq.choose (chooseModels run.Setup)
 
         //try to srhink the initial setup state

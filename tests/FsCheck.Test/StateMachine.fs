@@ -155,6 +155,26 @@ module StateMachine =
                 |> Seq.tryFind (fun { Setup = _,c; Operations = cmds } -> not <| checkPreconditions (c.Model()) cmds)
         test <@ counterexample.IsNone @>
 
+    let checkFaultyCommandModelSpecNoShrink =
+        let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
+        { new Machine<SimpleModel,int>() with
+            member __.Setup = Gen.constant create |> Arb.fromGen
+            member __.Next _ = FaultyCmd.Arb.Generator 
+            override __.ShrinkOperations _ = Seq.empty }
+
+    [<Fact>]
+    let ``should not shrink if shrinking is disabled``() =
+         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
+         let run = { Setup = (0,create)
+                     TearDown = checkFaultyCommandModelSpecNoShrink.TearDown
+                     Operations = [(FaultyInc(1) :> Operation<SimpleModel,int>,1)
+                                   (FaultyInc(2) :> Operation<SimpleModel,int>,2)] }
+ 
+         //since shrinker is disabled should not generate values through shrinking
+         let shrunk = StateMachine.shrink checkFaultyCommandModelSpecNoShrink run |> List.ofSeq
+         test <@ shrunk.Length = 0 @>
+  
+
     //a counter that never goes below zero
     type Counter(?init:int) =
       let mutable n = defaultArg init 0
