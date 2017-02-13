@@ -72,11 +72,11 @@
 <p>FsCheck はそれぞれのテストの名前も印字します:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 4 tests (5 shrinks) (StdGen (1022159845,296254228)):
+ListProperties.reverse is original-Falsifiable, after 2 tests (4 shrinks) (StdGen (657834587,296265931)):
 Original:
-[-3; 0; -4; -4]
+[3; -1]
 Shrunk:
-[0; 1]</code></pre></td></tr></table>
+[1; 0]</code></pre></td></tr></table>
 <p>モジュールの全てのトップレベル関数がモジュール名とともにクラスの静的メンバーとしてコンパイルされるので、あるモジュールの全てのトップレベル関数を
 テストするのに Check.QuickAll を使うこともできます。
 しかしながら、モジュールの型は F# から直接アクセスできないので、以下のトリックを使うことができます:</p>
