@@ -7,6 +7,7 @@ module StateMachine =
     open FsCheck.Experimental
     open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
     open Swensen.Unquote
+    open FsCheck.Xunit
 
     type SimpleModel(?init) =
         let count = ref (defaultArg init 0)
@@ -68,7 +69,8 @@ module StateMachine =
         let spec = checkFaultyCommandModalSpecWithSetupShrink create
         let run = { Setup = (53,create 53)
                     TearDown = spec.TearDown
-                    Operations = [(new FaultyInc(1) :> Operation<SimpleModel,int>,54)] }
+                    Operations = [(new FaultyInc(1) :> Operation<SimpleModel,int>,54)]
+                    UsedSize = 1 }
         let shrunk = StateMachine.shrink spec run |> Seq.toArray
         test <@ 1 = shrunk.Length @>
         let run = shrunk.[0]
@@ -89,7 +91,8 @@ module StateMachine =
         let spec = checkFaultyCommandModelSpec -1
         let run = { Setup = (0,create)
                     TearDown = spec.TearDown
-                    Operations = [(new FaultyInc(5) :> Operation<SimpleModel,int>,5)] }
+                    Operations = [(new FaultyInc(5) :> Operation<SimpleModel,int>,5)]
+                    UsedSize = 1 }
         //should contain an element smaller than 5 since they can't be generated but only shrunk
         let shrunk = StateMachine.shrink spec run
         test <@ shrunk |> Seq.exists (fun e -> (e.Operations.Head |> fst :?> FaultyInc).N < 5 ) @>
@@ -168,7 +171,8 @@ module StateMachine =
          let run = { Setup = (0,create)
                      TearDown = checkFaultyCommandModelSpecNoShrink.TearDown
                      Operations = [(FaultyInc(1) :> Operation<SimpleModel,int>,1)
-                                   (FaultyInc(2) :> Operation<SimpleModel,int>,2)] }
+                                   (FaultyInc(2) :> Operation<SimpleModel,int>,2)]
+                     UsedSize = 2 }
  
          //since shrinker is disabled should not generate values through shrinking
          let shrunk = StateMachine.shrink checkFaultyCommandModelSpecNoShrink run |> List.ofSeq
@@ -216,10 +220,9 @@ module StateMachine =
                     fun setup -> seq { if setup.Model() > 0 then yield create (setup.Model()-1) })
             member __.Next _ = Gen.elements [ inc; dec ] }
 
-    [<Fact>]
-    let ``should check Counter``() =
-        let prop = StateMachine.toProperty spec
-        Check.QuickThrowOnFailure prop
+    [<Property>]
+    let ``check Counter``() =
+        StateMachine.toProperty spec
 
     // "symbolic" model
 
@@ -271,10 +274,9 @@ module StateMachine =
             member __.Setup = Gen.constant setup |> Arb.fromGen
             member __.Next _ = Gen.frequency [ (10,``a->b``); (1,``b->c``);  (10, ``b->a``); (1,``a->c``) ] }
 
-    [<Fact>]
-    let ``should check specSymbolic``() =
-        let prop = StateMachine.toProperty (specSymbolic "nofail")
-        Check.QuickThrowOnFailure prop
+    [<Property>]
+    let ``check specSymbolic``() =
+        StateMachine.toProperty (specSymbolic "nofail")
 
     [<Fact>]
     let ``shrinker should remove loops``() =
@@ -284,6 +286,7 @@ module StateMachine =
         let (``a->b``, ``b->a``, ``b->c``, ``a->c``) = makeOperations "C"
         let run = { Setup = (A, setup)
                     TearDown = spec.TearDown
-                    Operations = [(``a->b``,B); (``b->a``,A);(``a->c``,C)] }
+                    Operations = [(``a->b``,B); (``b->a``,A);(``a->c``,C)] 
+                    UsedSize = 3}
         let shrunk = StateMachine.shrink spec run
         test <@ shrunk |> Seq.exists (fun e -> e.Operations = [(``a->c``,C)]) @>

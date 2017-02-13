@@ -111,9 +111,11 @@ type Machine<'Actual,'Model>(maxNumberOfCommands:int) =
 
 [<StructuredFormatDisplayAttribute("{StructuredToString}")>]
 type MachineRun<'Actual, 'Model> =
-    { Setup : 'Model * Setup<'Actual,'Model> 
-      Operations : list<Operation<'Actual,'Model> * 'Model>
-      TearDown : TearDown<'Actual> } with
+    { Setup         : 'Model * Setup<'Actual,'Model> 
+      Operations    : list<Operation<'Actual,'Model> * 'Model>
+      TearDown      : TearDown<'Actual> 
+      UsedSize      : int} 
+      with
     override t.ToString() =
         sprintf "%A\n%s\n%A" t.Setup (String.Join("\n", t.Operations |> Seq.map (fun (op,m) -> sprintf "%O -> %A" op m ))) t.TearDown
     member t.StructuredToString = t.ToString()
@@ -243,21 +245,25 @@ module StateMachine =
                 if size > 0 then
                     let nextOperation = spec.Next state
                     let! command = nextOperation |> Gen.tryWhere (fun operation -> operation.Pre state)
-                    if Option.isNone command || command.Value.GetType() = typeof<StopOperation<'Actual,'Model>> then return [state],[]
+                    if Option.isNone command || command.Value.GetType() = typeof<StopOperation<'Actual,'Model>> then 
+                        return [state],[]
                     else
                         let! states, commands = genCommandsS (command.Value.Run state) (size-1)
                         return state :: states, command.Value :: commands
                 else
                     return [state],[]
             }
-        gen { let! setup = spec.Setup |> Arb.toGen
-              let initialModel = setup.Model()
-              let maxNum = spec.MaxNumberOfCommands
-              let! models,operations = Gen.sized (fun s -> let size = if maxNum < 0 then s else maxNum in genCommandsS initialModel size)
-              return { Setup = initialModel, setup
-                       Operations = List.zip operations (List.tail models) //first state is actually the initial state; so drop it.
-                       TearDown = spec.TearDown }
-        }
+        Gen.sized (fun size ->
+            gen { let! setup = spec.Setup |> Arb.toGen
+                  let initialModel = setup.Model()
+                  let maxNum = spec.MaxNumberOfCommands
+                  let usedSize = if maxNum < 0 then size else maxNum 
+                  let! models,operations = genCommandsS initialModel usedSize
+                  return { Setup = initialModel, setup
+                           Operations = List.zip operations (List.tail models) //first state is actually the initial state; so drop it.
+                           TearDown = spec.TearDown
+                           UsedSize = usedSize }
+            })
 
     [<CompiledName("Shrink")>]
     let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
@@ -301,13 +307,13 @@ module StateMachine =
         //try to srhink the initial setup state
         let shrinkSetup =
             Arb.toShrink spec.Setup (snd run.Setup) 
-            |> Seq.choose (fun setup -> chooseModels (setup.Model(),setup) (List.map fst run.Operations)) //{ run with Setup = setup.Model(), setup })
+            |> Seq.choose (fun setup -> chooseModels (setup.Model(),setup) (List.map fst run.Operations))
 
         Seq.append shrinkOps shrinkSetup
         
     /// Check one run, i.e. create a property from a single run.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let forOne { Setup = _:'Model,setup; Operations = operations; TearDown = teardown } =
+    let forOne { Setup = _:'Model,setup; Operations = operations; TearDown = teardown; UsedSize = usedSize } =
             let rec run actual (operations:list<Operation<'Actual,'Model> * _>) property =
                 match operations with
                 | [] -> teardown.Actual actual; property
@@ -315,7 +321,14 @@ module StateMachine =
                     (op :> IOperation).ClearDependencies() //side-effect :(
                     let prop = op.Check(actual, model)
                     run actual ops (property .&. prop) //not great: should stop generating once error is found
-            run (setup.Actual()) operations (Prop.ofTestable true)
+            let prop = run (setup.Actual()) operations (Prop.ofTestable true)
+            let l = operations.Length
+            prop |> Prop.trivial (l = 0)
+                 |> Prop.classify (l > 1 && l <= 6) "short sequences (between 1-6 commands)"
+                 |> Prop.classify (l > 6) "long sequences (>6 commands)"
+                 |> Prop.classify (-1 <> usedSize && l < usedSize) "aborted sequences"
+                 |> Prop.classify (-1 <> usedSize && l > usedSize) "longer than used size sequences (should not occur)"
+                 |> Prop.classify (-1 = usedSize) "artificial sequences"
 
     ///Check all generated runs, i.e. create a property from an arbitrarily generated run.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
