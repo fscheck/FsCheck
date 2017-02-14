@@ -2,7 +2,8 @@
 #I "../../src/FsCheck/bin/Release"
 #r "../../src/FsCheck.Xunit/bin/Release/FsCheck.Xunit.dll"
 #r "../../packages/xunit/lib/net20/xunit.dll"
-
+#r "../../packages/Expecto/lib/net40/Expecto.dll"
+#r "../../packages/Expecto/lib/net40/Expecto.FsCheck.dll"
 (**
 # Quick Start
 
@@ -93,11 +94,41 @@ more bugs!
 ## Using FsCheck with other testing frameworks
 
 Once you have finished your initial exploration of FsCheck, you'll probably want to use it with your existing
-unit test framework to augment unit tests or just to run the properties more easily.
+unit test framework to augment unit tests or just to run the properties more easily. Below, we'll show some
+integration, but we leave it up to you to choose whichever suits your environment best.
 
-### Straightforward integration with any unit test framework
+### Integration with Expecto
 
-As an example we'll use xUnit.NET, but the same strategy can be used with any test framework. Here is how to write 
+Some testing frameworks like Expecto have an out-of-the-box integration with FsCheck. By using one of the runners that
+support FsCheck out of the box, you gain access the the frameworks' reporting capabilities and integrations with IDEs
+and build tooling.
+
+Here's a sample:*)
+open Expecto
+open Expecto.ExpectoFsCheck
+
+let config = { FsCheck.Config.Default with MaxTest = 10000 }
+
+let properties =
+  testList "FsCheck samples" [
+    testProperty "Addition is commutative" <| fun a b ->
+      a + b = b + a
+      
+    testProperty "Reverse of reverse of a list is the original list" <|
+      fun (xs:list<int>) -> List.rev (List.rev xs) = xs
+
+    // you can also override the FsCheck config
+    testPropertyWithConfig config "Product is distributive over addition" <|
+      fun a b c ->
+        a * (b + c) = a * b + a * c
+  ]
+
+Tests.run defaultConfig properties
+
+(**
+### Integration with xUnit
+
+Another frequently used runner is xUnit.NET. Here is how to write 
 the unit test above so it can be run from xUnit.NET:*)
 
 open global.Xunit

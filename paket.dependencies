@@ -10,3 +10,4 @@ nuget xunit.runner.console
 nuget xunit.runner.visualstudio version_in_path: true
 nuget SourceLink.Fake
 nuget FSharp.Formatting
+nuget Expecto

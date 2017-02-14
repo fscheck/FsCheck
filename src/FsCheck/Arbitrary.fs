@@ -404,7 +404,8 @@ module Arb =
             fromGenShrink (gen,shrink)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
+        ///Generates arbitrary 64 bit floats, NaN, NegativeInfinity, PositiveInfinity, 
+        ///Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float() = 
             let generator =
                 Gen.frequency [(6, Gen.map3 Default.fraction generate generate generate)
@@ -421,7 +422,12 @@ module Arb =
                 |> Seq.distinct
             fromGenShrink(generator, shrinker)
 
-        ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
+        /// Generates a "normal" 64 bit floats (without NaN, Infinity, Epsilon, MinValue, MaxValue)
+        static member NormalFloat() =
+            fromGenShrink(Gen.map3 Default.fraction generate generate generate, Default.Float().Shrinker)
+            |> convert NormalFloat float
+
+        ///Generates arbitrary 32 bit floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float32() = 
             let generator =
                 let fraction a b c = float32 (Default.fraction a b c)
@@ -801,13 +807,6 @@ module Arb =
            Default.Int32()
             |> filter ((<>) 0)
             |> convert NonZeroInt int
-
-        /// Generates an Float (without NaN, Infinity)
-        static member NormalFloat() =
-            Default.Float()
-            |> filter (fun f -> not <| System.Double.IsNaN(f) &&
-                                not <| System.Double.IsInfinity(f))
-            |> convert NormalFloat float
 
         static member IntWithMinMax() =
             { new Arbitrary<IntWithMinMax>() with

@@ -1,5 +1,10 @@
 ### 3.0.0-alpha - To be released
 
+### 2.7.1 - 13 February 2017
+ * Improve reflection based generator for union cases - now also detect if a union case is recursive via any number of other types.
+ * Improve shrinking - when many possible values are tried, the shrinking was not tail recursive which could lead to stack overflow in rare situations. (by Lukas Rieger)
+ * Improvements to Experimental.StateMachine: some stats about generated operations are now printed and shrinking of operations can be customized (by Silvio Marcovic). Also the Setup shrinking phase now works correctly.
+
 ### 2.7.0 - 15 January 2017
   * Switch FsCheck.NUnit to use NUnit 3. This solves a lot of issues with NUnit 2's wonky plugin model. 
   FsCheck.NUnit.Addin is no longer needed, for example, and neither is the install.ps1 in the FsCheck.NUnit package. Also,
