@@ -1,7 +1,7 @@
 ﻿namespace FsCheck
 
 ///Haskell typeclass concept simulation. For internal use.
-module TypeClass =
+module internal TypeClass =
 
     open System
     open System.Collections.Generic

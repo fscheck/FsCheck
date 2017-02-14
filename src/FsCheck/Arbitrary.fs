@@ -162,7 +162,6 @@ module Arb =
         let newTypeClass = arbitrary.Value.Discover(onlyPublic=true,instancesType=t)
         let result = arbitrary.Value.Compare newTypeClass
         arbitrary.Value <- arbitrary.Value.Merge newTypeClass
-        result
 
     ///Register the generators that are static members of the type argument.
     [<CompiledName("Register")>]
