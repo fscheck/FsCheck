@@ -27,7 +27,7 @@
     }
   },
   "dependencies": {
-    "Microsoft.FSharp.Core.netcore": "1.0.0-alpha-*"
+    "FSharp.Core": "4.1.0"
   },
   "frameworks": {
     "netstandard1.6": {
