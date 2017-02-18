@@ -141,14 +141,6 @@ Properties may take the form `within <timeout in ms> <Lazy<property>>`
 
 For example,*)
 
-(***hide***)
-//TODO: figure out why this does not exit cleanly. If I eval, 
-//FSharp.Formatting formats this file nicely, but hangs on any
-//subsequent file. I suspect this has to do with some thread
-//not closing cleanly...
-//(***define-output:timesOut***)
-
-(***do-not-eval***)
 let timesOut (a:int) = 
     lazy
         if a>10 then
@@ -157,10 +149,6 @@ let timesOut (a:int) =
         else 
             true
     |> Prop.within 1000
-Check.Quick timesOut
-
-(***hide***)
-//(***include-output:timesOut***)
 
 (**
 The first argument is the time the lazy property may run. If it runs longer, 
