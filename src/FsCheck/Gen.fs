@@ -602,13 +602,14 @@ module Gen =
         let mapToInt (value:'a) =
             if isNull (box value) then 0
             else
-                let (found,result) = toCounter.TryGetValue value
-                if found then 
-                    result
-                else
-                    toCounter.Add(value,!counter)
-                    counter := !counter + 1
-                    !counter - 1
+                lock toCounter (fun _ ->
+                    let (found,result) = toCounter.TryGetValue value
+                    if found then 
+                        result
+                    else
+                        toCounter.Add(value,!counter)
+                        counter := !counter + 1
+                        !counter - 1)
         let rec rands r0 = seq { let r1,r2 = Random.split r0 in yield r1; yield! (rands r2) }
         fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
 

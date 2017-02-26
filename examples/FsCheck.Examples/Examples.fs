@@ -27,6 +27,13 @@ Arb.register<Generators>() |> ignore
 //            override x.Arbitrary = arbitrary |> fmapGen int64 }
 //overwriteGenerators<NoInstancesFails>()
 
+
+let prop_lameTask (x:int) =
+    if x=0 then false else true
+    |> Threading.Tasks.Task.FromResult
+Check.Quick prop_lameTask
+
+
 type TestEnum =
     | First = 0
     | Second = 1

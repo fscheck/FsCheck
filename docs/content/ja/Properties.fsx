@@ -132,7 +132,7 @@ Check.Quick expectDivideByZero
 let timesOut (a:int) = 
     lazy
         if a>10 then
-            do System.Threading.Thread.Sleep(3000)
+            do Threading.Thread.Sleep(3000)
             true
         else 
             true
