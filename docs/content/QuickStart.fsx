@@ -123,7 +123,7 @@ let properties =
         a * (b + c) = a * b + a * c
   ]
 
-Tests.run defaultConfig properties
+Tests.runTests defaultConfig properties
 
 (**
 ### Integration with xUnit
