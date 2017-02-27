@@ -20,7 +20,8 @@ PM> Install-Package FsCheck.Xunit</pre>
   <div class="span1"></div>
 </div>
 
-Users have also created integrations with [Fuchu](https://github.com/mausch/Fuchu) and 
+Users have also created integrations with [Expecto](https://github.com/haf/Expecto), 
+[Fuchu](https://github.com/mausch/Fuchu) and 
 [AutoFixture](https://github.com/AutoFixture/AutoFixture) that 
 you can [find on NuGet](https://www.nuget.org/packages?q=fscheck).
 
