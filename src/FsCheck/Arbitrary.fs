@@ -1,14 +1,4 @@
-﻿(*--------------------------------------------------------------------------*\
-**  FsCheck                                                                 **
-**  Copyright (c) 2008-2015 Kurt Schelfthout and contributors.              **
-**  All rights reserved.                                                    **
-**  https://github.com/fscheck/FsCheck                              **
-**                                                                          **
-**  This software is released under the terms of the Revised BSD License.   **
-**  See the file License.txt for the full text.                             **
-\*--------------------------------------------------------------------------*)
-
-namespace FsCheck
+﻿namespace FsCheck
 
 // Disable warnings about calling certain FsCheck functions from F#.
 // Using them internally within FsCheck is important for performance reasons.
@@ -328,7 +318,7 @@ module Arb =
             fromGenShrink ( Gen.sized (fun n -> Gen.choose (-n,n)),
                             shrinkNumber)
 
-        ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
+        ///Generate arbitrary int32 that is unrestricted by size.
         [<Obsolete("Renamed to DoNotSizeInt32.")>]
         static member DontSizeInt32() =
             //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
@@ -339,7 +329,7 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generate arbitrary int32 that is between Int32.MinValue and Int32.MaxValue
+        ///Generate arbitrary int32 that is unrestricted by size.
         static member DoNotSizeInt32() =
             //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
             //so using this trick instead
@@ -354,14 +344,14 @@ module Arb =
             Default.Int32()
             |> convert (abs >> uint32) int
 
-        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        ///Generate arbitrary uint32 that is unrestricted by size.
         [<Obsolete("Renamed to DoNotSizeUInt32.")>]
         static member DontSizeUInt32() =
             let gen = Gen.choose(0, int UInt32.MaxValue)
             fromGenShrink(gen, shrink)
             |> convert (uint32 >> DoNotSize) (DoNotSize.Unwrap >> int)
 
-        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        ///Generate arbitrary uint32 that is unrestricted by size.
         static member DoNotSizeUInt32() =
             let gen = Gen.choose(0, int UInt32.MaxValue)
             fromGenShrink(gen, shrink)
@@ -375,7 +365,7 @@ module Arb =
             from<int32>
             |> convert int64 int32
 
-        ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        ///Generate arbitrary int64 that is unrestricted by size.
         [<Obsolete("Renamed to DoNotSizeInt64.")>]
         static member DontSizeInt64() =
             let gen =
@@ -384,7 +374,7 @@ module Arb =
             fromGenShrink (gen,shrinkNumber)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generate arbitrary int64 between Int64.MinValue and Int64.MaxValue
+        ///Generate arbitrary int64 that is unrestricted by size.
         static member DoNotSizeInt64() =
             let gen =
                 Gen.two generate<DoNotSize<int32>>
@@ -397,7 +387,7 @@ module Arb =
             from<int>
             |> convert (abs >> uint64) int
 
-        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        ///Generate arbitrary uint64 that is unrestricted by size.
         [<Obsolete("Renamed to DoNotSizeUInt64.")>]
         static member DontSizeUInt64() =
             let gen =
@@ -406,7 +396,7 @@ module Arb =
             fromGenShrink (gen,shrink)
             |> convert DoNotSize DoNotSize.Unwrap
         
-        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
+        ///Generate arbitrary uint64 that is unrestricted by size.
         static member DoNotSizeUInt64() =
             let gen =
                 Gen.two generate<DoNotSize<uint32>>
@@ -414,7 +404,8 @@ module Arb =
             fromGenShrink (gen,shrink)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
+        ///Generates arbitrary 64 bit floats, NaN, NegativeInfinity, PositiveInfinity, 
+        ///Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float() = 
             let generator =
                 Gen.frequency [(6, Gen.map3 Default.fraction generate generate generate)
@@ -431,7 +422,12 @@ module Arb =
                 |> Seq.distinct
             fromGenShrink(generator, shrinker)
 
-        ///Generates arbitrary floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
+        /// Generates a "normal" 64 bit floats (without NaN, Infinity, Epsilon, MinValue, MaxValue)
+        static member NormalFloat() =
+            fromGenShrink(Gen.map3 Default.fraction generate generate generate, Default.Float().Shrinker)
+            |> convert NormalFloat float
+
+        ///Generates arbitrary 32 bit floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float32() = 
             let generator =
                 let fraction a b c = float32 (Default.fraction a b c)
@@ -808,13 +804,6 @@ module Arb =
            Default.Int32()
             |> filter ((<>) 0)
             |> convert NonZeroInt int
-
-        /// Generates an Float (without NaN, Infinity)
-        static member NormalFloat() =
-            Default.Float()
-            |> filter (fun f -> not <| System.Double.IsNaN(f) &&
-                                not <| System.Double.IsInfinity(f))
-            |> convert NormalFloat float
 
         static member IntWithMinMax() =
             { new Arbitrary<IntWithMinMax>() with

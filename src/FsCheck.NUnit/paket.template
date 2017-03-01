@@ -7,6 +7,8 @@ owners
     Kurt Schelfthout and contributors
 projectUrl
     https://github.com/fsharp/FsCheck
+iconUrl
+    https://raw.githubusercontent.com/fscheck/FsCheck/master/docs/files/img/logo.png
 licenseUrl
     https://github.com/fsharp/FsCheck/blob/master/License.txt
 requireLicenseAcceptance
@@ -19,19 +21,12 @@ summary
     Integrates FsCheck with NUnit
 description
     FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute.
-    
+
     All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
 dependencies
     FsCheck >= CURRENTVERSION
     NUnit ~> LOCKEDVERSION
-    NUnit.Runners ~> LOCKEDVERSION
 files
     bin/Release/FsCheck.NUnit.dll ==> lib/net45
     bin/Release/FsCheck.NUnit.pdb ==> lib/net45
     bin/Release/FsCheck.NUnit.xml ==> lib/net45
-    ../FsCheck.NUnit.Addin/bin/Release/FsCheck.NUnit.Addin.dll ==> lib/net45
-    ../FsCheck.NUnit.Addin/bin/Release/FsCheck.NUnit.Addin.pdb ==> lib/net45
-    ../FsCheck.NUnit.Addin/bin/Release/FsCheck.NUnit.Addin.xml ==> lib/net45
-    ../../NuGet/install.ps1 ==> tools
-    ../../NuGet/FsCheckAddin.fs ==> content
-

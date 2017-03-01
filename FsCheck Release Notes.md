@@ -1,3 +1,19 @@
+### 2.7.1 - 13 February 2017
+ * Improve reflection based generator for union cases - now also detect if a union case is recursive via any number of other types.
+ * Improve shrinking - when many possible values are tried, the shrinking was not tail recursive which could lead to stack overflow in rare situations. (by Lukas Rieger)
+ * Improvements to Experimental.StateMachine: some stats about generated operations are now printed and shrinking of operations can be customized (by Silvio Marcovic). Also the Setup shrinking phase now works correctly.
+
+### 2.7.0 - 15 January 2017
+  * Switch FsCheck.NUnit to use NUnit 3. This solves a lot of issues with NUnit 2's wonky plugin model. 
+  FsCheck.NUnit.Addin is no longer needed, for example, and neither is the install.ps1 in the FsCheck.NUnit package. Also,
+  FsCheck.NUnit only needs a dependency on NUnit now, which should solve a bunch of install issues on its own. 
+  (like xUnit 2 support, another heroic contribution by Jon Hamm, and brilliantly pushed over the finish line by Mark Lambert.)
+  * NUnit versions < 3.0 are no longer supported. The latest FsCheck version that supports NUnit 2.6.4 is FsCheck.NUnit 2.6.3.
+
+### 2.6.3 - 13 January 2017
+ * Add Gen.zip, Gen.unzip, Gen.zip3 and Gen.unzip3. (by Mark Seemann)
+ * Add Cast() to enable type annotations in LINQ expressions. (by Mauricio Scheffer) 
+
 ### 2.6.2 - 7 October 2016
  * Add VB.NET support back. (by Paulmichael Blasucci)
  * Add HostName generator. (by Mark Seemann)

@@ -106,7 +106,29 @@ module Gen =
         Gen.map6 f (Gen.constant a) (Gen.constant b) (Gen.constant c) (Gen.constant d) (Gen.constant e) (Gen.constant g)
         |> sample1
         |> ((=) (f a b c d e g))
-    
+
+    [<Property>]
+    let Zip (a : int) (b : char) =
+        Gen.zip (Gen.constant a) (Gen.constant b)
+        |> sample1
+        |> ((=) (a, b))
+
+    [<Property>]
+    let Zip3 (a : int) (b : char) (c : bool) =
+        Gen.zip3 (Gen.constant a) (Gen.constant b) (Gen.constant c)
+        |> sample1
+        |> ((=) (a, b, c))
+
+    [<Property>]
+    let Unzip (a : char) (b : int) =
+        let f, g = Gen.constant (a, b) |> Gen.unzip
+        (sample1 f, sample1 g) = (a, b)
+
+    [<Property>]
+    let Unzip3 (a : char) (b : int) (c : bool) =
+        let f, g, h = Gen.constant (a, b, c) |> Gen.unzip3
+        (sample1 f, sample1 g, sample1 h) = (a, b, c)
+
     [<Property>]
     let Two (v:int) =
         Gen.two (Gen.constant v)
@@ -222,7 +244,6 @@ module Gen =
             (Array2D.length1 arr <= rows) 
             && (Array2D.length2 arr <= cols) 
             && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
-
 
     type MaybeNull =
         {
@@ -351,3 +372,31 @@ module Gen =
         test <@ convolutedGenNumber 100 
                 |> Gen.sample 1 10
                 |> Seq.forall ((=) 100) @>
+
+
+    type MyRecord =
+        { FieldA    : int
+          FieldB    : MyUnion
+          FieldC    : MyUnion }
+
+    and MyUnion = 
+    | NonRec of int
+    | Rec    of MyRecord
+    | Rec2   of MyOtherUnion
+
+    and MyOtherUnion =
+    | NonRec2 of int
+    | Rec2 of MyUnion * MyRecord
+
+    [<Fact>]
+    let ``should generate recursive types``() =
+        // this should just not stack overflow.
+        // It used to, because the detection of whether a union case
+        // is recursive or not, was limited to self-recursion (i.e. 
+        // type Tree = T of Tree * Tree |  Branch of int
+        // whereas as the example demonstrates recursion can be
+        // more involved.
+        let r1 = Gen.sample 100 100 (Arb.Default.Derive<MyRecord>().Generator)
+        let r2 = Gen.sample 100 100 (Arb.Default.Derive<MyUnion>().Generator)
+        let r3 = Gen.sample 100 100 (Arb.Default.Derive<MyOtherUnion>().Generator)
+        test <@ r1.Length + r2.Length + r3.Length = 300 @>

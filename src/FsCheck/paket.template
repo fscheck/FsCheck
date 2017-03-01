@@ -7,6 +7,8 @@ owners
     Kurt Schelfthout and contributors
 projectUrl
     https://github.com/fsharp/FsCheck
+iconUrl
+    https://raw.githubusercontent.com/fscheck/FsCheck/master/docs/files/img/logo.png
 licenseUrl
     https://github.com/fsharp/FsCheck/blob/master/License.txt
 requireLicenseAcceptance
@@ -22,9 +24,9 @@ description
     a specification of the program, in the form of properties which functions, methods
     or objects should satisfy, and FsCheck then tests that the properties hold in a
     large number of randomly generated cases.
-    
+
     While writing the properties, you are actually writing a testable specification of your program.
-    
+
     Specifications are expressed in F#, C# or VB, using combinators defined
     in the FsCheck library. FsCheck provides combinators to define properties,
     observe the distribution of test data, and define test data generators.
