@@ -590,7 +590,7 @@ let boxGen<'a> : Gen<Box<'a>> =
     gen { let! a = Arb.generate<'a>
           return! Gen.elements [ Whitebox a; Blackbox a] }
 
-type MyGenerators =
+type MyTreeGenerator =
     static member Tree() =
         {new Arbitrary<Tree>() with
             override x.Generator = tree
