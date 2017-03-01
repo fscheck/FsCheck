@@ -218,7 +218,7 @@ values between a minimum and maximum value, both inclusive:</p>
 but any value would do; it wouldn't change the result.</p>
 <p>While <code>Gen.choose (0, 9)</code> generates a single integer value, <code>Gen.sample 0 10</code>
 generates 10 sample values:</p>
-<table class="pre"><tr><td><pre><code>[4; 7; 1; 9; 3; 6; 9; 3; 0; 1]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[5; 9; 7; 2; 2; 9; 1; 1; 2; 4]</code></pre></td></tr></table>
 <p>If you supply values in the 'wrong order', <code>Gen.choose</code> will follow
 <a href="https://en.wikipedia.org/wiki/Robustness_principle">Postel's law</a> and 'know
 what you meant':</p>
@@ -227,7 +227,7 @@ what you meant':</p>
 <p>In this example, the first value is greater than the second value, but
 <code>Gen.choose</code> will happily interpret this as a range, and produce values between
 42 and 99, both included:</p>
-<table class="pre"><tr><td><pre><code>[44; 66; 90; 55; 83; 92; 92; 57; 62; 77]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[55; 92; 69; 48; 83; 62; 97; 59; 52; 91]</code></pre></td></tr></table>
 <p>Since both values are included, if you set both to the same value, you'll
 effectively constrain the generator to that single value, and it'll behave like
 <code>Gen.constant</code>.</p>
@@ -245,7 +245,7 @@ the result.</p>
 </code></pre>
 <p>The result of this expression is a list of ten sample values. Each value is
 a single integer drawn from the collection of numbers:</p>
-<table class="pre"><tr><td><pre><code>[1337; 42; 1453; 42; -273; 1453; 7; 42; 42; -100]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[1337; 1453; -273; 7; -100; 42; 1337; 7; -100; -273]</code></pre></td></tr></table>
 <p>All elements are equally likely to be drawn from the collection; we say that
 the random function has a uniform distribution. One easy way to affect the
 distribution is to put more than one identical element into the collection:</p>
@@ -253,7 +253,7 @@ distribution is to put more than one identical element into the collection:</p>
 </code></pre>
 <p>In the above example, the value <code>"foo"</code> appears twice, so is twice as likely
 to be drawn from the collection:</p>
-<table class="pre"><tr><td><pre><code>["bar"; "bar"; "foo"; "foo"; "foo"; "foo"; "foo"; "foo"; "foo"; "foo"]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>["foo"; "foo"; "foo"; "bar"; "bar"; "foo"; "foo"; "foo"; "foo"; "bar"]</code></pre></td></tr></table>
 <p>The above examples all use <code>list</code> values as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -271,13 +271,13 @@ argument, it's <code>3</code> in this example, which means only values from the 
 </code></pre>
 <p>The result of this expression is a list of ten sample values. Each value is
 a single character drawn from the segment <code>['a'; 'b'; 'c']</code>:</p>
-<table class="pre"><tr><td><pre><code>['c'; 'c'; 'a'; 'a'; 'b'; 'b'; 'c'; 'a'; 'c'; 'c']</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>['c'; 'c'; 'a'; 'a'; 'b'; 'b'; 'c'; 'c'; 'a'; 'a']</code></pre></td></tr></table>
 <p>Let's run <code>Gen.growingElements</code> again, with the same input but with size <code>7</code>:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Gen</span><span class="o">.</span><span class="i">growingElements</span> [<span class="s">&#39;a&#39;</span>; <span class="s">&#39;b&#39;</span>; <span class="s">&#39;c&#39;</span>; <span class="s">&#39;d&#39;</span>; <span class="s">&#39;e&#39;</span>; <span class="s">&#39;f&#39;</span>; <span class="s">&#39;g&#39;</span>; <span class="s">&#39;h&#39;</span>; <span class="s">&#39;i&#39;</span>; <span class="s">&#39;j&#39;</span>] <span class="o">|&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">sample</span> <span class="n">7</span> <span class="n">10</span>
 </code></pre>
 <p>The result of this expression is a list of ten sample values. Each value is
 now a single character drawn from the segment <code>['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g']</code>:</p>
-<table class="pre"><tr><td><pre><code>['b'; 'd'; 'c'; 'g'; 'd'; 'e'; 'f'; 'b'; 'a'; 'b']</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>['d'; 'b'; 'd'; 'b'; 'd'; 'b'; 'd'; 'b'; 'd'; 'b']</code></pre></td></tr></table>
 <p>The above examples all use <code>list</code> values as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -291,7 +291,7 @@ produce a <code>Gen&lt;byte&gt;</code> from a <code>Gen&lt;int&gt;</code> is to 
 </code></pre>
 <p>This example uses the <code>byte</code> <em>function</em> to cast any <code>int</code> created by
 <code>Gen.choose (0, 127)</code> to a <code>byte</code> value:</p>
-<table class="pre"><tr><td><pre><code>[68uy; 13uy; 2uy; 75uy; 64uy; 9uy; 126uy; 101uy; 41uy; 110uy]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[40uy; 113uy; 102uy; 47uy; 36uy; 109uy; 98uy; 43uy; 32uy; 105uy]</code></pre></td></tr></table>
 <p>This is only a basic example of the concept of <code>Gen.map</code>. In this particular
 example, you could also have used <code>Gen.elements [0uy..127uy]</code> to achieve the
 same result without using <code>Gen.map</code>, so let's consider a second
@@ -305,10 +305,10 @@ combine <code>Gen.map</code> with an anymous function to get the desired date:</
 </code></pre>
 <p>In this example, the generated <code>DateTime</code> value is immediately formatted as
 a <code>string</code>, so that the output is more readable:</p>
-<table class="pre"><tr><td><pre><code>["2019-11-20 00:00:00Z"; "2019-11-10 00:00:00Z"; "2019-11-21 00:00:00Z";
- "2019-11-08 00:00:00Z"; "2019-11-09 00:00:00Z"; "2019-11-03 00:00:00Z";
- "2019-11-16 00:00:00Z"; "2019-11-22 00:00:00Z"; "2019-11-13 00:00:00Z";
- "2019-11-07 00:00:00Z"]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>["2019-11-29 00:00:00Z"; "2019-11-20 00:00:00Z"; "2019-11-03 00:00:00Z";
+ "2019-11-24 00:00:00Z"; "2019-11-07 00:00:00Z"; "2019-11-28 00:00:00Z";
+ "2019-11-11 00:00:00Z"; "2019-11-02 00:00:00Z"; "2019-11-15 00:00:00Z";
+ "2019-11-06 00:00:00Z"]</code></pre></td></tr></table>
 <p>This causes the resulting generator to have the type <code>Gen&lt;string&gt;</code>, but if
 you omit calling <code>ToString "u"</code>, its type would have been <code>Gen&lt;DateTime&gt;</code>.</p>
 <h4><a name="Lists" class="anchor" href="#Lists">Lists</a></h4>
@@ -322,7 +322,7 @@ you can use <code>Gen.constant</code> to generate lists that all contain the sam
 <p>This combination uses <code>Gen.constant 42</code> as an individual generator, and then
 generates lists containing the the number 42. While the value(s) in the list is
 always 42, the length of the generated lists varies.</p>
-<table class="pre"><tr><td><pre><code>[[42]; []; []; [42]; [42]; [42]; []; [42]; [42]; []]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[42]; []; []; []; []; []; [42]; []; [42]; []]</code></pre></td></tr></table>
 <p>The length of the generated list is determined by the <code>size</code> argument. In
 this example, the <code>size</code> argument is <code>1</code>, so the generated lists are short.
 Note that while there's a correlation beteen <code>size</code> and the length of the
@@ -333,10 +333,10 @@ lists, you can't rely on a deterministic length. For that, there's
 <p>This example uses <code>Gen.choose (24, 42)</code> in order to generate individual
 integer values between 24 and 42. It then pipes this generator into
 <code>Gen.listOfLength 5</code> in order to generate lists with exactly five elements:</p>
-<table class="pre"><tr><td><pre><code>[[26; 29; 31; 40; 35]; [31; 26; 29; 31; 40]; [42; 31; 26; 29; 31];
- [39; 42; 31; 26; 29]; [34; 39; 42; 31; 26]; [34; 34; 39; 42; 31];
- [27; 34; 34; 39; 42]; [27; 27; 34; 34; 39]; [34; 27; 27; 34; 34];
- [33; 34; 27; 27; 34]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[36; 39; 41; 31; 26]; [41; 36; 39; 41; 31]; [32; 41; 36; 39; 41];
+ [30; 32; 41; 36; 39]; [27; 30; 32; 41; 36]; [25; 27; 30; 32; 41];
+ [30; 25; 27; 30; 32]; [40; 30; 25; 27; 30]; [37; 40; 30; 25; 27];
+ [35; 37; 40; 30; 25]]</code></pre></td></tr></table>
 <p>Notice that all sample lists have exactly five elements.</p>
 <p>You can also use <code>Gen.nonEmptyListOf</code> to create lists that are guaranteed to
 have at least one element. Like the other list generators, it uses a
@@ -346,9 +346,10 @@ single-value generator to generate its elements:</p>
 <p>Like <code>Gen.listOf</code>, <code>Gen.nonEmptyListOf</code> uses <code>size</code> to control the length
 of the generated lists. They may still be small, but the larger the <code>size</code>
 argument, the larger the lists may become.</p>
-<table class="pre"><tr><td><pre><code>[["baz"; "bar"; "bar"; "foo"; "baz"; "bar"; "bar"; "foo"];
- ["baz"; "baz"; "bar"; "bar"]; ["bar"];
- ["foo"; "bar"; "baz"; "baz"; "bar"; "bar"; "foo"; "baz"; "bar"; "bar"]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[["baz"; "bar"; "baz"; "foo"; "baz"; "baz"; "foo"];
+ ["baz"; "baz"; "bar"; "baz"; "foo"; "baz"; "baz"; "foo"; "bar"; "foo"; "foo";
+  "bar"; "baz"; "bar"; "bar"; "baz"; "foo"; "baz"; "foo"; "foo"];
+ ["baz"; "baz"; "baz"; "bar"; "baz"; "foo"; "baz"]; ["bar"]]</code></pre></td></tr></table>
 <p>In this example, each element is drawn from the small set "foo", "bar", and
 "baz". The lists are guaranteed to have at least a single element, but may be
 longer.</p>
@@ -364,9 +365,9 @@ random permutation of a given finite sequence.</p>
 example, but any value would do; it wouldn't change the result.</p>
 <p>The result of this expression is a list of lists, where each list contains
 the original input list, but shuffled:</p>
-<table class="pre"><tr><td><pre><code>[[|"qux"; "baz"; "foo"; "bar"|]; [|"foo"; "bar"; "baz"; "qux"|];
- [|"bar"; "foo"; "qux"; "baz"|]; [|"foo"; "bar"; "baz"; "qux"|];
- [|"foo"; "qux"; "baz"; "bar"|]; [|"baz"; "foo"; "bar"; "qux"|]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[|"bar"; "qux"; "baz"; "foo"|]; [|"baz"; "qux"; "bar"; "foo"|];
+ [|"qux"; "baz"; "bar"; "foo"|]; [|"baz"; "foo"; "qux"; "bar"|];
+ [|"baz"; "qux"; "foo"; "bar"|]; [|"bar"; "foo"; "qux"; "baz"|]]</code></pre></td></tr></table>
 <p>The above example uses a <code>list</code> value as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -387,8 +388,8 @@ can use integers:</p>
 <p><code>Gen.two</code> uses a single-value generator to create a generator of two-element
 tuples. This example generates 10 sample points, where each coordinate is
 between -100 and 100:</p>
-<table class="pre"><tr><td><pre><code>[(19, -40); (-56, 19); (32, -56); (55, 32); (-87, 55); (-13, -87); (31, -13);
- (-70, 31); (-52, -70); (6, -52)]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[(-5, -19); (95, -5); (-87, 95); (84, -87); (-20, 84); (56, -20); (-59, 56);
+ (94, -59); (43, 94); (-82, 43)]</code></pre></td></tr></table>
 <p>If you want to model a coordinate system in three-dimensional space, you may
 decide to use floating points instead:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Gen</span><span class="o">.</span><span class="i">elements</span> [<span class="o">-</span><span class="n">10.0</span><span class="o">..</span><span class="n">0.01</span><span class="o">..</span><span class="n">10.0</span>] <span class="o">|&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">three</span> <span class="o">|&gt;</span> <span class="i">Gen</span><span class="o">.</span><span class="i">sample</span> <span class="n">0</span> <span class="n">10</span>
@@ -397,10 +398,10 @@ decide to use floating points instead:</p>
 from between -10 and 10, with two decimals; that defines a <code>Gen&lt;float&gt;</code>.
 Second, <code>Gen.three</code> takes that <code>Gen&lt;float&gt;</code> and turns it into a
 <code>Gen&lt;float * float * float&gt;</code>:</p>
-<table class="pre"><tr><td><pre><code>[(1.88, -1.77, 8.23); (7.04, 1.88, -1.77); (-8.91, 7.04, 1.88);
- (-8.81, -8.91, 7.04); (-2.95, -8.81, -8.91); (0.89, -2.95, -8.81);
- (-7.68, 0.89, -2.95); (-7.4, -7.68, 0.89); (7.2, -7.4, -7.68);
- (9.81, 7.2, -7.4)]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[(9.14, -1.85, -0.85); (0.47, 9.14, -1.85); (5.77, 0.47, 9.14);
+ (-0.07, 5.77, 0.47); (-4.59, -0.07, 5.77); (-4.03, -4.59, -0.07);
+ (6.24, -4.03, -4.59); (-5.38, 6.24, -4.03); (-6.41, -5.38, 6.24);
+ (-4.21, -6.41, -5.38)]</code></pre></td></tr></table>
 <p>Finally, <code>Gen.four</code> transforms a single-value generator into a generator of
 four-element tuples. As all the other <em>combinators</em> in the <code>Gen</code> module, you
 can combine it with other functions to define more specific values. Imagine,
@@ -422,8 +423,8 @@ Third, you can pipe that generator into <code>Gen.map</code>, using the construc
 overload of <code>Version</code> that takes four integers; in F# 4, constructors can be
 treated as functions, and a constructor with four arguments can be treated as a
 function that takes a four-element tuple.</p>
-<table class="pre"><tr><td><pre><code>["8.2.8.2"; "9.8.2.8"; "7.9.8.2"; "1.7.9.8"; "7.1.7.9"; "1.7.1.7"; "6.1.7.1";
- "0.6.1.7"; "6.0.6.1"; "7.6.0.6"]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>["6.0.6.8"; "7.6.0.6"; "5.7.6.0"; "9.5.7.6"; "5.9.5.7"; "6.5.9.5"; "3.6.5.9";
+ "9.3.6.5"; "3.9.3.6"; "9.3.9.3"]</code></pre></td></tr></table>
 <p>This example composes the <code>Version</code> constructor with the <code>string</code> function,
 in order to produce a more readable output. The resulting generator has the
 type <code>Gen&lt;string&gt;</code>, but if you remove the <code>string</code> composition, the type would
@@ -446,8 +447,8 @@ remove all pairs where the elements are equal. Subsequently, you can use
 </code></pre>
 <p>This expression generates 10 sample lists, each containing two different
 numbers:</p>
-<table class="pre"><tr><td><pre><code>[[14; 50]; [100; 63]; [56; 88]; [54; 44]; [28; 3]; [12; 15]; [5; 99]; [79; 92];
- [94; 29]; [34; 81]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[7; 40]; [25; 57]; [62; 12]; [32; 49]; [90; 20]; [100; 39]; [86; 5]; [25; 74];
+ [73; 38]; [10; 23]]</code></pre></td></tr></table>
 <p>When using <code>Gen.filter</code>, be sure to provide a predicate with a high chance
 of returning <code>true</code>. If the predicate discards 'too many' candidates, it may
 cause tests to run slower, or to not terminate at all. If your filter is
@@ -501,21 +502,21 @@ option values containing Trees:</p>
     <span class="i">gen</span> { <span class="k">let!</span> <span class="i">a</span> <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">generate</span><span class="o">&lt;</span><span class="o">&#39;</span><span class="i">a</span><span class="o">&gt;</span>
           <span class="k">return!</span> <span class="i">Gen</span><span class="o">.</span><span class="i">elements</span> [ <span onmouseout="hideTip(event, 'fs37', 79)" onmouseover="showTip(event, 'fs37', 79)" class="i">Whitebox</span> <span class="i">a</span>; <span onmouseout="hideTip(event, 'fs38', 80)" onmouseover="showTip(event, 'fs38', 80)" class="i">Blackbox</span> <span class="i">a</span>] }
 
-<span class="k">type</span> <span onmouseout="hideTip(event, 'fs28', 81)" onmouseover="showTip(event, 'fs28', 81)" class="i">MyGenerators</span> <span class="o">=</span>
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs14', 82)" onmouseover="showTip(event, 'fs14', 82)" class="i">Tree</span>() <span class="o">=</span>
+<span class="k">type</span> <span onmouseout="hideTip(event, 'fs40', 81)" onmouseover="showTip(event, 'fs40', 81)" class="t">MyTreeGenerator</span> <span class="o">=</span>
+    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs41', 82)" onmouseover="showTip(event, 'fs41', 82)" class="f">Tree</span>() <span class="o">=</span>
         {<span class="k">new</span> <span class="i">Arbitrary</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs14', 83)" onmouseover="showTip(event, 'fs14', 83)" class="i">Tree</span><span class="o">&gt;</span>() <span class="k">with</span>
             <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">Generator</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs18', 84)" onmouseover="showTip(event, 'fs18', 84)" class="i">tree</span>
             <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">Shrinker</span> <span class="i">t</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs30', 85)" onmouseover="showTip(event, 'fs30', 85)" class="i">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 86)" onmouseover="showTip(event, 'fs31', 86)" class="i">empty</span> }
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs36', 87)" onmouseover="showTip(event, 'fs36', 87)" class="i">Box</span>() <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">fromGen</span> <span onmouseout="hideTip(event, 'fs39', 88)" onmouseover="showTip(event, 'fs39', 88)" class="i">boxGen</span>
+    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs42', 87)" onmouseover="showTip(event, 'fs42', 87)" class="f">Box</span>() <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">fromGen</span> <span onmouseout="hideTip(event, 'fs39', 88)" onmouseover="showTip(event, 'fs39', 88)" class="i">boxGen</span>
 </code></pre>
 <p>Notice that we use the function <code>generate&lt;'a&gt;</code> from the Arb module to get the generator
 for the type argument of <code>Box</code>. This allows you to define generators recursively. Similarly, there is
 a function <code>shrink&lt;'a&gt;</code>. Look at the FsCheck source for examples of default Arbitrary implementations
 to get a feeling of how to write such Arbitrary instances. The Arb module should help you with this task as well.</p>
 <p>Now, the following property can be checked:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs40', 89)" onmouseover="showTip(event, 'fs40', 89)" class="f">revRevBox</span> (<span onmouseout="hideTip(event, 'fs41', 90)" onmouseover="showTip(event, 'fs41', 90)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs34', 91)" onmouseover="showTip(event, 'fs34', 91)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs36', 92)" onmouseover="showTip(event, 'fs36', 92)" class="t">Box</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 93)" onmouseover="showTip(event, 'fs13', 93)" class="t">int</span><span class="o">&gt;</span><span class="o">&gt;</span>) <span class="o">=</span> 
-  <span onmouseout="hideTip(event, 'fs5', 94)" onmouseover="showTip(event, 'fs5', 94)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs35', 95)" onmouseover="showTip(event, 'fs35', 95)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs5', 96)" onmouseover="showTip(event, 'fs5', 96)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs35', 97)" onmouseover="showTip(event, 'fs35', 97)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs41', 98)" onmouseover="showTip(event, 'fs41', 98)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs41', 99)" onmouseover="showTip(event, 'fs41', 99)" class="i">xs</span>
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs40', 100)" onmouseover="showTip(event, 'fs40', 100)" class="i">revRevBox</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs43', 89)" onmouseover="showTip(event, 'fs43', 89)" class="f">revRevBox</span> (<span onmouseout="hideTip(event, 'fs44', 90)" onmouseover="showTip(event, 'fs44', 90)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs34', 91)" onmouseover="showTip(event, 'fs34', 91)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs36', 92)" onmouseover="showTip(event, 'fs36', 92)" class="t">Box</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs13', 93)" onmouseover="showTip(event, 'fs13', 93)" class="t">int</span><span class="o">&gt;</span><span class="o">&gt;</span>) <span class="o">=</span> 
+  <span onmouseout="hideTip(event, 'fs5', 94)" onmouseover="showTip(event, 'fs5', 94)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs35', 95)" onmouseover="showTip(event, 'fs35', 95)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs5', 96)" onmouseover="showTip(event, 'fs5', 96)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs35', 97)" onmouseover="showTip(event, 'fs35', 97)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs44', 98)" onmouseover="showTip(event, 'fs44', 98)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs44', 99)" onmouseover="showTip(event, 'fs44', 99)" class="i">xs</span>
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs43', 100)" onmouseover="showTip(event, 'fs43', 100)" class="i">revRevBox</span>
 </code></pre>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 <p>Note that the class needs not be tagged with attributes in any way. FsCheck determines the type of
@@ -574,8 +575,11 @@ derive suitable instances using reflection for discriminated unions, record type
 <div class="tip" id="fs37">union case Box.Whitebox: &#39;a -&gt; Box&lt;&#39;a&gt;</div>
 <div class="tip" id="fs38">union case Box.Blackbox: &#39;a -&gt; Box&lt;&#39;a&gt;</div>
 <div class="tip" id="fs39">val boxGen&lt;&#39;a&gt; : obj<br /><br />Full name: TestData.boxGen</div>
-<div class="tip" id="fs40">val revRevBox : xs:Box&lt;int&gt; list -&gt; bool<br /><br />Full name: TestData.revRevBox</div>
-<div class="tip" id="fs41">val xs : Box&lt;int&gt; list</div>
+<div class="tip" id="fs40">type MyTreeGenerator =<br />&#160;&#160;static member Box : unit -&gt; &#39;a<br />&#160;&#160;static member Tree : unit -&gt; &#39;a<br /><br />Full name: TestData.MyTreeGenerator</div>
+<div class="tip" id="fs41">Multiple items<br />static member MyTreeGenerator.Tree : unit -&gt; &#39;a<br /><br />Full name: TestData.MyTreeGenerator.Tree<br /><br />--------------------<br />type Tree =<br />&#160;&#160;| Leaf of int<br />&#160;&#160;| Branch of Tree * Tree<br /><br />Full name: TestData.Tree</div>
+<div class="tip" id="fs42">Multiple items<br />static member MyTreeGenerator.Box : unit -&gt; &#39;a<br /><br />Full name: TestData.MyTreeGenerator.Box<br /><br />--------------------<br />type Box&lt;&#39;a&gt; =<br />&#160;&#160;| Whitebox of &#39;a<br />&#160;&#160;| Blackbox of &#39;a<br /><br />Full name: TestData.Box&lt;_&gt;</div>
+<div class="tip" id="fs43">val revRevBox : xs:Box&lt;int&gt; list -&gt; bool<br /><br />Full name: TestData.revRevBox</div>
+<div class="tip" id="fs44">val xs : Box&lt;int&gt; list</div>
 
         </div>
         <div class="span3">
