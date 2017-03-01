@@ -231,6 +231,9 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                 cancellationTokenSource.Cancel() |> ignore
             summary
 
+        if not (messageBus.QueueMessage(new TestCaseStarting(this))) then
+            cancellationTokenSource.Cancel() |> ignore
+
         if not (messageBus.QueueMessage(new TestStarting(test))) then
             cancellationTokenSource.Cancel() |> ignore
 
