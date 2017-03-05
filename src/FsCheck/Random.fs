@@ -106,23 +106,23 @@ type internal Random () =
         Rnd(Rnd.mix64variant13 s, Rnd.mixGamma(s + RandomConstants.GOLDEN_GAMMA))
 
     ///Generate the next pseudo-random uint64 in the sequence, and return the new Rnd.
-    static member private nextUInt64 (s : Rnd, [<Out>] s' : byref<Rnd>) =
-        s' <- s.Next()
-        Rnd.mix64variant13 s'.Seed
+    static member private nextUInt64 ([<Out>] s : byref<Rnd>) =
+        s <- s.Next()
+        Rnd.mix64variant13 s.Seed
 
     ///Generate the next pseudo-random int64 in the sequence, and return the new Rnd.
-    static member nextInt64 (s : Rnd, [<Out>] s' : byref<Rnd>) =
-        s' <- s.Next()
-        int64 <| Rnd.mix64variant13 s'.Seed
+    static member nextInt64 ([<Out>] s : byref<Rnd>) =
+        s <- s.Next()
+        int64 <| Rnd.mix64variant13 s.Seed
 
     ///Generate the next pseudo-random int in the sequence, and return the new Rnd.
-    static member nextInt (s : Rnd, [<Out>] s' : byref<Rnd>) =
-        s' <- s.Next()
-        Rnd.mix32variant04 s'.Seed
+    static member nextInt ([<Out>] s : byref<Rnd>) =
+        s <- s.Next()
+        Rnd.mix32variant04 s.Seed
 
     ///Generate the next pseudo-random float in the sequence in the interval [0, 1] and return the new Rnd.
-    static member nextFloat (s : Rnd, [<Out>] s' : byref<Rnd>) =
-        let l = Random.nextUInt64 (s, &s')
+    static member nextFloat ([<Out>] s : byref<Rnd>) =
+        let l = Random.nextUInt64 (&s)
         double (l >>> 11) * RandomConstants.DOUBLE_MULTIPLIER
 
     ///Split this PRNG in two PRNGs that overlap with very small probability.
@@ -134,12 +134,13 @@ type internal Random () =
 
     ///Generate the next pseudo-random int64 in the given range (inclusive l and h) and return the new Rnd.
     static member rangeInt64 (l, h, s : Rnd, [<Out>] s' : byref<Rnd>) =
+        let mutable s'' = s
         if l > h then //swap l and h
             Random.rangeInt64 (h, l, s, &s')
         else
             let m = h - l  //size of the exclusive range
             let n = m + 1L //size of the inclusive range
-            let mutable candidate = Random.nextInt64 (s, &s')
+            let mutable candidate = Random.nextInt64 (&s'')
             let mutable result = System.Nullable<_> ()
             if (n > 0L) then
                 //we have a range that is a positive int64, i.e. a "small" range relative to the total range - half of it or less.
@@ -151,7 +152,7 @@ type internal Random () =
                     let offset = pcand % n
                     //
                     if pcand + m - offset < 0L then
-                        candidate <- Random.nextInt64 (s, &s')
+                        candidate <- Random.nextInt64 (&s'')
                     else
                         result <- System.Nullable<_> (l + offset)
             else 
@@ -159,36 +160,39 @@ type internal Random () =
                 //we can just keep generating until we find a number in the desired range.
                 while not result.HasValue do
                     if candidate < l || candidate >= h then
-                        candidate <- Random.nextInt64 (s, &s')
+                        candidate <- Random.nextInt64 (&s'')
                     else
                         result <- System.Nullable<_> (candidate)
             
             // Return the result
+            s' <- s''
             result.Value
 
     ///Generate the next pseudo-random int in the given range (inclusive l and h) and returns the new Rnd.
     static member rangeInt (l, h, s : Rnd, [<Out>] s' : byref<Rnd>) : int =
+        let mutable s'' = s
         if l > h then
             Random.rangeInt (h, l, s, &s')
         else
             let m = h - l
             let n = m + 1
-            let mutable candidate = Random.nextInt (s, &s')
+            let mutable candidate = Random.nextInt (&s'')
             let mutable result = System.Nullable<_> ()
             if (n > 0) then
                 while not result.HasValue do
                     let pcand = int (uint32 candidate >>> 1)
                     let offset = pcand % n
                     if pcand + m - offset < 0 then
-                        candidate <- Random.nextInt (s, &s')
+                        candidate <- Random.nextInt (&s'')
                     else
                         result <- System.Nullable<_> (l + offset)
             else 
                 while not result.HasValue do
                     if candidate < l || candidate >= h then 
-                        candidate <- Random.nextInt (s, &s')
+                        candidate <- Random.nextInt (&s'')
                     else
                         result <- System.Nullable<_> (candidate)
 
             // Return the result.
+            s' <- s''
             result.Value
