@@ -1,3 +1,6 @@
+### 2.7.2 - March 2017
+ * FsCheck.Xunit now shows currently executing test in UI test runner. (by Lukas Rieger)
+
 ### 2.7.1 - 13 February 2017
  * Improve reflection based generator for union cases - now also detect if a union case is recursive via any number of other types.
  * Improve shrinking - when many possible values are tried, the shrinking was not tail recursive which could lead to stack overflow in rare situations. (by Lukas Rieger)
