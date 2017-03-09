@@ -5,6 +5,7 @@ nuget NUnit
 nuget NUnit3TestAdapter version_in_path: true
 nuget Unquote
 nuget xunit
+nuget xunit.abstractions
 nuget xunit.core
 nuget xunit.runner.console
 nuget xunit.runner.visualstudio version_in_path: true
