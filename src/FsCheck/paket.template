@@ -34,9 +34,9 @@ description
 dependencies
     FSharp.Core >= 3.1.2.5
 files
-    bin/Release/FsCheck.dll ==> lib/net45
-    bin/Release/FsCheck.pdb ==> lib/net45
-    bin/Release/FsCheck.xml ==> lib/net45
+    bin/Release/FsCheck.dll ==> lib/net452
+    bin/Release/FsCheck.pdb ==> lib/net452
+    bin/Release/FsCheck.xml ==> lib/net452
     ../FsCheck.Portable.Profile7/bin/Release/FsCheck.dll ==> lib/portable-net45+netcore45
     ../FsCheck.Portable.Profile7/bin/Release/FsCheck.pdb ==> lib/portable-net45+netcore45
     ../FsCheck.Portable.Profile7/bin/Release/FsCheck.xml ==> lib/portable-net45+netcore45

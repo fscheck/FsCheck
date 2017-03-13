@@ -25,8 +25,8 @@ description
     All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
 dependencies
     FsCheck >= CURRENTVERSION
-    NUnit ~> LOCKEDVERSION
+    NUnit ~> 3.6.0
 files
-    bin/Release/FsCheck.NUnit.dll ==> lib/net45
-    bin/Release/FsCheck.NUnit.pdb ==> lib/net45
-    bin/Release/FsCheck.NUnit.xml ==> lib/net45
+    bin/Release/FsCheck.NUnit.dll ==> lib/net452
+    bin/Release/FsCheck.NUnit.pdb ==> lib/net452
+    bin/Release/FsCheck.NUnit.xml ==> lib/net452
