@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Architude.FsCheck.Examples</RootNamespace>
     <AssemblyName>FsCheck.Examples</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Name>Architude.FsCheck.Examples</Name>
     <TargetFrameworkProfile>

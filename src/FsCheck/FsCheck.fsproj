@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>FsCheck</RootNamespace>
     <AssemblyName>FsCheck</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Name>FsCheck</Name>
     <TargetFrameworkProfile>
