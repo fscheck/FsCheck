@@ -46,8 +46,8 @@ NUGET
     Microsoft.NETCore.Targets (1.1) - framework: >= net10, >= netstandard10, netstandard13
     Microsoft.TestPlatform.ObjectModel (15.0.0) - version_in_path: true, framework: netcore10
     Mono.Cecil (0.9.6.4)
-    NETStandard.Library (1.6.1) - version_in_path: true, framework: >= net452, >= netstandard11, netcore10
-    NUnit (3.6.1)
+    NETStandard.Library (1.6.1) - version_in_path: true, framework: >= net463, >= netstandard16, netcore10
+    NUnit (3.6.1) - framework: >= net452
       NETStandard.Library (>= 1.6) - framework: >= net463, >= netstandard16
       System.Runtime.Loader (>= 4.0) - framework: >= net463, >= netstandard16
     NUnit3TestAdapter (3.7.0) - version_in_path: true
@@ -301,10 +301,7 @@ NUGET
       System.Reflection.Primitives (>= 4.3) - framework: dnxcore50, netstandard11, netstandard12, netstandard13, >= netstandard15, netcore11
       System.Runtime (>= 4.3) - framework: net462, >= net463, dnxcore50, netstandard11, netstandard12, netstandard13, >= netstandard15, netcore11
       System.Runtime.Handles (>= 4.3) - framework: dnxcore50, netstandard13, >= netstandard15, netcore11
-    System.Runtime.Loader (4.3) - framework: >= net463, >= netstandard16
-      System.IO (>= 4.3) - framework: >= netstandard15
-      System.Reflection (>= 4.3) - framework: >= netstandard15
-      System.Runtime (>= 4.3) - framework: >= netstandard15
+    System.Runtime.Loader (4.3) - framework: >= net463
     System.Runtime.Numerics (4.3) - framework: >= netstandard16
       System.Globalization (>= 4.3) - framework: dnxcore50, >= netstandard13
       System.Resources.ResourceManager (>= 4.3) - framework: dnxcore50, >= netstandard13
@@ -488,22 +485,18 @@ NUGET
       System.Text.Encoding (>= 4.3) - framework: dnxcore50, >= netstandard13
       System.Threading (>= 4.3) - framework: dnxcore50, >= netstandard13
       System.Xml.ReaderWriter (>= 4.3) - framework: dnxcore50, netstandard10, >= netstandard13
-    Unquote (3.1.2)
-    xunit (2.2)
+    Unquote (3.1.2) - framework: >= net452
+    xunit (2.2) - framework: >= net452
       xunit.assert (2.2)
       xunit.core (2.2)
-    xunit.abstractions (2.0.1) - framework: >= net452, >= netstandard11
-      NETStandard.Library (>= 1.6) - framework: >= netstandard10
-    xunit.assert (2.2)
-      NETStandard.Library (>= 1.6) - framework: >= netstandard11
-    xunit.core (2.2)
+    xunit.abstractions (2.0.1) - framework: >= net452
+    xunit.assert (2.2) - framework: >= net452
+    xunit.core (2.2) - framework: >= net452
       xunit.extensibility.core (2.2)
       xunit.extensibility.execution (2.2)
-    xunit.extensibility.core (2.2)
-      NETStandard.Library (>= 1.6) - framework: >= netstandard11
+    xunit.extensibility.core (2.2) - framework: >= net452
       xunit.abstractions (>= 2.0.1) - framework: >= net452, >= netstandard11
-    xunit.extensibility.execution (2.2)
-      NETStandard.Library (>= 1.6) - framework: >= netstandard11
+    xunit.extensibility.execution (2.2) - framework: >= net452
       xunit.extensibility.core (2.2) - framework: >= net452, >= netstandard11
     xunit.runner.console (2.2)
     xunit.runner.visualstudio (2.2.0) - version_in_path: true
