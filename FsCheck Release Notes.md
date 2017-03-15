@@ -1,6 +1,6 @@
-### 2.8.0 - To be released
+### 2.8.0 - 15 March 2017
  * Removed support for .NET 4.5 and 4.5.1 frameworks as they are no longer supported by Microsoft.
- * Updated to xunit 2.2.
+ * Updated to xUnit 2.2.
  * Updated to NUnit 3.6.1.
 
 ### 2.7.2 - 5 March 2017
