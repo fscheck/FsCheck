@@ -90,11 +90,11 @@ configuration.QuietOnSuccess <span class="o">=</span> <span class="k">true</span
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 1 test (2 shrinks) (StdGen (1859998702,296273870)):
+ListProperties.reverse is original-Falsifiable, after 1 test (1 shrink) (StdGen (361032669,296278002)):
 Original:
-[2; -2]
+[0; -1]
 Shrunk:
-[1; 0]</code></pre></td></tr></table>
+[0; 1]</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
 you can also use Check.QuickAll to test all the top level functions in a certain module.
 However, the type of a module is not directly accessible via F#, so you can use the following trick:</p>
@@ -115,9 +115,9 @@ top level let-bound functions, and then register all generators and and all prop
 <span class="i">Arb</span><span class="o">.</span><span class="i">registerByType</span> (<span onmouseout="hideTip(event, 'fs11', 36)" onmouseover="showTip(event, 'fs11', 36)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs20', 37)" onmouseover="showTip(event, 'fs20', 37)" class="i">Marker</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">QuickAll</span> (<span onmouseout="hideTip(event, 'fs11', 38)" onmouseover="showTip(event, 'fs11', 38)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs20', 39)" onmouseover="showTip(event, 'fs20', 39)" class="i">Marker</span><span class="o">&gt;</span><span class="o">.</span><span class="i">DeclaringType</span>)
 </code></pre>
-<table class="pre"><tr><td><pre><code>--- Checking FSI_0129 ---
-FSI_0129.myprop-Ok, passed 100 tests.
-FSI_0129.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>--- Checking FSI_0127 ---
+FSI_0127.myprop-Ok, passed 100 tests.
+FSI_0127.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
 <p>The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way
 to get to a module's Type directly.</p>
 <p>FsCheck determines the intent of the function based on its return type:</p>
