@@ -1,7 +1,9 @@
 ### 2.8.0 - To be released
- * Removed support for .NET 4.5 and 4.5.1 frameworks. They are no longer supported by Microsoft.
+ * Removed support for .NET 4.5 and 4.5.1 frameworks as they are no longer supported by Microsoft.
+ * Updated to xunit 2.2.
+ * Updated to NUnit 3.6.1.
 
-### 2.7.2 - March 2017
+### 2.7.2 - 5 March 2017
  * FsCheck.Xunit now shows currently executing test in UI test runner. (by Lukas Rieger)
 
 ### 2.7.1 - 13 February 2017
