@@ -42,8 +42,9 @@ let solution = if isMono then "FsCheck-mono.sln" else "FsCheck.sln"
 let testAssemblies = "tests/**/bin/Release/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
-// The profile where the project is posted 
-let gitHome = "ssh://github.com/fscheck"
+// The profile where the project is posted
+let gitOwner = "fscheck"
+let gitHome = sprintf "ssh://github.com/%s" gitOwner
 // gitraw location - used for source linking
 let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/fscheck"
 // The name of the project on GitHub
@@ -217,14 +218,40 @@ Target "ReleaseDocs" (fun _ ->
     Branches.push tempDocsDir
 )
 
+#load "paket-files/fsharp/FAKE/modules/Octokit/Octokit.fsx"
+open Octokit 
+
 Target "Release" (fun _ ->
+    let user =
+        match getBuildParam "github-user" with
+        | s when not (String.IsNullOrWhiteSpace s) -> s
+        | _ -> getUserInput "Username: "
+    let pw =
+        match getBuildParam "github-pw" with
+        | s when not (String.IsNullOrWhiteSpace s) -> s
+        | _ -> getUserPassword "Password: "
+    let remote =
+        Git.CommandHelper.getGitResult "" "remote -v"
+        |> Seq.filter (fun (s: string) -> s.EndsWith("(push)"))
+        |> Seq.tryFind (fun (s: string) -> s.Contains(gitOwner + "/" + gitName))
+        |> function None -> gitHome + "/" + gitName | Some (s: string) -> s.Split().[0]
+
     StageAll ""
-    Commit "" (sprintf "Bump version to %s" release.NugetVersion)
-    Branches.push ""
+    Git.Commit.Commit "" (sprintf "Bump version to %s" release.NugetVersion)
+    Branches.pushBranch "" remote (Information.getBranchName "")
 
     Branches.tag "" release.NugetVersion
-    Branches.pushTag "" "origin" release.NugetVersion
+    Branches.pushTag "" remote release.NugetVersion
+
+    // release on github
+    createClient user pw
+    |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
+    // to upload a file: |> uploadFile "PATH_TO_FILE"
+    |> releaseDraft
+    |> Async.RunSynchronously
 )
+
+
 
 // --------------------------------------------------------------------------------------
 // Run all targets by default. Invoke 'build <Target>' to override

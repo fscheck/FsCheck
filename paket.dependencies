@@ -1,6 +1,7 @@
 source https://www.nuget.org/api/v2
 
 nuget FAKE
+github fsharp/FAKE modules/Octokit/Octokit.fsx
 nuget NUnit framework: >=net452
 nuget NUnit3TestAdapter version_in_path: true
 nuget Unquote framework: >=net452
