@@ -85,6 +85,7 @@
     <Compile Include="Runner.fs" />
     <Compile Include="RunnerExtensions.fs" />
     <None Include="Script.fsx" />
+    <None Include="paket.template" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">

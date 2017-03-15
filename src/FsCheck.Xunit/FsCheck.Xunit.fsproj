@@ -61,6 +61,7 @@
     <Compile Include="PropertyAttribute.fs" />
     <Compile Include="CheckExtensions.fs" />
     <None Include="paket.references" />
+    <None Include="paket.template" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
