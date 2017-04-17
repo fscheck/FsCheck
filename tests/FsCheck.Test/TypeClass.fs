@@ -14,6 +14,7 @@ module TypeClass =
     [<Fact>]
     let ``should be empty on initialization``() =
         let typeClassDef = TypeClass<ITypeClassUnderTest<_>>.New()
+
         typedefof<ITypeClassUnderTest<_>> =! typeClassDef.Class
         test <@ typeClassDef.Instances.IsEmpty @>
         false =! typeClassDef.HasCatchAll
@@ -37,6 +38,7 @@ module TypeClass =
             TypeClass<ITypeClassUnderTest<_>>
                 .New()
                 .Discover(true, typeof<PrimitiveInstance>)
+
         1 =! typeClass.Instances.Count
         test <@ typeClass.Instances.Contains (Primitive typeof<int>) @>
         false =! typeClass.HasCatchAll
@@ -52,6 +54,7 @@ module TypeClass =
             TypeClass<ITypeClassUnderTest<_>>
                 .New()
                 .Discover(true, typeof<ArrayInstance>)
+
         1 =! typeClass.Instances.Count
         test <@ typeClass.Instances.Contains (Array typeof<_[,]>) @>
 
@@ -66,6 +69,7 @@ module TypeClass =
             TypeClass<ITypeClassUnderTest<_>>
                 .New()
                 .Discover(true, typeof<CatchAllInstance>)
+
         test <@ typeClass.HasCatchAll @>
         1 =! typeClass.Instances.Count
 
@@ -87,6 +91,7 @@ module TypeClass =
                 .Discover(true, typeof<ArrayInstance>)
                 .DiscoverAndMerge(true, typeof<PrimitiveInstance>) //so the int is defined too
                 .InstanceFor<int[,],ITypeClassUnderTest<int[,]>>()
+
         2 =! instance.GetSomething
 
     [<Fact>]
@@ -96,6 +101,7 @@ module TypeClass =
                 .New()
                 .Discover(true, typeof<CatchAllInstance>)
                 .InstanceFor<string,ITypeClassUnderTest<string>>() //string not defined explicitly
+
         3 =! instance.GetSomething
 
 

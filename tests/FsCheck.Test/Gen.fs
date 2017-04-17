@@ -274,6 +274,7 @@ module Gen =
             |> sample1
             |> List.replicate 10
             |> List.map ((|>) ())
+
         generated
         |> Seq.pairwise
         |> Seq.map (fun (a,b) -> a = b)
@@ -356,6 +357,7 @@ module Gen =
                     s := !s + 1
                   return !s
                 }
+
         test <@ convolutedGenNumber 100 
                 |> Gen.sample 1 10
                 |> Seq.forall ((=) 100) @>
@@ -369,6 +371,7 @@ module Gen =
                     s := !s + 1
                   return !s
                 }
+
         test <@ convolutedGenNumber 100 
                 |> Gen.sample 1 10
                 |> Seq.forall ((=) 100) @>

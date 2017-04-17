@@ -147,7 +147,9 @@ module Property =
             let resultRunner = GetResultRunner()
             let config = { Config.Quick with Runner = resultRunner; MaxTest = 2  }
             Check.One(config,toProperty symprop)
+
             let actual = resultRunner.Result
+
             areSame expected actual
             |> Prop.label (sprintf "expected = %A - actual = %A" expected actual)
             |> Prop.collect (depth symprop)
