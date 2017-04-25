@@ -109,6 +109,14 @@ module internal ReflectArbitrary =
             let g = productGen fields create
             box g
 
+        elif isCSharpDtoType t then
+            let fields = getCSharpDtoFields t
+            if fields |> Seq.exists ((=) t) then 
+                failwithf "Recursive record types cannot be generated automatically: %A" t 
+            let create = getCSharpDtoConstructor t
+            let g = productGen fields create
+            box g
+
         else
             failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing and registering a generator for it." t.FullName
                 

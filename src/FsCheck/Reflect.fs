@@ -16,6 +16,8 @@ module internal Reflect =
 
     let getPublicCtors (ty: Type) = ty.GetTypeInfo().DeclaredConstructors |> Seq.filter (fun c -> c.IsPublic)
 
+    let getProperties (ty: Type) = ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic)
+
     let isCSharpRecordType (ty: Type) = 
         let typeinfo = ty.GetTypeInfo()
         typeinfo.IsClass && not typeinfo.IsAbstract
@@ -23,6 +25,19 @@ module internal Reflect =
         && Seq.length (getPublicCtors ty) = 1
         && not (ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic) |> Seq.exists (fun p -> p.CanWrite))
         && ty.GetRuntimeFields() |> Seq.filter (fun m -> not m.IsStatic && m.IsPublic) |> Seq.forall (fun f -> f.IsInitOnly)
+
+    let isCSharpDtoType (ty: Type) =
+        let typeinfo = ty.GetTypeInfo()
+        let hasOnlyDefaultCtor =
+            match getPublicCtors ty |> Array.ofSeq with
+            [| ctor |] -> ctor.GetParameters().Length = 0
+            | _ -> false
+        let hasWritableProperties =
+            getProperties ty |> Seq.exists (fun p -> p.CanWrite)
+        typeinfo.IsClass && not typeinfo.IsAbstract
+        && not typeinfo.ContainsGenericParameters
+        && hasOnlyDefaultCtor && hasWritableProperties
+
 
     /// Get information on the fields of a record type
     let getRecordFieldTypes (recordType: System.Type) = 
@@ -59,6 +74,33 @@ module internal Reflect =
         let l     = Expression.Lambda<Func<obj[], obj>> (body, par)
         let f     = l.Compile ()
         f.Invoke
+
+    let getCSharpDtoFields (recordType: Type) =
+        if isCSharpDtoType recordType then
+            getProperties recordType
+            |> Seq.filter (fun p -> p.CanWrite)
+            |> Seq.map (fun p -> p.PropertyType)
+        else
+            failwithf "The input type must be a DTO class. Got %A" recordType
+
+    let getCSharpDtoConstructor (t:Type) =
+        let par = Expression.Parameter (typeof<obj[]>, "args")
+        let props = getProperties t |> Seq.filter (fun p -> p.CanWrite)
+        let values = 
+            props 
+            |> Seq.mapi (fun i p ->  
+                let idx = Expression.ArrayIndex (par, Expression.Constant i)
+                Expression.Convert (idx, p.PropertyType) :> Expression)
+        let bindings =
+            props
+            |> Seq.zip values
+            |> Seq.map (fun (v, p) -> Expression.Bind(p, v) :> MemberBinding)
+        let ctor = Expression.New(getPublicCtors t |> Seq.head)
+        let body = Expression.MemberInit(ctor, bindings)
+        let l     = Expression.Lambda<Func<obj[], obj>> (body, par)
+        let f     = l.Compile ()
+        f.Invoke
+
 
     /// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
     let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list = 
