@@ -532,7 +532,7 @@ aggressive, consider using `Gen.tryFilter` instead of `Gen.filter`.
 FsCheck defines default test data generators and shrinkers for some often used types, for example
 unit, bool, byte, int, float, char, string, DateTime, lists, array 1D and 2D, Set, Map, objects and 
 functions from and to any of the above. Furthermore, by using reflection, FsCheck can derive 
-default implementations of record types, discriminated unions, tuples, enums and basic immutable classes in terms 
+default implementations of record types, discriminated unions, tuples, enums and basic classes in terms 
 of any primitive types that are defined (either in FsCheck or by you).
 
 You do not need to define these explicity for every property: FsCheck can provide a property with 

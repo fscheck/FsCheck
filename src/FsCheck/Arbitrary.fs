@@ -1114,8 +1114,9 @@ module Arb =
             
         ///Try to derive an arbitrary instance for the given type reflectively. 
         ///Generates and shrinks values for record, union, tuple and enum types.
-        ///Also generates (but doesn't shrink) values for immutable classes 
-        ///(i.e. single constructor, no mutable properties or fields).
+        ///Also generates (but doesn't shrink) values for basic classes 
+        ///(i.e. either classes having a single constructor with immutable values  
+        ///or DTO classes with a default constructor and public property setters).
         static member Derive() =
             //taking out this generator makes sure that the memoization table in reflectGenObj
             //is used properly.
