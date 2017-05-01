@@ -4,13 +4,13 @@ NUGET
       FSharp.Core (>= 4.0.1.7-alpha) - framework: >= net463, >= netstandard16
       NETStandard.Library (>= 1.6) - framework: >= net463, >= netstandard16
       System.Xml.XDocument (>= 4.0.11) - framework: >= net463, >= netstandard16
-    Expecto (4.0.3)
-      Argu (>= 3.2)
-      FSharp.Core (>= 3.1.2.5)
+    Expecto (4.2.1)
+      Argu (>= 3.7)
+      FSharp.Core (>= 4.1.12)
       Mono.Cecil (>= 0.9.6.4)
-    FAKE (4.55)
+    FAKE (4.60)
     FSharp.Compiler.Service (2.0.0.6)
-    FSharp.Core (4.1.0.2)
+    FSharp.Core (4.1.17)
       System.Collections (>= 4.0.11) - framework: >= netstandard16
       System.Console (>= 4.0) - framework: >= netstandard16
       System.Diagnostics.Debug (>= 4.0.11) - framework: >= netstandard16
@@ -493,7 +493,7 @@ NUGET
       System.Text.Encoding (>= 4.3) - framework: dnxcore50, >= netstandard13
       System.Threading (>= 4.3) - framework: dnxcore50, >= netstandard13
       System.Xml.ReaderWriter (>= 4.3) - framework: dnxcore50, netstandard10, >= netstandard13
-    Unquote (3.1.2) - framework: >= net452
+    Unquote (3.2) - framework: >= net452
     xunit (2.2) - framework: >= net452
       xunit.assert (2.2)
       xunit.core (2.2)
@@ -515,5 +515,5 @@ NUGET
       System.Threading.ThreadPool (>= 4.0.10) - framework: netcore10
 GITHUB
   remote: fsharp/FAKE
-    modules/Octokit/Octokit.fsx (d67516367361a02ae7836744e8396040ed5e4b22)
+    modules/Octokit/Octokit.fsx (466b791eeca22ac4c94c302f797cc9f09a7cd785)
       Octokit (>= 0.20)
