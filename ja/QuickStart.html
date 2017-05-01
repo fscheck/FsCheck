@@ -56,7 +56,7 @@
 <p>を定義すると、このような結果を確認できるでしょう:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs8', 21)" onmouseover="showTip(event, 'fs8', 21)" class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (135573155,296278002)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1657443399,296296904)):
 Original:
 [2; -2]
 Shrunk:
@@ -81,9 +81,9 @@ Shrunk:
 </code></pre>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (2 shrinks) (StdGen (136223428,296278002)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 11 tests (8 shrinks) (StdGen (1658123879,296296904)):
 Original:
-[nan; 1.0; -7.0]
+[-3.5; 10.71428571; -7.090909091; -8.5; -12.0; -8.0; -11.66666667; 0.5; nan]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <h2>FsCheck を他のテスティングフレームワークで使う</h2>

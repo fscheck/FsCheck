@@ -72,10 +72,8 @@
 <p>FsCheck はそれぞれのテストの名前も印字します:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 2 tests (3 shrinks) (StdGen (150464202,296278002)):
+ListProperties.reverse is original-Falsifiable, after 1 test (0 shrinks) (StdGen (1674597917,296296904)):
 Original:
-[1; 3; 0]
-Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>モジュールの全てのトップレベル関数がモジュール名とともにクラスの静的メンバーとしてコンパイルされるので、あるモジュールの全てのトップレベル関数を
 テストするのに Check.QuickAll を使うこともできます。
