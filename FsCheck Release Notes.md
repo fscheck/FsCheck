@@ -1,3 +1,6 @@
+### 2.8.1 - 1 May 2017
+* Added support to generate POCOs (reflectively) with a default ctor and settable properties. (by Giacomo Citi)
+
 ### 2.8.0 - 15 March 2017
  * Removed support for .NET 4.5 and 4.5.1 frameworks as they are no longer supported by Microsoft.
  * Updated to xUnit 2.2.
