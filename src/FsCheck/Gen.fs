@@ -550,7 +550,11 @@ module Gen =
                   let! rows = chooseSqrtOfSize 
                   let! cols = chooseSqrtOfSize
                   return! array2DOfDim (rows,cols) g }
-        
+
+    ///Generate an option value that is 'None' 1/8 of the time.
+    //[category: Creating generators from generators]
+    let optionOf g = frequency [(1, gen { return None }); (7, map Some g)]
+
     ///Always generate the same instance v. See also fresh.
     //[category: Creating generators]
     [<CompiledName("Constant")>]

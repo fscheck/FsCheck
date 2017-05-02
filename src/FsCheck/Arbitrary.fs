@@ -483,7 +483,7 @@ module Arb =
         ///Generate an option value that is 'None' 1/8 of the time.
         static member Option() = 
             { new Arbitrary<option<'a>>() with
-                override __.Generator = Gen.frequency [(1, gen { return None }); (7, Gen.map Some generate)]
+                override __.Generator = Gen.optionOf generate
                 override __.Shrinker o =
                     match o with
                     | Some x -> seq { yield None; for x' in shrink x -> Some x' }
