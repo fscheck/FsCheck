@@ -1,3 +1,5 @@
+### 2.9.0 - To be released
+
 ### 2.8.1 - 1 May 2017
 * Added support to generate POCOs (reflectively) with a default ctor and settable properties. (by Giacomo Citi)
 
