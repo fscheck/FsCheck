@@ -137,7 +137,10 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
 
     member private x.HandleException ex testResult failureSite =
         match ex with
+#if NETSTANDARD1_6
+#else
         | :? ThreadAbortException -> Thread.ResetAbort()
+#endif
         | _ -> ()
         testResult.RecordException(x.FilterException <| ex, failureSite)
 

@@ -1,0 +1,71 @@
+﻿<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>FsCheck</AssemblyName>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\FsCheck\AssemblyInfo.fs">
+      <Link>AssemblyInfo.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\Common.fs">
+      <Link>Common.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\Data.fs">
+      <Link>Data.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\Random.fs">
+      <Link>Random.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\Reflect.fs">
+      <Link>Reflect.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\TypeClass.fs">
+      <Link>TypeClass.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\Gen.fs">
+      <Link>Gen.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\ReflectArbitrary.fs">
+      <Link>ReflectArbitrary.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\Arbitrary.fs">
+      <Link>Arbitrary.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\ArbitraryExtensions.fs">
+      <Link>ArbitraryExtensions.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\GenExtensions.fs">
+      <Link>GenExtensions.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\Testable.fs">
+      <Link>Testable.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\Prop.fs">
+      <Link>Prop.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\PropExtensions.fs">
+      <Link>PropExtensions.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\Commands.fs">
+      <Link>Commands.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\StateMachine.fs">
+      <Link>StateMachine.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\Runner.fs">
+      <Link>Runner.fs</Link>
+    </Compile>
+    <Compile Include="..\FsCheck\RunnerExtensions.fs">
+      <Link>RunnerExtensions.fs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" Version="4.1.*" />
+    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>

@@ -6,7 +6,7 @@
 
 open System
 
-#if PCL
+#if PCL || NETSTANDARD1_6
 #else
 open System.Net
 open System.Net.Mail
@@ -124,7 +124,7 @@ type DoNotSize<'a when 'a : struct and 'a : comparison> =
     DoNotSize of 'a with
     static member Unwrap(DoNotSize a) : 'a = a
 
-#if PCL
+#if PCL || NETSTANDARD1_6
 #else
 type IPv4Address = IPv4Address of IPAddress
 type IPv6Address = IPv6Address of IPAddress
@@ -650,10 +650,13 @@ module Arb =
                                         OutOfMemoryException()
 #if PCL
 #else
+#if NETSTANDARD1_6
+#else
                                         NotFiniteNumberException()
+                                        StackOverflowException()
+#endif
                                         IO.DirectoryNotFoundException()
                                         IO.FileLoadException()
-                                        StackOverflowException()
                                         KeyNotFoundException()
                                         IO.PathTooLongException()
 #endif
@@ -900,7 +903,7 @@ module Arb =
             |> convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
 
         static member Culture() =
-#if PCL            
+#if PCL || NETSTANDARD1_6
             let cultures = 
                 cultureNames |> Seq.choose (fun name -> try Some (CultureInfo name) with _ -> None)
                       |> Seq.append [ CultureInfo.InvariantCulture; 
@@ -934,7 +937,7 @@ module Arb =
                 return Guid((a: int),b,c,d,e,f,g,h,i,j,k)
             } |> fromGen
 
-#if PCL
+#if PCL || NETSTANDARD1_6
 #else
         static member IPv4Address() =
             let generator =
@@ -1016,7 +1019,7 @@ module Arb =
 
             fromGenShrink (host, shrinkHost)
 
-#if PCL
+#if PCL || NETSTANDARD1_6
 #else
         static member MailAddress() =
             let isValidUser (user: string) = 

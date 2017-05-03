@@ -254,6 +254,38 @@ Target "Release" (fun _ ->
 
 
 // --------------------------------------------------------------------------------------
+// .NET Core SDK and .NET Core
+
+let assertExitCodeZero x = if x = 0 then () else failwithf "Command failed with exit code %i" x
+let isDotnetSDKInstalled = try Shell.Exec("dotnet", "--version") = 0 with _ -> false
+let shellExec cmd args dir =
+    printfn "%s %s" cmd args
+    Shell.Exec(cmd, args, dir) |> assertExitCodeZero
+
+Target "Build.NetCore" (fun _ ->
+    shellExec "dotnet" "restore" "src/FsCheck.netcore"
+    shellExec "dotnet" "restore" "src/FsCheck.Xunit.netcore"
+    shellExec "dotnet" "restore" "src/FsCheck.NUnit.netcore"
+    shellExec "dotnet" "pack --configuration Release" "src/FsCheck.netcore"
+    shellExec "dotnet" "pack --configuration Release" "src/FsCheck.Xunit.netcore"
+    shellExec "dotnet" "pack --configuration Release" "src/FsCheck.NUnit.netcore"
+)
+
+Target "RunTests.NetCore" (fun _ ->
+    shellExec "dotnet" "xunit" "tests/FsCheck.Test.netcore"
+)
+
+Target "Nuget.AddNetCore" (fun _ ->
+
+    for name in [ "FsCheck"; "FsCheck.NUnit"; "FsCheck.Xunit" ] do
+        let nupkg = sprintf "../../bin/%s.%s.nupkg" name buildVersion
+        let netcoreNupkg = sprintf "bin/Release/%s.%s.nupkg" name buildVersion
+
+        shellExec "dotnet" (sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg) (sprintf "src/%s/" name)
+
+)
+
+// --------------------------------------------------------------------------------------
 // Run all targets by default. Invoke 'build <Target>' to override
 
 Target "CI" DoNothing
@@ -262,6 +294,8 @@ Target "CI" DoNothing
   =?> ("BuildVersion", isAppVeyorBuild)
   ==> "AssemblyInfo"
   ==> "Build"
+  =?> ("Build.NetCore", isDotnetSDKInstalled)
+  =?> ("RunTests.NetCore", isDotnetSDKInstalled)
   ==> "RunTests"
 
 "RunTests"
@@ -274,6 +308,7 @@ Target "CI" DoNothing
 "RunTests"
   =?> ("SourceLink", isLocalBuild && not isLinux && not isMacOS)
   ==> "PaketPack"
+  =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
   ==> "PaketPush"
   ==> "Release"
 
@@ -282,6 +317,7 @@ Target "CI" DoNothing
 
 "RunTests"
   ==> "PaketPack" 
+  =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
   ==> "CI"
 
 RunTargetOrDefault "RunTests"
