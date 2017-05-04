@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{9E0BEF6A-F5B3-41D0-9EB9-6DE8F3C96EE5}"
 	ProjectSection(SolutionItems) = preProject
@@ -28,13 +27,13 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.NUnit.Examples", "e
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.NUnit.CSharpExamples", "examples\FsCheck.NUnit.CSharpExamples\FsCheck.NUnit.CSharpExamples.csproj", "{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}"
 EndProject
-Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck", "src\FsCheck\FsCheck.fsproj", "{32AA3276-BBA1-41CE-B78A-706B8454EC8D}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck", "src\FsCheck\FsCheck.fsproj", "{32AA3276-BBA1-41CE-B78A-706B8454EC8D}"
 EndProject
-Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.Xunit", "src\FsCheck.Xunit\FsCheck.Xunit.fsproj", "{26A87ED0-9836-45F6-A88E-603DA8FCD856}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Xunit", "src\FsCheck.Xunit\FsCheck.Xunit.fsproj", "{26A87ED0-9836-45F6-A88E-603DA8FCD856}"
 EndProject
-Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.Test", "tests\FsCheck.Test\FsCheck.Test.fsproj", "{EB8B96DF-C654-410D-B590-FDBE3BC235FE}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Test", "tests\FsCheck.Test\FsCheck.Test.fsproj", "{EB8B96DF-C654-410D-B590-FDBE3BC235FE}"
 EndProject
-Project("{4925A630-B079-445d-BCD4-3A9C94FE9307}") = "FsCheck.NUnit", "src\FsCheck.NUnit\FsCheck.NUnit.fsproj", "{6B1B9FF5-8E6D-4461-9D77-CD1619403684}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.NUnit", "src\FsCheck.NUnit\FsCheck.NUnit.fsproj", "{6B1B9FF5-8E6D-4461-9D77-CD1619403684}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D4E0-4CF4-840D-3F3016653F85}"
 	ProjectSection(SolutionItems) = preProject
@@ -47,56 +46,62 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D
 		Docs\content\TipsAndTricks.fsx = Docs\content\TipsAndTricks.fsx
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.XUnit.CSharpExamples", "examples\FsCheck.XUnit.CSharpExamples\FsCheck.XUnit.CSharpExamples.csproj", "{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7662113E-E531-4223-99C4-62EFCDDD77FF} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
-		{CB41BAC5-272F-4562-9494-E3DC1D0B4139} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
+		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = examples\FsCheck.Examples\FsCheck.Examples.fsproj
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
