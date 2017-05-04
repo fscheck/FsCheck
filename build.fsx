@@ -281,9 +281,9 @@ Target "Nuget.AddNetCore" (fun _ ->
 
     for name in [ "FsCheck"; "FsCheck.NUnit"; "FsCheck.Xunit" ] do
         let nupkg = sprintf "../../bin/%s.%s.nupkg" name buildVersion
-        let netcoreNupkg = sprintf "bin/Release/%s.%s.nupkg" name buildVersion
+        let netcoreNupkg = sprintf "bin/Release/%s.1.0.0.nupkg" name
 
-        shellExec "dotnet" (sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg) (sprintf "src/%s/" name)
+        shellExec "dotnet" (sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg) (sprintf "src/%s.netcore/" name)
 
 )
 

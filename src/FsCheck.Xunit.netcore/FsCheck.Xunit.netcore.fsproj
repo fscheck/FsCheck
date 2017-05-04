@@ -24,6 +24,7 @@
     <ProjectReference Include="../FsCheck.netcore/FsCheck.netcore.fsproj" />
     <PackageReference Include="xunit.core" Version="2.2.0" />
     <PackageReference Include="xunit.abstractions" Version="2.0.1" />
+    <DotNetCliToolReference Include="dotnet-mergenupkg" Version="1.0.*" />
   </ItemGroup>
 
 </Project>
