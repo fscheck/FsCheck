@@ -266,6 +266,7 @@ Target "Build.NetCore" (fun _ ->
     shellExec "dotnet" "restore" "src/FsCheck.netcore"
     shellExec "dotnet" "restore" "src/FsCheck.Xunit.netcore"
     shellExec "dotnet" "restore" "src/FsCheck.NUnit.netcore"
+    shellExec "dotnet" "restore" "tests/FsCheck.Test.netcore"
     shellExec "dotnet" "pack --configuration Release" "src/FsCheck.netcore"
     shellExec "dotnet" "pack --configuration Release" "src/FsCheck.Xunit.netcore"
     shellExec "dotnet" "pack --configuration Release" "src/FsCheck.NUnit.netcore"
