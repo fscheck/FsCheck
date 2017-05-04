@@ -138,8 +138,9 @@ Target "SourceLink" (fun _ ->
     let baseUrl = sprintf "%s/%s/{0}/%%var2%%" gitRaw packages.[0].Name
     !! "src/**/*.??proj"
     |> Seq.iter (fun projFile ->
-        let proj = VsProj.LoadRelease projFile 
-        SourceLink.Index proj.CompilesNotLinked proj.OutputFilePdb __SOURCE_DIRECTORY__ baseUrl
+        if not (projFile.Contains("netcore")) then
+            let proj = VsProj.LoadRelease projFile 
+            SourceLink.Index proj.CompilesNotLinked proj.OutputFilePdb __SOURCE_DIRECTORY__ baseUrl
     )
 )
 // --------------------------------------------------------------------------------------
