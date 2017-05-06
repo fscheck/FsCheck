@@ -1,4 +1,4 @@
-### 2.9.0-rc1 - To be released
+### 2.9.0-rc2 - To be released
 * Add a .NET Standard 1.6 compatible build to FsCheck, FsCheck.NUnit and FsCheck.Xunit. (with Enrico Sada)
 * Update to latest FSharp.Core 4.1.
 
