@@ -51,9 +51,9 @@ FsCheck can even shrink <code>Function</code>s. For example:</p>
       <span class="k">lazy</span> (<span class="i">List</span><span class="o">.</span><span class="i">map</span> <span class="i">f</span> <span class="i">l</span> <span class="o">=</span> (<span class="c">(*f &lt;|*)</span> <span class="i">List</span><span class="o">.</span><span class="i">head</span> <span class="i">l</span>) <span class="o">::</span> <span class="i">List</span><span class="o">.</span><span class="i">map</span> <span class="i">f</span> (<span class="i">List</span><span class="o">.</span><span class="i">tail</span> <span class="i">l</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">mapRec</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1933714820,296298887)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (337440002,296298909)):
 Original:
-{ 0-&gt;2; 2-&gt;1 }
+{ 0-&gt;2; 2-&gt;0 }
 [2]
 Shrunk:
 { 0-&gt;2; 2-&gt;0 }
@@ -95,13 +95,13 @@ define your own labelling equality combinator:</p>
 <span class="k">let</span> <span class="i">testCompare</span> (<span class="i">i</span><span class="o">:</span><span class="i">int</span>) (<span class="i">j</span><span class="o">:</span><span class="i">int</span>) <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span class="i">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span class="i">j</span><span class="o">-</span><span class="n">1</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (1937440439,296298887)):
-Label of failing property: 1 = -1
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (339315024,296298909)):
+Label of failing property: 3 = -1
 Original:
-3
-3
+1
+1
 Shrunk:
-0
+1
 0</code></pre></td></tr></table>
 <p>Of course, you can do this for any operator or function that you often use.</p>
 <h2><a name="Some-ways-to-run-FsCheck-tests" class="anchor" href="#Some-ways-to-run-FsCheck-tests">Some ways to run FsCheck tests</a></h2>
