@@ -268,9 +268,9 @@ Target "Build.NetCore" (fun _ ->
     shellExec "dotnet" "restore" "src/FsCheck.Xunit.netcore"
     shellExec "dotnet" "restore" "src/FsCheck.NUnit.netcore"
     shellExec "dotnet" "restore" "tests/FsCheck.Test.netcore"
-    shellExec "dotnet" "pack --configuration Release" "src/FsCheck.netcore"
-    shellExec "dotnet" "pack --configuration Release" "src/FsCheck.Xunit.netcore"
-    shellExec "dotnet" "pack --configuration Release" "src/FsCheck.NUnit.netcore"
+    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.netcore"
+    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.Xunit.netcore"
+    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.NUnit.netcore"
 )
 
 Target "RunTests.NetCore" (fun _ ->
@@ -281,7 +281,7 @@ Target "Nuget.AddNetCore" (fun _ ->
 
     for name in [ "FsCheck"; "FsCheck.NUnit"; "FsCheck.Xunit" ] do
         let nupkg = sprintf "../../bin/%s.%s.nupkg" name buildVersion
-        let netcoreNupkg = sprintf "bin/Release/%s.1.0.0.nupkg" name
+        let netcoreNupkg = sprintf "bin/Release/%s.%s.nupkg" name buildVersion
 
         shellExec "dotnet" (sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg) (sprintf "src/%s.netcore/" name)
 
