@@ -37,34 +37,34 @@
 FsCheck ではこのようなオブジェクトを対象にしたテストを実行することもできます。
 FsCheck ではほんの少し手を加えるだけで、テスト対象となるクラスに対してモデルを基準とするような
 仕様を定義できます。たとえば以下のような人為的なバグが含まれているクラスがあるとします:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">Counter</span>() <span class="o">=</span>
-  <span class="k">let</span> <span class="k">mutable</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="v">n</span> <span class="o">=</span> <span class="n">0</span>
-  <span class="k">member</span> <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="i">x</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="f">Inc</span>() <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 7)" onmouseover="showTip(event, 'fs4', 7)" class="v">n</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs4', 8)" onmouseover="showTip(event, 'fs4', 8)" class="v">n</span> <span class="o">+</span> <span class="n">1</span>
-  <span class="k">member</span> <span onmouseout="hideTip(event, 'fs5', 9)" onmouseover="showTip(event, 'fs5', 9)" class="i">x</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="f">Dec</span>() <span class="o">=</span> <span class="k">if</span> <span onmouseout="hideTip(event, 'fs4', 11)" onmouseover="showTip(event, 'fs4', 11)" class="v">n</span> <span class="o">&gt;</span> <span class="n">2</span> <span class="k">then</span> <span onmouseout="hideTip(event, 'fs4', 12)" onmouseover="showTip(event, 'fs4', 12)" class="v">n</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs4', 13)" onmouseover="showTip(event, 'fs4', 13)" class="v">n</span> <span class="o">-</span> <span class="n">2</span> <span class="k">else</span> <span onmouseout="hideTip(event, 'fs4', 14)" onmouseover="showTip(event, 'fs4', 14)" class="v">n</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs4', 15)" onmouseover="showTip(event, 'fs4', 15)" class="v">n</span> <span class="o">-</span> <span class="n">1</span>
-  <span class="k">member</span> <span onmouseout="hideTip(event, 'fs5', 16)" onmouseover="showTip(event, 'fs5', 16)" class="i">x</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 17)" onmouseover="showTip(event, 'fs8', 17)" class="i">Get</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 18)" onmouseover="showTip(event, 'fs4', 18)" class="v">n</span>
-  <span class="k">member</span> <span onmouseout="hideTip(event, 'fs5', 19)" onmouseover="showTip(event, 'fs5', 19)" class="i">x</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 20)" onmouseover="showTip(event, 'fs9', 20)" class="f">Reset</span>() <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 21)" onmouseover="showTip(event, 'fs4', 21)" class="v">n</span> <span class="o">&lt;-</span> <span class="n">0</span>
-  <span class="k">override</span> <span onmouseout="hideTip(event, 'fs5', 22)" onmouseover="showTip(event, 'fs5', 22)" class="i">x</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 23)" onmouseover="showTip(event, 'fs10', 23)" class="f">ToString</span>() <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 24)" onmouseover="showTip(event, 'fs4', 24)" class="v">n</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 25)" onmouseover="showTip(event, 'fs11', 25)" class="f">ToString</span>()
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="i">Counter</span>() <span class="o">=</span>
+  <span class="k">let</span> <span class="k">mutable</span> <span class="i">n</span> <span class="o">=</span> <span class="n">0</span>
+  <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">Inc</span>() <span class="o">=</span> <span class="i">n</span> <span class="o">&lt;-</span> <span class="i">n</span> <span class="o">+</span> <span class="n">1</span>
+  <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">Dec</span>() <span class="o">=</span> <span class="k">if</span> <span class="i">n</span> <span class="o">&gt;</span> <span class="n">2</span> <span class="k">then</span> <span class="i">n</span> <span class="o">&lt;-</span> <span class="i">n</span> <span class="o">-</span> <span class="n">2</span> <span class="k">else</span> <span class="i">n</span> <span class="o">&lt;-</span> <span class="i">n</span> <span class="o">-</span> <span class="n">1</span>
+  <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">Get</span> <span class="o">=</span> <span class="i">n</span>
+  <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">Reset</span>() <span class="o">=</span> <span class="i">n</span> <span class="o">&lt;-</span> <span class="n">0</span>
+  <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">ToString</span>() <span class="o">=</span> <span class="i">n</span><span class="o">.</span><span class="i">ToString</span>()
 </code></pre>
 <p>このクラスをテストするためのモデルとしては、オブジェクトの内部状態を表すのに役に立ちそうな int 値1つがふさわしいでしょう。
 それを踏まえると、以下のような仕様が作成できます:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 26)" onmouseover="showTip(event, 'fs1', 26)" class="i">FsCheck</span><span class="o">.</span><span class="i">Commands</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="i">FsCheck</span><span class="o">.</span><span class="i">Commands</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 27)" onmouseover="showTip(event, 'fs12', 27)" class="i">spec</span> <span class="o">=</span>
-  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 28)" onmouseover="showTip(event, 'fs13', 28)" class="i">inc</span> <span class="o">=</span> 
-      { <span class="k">new</span> <span class="i">ICommand</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 29)" onmouseover="showTip(event, 'fs3', 29)" class="i">Counter</span>,<span onmouseout="hideTip(event, 'fs14', 30)" onmouseover="showTip(event, 'fs14', 30)" class="i">int</span><span class="o">&gt;</span>() <span class="k">with</span>
+<span class="k">let</span> <span class="i">spec</span> <span class="o">=</span>
+  <span class="k">let</span> <span class="i">inc</span> <span class="o">=</span> 
+      { <span class="k">new</span> <span class="i">ICommand</span><span class="o">&lt;</span><span class="i">Counter</span>,<span class="i">int</span><span class="o">&gt;</span>() <span class="k">with</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">RunActual</span> <span class="i">c</span> <span class="o">=</span> <span class="i">c</span><span class="o">.</span><span class="i">Inc</span>(); <span class="i">c</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">RunModel</span> <span class="i">m</span> <span class="o">=</span> <span class="i">m</span> <span class="o">+</span> <span class="n">1</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">Post</span> (<span class="i">c</span>,<span class="i">m</span>) <span class="o">=</span> <span class="i">m</span> <span class="o">=</span> <span class="i">c</span><span class="o">.</span><span class="i">Get</span> <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">ofTestable</span>
           <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">ToString</span>() <span class="o">=</span> <span class="s">&quot;inc&quot;</span>}
-  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 31)" onmouseover="showTip(event, 'fs15', 31)" class="i">dec</span> <span class="o">=</span> 
-      { <span class="k">new</span> <span class="i">ICommand</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 32)" onmouseover="showTip(event, 'fs3', 32)" class="i">Counter</span>,<span onmouseout="hideTip(event, 'fs14', 33)" onmouseover="showTip(event, 'fs14', 33)" class="i">int</span><span class="o">&gt;</span>() <span class="k">with</span>
+  <span class="k">let</span> <span class="i">dec</span> <span class="o">=</span> 
+      { <span class="k">new</span> <span class="i">ICommand</span><span class="o">&lt;</span><span class="i">Counter</span>,<span class="i">int</span><span class="o">&gt;</span>() <span class="k">with</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">RunActual</span> <span class="i">c</span> <span class="o">=</span> <span class="i">c</span><span class="o">.</span><span class="i">Dec</span>(); <span class="i">c</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">RunModel</span> <span class="i">m</span> <span class="o">=</span> <span class="i">m</span> <span class="o">-</span> <span class="n">1</span>
           <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">Post</span> (<span class="i">c</span>,<span class="i">m</span>) <span class="o">=</span> <span class="i">m</span> <span class="o">=</span> <span class="i">c</span><span class="o">.</span><span class="i">Get</span> <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">ofTestable</span>
           <span class="k">override</span> <span class="i">x</span><span class="o">.</span><span class="i">ToString</span>() <span class="o">=</span> <span class="s">&quot;dec&quot;</span>}
-  { <span class="k">new</span> <span class="i">ISpecification</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs3', 34)" onmouseover="showTip(event, 'fs3', 34)" class="i">Counter</span>,<span onmouseout="hideTip(event, 'fs14', 35)" onmouseover="showTip(event, 'fs14', 35)" class="i">int</span><span class="o">&gt;</span> <span class="k">with</span>
-      <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">Initial</span>() <span class="o">=</span> (<span class="k">new</span> <span onmouseout="hideTip(event, 'fs3', 36)" onmouseover="showTip(event, 'fs3', 36)" class="i">Counter</span>(),<span class="n">0</span>)
-      <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">GenCommand</span> _ <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">elements</span> [<span onmouseout="hideTip(event, 'fs13', 37)" onmouseover="showTip(event, 'fs13', 37)" class="i">inc</span>;<span onmouseout="hideTip(event, 'fs15', 38)" onmouseover="showTip(event, 'fs15', 38)" class="i">dec</span>] }
+  { <span class="k">new</span> <span class="i">ISpecification</span><span class="o">&lt;</span><span class="i">Counter</span>,<span class="i">int</span><span class="o">&gt;</span> <span class="k">with</span>
+      <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">Initial</span>() <span class="o">=</span> (<span class="k">new</span> <span class="i">Counter</span>(),<span class="n">0</span>)
+      <span class="k">member</span> <span class="i">x</span><span class="o">.</span><span class="i">GenCommand</span> _ <span class="o">=</span> <span class="i">Gen</span><span class="o">.</span><span class="i">elements</span> [<span class="i">inc</span>;<span class="i">dec</span>] }
 </code></pre>
 <p>仕様は <code>ISpecification&lt;'typeUnderTest,'modelType&gt;</code> を実装したオブジェクトです。仕様は、初期状態のオブジェクトと、
 そのオブジェクトに対する初期状態のモデルを返さなくてはいけません。また ICommand オブジェクトのジェネレータも返す必要があります。</p>
@@ -74,26 +74,11 @@ FsCheck ではほんの少し手を加えるだけで、テスト対象となる
 一致すべき事後条件もチェックされます。すなわち、事後条件が一致しない場合、FsCheck ではテストが失敗したものと判断されます。</p>
 <p>なお反例が表示できるように ToString をオーバーライドしておくとよいでしょう。</p>
 <p>仕様を以下のようにチェックできます:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">asProperty</span> <span onmouseout="hideTip(event, 'fs12', 39)" onmouseover="showTip(event, 'fs12', 39)" class="i">spec</span>)
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">asProperty</span> <span class="i">spec</span>)
 </code></pre>
 <table class="pre"><tr><td><pre><code>No output has been produced.</code></pre></td></tr></table>
 <p>FsCheck は「バグ」を発見しただけでなく、バグを発生させる最小のシーケンスも生成したことにも注目してください。</p>
 
-<div class="tip" id="fs1">namespace FsCheck</div>
-<div class="tip" id="fs2">namespace System</div>
-<div class="tip" id="fs3">Multiple items<br />type Counter =<br />&#160;&#160;new : unit -&gt; Counter<br />&#160;&#160;member Dec : unit -&gt; unit<br />&#160;&#160;member Inc : unit -&gt; unit<br />&#160;&#160;member Reset : unit -&gt; unit<br />&#160;&#160;override ToString : unit -&gt; string<br />&#160;&#160;member Get : int<br /><br />Full name: StatefulTesting.Counter<br /><br />--------------------<br />new : unit -&gt; Counter</div>
-<div class="tip" id="fs4">val mutable n : int</div>
-<div class="tip" id="fs5">val x : Counter</div>
-<div class="tip" id="fs6">member Counter.Inc : unit -&gt; unit<br /><br />Full name: StatefulTesting.Counter.Inc</div>
-<div class="tip" id="fs7">member Counter.Dec : unit -&gt; unit<br /><br />Full name: StatefulTesting.Counter.Dec</div>
-<div class="tip" id="fs8">member Counter.Get : int<br /><br />Full name: StatefulTesting.Counter.Get</div>
-<div class="tip" id="fs9">member Counter.Reset : unit -&gt; unit<br /><br />Full name: StatefulTesting.Counter.Reset</div>
-<div class="tip" id="fs10">override Counter.ToString : unit -&gt; string<br /><br />Full name: StatefulTesting.Counter.ToString</div>
-<div class="tip" id="fs11">Int32.ToString() : string<br />Int32.ToString(provider: IFormatProvider) : string<br />Int32.ToString(format: string) : string<br />Int32.ToString(format: string, provider: IFormatProvider) : string</div>
-<div class="tip" id="fs12">val spec : obj<br /><br />Full name: StatefulTesting.spec</div>
-<div class="tip" id="fs13">val inc : obj</div>
-<div class="tip" id="fs14">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
-<div class="tip" id="fs15">val dec : obj</div>
 
         </div>
         <div class="span3">

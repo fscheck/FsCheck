@@ -34,7 +34,7 @@
           
 <h1>性質</h1>
 <p>性質は F# の関数定義として表現されます。性質はそのパラメータにわたって例外なく定量化されるので、</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="f">revRevIsOrig</span> <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs5', 7)" onmouseover="showTip(event, 'fs5', 7)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 8)" onmouseover="showTip(event, 'fs6', 8)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs4', 9)" onmouseover="showTip(event, 'fs4', 9)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs4', 10)" onmouseover="showTip(event, 'fs4', 10)" class="i">xs</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">revRevIsOrig</span> <span class="i">xs</span> <span class="o">=</span> <span class="i">List</span><span class="o">.</span><span class="i">rev</span>(<span class="i">List</span><span class="o">.</span><span class="i">rev</span> <span class="i">xs</span>) <span class="o">=</span> <span class="i">xs</span>
 </code></pre>
 <p>は等式が全てのリスト xs で成り立つことを意味します。</p>
 <p>性質は決して単相型を持ってはいけません。
@@ -44,7 +44,7 @@
 は上記の性質をチェックするために使うことができるリストになりえます。
 ですが生成された値は型をベースにしているので、推論により、あるいは明示的に、xs に異なる型を与えることで、
 この振る舞いを簡単に変更することもできます。つまり、</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs7', 11)" onmouseover="showTip(event, 'fs7', 11)" class="f">revRevIsOrigInt</span> (<span onmouseout="hideTip(event, 'fs8', 12)" onmouseover="showTip(event, 'fs8', 12)" class="i">xs</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="t">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="t">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 15)" onmouseover="showTip(event, 'fs5', 15)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 16)" onmouseover="showTip(event, 'fs6', 16)" class="f">rev</span>(<span onmouseout="hideTip(event, 'fs5', 17)" onmouseover="showTip(event, 'fs5', 17)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 18)" onmouseover="showTip(event, 'fs6', 18)" class="f">rev</span> <span onmouseout="hideTip(event, 'fs8', 19)" onmouseover="showTip(event, 'fs8', 19)" class="i">xs</span>) <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 20)" onmouseover="showTip(event, 'fs8', 20)" class="i">xs</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">revRevIsOrigInt</span> (<span class="i">xs</span><span class="o">:</span><span class="i">list</span><span class="o">&lt;</span><span class="i">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span class="i">List</span><span class="o">.</span><span class="i">rev</span>(<span class="i">List</span><span class="o">.</span><span class="i">rev</span> <span class="i">xs</span>) <span class="o">=</span> <span class="i">xs</span>
 </code></pre>
 <p>は int のリストについてのみチェックされます。</p>
 <p>FsCheck は様々な形式の性質をチェックすることができますーこれらの形式はテスト可能であると呼ばれ、
@@ -54,10 +54,10 @@ bool または unit を返す任意個のパラメータを取る関数となる
 <h2>条件付き性質</h2>
 <p>性質は <code>&lt;condition&gt; ==&gt; &lt;property&gt;</code> という形式を取ることがあります。</p>
 <p>例えば、</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">insertKeepsOrder</span> (<span onmouseout="hideTip(event, 'fs19', 48)" onmouseover="showTip(event, 'fs19', 48)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs10', 49)" onmouseover="showTip(event, 'fs10', 49)" class="t">int</span>) <span onmouseout="hideTip(event, 'fs12', 50)" onmouseover="showTip(event, 'fs12', 50)" class="i">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 51)" onmouseover="showTip(event, 'fs11', 51)" class="f">ordered</span> <span onmouseout="hideTip(event, 'fs12', 52)" onmouseover="showTip(event, 'fs12', 52)" class="i">xs</span> <span class="o">==&gt;</span> <span onmouseout="hideTip(event, 'fs11', 53)" onmouseover="showTip(event, 'fs11', 53)" class="f">ordered</span> (<span onmouseout="hideTip(event, 'fs16', 54)" onmouseover="showTip(event, 'fs16', 54)" class="i">insert</span> <span onmouseout="hideTip(event, 'fs19', 55)" onmouseover="showTip(event, 'fs19', 55)" class="i">x</span> <span onmouseout="hideTip(event, 'fs12', 56)" onmouseover="showTip(event, 'fs12', 56)" class="i">xs</span>)
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">insertKeepsOrder</span> (<span class="i">x</span><span class="o">:</span><span class="i">int</span>) <span class="i">xs</span> <span class="o">=</span> <span class="i">ordered</span> <span class="i">xs</span> <span class="o">==&gt;</span> <span class="i">ordered</span> (<span class="i">insert</span> <span class="i">x</span> <span class="i">xs</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertKeepsOrder</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 18 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 24 tests.</code></pre></td></tr></table>
 <p>条件が成り立つときはいつでも <code>==&gt;</code> の後の性質が成り立つのなら、このような性質は成り立ちます。</p>
 <p>テストは条件を満たさないテストケースを切り捨てます。条件を満たすテストケースが100件見つかるまで、
 あるいはテストケース数の限度に達する(条件が決して成り立たないループを避けるため)まで、テストケースの生成は続けられます。
@@ -70,27 +70,21 @@ FsCheck は異なる型(object の派生型)を含むリストを生成したか
 <p>F# はデフォルトでは正則評価ですが、上記の性質は必要以上に働いてしまいます。つまり、
 左側の条件の結果がどうであれ、条件の右側にある性質を評価します。
 上の例におけるパフォーマンス面の考察だけではありますが、性質の表現力を制限する可能性がありますー考えてみましょう:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">tooEager</span> <span onmouseout="hideTip(event, 'fs20', 57)" onmouseover="showTip(event, 'fs20', 57)" class="i">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 58)" onmouseover="showTip(event, 'fs20', 58)" class="i">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> (<span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs20', 59)" onmouseover="showTip(event, 'fs20', 59)" class="i">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs20', 60)" onmouseover="showTip(event, 'fs20', 60)" class="i">a</span>)
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">tooEager</span> <span class="i">a</span> <span class="o">=</span> <span class="i">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> (<span class="n">1</span><span class="o">/</span><span class="i">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span class="i">a</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">tooEager</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 25 tests (0 shrinks) (StdGen (1635574998,296296904)):
-Original:
-0
-with exception:
-System.DivideByZeroException: Attempted to divide by zero.
-   at FSI_0029.tooEager(Int32 a) in C:\Users\Kurt\Projects\FsCheck\FsCheck\docs\tools\input.fsx:line 1
-   at FsCheck.Testable.evaluate[a,b](FSharpFunc`2 body, a a) in C:\Users\Kurt\Projects\FsCheck\FsCheck\src\FsCheck\Testable.fs:line 151</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 <p>ここで、性質が正しくチェックされているかどうかを確かめるために、遅延評価が必要になります:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">moreLazy</span> <span onmouseout="hideTip(event, 'fs20', 61)" onmouseover="showTip(event, 'fs20', 61)" class="i">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 62)" onmouseover="showTip(event, 'fs20', 62)" class="i">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> (<span class="k">lazy</span> (<span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs20', 63)" onmouseover="showTip(event, 'fs20', 63)" class="i">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs20', 64)" onmouseover="showTip(event, 'fs20', 64)" class="i">a</span>))
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">moreLazy</span> <span class="i">a</span> <span class="o">=</span> <span class="i">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> (<span class="k">lazy</span> (<span class="n">1</span><span class="o">/</span><span class="i">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span class="i">a</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">moreLazy</span>
 </code></pre>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 <h2>定量化された性質</h2>
 <p>性質は <code>forAll &lt;arbitrary&gt; (fun &lt;args&gt; -&gt; &lt;property&gt;)</code> という形式を取る場合があります。</p>
 <p>例えば、</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 65)" onmouseover="showTip(event, 'fs21', 65)" class="i">orderedList</span> <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">from</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs9', 66)" onmouseover="showTip(event, 'fs9', 66)" class="i">list</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs10', 67)" onmouseover="showTip(event, 'fs10', 67)" class="i">int</span><span class="o">&gt;</span><span class="o">&gt;</span> <span class="o">|&gt;</span> <span class="i">Arb</span><span class="o">.</span><span class="i">mapFilter</span> <span onmouseout="hideTip(event, 'fs5', 68)" onmouseover="showTip(event, 'fs5', 68)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs22', 69)" onmouseover="showTip(event, 'fs22', 69)" class="i">sort</span> <span onmouseout="hideTip(event, 'fs11', 70)" onmouseover="showTip(event, 'fs11', 70)" class="i">ordered</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs23', 71)" onmouseover="showTip(event, 'fs23', 71)" class="f">insertWithArb</span> <span onmouseout="hideTip(event, 'fs24', 72)" onmouseover="showTip(event, 'fs24', 72)" class="i">x</span> <span class="o">=</span> <span class="i">Prop</span><span class="o">.</span><span class="i">forAll</span> <span onmouseout="hideTip(event, 'fs21', 73)" onmouseover="showTip(event, 'fs21', 73)" class="i">orderedList</span> (<span class="k">fun</span> <span class="i">xs</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 74)" onmouseover="showTip(event, 'fs11', 74)" class="i">ordered</span>(<span onmouseout="hideTip(event, 'fs16', 75)" onmouseover="showTip(event, 'fs16', 75)" class="i">insert</span> <span onmouseout="hideTip(event, 'fs24', 76)" onmouseover="showTip(event, 'fs24', 76)" class="i">x</span> <span class="i">xs</span>))
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs23', 77)" onmouseover="showTip(event, 'fs23', 77)" class="i">insertWithArb</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">orderedList</span> <span class="o">=</span> <span class="i">Arb</span><span class="o">.</span><span class="i">from</span><span class="o">&lt;</span><span class="i">list</span><span class="o">&lt;</span><span class="i">int</span><span class="o">&gt;</span><span class="o">&gt;</span> <span class="o">|&gt;</span> <span class="i">Arb</span><span class="o">.</span><span class="i">mapFilter</span> <span class="i">List</span><span class="o">.</span><span class="i">sort</span> <span class="i">ordered</span>
+<span class="k">let</span> <span class="i">insertWithArb</span> <span class="i">x</span> <span class="o">=</span> <span class="i">Prop</span><span class="o">.</span><span class="i">forAll</span> <span class="i">orderedList</span> (<span class="k">fun</span> <span class="i">xs</span> <span class="k">-&gt;</span> <span class="i">ordered</span>(<span class="i">insert</span> <span class="i">x</span> <span class="i">xs</span>))
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertWithArb</span>
 </code></pre>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 <p>forAll の第一引数は IArbitrary インスタンスです。このようなインスタンスは
@@ -103,8 +97,8 @@ System.DivideByZeroException: Attempted to divide by zero.
 <h2>例外の予測</h2>
 <p>ある状況下で関数やメソッドが例外をスローするというテストをしたいと思うかもしれません。
 これを実現するために <code>throws&lt;'e :&gt; exn, 'a&gt; Lazy&lt;'a&gt;</code> を使いましょう。例えば:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs25', 78)" onmouseover="showTip(event, 'fs25', 78)" class="f">expectDivideByZero</span>() <span class="o">=</span> <span class="i">Prop</span><span class="o">.</span><span class="i">throws</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs26', 79)" onmouseover="showTip(event, 'fs26', 79)" class="i">DivideByZeroException</span>,_<span class="o">&gt;</span> (<span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs27', 80)" onmouseover="showTip(event, 'fs27', 80)" class="i">raise</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs26', 81)" onmouseover="showTip(event, 'fs26', 81)" class="i">DivideByZeroException</span>()))
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs25', 82)" onmouseover="showTip(event, 'fs25', 82)" class="i">expectDivideByZero</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">expectDivideByZero</span>() <span class="o">=</span> <span class="i">Prop</span><span class="o">.</span><span class="i">throws</span><span class="o">&lt;</span><span class="i">DivideByZeroException</span>,_<span class="o">&gt;</span> (<span class="k">lazy</span> (<span class="i">raise</span> <span class="o">&lt;|</span> <span class="i">DivideByZeroException</span>()))
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">expectDivideByZero</span>
 </code></pre>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 <pre class="fssnip highlighted"><code lang="fsharp">  
@@ -112,15 +106,15 @@ System.DivideByZeroException: Attempted to divide by zero.
 <h2>時間制限のある性質</h2>
 <p>性質は <code>within &lt;timeout in ms&gt; &lt;Lazy&lt;property&gt;&gt;</code> という形式を取ることがあります。</p>
 <p>例えば、</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 83)" onmouseover="showTip(event, 'fs28', 83)" class="f">timesOut</span> (<span onmouseout="hideTip(event, 'fs20', 84)" onmouseover="showTip(event, 'fs20', 84)" class="i">a</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs10', 85)" onmouseover="showTip(event, 'fs10', 85)" class="t">int</span>) <span class="o">=</span> 
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">timesOut</span> (<span class="i">a</span><span class="o">:</span><span class="i">int</span>) <span class="o">=</span> 
     <span class="k">lazy</span>
-        <span class="k">if</span> <span onmouseout="hideTip(event, 'fs20', 86)" onmouseover="showTip(event, 'fs20', 86)" class="i">a</span><span class="o">&gt;</span><span class="n">10</span> <span class="k">then</span>
-            <span class="k">do</span> <span onmouseout="hideTip(event, 'fs2', 87)" onmouseover="showTip(event, 'fs2', 87)" class="i">System</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs29', 88)" onmouseover="showTip(event, 'fs29', 88)" class="i">Threading</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 89)" onmouseover="showTip(event, 'fs30', 89)" class="t">Thread</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 90)" onmouseover="showTip(event, 'fs31', 90)" class="f">Sleep</span>(<span class="n">3000</span>)
+        <span class="k">if</span> <span class="i">a</span><span class="o">&gt;</span><span class="n">10</span> <span class="k">then</span>
+            <span class="k">do</span> <span class="i">System</span><span class="o">.</span><span class="i">Threading</span><span class="o">.</span><span class="i">Thread</span><span class="o">.</span><span class="i">Sleep</span>(<span class="n">3000</span>)
             <span class="k">true</span>
         <span class="k">else</span> 
             <span class="k">true</span>
     <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">within</span> <span class="n">1000</span>
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs28', 91)" onmouseover="showTip(event, 'fs28', 91)" class="i">timesOut</span>
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">timesOut</span>
 </code></pre>
 <p>第一引数は与えられた遅延性質が実行して良い最大の時間です。もしそれよりも長く実行していると、
 FsCheck はそのテストが失敗したと見做します。そうでなければ、遅延性質の結果は within の結果です。
@@ -135,61 +129,58 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <h2>自明なケースの計数</h2>
 <p>性質は <code>trivial &lt;condition&gt; &lt;property&gt;</code> という形式を取ることがあります。</p>
 <p>例えば、</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs32', 92)" onmouseover="showTip(event, 'fs32', 92)" class="f">insertTrivial</span> (<span onmouseout="hideTip(event, 'fs19', 93)" onmouseover="showTip(event, 'fs19', 93)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs10', 94)" onmouseover="showTip(event, 'fs10', 94)" class="t">int</span>) <span onmouseout="hideTip(event, 'fs12', 95)" onmouseover="showTip(event, 'fs12', 95)" class="i">xs</span> <span class="o">=</span> 
-  <span onmouseout="hideTip(event, 'fs11', 96)" onmouseover="showTip(event, 'fs11', 96)" class="f">ordered</span> <span onmouseout="hideTip(event, 'fs12', 97)" onmouseover="showTip(event, 'fs12', 97)" class="i">xs</span> <span class="o">==&gt;</span> (<span onmouseout="hideTip(event, 'fs11', 98)" onmouseover="showTip(event, 'fs11', 98)" class="f">ordered</span> (<span onmouseout="hideTip(event, 'fs16', 99)" onmouseover="showTip(event, 'fs16', 99)" class="i">insert</span> <span onmouseout="hideTip(event, 'fs19', 100)" onmouseover="showTip(event, 'fs19', 100)" class="i">x</span> <span onmouseout="hideTip(event, 'fs12', 101)" onmouseover="showTip(event, 'fs12', 101)" class="i">xs</span>))
-  <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">trivial</span> (<span onmouseout="hideTip(event, 'fs5', 102)" onmouseover="showTip(event, 'fs5', 102)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 103)" onmouseover="showTip(event, 'fs33', 103)" class="i">length</span> <span onmouseout="hideTip(event, 'fs12', 104)" onmouseover="showTip(event, 'fs12', 104)" class="i">xs</span> <span class="o">=</span> <span class="n">0</span>)
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs32', 105)" onmouseover="showTip(event, 'fs32', 105)" class="i">insertTrivial</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">insertTrivial</span> (<span class="i">x</span><span class="o">:</span><span class="i">int</span>) <span class="i">xs</span> <span class="o">=</span> 
+  <span class="i">ordered</span> <span class="i">xs</span> <span class="o">==&gt;</span> (<span class="i">ordered</span> (<span class="i">insert</span> <span class="i">x</span> <span class="i">xs</span>))
+  <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">trivial</span> (<span class="i">List</span><span class="o">.</span><span class="i">length</span> <span class="i">xs</span> <span class="o">=</span> <span class="n">0</span>)
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertTrivial</span>
 </code></pre>
 <p>この条件が真になるテストケースは自明であると分類され、全体における自明なテストケースの比率が報告されます:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 13 tests (38% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 18 tests (44% trivial).</code></pre></td></tr></table>
 <h3>テストケースの分類</h3>
 <p>性質は <code>classify &lt;condition&gt; &lt;string&gt; &lt;property&gt;</code> という形式を取ることがあります。</p>
 <p>例えば、</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs34', 106)" onmouseover="showTip(event, 'fs34', 106)" class="f">insertClassify</span> (<span onmouseout="hideTip(event, 'fs19', 107)" onmouseover="showTip(event, 'fs19', 107)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs10', 108)" onmouseover="showTip(event, 'fs10', 108)" class="t">int</span>) <span onmouseout="hideTip(event, 'fs12', 109)" onmouseover="showTip(event, 'fs12', 109)" class="i">xs</span> <span class="o">=</span> 
-  <span onmouseout="hideTip(event, 'fs11', 110)" onmouseover="showTip(event, 'fs11', 110)" class="f">ordered</span> <span onmouseout="hideTip(event, 'fs12', 111)" onmouseover="showTip(event, 'fs12', 111)" class="i">xs</span> <span class="o">==&gt;</span> (<span onmouseout="hideTip(event, 'fs11', 112)" onmouseover="showTip(event, 'fs11', 112)" class="f">ordered</span> (<span onmouseout="hideTip(event, 'fs16', 113)" onmouseover="showTip(event, 'fs16', 113)" class="i">insert</span> <span onmouseout="hideTip(event, 'fs19', 114)" onmouseover="showTip(event, 'fs19', 114)" class="i">x</span> <span onmouseout="hideTip(event, 'fs12', 115)" onmouseover="showTip(event, 'fs12', 115)" class="i">xs</span>))
-  <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">classify</span> (<span onmouseout="hideTip(event, 'fs11', 116)" onmouseover="showTip(event, 'fs11', 116)" class="i">ordered</span> (<span onmouseout="hideTip(event, 'fs19', 117)" onmouseover="showTip(event, 'fs19', 117)" class="i">x</span><span class="o">::</span><span onmouseout="hideTip(event, 'fs12', 118)" onmouseover="showTip(event, 'fs12', 118)" class="i">xs</span>)) <span class="s">&quot;at-head&quot;</span>
-  <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">classify</span> (<span onmouseout="hideTip(event, 'fs11', 119)" onmouseover="showTip(event, 'fs11', 119)" class="i">ordered</span> (<span onmouseout="hideTip(event, 'fs12', 120)" onmouseover="showTip(event, 'fs12', 120)" class="i">xs</span> <span class="o">@</span> [<span onmouseout="hideTip(event, 'fs19', 121)" onmouseover="showTip(event, 'fs19', 121)" class="i">x</span>])) <span class="s">&quot;at-tail&quot;</span>
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs34', 122)" onmouseover="showTip(event, 'fs34', 122)" class="i">insertClassify</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">insertClassify</span> (<span class="i">x</span><span class="o">:</span><span class="i">int</span>) <span class="i">xs</span> <span class="o">=</span> 
+  <span class="i">ordered</span> <span class="i">xs</span> <span class="o">==&gt;</span> (<span class="i">ordered</span> (<span class="i">insert</span> <span class="i">x</span> <span class="i">xs</span>))
+  <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">classify</span> (<span class="i">ordered</span> (<span class="i">x</span><span class="o">::</span><span class="i">xs</span>)) <span class="s">&quot;at-head&quot;</span>
+  <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">classify</span> (<span class="i">ordered</span> (<span class="i">xs</span> <span class="o">@</span> [<span class="i">x</span>])) <span class="s">&quot;at-tail&quot;</span>
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertClassify</span>
 </code></pre>
 <p>条件を満足するテストケースは与えられた分類に割り当てられ、分類の分布はテスト後に報告されます:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 10 tests.
-50% at-tail, at-head.
-30% at-tail.
-10% at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 14 tests.
+42% at-head.
+35% at-tail, at-head.
+7% at-tail.</code></pre></td></tr></table>
 <p>1つのテストケースは複数の分類に当てはまる場合があることに注意してください。</p>
 <h3>データの値の収集</h3>
 <p>性質は <code>collect &lt;expression&gt; &lt;property&gt;</code> という形式を取ることがあります。</p>
 <p>例えば、</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 123)" onmouseover="showTip(event, 'fs35', 123)" class="f">insertCollect</span> (<span onmouseout="hideTip(event, 'fs19', 124)" onmouseover="showTip(event, 'fs19', 124)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs10', 125)" onmouseover="showTip(event, 'fs10', 125)" class="t">int</span>) <span onmouseout="hideTip(event, 'fs12', 126)" onmouseover="showTip(event, 'fs12', 126)" class="i">xs</span> <span class="o">=</span> 
-  <span onmouseout="hideTip(event, 'fs11', 127)" onmouseover="showTip(event, 'fs11', 127)" class="f">ordered</span> <span onmouseout="hideTip(event, 'fs12', 128)" onmouseover="showTip(event, 'fs12', 128)" class="i">xs</span> <span class="o">==&gt;</span> (<span onmouseout="hideTip(event, 'fs11', 129)" onmouseover="showTip(event, 'fs11', 129)" class="f">ordered</span> (<span onmouseout="hideTip(event, 'fs16', 130)" onmouseover="showTip(event, 'fs16', 130)" class="i">insert</span> <span onmouseout="hideTip(event, 'fs19', 131)" onmouseover="showTip(event, 'fs19', 131)" class="i">x</span> <span onmouseout="hideTip(event, 'fs12', 132)" onmouseover="showTip(event, 'fs12', 132)" class="i">xs</span>))
-      <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">collect</span> (<span onmouseout="hideTip(event, 'fs5', 133)" onmouseover="showTip(event, 'fs5', 133)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 134)" onmouseover="showTip(event, 'fs33', 134)" class="i">length</span> <span onmouseout="hideTip(event, 'fs12', 135)" onmouseover="showTip(event, 'fs12', 135)" class="i">xs</span>)
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs35', 136)" onmouseover="showTip(event, 'fs35', 136)" class="i">insertCollect</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">insertCollect</span> (<span class="i">x</span><span class="o">:</span><span class="i">int</span>) <span class="i">xs</span> <span class="o">=</span> 
+  <span class="i">ordered</span> <span class="i">xs</span> <span class="o">==&gt;</span> (<span class="i">ordered</span> (<span class="i">insert</span> <span class="i">x</span> <span class="i">xs</span>))
+      <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">collect</span> (<span class="i">List</span><span class="o">.</span><span class="i">length</span> <span class="i">xs</span>)
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertCollect</span>
 </code></pre>
 <p>collect の引数はテストケースごとに評価され、値の分布が報告されます。
 この引数の型は <code>sprintf "%A"</code> を用いて出力されます:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 17 tests.
-58% 1.
-23% 0.
-11% 4.
-5% 2.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 16 tests.
+43% 0.
+25% 2.
+25% 1.
+6% 4.</code></pre></td></tr></table>
 <h3>観測の連結</h3>
 <p>ここで説明した観測は何らかの方法で連結されるかもしれません。テストケースそれぞれにおける
 全ての観測は連結されており、これらの連結の分布は報告されます。例えば</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 137)" onmouseover="showTip(event, 'fs36', 137)" class="f">insertCombined</span> (<span onmouseout="hideTip(event, 'fs19', 138)" onmouseover="showTip(event, 'fs19', 138)" class="i">x</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs10', 139)" onmouseover="showTip(event, 'fs10', 139)" class="t">int</span>) <span onmouseout="hideTip(event, 'fs12', 140)" onmouseover="showTip(event, 'fs12', 140)" class="i">xs</span> <span class="o">=</span> 
-    <span onmouseout="hideTip(event, 'fs11', 141)" onmouseover="showTip(event, 'fs11', 141)" class="f">ordered</span> <span onmouseout="hideTip(event, 'fs12', 142)" onmouseover="showTip(event, 'fs12', 142)" class="i">xs</span> <span class="o">==&gt;</span> (<span onmouseout="hideTip(event, 'fs11', 143)" onmouseover="showTip(event, 'fs11', 143)" class="f">ordered</span> (<span onmouseout="hideTip(event, 'fs16', 144)" onmouseover="showTip(event, 'fs16', 144)" class="i">insert</span> <span onmouseout="hideTip(event, 'fs19', 145)" onmouseover="showTip(event, 'fs19', 145)" class="i">x</span> <span onmouseout="hideTip(event, 'fs12', 146)" onmouseover="showTip(event, 'fs12', 146)" class="i">xs</span>))
-    <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">classify</span> (<span onmouseout="hideTip(event, 'fs11', 147)" onmouseover="showTip(event, 'fs11', 147)" class="i">ordered</span> (<span onmouseout="hideTip(event, 'fs19', 148)" onmouseover="showTip(event, 'fs19', 148)" class="i">x</span><span class="o">::</span><span onmouseout="hideTip(event, 'fs12', 149)" onmouseover="showTip(event, 'fs12', 149)" class="i">xs</span>)) <span class="s">&quot;at-head&quot;</span>
-    <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">classify</span> (<span onmouseout="hideTip(event, 'fs11', 150)" onmouseover="showTip(event, 'fs11', 150)" class="i">ordered</span> (<span onmouseout="hideTip(event, 'fs12', 151)" onmouseover="showTip(event, 'fs12', 151)" class="i">xs</span> <span class="o">@</span> [<span onmouseout="hideTip(event, 'fs19', 152)" onmouseover="showTip(event, 'fs19', 152)" class="i">x</span>])) <span class="s">&quot;at-tail&quot;</span>
-    <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">collect</span> (<span onmouseout="hideTip(event, 'fs5', 153)" onmouseover="showTip(event, 'fs5', 153)" class="i">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 154)" onmouseover="showTip(event, 'fs33', 154)" class="i">length</span> <span onmouseout="hideTip(event, 'fs12', 155)" onmouseover="showTip(event, 'fs12', 155)" class="i">xs</span>)
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs36', 156)" onmouseover="showTip(event, 'fs36', 156)" class="i">insertCombined</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">insertCombined</span> (<span class="i">x</span><span class="o">:</span><span class="i">int</span>) <span class="i">xs</span> <span class="o">=</span> 
+    <span class="i">ordered</span> <span class="i">xs</span> <span class="o">==&gt;</span> (<span class="i">ordered</span> (<span class="i">insert</span> <span class="i">x</span> <span class="i">xs</span>))
+    <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">classify</span> (<span class="i">ordered</span> (<span class="i">x</span><span class="o">::</span><span class="i">xs</span>)) <span class="s">&quot;at-head&quot;</span>
+    <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">classify</span> (<span class="i">ordered</span> (<span class="i">xs</span> <span class="o">@</span> [<span class="i">x</span>])) <span class="s">&quot;at-tail&quot;</span>
+    <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">collect</span> (<span class="i">List</span><span class="o">.</span><span class="i">length</span> <span class="i">xs</span>)
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertCombined</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 13 tests.
-30% 1, at-head.
-30% 0, at-tail, at-head.
-7% 3, at-tail.
-7% 3.
-7% 2, at-head.
-7% 2.
-7% 1, at-tail.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 10 tests.
+40% 0, at-tail, at-head.
+30% 1, at-tail.
+20% 1, at-head.
+10% 2, at-head.</code></pre></td></tr></table>
 <h2>And, Or およびラベル</h2>
 <p>性質は</p>
 <ul>
@@ -201,30 +192,33 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 そのために従属性質にラベルを付けることができて、FsCheck が反例を見つけると、失敗した従属性質のラベルを表示します。
 これはこのような形式になります: <code>&lt;string&gt; @| &lt;property&gt;</code> または <code>&lt;property&gt; |@ &lt;string&gt;</code></p>
 <p>例えば、</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs37', 157)" onmouseover="showTip(event, 'fs37', 157)" class="f">complex</span> (<span onmouseout="hideTip(event, 'fs38', 158)" onmouseover="showTip(event, 'fs38', 158)" class="i">m</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs10', 159)" onmouseover="showTip(event, 'fs10', 159)" class="t">int</span>) (<span onmouseout="hideTip(event, 'fs39', 160)" onmouseover="showTip(event, 'fs39', 160)" class="i">n</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs10', 161)" onmouseover="showTip(event, 'fs10', 161)" class="t">int</span>) <span class="o">=</span>
-  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs40', 162)" onmouseover="showTip(event, 'fs40', 162)" class="i">res</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs39', 163)" onmouseover="showTip(event, 'fs39', 163)" class="i">n</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs38', 164)" onmouseover="showTip(event, 'fs38', 164)" class="i">m</span>
-  (<span onmouseout="hideTip(event, 'fs40', 165)" onmouseover="showTip(event, 'fs40', 165)" class="i">res</span> <span class="o">&gt;</span><span class="o">=</span> <span onmouseout="hideTip(event, 'fs38', 166)" onmouseover="showTip(event, 'fs38', 166)" class="i">m</span>)    <span class="o">|@</span> <span class="s">&quot;result &gt; #1&quot;</span> <span class="o">.</span><span class="o">&amp;.</span>
-  (<span onmouseout="hideTip(event, 'fs40', 167)" onmouseover="showTip(event, 'fs40', 167)" class="i">res</span> <span class="o">&gt;</span><span class="o">=</span> <span onmouseout="hideTip(event, 'fs39', 168)" onmouseover="showTip(event, 'fs39', 168)" class="i">n</span>)    <span class="o">|@</span> <span class="s">&quot;result &gt; #2&quot;</span> <span class="o">.</span><span class="o">&amp;.</span>
-  (<span onmouseout="hideTip(event, 'fs40', 169)" onmouseover="showTip(event, 'fs40', 169)" class="i">res</span> <span class="o">&lt;</span> <span onmouseout="hideTip(event, 'fs38', 170)" onmouseover="showTip(event, 'fs38', 170)" class="i">m</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs39', 171)" onmouseover="showTip(event, 'fs39', 171)" class="i">n</span>) <span class="o">|@</span> <span class="s">&quot;result not sum&quot;</span>
-<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span onmouseout="hideTip(event, 'fs37', 172)" onmouseover="showTip(event, 'fs37', 172)" class="i">complex</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">complex</span> (<span class="i">m</span><span class="o">:</span> <span class="i">int</span>) (<span class="i">n</span><span class="o">:</span> <span class="i">int</span>) <span class="o">=</span>
+  <span class="k">let</span> <span class="i">res</span> <span class="o">=</span> <span class="i">n</span> <span class="o">+</span> <span class="i">m</span>
+  (<span class="i">res</span> <span class="o">&gt;</span><span class="o">=</span> <span class="i">m</span>)    <span class="o">|@</span> <span class="s">&quot;result &gt; #1&quot;</span> <span class="o">.</span><span class="o">&amp;.</span>
+  (<span class="i">res</span> <span class="o">&gt;</span><span class="o">=</span> <span class="i">n</span>)    <span class="o">|@</span> <span class="s">&quot;result &gt; #2&quot;</span> <span class="o">.</span><span class="o">&amp;.</span>
+  (<span class="i">res</span> <span class="o">&lt;</span> <span class="i">m</span> <span class="o">+</span> <span class="i">n</span>) <span class="o">|@</span> <span class="s">&quot;result not sum&quot;</span>
+<span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">complex</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1646435787,296296904)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1721460433,296298887)):
 Label of failing property: result not sum
 Original:
+0
+1
+Shrunk:
 0
 0</code></pre></td></tr></table>
 <p>1つの性質に複数のラベルを適用することは一向に構いません。FsCheck は適用可能な全てのラベルを表示します。
 これは途中の結果を表示するのに便利で、例えば:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">multiply</span> (<span onmouseout="hideTip(event, 'fs39', 173)" onmouseover="showTip(event, 'fs39', 173)" class="i">n</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs10', 174)" onmouseover="showTip(event, 'fs10', 174)" class="t">int</span>, <span onmouseout="hideTip(event, 'fs38', 175)" onmouseover="showTip(event, 'fs38', 175)" class="i">m</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs10', 176)" onmouseover="showTip(event, 'fs10', 176)" class="t">int</span>) <span class="o">=</span>
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs40', 177)" onmouseover="showTip(event, 'fs40', 177)" class="i">res</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs39', 178)" onmouseover="showTip(event, 'fs39', 178)" class="i">n</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs38', 179)" onmouseover="showTip(event, 'fs38', 179)" class="i">m</span>
-    <span onmouseout="hideTip(event, 'fs41', 180)" onmouseover="showTip(event, 'fs41', 180)" class="f">sprintf</span> <span class="s">&quot;evidence = </span><span class="pf">%i</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs40', 181)" onmouseover="showTip(event, 'fs40', 181)" class="i">res</span> <span class="o">@|</span> (
-      <span class="s">&quot;div1&quot;</span> <span class="o">@|</span> (<span onmouseout="hideTip(event, 'fs38', 182)" onmouseover="showTip(event, 'fs38', 182)" class="i">m</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs40', 183)" onmouseover="showTip(event, 'fs40', 183)" class="i">res</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs38', 184)" onmouseover="showTip(event, 'fs38', 184)" class="i">m</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs39', 185)" onmouseover="showTip(event, 'fs39', 185)" class="i">n</span>)),
-      <span class="s">&quot;div2&quot;</span> <span class="o">@|</span> (<span onmouseout="hideTip(event, 'fs39', 186)" onmouseover="showTip(event, 'fs39', 186)" class="i">n</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs40', 187)" onmouseover="showTip(event, 'fs40', 187)" class="i">res</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs39', 188)" onmouseover="showTip(event, 'fs39', 188)" class="i">n</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs38', 189)" onmouseover="showTip(event, 'fs38', 189)" class="i">m</span>)),
-      <span class="s">&quot;lt1&quot;</span>  <span class="o">@|</span> (<span onmouseout="hideTip(event, 'fs40', 190)" onmouseover="showTip(event, 'fs40', 190)" class="i">res</span> <span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs38', 191)" onmouseover="showTip(event, 'fs38', 191)" class="i">m</span>),
-      <span class="s">&quot;lt2&quot;</span>  <span class="o">@|</span> (<span onmouseout="hideTip(event, 'fs40', 192)" onmouseover="showTip(event, 'fs40', 192)" class="i">res</span> <span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs39', 193)" onmouseover="showTip(event, 'fs39', 193)" class="i">n</span>))
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">multiply</span> (<span class="i">n</span><span class="o">:</span> <span class="i">int</span>, <span class="i">m</span><span class="o">:</span> <span class="i">int</span>) <span class="o">=</span>
+    <span class="k">let</span> <span class="i">res</span> <span class="o">=</span> <span class="i">n</span><span class="o">*</span><span class="i">m</span>
+    <span class="i">sprintf</span> <span class="s">&quot;evidence = %i&quot;</span> <span class="i">res</span> <span class="o">@|</span> (
+      <span class="s">&quot;div1&quot;</span> <span class="o">@|</span> (<span class="i">m</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> (<span class="i">res</span> <span class="o">/</span> <span class="i">m</span> <span class="o">=</span> <span class="i">n</span>)),
+      <span class="s">&quot;div2&quot;</span> <span class="o">@|</span> (<span class="i">n</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> (<span class="i">res</span> <span class="o">/</span> <span class="i">n</span> <span class="o">=</span> <span class="i">m</span>)),
+      <span class="s">&quot;lt1&quot;</span>  <span class="o">@|</span> (<span class="i">res</span> <span class="o">&gt;</span> <span class="i">m</span>),
+      <span class="s">&quot;lt2&quot;</span>  <span class="o">@|</span> (<span class="i">res</span> <span class="o">&gt;</span> <span class="i">n</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">multiply</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1647071431,296296904)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1722241509,296298887)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
@@ -236,57 +230,16 @@ Original:
 <li><code>[property1; property2, ..., propertyN]</code> は <code>&lt;property1&gt; .&amp;. &lt;property2&gt; .&amp;. ... .&amp;. &lt;propertyN&gt;</code> を意味します</li>
 </ul>
 <p>リストとして記述した例:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">multiplyAsList</span> (<span onmouseout="hideTip(event, 'fs39', 194)" onmouseover="showTip(event, 'fs39', 194)" class="i">n</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs10', 195)" onmouseover="showTip(event, 'fs10', 195)" class="t">int</span>, <span onmouseout="hideTip(event, 'fs38', 196)" onmouseover="showTip(event, 'fs38', 196)" class="i">m</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs10', 197)" onmouseover="showTip(event, 'fs10', 197)" class="t">int</span>) <span class="o">=</span>
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs40', 198)" onmouseover="showTip(event, 'fs40', 198)" class="i">res</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs39', 199)" onmouseover="showTip(event, 'fs39', 199)" class="i">n</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs38', 200)" onmouseover="showTip(event, 'fs38', 200)" class="i">m</span>
-    <span onmouseout="hideTip(event, 'fs41', 201)" onmouseover="showTip(event, 'fs41', 201)" class="f">sprintf</span> <span class="s">&quot;evidence = </span><span class="pf">%i</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs40', 202)" onmouseover="showTip(event, 'fs40', 202)" class="i">res</span> <span class="o">@|</span> [
-      <span class="s">&quot;div1&quot;</span> <span class="o">@|</span> (<span onmouseout="hideTip(event, 'fs38', 203)" onmouseover="showTip(event, 'fs38', 203)" class="i">m</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs40', 204)" onmouseover="showTip(event, 'fs40', 204)" class="i">res</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs38', 205)" onmouseover="showTip(event, 'fs38', 205)" class="i">m</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs39', 206)" onmouseover="showTip(event, 'fs39', 206)" class="i">n</span>));
-      <span class="s">&quot;div2&quot;</span> <span class="o">@|</span> (<span onmouseout="hideTip(event, 'fs39', 207)" onmouseover="showTip(event, 'fs39', 207)" class="i">n</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> (<span onmouseout="hideTip(event, 'fs40', 208)" onmouseover="showTip(event, 'fs40', 208)" class="i">res</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs39', 209)" onmouseover="showTip(event, 'fs39', 209)" class="i">n</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs38', 210)" onmouseover="showTip(event, 'fs38', 210)" class="i">m</span>));
-      <span class="s">&quot;lt1&quot;</span>  <span class="o">@|</span> (<span onmouseout="hideTip(event, 'fs40', 211)" onmouseover="showTip(event, 'fs40', 211)" class="i">res</span> <span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs38', 212)" onmouseover="showTip(event, 'fs38', 212)" class="i">m</span>);
-      <span class="s">&quot;lt2&quot;</span>  <span class="o">@|</span> (<span onmouseout="hideTip(event, 'fs40', 213)" onmouseover="showTip(event, 'fs40', 213)" class="i">res</span> <span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs39', 214)" onmouseover="showTip(event, 'fs39', 214)" class="i">n</span>)]
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">multiplyAsList</span> (<span class="i">n</span><span class="o">:</span> <span class="i">int</span>, <span class="i">m</span><span class="o">:</span> <span class="i">int</span>) <span class="o">=</span>
+    <span class="k">let</span> <span class="i">res</span> <span class="o">=</span> <span class="i">n</span><span class="o">*</span><span class="i">m</span>
+    <span class="i">sprintf</span> <span class="s">&quot;evidence = %i&quot;</span> <span class="i">res</span> <span class="o">@|</span> [
+      <span class="s">&quot;div1&quot;</span> <span class="o">@|</span> (<span class="i">m</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> (<span class="i">res</span> <span class="o">/</span> <span class="i">m</span> <span class="o">=</span> <span class="i">n</span>));
+      <span class="s">&quot;div2&quot;</span> <span class="o">@|</span> (<span class="i">n</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> (<span class="i">res</span> <span class="o">/</span> <span class="i">n</span> <span class="o">=</span> <span class="i">m</span>));
+      <span class="s">&quot;lt1&quot;</span>  <span class="o">@|</span> (<span class="i">res</span> <span class="o">&gt;</span> <span class="i">m</span>);
+      <span class="s">&quot;lt2&quot;</span>  <span class="o">@|</span> (<span class="i">res</span> <span class="o">&gt;</span> <span class="i">n</span>)]
 </code></pre>
 <p>は同じ結果となります。</p>
 
-<div class="tip" id="fs1">namespace FsCheck</div>
-<div class="tip" id="fs2">namespace System</div>
-<div class="tip" id="fs3">val revRevIsOrig : xs:&#39;a list -&gt; bool (requires equality)<br /><br />Full name: Properties.revRevIsOrig</div>
-<div class="tip" id="fs4">val xs : &#39;a list (requires equality)</div>
-<div class="tip" id="fs5">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
-<div class="tip" id="fs6">val rev : list:&#39;T list -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.rev</div>
-<div class="tip" id="fs7">val revRevIsOrigInt : xs:int list -&gt; bool<br /><br />Full name: Properties.revRevIsOrigInt</div>
-<div class="tip" id="fs8">val xs : int list</div>
-<div class="tip" id="fs9">type &#39;T list = List&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Collections.list&lt;_&gt;</div>
-<div class="tip" id="fs10">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.int<br /><br />--------------------<br />type int = int32<br /><br />Full name: Microsoft.FSharp.Core.int<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int<br /><br />Full name: Microsoft.FSharp.Core.int&lt;_&gt;</div>
-<div class="tip" id="fs11">val ordered : xs:&#39;a list -&gt; bool (requires comparison)<br /><br />Full name: Properties.ordered</div>
-<div class="tip" id="fs12">val xs : &#39;a list (requires comparison)</div>
-<div class="tip" id="fs13">val x : &#39;a (requires comparison)</div>
-<div class="tip" id="fs14">val y : &#39;a (requires comparison)</div>
-<div class="tip" id="fs15">val ys : &#39;a list (requires comparison)</div>
-<div class="tip" id="fs16">val insert : x:&#39;a -&gt; xs:&#39;a list -&gt; &#39;a list (requires comparison)<br /><br />Full name: Properties.insert</div>
-<div class="tip" id="fs17">val c : &#39;a (requires comparison)</div>
-<div class="tip" id="fs18">val cs : &#39;a list (requires comparison)</div>
-<div class="tip" id="fs19">val x : int</div>
-<div class="tip" id="fs20">val a : int</div>
-<div class="tip" id="fs21">val orderedList : obj<br /><br />Full name: Properties.orderedList</div>
-<div class="tip" id="fs22">val sort : list:&#39;T list -&gt; &#39;T list (requires comparison)<br /><br />Full name: Microsoft.FSharp.Collections.List.sort</div>
-<div class="tip" id="fs23">val insertWithArb : x:&#39;a -&gt; &#39;b<br /><br />Full name: Properties.insertWithArb</div>
-<div class="tip" id="fs24">val x : &#39;a</div>
-<div class="tip" id="fs25">val expectDivideByZero : unit -&gt; &#39;a<br /><br />Full name: Properties.expectDivideByZero</div>
-<div class="tip" id="fs26">Multiple items<br />type DivideByZeroException =<br />&#160;&#160;inherit ArithmeticException<br />&#160;&#160;new : unit -&gt; DivideByZeroException + 2 overloads<br /><br />Full name: System.DivideByZeroException<br /><br />--------------------<br />DivideByZeroException() : unit<br />DivideByZeroException(message: string) : unit<br />DivideByZeroException(message: string, innerException: exn) : unit</div>
-<div class="tip" id="fs27">val raise : exn:Exception -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.Operators.raise</div>
-<div class="tip" id="fs28">val timesOut : a:int -&gt; &#39;a<br /><br />Full name: Properties.timesOut</div>
-<div class="tip" id="fs29">namespace System.Threading</div>
-<div class="tip" id="fs30">Multiple items<br />type Thread =<br />&#160;&#160;inherit CriticalFinalizerObject<br />&#160;&#160;new : start:ThreadStart -&gt; Thread + 3 overloads<br />&#160;&#160;member Abort : unit -&gt; unit + 1 overload<br />&#160;&#160;member ApartmentState : ApartmentState with get, set<br />&#160;&#160;member CurrentCulture : CultureInfo with get, set<br />&#160;&#160;member CurrentUICulture : CultureInfo with get, set<br />&#160;&#160;member DisableComObjectEagerCleanup : unit -&gt; unit<br />&#160;&#160;member ExecutionContext : ExecutionContext<br />&#160;&#160;member GetApartmentState : unit -&gt; ApartmentState<br />&#160;&#160;member GetCompressedStack : unit -&gt; CompressedStack<br />&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;...<br /><br />Full name: System.Threading.Thread<br /><br />--------------------<br />Threading.Thread(start: Threading.ThreadStart) : unit<br />Threading.Thread(start: Threading.ParameterizedThreadStart) : unit<br />Threading.Thread(start: Threading.ThreadStart, maxStackSize: int) : unit<br />Threading.Thread(start: Threading.ParameterizedThreadStart, maxStackSize: int) : unit</div>
-<div class="tip" id="fs31">Threading.Thread.Sleep(timeout: TimeSpan) : unit<br />Threading.Thread.Sleep(millisecondsTimeout: int) : unit</div>
-<div class="tip" id="fs32">val insertTrivial : x:int -&gt; xs:&#39;a list -&gt; &#39;b (requires comparison)<br /><br />Full name: Properties.insertTrivial</div>
-<div class="tip" id="fs33">val length : list:&#39;T list -&gt; int<br /><br />Full name: Microsoft.FSharp.Collections.List.length</div>
-<div class="tip" id="fs34">val insertClassify : x:int -&gt; xs:&#39;a list -&gt; &#39;b (requires comparison)<br /><br />Full name: Properties.insertClassify</div>
-<div class="tip" id="fs35">val insertCollect : x:int -&gt; xs:&#39;a list -&gt; &#39;b (requires comparison)<br /><br />Full name: Properties.insertCollect</div>
-<div class="tip" id="fs36">val insertCombined : x:int -&gt; xs:&#39;a list -&gt; &#39;b (requires comparison)<br /><br />Full name: Properties.insertCombined</div>
-<div class="tip" id="fs37">val complex : m:int -&gt; n:int -&gt; &#39;_arg3<br /><br />Full name: Properties.complex</div>
-<div class="tip" id="fs38">val m : int</div>
-<div class="tip" id="fs39">val n : int</div>
-<div class="tip" id="fs40">val res : int</div>
-<div class="tip" id="fs41">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</div>
 
         </div>
         <div class="span3">
