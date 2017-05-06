@@ -51,12 +51,12 @@ FsCheck can even shrink <code>Function</code>s. For example:</p>
       <span class="k">lazy</span> (<span class="i">List</span><span class="o">.</span><span class="i">map</span> <span class="i">f</span> <span class="i">l</span> <span class="o">=</span> (<span class="c">(*f &lt;|*)</span> <span class="i">List</span><span class="o">.</span><span class="i">head</span> <span class="i">l</span>) <span class="o">::</span> <span class="i">List</span><span class="o">.</span><span class="i">map</span> <span class="i">f</span> (<span class="i">List</span><span class="o">.</span><span class="i">tail</span> <span class="i">l</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">mapRec</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (337440002,296298909)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (5 shrinks) (StdGen (1410559702,296298921)):
 Original:
-{ 0-&gt;2; 2-&gt;0 }
-[2]
+{ 0-&gt;2; 1-&gt;2; 3-&gt;3 }
+[1; 1; 3]
 Shrunk:
-{ 0-&gt;2; 2-&gt;0 }
+{ 0-&gt;2; 1-&gt;0; 3-&gt;0 }
 [0]</code></pre></td></tr></table>
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
 records a map of all the arguments it was called with, and the result it produced.
@@ -95,13 +95,13 @@ define your own labelling equality combinator:</p>
 <span class="k">let</span> <span class="i">testCompare</span> (<span class="i">i</span><span class="o">:</span><span class="i">int</span>) (<span class="i">j</span><span class="o">:</span><span class="i">int</span>) <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span class="i">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span class="i">j</span><span class="o">-</span><span class="n">1</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (339315024,296298909)):
-Label of failing property: 3 = -1
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (1 shrink) (StdGen (1412278427,296298921)):
+Label of failing property: 1 = -1
 Original:
-1
-1
+0
+2
 Shrunk:
-1
+0
 0</code></pre></td></tr></table>
 <p>Of course, you can do this for any operator or function that you often use.</p>
 <h2><a name="Some-ways-to-run-FsCheck-tests" class="anchor" href="#Some-ways-to-run-FsCheck-tests">Some ways to run FsCheck tests</a></h2>
