@@ -1,4 +1,4 @@
-### 2.9.0-rc2 - To be released
+### 2.9.0-rc3 - To be released
 * Add a .NET Standard 1.6 compatible build to FsCheck, FsCheck.NUnit and FsCheck.Xunit. (with Enrico Sada)
 * Update to latest FSharp.Core 4.1.
 
@@ -87,7 +87,7 @@
  * Fix bug in xunit integration: Verbose didn't show any output.
 
 ### 2.2.2 - 14 November 2015
- * Major performance improvements in generators, particularly reflection-based generators. (with Mårten Rånge)
+ * Major performance improvements in generators, particularly reflection-based generators. (with Mï¿½rten Rï¿½nge)
 
 ### 2.2.1 - 5 November 2015
   * Bug fix: xUnit runner did not update failed count correctly in some cases.
