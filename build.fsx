@@ -264,10 +264,10 @@ let shellExec cmd args dir =
     Shell.Exec(cmd, args, dir) |> assertExitCodeZero
 
 Target "Build.NetCore" (fun _ ->
-    shellExec "dotnet" "restore" "src/FsCheck.netcore"
-    shellExec "dotnet" "restore" "src/FsCheck.Xunit.netcore"
-    shellExec "dotnet" "restore" "src/FsCheck.NUnit.netcore"
-    shellExec "dotnet" "restore" "tests/FsCheck.Test.netcore"
+    shellExec "dotnet" (sprintf "restore /p:Version=%s" buildVersion) "src/FsCheck.netcore"
+    shellExec "dotnet" (sprintf "restore /p:Version=%s" buildVersion) "src/FsCheck.Xunit.netcore"
+    shellExec "dotnet" (sprintf "restore /p:Version=%s" buildVersion) "src/FsCheck.NUnit.netcore"
+    shellExec "dotnet" (sprintf "restore /p:Version=%s" buildVersion) "tests/FsCheck.Test.netcore"
     shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.netcore"
     shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.Xunit.netcore"
     shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.NUnit.netcore"
