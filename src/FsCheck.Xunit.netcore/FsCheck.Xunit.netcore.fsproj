@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>FsCheck.Xunit</AssemblyName>
     <TargetFramework>netstandard1.6</TargetFramework>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
