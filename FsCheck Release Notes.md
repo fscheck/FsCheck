@@ -1,6 +1,6 @@
-### 2.9.0-rc3 - To be released
-* Add a .NET Standard 1.6 compatible build to FsCheck, FsCheck.NUnit and FsCheck.Xunit. (with Enrico Sada)
-* Update to latest FSharp.Core 4.1.
+### 2.9.0 - 18 May 2017
+* Add a .NET Standard 1.6 build to FsCheck, FsCheck.NUnit and FsCheck.Xunit NuGet packages. (with Enrico Sada)
+* Update to latest FSharp.Core 4.1. The last version to support 3.1 or higher is FsCheck 2.8.2.
 
 ### 2.8.2 - 6 May 2017
 * Add Gen.optionOf. (by Mark Seemann)
