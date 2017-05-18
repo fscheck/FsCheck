@@ -56,9 +56,9 @@
 <p>を定義すると、このような結果を確認できるでしょう:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1289004665,296299310)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (3 shrinks) (StdGen (221531219,296303757)):
 Original:
-[1; -2]
+[-1; -2]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>FsCheck は反例の <em>シュリンク</em> (訳註: 推定による絞り込みのこと)も行うので、テストケースを失敗させる最小の反例を見つけようとします。
@@ -81,9 +81,9 @@ Shrunk:
 </code></pre>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 7 tests (3 shrinks) (StdGen (1289699988,296299310)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (1 shrink) (StdGen (222183864,296303757)):
 Original:
-[nan; 2.333333333; -7.25; -1.797693135e+308]
+[0.1666666667; nan]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <h2>FsCheck を他のテスティングフレームワークで使う</h2>
