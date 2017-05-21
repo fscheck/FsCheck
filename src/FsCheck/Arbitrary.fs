@@ -132,6 +132,28 @@ type IPv6Address = IPv6Address of IPAddress
 
 type HostName = HostName of string with
     override x.ToString () = match x with HostName s -> s
+type UriScheme = UriScheme of string with
+    override x.ToString () = match x with UriScheme s -> s
+
+#if PCL
+type UriHost = UriHostName of HostName with
+    override x.ToString () = match x with UriHostName (HostName s) -> s
+#else
+type UriHost =
+| UriHostName of HostName
+| UriIPHost of IPAddress
+with
+    override x.ToString () =
+        match x with
+        | UriHostName (HostName s) -> s
+        | UriIPHost ip ->
+            if ip.AddressFamily = Sockets.AddressFamily.InterNetworkV6
+            then sprintf "[%O]" ip
+            else string ip
+#endif
+
+type UriPathSegment = UriPathSegment of string with
+    override x.ToString () = match x with UriPathSegment s -> s
 
 [<AutoOpen>]
 module ArbPatterns =
@@ -1100,6 +1122,72 @@ module Arb =
         
             fromGenShrink (generator, shrinker)
 #endif
+
+        static member UriScheme() =
+            let letters = ['a'..'z'] @ ['A'..'Z']
+            let otherValidChars = ['0'..'9'] @ ['+'; '.'; '-']
+            let randomSchemeGen = gen {
+                let! firstChar = Gen.elements letters
+                let! chars =
+                    letters @ otherValidChars |> Gen.elements |> Gen.listOf
+                return  firstChar :: chars
+                        |> List.toArray
+                        |> System.String
+                        |> UriScheme }
+            // While these well-known scheme are available in the full BCL as
+            // Uri.UriSchemeFile, Uri.UriSchemeFtp, etceterat, they aren't
+            // available in PCL, so instead are hard-coded to their string
+            // values
+            let knownSchemeGen =
+                [
+                    "file"
+                    "ftp"
+                    "gopher"
+                    "http"
+                    "https"
+                    "mailto"
+                    "net.pipe"
+                    "net.tcp"
+                    "news"
+                    "nntp"
+                ]
+                |> Gen.elements
+                |> Gen.map UriScheme
+            let s (UriScheme candidate) = seq {
+                if candidate.Length > 0 then
+                    let shrunk = candidate.Substring(0, candidate.Length - 1)
+                    yield shrunk.ToLowerInvariant () |> UriScheme
+                    yield shrunk |> UriScheme }
+            fromGenShrink (Gen.oneof [randomSchemeGen; knownSchemeGen], s)
+
+        static member UriHost() =
+            let genUriHostName =
+                Default.HostName().Generator |> Gen.map UriHostName
+            let shrinkUriHostName = Default.HostName().Shrinker
+#if PCL
+            let genUriHost = genUriHostName
+            let shrinkUriHost (UriHostName hn) =
+                shrinkUriHostName hn |> Seq.map UriHostName
+#else
+            let genIPAddressHostName =
+                Default.IPAddress().Generator |> Gen.map UriIPHost
+            let shrinkIPAddressHost = Default.IPAddress().Shrinker
+
+            let genUriHost =
+                Gen.oneof [genUriHostName; genIPAddressHostName]
+            let shrinkUriHost = function
+                | UriHostName hn -> shrinkUriHostName hn |> Seq.map UriHostName
+                | UriIPHost ip -> shrinkIPAddressHost ip |> Seq.map UriIPHost
+#endif
+            fromGenShrink (genUriHost, shrinkUriHost)
+
+        static member UriPathSegment() =
+            let g =
+                ['a'..'z'] @ ['A'..'Z'] @ ['0'..'9'] @ ['-'; '.'; '_'; '~']
+                |> Gen.elements
+                |> Gen.nonEmptyListOf
+                |> Gen.map (List.toArray >> String >> UriPathSegment)
+            fromGen g
 
         ///Arbitray instance for BigInteger.
         static member BigInt() =
