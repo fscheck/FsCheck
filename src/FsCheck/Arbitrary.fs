@@ -154,14 +154,36 @@ module Arb =
         let empty = TypeClass<Arbitrary<obj>>.New()
         empty.Discover(onlyPublic=true,instancesType=typeof<Default>)
 
+    #if !PCL
+    open System.Runtime.Remoting.Messaging
+
+    let threadLocalDataName = "fscheck-arbitrary"
+
+    let internal setArbitrary instance =
+        CallContext.LogicalSetData(threadLocalDataName, instance)
+
+    let internal getArbitrary () =
+        match CallContext.LogicalGetData(threadLocalDataName) with
+        | null -> defaultArbitrary
+        | arb -> arb :?> TypeClass<Arbitrary<obj>>
+
+    #else
     let internal arbitrary = new ThreadLocal<TypeClass<Arbitrary<obj>>>(fun () -> defaultArbitrary)
+
+    let internal setArbitrary instance =
+        arbitrary.Value <- instance
+
+    let internal getArbitrary () =
+        arbitrary.Value
+    #endif
 
     ///Register the generators that are static members of the given type.
     [<CompiledName("Register")>]
     let registerByType t = 
-        let newTypeClass = arbitrary.Value.Discover(onlyPublic=true,instancesType=t)
-        let result = arbitrary.Value.Compare newTypeClass
-        arbitrary.Value <- arbitrary.Value.Merge newTypeClass
+        let arb = getArbitrary()
+        let newTypeClass = arb.Discover(onlyPublic=true,instancesType=t)
+        let result = arb.Compare newTypeClass
+        setArbitrary (arb.Merge newTypeClass)
         result
 
     ///Register the generators that are static members of the type argument.
@@ -170,7 +192,7 @@ module Arb =
 
     ///Get the Arbitrary instance for the given type.
     [<CompiledName("From")>]
-    let from<'Value> = arbitrary.Value.InstanceFor<'Value,Arbitrary<'Value>>()
+    let from<'Value> = getArbitrary().InstanceFor<'Value,Arbitrary<'Value>>()
 
     ///Returns a Gen<'Value>
     [<CompiledName("Generate")>]
@@ -191,9 +213,9 @@ module Arb =
                         |> Seq.takeWhile ((|>|) n) }
         |> Seq.distinct
 
-    let internal getGenerator t = arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
+    let internal getGenerator t = getArbitrary().GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
 
-    let internal getShrink t = arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
+    let internal getShrink t = getArbitrary().GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
 
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toGen (arb:Arbitrary<'Value>) = arb.Generator

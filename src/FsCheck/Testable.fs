@@ -126,6 +126,7 @@ module private Testable =
          
         let ofBool b = ofResult <| if b then Res.succeeded else Res.failed
 
+
         let mapRoseResult f a = property a |> Property.GetGen |> Gen.map f |> Property
 
         let mapResult f = mapRoseResult (Rose.map f)
@@ -219,3 +220,28 @@ module private Testable =
         static member List() =
             { new Testable<list<'a>> with
                 member __.Property l = List.fold (.&) (property <| List.head l) (List.tail l) }
+
+        #if !PCL
+
+        static member Task() =
+            { new Testable<System.Threading.Tasks.Task> with
+                member __.Property t =
+                    try
+                        t.Wait()
+                        property true
+                    with
+                    | :? AggregateException as agg ->
+                        Prop.ofResult (Res.exc agg.InnerException)
+                    | ex -> Prop.ofResult (Res.exc ex) }
+
+        static member TaskOfT() =
+            { new Testable<System.Threading.Tasks.Task<'t>> with
+                member __.Property t =
+                    try
+                        t.Result |> property
+                    with
+                    | :? AggregateException as agg ->
+                        Prop.ofResult (Res.exc agg.InnerException)
+                    | ex -> Prop.ofResult (Res.exc ex) }
+
+        #endif
