@@ -402,6 +402,13 @@ module Arbitrary =
     let ``Can create 64-bit integer flags enumeration`` (value : LongFlags) =
         List.exists (fun e -> e = int64 value) [0L..7L]
 
+    [<Flags>]
+    type CharFlags = A = 'A' | B = 'B' | C = 'C'
+
+    [<Property>]
+    let ``Can create char flags enumeration`` (value : CharFlags) =
+        List.exists ((=) value) [CharFlags.A; CharFlags.B; CharFlags.C]
+
     [<Fact>]
     let ``FsList shrunk is at minimum n-1``() =
         let prop (l:int list) = 
