@@ -12,6 +12,11 @@ open System.Net
 open System.Net.Mail
 #endif
 
+type NegativeInt = NegativeInt of int with
+    member x.Get = match x with NegativeInt r -> r
+    override x.ToString() = x.Get.ToString()
+    static member op_Explicit(NegativeInt i) = i
+
 ///Represents an int >= 0
 type NonNegativeInt = NonNegativeInt of int with
     member x.Get = match x with NonNegativeInt r -> r
@@ -792,6 +797,11 @@ module Arb =
                         for value in shrink kvp.Value do
                             yield new KeyValuePair<_,_>(key, value) }
             fromGenShrink(genKeyValuePair,shrinkKeyValuePair)
+
+        static member NegativeInt() =
+            Default.Int32()
+            |> mapFilter abs (fun i -> i < 0)
+            |> convert NegativeInt int
 
         static member NonNegativeInt() =
            Default.Int32()
