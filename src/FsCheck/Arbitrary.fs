@@ -12,7 +12,7 @@ open System.Net
 open System.Net.Mail
 #endif
 
-///Represents and int < 0
+///Represents an int < 0
 type NegativeInt = NegativeInt of int with
     member x.Get = match x with NegativeInt r -> r
     override x.ToString() = x.Get.ToString()
