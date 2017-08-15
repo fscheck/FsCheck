@@ -801,7 +801,7 @@ module Arb =
 
         static member NegativeInt() =
             Default.Int32()
-            |> mapFilter ((*) -1) (fun x -> x < 0)
+            |> mapFilter (fun x -> -abs x) (fun x -> x < 0)
             |> convert NegativeInt int
 
         static member NonNegativeInt() =
