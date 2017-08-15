@@ -330,7 +330,15 @@ module Arbitrary =
     [<Property>]
     let ``PositiveInt shrinks positive ints`` (value:PositiveInt ) =
         shrink value |> Seq.forall (fun (PositiveInt v) -> v > 0)
-    
+
+    [<Property>]
+    let ``NegativeInt generates negative ints`` (NegativeInt value) =
+        value < 0
+
+    [<Property>]
+    let ``NegativeInt shrinks negative ints`` (value:NegativeInt ) =
+        shrink value |> Seq.forall (fun (NegativeInt v) -> v < 0)
+
     type TestEnum =
         | A = 0
         | B = 3
