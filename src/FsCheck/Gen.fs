@@ -602,7 +602,7 @@ module Gen =
         fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.
-type Gen with
+type Gen<'a> with
 
     /// Lifted function application = apply f to a, all in the Gen applicative functor.
     static member (<*>) (f, a) = Gen.apply f a
