@@ -26,6 +26,9 @@
     <Compile Include="..\FsCheck\TypeClass.fs">
       <Link>TypeClass.fs</Link>
     </Compile>
+    <Compile Include="..\FsCheck\Urn.fs">
+      <Link>Urn.fs</Link>
+    </Compile>
     <Compile Include="..\FsCheck\Gen.fs">
       <Link>Gen.fs</Link>
     </Compile>
