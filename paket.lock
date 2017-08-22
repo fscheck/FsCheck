@@ -190,7 +190,6 @@ NUGET
     runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - redirects: force, restriction: || (&& (>= dnxcore50) (>= netstandard1.6)) (&& (>= netstandard1.6) (< monotouch) (< xamarintvos) (< xamarinwatchos) (< xamarinios) (< xamarinmac)) (>= netcoreapp1.0)
     runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - redirects: force, restriction: || (&& (>= dnxcore50) (>= netstandard1.6)) (&& (>= netstandard1.6) (< monotouch) (< xamarintvos) (< xamarinwatchos) (< xamarinios) (< xamarinmac)) (>= netcoreapp1.0)
     runtime.ubuntu.16.10-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3) - redirects: force, restriction: || (&& (>= dnxcore50) (>= netstandard1.6)) (&& (>= netstandard1.6) (< monotouch) (< xamarintvos) (< xamarinwatchos) (< xamarinios) (< xamarinmac)) (>= netcoreapp1.0)
-    SourceLink.Fake (1.1)
     System.AppContext (4.3.0) - version_in_path: true, restriction: >= netstandard1.6
       System.Runtime (>= 4.3) - restriction: || (&& (< net46) (>= netstandard1.3) (< netstandard1.6) (< monoandroid)) (>= dnxcore50) (&& (>= netstandard1.6) (< monotouch) (< xamarintvos) (< xamarinwatchos) (< xamarinios) (< xamarinmac))
     System.Buffers (4.4.0) - version_in_path: true, restriction: || (&& (>= dnxcore50) (>= netstandard1.6)) (&& (>= netstandard1.6) (< monotouch) (< xamarintvos) (< xamarinwatchos) (< xamarinios) (< xamarinmac)) (>= netcoreapp1.0)

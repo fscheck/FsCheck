@@ -132,18 +132,6 @@ Target "RunTests" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
-// Source linking
-
-Target "SourceLink" (fun _ ->
-    let baseUrl = sprintf "%s/%s/{0}/%%var2%%" gitRaw packages.[0].Name
-    !! "src/**/*.??proj"
-    |> Seq.iter (fun projFile ->
-        if not (projFile.Contains("netcore")) then
-            let proj = VsProj.LoadRelease projFile 
-            SourceLink.Index proj.CompilesNotLinked proj.OutputFilePdb __SOURCE_DIRECTORY__ baseUrl
-    )
-)
-// --------------------------------------------------------------------------------------
 // Build a NuGet package
 
 Target "PaketPack" (fun _ ->
@@ -308,7 +296,6 @@ Target "CI" DoNothing
   ==> "Release"
 
 "RunTests"
-  =?> ("SourceLink", isLocalBuild && not isLinux && not isMacOS)
   ==> "PaketPack"
   =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
   ==> "PaketPush"
