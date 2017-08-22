@@ -3,15 +3,12 @@
 // --------------------------------------------------------------------------------------
 
 #r @"./packages/FAKE/tools/FakeLib.dll"
-#load "./packages/SourceLink.Fake/tools/SourceLink.fsx"
 
 open Fake 
 open Fake.Git
 open Fake.AssemblyInfoFile
 open Fake.ReleaseNotesHelper
 open Fake.Testing
-
-open SourceLink
 
 open System
 open System.IO
