@@ -3,6 +3,7 @@
   <PropertyGroup>
     <AssemblyName>FsCheck.NUnit</AssemblyName>
     <TargetFramework>netstandard1.6</TargetFramework>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\FsCheck.NUnit.XML</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
