@@ -72,9 +72,9 @@
 <p>FsCheck はそれぞれのテストの名前も印字します:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 1 test (3 shrinks) (StdGen (224443260,296303757)):
+ListProperties.reverse is original-Falsifiable, after 2 tests (3 shrinks) (StdGen (332561030,296344372)):
 Original:
-[-1; -2]
+[-2; 2; 3]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>モジュールの全てのトップレベル関数がモジュール名とともにクラスの静的メンバーとしてコンパイルされるので、あるモジュールの全てのトップレベル関数を
