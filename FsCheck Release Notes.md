@@ -1,4 +1,6 @@
-### 2.9.1 - To be released
+### 2.9.1 - 27 August 2017
+* Add NegativeInt type and Arbitrary instance. (by Stijn Moreels)
+* Update SourceLink to v2. (by Cameron Taggart)
 
 ### 2.9.0 - 18 May 2017
 * Add a .NET Standard 1.6 build to FsCheck, FsCheck.NUnit and FsCheck.Xunit NuGet packages. (with Enrico Sada)
