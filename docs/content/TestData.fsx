@@ -120,7 +120,7 @@ let rec unsafeTree() =
 
 (**
 In C#, we elide the type because it is quite a bit more verbose than in F# - assume the typical composite
-of having an abstract superclass Tree with two subclasses, one for Leaf and one fro Branch. Basically this is
+of having an abstract superclass Tree with two subclasses, one for Leaf and one for Branch. Basically this is
 the code F# generates for the type definition above. Assuming that, `unsafeTree` in C# looks like:
 
     [lang=csharp,file=../csharp/TestData.cs,key=unsafeTree]
