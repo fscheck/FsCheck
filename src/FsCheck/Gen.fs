@@ -531,7 +531,7 @@ module Gen =
     [<CompiledName("ArrayOf")>]
     let arrayOf (g: Gen<'a>) : Gen<'a[]> = 
        sized <| fun n ->
-             gen { let! size = choose(0, n+1) //deccrease chance of empty arrays somewhat
+             gen { let! size = choose(0, n)
                    return! arrayOfLength size g }
 
     /// Generates a 2D array of the given dimensions.
