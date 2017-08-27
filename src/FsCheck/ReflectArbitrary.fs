@@ -52,9 +52,9 @@ module internal ReflectArbitrary =
                     Seq.empty
 
             fieldType = containingType
-            || seen.Contains(fieldType.FullName)
+            || seen.Contains(fieldType.AssemblyQualifiedName)
             || (let fields = children fieldType
-                let newSeen = seen.Add fieldType.FullName
+                let newSeen = seen.Add fieldType.AssemblyQualifiedName
                 fields |> Seq.exists (fun field -> isRecursive field containingType newSeen))
 
         let productGen (ts : seq<Type>) create =

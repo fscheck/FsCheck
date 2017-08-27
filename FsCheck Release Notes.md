@@ -1,3 +1,5 @@
+### 2.9.2 - To be released
+
 ### 2.9.1 - 27 August 2017
 * Add NegativeInt type and Arbitrary instance. (by Stijn Moreels)
 * Update SourceLink to v2. (by Cameron Taggart)
