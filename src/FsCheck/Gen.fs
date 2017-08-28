@@ -336,7 +336,7 @@ module Gen =
         map (fun (_, y, _) -> y) g,
         map (fun (_, _, z) -> z) g
 
-    ///Sequence the given seq of generators into a generator of a list.
+    /// Sequence the given enumerable of generators into a generator of a list.
     //[category: Creating generators from generators]
     [<CompiledName("SequenceToList"); EditorBrowsable(EditorBrowsableState.Never)>]
     let sequence l = 
@@ -349,9 +349,9 @@ module Gen =
                 go gs' (y::acc) size r2
         Gen(fun n r -> go (Seq.toList l) [] n r)
 
-    ///Sequence the given list of generators into a generator of a list.
+    /// Sequence the given enumerable of generators into a generator of an enumerable.
     //[category: Creating generators from generators]
-    [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    [<CompiledName("Sequence")>]
     let sequenceToSeq generators = 
         // This implementation is similar to that for arrays and lists but is specialized
         // to sequences to avoid intermediate conversion to an intermediate list.
@@ -364,9 +364,9 @@ module Gen =
                 yield g size r1
             }
 
-    ///Sequence the given array of generators into a generator of a array.
+    /// Sequence the given array of generators into a generator of a array.
     //[category: Creating generators from generators]
-    [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    [<CompiledName("Sequence")>]
     let sequenceToArr ([<ParamArrayAttribute>]generators:array<Gen<_>>) = 
         if Object.ReferenceEquals (null, generators) then
             nullArg "generators"

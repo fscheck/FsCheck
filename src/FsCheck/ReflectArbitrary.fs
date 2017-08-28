@@ -58,13 +58,13 @@ module internal ReflectArbitrary =
                 fields |> Seq.exists (fun field -> isRecursive field containingType newSeen))
 
         let productGen (ts : seq<Type>) create =
-            let gs = [ for t in ts -> getGenerator t ]
+            let gs = [| for t in ts -> getGenerator t |]
             let n = gs.Length
-            if n = 0 then
+            if n <= 0 then
                 Gen.constant (create [||])
             else
-                sized (fun s -> resize ((s / n) - 1) (sequence gs))
-                |> map (List.toArray >> create)
+                sized (fun s -> resize (max 0 ((s / n) - 1)) (sequenceToArr gs))
+                |> map create
 
         if isRecordType t then
             let fields = getRecordFieldTypes t
