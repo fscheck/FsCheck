@@ -51,12 +51,12 @@ FsCheck can even shrink <code>Function</code>s. For example:</p>
       <span class="k">lazy</span> (<span class="i">List</span><span class="o">.</span><span class="i">map</span> <span class="i">f</span> <span class="i">l</span> <span class="o">=</span> (<span class="c">(*f &lt;|*)</span> <span class="i">List</span><span class="o">.</span><span class="i">head</span> <span class="i">l</span>) <span class="o">::</span> <span class="i">List</span><span class="o">.</span><span class="i">map</span> <span class="i">f</span> (<span class="i">List</span><span class="o">.</span><span class="i">tail</span> <span class="i">l</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">mapRec</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (1 shrink) (StdGen (526407575,296344372)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (13867098,296344738)):
 Original:
-{ 0-&gt;3; 5-&gt;0 }
-[5]
+{ 0-&gt;2; 2-&gt;1 }
+[2; 2]
 Shrunk:
-{ 0-&gt;3; 5-&gt;0 }
+{ 0-&gt;2; 2-&gt;0 }
 [0]</code></pre></td></tr></table>
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
 records a map of all the arguments it was called with, and the result it produced.
@@ -95,11 +95,11 @@ define your own labelling equality combinator:</p>
 <span class="k">let</span> <span class="i">testCompare</span> (<span class="i">i</span><span class="o">:</span><span class="i">int</span>) (<span class="i">j</span><span class="o">:</span><span class="i">int</span>) <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span class="i">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span class="i">j</span><span class="o">-</span><span class="n">1</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (528096077,296344372)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (1 shrink) (StdGen (15638436,296344738)):
 Label of failing property: 1 = -1
 Original:
-3
 2
+0
 Shrunk:
 0
 0</code></pre></td></tr></table>

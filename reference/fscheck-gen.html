@@ -767,15 +767,15 @@ equal probability.</p>
             sequence l
           </code>
           <div class="tip" id="57">
-            <strong>Signature:</strong> l:seq&lt;Gen&lt;&#39;b&gt;&gt; -&gt; Gen&lt;&#39;b list&gt;<br />
-                          <strong>Type parameters:</strong> 'b          </div>
+            <strong>Signature:</strong> l:seq&lt;Gen&lt;&#39;a&gt;&gt; -&gt; Gen&lt;&#39;a list&gt;<br />
+                          <strong>Type parameters:</strong> 'a          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L342-342" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Sequence the given seq of generators into a generator of a list.</p>
+          <p>Sequence the given enumerable of generators into a generator of a list.</p>
 
 
               <p>CompiledName: <code>SequenceToList</code></p>
@@ -788,15 +788,15 @@ equal probability.</p>
             sequenceToArr generators
           </code>
           <div class="tip" id="58">
-            <strong>Signature:</strong> generators:Gen&lt;&#39;?72753&gt; array -&gt; Gen&lt;&#39;?72753 []&gt;<br />
-                          <strong>Type parameters:</strong> '?72753          </div>
+            <strong>Signature:</strong> generators:Gen&lt;&#39;b&gt; array -&gt; Gen&lt;&#39;b []&gt;<br />
+                          <strong>Type parameters:</strong> 'b          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L370-370" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Sequence the given list of generators into a generator of a list.</p>
+          <p>Sequence the given array of generators into a generator of a array.</p>
 
 
               <p>CompiledName: <code>Sequence</code></p>
@@ -817,7 +817,7 @@ equal probability.</p>
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Sequence the given list of generators into a generator of a list.</p>
+          <p>Sequence the given enumerable of generators into a generator of an enumerable.</p>
 
 
               <p>CompiledName: <code>Sequence</code></p>
