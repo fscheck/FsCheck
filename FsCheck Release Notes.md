@@ -1,4 +1,5 @@
-### 2.9.2 - To be released
+### 2.9.2 - 28 August 2017
+* Fix a bug in recursive union type generation that could lead to stack overflow in some cases.
 
 ### 2.9.1 - 27 August 2017
 * Add NegativeInt type and Arbitrary instance. (by Stijn Moreels)
