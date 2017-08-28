@@ -496,15 +496,13 @@ module Gen =
     //[category: Creating generators]
     [<CompiledName("Piles")>]
     let piles k sum = 
-        if k < 0 then failwith "Can't make fewer than zero piles."
-
         let rec genSorted = function 
             | (1, n, _) -> gen.Return [n]
             | (p, n, m) ->
                 gen { let! r = choose (int (ceil(float n / float p)), min m n)
                       return! map (fun l -> r::l) (genSorted (p-1, n-r, min m r))
                 }
-        if k = 0 then
+        if k <= 0 then
             constant [||]
         else
             gen.Bind(genSorted (k, sum, sum), shuffle)
@@ -517,7 +515,8 @@ module Gen =
     let listOf gn =
         sized <| fun n ->
             gen { let! k = choose (0,n)
-                  return! listOfLength k gn }
+                  let! sizes = piles k n
+                  return! sequence [ for size in sizes -> resize size gn ] }
 
     /// Generates a non-empty list of random length. The maximum length 
     /// depends on the size parameter.
@@ -525,8 +524,9 @@ module Gen =
     [<CompiledName("NonEmptyListOf")>]
     let nonEmptyListOf gn =
         sized <| fun n ->
-            gen {   let! k = choose (1,max 1 n)
-                    return! listOfLength k gn }
+            gen { let! k = choose (1,max 1 n)
+                  let! sizes = piles k n
+                  return! sequence [ for size in sizes -> resize size gn ] }
 
     /// Generates sublists of the given sequence.
     //[category: Creating generators]
@@ -567,8 +567,9 @@ module Gen =
     [<CompiledName("ArrayOf")>]
     let arrayOf (g: Gen<'a>) : Gen<'a[]> = 
        sized <| fun n ->
-             gen { let! size = choose(0, n)
-                   return! arrayOfLength size g }
+             gen { let! k = choose(0, n)
+                   let! sizes = piles k n
+                   return! sequenceToArr [| for size in sizes -> resize size g |]}
 
     /// Generates a 2D array of the given dimensions.
     //[category: Creating generators from generators]
