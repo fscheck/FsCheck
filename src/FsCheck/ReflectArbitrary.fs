@@ -8,6 +8,7 @@ module internal ReflectArbitrary =
     open Microsoft.FSharp.Reflection
     open Reflect
     open Gen
+    open Gen
 
     let inline private orElems<'a when 'a : (static member (|||) : 'a * 'a -> 'a) and 'a : (static member Zero : 'a)>
         t
@@ -52,10 +53,12 @@ module internal ReflectArbitrary =
                     Seq.empty
 
             fieldType = containingType
-            || seen.Contains(fieldType.AssemblyQualifiedName)
-            || (let fields = children fieldType
-                let newSeen = seen.Add fieldType.AssemblyQualifiedName
-                fields |> Seq.exists (fun field -> isRecursive field containingType newSeen))
+            || (if seen.Contains(fieldType.AssemblyQualifiedName) then 
+                    false
+                else
+                    let fields = children fieldType
+                    let newSeen = seen.Add fieldType.AssemblyQualifiedName
+                    fields |> Seq.exists (fun field -> isRecursive field containingType newSeen))
 
         let productGen (ts : seq<Type>) create =
             let gs = [| for t in ts -> getGenerator t |]
