@@ -364,7 +364,7 @@ module Gen =
                 yield g size r1
             }
 
-    ///Sequence the given list of generators into a generator of a list.
+    ///Sequence the given array of generators into a generator of a array.
     //[category: Creating generators from generators]
     [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let sequenceToArr ([<ParamArrayAttribute>]generators:array<Gen<_>>) = 
