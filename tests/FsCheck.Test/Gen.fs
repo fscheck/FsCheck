@@ -182,6 +182,13 @@ module Gen =
         |> sample 20
         |> List.map Seq.toList
         |> List.exists ((<>) l)
+
+    [<Property>]
+    let Piles (NonNegativeInt k) (sum:int) =
+        let sample = Gen.piles k sum |> sample 1
+        sample
+        |> List.forall (fun l -> l.Length = k && Array.sum l = (if k = 0 then 0 else sum))
+        |> Prop.collect (k, sum, sample)
    
     [<Property>]
     let TryWhere (v:int) (predicate:int -> bool) =
