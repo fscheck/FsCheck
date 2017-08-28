@@ -1,3 +1,5 @@
+### 2.9.3 - To be released
+
 ### 2.9.2 - 28 August 2017
 * Fix a bug in recursive union type generation that could lead to stack overflow in some cases.
 
