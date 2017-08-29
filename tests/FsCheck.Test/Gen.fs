@@ -211,6 +211,16 @@ module Gen =
         Gen.resize size (Gen.listOf <| Gen.constant v)
         |> sample 10
         |> List.forall (fun l -> l.Length <= size && List.forall ((=) v) l)
+
+
+    [<Property>]
+    let ``ListOf high dimension``(NonNegativeInt size) (v:int) =
+        let l = Gen.resize size (Gen.listOf (Gen.listOf (Gen.listOf (Gen.listOf <| Gen.constant v))))
+                |> sample 10
+        l
+        |> List.forall (fun l -> l.Length <= size && List.forall (List.forall (List.forall (List.forall ((=) v)))) l)
+        |> Prop.collect l.Head
+
     
     [<Property>]
     let NonEmptyListOf (NonNegativeInt size) (v:string) =
@@ -231,6 +241,12 @@ module Gen =
         Gen.resize size (Gen.arrayOf <| Gen.constant v)
         |> sample 10
         |> List.forall (fun l -> l.Length <= size && Array.forall ((=) v) l)
+
+    [<Property>]
+    let ``ArrayOf high dimension`` (NonNegativeInt size) (v:int) =
+        Gen.resize size (Gen.arrayOf (Gen.arrayOf (Gen.arrayOf (Gen.arrayOf <| Gen.constant v))))
+        |> sample 10
+        |> List.forall (fun l -> l.Length <= size && (Array.forall (Array.forall (Array.forall (Array.forall ((=) v)))) l))
     
     [<Property>]
     let ArrayOfLength (v:char) (PositiveInt length) =
