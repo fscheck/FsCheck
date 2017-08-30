@@ -1,4 +1,30 @@
 ### 3.0.0-alpha - To be released
+### 2.9.3 - To be released
+
+### 2.9.2 - 28 August 2017
+* Fix a bug in recursive union type generation that could lead to stack overflow in some cases.
+
+### 2.9.1 - 27 August 2017
+* Add NegativeInt type and Arbitrary instance. (by Stijn Moreels)
+* Update SourceLink to v2. (by Cameron Taggart)
+
+### 2.9.0 - 18 May 2017
+* Add a .NET Standard 1.6 build to FsCheck, FsCheck.NUnit and FsCheck.Xunit NuGet packages. (with Enrico Sada)
+* Update to latest FSharp.Core 4.1. The last version to support 3.1 or higher is FsCheck 2.8.2.
+
+### 2.8.2 - 6 May 2017
+* Add Gen.optionOf. (by Mark Seemann)
+
+### 2.8.1 - 1 May 2017
+* Added support to generate POCOs (reflectively) with a default ctor and settable properties. (by Giacomo Citi)
+
+### 2.8.0 - 15 March 2017
+ * Removed support for .NET 4.5 and 4.5.1 frameworks as they are no longer supported by Microsoft.
+ * Updated to xUnit 2.2.
+ * Updated to NUnit 3.6.1.
+
+### 2.7.2 - 5 March 2017
+ * FsCheck.Xunit now shows currently executing test in UI test runner. (by Lukas Rieger)
 
 ### 2.7.1 - 13 February 2017
  * Improve reflection based generator for union cases - now also detect if a union case is recursive via any number of other types.
@@ -35,8 +61,7 @@
 ### 2.5.0 - 7 June 2016
   * Add Gen.growingElements.
   * Add default generator and shrinker for IPAddress and MailAddress.
-  * Gen.eval now uses the given size directly to generate an element of that size, instead of randomly choosing a size up to the given size. This means that on average
-    test case sizes are bigger.
+  * Gen.eval now uses the given size directly to generate an element of that size, instead of randomly choosing a size up to the given size. This means that on average test case sizes are bigger.
   * Gen.frequency now throws a clearer exeption if no element can be generated.
   * Renamed Gen.suchThat and Gen.suchThatOption to Gen.where or Gen.filter and Gen.tryWhere or Gen.tryFilter. (The functions/methods with the old names are still there, they are just marked Obsolete and will be removed in a future version.)
   * Renamed DontSize to DoNotSize, DontShrink to DoNotShrink, DontSizeInt16 to DoNotSizeInt16 etc. (The types with the old names are still there, they are just marked Obsolete and will be removed in a future version.)
@@ -72,7 +97,7 @@
  * Fix bug in xunit integration: Verbose didn't show any output.
 
 ### 2.2.2 - 14 November 2015
- * Major performance improvements in generators, particularly reflection-based generators. (with Mårten Rånge)
+ * Major performance improvements in generators, particularly reflection-based generators. (with Mï¿½rten Rï¿½nge)
 
 ### 2.2.1 - 5 November 2015
   * Bug fix: xUnit runner did not update failed count correctly in some cases.

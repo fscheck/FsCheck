@@ -12,6 +12,12 @@ open System.Net
 open System.Net.Mail
 #endif
 
+///Represents an int < 0
+type NegativeInt = NegativeInt of int with
+    member x.Get = match x with NegativeInt r -> r
+    override x.ToString() = x.Get.ToString()
+    static member op_Explicit(NegativeInt i) = i
+
 ///Represents an int >= 0
 type NonNegativeInt = NonNegativeInt of int with
     member x.Get = match x with NonNegativeInt r -> r
@@ -482,7 +488,7 @@ module Arb =
         ///Generate an option value that is 'None' 1/8 of the time.
         static member Option() = 
             { new Arbitrary<option<'a>>() with
-                override __.Generator = Gen.frequency [(1, gen { return None }); (7, Gen.map Some generate)]
+                override __.Generator = Gen.optionOf generate
                 override __.Shrinker o =
                     match o with
                     | Some x -> seq { yield None; for x' in shrink x -> Some x' }
@@ -791,6 +797,11 @@ module Arb =
                         for value in shrink kvp.Value do
                             yield new KeyValuePair<_,_>(key, value) }
             fromGenShrink(genKeyValuePair,shrinkKeyValuePair)
+
+        static member NegativeInt() =
+            Default.Int32()
+            |> mapFilter (fun x -> -abs x) (fun x -> x < 0)
+            |> convert NegativeInt int
 
         static member NonNegativeInt() =
            Default.Int32()
@@ -1116,8 +1127,9 @@ module Arb =
             
         ///Try to derive an arbitrary instance for the given type reflectively. 
         ///Generates and shrinks values for record, union, tuple and enum types.
-        ///Also generates (but doesn't shrink) values for immutable classes 
-        ///(i.e. single constructor, no mutable properties or fields).
+        ///Also generates (but doesn't shrink) values for basic classes 
+        ///(i.e. either classes having a single constructor with immutable values  
+        ///or DTO classes with a default constructor and public property setters).
         static member Derive() =
             //taking out this generator makes sure that the memoization table in reflectGenObj
             //is used properly.

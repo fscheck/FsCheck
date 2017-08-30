@@ -229,7 +229,13 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             summary.Time <- summary.Time + result.ExecutionTime
             if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, result.Output))) then
                 cancellationTokenSource.Cancel() |> ignore
+            if not (messageBus.QueueMessage(new TestCaseFinished(this, summary.Time, summary.Total, summary.Failed, summary.Skipped))) then
+                cancellationTokenSource.Cancel() |> ignore
+
             summary
+
+        if not (messageBus.QueueMessage(new TestCaseStarting(this))) then
+            cancellationTokenSource.Cancel() |> ignore
 
         if not (messageBus.QueueMessage(new TestStarting(test))) then
             cancellationTokenSource.Cancel() |> ignore
@@ -238,9 +244,11 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             summary.Skipped <- summary.Skipped + 1
             if not(messageBus.QueueMessage(new TestSkipped(test, this.SkipReason))) then
                 cancellationTokenSource.Cancel() |> ignore
-            Task.Factory.StartNew(fun () -> summary)
+            if not(messageBus.QueueMessage(new TestCaseFinished(this, decimal 1, 0, 0, 1))) then
+                cancellationTokenSource.Cancel() |> ignore
+            Task.FromResult(summary)
         else
-            Task.Factory.StartNew<RunSummary>(fun () -> testExec())
+            Task.Run(testExec)
 
 /// xUnit2 test case discoverer to link the method with the PropertyAttribute to the PropertyTestCase
 /// so the test can be run via FsCheck.

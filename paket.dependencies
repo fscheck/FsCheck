@@ -1,13 +1,13 @@
 source https://www.nuget.org/api/v2
 
 nuget FAKE
-nuget NUnit
+nuget FSharp.Core < 4.2 redirects: force
+github fsharp/FAKE modules/Octokit/Octokit.fsx
+nuget NUnit framework: >=net452
 nuget NUnit3TestAdapter version_in_path: true
-nuget Unquote
-nuget xunit
-nuget xunit.core
+nuget Unquote framework: >=net452
+nuget xunit framework: >=net452
 nuget xunit.runner.console
 nuget xunit.runner.visualstudio version_in_path: true
-nuget SourceLink.Fake
 nuget FSharp.Formatting
 nuget Expecto

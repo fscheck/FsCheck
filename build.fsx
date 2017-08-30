@@ -3,15 +3,12 @@
 // --------------------------------------------------------------------------------------
 
 #r @"./packages/FAKE/tools/FakeLib.dll"
-#load "./packages/SourceLink.Fake/tools/SourceLink.fsx"
 
 open Fake 
 open Fake.Git
 open Fake.AssemblyInfoFile
 open Fake.ReleaseNotesHelper
 open Fake.Testing
-
-open SourceLink
 
 open System
 open System.IO
@@ -42,8 +39,9 @@ let solution = if isMono then "FsCheck-mono.sln" else "FsCheck.sln"
 let testAssemblies = "tests/**/bin/Release/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
-// The profile where the project is posted 
-let gitHome = "ssh://github.com/fscheck"
+// The profile where the project is posted
+let gitOwner = "fscheck"
+let gitHome = sprintf "ssh://github.com/%s" gitOwner
 // gitraw location - used for source linking
 let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/fscheck"
 // The name of the project on GitHub
@@ -131,17 +129,6 @@ Target "RunTests" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
-// Source linking
-
-Target "SourceLink" (fun _ ->
-    let baseUrl = sprintf "%s/%s/{0}/%%var2%%" gitRaw packages.[0].Name
-    !! "src/**/*.??proj"
-    |> Seq.iter (fun projFile ->
-        let proj = VsProj.LoadRelease projFile 
-        SourceLink.Index proj.CompilesNotLinked proj.OutputFilePdb __SOURCE_DIRECTORY__ baseUrl
-    )
-)
-// --------------------------------------------------------------------------------------
 // Build a NuGet package
 
 Target "PaketPack" (fun _ ->
@@ -217,14 +204,40 @@ Target "ReleaseDocs" (fun _ ->
     Branches.push tempDocsDir
 )
 
+#load "paket-files/fsharp/FAKE/modules/Octokit/Octokit.fsx"
+open Octokit 
+
 Target "Release" (fun _ ->
+    let user =
+        match getBuildParam "github-user" with
+        | s when not (String.IsNullOrWhiteSpace s) -> s
+        | _ -> getUserInput "Username: "
+    let pw =
+        match getBuildParam "github-pw" with
+        | s when not (String.IsNullOrWhiteSpace s) -> s
+        | _ -> getUserPassword "Password: "
+    let remote =
+        Git.CommandHelper.getGitResult "" "remote -v"
+        |> Seq.filter (fun (s: string) -> s.EndsWith("(push)"))
+        |> Seq.tryFind (fun (s: string) -> s.Contains(gitOwner + "/" + gitName))
+        |> function None -> gitHome + "/" + gitName | Some (s: string) -> s.Split().[0]
+
     StageAll ""
-    Commit "" (sprintf "Bump version to %s" release.NugetVersion)
-    Branches.push ""
+    Git.Commit.Commit "" (sprintf "Bump version to %s" release.NugetVersion)
+    Branches.pushBranch "" remote (Information.getBranchName "")
 
     Branches.tag "" release.NugetVersion
-    Branches.pushTag "" "origin" release.NugetVersion
+    Branches.pushTag "" remote release.NugetVersion
+
+    // release on github
+    createClient user pw
+    |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
+    // to upload a file: |> uploadFile "PATH_TO_FILE"
+    |> releaseDraft
+    |> Async.RunSynchronously
 )
+
+
 
 // --------------------------------------------------------------------------------------
 // .NET Core SDK and .NET Core
@@ -235,21 +248,15 @@ let shellExec cmd args dir =
     printfn "%s %s" cmd args
     Shell.Exec(cmd, args, dir) |> assertExitCodeZero
 
-
-Target "SetVersionInProjectJSON" (fun _ ->
-    !! "./src/**/project.json"
-    |> Seq.iter (DotNetCli.SetVersionInProjectJson buildVersion)
-)
-
 Target "Build.NetCore" (fun _ ->
-    shellExec "dotnet" "restore" "."
-    shellExec "dotnet" "--verbose pack --configuration Release" "src/FsCheck"
-    shellExec "dotnet" "--verbose pack --configuration Release" "src/FsCheck.Xunit"
-    shellExec "dotnet" "--verbose pack --configuration Release" "src/FsCheck.NUnit"
+    shellExec "dotnet" (sprintf "restore /p:Version=%s FsCheck.netcore.sln" buildVersion) "."
+    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.netcore"
+    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.Xunit.netcore"
+    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.NUnit.netcore"
 )
 
 Target "RunTests.NetCore" (fun _ ->
-    shellExec "dotnet" "--verbose test --configuration Release" "tests/FsCheck.Test"
+    shellExec "dotnet" "xunit" "tests/FsCheck.Test.netcore"
 )
 
 Target "Nuget.AddNetCore" (fun _ ->
@@ -258,7 +265,7 @@ Target "Nuget.AddNetCore" (fun _ ->
         let nupkg = sprintf "../../bin/%s.%s.nupkg" name buildVersion
         let netcoreNupkg = sprintf "bin/Release/%s.%s.nupkg" name buildVersion
 
-        shellExec "dotnet" (sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg) (sprintf "src/%s/" name)
+        shellExec "dotnet" (sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg) (sprintf "src/%s.netcore/" name)
 
 )
 
@@ -270,7 +277,6 @@ Target "CI" DoNothing
 "Clean"
   =?> ("BuildVersion", isAppVeyorBuild)
   ==> "AssemblyInfo"
-  ==> "SetVersionInProjectJSON"
   ==> "Build"
   =?> ("Build.NetCore", isDotnetSDKInstalled)
   =?> ("RunTests.NetCore", isDotnetSDKInstalled)
@@ -284,7 +290,6 @@ Target "CI" DoNothing
   ==> "Release"
 
 "RunTests"
-  =?> ("SourceLink", isLocalBuild && not isLinux && not isMacOS)
   ==> "PaketPack"
   =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
   ==> "PaketPush"

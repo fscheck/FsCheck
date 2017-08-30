@@ -14,7 +14,7 @@ licenseUrl
 requireLicenseAcceptance
     false
 copyright
-    Copyright 2015
+    Copyright 2017
 tags
     test testing random fscheck quickcheck nunit
 summary
@@ -27,6 +27,6 @@ dependencies
     FsCheck >= CURRENTVERSION
     NUnit ~> LOCKEDVERSION
 files
-    bin/Release/FsCheck.NUnit.dll ==> lib/net45
-    bin/Release/FsCheck.NUnit.pdb ==> lib/net45
-    bin/Release/FsCheck.NUnit.xml ==> lib/net45
+    bin/Release/FsCheck.NUnit.dll ==> lib/net452
+    bin/Release/FsCheck.NUnit.pdb ==> lib/net452
+    bin/Release/FsCheck.NUnit.xml ==> lib/net452

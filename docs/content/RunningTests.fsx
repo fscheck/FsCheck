@@ -1,8 +1,12 @@
 ﻿(*** hide ***)
 #I "../../src/FsCheck/bin/Release"
-#r @"../../packages/xunit/lib/net20/xunit.dll"
+#I "../../src/FsCheck.Xunit/bin/Release"
+#I "../../src/FsCheck.NUnit/bin/Release"
+#r @"../../packages/xunit.abstractions/lib/net35/xunit.abstractions.dll"
+#r @"../../packages/xunit.extensibility.core/lib/portable-net45+win8+wp8+wpa81/xunit.core.dll"
 #r "FsCheck"
 #r "FsCheck.Xunit"
+#r "FsCheck.NUnit"
 
 open FsCheck
 open System
@@ -285,20 +289,18 @@ nterface has the following methods:
 to call Assert statements from a particular unit testing framework - allowing FsCheck to integrate easily. You can leverage 
 another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.*)
 
-open Xunit
-
-let xUnitRunner =
+let testRunner =
   { new IRunner with
-      member x.OnStartFixture t = ()
-      member x.OnArguments (ntest,args, every) = ()
-      member x.OnShrink(args, everyShrink) = ()
-      member x.OnFinished(name,testResult) = 
+      member __.OnStartFixture t = ()
+      member __.OnArguments (ntest,args, every) = ()
+      member __.OnShrink(args, everyShrink) = ()
+      member __.OnFinished(name,testResult) = 
           match testResult with 
-          | TestResult.True _ -> Assert.True(true)
-          | _ -> Assert.True(false, Runner.onFinishedToString name testResult) 
+          | TestResult.True _ -> () //let the test runner know that the test passed
+          | _ -> () // test failed, or other problem. Notify test runner. Runner.onFinishedToString name testResult
   }
    
-let withxUnitConfig = { Config.Default with Runner = xUnitRunner }
+let withxUnitConfig = { Config.Default with Runner = testRunner }
 
 (**
 ### Example 2: to customize printing of generated arguments

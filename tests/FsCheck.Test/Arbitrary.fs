@@ -330,7 +330,15 @@ module Arbitrary =
     [<Property>]
     let ``PositiveInt shrinks positive ints`` (value:PositiveInt ) =
         shrink value |> Seq.forall (fun (PositiveInt v) -> v > 0)
-    
+
+    [<Property>]
+    let ``NegativeInt generates negative ints`` (NegativeInt value) =
+        value < 0
+
+    [<Property>]
+    let ``NegativeInt shrinks negative ints`` (value:NegativeInt ) =
+        shrink value |> Seq.forall (fun (NegativeInt v) -> v < 0)
+
     type TestEnum =
         | A = 0
         | B = 3
@@ -536,6 +544,17 @@ module Arbitrary =
     [<Fact>]
     let ``Derive generator for concrete class with one constructor with two parameters``() =
         generate<FakeRecord> |> sample 10 |> ignore
+
+    type FakeDto() =
+        member val A = Unchecked.defaultof<string> with get, set
+        member val B = Unchecked.defaultof<int> with get, set
+        member val C = Unchecked.defaultof<System.Nullable<int>> with get, set
+        member val D = Unchecked.defaultof<ResizeArray<string>> with get, set
+
+    [<Fact>]
+    let ``Derive generator for concrete DTO class with writable properties``() =
+        generate<FakeDto> |> sample 10 |> ignore
+
 
     type PrivateRecord = private { a: int; b: string }
 

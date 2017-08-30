@@ -1,9 +1,11 @@
 ﻿(*** hide ***)
 #I "../../src/FsCheck/bin/Release"
 #r "../../src/FsCheck.Xunit/bin/Release/FsCheck.Xunit.dll"
-#r "../../packages/xunit/lib/net20/xunit.dll"
+#r @"../../packages/xunit.abstractions/lib/net35/xunit.abstractions.dll"
+#r @"../../packages/xunit.extensibility.core/lib/portable-net45+win8+wp8+wpa81/xunit.core.dll"
+#r "FsCheck"
 #r "../../packages/Expecto/lib/net40/Expecto.dll"
-#r "../../packages/Expecto/lib/net40/Expecto.FsCheck.dll"
+#r "../../packages/Expecto.FsCheck/lib/net40/Expecto.FsCheck.dll"
 (**
 # Quick Start
 
@@ -123,7 +125,7 @@ let properties =
         a * (b + c) = a * b + a * c
   ]
 
-Tests.run defaultConfig properties
+Tests.runTests defaultConfig properties
 
 (**
 ### Integration with xUnit

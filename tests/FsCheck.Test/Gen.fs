@@ -200,7 +200,7 @@ module Gen =
     let ListOf (NonNegativeInt size) (v:char) =
         Gen.resize size (Gen.listOf <| Gen.constant v)
         |> sample 10
-        |> List.forall (fun l -> l.Length <= size+1 && List.forall ((=) v) l)
+        |> List.forall (fun l -> l.Length <= size && List.forall ((=) v) l)
     
     [<Property>]
     let NonEmptyListOf (NonNegativeInt size) (v:string) =
@@ -220,7 +220,7 @@ module Gen =
     let ArrayOf (NonNegativeInt size) (v:int) =
         Gen.resize size (Gen.arrayOf <| Gen.constant v)
         |> sample 10
-        |> List.forall (fun l -> l.Length <= size+1 && Array.forall ((=) v) l)
+        |> List.forall (fun l -> l.Length <= size && Array.forall ((=) v) l)
     
     [<Property>]
     let ArrayOfLength (v:char) (PositiveInt length) =
@@ -400,3 +400,63 @@ module Gen =
         let r2 = Gen.sample 100 100 (Arb.Default.Derive<MyUnion>().Generator)
         let r3 = Gen.sample 100 100 (Arb.Default.Derive<MyOtherUnion>().Generator)
         test <@ r1.Length + r2.Length + r3.Length = 300 @>
+
+
+    // these types were taking from the FSharpLu project, as there was some regression
+    // when these types, or a subset of them, was generated.
+
+    type WithFields = SomeField of int * int
+    type SimpleDu = Foo | FooBar | Bar
+    type ComplexDu = ComplexDu of WithFields | SimpleDU | AString of string
+    type 'a RecursiveList = RecListLeaf of 'a | RecListCons of 'a RecursiveList
+    type OptionOfBase = int option
+    type OptionOfDu = SimpleDu option
+    type Color = Red | Blue
+    type Shape = Circle of int * int | Rectangle
+    type 'a Tree = Leaf of 'a | Node of 'a Tree * 'a Tree
+    type 'a Test = Case1 | Case2 of int | Case3 of int * string * 'a
+    type MapType = Map<string,Color>
+    type 'a NestedOptions = 'a option option option option
+
+    type 'a Wrapper = { WrappedField : 'a }
+    type NestedStructure = { subField : int }
+    type NestedOptionStructure = { field : NestedStructure option }
+
+    module SomeAmbiguity =
+        type 'a RecordWithFieldNamedSome = { Some : 'a }
+        type DUWithFieldlessCaseNamedSome = Some of string | Bla
+        type DUWithCaseWithFieldNamedSome = Some | Bla
+        type 'a Ambiguous1 = 'a RecordWithFieldNamedSome option
+        type Ambiguous2 = DUWithFieldlessCaseNamedSome option
+        type Ambiguous3 = DUWithCaseWithFieldNamedSome option
+
+
+    [<Fact>]
+    let ``generate FSharpLu test types``() =
+        let size = 25
+        let times = 10000
+        let r = Gen.sample size times Arb.generate<ComplexDu>
+        let r = Gen.sample size times Arb.generate<ComplexDu RecursiveList>
+        let r = Gen.sample size times Arb.generate<WithFields>
+        let r = Gen.sample size times Arb.generate<SimpleDu>
+        let r = Gen.sample size times Arb.generate<ComplexDu>
+        let r = Gen.sample size times Arb.generate<OptionOfBase>
+        let r = Gen.sample size times Arb.generate<OptionOfDu>
+        let r = Gen.sample size times Arb.generate<Color>
+        let r = Gen.sample size times Arb.generate<Shape>
+        let r = Gen.sample size times Arb.generate<int Tree>
+        let r = Gen.sample size times Arb.generate<int Tree Test>
+        let r = Gen.sample size times Arb.generate<int Test>
+        let r = Gen.sample size times Arb.generate<int list Tree>
+        let r = Gen.sample size times Arb.generate<string NestedOptions>
+        let r = Gen.sample size times Arb.generate<string>
+        let r = Gen.sample size times Arb.generate<string option>
+        let r = Gen.sample size times Arb.generate<string option option>
+        let r = Gen.sample size times Arb.generate<string option option option option>
+        let r = Gen.sample size times Arb.generate<int NestedOptions>
+        let r = Gen.sample size times Arb.generate<SomeAmbiguity.Ambiguous1<string>>
+        let r = Gen.sample size times Arb.generate<SomeAmbiguity.Ambiguous1<SimpleDu>>
+        let r = Gen.sample size times Arb.generate<NestedOptionStructure>
+        let r = Gen.sample size times Arb.generate<SomeAmbiguity.Ambiguous2>
+        let r = Gen.sample size times Arb.generate<SomeAmbiguity.Ambiguous3>
+        ()

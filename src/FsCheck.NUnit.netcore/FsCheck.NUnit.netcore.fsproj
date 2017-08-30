@@ -1,0 +1,27 @@
+﻿<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>FsCheck.NUnit</AssemblyName>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\FsCheck.NUnit.XML</DocumentationFile>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../FsCheck.NUnit/AssemblyInfo.fs">
+      <Link>AssemblyInfo.fs</Link>
+    </Compile>
+    <Compile Include="../FsCheck.NUnit/FsCheckPropertyAttribute.fs">
+      <Link>FsCheckPropertyAttribute.fs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" Version="4.1.*" />
+    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
+    <ProjectReference Include="../FsCheck.netcore/FsCheck.netcore.fsproj" />
+    <PackageReference Include="NUnit" Version="3.6.1" />
+    <DotNetCliToolReference Include="dotnet-mergenupkg" Version="1.0.*" />
+  </ItemGroup>
+
+</Project>

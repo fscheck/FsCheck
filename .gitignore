@@ -102,6 +102,7 @@ publish/
 
 # NuGet Packages Directory
 packages/
+paket-files/
 
 # Windows Azure Build Output
 csx
@@ -154,7 +155,6 @@ $RECYCLE.BIN/
 .DS_Store
 
 # Other
-.paket/paket.exe
 *.userprefs
 release.cmd
 .fake/

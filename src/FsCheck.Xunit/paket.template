@@ -14,7 +14,7 @@ licenseUrl
 requireLicenseAcceptance
     false
 copyright
-    Copyright 2015
+    Copyright 2017
 tags
     test testing random fscheck quickcheck xunit xunit.net
 summary
@@ -27,7 +27,7 @@ dependencies
     FsCheck >= CURRENTVERSION
     xunit.extensibility.execution ~> LOCKEDVERSION
 files
-    bin/Release/FsCheck.Xunit.dll ==> lib/net45
-    bin/Release/FsCheck.Xunit.pdb ==> lib/net45
-    bin/Release/FsCheck.Xunit.xml ==> lib/net45
+    bin/Release/FsCheck.Xunit.dll ==> lib/net452
+    bin/Release/FsCheck.Xunit.pdb ==> lib/net452
+    bin/Release/FsCheck.Xunit.xml ==> lib/net452
 

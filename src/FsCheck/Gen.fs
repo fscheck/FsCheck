@@ -359,7 +359,7 @@ module Gen =
         map (fun (_, y, _) -> y) g,
         map (fun (_, _, z) -> z) g
 
-    ///Sequence the given seq of generators into a generator of a list.
+    /// Sequence the given enumerable of generators into a generator of a list.
     //[category: Creating generators from generators]
     [<CompiledName("SequenceToList"); EditorBrowsable(EditorBrowsableState.Never)>]
     let sequence l = 
@@ -372,18 +372,18 @@ module Gen =
                 go gs' (y_r1.Value::acc) size y_r1.UpdatedState
         Gen(fun n r -> go (Seq.toList l) [] n r)
 
-    ///Sequence the given list of generators into a generator of a list.
+    /// Sequence the given enumerable of generators into a generator of an enumerable.
     //[category: Creating generators from generators]
-    [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    [<CompiledName("Sequence")>]
     let sequenceToSeq generators = 
         if Object.ReferenceEquals (null, generators) then
             nullArg "generators"
 
         generators |> sequence |> map List.toSeq
 
-    ///Sequence the given list of generators into a generator of a list.
+    /// Sequence the given array of generators into a generator of a array.
     //[category: Creating generators from generators]
-    [<CompiledName("Sequence"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    [<CompiledName("Sequence")>]
     let sequenceToArr ([<ParamArrayAttribute>]generators:array<Gen<_>>) = 
         if Object.ReferenceEquals (null, generators) then
             nullArg "generators"
@@ -536,7 +536,7 @@ module Gen =
     [<CompiledName("ArrayOf")>]
     let arrayOf (g: Gen<'a>) : Gen<'a[]> = 
        sized <| fun n ->
-             gen { let! size = choose(0, n+1) //deccrease chance of empty arrays somewhat
+             gen { let! size = choose(0, n)
                    return! arrayOfLength size g }
 
     /// Generates a 2D array of the given dimensions.
@@ -555,7 +555,11 @@ module Gen =
                   let! rows = chooseSqrtOfSize 
                   let! cols = chooseSqrtOfSize
                   return! array2DOfDim (rows,cols) g }
-        
+
+    ///Generate an option value that is 'None' 1/8 of the time.
+    //[category: Creating generators from generators]
+    let optionOf g = frequency [(1, gen { return None }); (7, map Some g)]
+
     ///Always generate the same instance v. See also fresh.
     //[category: Creating generators]
     [<CompiledName("Constant")>]
@@ -604,7 +608,7 @@ module Gen =
         fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.
-type Gen with
+type Gen<'a> with
 
     /// Lifted function application = apply f to a, all in the Gen applicative functor.
     static member (<*>) (f, a) = Gen.apply f a

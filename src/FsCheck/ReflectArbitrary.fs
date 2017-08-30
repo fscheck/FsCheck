@@ -8,6 +8,7 @@ module internal ReflectArbitrary =
     open Microsoft.FSharp.Reflection
     open Reflect
     open Gen
+    open Gen
 
     let inline private orElems<'a when 'a : (static member (|||) : 'a * 'a -> 'a) and 'a : (static member Zero : 'a)>
         t
@@ -52,19 +53,21 @@ module internal ReflectArbitrary =
                     Seq.empty
 
             fieldType = containingType
-            || seen.Contains(fieldType.FullName)
-            || (let fields = children fieldType
-                let newSeen = seen.Add fieldType.FullName
-                fields |> Seq.exists (fun field -> isRecursive field containingType newSeen))
+            || (if seen.Contains(fieldType.AssemblyQualifiedName) then 
+                    false
+                else
+                    let fields = children fieldType
+                    let newSeen = seen.Add fieldType.AssemblyQualifiedName
+                    fields |> Seq.exists (fun field -> isRecursive field containingType newSeen))
 
         let productGen (ts : seq<Type>) create =
-            let gs = [ for t in ts -> getGenerator t ]
+            let gs = [| for t in ts -> getGenerator t |]
             let n = gs.Length
-            if n = 0 then
+            if n <= 0 then
                 Gen.constant (create [||])
             else
-                sized (fun s -> resize ((s / n) - 1) (sequence gs))
-                |> map (List.toArray >> create)
+                sized (fun s -> resize (max 0 ((s / n) - 1)) (sequenceToArr gs))
+                |> map create
 
         if isRecordType t then
             let fields = getRecordFieldTypes t
@@ -106,6 +109,14 @@ module internal ReflectArbitrary =
             if fields |> Seq.exists ((=) t) then 
                 failwithf "Recursive record types cannot be generated automatically: %A" t 
             let create = getCSharpRecordConstructor t
+            let g = productGen fields create
+            box g
+
+        elif isCSharpDtoType t then
+            let fields = getCSharpDtoFields t
+            if fields |> Seq.exists ((=) t) then 
+                failwithf "Recursive record types cannot be generated automatically: %A" t 
+            let create = getCSharpDtoConstructor t
             let g = productGen fields create
             box g
 
