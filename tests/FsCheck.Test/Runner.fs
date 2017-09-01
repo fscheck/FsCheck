@@ -137,12 +137,12 @@ module Runner =
         [<Property>]
         let ``should use configuration from enclosing module``(x:int) =
             // checking if the generated value is always the same (-59) from "01234,56789" Replay
-            x =! -84
+            x =! -4
 
         [<Property( Replay = "12345,67891")>]
         let ``should use configuration on method preferentially``(x:int) =
             // checking if the generated value is always the same (18) from "12345,67890" Replay
-            x =! 9
+            x =! -93
 
 module BugReproIssue195 =
 

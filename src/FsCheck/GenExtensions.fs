@@ -8,12 +8,6 @@ open System.Collections.Generic
 [<AbstractClass; Sealed; System.Runtime.CompilerServices.Extension>]
 type GenExtensions = 
 
-    ///Generates a value with maximum size n.
-    //[category: Generating test values]
-    [<System.Runtime.CompilerServices.Extension>]
-    static member Eval(generator, size, random) =
-        eval size random generator
-
     ///Generates n values of the given size.
     //[category: Generating test values]
     [<System.Runtime.CompilerServices.Extension>]

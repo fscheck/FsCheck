@@ -91,14 +91,17 @@ module Runner =
                 yield EndShrink result
         }
         
-    let rec private test initSize resize rnd0 gen =
-        seq { let rnd1,rnd2 = Random.split rnd0
+    let rec private test initSize resize rnd0 ((Gen eval) as gen) =
+        seq { // would like to get rid of this split,
+              // but the problem is DiscardException. If it is thrown,
+              // we also don't get the the updated Rnd back from eval.
+              let rnd1,rnd2 = Random.split rnd0
               let newSize = resize initSize
               //printfn "Before generate"
               //result forced here!
               let result, shrinks =
                   try
-                    let (MkRose (Lazy result,shrinks)) = Gen.eval (newSize |> round |> int) rnd2 gen
+                    let (MkRose (Lazy result,shrinks)) = (eval (newSize |> round |> int) rnd2).Value
                     result, shrinks
                     //printfn "After generate"
                     //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
