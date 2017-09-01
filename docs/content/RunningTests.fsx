@@ -3,7 +3,8 @@
 #I "../../src/FsCheck.Xunit/bin/Release"
 #I "../../src/FsCheck.NUnit/bin/Release"
 #r @"../../packages/xunit.abstractions/lib/net35/xunit.abstractions.dll"
-#r @"../../packages/xunit.extensibility.core/lib/portable-net45+win8+wp8+wpa81/xunit.core.dll"
+#r @"../../packages/xunit.extensibility.core/lib/netstandard1.1/xunit.core.dll"
+#r @"../../packages/NUnit/lib/net45/nunit.framework.dll"
 #r "FsCheck"
 #r "FsCheck.Xunit"
 #r "FsCheck.NUnit"
@@ -207,7 +208,7 @@ If, for that, or other reasons, you want to disable output on success, you can d
 *)
 
 [<Property(QuietOnSuccess = true)>]
-let ``abs(v) % k equals abs(v % k)`` v (NonZeroInt k) = 
+let ``abs(v) % k equals abs(v % k) `` v (NonZeroInt k) = 
     (abs v) % k = abs(v % k)
 
 (**
