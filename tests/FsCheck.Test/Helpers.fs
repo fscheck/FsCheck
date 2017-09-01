@@ -8,7 +8,7 @@ module Helpers =
     open System
     open FsCheck
 
-    let sample n = Gen.sample 1000 n
+    let sample n = Gen.sampleWithSize 1000 n
 
     let sample1 gn = sample 1 gn |> List.head
     

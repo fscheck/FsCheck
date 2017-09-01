@@ -155,16 +155,26 @@ module Gen =
     [<CompiledName("Resize")>]
     let resize newSize (Gen m) = Gen (fun _ r -> m newSize r)
 
-    ///Generates n values of the given size.
+    ///Generates n values of the given size and starting with the given seed.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sample size n (Gen generator)  = 
+    let sampleWithSeed seed size nbSamples (Gen generator)  = 
         let rec sample i seed samples =
             if i = 0 then samples
             else
                 let sv = generator size seed
                 sample (i-1) sv.UpdatedState (sv.Value :: samples)
-        sample n (Random.create()) []
+        sample nbSamples seed []
+
+    ///Generates a given number of values with a new seed and a given size.
+    //[category: Generating test values]
+    [<CompiledName("Sample")>]
+    let sampleWithSize size nbSamples gen = sampleWithSeed (Random.create()) size nbSamples gen
+
+    ///Generates a given number of values with a new seed and a size of 50.
+    //[category: Generating test values]
+    [<CompiledName("Sample")>]
+    let sample nbSamples gen = sampleWithSize 50 nbSamples gen
 
     ///Generates an integer between l and h, inclusive.
     //[category: Creating generators]
