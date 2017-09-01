@@ -26,7 +26,7 @@ module StateMachine =
     let ``check generated commands``() =
         let commands =
             StateMachine.generate (checkSimpleModelSpec -1)
-            |> Gen.sample 10 10
+            |> Gen.sample 10
         for { Setup = _,create; Operations = comms } in commands do
             typeof<SimpleModel> =! create.Actual().GetType()
             0 =! create.Model()
@@ -103,7 +103,7 @@ module StateMachine =
     [<Fact>] 
     let ``without stop command length of commands should be Machine.MaxNumberOfCommands``() =
         let specWithLength = checkSimpleModelSpec 3
-        let runs = StateMachine.generate specWithLength |> Gen.sample 100 10
+        let runs = StateMachine.generate specWithLength |> Gen.sampleWithSize 100 10
         test <@ runs |> Seq.forall (fun { Operations = cmds } -> cmds.Length = 3) @>
 
     //every tenth command is a stop
@@ -119,7 +119,7 @@ module StateMachine =
     [<Fact>] 
     let ``stop command can terminate before MaxNumberOfCommands is reached``() =
         let specWithLength = checkStoppingSpec 10
-        let runs = StateMachine.generate specWithLength |> Gen.sample 100 20
+        let runs = StateMachine.generate specWithLength |> Gen.sampleWithSize 100 20
         let len = List.fold (fun acc { Operations = cmds } -> acc + cmds.Length) 0 runs
         test <@ len > 0 && len < 200 @>
 
@@ -146,14 +146,14 @@ module StateMachine =
     [<Fact>]
     let ``generate commands should never violate precondition``() =
         test <@ StateMachine.generate checkPreconditionSpec
-                |> Gen.sample 100 10
+                |> Gen.sampleWithSize 100 10
                 |> Seq.forall (fun { Setup = _,c; Operations = cmds } -> checkPreconditions (c.Model()) cmds) @>
 
     [<Fact>]
     let ``shrink commands should never violate precondition``() =
         let counterexample = 
                 StateMachine.generate checkPreconditionSpec 
-                |> Gen.sample 100 10
+                |> Gen.sampleWithSize 100 10
                 |> Seq.collect (StateMachine.shrink checkPreconditionSpec)
                 |> Seq.tryFind (fun { Setup = _,c; Operations = cmds } -> not <| checkPreconditions (c.Model()) cmds)
         test <@ counterexample.IsNone @>

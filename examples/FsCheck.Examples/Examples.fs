@@ -10,7 +10,7 @@ open System.Collections.Generic
 open Prop
 
 //init bug
-let sizedString =  Arb.generate<char> |> Gen.sample 10 10
+let sizedString =  Arb.generate<char> |> Gen.sample 10
     
 
 //---too early initialization bug (put this first): fixed---

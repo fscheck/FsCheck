@@ -178,6 +178,9 @@ namespace FsCheck.CSharpExamples
                             a.Except(b).Count() <= a.Count())
                 .QuickCheck();
 
+            Arb.Generate<int>().Sample(10);
+            Arb.Generate<int>().Sample(10, size:25);
+
             Console.ReadKey();
         }
 

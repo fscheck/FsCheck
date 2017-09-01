@@ -357,7 +357,7 @@ module Gen =
                   return !s
                 }
         test <@ convolutedGenNumber 100 
-                |> Gen.sample 1 10
+                |> Gen.sample 10
                 |> Seq.forall ((=) 100) @>
 
     [<Fact>]
@@ -370,7 +370,7 @@ module Gen =
                   return !s
                 }
         test <@ convolutedGenNumber 100 
-                |> Gen.sample 1 10
+                |> Gen.sample 10
                 |> Seq.forall ((=) 100) @>
 
 
@@ -396,9 +396,9 @@ module Gen =
         // type Tree = T of Tree * Tree |  Branch of int
         // whereas as the example demonstrates recursion can be
         // more involved.
-        let r1 = Gen.sample 100 100 (Arb.Default.Derive<MyRecord>().Generator)
-        let r2 = Gen.sample 100 100 (Arb.Default.Derive<MyUnion>().Generator)
-        let r3 = Gen.sample 100 100 (Arb.Default.Derive<MyOtherUnion>().Generator)
+        let r1 = Gen.sampleWithSize 100 100 (Arb.Default.Derive<MyRecord>().Generator)
+        let r2 = Gen.sampleWithSize 100 100 (Arb.Default.Derive<MyUnion>().Generator)
+        let r3 = Gen.sampleWithSize 100 100 (Arb.Default.Derive<MyOtherUnion>().Generator)
         test <@ r1.Length + r2.Length + r3.Length = 300 @>
 
 
@@ -433,30 +433,29 @@ module Gen =
 
     [<Fact>]
     let ``generate FSharpLu test types``() =
-        let size = 25
         let times = 10000
-        let r = Gen.sample size times Arb.generate<ComplexDu>
-        let r = Gen.sample size times Arb.generate<ComplexDu RecursiveList>
-        let r = Gen.sample size times Arb.generate<WithFields>
-        let r = Gen.sample size times Arb.generate<SimpleDu>
-        let r = Gen.sample size times Arb.generate<ComplexDu>
-        let r = Gen.sample size times Arb.generate<OptionOfBase>
-        let r = Gen.sample size times Arb.generate<OptionOfDu>
-        let r = Gen.sample size times Arb.generate<Color>
-        let r = Gen.sample size times Arb.generate<Shape>
-        let r = Gen.sample size times Arb.generate<int Tree>
-        let r = Gen.sample size times Arb.generate<int Tree Test>
-        let r = Gen.sample size times Arb.generate<int Test>
-        let r = Gen.sample size times Arb.generate<int list Tree>
-        let r = Gen.sample size times Arb.generate<string NestedOptions>
-        let r = Gen.sample size times Arb.generate<string>
-        let r = Gen.sample size times Arb.generate<string option>
-        let r = Gen.sample size times Arb.generate<string option option>
-        let r = Gen.sample size times Arb.generate<string option option option option>
-        let r = Gen.sample size times Arb.generate<int NestedOptions>
-        let r = Gen.sample size times Arb.generate<SomeAmbiguity.Ambiguous1<string>>
-        let r = Gen.sample size times Arb.generate<SomeAmbiguity.Ambiguous1<SimpleDu>>
-        let r = Gen.sample size times Arb.generate<NestedOptionStructure>
-        let r = Gen.sample size times Arb.generate<SomeAmbiguity.Ambiguous2>
-        let r = Gen.sample size times Arb.generate<SomeAmbiguity.Ambiguous3>
+        let r = Gen.sample times Arb.generate<ComplexDu>
+        let r = Gen.sample times Arb.generate<ComplexDu RecursiveList>
+        let r = Gen.sample times Arb.generate<WithFields>
+        let r = Gen.sample times Arb.generate<SimpleDu>
+        let r = Gen.sample times Arb.generate<ComplexDu>
+        let r = Gen.sample times Arb.generate<OptionOfBase>
+        let r = Gen.sample times Arb.generate<OptionOfDu>
+        let r = Gen.sample times Arb.generate<Color>
+        let r = Gen.sample times Arb.generate<Shape>
+        let r = Gen.sample times Arb.generate<int Tree>
+        let r = Gen.sample times Arb.generate<int Tree Test>
+        let r = Gen.sample times Arb.generate<int Test>
+        let r = Gen.sample times Arb.generate<int list Tree>
+        let r = Gen.sample times Arb.generate<string NestedOptions>
+        let r = Gen.sample times Arb.generate<string>
+        let r = Gen.sample times Arb.generate<string option>
+        let r = Gen.sample times Arb.generate<string option option>
+        let r = Gen.sample times Arb.generate<string option option option option>
+        let r = Gen.sample times Arb.generate<int NestedOptions>
+        let r = Gen.sample times Arb.generate<SomeAmbiguity.Ambiguous1<string>>
+        let r = Gen.sample times Arb.generate<SomeAmbiguity.Ambiguous1<SimpleDu>>
+        let r = Gen.sample times Arb.generate<NestedOptionStructure>
+        let r = Gen.sample times Arb.generate<SomeAmbiguity.Ambiguous2>
+        let r = Gen.sample times Arb.generate<SomeAmbiguity.Ambiguous3>
         ()
