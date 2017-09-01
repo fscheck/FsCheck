@@ -155,20 +155,15 @@ module Gen =
     [<CompiledName("Resize")>]
     let resize newSize (Gen m) = Gen (fun _ r -> m newSize r)
 
-    ///Generates a value of the give size with the given seed.
-    //[category: Generating test values]
-    [<CompiledName("Eval")>]
-    let eval n rnd (Gen m) = 
-        let size,rnd' = Random.rangeInt (0, n, rnd)
-        (m size rnd').Value
-
     ///Generates n values of the given size.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sample size n generator  = 
+    let sample size n (Gen generator)  = 
         let rec sample i seed samples =
             if i = 0 then samples
-            else sample (i-1) (Random.split seed |> snd) (eval size seed generator :: samples)
+            else
+                let sv = generator size seed
+                sample (i-1) sv.UpdatedState (sv.Value :: samples)
         sample n (Random.create()) []
 
     ///Generates an integer between l and h, inclusive.
