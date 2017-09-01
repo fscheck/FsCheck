@@ -1,4 +1,5 @@
-### 2.9.3 - To be released
+### 2.10.0 - To be released
+* Update FsCheck.NUnit to work with NUnit 3.8.1. FsCheck.NUnit is not backwards compatible with earlier NUnit versions because NUnit changed the name of a few methods in their extension API.
 
 ### 2.9.2 - 28 August 2017
 * Fix a bug in recursive union type generation that could lead to stack overflow in some cases.

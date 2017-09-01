@@ -104,13 +104,13 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         testResult
 
     member private x.RunSetUp() =
-        if x.setUpMethods <> null then
-            x.setUpMethods |> Array.iter x.InvokeMethodIgnore
+        if x.SetUpMethods <> null then
+            x.SetUpMethods |> Array.iter x.InvokeMethodIgnore
 
     member private x.RunTearDown testResult =
         try
-            if x.tearDownMethods <> null then
-                x.tearDownMethods
+            if x.TearDownMethods <> null then
+                x.TearDownMethods
                 |> Array.rev
                 |> Array.iter x.InvokeMethodIgnore
         with
