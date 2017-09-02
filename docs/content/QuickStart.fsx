@@ -2,10 +2,9 @@
 #I "../../src/FsCheck/bin/Release"
 #r "../../src/FsCheck.Xunit/bin/Release/FsCheck.Xunit.dll"
 #r @"../../packages/xunit.abstractions/lib/net35/xunit.abstractions.dll"
-#r @"../../packages/xunit.extensibility.core/lib/portable-net45+win8+wp8+wpa81/xunit.core.dll"
+#r @"../../packages/xunit.extensibility.core/lib/netstandard1.1/xunit.core.dll"
 #r "FsCheck"
-#r "../../packages/Expecto/lib/net40/Expecto.dll"
-#r "../../packages/Expecto.FsCheck/lib/net40/Expecto.FsCheck.dll"
+
 (**
 # Quick Start
 
@@ -105,7 +104,9 @@ Some testing frameworks like Expecto have an out-of-the-box integration with FsC
 support FsCheck out of the box, you gain access the the frameworks' reporting capabilities and integrations with IDEs
 and build tooling.
 
-Here's a sample:*)
+Here's a sample:
+
+```fsharp
 open Expecto
 open Expecto.ExpectoFsCheck
 
@@ -126,8 +127,8 @@ let properties =
   ]
 
 Tests.runTests defaultConfig properties
+```
 
-(**
 ### Integration with xUnit
 
 Another frequently used runner is xUnit.NET. Here is how to write 
