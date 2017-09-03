@@ -497,7 +497,7 @@ module Gen =
     [<CompiledName("Piles")>]
     let piles k sum = 
         let rec genSorted = function 
-            | (1, n, _) -> gen.Return [n]
+            | (1, n, _) -> constant [n]
             | (p, n, m) ->
                 gen { let! r = choose (int (ceil(float n / float p)), min m n)
                       return! map (fun l -> r::l) (genSorted (p-1, n-r, min m r))
