@@ -610,7 +610,6 @@ module Gen =
               let! gn' = gn
               return f' gn' }
 
-
     let backtrack weightedGens =
         let urn = Urn.ofSeq weightedGens
         let constantNone = constant None
@@ -623,6 +622,9 @@ module Gen =
                   | None -> return! urn' |> Option.map bt |> Option.defaultValue constantNone
             }
         bt urn
+
+    let defaultTo (defaultGen:Gen<'T>) (optionGen:Gen<'T option>) =
+        gen.Bind (optionGen, fun opt -> match opt with None -> defaultGen | Some v -> gen.Return v)
 
     ///Promote the given function f to a function generator. Only used for generating arbitrary functions.
     let internal promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)

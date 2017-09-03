@@ -280,6 +280,18 @@ module Gen =
             && (Array2D.length2 arr <= cols) 
             && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
 
+    [<Fact>]
+    let Backtrack () =
+        let choose = Gen.choose (0,100000)
+        let yes = choose |> Gen.tryWhere (fun i -> i <= 50000)
+        let no = choose |> Gen.tryWhere  (fun i -> i > 50000)
+        let unlikely = choose |> Gen.tryWhere ((=) 2342)
+        let yesOrNo = Gen.backtrack [ 10,yes; 10, no; 100,unlikely ]
+        yesOrNo
+        |> sample 100
+        |> List.forall (fun i -> not (Option.isNone i))
+
+
     type MaybeNull =
         {
             SomeField : int
