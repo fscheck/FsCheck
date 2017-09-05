@@ -69,21 +69,21 @@ module RunnerInternals =
         let body i = true
         let arb = Arb.from<int>
         let config = { Config.Quick with MaxTest = 30000; EndSize = 30000 }
-        if not <| check arb body config then failwith "can't find the way to call xunit assertion lol"
+        if not <| check arb body config then failwith "assertion failure!"
 
     [<Fact>]
     let ``parallelTest produces same sequence as test on failure`` () =
         let body i = i < 999
         let arb = Arb.from<int>
         let config = { Config.Quick with MaxTest = 30000; EndSize = 30000 }
-        if not <| check arb body config then failwith "can't find the way to call xunit assertion lol"
+        if not <| check arb body config then failwith "assertion failure!"
             
     [<Fact>]
     let ``parallelTest produces same sequence as test on discard`` () =
         let body _ = true
         let arb = Arb.fromGen (Gen.constant 1 |> Gen.map (fun _ -> Prop.discard ()))
         let config = { Config.Quick with MaxTest = 30000; MaxFail = 100000; EndSize = 30000 }
-        if not <| check arb body config then failwith "can't find the way to call xunit assertion lol"
+        if not <| check arb body config then failwith "assertion failure!"
     
     type Tree = Leaf of int | Branch of Tree * Tree
     
@@ -133,17 +133,7 @@ module RunnerInternals =
         let body i = true
         let arb = Arb.from<Integer>
         let config = { Config.Quick with MaxTest = 300000; EndSize = 300000 }
-        if check arb body config then failwith "can't be"
-
-    [<Property(Replay = "10538531436017130025,14826463994991344553", MaxTest = 30000, EndSize = 30000)>]
-    let ``30k ints fails`` () =
-        true
-        
-    [<Fact>]
-    let ``bad case`` () = 
-        let rnd = Random.createWithSeedAndGamma (13471455474525100574UL,7555858534656909083UL)
-        let n = 19938
-        Random.rangeInt (0, n, rnd)
+        if check arb body config then failwith "assertion failure!"
 
 module Runner =
 
