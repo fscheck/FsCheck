@@ -15,6 +15,7 @@ type Configuration() =
     let mutable quietOnSuccess = Config.Quick.QuietOnSuccess
     let mutable runner = Config.Quick.Runner
     let mutable replay = Config.Quick.Replay
+    let mutable parallelRunConfig = Config.Quick.ParallelRunConfig
 
     ///The quick configuration only prints a summary result at the end of the test.
     static member Quick = new Configuration()
@@ -76,6 +77,11 @@ type Configuration() =
     member __.Replay 
         with get() = (match replay with None -> Unchecked.defaultof<uint64*uint64> | Some s -> (s.Seed,s.Gamma))
         and set(v) = replay <- Some <| Random.createWithSeedAndGamma v
+        
+    ///If set, inputs for property generation and property evaluation will be runned in parallel.
+    member __.ParallelRunConfig 
+        with get() = (match parallelRunConfig with None -> Unchecked.defaultof<ParallelRunConfig> | Some c -> c)
+        and set(v) = parallelRunConfig <- Some <| v
 
     member internal __.ToConfig() =
         { MaxTest = maxTest
@@ -89,6 +95,7 @@ type Configuration() =
           Runner = runner
           Replay = replay
           Arbitrary = []
+          ParallelRunConfig = parallelRunConfig
         }
 
 

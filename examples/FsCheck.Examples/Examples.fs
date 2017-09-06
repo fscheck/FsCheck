@@ -27,6 +27,13 @@ Arb.register<Generators>() |> ignore
 //            override x.Arbitrary = arbitrary |> fmapGen int64 }
 //overwriteGenerators<NoInstancesFails>()
 
+
+let prop_lameTask (x:int) =
+    if x=0 then false else true
+    |> Threading.Tasks.Task.FromResult
+Check.Quick prop_lameTask
+
+
 type TestEnum =
     | First = 0
     | Second = 1
@@ -189,6 +196,20 @@ Check.Quick (withNonEmptyString blah)
 let prop_Exc = forAll (Arb.fromGenShrink(Gen.resize 100 Arb.generate,Arb.shrink)) (fun (s:string) -> failwith "error")
 Check.Quick("prop_Exc",prop_Exc)
 
+//-----------------async--------
+let asyncWork (i :int) =
+    async {
+        let s = Async.Sleep i   
+        let c = Async.Sleep 1500
+        let t = 
+            [s; c]
+            |> Seq.map Async.StartAsTask
+            |> System.Threading.Tasks.Task.WhenAny
+        let! x = Async.AwaitTask t
+        return true
+    }
+let config = { Config.QuickThrowOnFailure with ParallelRunConfig = Some { MaxDegreeOfParallelism = 1 } }
+Check.One (config, asyncWork)  
 
 //-----------------test reflective shrinking--------
 type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }

@@ -1,5 +1,140 @@
 ﻿namespace FsCheck.Test
 
+module RunnerInternals =
+
+    open System
+    open Xunit
+    open FsCheck
+    open FsCheck.Runner
+    open System.Linq
+    open FsCheck.Xunit
+
+    type ProbeRunner () =
+        let mutable result = None
+        let sink :Collections.Generic.List<obj> = ResizeArray ()
+        let cmpTestData = function 
+            { NumberOfTests = nt1; NumberOfShrinks = ns1; Stamps = sx1; Labels = lx1 }, 
+            { NumberOfTests = nt2; NumberOfShrinks = ns2; Stamps = sx2; Labels = lx2 } -> 
+                nt1 = nt2 && ns1 = ns2 && Enumerable.SequenceEqual (sx1, sx2) && Enumerable.SequenceEqual (lx1, lx2)
+        let cmpOutcome = function
+            | Outcome.Timeout _, Outcome.Timeout _ -> true
+            | Outcome.Exception ex1, Outcome.Exception ex2 -> ex1.Equals ex2
+            | Outcome.False, Outcome.False -> true
+            | Outcome.True, Outcome.True -> true
+            | Outcome.Rejected, Outcome.Rejected -> true
+            | _, _ -> false
+        member __.Result = result.Value
+        member __.Sink = sink
+        override __.Equals other =
+            match other with
+            | :? ProbeRunner as pr -> 
+                let resultEq = 
+                    match pr.Result, __.Result with
+                    | TestResult.True (td1, so1), TestResult.True (td2, so2) -> 
+                        so1 = so2 && cmpTestData (td1, td2)
+                    | TestResult.False (td1, oa1, sa1, o1, r1), TestResult.False (td2, oa2, sa2, o2, r2) -> 
+                        cmpTestData (td1, td2) && 
+                        cmpOutcome (o1, o2) && 
+                        Enumerable.SequenceEqual (oa1, oa2) && 
+                        Enumerable.SequenceEqual (sa1, sa2) &&
+                        r1 = r2
+                    | TestResult.Exhausted td1, TestResult.Exhausted td2 -> cmpTestData (td1, td2)
+                    | _, _-> false
+                resultEq && Enumerable.SequenceEqual (pr.Sink, sink)
+            | _ -> false
+        interface IRunner with
+            override __.OnStartFixture _ = ()
+            override __.OnArguments (ntest, args, _) = 
+                sink.Add ntest
+                sink.AddRange args
+            override __.OnShrink(args, _) = 
+                sink.Add -1
+                sink.AddRange args
+            override __.OnFinished(_, testResult) = 
+                result <- Some testResult
+
+
+    let check arb body config =
+        let p = Prop.forAll arb body
+        let seed = Random.create () |> Some
+        printfn "seed %A" seed
+        let runner1 = ProbeRunner () 
+        FsCheck.Runner.check { config with Replay = seed; Runner = runner1; ParallelRunConfig = Some { MaxDegreeOfParallelism = Environment.ProcessorCount } } p
+        let runner2 = ProbeRunner () 
+        FsCheck.Runner.check { config with Replay = seed; Runner = runner2; ParallelRunConfig = None } p
+        runner1.Equals runner2
+            
+    [<Fact>]
+    let ``parallelTest produces same sequence as test on success`` () =
+        let body i = true
+        let arb = Arb.from<int>
+        let config = { Config.Quick with MaxTest = 30000; EndSize = 30000 }
+        if not <| check arb body config then failwith "assertion failure!"
+
+    [<Fact>]
+    let ``parallelTest produces same sequence as test on failure`` () =
+        let body i = i < 999
+        let arb = Arb.from<int>
+        let config = { Config.Quick with MaxTest = 30000; EndSize = 30000 }
+        if not <| check arb body config then failwith "assertion failure!"
+            
+    [<Fact>]
+    let ``parallelTest produces same sequence as test on discard`` () =
+        let body _ = true
+        let arb = Arb.fromGen (Gen.constant 1 |> Gen.map (fun _ -> Prop.discard ()))
+        let config = { Config.Quick with MaxTest = 30000; MaxFail = 100000; EndSize = 30000 }
+        if not <| check arb body config then failwith "assertion failure!"
+    
+    type Tree = Leaf of int | Branch of Tree * Tree
+    
+    let tree =
+        let rec tree' s = 
+            match s with
+            | 0 -> Gen.map Leaf Arb.generate<int>
+            | n when n>0 -> 
+                let subtree = tree' (n/2)
+                Gen.oneof [ Gen.map Leaf Arb.generate<int> 
+                            Gen.map2 (fun x y -> Branch (x,y)) subtree subtree]
+            | _ -> invalidArg "s" "Only positive arguments are allowed"
+        Gen.sized tree'
+        
+    type TreeGen =
+        static member Tree() =
+            {new Arbitrary<Tree>() with
+                override x.Generator = tree
+                override x.Shrinker t = Seq.empty }
+
+    [<Fact>]
+    let ``parallelTest works with custom arb`` () =
+        Arb.register<TreeGen> ()
+        let arb = Arb.from<list<Tree>>
+        let body (xs:list<Tree>) = List.rev(List.rev xs) = xs
+        let config = { Config.Quick with MaxTest = 3000; EndSize = 3000 }
+        if not <| check arb body config then failwith "not threadsafe"
+    
+    type Integer = Integer of int
+    
+    let integer =
+        let mutable i = 0
+        let rec integer' s = 
+            i <- i + s // breaking thread safety
+            Integer i |> gen.Return
+        Gen.sized integer'
+        
+    type IntegerGen =
+        static member Integer() =
+            {new Arbitrary<Integer>() with
+                override x.Generator = integer
+                override x.Shrinker t = Seq.empty }
+
+    [<Fact>]
+    let ``parallelTest doesnt works with custom non threadsafe arb`` () =
+        Arb.register<IntegerGen> ()
+        let body i = true
+        let arb = Arb.from<Integer>
+        let config = { Config.Quick with MaxTest = 300000; EndSize = 300000 }
+        if check arb body config then failwith "assertion failure!"
+
 module Runner =
 
     open System
@@ -202,7 +337,7 @@ module BugReproIssue344 =
             
         // run this on another thread, and abort it manually
         let thread2 = Thread(fun () ->
-            let config = { Config.Quick with Arbitrary = [ typeof<MyGenerators> ]  }
+            let config = { Config.Quick with Arbitrary = [ typeof<MyGenerators> ]; ParallelRunConfig = None }
             Check.One(config, fun (x:IntWrapper) -> 
                 // fail the first iteration
                 if x.I = 1 then
