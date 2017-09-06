@@ -13,4 +13,4 @@ nuget xunit.runner.console
 nuget xunit.runner.visualstudio version_in_path: true
 nuget FSharp.Formatting
 nuget Expecto
-nuget System.Threading
+nuget System.Threading.Thread

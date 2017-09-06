@@ -290,7 +290,11 @@ module Runner =
                 run unluckySeq indexF
                 firstRun <- false
             while isNull results.[i] do
+#if NETSTANDARD1_6
+                Threading.Thread.Sleep (1) |> ignore
+#else
                 Threading.Thread.Yield () |> ignore
+#endif
             subE <- results.[i].GetEnumerator ()
             i <- i + 1
         interface IEnumerator<TestStep> with
