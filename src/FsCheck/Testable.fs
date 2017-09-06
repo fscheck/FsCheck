@@ -241,6 +241,9 @@ module private Testable =
         static member Result() =
             { new Testable<Result> with
                 member __.Property res = Prop.ofResult <| Value res }
+        static member ResultContainer() =
+            { new Testable<ResultContainer> with
+                member __.Property resC = Prop.ofResult resC }
         static member Property() =
             { new Testable<Property> with
                 member __.Property prop = prop }
