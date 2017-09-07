@@ -1,5 +1,7 @@
 ﻿namespace FsCheck
 
+open System
+
 [<NoComparison; RequireQualifiedAccess>]
 type Outcome = 
     | Timeout of int
@@ -19,7 +21,7 @@ type Result =
         Arguments   : list<obj> } 
     ///Returns a new result that is Succeeded if and only if both this
     ///and the given Result are Succeeded.
-    static member (&&&) (l,r) = 
+    static member resAnd l r = 
         //printfn "And of l %A and r %A" l.Outcome r.Outcome
         match (l.Outcome,r.Outcome) with
         | (Outcome.Exception _,_) -> l //here a potential exception in r is thrown away...
@@ -31,7 +33,7 @@ type Result =
         | (_,Outcome.True) -> l
         | (Outcome.True,_) -> r
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
-    static member (|||) (l,r) =
+    static member resOr l r =
         match (l.Outcome, r.Outcome) with
         | (Outcome.Exception _,_) -> r
         | (_,Outcome.Exception _) -> l
@@ -43,24 +45,47 @@ type Result =
         | (_,Outcome.True) -> r
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
 
+type ResultContainer = 
+    | Value of Result
+    | Future of Threading.Tasks.Task<Result>
+    static member (&&&) (l,r) = 
+        //printfn "And of l %A and r %A" l.Outcome r.Outcome
+        match (l,r) with
+        | (Value vl,Value vr) -> Result.resAnd vl vr |> Value
+        | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.resAnd x.Result vr) |> Future
+        | (Value vl,Future tr) -> tr.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.resAnd x.Result vl) |> Future
+        | (Future tl,Future tr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
+            tr.ContinueWith (fun (y :Threading.Tasks.Task<Result>) -> Result.resAnd x.Result y.Result)) |> Threading.Tasks.TaskExtensions.Unwrap |> Future
+    static member (|||) (l,r) =
+        match (l,r) with
+        | (Value vl,Value vr) -> Result.resOr vl vr |> Value
+        | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.resOr x.Result vr) |> Future
+        | (Value vl,Future tr) -> tr.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.resOr x.Result vl) |> Future
+        | (Future tl,Future tr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
+            tr.ContinueWith (fun (y :Threading.Tasks.Task<Result>) -> Result.resOr x.Result y.Result)) |> Threading.Tasks.TaskExtensions.Unwrap |> Future
+
 module internal Res =
 
     let private result =
       { Outcome     = Outcome.Rejected
         Stamp       = []
-        Labels       = Set.empty
+        Labels      = Set.empty
         Arguments   = []
       }
 
-    let failed = { result with Outcome = Outcome.False }
+    let failed = { result with Outcome = Outcome.False } |> Value
 
-    let exc e = { result with Outcome = Outcome.Exception e }
+    let exc e = { result with Outcome = Outcome.Exception e } |> Value
 
-    let timeout i = { result with Outcome = Outcome.Timeout i }
+    let timeout i = { result with Outcome = Outcome.Timeout i } |> Value
 
-    let succeeded = { result with Outcome = Outcome.True }
+    let succeeded = { result with Outcome = Outcome.True } |> Value
 
-    let rejected = { result with Outcome = Outcome.Rejected }
+    let rejected = { result with Outcome = Outcome.Rejected } |> Value
+
+    let rejectedV = { result with Outcome = Outcome.Rejected }
+
+    let future (t :Threading.Tasks.Task<Outcome>) = t.ContinueWith (fun (x :Threading.Tasks.Task<Outcome>) -> { result with Outcome = x.Result }) |> Future
 
 //A rose is a pretty tree
 //Draw it and you'll see.
@@ -96,7 +121,7 @@ module internal Rose =
 
 
 ///A Property can be checked by FsCheck.
-type Property = private Property of Gen<Rose<Result>> with static member internal GetGen (Property g) = g
+type Property = private Property of Gen<Rose<ResultContainer>> with static member internal GetGen (Property g) = g
 
 module private Testable =
 
@@ -121,10 +146,20 @@ module private Testable =
     
         let ofRoseResult t : Property = Property <| gen { return t }
 
-        let ofResult (r:Result) : Property = 
+        let ofResult (r:ResultContainer) : Property = 
             ofRoseResult <| Rose.ret r
          
         let ofBool b = ofResult <| if b then Res.succeeded else Res.failed
+        
+        let ofTaskBool (b :Threading.Tasks.Task<bool>) = 
+            ofResult <| Res.future (b.ContinueWith (fun (x :Threading.Tasks.Task<bool>) -> 
+                if x.IsCompleted then
+                    if x.Result then Outcome.True else Outcome.False
+                else Outcome.Exception x.Exception))
+        
+        let ofTask (b :Threading.Tasks.Task) = 
+            ofResult <| Res.future (b.ContinueWith (fun (x :Threading.Tasks.Task) -> 
+                if x.IsCompleted then Outcome.True else Outcome.Exception x.Exception))
 
         let mapRoseResult f a = property a |> Property.GetGen |> Gen.map f |> Property
 
@@ -144,9 +179,13 @@ module private Testable =
         let rec props x = MkRose (lazy (property (pf x) |> Property.GetGen), shrink x |> Seq.map props |> Seq.cache)
         promoteRose (props x)
         |> Gen.map Rose.join
-     
+    
     let private evaluate body a =
-        let argument a res = { res with Arguments = (box a) :: res.Arguments }
+        let argument a res = match res with
+            | ResultContainer.Value r -> { r with Arguments = (box a) :: r.Arguments } |> Value
+            | ResultContainer.Future t -> t.ContinueWith (fun (rt :Threading.Tasks.Task<Result>) -> 
+                let r = rt.Result
+                { r with Arguments = (box a) :: r.Arguments }) |> Future
         //safeForce (lazy ( body a )) //this doesn't work - exception escapes??
         try 
             body a |> property
@@ -181,6 +220,18 @@ module private Testable =
         static member Bool() =
             { new Testable<bool> with
                 member __.Property b = Prop.ofBool b }
+        static member TaskBool() =
+            { new Testable<Threading.Tasks.Task<bool>> with
+                member __.Property b = Prop.ofTaskBool b }
+        static member Task() =
+            { new Testable<Threading.Tasks.Task> with
+                member __.Property b = Prop.ofTask b }
+        static member AsyncBool() =
+            { new Testable<Async<bool>> with
+                member __.Property b = Prop.ofTaskBool <| Async.StartAsTask b }
+        static member Async() =
+            { new Testable<Async<unit>> with
+                member __.Property b = Prop.ofTask <| Async.StartAsTask b }
         static member Lazy() =
             { new Testable<Lazy<'a>> with
                 member __.Property b =
@@ -189,7 +240,10 @@ module private Testable =
                     promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
         static member Result() =
             { new Testable<Result> with
-                member __.Property res = Prop.ofResult res }
+                member __.Property res = Prop.ofResult <| Value res }
+        static member ResultContainer() =
+            { new Testable<ResultContainer> with
+                member __.Property resC = Prop.ofResult resC }
         static member Property() =
             { new Testable<Property> with
                 member __.Property prop = prop }
@@ -197,7 +251,7 @@ module private Testable =
             { new Testable<Gen<'a>> with
                 member __.Property gena = gen { let! a = gena in return! property a |> Property.GetGen } |> Property }
         static member RoseResult() =
-            { new Testable<Rose<Result>> with
+            { new Testable<Rose<ResultContainer>> with
                 member __.Property rosea = gen { return rosea } |> Property }
         static member Arrow() =
             { new Testable<('a->'b)> with

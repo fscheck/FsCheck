@@ -41,6 +41,7 @@ type internal PropertyConfig =
     { MaxTest        : Option<int>
       MaxFail        : Option<int>
       Replay         : Option<string>
+      Parallelism    : Option<int>
       StartSize      : Option<int>
       EndSize        : Option<int>
       Verbose        : Option<bool>
@@ -59,6 +60,7 @@ module internal PropertyConfig =
         { MaxTest        = None
           MaxFail        = None
           Replay         = None
+          Parallelism    = None
           StartSize      = None
           EndSize        = None
           Verbose        = None
@@ -69,6 +71,7 @@ module internal PropertyConfig =
         { MaxTest        = extra.MaxTest        |> orElse original.MaxTest
           MaxFail        = extra.MaxFail        |> orElse original.MaxFail
           Replay         = extra.Replay         |> orElse original.Replay
+          Parallelism    = extra.Parallelism    |> orElse original.Parallelism
           StartSize      = extra.StartSize      |> orElse original.StartSize
           EndSize        = extra.EndSize        |> orElse original.EndSize
           Verbose        = extra.Verbose        |> orElse original.Verbose
@@ -87,6 +90,9 @@ module internal PropertyConfig =
               Replay         = propertyConfig.Replay 
                                |> Option.map parseStdGen 
                                |> orElse Config.Default.Replay
+              ParallelRunConfig    = propertyConfig.Parallelism 
+                                    |> Option.map (fun i -> { MaxDegreeOfParallelism = i })
+                                    |> orElse Config.Default.ParallelRunConfig
               MaxTest        = propertyConfig.MaxTest        |> orDefault Config.Default.MaxTest
               MaxFail        = propertyConfig.MaxFail        |> orDefault Config.Default.MaxFail
               StartSize      = propertyConfig.StartSize      |> orDefault Config.Default.StartSize
@@ -112,6 +118,7 @@ type public PropertyAttribute() =
     inherit FactAttribute()
     let mutable config = PropertyConfig.zero
     let mutable replay = null
+    let mutable parallelism = -1
     let mutable maxTest = -1
     let mutable maxFail = -1
     let mutable startSize = -1
@@ -119,10 +126,13 @@ type public PropertyAttribute() =
     let mutable verbose = false
     let mutable arbitrary = [||]
     let mutable quietOnSuccess = false
-
+    
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
     member __.Replay with get() = replay and set(v) = replay <- v; config <- {config with Replay = Some v}
+    ///If set, run tests in parallel. Useful for Task/async related work and heavy number crunching
+    ///Environment.ProcessorCount have been found to be useful default.
+    member __.Parallelism with get() = parallelism and set(v) = parallelism <- v; config <- {config with Parallelism = Some v}
     ///The maximum number of tests that are run.
     member __.MaxTest with get() = maxTest and set(v) = maxTest <- v; config <- {config with MaxTest = Some v}
     ///The maximum number of tests where values are rejected, e.g. as the result of ==>

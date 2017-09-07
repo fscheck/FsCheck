@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using FsCheck;
 
 namespace FsCheck.CSharpExamples
@@ -44,11 +45,15 @@ namespace FsCheck.CSharpExamples
                 throw new NotImplementedException();
             }
         }
-
+        
         static void Main(string[] args)
         {
+
+            Prop.ForAll<int>((i => Task.FromResult(i < 1000)))
+                .QuickCheck("Task");
+
             //A simple example
-            
+
             Prop.ForAll<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs, new Eq()))
                 .QuickCheck("RevRev");
 
