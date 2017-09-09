@@ -52,8 +52,12 @@ type PropertyAttribute() =
     let mutable endSize = Config.Default.EndSize
     let mutable verbose = false
     let mutable quietOnSuccess = false
+    let mutable replay = null
     let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
 
+    ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
+    ///the tuple from the output window, e.g. 12344,12312 or (123,123).
+    member __.Replay with get() = replay and set(v) = replay <- v
     ///The maximum number of tests that are run.
     member __.MaxTest with get() = maxTest and set(v) = maxTest <- v
     ///The maximum number of tests where values are rejected, e.g. as the result of ==>
@@ -145,6 +149,12 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         testResult.RecordException(x.FilterException <| ex, failureSite)
 
     member private x.RunTestMethod context testResult =
+        let parseStdGen (str: string) =
+            //if someone sets this, we want it to throw if it fails
+            let split = str.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
+            let elem1 = Int32.Parse(split.[0])
+            let elem2 = Int32.Parse(split.[1])
+            Random.StdGen (elem1,elem2)
         let attr = x.GetFsCheckPropertyAttribute()
         let testRunner = NunitRunner()
         let config = { Config.Default with
@@ -155,6 +165,9 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
                         Every = if attr.Verbose then Config.Verbose.Every else Config.Quick.Every
                         EveryShrink = if attr.Verbose then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
                         Arbitrary = attr.Arbitrary |> Array.toList
+                        Replay = match attr.Replay with
+                                    | null -> Config.Default.Replay
+                                    | s -> parseStdGen s |> Some
                         Runner = testRunner }
 
         let target = if x.Fixture <> null then Some x.Fixture

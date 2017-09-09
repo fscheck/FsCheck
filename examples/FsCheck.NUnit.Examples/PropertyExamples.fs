@@ -25,6 +25,14 @@ type NUnitTest() =
     member __.MaxLe (x:float) y =
         (x <= y) ==> (lazy (max  x y = y))
 
+    [<Property( Replay="54321,67584", Verbose = true )>]
+    member __.Replay x =
+        System.Int32.MaxValue >= x
+
+    [<Property( Replay="lame,string" )>]
+    member __.ReplayBroken_shouldFail (x:float) y =
+        true
+
     // Note: should fail
     [<Property( Verbose = true )>]
     member __.RevIdVerbose_shouldFail (xs:int[]) =
