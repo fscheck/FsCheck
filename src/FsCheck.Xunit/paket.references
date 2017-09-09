@@ -1,2 +1,2 @@
-xunit.extensibility.execution
-FSharp.Core
+xunit.extensibility.execution framework: net452
+FSharp.Core framework: net452
