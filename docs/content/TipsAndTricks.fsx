@@ -144,6 +144,11 @@ To replay this test, which should have the exact same output, use the `Replay` f
 Check.One({ Config.Quick with Replay = Some <| Rnd (1145655947UL,296144285UL) }, fun x -> abs x >= 0)
 
 (**
+In C#:
+    [lang=csharp,file=../csharp/TipsAndTricks.cs,key=replay]
+*)
+
+(**
 ## Checking properties in parallel
 
 FsCheck can evaluate properties in parallel.
