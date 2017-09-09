@@ -141,10 +141,32 @@ seed of its pseudo-random number generator when a test fails. Look for the bit o
 
 To replay this test, which should have the exact same output, use the `Replay` field on `Config`:*)
 
-Check.One({ Config.Quick with Replay = Some <| Random.StdGen (1145655947,296144285) }, fun x -> abs x >= 0)
+Check.One({ Config.Quick with Replay = Some <| Rnd (1145655947UL,296144285UL) }, fun x -> abs x >= 0)
 
 (**
-In C#:
+## Checking properties in parallel
 
-    [lang=csharp,file=../csharp/TipsAndTricks.cs,key=replay]
+FsCheck can evaluate properties in parallel.
+This feature may be useful to speed-up your cpu-heavy props and custom arbs.
+Also this is invaluable for running asynchronous props, i.e. when you doing IO inside prop (don't forget to wrap your prop in Task/async in such case)
+
+To run prop in parallel, use the `ParallelRunConfig` field on `Config`:*)
+
+Check.One(
+    { Config.Quick with ParallelRunConfig = Some <| { MaxDegreeOfParallelism = System.Environment.ProcessorCount } },
+     fun x -> abs x >= 0
+)
+
+(**
+`System.Environment.ProcessorCount` is good default for cpu-bound work
+For io-bound work it's usually enough to set `ParallelRunConfig` to 1
 *)
+
+Check.One(
+    { Config.Quick with ParallelRunConfig = Some <| { MaxDegreeOfParallelism = 1 } },
+     fun x -> 
+        async { 
+            do! Async.Sleep x
+            return true
+        }
+)
