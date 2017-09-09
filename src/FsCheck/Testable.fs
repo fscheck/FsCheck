@@ -181,7 +181,8 @@ module private Testable =
         |> Gen.map Rose.join
     
     let private evaluate body a =
-        let argument a res = match res with
+        let argument a res = 
+            match res with
             | ResultContainer.Value r -> { r with Arguments = (box a) :: r.Arguments } |> Value
             | ResultContainer.Future t -> t.ContinueWith (fun (rt :Threading.Tasks.Task<Result>) -> 
                 let r = rt.Result

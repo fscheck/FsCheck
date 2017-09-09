@@ -86,7 +86,8 @@ module Prop =
        property <| try ignore p.Value; Res.failed with :? 'Exception -> Res.succeeded
 
     let private stamp str = 
-        let add res = match res with
+        let add res = 
+            match res with
             | ResultContainer.Value r -> { r with Stamp = str :: r.Stamp } |> Value
             | ResultContainer.Future t -> t.ContinueWith (fun (rt :Threading.Tasks.Task<Result>) -> 
                 let r = rt.Result
@@ -109,7 +110,8 @@ module Prop =
     ///Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let label l : ('Testable -> Property) = 
-        let add res = match res with
+        let add res = 
+            match res with
             | ResultContainer.Value r -> { r with Labels = Set.add l r.Labels } |> Value
             | ResultContainer.Future t -> t.ContinueWith (fun (rt :Threading.Tasks.Task<Result>) -> 
                 let r = rt.Result

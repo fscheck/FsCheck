@@ -134,6 +134,23 @@ module Gen =
     open System.Collections.Generic
     open System.ComponentModel
 
+    ///Always generate the same instance v. See also fresh.
+    //[category: Creating generators]
+    [<CompiledName("Constant")>]
+    let constant v = gen.Return v
+
+    ///Generate a fresh instance every time the generator is called. Useful for mutable objects.
+    ///See also constant.
+    //[category: Creating generators]
+    [<CompiledName("Fresh"); EditorBrowsable(EditorBrowsableState.Never)>]
+    let fresh fv = gen { let a = fv() in return a }
+
+    ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
+    ///See also constant.
+    //[category: Creating generators]
+    [<CompiledName("Fresh"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false) >]
+    let freshFunc (fv:Func<_>) = fresh fv.Invoke
+
     ///Apply the function f to the value in the generator, yielding a new generator.
     //[category: Creating generators from generators]
     [<CompiledName("Map"); EditorBrowsable(EditorBrowsableState.Never)>]
@@ -484,14 +501,32 @@ module Gen =
     [<Obsolete("This function will be removed in a future version of FsCheck. Please use the synonyms where or filter instead.");CompiledName("SuchThat")>]
     let rec suchThat = where
 
+    /// Generates a random array of length k where the sum of
+    /// all elements equals the given sum.
+    //[category: Creating generators]
+    [<CompiledName("Piles")>]
+    let piles k sum = 
+        let rec genSorted = function 
+            | (1, n, _) -> constant [n]
+            | (p, n, m) ->
+                gen { let! r = choose (int (ceil(float n / float p)), min m n)
+                      return! map (fun l -> r::l) (genSorted (p-1, n-r, min m r))
+                }
+        if k <= 0 then
+            constant [||]
+        else
+            gen.Bind(genSorted (k, sum, sum), shuffle)
+  
+
     /// Generates a list of random length. The maximum length depends on the
     /// size parameter.
     //[category: Creating generators from generators]
     [<CompiledName("ListOf")>]
     let listOf gn =
         sized <| fun n ->
-            gen {   let! k = choose (0,n)
-                    return! listOfLength k gn }
+            gen { let! k = choose (0,n)
+                  let! sizes = piles k n
+                  return! sequence [ for size in sizes -> resize size gn ] }
 
     /// Generates a non-empty list of random length. The maximum length 
     /// depends on the size parameter.
@@ -499,8 +534,9 @@ module Gen =
     [<CompiledName("NonEmptyListOf")>]
     let nonEmptyListOf gn =
         sized <| fun n ->
-            gen {   let! k = choose (1,max 1 n)
-                    return! listOfLength k gn }
+            gen { let! k = choose (1,max 1 n)
+                  let! sizes = piles k n
+                  return! sequence [ for size in sizes -> resize size gn ] }
 
     /// Generates sublists of the given sequence.
     //[category: Creating generators]
@@ -541,8 +577,9 @@ module Gen =
     [<CompiledName("ArrayOf")>]
     let arrayOf (g: Gen<'a>) : Gen<'a[]> = 
        sized <| fun n ->
-             gen { let! size = choose(0, n)
-                   return! arrayOfLength size g }
+             gen { let! k = choose(0, n)
+                   let! sizes = piles k n
+                   return! sequenceToArr [| for size in sizes -> resize size g |]}
 
     /// Generates a 2D array of the given dimensions.
     //[category: Creating generators from generators]
@@ -564,23 +601,6 @@ module Gen =
     ///Generate an option value that is 'None' 1/8 of the time.
     //[category: Creating generators from generators]
     let optionOf g = frequency [(1, gen { return None }); (7, map Some g)]
-
-    ///Always generate the same instance v. See also fresh.
-    //[category: Creating generators]
-    [<CompiledName("Constant")>]
-    let constant v = gen.Return v
-
-    ///Generate a fresh instance every time the generator is called. Useful for mutable objects.
-    ///See also constant.
-    //[category: Creating generators]
-    [<CompiledName("Fresh"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let fresh fv = gen { let a = fv() in return a }
-
-    ///Generate a fresh instance every time the generatoris called. Useful for mutable objects.
-    ///See also constant.
-    //[category: Creating generators]
-    [<CompiledName("Fresh"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false) >]
-    let freshFunc (fv:Func<_>) = fresh fv.Invoke
 
     ///Apply the given Gen function to the given generator, aka the applicative <*> operator.
     //[category: Creating generators from generators]

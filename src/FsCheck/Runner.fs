@@ -181,7 +181,8 @@ module Runner =
                 yield! test' newSize resize rnd1 gen
             }
         //Since we're not runing test for parallel scenarios it's impossible to discover `ResultContainer.Future` inside `result`
-        let gen' = gen |> Gen.map (Rose.map (fun rc -> match rc with 
+        let gen' = gen |> Gen.map (Rose.map (fun rc -> 
+                match rc with 
                 | ResultContainer.Value r -> r 
                 | ResultContainer.Future t -> t.Result))
         test' initSize resize rnd0 gen'

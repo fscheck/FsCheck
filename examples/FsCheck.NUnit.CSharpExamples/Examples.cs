@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FsCheck.NUnit.CSharpExamples.ClassesToTest;
 using NUnit.Framework;
 
@@ -19,6 +20,12 @@ namespace FsCheck.NUnit.CSharpExamples
         public Property RevId_shouldFail()
         {
             return Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs));
+        }
+
+        [Property(Replay = "54321,67584", Verbose = true)]
+        public bool Replay(int x)
+        {
+            return Int32.MaxValue >= x;
         }
 
         //TODO: do not call toProperty.

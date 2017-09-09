@@ -182,6 +182,16 @@ module Gen =
         |> sample 20
         |> List.map Seq.toList
         |> List.exists ((<>) l)
+
+    [<Property>]
+    let Piles (k:int) (sum:int) =
+        let sample = Gen.piles k sum |> sample 10
+        sample
+        |> List.forall (fun l -> 
+            l.Length = max 0 k // if k <= 0 empty list is returned 
+            && Array.sum l = (if k <= 0 then 0 else sum)
+            && if sum >= 0 then Array.forall (fun e -> e >= 0) l else true)
+        //|> Prop.collect (k, sum, sample)
    
     [<Property>]
     let TryWhere (v:int) (predicate:int -> bool) =
@@ -201,6 +211,16 @@ module Gen =
         Gen.resize size (Gen.listOf <| Gen.constant v)
         |> sample 10
         |> List.forall (fun l -> l.Length <= size && List.forall ((=) v) l)
+
+
+    [<Property>]
+    let ``ListOf high dimension``(NonNegativeInt size) (v:int) =
+        let l = Gen.resize size (Gen.listOf (Gen.listOf (Gen.listOf (Gen.listOf <| Gen.constant v))))
+                |> sample 10
+        l
+        |> List.forall (fun l -> l.Length <= size && List.forall (List.forall (List.forall (List.forall ((=) v)))) l)
+        |> Prop.collect l.Head
+
     
     [<Property>]
     let NonEmptyListOf (NonNegativeInt size) (v:string) =
@@ -221,6 +241,12 @@ module Gen =
         Gen.resize size (Gen.arrayOf <| Gen.constant v)
         |> sample 10
         |> List.forall (fun l -> l.Length <= size && Array.forall ((=) v) l)
+
+    [<Property>]
+    let ``ArrayOf high dimension`` (NonNegativeInt size) (v:int) =
+        Gen.resize size (Gen.arrayOf (Gen.arrayOf (Gen.arrayOf (Gen.arrayOf <| Gen.constant v))))
+        |> sample 10
+        |> List.forall (fun l -> l.Length <= size && (Array.forall (Array.forall (Array.forall (Array.forall ((=) v)))) l))
     
     [<Property>]
     let ArrayOfLength (v:char) (PositiveInt length) =
