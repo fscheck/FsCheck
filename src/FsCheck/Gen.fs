@@ -175,23 +175,22 @@ module Gen =
     ///Generates n values of the given size and starting with the given seed.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sampleWithSeed seed size nbSamples (Gen generator)  = 
-        let rec sample i seed samples =
-            if i = 0 then samples
-            else
-                let sv = generator size seed
-                sample (i-1) sv.UpdatedState (sv.Value :: samples)
-        sample nbSamples seed []
+    let sampleWithSeed seed size nbSamples (Gen generator) :'T[] = 
+        let mutable s = seed
+        [| for i in 1..nbSamples do
+            let sv = generator size s
+            s <- sv.UpdatedState
+            yield sv.Value |]
 
     ///Generates a given number of values with a new seed and a given size.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sampleWithSize size nbSamples gen = sampleWithSeed (Random.create()) size nbSamples gen
+    let sampleWithSize size nbSamples gen : 'T[]= sampleWithSeed (Random.create()) size nbSamples gen
 
     ///Generates a given number of values with a new seed and a size of 50.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sample nbSamples gen = sampleWithSize 50 nbSamples gen
+    let sample nbSamples gen : 'T[] = sampleWithSize 50 nbSamples gen
 
     ///Generates an integer between l and h, inclusive.
     //[category: Creating generators]

@@ -19,86 +19,86 @@ module Arbitrary =
     
     [<Property>]
     let Unit() = 
-        (   generate<unit> |> sample 10 |> List.forall ((=) ())
+        (   generate<unit> |> sample 10 |> Seq.forall ((=) ())
         ,   shrink<unit>() |> Seq.isEmpty)
         |> addLabels
     
     [<Property>]
     let Boolean (b:bool) =
-        (   generate<bool> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<bool> |> sample 10 |> Seq.forall (fun _ -> true)
         ,    shrink<bool> b |> Seq.isEmpty)
         |> addLabels
     
     [<Property>]
     let Int16 (NonNegativeInt size) (v:int16) =
-        (   generate<int16> |> Gen.resize size |> sample 10 |> List.forall (fun v -> -size <= int v && int v <= size)
+        (   generate<int16> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> -size <= int v && int v <= size)
         ,   shrink<int16> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v))
 
     [<Property>]
     let DoNotSizeInt16 (DoNotSize v as doNotSizeV) =
         //could theoretically go wrong, if all the values do happen to be zero.
-        (   generate<DoNotSize<int16>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DoNotSize v) -> v <> 0s)
+        (   generate<DoNotSize<int16>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0s)
         ,   shrink<DoNotSize<int16>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= abs v))
 
     [<Property>]
     let UInt16 (NonNegativeInt size) (v:uint16) =
-        (   generate<uint16> |> Gen.resize size |> sample 10 |> List.forall (fun v -> int v <= size)
+        (   generate<uint16> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> int v <= size)
         ,   shrink<uint16> v |> Seq.forall (fun shrunkv -> shrunkv <= v))
 
     [<Property>]
     let DoNotSizeUInt16 (DoNotSize v as doNotSizeV) =
         //could theoretically go wrong, if all the values do happen to be zero.
-        (   generate<DoNotSize<uint16>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DoNotSize v) -> v <> 0us)
+        (   generate<DoNotSize<uint16>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0us)
         ,   shrink<DoNotSize<uint16>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= v))
 
     [<Property>]
     let Int32 (NonNegativeInt size) (v:int) =
-        (   generate<int> |> Gen.resize size |> sample 10 |> List.forall (fun v -> -size <= v && v <= size)
+        (   generate<int> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> -size <= v && v <= size)
         ,   shrink<int> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v))
 
     [<Property>]
     let DoNotSizeInt32 (DoNotSize v as doNotSizeV) =
         //could theoretically go wrong, if all the values do happen to be zero.
-        (   generate<DoNotSize<int>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DoNotSize v) -> v <> 0)
+        (   generate<DoNotSize<int>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0)
         ,   shrink<DoNotSize<int>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= abs v))
 
     [<Property>]
     let UInt32 (NonNegativeInt size) (v:uint32) =
-        (   generate<uint32> |> Gen.resize size |> sample 10 |> List.forall (fun v -> int v <= size)
+        (   generate<uint32> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> int v <= size)
         ,   shrink<uint32> v |> Seq.forall (fun shrunkv -> shrunkv <= v))
 
     [<Property>]
     let DoNotSizeUInt32 (DoNotSize v as doNotSizeV) =
         //could theoretically go wrong, if all the values do happen to be zero.
-        (   generate<DoNotSize<uint32>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DoNotSize v) -> v <> 0u)
+        (   generate<DoNotSize<uint32>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0u)
         ,   shrink<DoNotSize<uint32>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= v))
 
     [<Property>]
     let Int64 (NonNegativeInt size) (value: int64) = 
-        (   generate<int64> |> Gen.resize size |> sample 10 |> List.forall (fun v -> -(int64 size) <= v && v <= int64 size)
+        (   generate<int64> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> -(int64 size) <= v && v <= int64 size)
         ,   shrink<int64> value |> Seq.forall (fun shrunkv -> (int shrunkv) <= abs (int value)))
                 
     [<Property>]
     let DoNotSizeInt64 (DoNotSize v as doNotSizeV) =
         //could theoretically go wrong, if all the values do happen to be zero.
-        (   generate<DoNotSize<int64>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DoNotSize v) -> v <> 0L)
+        (   generate<DoNotSize<int64>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0L)
         ,   shrink<DoNotSize<int64>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= abs v))
 
     [<Property>]
     let UInt64 (NonNegativeInt size) (v:uint64) =
-        (   generate<uint64> |> Gen.resize size |> sample 10 |> List.forall (fun v -> int v <= size)
+        (   generate<uint64> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> int v <= size)
         ,   shrink<uint64> v |> Seq.forall (fun shrunkv -> shrunkv <= v))
 
     [<Property>]
     let DoNotSizeUInt64 (DoNotSize v as doNotSizeV) =
         //could theoretically go wrong, if all the values do happen to be zero.
-        (   generate<DoNotSize<uint64>> |> Gen.resize 0 |> sample 100 |> List.exists (fun (DoNotSize v) -> v <> 0UL)
+        (   generate<DoNotSize<uint64>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0UL)
         ,   shrink<DoNotSize<uint64>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= v))
 
     [<Property>]
     let Double (NonNegativeInt size) (value:float) =
         (   generate<float> |> Gen.resize size |> sample 10
-            |> List.forall (fun v -> 
+            |> Seq.forall (fun v -> 
                 (-2.0 * float size <= v && v <= 2.0 * float size )
                 || Double.IsNaN(v) || Double.IsInfinity(v)
                 || v = Double.Epsilon || v = Double.MaxValue || v = Double.MinValue)
@@ -109,7 +109,7 @@ module Arbitrary =
     [<Property>]
     let Single (NonNegativeInt size) (value:float32) =
         (   generate<float32> |> Gen.resize size |> sample 10
-            |> List.forall (fun v -> 
+            |> Seq.forall (fun v -> 
                 (-2.0f * float32 size <= v && v <= 2.0f * float32 size )
                 || Single.IsNaN(v) || Single.IsInfinity(v)
                 || v = Single.Epsilon || v = Single.MaxValue || v = Single.MinValue)
@@ -119,22 +119,22 @@ module Arbitrary =
 
     [<Property>]
     let Byte (value:byte) =
-        (   generate<byte> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate bytes
+        (   generate<byte> |> sample 10 |> Seq.forall (fun _ -> true) //just check that we can generate bytes
         ,   shrink<byte> value |> Seq.forall (fun shrunkv -> (int shrunkv) <= abs (int value)))
         
     [<Property>]
     let SByte (value:sbyte) =
-        (   generate<sbyte> |> sample 10 |> List.forall (fun _ -> true) //just check that we can generate sbytes
+        (   generate<sbyte> |> sample 10 |> Seq.forall (fun _ -> true) //just check that we can generate sbytes
         ,   shrink<sbyte> value |> Seq.forall (fun shrunkv -> int shrunkv <= abs (int value) ))
 
     [<Property>]
     let Char (value:char) =
-        (   generate<char> |> sample 10 |> List.forall (fun v -> v >= Char.MinValue && (int v) <= 127)
+        (   generate<char> |> sample 10 |> Seq.forall (fun v -> v >= Char.MinValue && (int v) <= 127)
         ,   shrink<char> value |> Seq.forall (fun shrunkv -> isIn  ['a';'b';'c'] shrunkv ))
 
     [<Property>]
     let String (value:string) =
-        (   generate<string> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<string> |> sample 10 |> Seq.forall (fun _ -> true)
             //or the lenght of the string is shorter, or one of its values have been shrunk
         ,   shrink<string> value |> Seq.forall (fun s -> s = null || String.length s < String.length value || (String.exists (isIn ['a';'b';'c']) s)) )
         |> addLabels
@@ -144,13 +144,13 @@ module Arbitrary =
       
     [<Property>]
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
-        (   generate<int*char> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<int*char> |> sample 10 |> Seq.forall (fun _ -> true)
             //or the first value is shrunk, or the second
         ,   shrink value |> Seq.forall (fun (i,c) -> shrink valuei |> Seq.exists ((=) i) || shrink valuec |> Seq.exists ((=) c))  )
     
     [<Property>]
     let ``3-Tuple``((valuei:int,valuec:char,valueb:bool) as value) =
-        (   generate<int*char*bool> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<int*char*bool> |> sample 10 |> Seq.forall (fun _ -> true)
             //or the first value is shrunk, or the second, or the third
         ,   shrink value |> Seq.forall (fun (i,c,b) -> shrink valuei |> Seq.exists ((=) i) 
                                                     || shrink valuec |> Seq.exists ((=) c)
@@ -158,7 +158,7 @@ module Arbitrary =
      
     [<Property>]
     let Option (value:option<int>) =
-        (   generate<option<int>> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<option<int>> |> sample 10 |> Seq.forall (fun _ -> true)
         ,   shrink value 
             |> (fun shrinks -> match value with 
                                 | None -> shrinks = Seq.empty 
@@ -166,12 +166,12 @@ module Arbitrary =
 
     [<Property>]
     let NonNull (value:NonNull<string>) = 
-        (   generate<NonNull<string>> |> sample 10 |> List.forall (fun (NonNull x) -> x <> null)
+        (   generate<NonNull<string>> |> sample 10 |> Seq.forall (fun (NonNull x) -> x <> null)
         ,   Seq.forall (fun (NonNull x) -> x <> null) (shrink value))
 
     [<Property>]
     let Nullable (value:Nullable<int>) =
-        (   generate<Nullable<int>> |> sample 10 |> List.forall (fun _ -> true)
+        (   generate<Nullable<int>> |> sample 10 |> Seq.forall (fun _ -> true)
         ,   shrink value 
             |> (fun shrinks -> if value.HasValue
                                   then Seq.forall2 (=) shrinks (seq { yield Nullable(); for x' in shrink value.Value -> Nullable x' })
@@ -264,7 +264,7 @@ module Arbitrary =
 
     [<Fact>]
     let ``TimeSpan``() =
-        generate<TimeSpan> |> sample 10 |> List.forall (fun _ -> true)
+        generate<TimeSpan> |> sample 10 |> Seq.forall (fun _ -> true)
 
     [<Property>]
     let ``TimeSpan shrinks`` (value: TimeSpan) =
@@ -277,7 +277,7 @@ module Arbitrary =
 
     [<Fact>]
     let DateTimeOffset() =
-        generate<DateTimeOffset> |> sample 10 |> List.forall (fun _ -> true)
+        generate<DateTimeOffset> |> sample 10 |> Seq.forall (fun _ -> true)
 
     [<Property>]
     let ``DateTimeOffset shrinks`` (t: DateTimeOffset) =
@@ -290,7 +290,7 @@ module Arbitrary =
 
     [<Fact>]
     let KeyValuePair () =
-        generate<KeyValuePair<int,int>> |> sample 10 |> List.forall (fun _ -> true)
+        generate<KeyValuePair<int,int>> |> sample 10 |> Seq.forall (fun _ -> true)
 
     [<Property>]
     let ``KeyValuePair shrinks`` (value: KeyValuePair<int, int>) =
@@ -420,11 +420,11 @@ module Arbitrary =
 
     [<Fact>]
     let ``Generic List``() =
-        generate<List<int>> |> sample 10 |> List.forall (fun _ -> true)
+        generate<List<int>> |> sample 10 |> Seq.forall (fun _ -> true)
 
     [<Fact>]
     let ``Generic IList``() =
-        generate<IList<int>> |> sample 10 |> List.forall (fun _ -> true)
+        generate<IList<int>> |> sample 10 |> Seq.forall (fun _ -> true)
 
     [<Property>]
     let ``Generic IList shrinks`` (value: int IList) =
@@ -433,7 +433,7 @@ module Arbitrary =
 
     [<Fact>]
     let ``Generic ICollection``() =
-        generate<ICollection<int>> |> sample 10 |> List.forall (fun _ -> true)
+        generate<ICollection<int>> |> sample 10 |> Seq.forall (fun _ -> true)
 
     [<Property>]
     let ``Generic ICollection shrinks`` (value: int ICollection) =
@@ -442,11 +442,11 @@ module Arbitrary =
 
     [<Fact>]
     let ``Generic Dictionary``() =
-        generate<Dictionary<int, char>> |> sample 10 |> List.forall (fun _ -> true)
+        generate<Dictionary<int, char>> |> sample 10 |> Seq.forall (fun _ -> true)
 
     [<Fact>]
     let ``Generic Dictionary with string key``() =
-        generate<Dictionary<string, char>> |> sample 10 |> List.forall (fun _ -> true)
+        generate<Dictionary<string, char>> |> sample 10 |> Seq.forall (fun _ -> true)
 
     [<Property>]
     let ``Generic Dictionary shrinks`` (value: Dictionary<int, string>) =
@@ -455,11 +455,11 @@ module Arbitrary =
 
     [<Fact>]
     let ``Generic IDictionary``() =
-        generate<IDictionary<int, char>> |> sample 10 |> List.forall (fun _ -> true)
+        generate<IDictionary<int, char>> |> sample 10 |> Seq.forall (fun _ -> true)
 
     [<Fact>]
     let ``Map with string key``() =
-        generate<Map<string, char>> |> sample 10 |> List.exists (fun x -> not x.IsEmpty)
+        generate<Map<string, char>> |> sample 10 |> Seq.exists (fun x -> not x.IsEmpty)
 
     [<Fact>]
     let Decimal() =

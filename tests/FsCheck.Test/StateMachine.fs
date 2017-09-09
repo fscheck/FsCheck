@@ -120,7 +120,7 @@ module StateMachine =
     let ``stop command can terminate before MaxNumberOfCommands is reached``() =
         let specWithLength = checkStoppingSpec 10
         let runs = StateMachine.generate specWithLength |> Gen.sampleWithSize 100 20
-        let len = List.fold (fun acc { Operations = cmds } -> acc + cmds.Length) 0 runs
+        let len = Array.fold (fun acc { Operations = cmds } -> acc + cmds.Length) 0 runs
         test <@ len > 0 && len < 200 @>
 
     //this spec is created using preconditions such that the only valid sequence is setFalse,setTrue

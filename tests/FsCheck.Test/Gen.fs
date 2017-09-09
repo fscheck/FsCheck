@@ -13,14 +13,14 @@ module Gen =
     let Choose (Interval (l,h)) = 
         Gen.choose (l,h)
         |> sample 10
-        |> List.forall (fun v -> l <= v && v <= h)
+        |> Seq.forall (fun v -> l <= v && v <= h)
     
     [<Property>] 
     let Elements (l:list<char>) =
         not l.IsEmpty ==> 
         lazy (  Gen.elements l
                 |> sample 50
-                |> List.forall (isIn l))
+                |> Seq.forall (isIn l))
 
     [<Fact>]
     let GrowingElements () =
@@ -38,13 +38,13 @@ module Gen =
     let constant (v : (int * char)) =
         Gen.constant v
         |> sample 10
-        |> List.forall (fun actual -> obj.ReferenceEquals(actual, v))
+        |> Seq.forall (fun actual -> obj.ReferenceEquals(actual, v))
 
     [<Property>]
     let fresh ((i:int,c:char) as v) =
         Gen.fresh (fun () -> (i,c)) 
         |> sample 10
-        |> List.forall (fun actual -> not (obj.ReferenceEquals(actual, v)) && actual = v)
+        |> Seq.forall (fun actual -> not (obj.ReferenceEquals(actual, v)) && actual = v)
     
     [<Property>]
     let Oneof (l:list<string>) =
@@ -52,7 +52,7 @@ module Gen =
         lazy (  List.map Gen.constant l
                 |> Gen.oneof
                 |> sample 10
-                |> List.forall (isIn l))
+                |> Seq.forall (isIn l))
 
     [<Property>]
     let Frequency (frequencies:list<PositiveInt*string>) =
@@ -63,7 +63,7 @@ module Gen =
                 |> List.map (fun (freq,s) -> (freq.Get,Gen.constant s))
                 |> Gen.frequency
                 |> sample 100
-                |> List.forall (isIn generatedValues)))
+                |> Seq.forall (isIn generatedValues)))
 
     [<Fact>]
     let ``frequency should throw argument exception if no element can be generated``() =
@@ -75,7 +75,7 @@ module Gen =
     let Map (f:string -> int) v =
         Gen.map f (Gen.constant v)
         |> sample 1
-        |> List.forall ((=) (f v))
+        |> Seq.forall ((=) (f v))
         
     [<Property>]
     let Map2 (f:char -> int -> int) a b =
@@ -180,14 +180,14 @@ module Gen =
         let l = Set.toList s
         Gen.shuffle l
         |> sample 20
-        |> List.map Seq.toList
-        |> List.exists ((<>) l)
+        |> Seq.map Seq.toList
+        |> Seq.exists ((<>) l)
 
     [<Property>]
     let Piles (k:int) (sum:int) =
         let sample = Gen.piles k sum |> sample 10
         sample
-        |> List.forall (fun l -> 
+        |> Seq.forall (fun l -> 
             l.Length = max 0 k // if k <= 0 empty list is returned 
             && Array.sum l = (if k <= 0 then 0 else sum)
             && if sum >= 0 then Array.forall (fun e -> e >= 0) l else true)
@@ -210,7 +210,7 @@ module Gen =
     let ListOf (NonNegativeInt size) (v:char) =
         Gen.resize size (Gen.listOf <| Gen.constant v)
         |> sample 10
-        |> List.forall (fun l -> l.Length <= size && List.forall ((=) v) l)
+        |> Seq.forall (fun l -> l.Length <= size && Seq.forall ((=) v) l)
 
 
     [<Property>]
@@ -218,35 +218,35 @@ module Gen =
         let l = Gen.resize size (Gen.listOf (Gen.listOf (Gen.listOf (Gen.listOf <| Gen.constant v))))
                 |> sample 10
         l
-        |> List.forall (fun l -> l.Length <= size && List.forall (List.forall (List.forall (List.forall ((=) v)))) l)
-        |> Prop.collect l.Head
+        |> Seq.forall (fun l -> l.Length <= size && Seq.forall (Seq.forall (Seq.forall (Seq.forall ((=) v)))) l)
+        |> Prop.collect (Seq.head l)
 
     
     [<Property>]
     let NonEmptyListOf (NonNegativeInt size) (v:string) =
         let actual = Gen.resize size (Gen.nonEmptyListOf <| Gen.constant v) |> sample 10
         actual
-        |> List.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && List.forall ((=) v) l)
+        |> Seq.forall (fun l -> 0 < l.Length && l.Length <= max 1 size && Seq.forall ((=) v) l)
     
     [<Property>]
     let SubListOf (l:list<int>) =
         Gen.subListOf l
         |> sample 10
-        |> List.forall (fun sublist -> 
+        |> Seq.forall (fun sublist -> 
             List.length sublist <= List.length l
-            && List.forall (fun e -> List.exists ((=) e) l) sublist)
+            && Seq.forall (fun e -> List.exists ((=) e) l) sublist)
 
     [<Property>]
     let ArrayOf (NonNegativeInt size) (v:int) =
         Gen.resize size (Gen.arrayOf <| Gen.constant v)
         |> sample 10
-        |> List.forall (fun l -> l.Length <= size && Array.forall ((=) v) l)
+        |> Seq.forall (fun l -> l.Length <= size && Array.forall ((=) v) l)
 
     [<Property>]
     let ``ArrayOf high dimension`` (NonNegativeInt size) (v:int) =
         Gen.resize size (Gen.arrayOf (Gen.arrayOf (Gen.arrayOf (Gen.arrayOf <| Gen.constant v))))
         |> sample 10
-        |> List.forall (fun l -> l.Length <= size && (Array.forall (Array.forall (Array.forall (Array.forall ((=) v)))) l))
+        |> Seq.forall (fun l -> l.Length <= size && (Array.forall (Array.forall (Array.forall (Array.forall ((=) v)))) l))
     
     [<Property>]
     let ArrayOfLength (v:char) (PositiveInt length) =
@@ -309,7 +309,7 @@ module Gen =
         static member Identity (x :'a) =
             let x' =  Gen.constant x
             let a = sample 10 (id x')
-            let b = List.replicate 10 (id x)
+            let b = Array.replicate 10 (id x)
             a = b
 
         static member Distribution (x:'a) (f:'b ->'c) (g:'a->'b) =
@@ -327,7 +327,7 @@ module Gen =
         static member Identity (v: 'a) = 
             let a = Gen.constant v
             let x = Gen.constant id <*> a
-            sample 10 x |> List.forall ((=) v)
+            sample 10 x |> Seq.forall ((=) v)
 
         static member Composition (u: 'a -> 'b) (v: 'c -> 'a) (w: 'c) = 
             let u',v',w' = Gen.constant u, Gen.constant v, Gen.constant w

@@ -10,7 +10,7 @@ module Helpers =
 
     let sample n = Gen.sampleWithSize 1000 n
 
-    let sample1 gn = sample 1 gn |> List.head
+    let sample1 gn = sample 1 gn |> Seq.head
     
     let isIn l elem = List.exists ((=) elem) l
 
