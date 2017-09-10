@@ -38,7 +38,7 @@ module Gen =
     let constant (v : (int * char)) =
         Gen.constant v
         |> sample 10
-        |> Seq.forall (fun actual -> obj.ReferenceEquals(actual, v))
+        |> Array.forall (fun actual -> obj.ReferenceEquals(actual, v))
 
     [<Property>]
     let fresh ((i:int,c:char) as v) =
