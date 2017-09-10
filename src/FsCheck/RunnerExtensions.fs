@@ -75,8 +75,8 @@ type Configuration() =
 
     ///If not null, the seed to use to start testing. Allows reproduction of previous runs.
     member __.Replay 
-        with get() = (match replay with None -> Unchecked.defaultof<uint64*uint64> | Some s -> (s.Seed,s.Gamma))
-        and set(v) = replay <- Some <| Random.createWithSeedAndGamma v
+        with get() = (match replay with None -> Unchecked.defaultof<uint64*uint64*int> | Some s -> (s.Rnd.Seed,s.Rnd.Gamma,Option.defaultValue 0 s.Ff))
+        and set(v) = replay <- Some <| let s,g,ff = v in { Rnd = Random.createWithSeedAndGamma (s,g); Ff = if ff = -1 then None else Some ff }
         
     ///If set, inputs for property generation and property evaluation will be runned in parallel.
     member __.ParallelRunConfig 

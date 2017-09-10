@@ -69,17 +69,18 @@ module internal PropertyConfig =
           QuietOnSuccess = extra.QuietOnSuccess |> orElse original.QuietOnSuccess
           Arbitrary      = Array.append extra.Arbitrary original.Arbitrary }
 
-    let parseStdGen (str: string) =
+    let parseReplay (str: string) =
         //if someone sets this, we want it to throw if it fails
         let split = str.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
-        let elem1 = UInt64.Parse(split.[0])
-        let elem2 = UInt64.Parse(split.[1])
-        Rnd (elem1,elem2)
+        let seed = UInt64.Parse(split.[0])
+        let gamma = UInt64.Parse(split.[1])
+        let ff = if split.Length = 3 then Some <| Convert.ToInt32(UInt32.Parse(split.[2])) else None
+        { Rnd = Rnd (seed,gamma); Ff = ff }
 
     let toConfig (output : TestOutputHelper) propertyConfig =
         { Config.Default with
               Replay         = propertyConfig.Replay 
-                               |> Option.map parseStdGen 
+                               |> Option.map parseReplay 
                                |> orElse Config.Default.Replay
               ParallelRunConfig    = propertyConfig.Parallelism 
                                     |> Option.map (fun i -> { MaxDegreeOfParallelism = i })

@@ -15,13 +15,12 @@ type NUnitTest() =
     member __.RevUnit (x:char) =
         List.rev [x] = [x]
 
-    // Parallelism for PropertyAttribute not implemented for Nunit yet
-    // [<Property(Parallelism = 8)>]
-//    member __.Async (i:int) =
-//        async { 
-//            do! Async.Sleep 1500
-//            return true
-//        }
+    [<Property(Parallelism = 8)>]
+    member __.Async (i:int) =
+        async { 
+            do! Async.Sleep 1500
+            return true
+        }
   
     [<Property>]
     member __.RevApp (x:string) xs =
@@ -58,3 +57,7 @@ type NUnitTest() =
     [<Property(QuietOnSuccess = true)>]
     member __.NoOutputOnSuccess (x:char) =
         List.rev [x] = [x]
+
+    [<Property( Replay="7797334217889672160,158684412801592049,91", Verbose = true )>]
+    member __.Get82_shouldFail (i:int) =
+        i < 80

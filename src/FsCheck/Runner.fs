@@ -33,6 +33,12 @@ type IRunner =
     ///Called whenever all tests are done, either True, False or Exhausted.
     abstract member OnFinished: string * TestResult -> unit
 
+type Replay =
+    {
+      Rnd: Rnd
+      Ff: int option
+    }
+
 type ParallelRunConfig =
     { // For I/O bound work 1 would be fine, for cpu intensive tasks Environment.ProcessorCount appears to be fastest option
       MaxDegreeOfParallelism : int 
@@ -46,7 +52,7 @@ type Config =
       ///The maximum number of tests where values are rejected, e.g. as the result of ==>
       MaxFail       : int
       ///If set, the seed to use to start testing. Allows reproduction of previous runs.
-      Replay        : Rnd option
+      Replay        : Replay option
       ///Name of the test.
       Name          : string
       ///The size to use for the first test.
@@ -150,42 +156,42 @@ module Runner =
             else xs.Add <| EndShrink result; xs :> seq<_> |> OutcomeSeqOrFuture.Value
         iter result shrinks
 
-    let private test initSize resize rnd0 gen =
-        let rec test' initSize resize rnd0 ((Gen eval) as gen) =
-            seq { 
-                let rnd1,rnd2 = Random.split rnd0
-                let newSize = resize initSize
-                //result forced here!
-                let result, shrinks =
-                    try
-                        let (MkRose (Lazy result, shrinks)) = (eval (newSize |> round |> int) rnd2).Value
-                        result, shrinks
-                        //printfn "After generate"
-                        //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
-                    with :? DiscardException -> 
-                        Res.rejectedV, Seq.empty
+    let stepsSeq resize =
+        Seq.unfold (fun (initSize, rnd) ->
+            let rnd1, rnd2 = Random.split rnd
+            let newSize = resize initSize
+            Some ((rnd1, rnd2, newSize), (newSize, rnd1)))
 
-                yield Generated result.Arguments
+    let private test fastForward initSize resize rnd0 gen =    
+        let test' ((Gen eval) as gen) (_, rnd2, newSize) =
+            let result, shrinks =
+                try
+                    let (MkRose (Lazy result, shrinks)) = (eval (newSize |> round |> int) rnd2).Value
+                    result, shrinks
+                    //printfn "After generate"
+                    //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
+                with :? DiscardException -> 
+                    Res.rejectedV, Seq.empty
+                    
+            let g = Generated result.Arguments
 
-                match result.Outcome with
-                    | Outcome.Rejected -> 
-                        yield Failed result 
-                    | Outcome.True -> 
-                        yield Passed result
-                    | o when o.Shrink -> 
-                        yield Falsified result
-                        yield! shrinkResultValue result (shrinks.GetEnumerator ())
-                    | _ ->
-                        yield Falsified result
-                        yield EndShrink result
-                yield! test' newSize resize rnd1 gen
-            }
+            match result.Outcome with
+                | Outcome.Rejected -> 
+                    seq {yield g; yield Failed result}
+                | Outcome.True -> 
+                    seq {yield g; yield Passed result}
+                | o when o.Shrink -> 
+                    seq {yield g; yield Falsified result; yield! shrinkResultValue result (shrinks.GetEnumerator ())}
+                | _ ->
+                    seq {yield g; yield Falsified result; yield EndShrink result}
         //Since we're not runing test for parallel scenarios it's impossible to discover `ResultContainer.Future` inside `result`
         let gen' = gen |> Gen.map (Rose.map (fun rc -> 
                 match rc with 
                 | ResultContainer.Value r -> r 
                 | ResultContainer.Future t -> t.Result))
-        test' initSize resize rnd0 gen'
+        let source = stepsSeq resize (initSize, rnd0)
+        Option.fold (fun s i -> Seq.skip (i-1) s |> (Seq.take 1)) source fastForward
+        |> Seq.collect (test' gen')
 
     let private outcomeSeq result (shrinks :seq<_>) = 
         let g = Generated result.Arguments
@@ -216,12 +222,6 @@ module Runner =
                 match outcomeSeq x.Result shrinks with
                 | OutcomeSeqOrFuture.Value v -> Threading.Tasks.Task.FromResult v
                 | OutcomeSeqOrFuture.Future t -> t) |> Threading.Tasks.TaskExtensions.Unwrap |> OutcomeSeqOrFuture.Future
-
-    let stepsSeq resize =
-        Seq.unfold (fun (initSize, rnd) ->
-            let rnd1, rnd2 = Random.split rnd
-            let newSize = resize initSize
-            Some ((rnd1, rnd2, newSize), (newSize, rnd1)))
 
     let private outcomeSeqFutureCont (xs :Threading.Tasks.Task<seq<TestStep>>) (state :obj) =
         match state with 
@@ -373,19 +373,19 @@ module Runner =
         let tryShrinkNb = ref 0
         let origArgs = ref []
         let lastStep = ref (Failed Res.rejectedV)
-        let seed = match config.Replay with None -> Random.create() | Some s -> s
+        let seed, ff = match config.Replay with None -> Random.create(), None | Some s -> s.Rnd, s.Ff
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
         let testSeq = 
-            if config.ParallelRunConfig.IsSome then 
+            if config.ParallelRunConfig.IsSome && ff.IsNone then //no point to run single test in parallel
                 parallelTest config 
              else 
-                test
+                test ff
         testSeq (float config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
         |> Common.takeWhilePlusLast (fun step ->
             lastStep := step
             match step with
                 | Generated args -> config.Runner.OnArguments(!testNb, args, config.Every); true
-                | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest //stop if we have enough tests
+                | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest && ff.IsNone //stop if we have enough tests or this was fast-forward single test run
                 | Falsified result -> origArgs := result.Arguments; testNb := !testNb + 1; true //falsified, true to continue with shrinking
                 | Failed _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxFail //failed, stop if we have too much failed tests
                 | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Runner.OnShrink(result.Arguments, config.EveryShrink); true

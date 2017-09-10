@@ -41,11 +41,15 @@ type PropertyAttribute() =
     let mutable verbose = false
     let mutable quietOnSuccess = false
     let mutable replay = null
+    let mutable parallelism = -1
     let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
 
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
     member __.Replay with get() = replay and set(v) = replay <- v
+    ///If set, run tests in parallel. Useful for Task/async related work and heavy number crunching
+    ///Environment.ProcessorCount have been found to be useful default.
+    member __.Parallelism with get() = parallelism and set(v) = parallelism <- v
     ///The maximum number of tests that are run.
     member __.MaxTest with get() = maxTest and set(v) = maxTest <- v
     ///The maximum number of tests where values are rejected, e.g. as the result of ==>
@@ -137,12 +141,13 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         testResult.RecordException(x.FilterException <| ex, failureSite)
 
     member private x.RunTestMethod context testResult =
-        let parseStdGen (str: string) =
+        let parseReplay (str: string) =
             //if someone sets this, we want it to throw if it fails
             let split = str.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
-            let elem1 = UInt64.Parse(split.[0])
-            let elem2 = UInt64.Parse(split.[1])
-            Rnd (elem1,elem2)
+            let seed = UInt64.Parse(split.[0])
+            let gamma = UInt64.Parse(split.[1])
+            let ff = if split.Length = 3 then Some <| Convert.ToInt32(UInt32.Parse(split.[2])) else None
+            { Rnd = Rnd (seed,gamma); Ff = ff }
         let attr = x.GetFsCheckPropertyAttribute()
         let testRunner = NunitRunner()
         let config = { Config.Default with
@@ -155,7 +160,9 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
                         Arbitrary = attr.Arbitrary |> Array.toList
                         Replay = match attr.Replay with
                                     | null -> Config.Default.Replay
-                                    | s -> parseStdGen s |> Some
+                                    | s -> parseReplay s |> Some
+                        ParallelRunConfig = if attr.Parallelism <= 0 
+                                            then None else Some { MaxDegreeOfParallelism = attr.Parallelism }
                         Runner = testRunner }
 
         let target = if x.Fixture <> null then Some x.Fixture
