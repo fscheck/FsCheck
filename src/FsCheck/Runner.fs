@@ -34,6 +34,15 @@ type IRunner =
     ///Called whenever all tests are done, either True, False or Exhausted.
     abstract member OnFinished: string * TestResult -> unit
 
+///For implementing your own test runner.
+type IRunner2 =
+    inherit IRunner
+    ///Called whenever arguments are generated and after the test is run.
+    abstract member OnArguments: int * list<obj> * (int -> list<obj> -> string) -> unit
+    
+
+
+
 ///For configuring a run.
 [<NoEquality;NoComparison>]
 type Config = 
@@ -73,7 +82,7 @@ module Runner =
    
     [<NoEquality;NoComparison>]
     type private TestStep = 
-        | Generated of list<obj>    //generated arguments (test not yet executed)
+        | Generated of (list<obj> * StdGen * int)    //generated arguments (test not yet executed)
         | Passed of Result          //one test passed
         | Falsified of Result       //falsified the property
         | Failed of Result          //generated arguments did not pass precondition
@@ -94,23 +103,24 @@ module Runner =
         
     let rec private test initSize resize rnd0 gen =
         seq { let rnd1,rnd2 = split rnd0
-              let newSize = resize initSize
+              let newSize = initSize |> resize
+              let usedSize = newSize |> round |> int
               //printfn "Before generate"
               //result forced here!
               let result, shrinks =
                   try
-                    let (MkRose (Lazy result,shrinks)) = Gen.eval (newSize |> round |> int) rnd2 gen
+                    let (MkRose (Lazy result,shrinks)) = Gen.eval usedSize rnd2 gen
                     result, shrinks
                     //printfn "After generate"
                     //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
                   with :? DiscardException -> 
                     Res.rejected, Seq.empty
 
-              yield Generated result.Arguments
+              yield Generated (result.Arguments, rnd2, usedSize)
 
               match result.Outcome with
                 | Outcome.Rejected -> 
-                    yield Failed result 
+                    yield Failed result
                 | Outcome.True -> 
                     yield Passed result
                 | o when o.Shrink -> 
@@ -122,7 +132,7 @@ module Runner =
               yield! test newSize resize rnd1 gen
         }
 
-    let private testsDone config testStep origArgs ntest nshrinks usedSeed stamps  =
+    let private testsDone config testStep origArgs ntest nshrinks originalSeed stamps lastSeed lastSize =
         let entry (n,xs) = (100 * n / ntest),xs
         let table = stamps 
                     |> Seq.filter (not << List.isEmpty)
@@ -136,9 +146,9 @@ module Runner =
             let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
             match testStep with
                 | Passed _ -> TestResult.True (testData, config.QuietOnSuccess)
-                | Falsified result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
+                | Falsified result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, originalSeed)
                 | Failed _ -> TestResult.Exhausted testData
-                | EndShrink result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
+                | EndShrink result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, originalSeed)
                 | _ -> failwith "Test ended prematurely"
         config.Runner.OnFinished(config.Name,testResult)
 
@@ -151,12 +161,14 @@ module Runner =
         let lastStep = ref (Failed Res.rejected)
         let seed = match config.Replay with None -> newSeed() | Some s -> s
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
+        let lastSeed = ref seed
+        let lastSize = ref config.StartSize
         test (float config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen) 
         |> Common.takeWhilePlusLast (fun step ->
             lastStep := step
             //printfn "%A" step
             match step with
-                | Generated args -> config.Runner.OnArguments(!testNb, args, config.Every); true
+                | Generated (args,seed,size) -> lastSeed := seed; lastSize := size; config.Runner.OnArguments(!testNb, args, config.Every); true
                 | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest //stop if we have enough tests
                 | Falsified result -> origArgs := result.Arguments; testNb := !testNb + 1; true //falsified, true to continue with shrinking
                 | Failed _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxFail //failed, stop if we have too much failed tests
@@ -168,7 +180,7 @@ module Runner =
                 | Passed result -> (result.Stamp :: acc)
                 | _ -> acc
             ) [] 
-        |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed
+        |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed !lastSeed !lastSize
 
     let private newline = Environment.NewLine
 
@@ -245,7 +257,6 @@ module Runner =
             member __.OnFinished(name,testResult) = 
                 printf "%s" (onFinishedToString name testResult)
         }
-           
 
     ///Force this value to do the necessary initializations of typeclasses. Normally this initialization happens automatically. 
     ///In any case, it can be forced any number of times without problem.
