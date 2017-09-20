@@ -1,4 +1,7 @@
 ### 2.10.1 - To be released
+* Make Gen.variant thread safe.
+
+* Allow registration of Arbitrary instances that are defined as properties, in addition to methods.
 
 ### 2.10.0 - 7 September 2017
 * Update FsCheck.NUnit to work with NUnit 3.8.1. FsCheck.NUnit is not backwards compatible with earlier NUnit versions because NUnit changed the name of a few methods in their extension API.

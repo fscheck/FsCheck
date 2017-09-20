@@ -22,6 +22,22 @@ module Runner =
     let ``should register Arbitrary instances from Config in last to first order``(underTest:float) =
         underTest <= 0.0
 
+    type TestArbitrary3 =
+        static member NegativeDouble =
+            TestArbitrary2.NegativeDouble()
+
+    [<Property( Arbitrary=[| typeof<TestArbitrary3> |] )>]
+    let ``should register Arbitrary instances defined as properties``(underTest:float) =
+        underTest <= 0.0
+
+    type TestArbitrary4() =
+        static member val NegativeDouble  =
+            TestArbitrary2.NegativeDouble()
+
+    [<Property( Arbitrary=[| typeof<TestArbitrary4> |] )>]
+    let ``should register Arbitrary instances defined as auto-implemented properties ``(underTest:float) =
+        underTest <= 0.0
+
     [<Fact>]
     let ``should discard case with discardexception in gen``() =
         let myGen = 

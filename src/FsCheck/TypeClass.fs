@@ -63,6 +63,7 @@ module TypeClass =
             | _ -> acc
         let addMethods (t:Type) =
             t.GetRuntimeMethods()
+            |> Seq.append (t.GetRuntimeProperties() |> Seq.where (fun prop -> prop.CanRead)|> Seq.map (fun prop -> prop.GetGetMethod(true)))
             |> Seq.where(fun meth -> meth.IsStatic && (meth.IsPublic || not onlyPublic) && meth.GetParameters().Length = 0)
             |> Seq.fold addMethod []
         let instances = addMethods instancesType
