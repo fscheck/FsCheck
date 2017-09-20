@@ -57,6 +57,18 @@ module Runner =
         Check.QuickThrowOnFailure <| (fun a -> if a > 3 then Prop.discard() else true)
         
     [<Fact>]
+    let ``should show control characters as character codes``() =
+        let stringWithControlChar = "1234\001 fadf"
+        let result = Runner.argumentsToString [stringWithControlChar]
+        test <@ result.StartsWith("\"1234\\001 fadf") @>
+
+    [<Fact>]
+    let ``should show control characters as character codes for strings nested in other types``() =
+        let stringWithControlChar = Some (Choice1Of2 "1234\001 fadf")
+        let result = Runner.argumentsToString [stringWithControlChar]
+        test <@ result.StartsWith("Some (Choice1Of2 \"1234\\001 fadf") @>
+
+    [<Fact>]
     let ``should replay property with one generator``() =
         let doOne(s1,s2) =
             try

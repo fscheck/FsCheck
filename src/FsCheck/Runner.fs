@@ -172,7 +172,24 @@ module Runner =
 
     let private newline = Environment.NewLine
 
-    let argumentsToString = List.map (sprintf "%A") >> String.concat newline
+    let argumentsToString args =
+        let escapeControlChars (s:string) =
+            if isNull s then s
+            else
+                let result = System.Text.StringBuilder()
+                let mutable escaped = false
+                s |> String.iter (fun ch ->
+                        if not (Char.IsControl(ch)) then
+                            result.Append(ch) |> ignore
+                        else
+                            escaped <- true
+                            result.Append(ch |> int |> sprintf "\%03i") |> ignore)
+                if escaped then result.Append(" (At least one control character has been escaped as a char code, e.g. \\023)") |> ignore
+                result.ToString()
+
+        args
+        |> List.map (sprintf "%A" >> escapeControlChars)
+        |> String.concat newline
 
     let onStartFixtureToString (t:Type) =
         sprintf "--- Checking %s ---%s" t.Name newline

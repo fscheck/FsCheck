@@ -3,6 +3,8 @@
 
 * Allow registration of Arbitrary instances that are defined as properties, in addition to methods.
 
+* Show control characters, which are unprintable, as escaped ascii codes in the output.
+
 ### 2.10.0 - 7 September 2017
 * Update FsCheck.NUnit to work with NUnit 3.8.1. FsCheck.NUnit is not backwards compatible with earlier NUnit versions because NUnit changed the name of a few methods in their extension API.
 * Gen.listOf and Gen.arrayOf now divide the size among the element generators, to avoid exponential explosion of size when high-dimensional types like `int list list list` are generated. This is the approach advocated in https://gupea.ub.gu.se/handle/2077/22087. The effect on list and array generators is as follows, quoting from that text: This adjustment of the list generator impacts the distribution in several ways. Most apparently it inverts the correlation between the length of the list and the size of the elements, long lists will tend to have small elements instead of large. Short lists with small elements will be generated whenever n is low. Short lists with large elements will occur when n is large and a small k is chosen. If a large k is chosen instead, long list with small elements will be generated. The only way to generate long lists with large elements is if n is very large, which is natural given that the purpose of the modified algorithm is to reduce the size of test data.
