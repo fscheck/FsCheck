@@ -219,6 +219,24 @@ module BugReproIssue344 =
         if tooManyFrames then failwith "too many frames, possible stackoverflow detected"
 
 
+module Override =
+    open System
+    open FsCheck
+    open global.Xunit
+
+    type Calc = { Float: float }
+
+    type Arbitraries =
+        static member Float() = Arb.Default.NormalFloat() |> Arb.convert float NormalFloat
+        //static member Calc() = Arb.Default.Derive<Calc>()
+
+    [<Fact>]
+    let ``should use override in same Arbitrary class``() =
+        Check.One(Config.QuickThrowOnFailure, fun (calc:Calc) -> true)
+        Check.One( { Config.QuickThrowOnFailure with Arbitrary=[ typeof<Arbitraries> ] },
+             fun (calc:Calc) -> not (Double.IsNaN calc.Float || Double.IsInfinity calc.Float || calc.Float = Double.Epsilon || calc.Float = Double.MinValue || calc.Float = Double.MaxValue))
+
+
 // Compiler warning FS0044 occurs when a construct is deprecated.
 // This warning suppression has to sit in the end of the file, because once a
 // warning type is suppressed in a file, it can't be turned back on. There's a
