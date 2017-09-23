@@ -1,4 +1,4 @@
-### 2.10.1 - To be released
+### 2.10.1 - 23 September 2017
 * Make Gen.variant thread safe.
 
 * Allow registration of Arbitrary instances that are defined as properties, in addition to methods.
