@@ -1,5 +1,5 @@
 ### 2.10.2 - To be released
-
+* Fix potential stack overflow in Gen.piles.
 
 ### 2.10.1 - 23 September 2017
 * Make Gen.variant thread safe.

@@ -183,14 +183,23 @@ module Gen =
         |> List.map Seq.toList
         |> List.exists ((<>) l)
 
+    [<Fact>]
+    let ``Shuffle returns different array instances``() =
+        Gen.shuffle [| 1..30 |]
+        |> sample 20
+        |> List.pairwise
+        |> List.forall (fun (l,r) -> not <| obj.ReferenceEquals(l,r))
+
     [<Property>]
     let Piles (k:int) (sum:int) =
         let sample = Gen.piles k sum |> sample 10
-        sample
-        |> List.forall (fun l -> 
-            l.Length = max 0 k // if k <= 0 empty list is returned 
-            && Array.sum l = (if k <= 0 then 0 else sum)
-            && if sum >= 0 then Array.forall (fun e -> e >= 0) l else true)
+        
+        test <@ sample |> List.pairwise |> List.forall (fun (l,r) -> (l.Length = 0 && r.Length = 0) || not <| obj.ReferenceEquals(l,r)) @>
+        test <@ sample
+                |> List.forall (fun l -> 
+                    l.Length = max 0 k // if k <= 0 empty list is returned 
+                    && Array.sum l = (if k <= 0 then 0 else sum)
+                    && if sum >= 0 then Array.forall (fun e -> e >= 0) l else true) @>
         //|> Prop.collect (k, sum, sample)
    
     [<Property>]
@@ -486,3 +495,8 @@ module Gen =
         let r = Gen.sample size times Arb.generate<SomeAmbiguity.Ambiguous2>
         let r = Gen.sample size times Arb.generate<SomeAmbiguity.Ambiguous3>
         ()
+
+    [<Fact>]
+    let ``generating large array should work``() =
+        // occassionally there have been bugs where large array generations causes stack overflow
+        Gen.choose(0,100) |> Gen.arrayOf |> Gen.sample 30000 100
