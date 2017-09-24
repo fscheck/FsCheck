@@ -70,33 +70,30 @@ type Arbitrary<'a>() =
 [<AutoOpen>]
 module GenBuilder =
 
-    let private result x = Gen (fun _ r -> GeneratedValue(x,r))
+    let inline private result x = Gen (fun _ r -> GeneratedValue(x,r))
 
-    let private bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
+    let inline private bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
         Gen (fun n r0 ->
             let v_r1 = m n r0
             let (Gen m') = k v_r1.Value
             m' n v_r1.UpdatedState)
 
-    let private delay (f : unit -> Gen<_>) : Gen<_> = 
+    let inline private delay (f : unit -> Gen<_>) : Gen<_> = 
         Gen (fun n r -> match f() with (Gen g) -> g n r)
 
-    let rec private doWhile p (Gen m) =
-        let rec go pred size r0 =
-            if pred() then
-                let r1 = (m size r0).UpdatedState
-                go pred size r1
-            else
-                r0
-        Gen (fun n r ->
-            GeneratedValue ((), go p n r))
+    let inline private doWhile p (Gen m) =
+        let go pred size rInit =
+            let mutable r = rInit
+            while pred() do r <- (m size r).UpdatedState
+            r            
+        Gen (fun n r -> GeneratedValue ((), go p n r))
 
-    let private tryFinally (Gen m) handler = 
+    let inline private tryFinally (Gen m) handler = 
         Gen (fun n r -> try m n r finally handler ())
 
-    let private dispose (x: #System.IDisposable) = x.Dispose()
+    let inline private dispose (x: #System.IDisposable) = x.Dispose()
 
-    let private using r f = tryFinally (f r) (fun () -> dispose r)
+    let inline private using r f = tryFinally (f r) (fun () -> dispose r)
 
     ///The workflow type for generators.
     type GenBuilder internal() =

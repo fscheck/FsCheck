@@ -1,6 +1,11 @@
 ### 3.0.0-alpha - To be released
 
-### 2.10.1 - To be released
+### 2.10.1 - 23 September 2017
+* Make Gen.variant thread safe.
+
+* Allow registration of Arbitrary instances that are defined as properties, in addition to methods.
+
+* Show control characters, which are unprintable, as escaped ascii codes in the output.
 
 ### 2.10.0 - 7 September 2017
 * Update FsCheck.NUnit to work with NUnit 3.8.1. FsCheck.NUnit is not backwards compatible with earlier NUnit versions because NUnit changed the name of a few methods in their extension API.

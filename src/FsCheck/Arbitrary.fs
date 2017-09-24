@@ -222,7 +222,7 @@ module Arb =
            override __.Shrinker a = shrinker a
        }
 
-    // Construct an Arbitrary instance from a generator and shrinker.
+    /// Construct an Arbitrary instance from a generator and shrinker.
     [<CompiledName("From")>]
     let fromGenShrinkFunc (gen: Gen<'Value>, shrinker: Func<'Value, seq<'Value>>): Arbitrary<'Value> =
        fromGenShrink(gen, shrinker.Invoke)

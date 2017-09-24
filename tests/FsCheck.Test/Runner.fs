@@ -157,6 +157,22 @@ module Runner =
     let ``should register Arbitrary instances from Config in last to first order``(underTest:float) =
         underTest <= 0.0
 
+    type TestArbitrary3 =
+        static member NegativeDouble =
+            TestArbitrary2.NegativeDouble()
+
+    [<Property( Arbitrary=[| typeof<TestArbitrary3> |] )>]
+    let ``should register Arbitrary instances defined as properties``(underTest:float) =
+        underTest <= 0.0
+
+    type TestArbitrary4() =
+        static member val NegativeDouble  =
+            TestArbitrary2.NegativeDouble()
+
+    [<Property( Arbitrary=[| typeof<TestArbitrary4> |] )>]
+    let ``should register Arbitrary instances defined as auto-implemented properties ``(underTest:float) =
+        underTest <= 0.0
+
     [<Fact>]
     let ``should discard case with discardexception in gen``() =
         let myGen = 
@@ -175,6 +191,18 @@ module Runner =
     let ``should discard case with discardexception in test``() =
         Check.QuickThrowOnFailure <| (fun a -> if a > 3 then Prop.discard() else true)
         
+    [<Fact>]
+    let ``should show control characters as character codes``() =
+        let stringWithControlChar = "1234\001 fadf"
+        let result = Runner.argumentsToString [stringWithControlChar]
+        test <@ result.StartsWith("\"1234\\001 fadf") @>
+
+    [<Fact>]
+    let ``should show control characters as character codes for strings nested in other types``() =
+        let stringWithControlChar = Some (Choice1Of2 "1234\001 fadf")
+        let result = Runner.argumentsToString [stringWithControlChar]
+        test <@ result.StartsWith("Some (Choice1Of2 \"1234\\001 fadf") @>
+
     [<Fact>]
     let ``should replay property with one generator``() =
         let doOne(s1,s2) =
@@ -352,6 +380,24 @@ module BugReproIssue344 =
         thread2.Start()
         thread2.Join()
         if tooManyFrames then failwith "too many frames, possible stackoverflow detected"
+
+
+module Override =
+    open System
+    open FsCheck
+    open global.Xunit
+
+    type Calc = { Float: float }
+
+    type Arbitraries =
+        static member Float() = Arb.Default.NormalFloat() |> Arb.convert float NormalFloat
+        //static member Calc() = Arb.Default.Derive<Calc>()
+
+    [<Fact>]
+    let ``should use override in same Arbitrary class``() =
+        Check.One(Config.QuickThrowOnFailure, fun (calc:Calc) -> true)
+        Check.One( { Config.QuickThrowOnFailure with Arbitrary=[ typeof<Arbitraries> ] },
+             fun (calc:Calc) -> not (Double.IsNaN calc.Float || Double.IsInfinity calc.Float || calc.Float = Double.Epsilon || calc.Float = Double.MinValue || calc.Float = Double.MaxValue))
 
 
 // Compiler warning FS0044 occurs when a construct is deprecated.
