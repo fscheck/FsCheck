@@ -13,10 +13,7 @@ FsCheck is a tool for testing .NET programs automatically. The programmer provid
   <div class="span1"></div>
   <div class="span6">
     <div class="well well-small" id="nuget">
-      FsCheck, NUnit and xUnit.NET plugin can be <a href="https://www.nuget.org/packages?q=fscheck">installed from NuGet</a>:
-      <pre>PM> Install-Package FsCheck
-PM> Install-Package FsCheck.NUnit
-PM> Install-Package FsCheck.Xunit</pre>
+      FsCheck, NUnit and xUnit.NET plugin can be <a href="https://www.nuget.org/packages?q=fscheck">installed from NuGet</a> using your favorite package manager.
     </div>
   </div> 
   <div class="span1"></div>

@@ -413,24 +413,29 @@ module Gen =
     [<CompiledName("ListOf")>]
     let listOfLength n arb = sequence [ for _ in 1..n -> arb ]
 
-    ///Generates a random permutation of the given sequence.
-    //[category: Creating generators]
-    [<CompiledName("Shuffle")>]
-    let shuffle xs =
+    let inline private shuffleInPlace (arr: _ array) =
         // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
-        let xs = xs |> Seq.toArray
-        let swap (arr : _ array) i j =
+        let inline swap (arr : _ array) i j =
             let v = arr.[j]
             arr.[j] <- arr.[i]
             arr.[i] <- v
         gen {
-            let copy = Array.copy xs
-            let maxI = copy.Length - 1
+            let maxI = arr.Length - 1
             let! indexes =
                 [| for i in 0..maxI - 1 -> choose (i, maxI) |]
                 |> sequenceToArr
-            indexes |> Array.iteri (swap copy)
-            return copy
+            indexes |> Array.iteri (swap arr)
+            return arr
+        }
+
+    ///Generates a random permutation of the given sequence.
+    //[category: Creating generators]
+    [<CompiledName("Shuffle")>]
+    let shuffle xs =
+        let xs = xs |> Seq.toArray
+        gen {
+            let copy = Array.copy xs
+            return! shuffleInPlace copy
         }
 
     ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
@@ -502,16 +507,25 @@ module Gen =
     //[category: Creating generators]
     [<CompiledName("Piles")>]
     let piles k sum = 
-        let rec genSorted = function 
-            | (1, n, _) -> constant [n]
-            | (p, n, m) ->
-                gen { let! r = choose (int (ceil(float n / float p)), min m n)
-                      return! map (fun l -> r::l) (genSorted (p-1, n-r, min m r))
-                }
+        let genSorted p n m =
+            gen {
+                let result = Array.zeroCreate<int> k
+                let mutable n = n
+                let mutable m = m
+                for i in p..(-1)..1 do
+                    if i = 1 then
+                        result.[i-1] <- n
+                    else
+                        let! r = choose (int (ceil(float n / float i)), min m n)
+                        result.[i-1] <- r
+                        n <- n-r
+                        m <- min m r
+                return result
+            }
         if k <= 0 then
             constant [||]
         else
-            gen.Bind(genSorted (k, sum, sum), shuffle)
+            gen.Bind(genSorted k sum sum, shuffleInPlace)
   
 
     /// Generates a list of random length. The maximum length depends on the
