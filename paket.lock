@@ -1,7 +1,7 @@
 RESTRICTION: || (== net452) (== portable-net45+win8) (== portable-net45+win8+wp8) (== portable-net45+win8+wp8+wpa81)
 NUGET
   remote: https://www.nuget.org/api/v2
-    FAKE (4.63)
+    FAKE (4.63.2)
     FSharp.Compiler.Service (2.0.0.6)
     FSharp.Core (4.1.18) - redirects: force
     FSharp.Formatting (2.14.4)
@@ -9,32 +9,25 @@ NUGET
       FSharpVSPowerTools.Core (>= 2.3 < 2.4)
     FSharpVSPowerTools.Core (2.3)
       FSharp.Compiler.Service (>= 2.0.0.3)
-    Microsoft.Bcl (1.1.10) - restriction: || (&& (== net452) (< net45) (< portable-win81+wpa81)) (== portable-net45+win8) (== portable-net45+win8+wp8) (== portable-net45+win8+wp8+wpa81)
-      Microsoft.Bcl.Build (>= 1.0.14)
-    Microsoft.Bcl.Build (1.0.21) - import_targets: false, restriction: || (&& (== net452) (< net45) (< portable-win81+wpa81)) (== portable-net45+win8) (== portable-net45+win8+wp8) (== portable-net45+win8+wp8+wpa81)
-    Microsoft.Net.Http (2.2.29) - restriction: || (&& (== net452) (< net45) (< portable-win81+wpa81)) (== portable-net45+win8) (== portable-net45+win8+wp8) (== portable-net45+win8+wp8+wpa81)
-      Microsoft.Bcl (>= 1.1.10)
-      Microsoft.Bcl.Build (>= 1.0.14)
     NUnit (3.8.1)
     NUnit3TestAdapter (3.8.0) - version_in_path: true
-    Octokit (0.24)
-      Microsoft.Net.Http  - restriction: || (&& (== net452) (== portable-net45+win8)) (&& (== net452) (== portable-net45+win8+wp8)) (&& (== net452) (== portable-net45+win8+wp8+wpa81)) (&& (== net452) (< net45) (< portable-win81+wpa81)) (== portable-net45+win8) (&& (== portable-net45+win8) (== portable-net45+win8+wp8)) (&& (== portable-net45+win8) (== portable-net45+win8+wp8+wpa81)) (== portable-net45+win8+wp8) (&& (== portable-net45+win8+wp8) (== portable-net45+win8+wp8+wpa81)) (== portable-net45+win8+wp8+wpa81)
+    Octokit (0.26)
     Unquote (3.2)
     xunit (2.2)
       xunit.assert (2.2)
       xunit.core (2.2)
-    xunit.abstractions (2.0.1) - restriction: || (== net452) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
+    xunit.abstractions (2.0.1) - restriction: || (== net452) (&& (== net452) (== portable-net45+win8)) (&& (== net452) (== portable-net45+win8+wp8)) (&& (== net452) (== portable-net45+win8+wp8+wpa81)) (&& (== portable-net45+win8) (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8) (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1)) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
     xunit.assert (2.2)
     xunit.core (2.2)
       xunit.extensibility.core (2.2)
       xunit.extensibility.execution (2.2)
     xunit.extensibility.core (2.2)
-      xunit.abstractions (>= 2.0.1) - restriction: || (== net452) (&& (== net452) (== portable-net45+win8)) (&& (== net452) (== portable-net45+win8+wp8)) (&& (== net452) (== portable-net45+win8+wp8+wpa81)) (&& (== portable-net45+win8) (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8) (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1)) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
+      xunit.abstractions (>= 2.0.1) - restriction: || (== net452) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
     xunit.extensibility.execution (2.2)
-      xunit.extensibility.core (2.2) - restriction: || (== net452) (&& (== net452) (== portable-net45+win8)) (&& (== net452) (== portable-net45+win8+wp8)) (&& (== net452) (== portable-net45+win8+wp8+wpa81)) (&& (== portable-net45+win8) (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8) (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1)) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
+      xunit.extensibility.core (2.2) - restriction: || (== net452) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
     xunit.runner.console (2.2)
     xunit.runner.visualstudio (2.2.0) - version_in_path: true
 GITHUB
   remote: fsharp/FAKE
-    modules/Octokit/Octokit.fsx (2b028cb33738ed3d35a79730bd792c24d48a0f31)
+    modules/Octokit/Octokit.fsx (2b280a638fd60d9f1221d2eb37cd902a5475daa1)
       Octokit (>= 0.20)

@@ -6,8 +6,8 @@ open System.Runtime.CompilerServices
 [<assembly: AssemblyTitleAttribute("FsCheck.Xunit")>]
 [<assembly: AssemblyProductAttribute("FsCheck.Xunit")>]
 [<assembly: AssemblyDescriptionAttribute("Integrates FsCheck with xUnit.NET")>]
-[<assembly: AssemblyVersionAttribute("2.10.2")>]
-[<assembly: AssemblyFileVersionAttribute("2.10.2")>]
+[<assembly: AssemblyVersionAttribute("2.10.3")>]
+[<assembly: AssemblyFileVersionAttribute("2.10.3")>]
 [<assembly: InternalsVisibleToAttribute("FsCheck.Test")>]
 do ()
 
@@ -15,6 +15,6 @@ module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "FsCheck.Xunit"
     let [<Literal>] AssemblyProduct = "FsCheck.Xunit"
     let [<Literal>] AssemblyDescription = "Integrates FsCheck with xUnit.NET"
-    let [<Literal>] AssemblyVersion = "2.10.2"
-    let [<Literal>] AssemblyFileVersion = "2.10.2"
+    let [<Literal>] AssemblyVersion = "2.10.3"
+    let [<Literal>] AssemblyFileVersion = "2.10.3"
     let [<Literal>] InternalsVisibleTo = "FsCheck.Test"
