@@ -1,7 +1,14 @@
-### 3.0.0-alpha - To be released
+### 3.0.0-alpha1 - To be released
+* Update random number generator to SplitMix algorithm. (with thanks to Jack Pappas for making it fast)
 
-### 2.10.2 - To be released
-* Fix potential stack overflow in Gen.piles.
+* Add support for parallel and async testing. (by Sergey - great effort!)
+
+* Simplify sampling data, Gen.sample et al.
+
+### 2.10.3 - To be released
+
+### 2.10.2 - 25 September 2017
+* Fix stack overflow in Gen.piles, listOf and arrayOf when generating long collections.
 
 
 ### 2.10.1 - 23 September 2017
