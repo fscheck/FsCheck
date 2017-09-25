@@ -103,12 +103,12 @@ so when we run this specification we can check that FsCheck does the right thing
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">StateMachine</span><span class="o">.</span><span class="i">toProperty</span> <span class="i">spec</span>)
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 6 tests (2 shrinks) (StdGen (84802997,296355074)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (8 shrinks) (StdGen (360375385,296356034)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
-(0, Setup Counter)\010inc -&gt; 1\010inc -&gt; 2\010inc -&gt; 3\010inc -&gt; 4\010inc -&gt; 5\010inc -&gt; 6\010inc -&gt; 7\010 (At least one control character has been escaped as a char code, e.g. \023)
+(3, Setup Counter)\010inc -&gt; 4\010dec -&gt; 3\010inc -&gt; 4\010inc -&gt; 5\010inc -&gt; 6\010dec -&gt; 5\010inc -&gt; 6\010inc -&gt; 7\010inc -&gt; 8\010dec -&gt; 7\010 (At least one control character has been escaped as a char code, e.g. \023)
 Shrunk:
-(0, Setup Counter)\010inc -&gt; 1\010inc -&gt; 2\010inc -&gt; 3\010inc -&gt; 4\010inc -&gt; 5\010 (At least one control character has been escaped as a char code, e.g. \023)</code></pre></td></tr></table>
+(3, Setup Counter)\010inc -&gt; 4\010inc -&gt; 5\010 (At least one control character has been escaped as a char code, e.g. \023)</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence of operations that leads to it.</p>
 <p>But what has actually happened? Using the generators from the <code>Machine</code> methods, FsCheck tries to generate a random sequence of operations, for example:</p>
 <pre class="fssnip highlighted"><code lang="fsharp">{<span class="i">Setup</span> <span class="o">=</span> (<span class="n">0</span>, <span class="i">Setup</span> <span class="i">Counter</span>);
@@ -127,7 +127,7 @@ although the original sequence contains a few superfluous operations, FsCheck no
 
         </div>
         <div class="span3">
-          <img src="/FsCheck/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <img src="/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" />  
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
             <li class="nav-header">FsCheck</li>
             <li><a href="/FsCheck/index.html">Home page</a></li>

@@ -80,10 +80,10 @@ fails the test if a postcondition does not hold.</p>
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">Command</span><span class="o">.</span><span class="i">toProperty</span> <span class="i">spec</span>)
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 8 tests (5 shrinks) (StdGen (77999139,296355074)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (6 shrinks) (StdGen (351733449,296356034)):
 Label of failing property: model: 2 &lt;&gt; Counter=1
 Original:
-[inc; inc; dec; inc; inc; dec; inc; dec; dec]
+[inc; inc; inc; dec; dec; dec; dec; inc; inc; dec]
 Shrunk:
 [inc; inc; inc; dec]</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.</p>
@@ -144,7 +144,7 @@ Shrunk:
 
         </div>
         <div class="span3">
-          <img src="/FsCheck/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <img src="/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" />  
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
             <li class="nav-header">FsCheck</li>
             <li><a href="/FsCheck/index.html">Home page</a></li>

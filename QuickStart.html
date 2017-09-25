@@ -60,9 +60,9 @@ Prop.ForAll(revRevIsOrig).QuickCheck();</code></pre></td></tr></table>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">revIsOrig</span> (<span class="i">xs</span><span class="o">:</span><span class="i">list</span><span class="o">&lt;</span><span class="i">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span class="i">List</span><span class="o">.</span><span class="i">rev</span> <span class="i">xs</span> <span class="o">=</span> <span class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (58637580,296355074)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (332082707,296356034)):
 Original:
-[0; -2]
+[0; -1]
 Shrunk:
 [0; 1]</code></pre></td></tr></table>
 <p>In C#:</p>
@@ -88,9 +88,9 @@ To see this error, ask FsCheck to generate lists of floats:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">revRevIsOrigFloat</span> (<span class="i">xs</span><span class="o">:</span><span class="i">list</span><span class="o">&lt;</span><span class="i">float</span><span class="o">&gt;</span>) <span class="o">=</span> <span class="i">List</span><span class="o">.</span><span class="i">rev</span>(<span class="i">List</span><span class="o">.</span><span class="i">rev</span> <span class="i">xs</span>) <span class="o">=</span> <span class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 8 tests (6 shrinks) (StdGen (59037880,296355074)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 15 tests (4 shrinks) (StdGen (332478057,296356034)):
 Original:
-[0.0; nan; 0.0; infinity; 2.166666667; 0.0; 0.0]
+[2.0; -2.142857143; nan; -2.333333333; 1.4]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <p>That said, the example in C# using floats actually works!</p>
@@ -167,7 +167,7 @@ see <a href="RunningTests.html">Running Tests</a>.</p>
 
         </div>
         <div class="span3">
-          <img src="/FsCheck/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <img src="/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" />  
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
             <li class="nav-header">FsCheck</li>
             <li><a href="/FsCheck/index.html">Home page</a></li>

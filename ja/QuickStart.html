@@ -56,10 +56,8 @@
 <p>を定義すると、このような結果を確認できるでしょう:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (2 shrinks) (StdGen (2047361300,296355073)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (171021066,296356034)):
 Original:
-[-1; 2]
-Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>FsCheck は反例の <em>シュリンク</em> (訳註: 推定による絞り込みのこと)も行うので、テストケースを失敗させる最小の反例を見つけようとします。
 反例は確かに最小、つまりリストは少なくともテストを失敗するための２つの異なる要素を持っています。FsCheck はより小さな反例を
@@ -81,9 +79,9 @@ Shrunk:
 </code></pre>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (9 shrinks) (StdGen (2048007349,296355073)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (9 shrinks) (StdGen (171791771,296356034)):
 Original:
-[-1.797693135e+308; 4.940656458e-324; nan; 0.5; 0.5; -1.0; 4.940656458e-324; nan;\010 -0.5; 0.0] (At least one control character has been escaped as a char code, e.g. \023)
+[infinity; -2.0; -1.5; -1.797693135e+308; 0.0; nan; 2.0; -1.0; 0.0; -1.0]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <h2>FsCheck を他のテスティングフレームワークで使う</h2>

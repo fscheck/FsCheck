@@ -51,13 +51,13 @@ FsCheck can even shrink <code>Function</code>s. For example:</p>
       <span class="k">lazy</span> (<span class="i">List</span><span class="o">.</span><span class="i">map</span> <span class="i">f</span> <span class="i">l</span> <span class="o">=</span> (<span class="c">(*f &lt;|*)</span> <span class="i">List</span><span class="o">.</span><span class="i">head</span> <span class="i">l</span>) <span class="o">::</span> <span class="i">List</span><span class="o">.</span><span class="i">map</span> <span class="i">f</span> (<span class="i">List</span><span class="o">.</span><span class="i">tail</span> <span class="i">l</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">mapRec</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (7 shrinks) (StdGen (117290755,296355074)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (392150613,296356034)):
 Original:
-{ 0-&gt;3; 1-&gt;4; 2-&gt;0; 3-&gt;3 }
-[1; 0; 3]
+{ 0-&gt;2; 1-&gt;2 }
+[1; 1]
 Shrunk:
-{ 0-&gt;0; 1-&gt;0; 2-&gt;0; 3-&gt;0 }
-[1]</code></pre></td></tr></table>
+{ 0-&gt;2; 1-&gt;0 }
+[0]</code></pre></td></tr></table>
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
 records a map of all the arguments it was called with, and the result it produced.
 In your properties, you can extract the actual function by pattern matching as in the example.
@@ -95,10 +95,10 @@ define your own labelling equality combinator:</p>
 <span class="k">let</span> <span class="i">testCompare</span> (<span class="i">i</span><span class="o">:</span><span class="i">int</span>) (<span class="i">j</span><span class="o">:</span><span class="i">int</span>) <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span class="i">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span class="i">j</span><span class="o">-</span><span class="n">1</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (119852703,296355074)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (394882899,296356034)):
 Label of failing property: 3 = -1
 Original:
-2
+1
 1
 Shrunk:
 1
@@ -165,7 +165,7 @@ seed of its pseudo-random number generator when a test fails. Look for the bit o
 
         </div>
         <div class="span3">
-          <img src="/FsCheck/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <img src="/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" />  
           <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
             <li class="nav-header">FsCheck</li>
             <li><a href="/FsCheck/index.html">Home page</a></li>
