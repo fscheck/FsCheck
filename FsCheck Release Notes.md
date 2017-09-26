@@ -3,13 +3,13 @@
 
 * Add support for parallel and async testing. (by Sergey - great effort!)
 
-* Simplify sampling data, Gen.sample et al.
+* Simplify sampling data: Gen.sample et al.
 
-### 2.10.3 - To be released
+### 2.10.3 - 26 September 2017
+* Don't escape newline and tab characters.
 
 ### 2.10.2 - 25 September 2017
 * Fix stack overflow in Gen.piles, listOf and arrayOf when generating long collections.
-
 
 ### 2.10.1 - 23 September 2017
 * Make Gen.variant thread safe.
