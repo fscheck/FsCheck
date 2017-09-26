@@ -58,9 +58,9 @@ module Runner =
         
     [<Fact>]
     let ``should show control characters as character codes``() =
-        let stringWithControlChar = "1234\001 fadf"
+        let stringWithControlChar = "\r\n\t1234\001 fadf"
         let result = Runner.argumentsToString [stringWithControlChar]
-        test <@ result.StartsWith("\"1234\\001 fadf") @>
+        test <@ result.StartsWith("\"\r\n\t1234\\001 fadf") @>
 
     [<Fact>]
     let ``should show control characters as character codes for strings nested in other types``() =

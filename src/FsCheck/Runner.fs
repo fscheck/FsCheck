@@ -179,7 +179,7 @@ module Runner =
                 let result = System.Text.StringBuilder()
                 let mutable escaped = false
                 s |> String.iter (fun ch ->
-                        if not (Char.IsControl(ch)) then
+                        if not (Char.IsControl(ch)) || ch = '\n' || ch = '\r' || ch = '\t' then
                             result.Append(ch) |> ignore
                         else
                             escaped <- true
