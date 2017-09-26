@@ -284,9 +284,9 @@ Target "CI" DoNothing
 
 "RunTests"
   ==> "CleanDocs"
-  ==> "GenerateDocsJa"
+//  ==> "GenerateDocsJa"
   ==> "GenerateDocs"
-  =?> ("ReleaseDocs", isLocalBuild)
+//  =?> ("ReleaseDocs", isLocalBuild)
   ==> "Release"
 
 "RunTests"
