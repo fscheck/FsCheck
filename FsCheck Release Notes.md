@@ -1,4 +1,4 @@
-### 3.0.0-alpha1 - To be released
+### 3.0.0-alpha1 - 26 September 2017
 * Update random number generator to SplitMix algorithm. (with thanks to Jack Pappas for making it fast)
 
 * Add support for parallel and async testing. (by Sergey - great effort!)
