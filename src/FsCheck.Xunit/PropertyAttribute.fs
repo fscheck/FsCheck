@@ -74,8 +74,8 @@ module internal PropertyConfig =
         let split = str.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
         let seed = UInt64.Parse(split.[0])
         let gamma = UInt64.Parse(split.[1])
-        let ff = if split.Length = 3 then Some <| Convert.ToInt32(UInt32.Parse(split.[2])) else None
-        { Rnd = Rnd (seed,gamma); Ff = ff }
+        let size = if split.Length = 3 then Some <| Convert.ToInt32(UInt32.Parse(split.[2])) else None
+        { Rnd = Rnd (seed,gamma); Size = size }
 
     let toConfig (output : TestOutputHelper) propertyConfig =
         { Config.Default with
@@ -209,9 +209,9 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                           | TestResult.Exhausted _ ->
                             summary.Failed <- summary.Failed + 1
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
-                          | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
+                          | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, originalSeed, lastSeed, lastSize)  ->
                             summary.Failed <- summary.Failed + 1
-                            let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
+                            let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs originalSeed lastSeed lastSize)
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(message, e))
                           | TestResult.False _ ->
                             summary.Failed <- summary.Failed + 1

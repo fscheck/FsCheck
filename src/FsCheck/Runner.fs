@@ -18,7 +18,9 @@ type TestResult =
                 * list<obj>(*the original arguments that produced the failed test*)
                 * list<obj>(*the shrunk arguments that produce a failed test*)
                 * Outcome(*possibly exception or timeout that falsified the property*) 
-                * Rnd (*the seed used*)
+                * Rnd (*initial seed for test run*)
+                * Rnd (*the seed used for generation of arguments that falsified test*)
+                * int (*the size used for generation of arguments that falsified test*)
     | Exhausted of TestData
 
 
@@ -36,7 +38,7 @@ type IRunner =
 type Replay =
     {
       Rnd: Rnd
-      Ff: int option
+      Size: int option
     }
 
 type ParallelRunConfig =
@@ -85,13 +87,13 @@ module Runner =
    
     [<NoEquality;NoComparison>]
     type private TestStep = 
-        | Generated of list<obj>    //generated arguments (test not yet executed)
-        | Passed of Result          //one test passed
-        | Falsified of Result       //falsified the property
-        | Failed of Result          //generated arguments did not pass precondition
-        | Shrink of Result          //shrunk falsified result succesfully
-        | NoShrink of Result        //could not falsify given result; so unsuccesful shrink.
-        | EndShrink of Result       //gave up shrinking; (possibly) shrunk result is given
+        | Generated of (list<obj> * Rnd * int)   //generated arguments, Rnd and size used (test not yet executed)
+        | Passed of Result                          //one test passed
+        | Falsified of Result                       //falsified the property
+        | Failed of Result                          //generated arguments did not pass precondition
+        | Shrink of Result                          //shrunk falsified result succesfully
+        | NoShrink of Result                        //could not falsify given result; so unsuccesful shrink.
+        | EndShrink of Result                       //gave up shrinking; (possibly) shrunk result is given
         
     [<NoEquality;NoComparison>]
     type private OutcomeSeqOrFuture =
@@ -162,18 +164,19 @@ module Runner =
             let newSize = resize initSize
             Some ((rnd1, rnd2, newSize), (newSize, rnd1)))
 
-    let private test fastForward initSize resize rnd0 gen =    
-        let test' ((Gen eval) as gen) (_, rnd2, newSize) =
+    let private test initSize resize rnd0 gen =    
+        let test' ((Gen eval) as gen) (rnd1, rnd2, newSize) =
+            let usedSize = newSize |> round |> int
             let result, shrinks =
                 try
-                    let (MkRose (Lazy result, shrinks)) = (eval (newSize |> round |> int) rnd2).Value
+                    let (MkRose (Lazy result, shrinks)) = (eval usedSize rnd2).Value
                     result, shrinks
                     //printfn "After generate"
                     //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
                 with :? DiscardException -> 
                     Res.rejectedV, Seq.empty
                     
-            let g = Generated result.Arguments
+            let g = Generated (result.Arguments, rnd1, usedSize)
 
             match result.Outcome with
                 | Outcome.Rejected -> 
@@ -190,11 +193,10 @@ module Runner =
                 | ResultContainer.Value r -> r 
                 | ResultContainer.Future t -> t.Result))
         let source = stepsSeq resize (initSize, rnd0)
-        Option.fold (fun s i -> Seq.skip (i-1) s |> (Seq.take 1)) source fastForward
-        |> Seq.collect (test' gen')
+        Seq.collect (test' gen') source
 
-    let private outcomeSeq result (shrinks :seq<_>) = 
-        let g = Generated result.Arguments
+    let private outcomeSeq result (shrinks :seq<_>) rnd usedSize = 
+        let g = Generated (result.Arguments, rnd, usedSize)
         match result.Outcome with
         | Outcome.Rejected -> 
             seq {yield g; yield Failed result} |> OutcomeSeqOrFuture.Value
@@ -209,17 +211,18 @@ module Runner =
             seq {yield g; yield Falsified result; yield EndShrink result} |> OutcomeSeqOrFuture.Value
 
     let private testStep rnd (size :float) ((Gen eval) as gen) =
+            let usedSize = size |> round |> int
             let result, shrinks =
                 try
-                    let (MkRose (Lazy result, shrinks)) = (eval (size |> round |> int) rnd).Value
+                    let (MkRose (Lazy result, shrinks)) = (eval usedSize rnd).Value
                     result, shrinks
                 with :? DiscardException ->
                     Res.rejected, Seq.empty
 
             match result with
-            | ResultContainer.Value r -> outcomeSeq r shrinks
+            | ResultContainer.Value r -> outcomeSeq r shrinks rnd usedSize
             | ResultContainer.Future t -> t.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
-                match outcomeSeq x.Result shrinks with
+                match outcomeSeq x.Result shrinks rnd usedSize with
                 | OutcomeSeqOrFuture.Value v -> Threading.Tasks.Task.FromResult v
                 | OutcomeSeqOrFuture.Future t -> t) |> Threading.Tasks.TaskExtensions.Unwrap |> OutcomeSeqOrFuture.Future
 
@@ -345,7 +348,7 @@ module Runner =
         parSeq :> seq<_>
 
 
-    let private testsDone config testStep origArgs ntest nshrinks usedSeed stamps  =
+    let private testsDone config testStep origArgs ntest nshrinks originalSeed lastSeed lastSize stamps =
         let entry (n,xs) = (100 * n / ntest),xs
         let table = stamps 
                     |> Seq.filter (not << List.isEmpty)
@@ -359,9 +362,9 @@ module Runner =
             let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
             match testStep with
                 | Passed _ -> TestResult.True (testData, config.QuietOnSuccess)
-                | Falsified result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
+                | Falsified result -> TestResult.False ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
                 | Failed _ -> TestResult.Exhausted testData
-                | EndShrink result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
+                | EndShrink result -> TestResult.False ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
                 | _ -> failwith "Test ended prematurely"
         config.Runner.OnFinished(config.Name,testResult)
 
@@ -373,19 +376,27 @@ module Runner =
         let tryShrinkNb = ref 0
         let origArgs = ref []
         let lastStep = ref (Failed Res.rejectedV)
-        let seed, ff = match config.Replay with None -> Random.create(), None | Some s -> s.Rnd, s.Ff
+        let seed, size = match config.Replay with None -> Random.create(), None | Some s -> s.Rnd, s.Size
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
+        let preLastSeed = ref seed
+        let preLastSize = ref (int ((float <| defaultArg size config.StartSize) - increaseSizeStep))
+        let lastSeed = ref seed
+        let lastSize = ref (int (float <| defaultArg size config.StartSize))
         let testSeq = 
-            if config.ParallelRunConfig.IsSome && ff.IsNone then //no point to run single test in parallel
+            if config.ParallelRunConfig.IsSome && size.IsNone then //no point to run single test in parallel
                 parallelTest config 
-             else 
-                test ff
-        testSeq (float config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
+            else 
+                test
+        testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
         |> Common.takeWhilePlusLast (fun step ->
             lastStep := step
             match step with
-                | Generated args -> config.Runner.OnArguments(!testNb, args, config.Every); true
-                | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest && ff.IsNone //stop if we have enough tests or this was fast-forward single test run
+                | Generated (args, seed, size) ->                               //I really don't want to divide `test` routine into two dedicated functions to handle regular runs and replays
+                    preLastSeed := !lastSeed; preLastSize := !lastSize          //so this two-cell memory need to report proper seed and size (preLastSeed, preLastSize)
+                    lastSeed := seed; lastSize := size                          //thoose which were used to generate args for "current" run
+                    config.Runner.OnArguments(!testNb, args, config.Every)      //(lastSeed, lastSize) are used to generate args for "next" run
+                    true                                                        //if we would use them, user will be off-by-one'd
+                | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest && size.IsNone //stop if we have enough tests or this was fast-forward single test run
                 | Falsified result -> origArgs := result.Arguments; testNb := !testNb + 1; true //falsified, true to continue with shrinking
                 | Failed _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxFail //failed, stop if we have too much failed tests
                 | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Runner.OnShrink(result.Arguments, config.EveryShrink); true
@@ -396,7 +407,7 @@ module Runner =
                 | Passed result -> (result.Stamp :: acc)
                 | _ -> acc
             ) [] 
-        |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed
+        |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed !preLastSeed !preLastSize
 
     let private newline = Environment.NewLine
 
@@ -432,9 +443,9 @@ module Runner =
         | 1 -> sprintf "Label of failing property: %s%s" (labelsToString l) newline
         | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labelsToString l) newline
 
-    let onFailureToString name data originalArgs args usedSeed =
-        sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A):%s" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
+    let onFailureToString name data originalArgs args usedSeed lastSeed lastSize =
+        sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A)%sLast step was invoked with size of %i and seed of (%A):%s" 
+                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline lastSize lastSeed newline
             + maybePrintLabels data.Labels
             + sprintf "Original:%s%s%s" newline (argumentsToString originalArgs) newline
             + if (data.NumberOfShrinks > 0 ) then sprintf "Shrunk:%s%s%s" newline (argumentsToString args) newline else ""
@@ -453,16 +464,16 @@ module Runner =
             if suppressOutput then ""
             else sprintf "%sOk, passed %i test%s%s"
                     name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stampsToString)
-        | TestResult.False (data, originalArgs, args, Outcome.Exception exc, usedSeed) -> 
-            onFailureToString name data originalArgs args usedSeed
+        | TestResult.False (data, originalArgs, args, Outcome.Exception exc, originalSeed, lastSeed, lastSize) -> 
+            onFailureToString name data originalArgs args originalSeed lastSeed lastSize
             + sprintf "with exception:%s%O%s" newline exc newline
-        | TestResult.False (data, _, args, Outcome.Timeout i, usedSeed) -> 
-            sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):%s" 
-                name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
+        | TestResult.False (data, _, args, Outcome.Timeout i, originalSeed, lastSeed, lastSize) -> 
+            sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A)%sLast step was invoked with size of %i and seed of (%A):%s" 
+                name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) originalSeed newline lastSize lastSeed newline
             + maybePrintLabels data.Labels 
             + sprintf "%s%s" (args |> argumentsToString) newline
-        | TestResult.False (data, originalArgs, args, _, usedSeed) -> 
-            onFailureToString name data originalArgs args usedSeed
+        | TestResult.False (data, originalArgs, args, _, originalSeed, lastSeed, lastSize) -> 
+            onFailureToString name data originalArgs args originalSeed lastSeed lastSize
         | TestResult.Exhausted data -> 
             sprintf "%sArguments exhausted after %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stampsToString )

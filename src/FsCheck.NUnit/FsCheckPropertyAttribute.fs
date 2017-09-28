@@ -146,8 +146,8 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
             let split = str.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
             let seed = UInt64.Parse(split.[0])
             let gamma = UInt64.Parse(split.[1])
-            let ff = if split.Length = 3 then Some <| Convert.ToInt32(UInt32.Parse(split.[2])) else None
-            { Rnd = Rnd (seed,gamma); Ff = ff }
+            let size = if split.Length = 3 then Some <| Convert.ToInt32(UInt32.Parse(split.[2])) else None
+            { Rnd = Rnd (seed,gamma); Size = size }
         let attr = x.GetFsCheckPropertyAttribute()
         let testRunner = NunitRunner()
         let config = { Config.Default with
@@ -177,9 +177,9 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg))
-        | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
-            let msg = sprintf "%s" (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
+        | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, originalSeed, lastSeed, lastSize)  ->
+            let msg = sprintf "%s" (Runner.onFailureToString "" testdata originalArgs shrunkArgs originalSeed lastSeed lastSize)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg))
-        | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed) ->
+        | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, originalSeed, lastSeed, lastSize) ->
             let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg))

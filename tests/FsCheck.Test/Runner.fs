@@ -39,12 +39,14 @@ module RunnerInternals =
                     match pr.Result, __.Result with
                     | TestResult.True (td1, so1), TestResult.True (td2, so2) -> 
                         so1 = so2 && cmpTestData (td1, td2)
-                    | TestResult.False (td1, oa1, sa1, o1, r1), TestResult.False (td2, oa2, sa2, o2, r2) -> 
+                    | TestResult.False (td1, oa1, sa1, o1, r1, rr1, s1), TestResult.False (td2, oa2, sa2, o2, r2, rr2, s2) -> 
                         cmpTestData (td1, td2) && 
                         cmpOutcome (o1, o2) && 
                         Enumerable.SequenceEqual (oa1, oa2) && 
                         Enumerable.SequenceEqual (sa1, sa2) &&
-                        r1 = r2
+                        r1 = r2 &&
+                        rr1 = rr2 &&
+                        s1 = s2
                     | TestResult.Exhausted td1, TestResult.Exhausted td2 -> cmpTestData (td1, td2)
                     | _, _-> false
                 resultEq && Enumerable.SequenceEqual (pr.Sink, sink)
@@ -64,7 +66,7 @@ module RunnerInternals =
     let check arb body config =
         let p = Prop.forAll arb body
         let seed = Random.create ()
-        let replay = { Rnd = seed; Ff = None } |> Some
+        let replay = { Rnd = seed; Size = None } |> Some
         printfn "seed %A" seed
         let runner1 = ProbeRunner () 
         FsCheck.Runner.check { config with Replay = replay; Runner = runner1; ParallelRunConfig = Some { MaxDegreeOfParallelism = Environment.ProcessorCount } } p
@@ -217,7 +219,7 @@ module Runner =
         let doOne(s1,s2) =
             try
                 Check.One(
-                    {Config.QuickThrowOnFailure with Replay = Some <| {Rnd = Random.createWithSeedAndGamma (s1,s2); Ff = None}},
+                    {Config.QuickThrowOnFailure with Replay = Some <| {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = None}},
                     fun a -> a < 5
                 )
                 "should have failed"
@@ -236,7 +238,7 @@ module Runner =
         let doOne(s1,s2) =
             try
                 Check.One( 
-                    {Config.QuickThrowOnFailure with Replay = Some {Rnd = Random.createWithSeedAndGamma (s1,s2); Ff = None}},
+                    {Config.QuickThrowOnFailure with Replay = Some {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = None}},
                     fun a (_:list<char>, _:array<int*double>) (_:DateTime) -> a < 10
                 )
                 "should have failed"
@@ -269,33 +271,11 @@ module Runner =
     Arb.register<UIntegerGen> ()
     Arb.register<IntegerGen> ()
 
-    [<Property(Parallelism = 2, StartSize = 10, EndSize = 100000, MaxTest = 50, MaxFail = 0)>]
-    let ``should fast-forward properly``((UInteger a)) =
-        let runs = Convert.ToInt32(Math.Min(a,100000u)) + 1
-        let ff = runs
-        let xs = ResizeArray (runs)
-        let mutable i = 0
-        let populate ((Integer x)) = xs.Add x
-        let check ((Integer x)) = 
-            i <- i + 1
-            xs.[ff-1] = x
-        let rnd = Random.create ()
-        let cfg = {Config.Quick with 
-            Replay = Some {Rnd = rnd; Ff = None}
-            MaxTest = runs
-            StartSize = 0
-            EndSize = runs
-            MaxFail = 0
-        }
-        Check.One (cfg, populate)
-        Check.One ({cfg with Replay = Some {Rnd = rnd; Ff = Some ff}}, check)
-        i = 1
-
     type ProbeRunner () =
         let mutable result = None
         member __.TestData () = match result.Value with
                                 | TestResult.True (t, _) -> None
-                                | TestResult.False (t, oa, sa, o, r) -> Some (t, oa, sa, o, r)
+                                | TestResult.False (t, oa, sa, o, r, rr, s) -> Some (t, oa, sa, o, r, rr, s)
                                 | TestResult.Exhausted t -> None
         interface IRunner with
             override __.OnStartFixture _ = ()
@@ -315,7 +295,7 @@ module Runner =
         let rnd = Random.create ()
         let runner = ProbeRunner ()
         let cfg = {Config.Quick with 
-            Replay = Some {Rnd = rnd; Ff = None}
+            Replay = Some {Rnd = rnd; Size = None}
             MaxTest = runs
             StartSize = 0
             EndSize = runs
@@ -325,16 +305,19 @@ module Runner =
         Check.One (cfg, f)
         match runner.TestData () with
         | None -> true
-        | Some (td1, oa1, sa1, o1, r1) ->
-            Check.One ({cfg with Replay = Some {Rnd = rnd; Ff = Some td1.NumberOfTests}}, f)
+        | Some (td1, oa1, sa1, o1, r1, rr1, s1) ->
+            Check.One ({cfg with Replay = Some {Rnd = rr1; Size = Some s1}}, f)
             match runner.TestData () with
             | None -> false
-            | Some (td2, oa2, sa2, o2, r2) ->
+            | Some (td2, oa2, sa2, o2, r2, rr2, s2) ->
+                let kek = ""
                 cmpTestData (td1, td2) && 
                 cmpOutcome (o1, o2) && 
                 Enumerable.SequenceEqual (oa1, oa2) && 
                 Enumerable.SequenceEqual (sa1, sa2) &&
-                r1 = r2
+                rr1 = r2 &&
+                rr1 = rr2 &&
+                s1 = s2 
 
     [<Property(Replay="54321,67583")>]
     let ``should pick up replay seeds from PropertyAttribute without parens``(_:int, _:string) =
@@ -381,13 +364,13 @@ module Runner =
         config.MaxTest =! Config.Default.MaxTest
 
     [<Property>]
-    let ``Replay should pick fast-forward``(ff :int) =
-        let ff = Math.Abs ff
-        let propertyConfig = { PropertyConfig.zero with Replay = Some <| sprintf "(01234,56789,%i)" ff }
+    let ``Replay should pick fast-forward``(size :int) =
+        let size = Math.Abs size
+        let propertyConfig = { PropertyConfig.zero with Replay = Some <| sprintf "(01234,56789,%i)" size }
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Ff = Some ff})
+        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = Some size})
 
     [<Fact>]
     let ``Replay with no fast-forward``() =
@@ -395,7 +378,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Ff = None})
+        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = None})
 
     type TypeToInstantiate() =
         [<Property>]
