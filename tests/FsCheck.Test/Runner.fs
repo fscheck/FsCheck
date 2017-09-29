@@ -47,8 +47,9 @@ module RunnerInternals =
                         r1 = r2 &&
                         rr1 = rr2 &&
                         s1 = s2
-                    | TestResult.Exhausted td1, TestResult.Exhausted td2 -> cmpTestData (td1, td2)
-                    | _, _-> false
+                    | TestResult.Exhausted td1, TestResult.Exhausted td2 ->
+                        cmpTestData (td1, td2)
+                    | a1, b1-> false
                 resultEq && Enumerable.SequenceEqual (pr.Sink, sink)
             | _ -> false
         interface IRunner with
@@ -310,7 +311,6 @@ module Runner =
             match runner.TestData () with
             | None -> false
             | Some (td2, oa2, sa2, o2, r2, rr2, s2) ->
-                let kek = ""
                 cmpTestData (td1, td2) && 
                 cmpOutcome (o1, o2) && 
                 Enumerable.SequenceEqual (oa1, oa2) && 

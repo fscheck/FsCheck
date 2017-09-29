@@ -210,19 +210,19 @@ module Runner =
         | _ ->
             seq {yield g; yield Falsified result; yield EndShrink result} |> OutcomeSeqOrFuture.Value
 
-    let private testStep rnd (size :float) ((Gen eval) as gen) =
+    let private testStep rnd1 rnd2 (size :float) ((Gen eval) as gen) =
             let usedSize = size |> round |> int
             let result, shrinks =
                 try
-                    let (MkRose (Lazy result, shrinks)) = (eval usedSize rnd).Value
+                    let (MkRose (Lazy result, shrinks)) = (eval usedSize rnd2).Value
                     result, shrinks
                 with :? DiscardException ->
                     Res.rejected, Seq.empty
 
             match result with
-            | ResultContainer.Value r -> outcomeSeq r shrinks rnd usedSize
+            | ResultContainer.Value r -> outcomeSeq r shrinks rnd1 usedSize
             | ResultContainer.Future t -> t.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
-                match outcomeSeq x.Result shrinks rnd usedSize with
+                match outcomeSeq x.Result shrinks rnd1 usedSize with
                 | OutcomeSeqOrFuture.Value v -> Threading.Tasks.Task.FromResult v
                 | OutcomeSeqOrFuture.Future t -> t) |> Threading.Tasks.TaskExtensions.Unwrap |> OutcomeSeqOrFuture.Future
 
@@ -242,8 +242,8 @@ module Runner =
             while (not ct.IsCancellationRequested) && j < iters do
                 j <- Threading.Interlocked.Increment (i) - 1
                 if j < iters then
-                    let _, rnd, size = steps.[j]
-                    let res = testStep rnd size gen
+                    let rnd1, rnd2, size = steps.[j]
+                    let res = testStep rnd1 rnd2 size gen
                     match res with
                     | OutcomeSeqOrFuture.Value xs -> results.[j] <- xs
                     | OutcomeSeqOrFuture.Future ts -> 
