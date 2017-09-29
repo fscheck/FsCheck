@@ -1,3 +1,6 @@
+### 2.10.4 - To be released
+* Change NuGet dependency of FsCheck.Xunit and FsCheck.NUnit on FsCheck to strict equality constraint.
+
 ### 2.10.3 - 26 September 2017
 * Don't escape newline and tab characters.
 
