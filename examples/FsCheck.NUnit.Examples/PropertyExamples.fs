@@ -57,7 +57,3 @@ type NUnitTest() =
     [<Property(QuietOnSuccess = true)>]
     member __.NoOutputOnSuccess (x:char) =
         List.rev [x] = [x]
-
-    [<Property( Replay="7797334217889672160,158684412801592049,91", Verbose = true )>]
-    member __.Get82_shouldFail (i:int) =
-        i < 80
