@@ -28,15 +28,6 @@ type XunitRunner() =
         override __.OnFinished(_ ,testResult) =
             result <- Some testResult
 
-///Override Arbitrary instances for FsCheck tests within the attributed class
-///or module.
-[<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
-[<Obsolete("Please use PropertiesAttribute instead.")>]
-type ArbitraryAttribute(types:Type[]) =
-    inherit Attribute()
-    new(typ:Type) = ArbitraryAttribute([|typ|])
-    member __.Arbitrary = types
-
 type internal PropertyConfig =
     { MaxTest        : Option<int>
       MaxFail        : Option<int>
@@ -169,10 +160,6 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
     member this.Init(output:TestOutputHelper) =
         let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
-        let arbitrariesOnClass =
-            this.TestMethod.TestClass.Class.GetCustomAttributes(Type.GetType("FsCheck.Xunit.ArbitraryAttribute"))
-                |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
-                |> Seq.toArray
         let generalAttribute = 
             this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<PropertiesAttribute>) 
                 |> Seq.tryFind (fun _ -> true)
@@ -186,7 +173,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             | None ->
                 factAttribute.GetNamedArgument "Config"
         
-        { config with Arbitrary = Array.append config.Arbitrary arbitrariesOnClass }
+        { config with Arbitrary = config.Arbitrary }
         |> PropertyConfig.toConfig output 
 
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =

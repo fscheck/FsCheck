@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using FsCheck.NUnit.CSharpExamples.ClassesToTest;
 using NUnit.Framework;
 
 namespace FsCheck.NUnit.CSharpExamples
@@ -26,14 +25,6 @@ namespace FsCheck.NUnit.CSharpExamples
         public bool Replay(int x)
         {
             return Int32.MaxValue >= x;
-        }
-
-        //TODO: do not call toProperty.
-        // Note this one should fail
-        [Property]
-        public Property Counter_shouldFail()
-        {
-            return new CounterSpec().ToProperty();
         }
     }
 }

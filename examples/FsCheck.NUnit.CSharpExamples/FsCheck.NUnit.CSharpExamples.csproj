@@ -39,8 +39,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClassesToTest\Counter.cs" />
-    <Compile Include="ClassesToTest\CounterSpec.cs" />
     <Compile Include="Examples.cs" />
   </ItemGroup>
   <ItemGroup>

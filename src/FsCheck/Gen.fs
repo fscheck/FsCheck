@@ -464,13 +464,6 @@ module Gen =
     [<CompiledName("TryFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
     let tryFilter predicate generator = tryWhere predicate generator
 
-    ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
-    ///if the given original generator did not generate any values that satisfied the predicate, after trying to
-    ///get values by increasing its size.
-    //[category: Creating generators from generators]
-    [<Obsolete("This function will be removed in a future version of FsCheck. Please use the synonyms tryWhere or tryFilter instead.");CompiledName("SuchThatOption"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let suchThatOption = tryWhere
-
     ///Generates a value that satisfies a predicate. Contrary to tryWhere, this function keeps re-trying
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
     ///the predicate is satisfied.
@@ -494,13 +487,6 @@ module Gen =
     //[category: Creating generators from generators]
     [<CompiledName("Filter");EditorBrowsable(EditorBrowsableState.Never)>]
     let filter predicate generator = where predicate generator
-
-    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
-    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
-    ///the predicate is satisfied.
-    //[category: Creating generators from generators]
-    [<Obsolete("This function will be removed in a future version of FsCheck. Please use the synonyms where or filter instead.");CompiledName("SuchThat")>]
-    let rec suchThat = where
 
     /// Generates a random array of length k where the sum of
     /// all elements equals the given sum.

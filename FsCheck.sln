@@ -47,7 +47,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D
 		Docs\content\Properties.fsx = Docs\content\Properties.fsx
 		Docs\content\QuickStart.fsx = Docs\content\QuickStart.fsx
 		Docs\content\RunningTests.fsx = Docs\content\RunningTests.fsx
-		Docs\content\StatefulTesting.fsx = Docs\content\StatefulTesting.fsx
 		docs\content\StatefulTestingNew.fsx = docs\content\StatefulTestingNew.fsx
 		docs\tools\templates\template.cshtml = docs\tools\templates\template.cshtml
 		Docs\content\TestData.fsx = Docs\content\TestData.fsx
@@ -61,7 +60,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ja", "ja", "{34021B41-3EED-
 		docs\content\ja\Properties.fsx = docs\content\ja\Properties.fsx
 		docs\content\ja\QuickStart.fsx = docs\content\ja\QuickStart.fsx
 		docs\content\ja\RunningTests.fsx = docs\content\ja\RunningTests.fsx
-		docs\content\ja\StatefulTesting.fsx = docs\content\ja\StatefulTesting.fsx
 		docs\content\ja\TestData.fsx = docs\content\ja\TestData.fsx
 		docs\content\ja\TipsAndTricks.fsx = docs\content\ja\TipsAndTricks.fsx
 	EndProjectSection

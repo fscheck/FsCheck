@@ -41,8 +41,6 @@ type NormalFloat = NormalFloat of float with
     member x.Get = match x with NormalFloat f -> f
     override x.ToString() = x.Get.ToString()
     static member op_Explicit(NormalFloat f) = f
-    [<Obsolete("Will be removed in a future version.")>]
-    static member get (NormalFloat f) = f
 
 ///Represents a string that is not null or empty, and does not contain any null characters ('\000')
 type NonEmptyString = NonEmptyString of string with
@@ -68,20 +66,14 @@ type IntWithMinMax = IntWithMinMax of int with
 ///Represents a non-empty Set.
 type NonEmptySet<'a when 'a : comparison> = NonEmptySet of Set<'a> with
     member x.Get = match x with NonEmptySet r -> r
-    [<Obsolete("Will be removed in a future version.")>]
-    static member toSet(NonEmptySet s) = s
     
 ///Represents a non-empty array.
 type NonEmptyArray<'a> = NonEmptyArray of 'a[] with
     member x.Get = match x with NonEmptyArray r -> r
-    [<Obsolete("Will be removed in a future version.")>]
-    static member toArray(NonEmptyArray a) = a
 
 ///Represents an array whose length does not change when shrinking.
 type FixedLengthArray<'a> = FixedLengthArray of 'a[] with
     member x.Get = match x with FixedLengthArray r -> r
-    [<Obsolete("Will be removed in a future version.")>]
-    static member toArray(FixedLengthArray a) = a
 
 ///Wrap a type in NonNull to prevent null being generated for the wrapped type.
 type NonNull<'a when 'a : null> = NonNull of 'a with
@@ -106,15 +98,9 @@ type Function<'a,'b when 'a : comparison> = F of ref<list<('a*'b)>> * ('a ->'b) 
         |> Seq.map layoutTuple 
         |> String.concat "; "
         |> sprintf "{ %s }"
-    [<Obsolete("Will be removed in a future version. Use From instead.")>]
-    static member from f = Function<_,_>.From f
     static member From f = 
         let table = ref []
         F (table,fun x -> let y = f x in table := (x,y)::(!table); y)
-
-///Use the generator for 'a, but don't shrink.
-[<Obsolete("Renamed to DoNotShrink.")>]
-type DontShrink<'a> = DontShrink of 'a
 
 ///Use the generator for 'a, but don't shrink.
 type DoNotShrink<'a> = DoNotShrink of 'a
@@ -288,13 +274,6 @@ module Arb =
             |> convert int16 int
 
         ///Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.
-        [<Obsolete("Renamed to DoNotSizeInt16.")>]
-        static member DontSizeInt16() =
-            let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
-            fromGenShrink(gen, shrink)
-            |> convert (int16 >> DoNotSize) (DoNotSize.Unwrap >> int)
-
-        ///Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.
         static member DoNotSizeInt16() =
             let gen = Gen.choose(int Int16.MinValue, int Int16.MaxValue)
             fromGenShrink(gen, shrink)
@@ -306,13 +285,6 @@ module Arb =
             |> convert (abs >> uint16) int
 
         ///Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
-        [<Obsolete("Renamed to DoNotSizeUInt16.")>]
-        static member DontSizeUInt16() =
-            let gen = Gen.choose(0, int UInt16.MaxValue)
-            fromGenShrink(gen, shrink)
-            |> convert (uint16 >> DoNotSize) (DoNotSize.Unwrap >> int)
-
-        ///Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
         static member DoNotSizeUInt16() =
             let gen = Gen.choose(0, int UInt16.MaxValue)
             fromGenShrink(gen, shrink)
@@ -322,17 +294,6 @@ module Arb =
         static member Int32() = 
             fromGenShrink ( Gen.sized (fun n -> Gen.choose (-n,n)),
                             shrinkNumber)
-
-        ///Generate arbitrary int32 that is unrestricted by size.
-        [<Obsolete("Renamed to DoNotSizeInt32.")>]
-        static member DontSizeInt32() =
-            //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
-            //so using this trick instead
-            let gen =
-                Gen.two generate<DoNotSize<int16>>
-                |> Gen.map (fun (DoNotSize h,DoNotSize l) -> int ((uint32 h <<< 16) ||| uint32 l))
-            fromGenShrink(gen, shrink)
-            |> convert DoNotSize DoNotSize.Unwrap
 
         ///Generate arbitrary int32 that is unrestricted by size.
         static member DoNotSizeInt32() =
@@ -350,13 +311,6 @@ module Arb =
             |> convert (abs >> uint32) int
 
         ///Generate arbitrary uint32 that is unrestricted by size.
-        [<Obsolete("Renamed to DoNotSizeUInt32.")>]
-        static member DontSizeUInt32() =
-            let gen = Gen.choose(0, int UInt32.MaxValue)
-            fromGenShrink(gen, shrink)
-            |> convert (uint32 >> DoNotSize) (DoNotSize.Unwrap >> int)
-
-        ///Generate arbitrary uint32 that is unrestricted by size.
         static member DoNotSizeUInt32() =
             let gen = Gen.choose(0, int UInt32.MaxValue)
             fromGenShrink(gen, shrink)
@@ -371,15 +325,6 @@ module Arb =
             |> convert int64 int32
 
         ///Generate arbitrary int64 that is unrestricted by size.
-        [<Obsolete("Renamed to DoNotSizeInt64.")>]
-        static member DontSizeInt64() =
-            let gen =
-                Gen.two generate<DoNotSize<int32>>
-                |> Gen.map (fun (DoNotSize h, DoNotSize l) -> (int64 h <<< 32) ||| int64 l)
-            fromGenShrink (gen,shrinkNumber)
-            |> convert DoNotSize DoNotSize.Unwrap
-
-        ///Generate arbitrary int64 that is unrestricted by size.
         static member DoNotSizeInt64() =
             let gen =
                 Gen.two generate<DoNotSize<int32>>
@@ -391,15 +336,6 @@ module Arb =
         static member UInt64() =
             from<int>
             |> convert (abs >> uint64) int
-
-        ///Generate arbitrary uint64 that is unrestricted by size.
-        [<Obsolete("Renamed to DoNotSizeUInt64.")>]
-        static member DontSizeUInt64() =
-            let gen =
-                Gen.two generate<DoNotSize<uint32>>
-                |> Gen.map (fun (DoNotSize h, DoNotSize l) -> (uint64 h <<< 32) ||| uint64 l)
-            fromGenShrink (gen,shrink)
-            |> convert DoNotSize DoNotSize.Unwrap
         
         ///Generate arbitrary uint64 that is unrestricted by size.
         static member DoNotSizeUInt64() =
@@ -1114,11 +1050,6 @@ module Arb =
             |> convert bigint int
 
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
-        [<Obsolete("Renamed to DoNotShrink.")>]
-        static member DontShrink() =
-            generate |> Gen.map DoNotShrink |> fromGen
-
-        ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
         static member DoNotShrink() =
             generate |> Gen.map DoNotShrink |> fromGen
             
@@ -1135,22 +1066,3 @@ module Arb =
                 override __.Generator = generator typeof<'a> |> Gen.map unbox<'a>
                 override __.Shrinker a = ReflectArbitrary.reflectShrink getShrink a
             }
-            
-// Compiler warning FS0044 occurs when a construct is deprecated.
-// This warning suppression has to sit in the end of the file, because once a
-// warning type is suppressed in a file, it can't be turned back on. There's a
-// feature request for that, though: 
-// https://fslang.uservoice.com/forums/245727-f-language/suggestions/6085102-allow-f-compiler-directives-like-nowarn-to-span
-#nowarn"44"
-
-///Whereas most types are restricted by a size that grows
-///as the test gets further, by applying this type the underlying
-///type will ignore this size and always generate from the full range.
-///Note that this only makes a difference for types that have a range -
-///currently Int16, Int32, Int64 have DontSize Arbitrary instances.
-///This is typically (and at least currently) only applicable for value types
-///that are comparable, hence the type constraints.
-[<Obsolete("Renamed to DoNotSize.")>]
-type DontSize<'a when 'a : struct and 'a : comparison> = 
-    DontSize of 'a with
-    static member Unwrap(DontSize a) : 'a = a

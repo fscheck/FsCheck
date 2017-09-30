@@ -398,27 +398,3 @@ module Override =
         Check.One(Config.QuickThrowOnFailure, fun (calc:Calc) -> true)
         Check.One( { Config.QuickThrowOnFailure with Arbitrary=[ typeof<Arbitraries> ] },
              fun (calc:Calc) -> not (Double.IsNaN calc.Float || Double.IsInfinity calc.Float || calc.Float = Double.Epsilon || calc.Float = Double.MinValue || calc.Float = Double.MaxValue))
-
-
-// Compiler warning FS0044 occurs when a construct is deprecated.
-// This warning suppression has to sit in the end of the file, because once a
-// warning type is suppressed in a file, it can't be turned back on. There's a
-// feature request for that, though: 
-// https://fslang.uservoice.com/forums/245727-f-language/suggestions/6085102-allow-f-compiler-directives-like-nowarn-to-span
-#nowarn"44"
-
-module Deprecated =
-
-    open FsCheck.Xunit
-    open Runner
-    
-    [<Arbitrary(typeof<TestArbitrary2>)>]
-    module ModuleWithArbitrary =
-
-        [<Property>]
-        let ``should use Arb instances from enclosing module``(underTest:float) =
-            underTest <= 0.0
-
-        [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
-        let ``should use Arb instance on method preferentially``(underTest:float) =
-            underTest >= 0.0

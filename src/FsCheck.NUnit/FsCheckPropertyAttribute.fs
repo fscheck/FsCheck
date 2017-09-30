@@ -9,18 +9,6 @@ open NUnit.Framework
 open NUnit.Framework.Interfaces
 open NUnit.Framework.Internal
 
-///help consumers remove the unneeded classes
-[<Obsolete("This class is no longer needed for running NUnit v3.", true)>]
-type FsCheckTestCaseBuilder() =
-    do
-        failwith "This class is no longer needed for running NUnit v3."
-
-///help consumers remove the unneeded classes
-[<Obsolete("This class is no longer needed for running NUnit v3.", true)>]
-type FsCheckAddin() =
-    do
-        failwith "This class is no longer needed for running NUnit v3."
-
 //can not be an anonymous type because of let mutable.
 type private NunitRunner() =
     let mutable result = None

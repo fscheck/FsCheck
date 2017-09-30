@@ -40,11 +40,6 @@ The documentation is also available in [Japanese](ja/index.html).
    sense for what you're trying to test. FsCheck has a flexible language to describe test 
    value generators and shrinkers, and apply them to your properties.
 
- * [Model based testing](StatefulTesting.html) is a particular testing approach
-   where FsCheck generates a large number of random operations on an object or data
-   structure, and the results of each operation are compared with a (much simpler)
-   model.
-
  * [Running Tests](RunningTests.html) explains various ways to run FsCheck tests and how to
    integrate with unit testing frameworks.
 

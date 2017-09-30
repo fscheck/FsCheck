@@ -48,9 +48,6 @@
     <Compile Include="..\FsCheck\PropExtensions.fs">
       <Link>PropExtensions.fs</Link>
     </Compile>
-    <Compile Include="..\FsCheck\Commands.fs">
-      <Link>Commands.fs</Link>
-    </Compile>
     <Compile Include="..\FsCheck\StateMachine.fs">
       <Link>StateMachine.fs</Link>
     </Compile>
