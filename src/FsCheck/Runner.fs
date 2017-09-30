@@ -231,9 +231,6 @@ module Runner =
                 results.[j] <- xs.Result
         | _ -> raise (System.ArgumentException ("state"))
 
-#if PCL
-    let private parallelTest config = test
-#else
     let private tpWorkerFun (state :obj) =
         match state with 
         | :? ((Rnd * Rnd * float) array * (int ref) * int * Gen<Rose<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken) as state ->
@@ -346,7 +343,6 @@ module Runner =
         let pd = Option.fold (fun _ pc -> if pc.MaxDegreeOfParallelism <> -1 then pc.MaxDegreeOfParallelism else Environment.ProcessorCount) 1 config.ParallelRunConfig
         let parSeq = ParTestSeq (steps, config.MaxTest, config.MaxFail, pd, gen)
         parSeq :> seq<_>
-#endif
 
 
     let private testsDone config testStep origArgs ntest nshrinks usedSeed stamps  =
@@ -476,11 +472,6 @@ module Runner =
     
     let onShrinkToString args =
         sprintf "shrink:%s%s%s" newline (argumentsToString args) newline
-
-#if PCL
-    let internal printf fmt = 
-        Printf.kprintf Diagnostics.Debug.WriteLine fmt
-#endif
     
     ///A runner that prints results to the standard output.
     let consoleRunner =

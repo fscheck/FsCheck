@@ -1,3 +1,7 @@
+### 3.0.0-alpha2 - To be released
+* Remove PCL builds. NET Standard is the way forward. Latest FSharp.Core builds don't even include PCL versions. As a result of the FSharp.Core dependency, FsCheck targets NET Standard 1.6.
+
+
 ### 3.0.0-alpha1 - 26 September 2017
 * Update random number generator to SplitMix algorithm. (with thanks to Jack Pappas for making it fast)
 
