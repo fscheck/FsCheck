@@ -1,28 +1,35 @@
 ﻿namespace FsCheck.Test
 
-module RunnerInternals =
+module RunnerHelper =
+    open FsCheck
+    open FsCheck.Runner
+    open System.Linq
 
+    let cmpTestData = function 
+        { NumberOfTests = nt1; NumberOfShrinks = ns1; Stamps = sx1; Labels = lx1 }, 
+        { NumberOfTests = nt2; NumberOfShrinks = ns2; Stamps = sx2; Labels = lx2 } -> 
+            nt1 = nt2 && ns1 = ns2 && Enumerable.SequenceEqual (sx1, sx2) && Enumerable.SequenceEqual (lx1, lx2)
+    let cmpOutcome = function
+        | Outcome.Timeout _, Outcome.Timeout _ -> true
+        | Outcome.Exception ex1, Outcome.Exception ex2 -> ex1.Equals ex2
+        | Outcome.False, Outcome.False -> true
+        | Outcome.True, Outcome.True -> true
+        | Outcome.Rejected, Outcome.Rejected -> true
+        | _, _ -> false  
+
+module RunnerInternals =
     open System
     open Xunit
     open FsCheck
     open FsCheck.Runner
     open System.Linq
     open FsCheck.Xunit
+    open RunnerHelper
 
     type ProbeRunner () =
         let mutable result = None
         let sink :Collections.Generic.List<obj> = ResizeArray ()
-        let cmpTestData = function 
-            { NumberOfTests = nt1; NumberOfShrinks = ns1; Stamps = sx1; Labels = lx1 }, 
-            { NumberOfTests = nt2; NumberOfShrinks = ns2; Stamps = sx2; Labels = lx2 } -> 
-                nt1 = nt2 && ns1 = ns2 && Enumerable.SequenceEqual (sx1, sx2) && Enumerable.SequenceEqual (lx1, lx2)
-        let cmpOutcome = function
-            | Outcome.Timeout _, Outcome.Timeout _ -> true
-            | Outcome.Exception ex1, Outcome.Exception ex2 -> ex1.Equals ex2
-            | Outcome.False, Outcome.False -> true
-            | Outcome.True, Outcome.True -> true
-            | Outcome.Rejected, Outcome.Rejected -> true
-            | _, _ -> false
+
         member __.Result = result.Value
         member __.Sink = sink
         override __.Equals other =
@@ -32,14 +39,17 @@ module RunnerInternals =
                     match pr.Result, __.Result with
                     | TestResult.True (td1, so1), TestResult.True (td2, so2) -> 
                         so1 = so2 && cmpTestData (td1, td2)
-                    | TestResult.False (td1, oa1, sa1, o1, r1), TestResult.False (td2, oa2, sa2, o2, r2) -> 
+                    | TestResult.False (td1, oa1, sa1, o1, r1, rr1, s1), TestResult.False (td2, oa2, sa2, o2, r2, rr2, s2) -> 
                         cmpTestData (td1, td2) && 
                         cmpOutcome (o1, o2) && 
                         Enumerable.SequenceEqual (oa1, oa2) && 
                         Enumerable.SequenceEqual (sa1, sa2) &&
-                        r1 = r2
-                    | TestResult.Exhausted td1, TestResult.Exhausted td2 -> cmpTestData (td1, td2)
-                    | _, _-> false
+                        r1 = r2 &&
+                        rr1 = rr2 &&
+                        s1 = s2
+                    | TestResult.Exhausted td1, TestResult.Exhausted td2 ->
+                        cmpTestData (td1, td2)
+                    | a1, b1-> false
                 resultEq && Enumerable.SequenceEqual (pr.Sink, sink)
             | _ -> false
         interface IRunner with
@@ -56,12 +66,13 @@ module RunnerInternals =
 
     let check arb body config =
         let p = Prop.forAll arb body
-        let seed = Random.create () |> Some
+        let seed = Random.create ()
+        let replay = { Rnd = seed; Size = None } |> Some
         printfn "seed %A" seed
         let runner1 = ProbeRunner () 
-        FsCheck.Runner.check { config with Replay = seed; Runner = runner1; ParallelRunConfig = Some { MaxDegreeOfParallelism = Environment.ProcessorCount } } p
+        FsCheck.Runner.check { config with Replay = replay; Runner = runner1; ParallelRunConfig = Some { MaxDegreeOfParallelism = Environment.ProcessorCount } } p
         let runner2 = ProbeRunner () 
-        FsCheck.Runner.check { config with Replay = seed; Runner = runner2; ParallelRunConfig = None } p
+        FsCheck.Runner.check { config with Replay = replay; Runner = runner2; ParallelRunConfig = None } p
         runner1.Equals runner2
             
     [<Fact>]
@@ -136,11 +147,12 @@ module RunnerInternals =
         if check arb body config then failwith "assertion failure!"
 
 module Runner =
-
+    open RunnerHelper
     open System
     open Xunit
     open FsCheck
     open FsCheck.Xunit
+    open System.Linq
     open Swensen.Unquote
 
     type TestArbitrary1 =
@@ -207,7 +219,10 @@ module Runner =
     let ``should replay property with one generator``() =
         let doOne(s1,s2) =
             try
-                Check.One( {Config.QuickThrowOnFailure with Replay = Some <| Random.createWithSeedAndGamma (s1,s2) }, fun a -> a < 5)
+                Check.One(
+                    {Config.QuickThrowOnFailure with Replay = Some <| {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = None}},
+                    fun a -> a < 5
+                )
                 "should have failed"
             with e ->
                 e.Message
@@ -223,7 +238,10 @@ module Runner =
     let ``should replay property with complex set of generators``() =
         let doOne(s1,s2) =
             try
-                Check.One( {Config.QuickThrowOnFailure with Replay = Some <| Random.createWithSeedAndGamma (s1,s2) }, fun a (_:list<char>, _:array<int*double>) (_:DateTime) -> a < 10)
+                Check.One( 
+                    {Config.QuickThrowOnFailure with Replay = Some {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = None}},
+                    fun a (_:list<char>, _:array<int*double>) (_:DateTime) -> a < 10
+                )
                 "should have failed"
             with e ->
                 e.Message
@@ -234,6 +252,72 @@ module Runner =
         1 =! Seq.length same
         "should have failed" <>! Seq.head same
         test <@ (Seq.head same).Contains "(123,654321)" @>
+
+    
+    type Integer = Integer of int
+    type UInteger = UInteger of uint32
+        
+    type IntegerGen =
+        static member Integer() =
+            {new Arbitrary<Integer>() with
+                override x.Generator = Arb.generate<int> |> Gen.map Integer
+                override x.Shrinker t = Seq.empty }
+
+    type UIntegerGen =
+            static member UInteger() =
+                {new Arbitrary<UInteger>() with
+                    override x.Generator = Arb.generate<uint32> |> Gen.map UInteger
+                    override x.Shrinker t = Seq.empty }
+    
+    Arb.register<UIntegerGen> ()
+    Arb.register<IntegerGen> ()
+
+    type ProbeRunner () =
+        let mutable result = None
+        member __.TestData () = match result.Value with
+                                | TestResult.True (t, _) -> None
+                                | TestResult.False (t, oa, sa, o, r, rr, s) -> Some (t, oa, sa, o, r, rr, s)
+                                | TestResult.Exhausted t -> None
+        interface IRunner with
+            override __.OnStartFixture _ = ()
+            override __.OnArguments (_, _, _) = ()
+            override __.OnShrink (_, _) = ()
+            override __.OnFinished (_, testResult) = 
+                result <- Some testResult
+
+    let cmpTestData = function 
+        { NumberOfShrinks = ns1; Stamps = sx1; Labels = lx1 }, 
+        { NumberOfShrinks = ns2; Stamps = sx2; Labels = lx2 } -> 
+           ns1 = ns2 && Enumerable.SequenceEqual (sx1, sx2) && Enumerable.SequenceEqual (lx1, lx2)
+
+    [<Property(StartSize = 10, EndSize = 100000, MaxTest = 200, MaxFail = 0)>]
+    let ``should fast-forward properly on failing funcs``(f :(int -> bool), (UInteger a)) =
+        let runs = Convert.ToInt32(Math.Min(a,100000u)) + 1
+        let rnd = Random.create ()
+        let runner = ProbeRunner ()
+        let cfg = {Config.Quick with 
+            Replay = Some {Rnd = rnd; Size = None}
+            MaxTest = runs
+            StartSize = 0
+            EndSize = runs
+            MaxFail = 1000
+            Runner = runner
+        }   
+        Check.One (cfg, f)
+        match runner.TestData () with
+        | None -> true
+        | Some (td1, oa1, sa1, o1, r1, rr1, s1) ->
+            Check.One ({cfg with Replay = Some {Rnd = rr1; Size = Some s1}}, f)
+            match runner.TestData () with
+            | None -> false
+            | Some (td2, oa2, sa2, o2, r2, rr2, s2) ->
+                cmpTestData (td1, td2) && 
+                cmpOutcome (o1, o2) && 
+                Enumerable.SequenceEqual (oa1, oa2) && 
+                Enumerable.SequenceEqual (sa1, sa2) &&
+                rr1 = r2 &&
+                rr1 = rr2 &&
+                s1 = s2 
 
     [<Property(Replay="54321,67583")>]
     let ``should pick up replay seeds from PropertyAttribute without parens``(_:int, _:string) =
@@ -278,6 +362,23 @@ module Runner =
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
         config.MaxTest =! Config.Default.MaxTest
+
+    [<Property>]
+    let ``Replay should pick fast-forward``(size :int) =
+        let size = Math.Abs size
+        let propertyConfig = { PropertyConfig.zero with Replay = Some <| sprintf "(01234,56789,%i)" size }
+        let testOutputHelper = new Sdk.TestOutputHelper()
+        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
+
+        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = Some size})
+
+    [<Fact>]
+    let ``Replay with no fast-forward``() =
+        let propertyConfig = { PropertyConfig.zero with Replay = Some <| sprintf "(01234,56789)" }
+        let testOutputHelper = new Sdk.TestOutputHelper()
+        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
+
+        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = None})
 
     type TypeToInstantiate() =
         [<Property>]

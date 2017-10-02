@@ -99,13 +99,13 @@ module Property =
         let testData =
             match r1 with 
             | TestResult.True (td,_) -> td
-            | TestResult.False (td,_,_,_,_) -> td
+            | TestResult.False (td,_,_,_,_,_,_) -> td
             | TestResult.Exhausted td -> td
 
         match r0.Outcome, r1 with
-        | Outcome.Timeout i, TestResult.False(_,_,_,Outcome.Timeout j,_) when i = j -> r0.Labels = testData.Labels
-        | Outcome.Exception _, TestResult.False(_,_,_,Outcome.Exception _,_) -> r0.Labels = testData.Labels
-        | Outcome.False, TestResult.False(_,_,_,Outcome.False,_) -> r0.Labels = testData.Labels
+        | Outcome.Timeout i, TestResult.False(_,_,_,Outcome.Timeout j,_,_,_) when i = j -> r0.Labels = testData.Labels
+        | Outcome.Exception _, TestResult.False(_,_,_,Outcome.Exception _,_,_,_) -> r0.Labels = testData.Labels
+        | Outcome.False, TestResult.False(_,_,_,Outcome.False,_,_,_) -> r0.Labels = testData.Labels
         | Outcome.True, TestResult.True _ -> (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
         | Outcome.Rejected,TestResult.Exhausted _ -> true
         | _ -> false

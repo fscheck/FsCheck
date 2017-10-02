@@ -54,7 +54,7 @@ namespace FsCheck.XUnit.CSharpExamples
         [Property(MaxTest = 1000, EndSize = 5)]
         public bool ShouldFail_3(int[] xs)
         {
-          return xs.BadReverse3().SequenceEqual(xs.Reverse());
+            return xs.BadReverse3().SequenceEqual(xs.Reverse());
         }
 
         [Property]

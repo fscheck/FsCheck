@@ -19,7 +19,7 @@ namespace CSharp.DocSnippets
 
             //[replay]
             Prop.ForAll((int x) => Math.Abs(x) >= 0)
-                .Check(new Configuration { Replay = Tuple.Create(1145655947UL, 296144285UL)});
+                .Check(new Configuration { Replay = Tuple.Create(1145655947UL, 296144285UL, -1)});
             //[/replay]
 
             //[configuration]

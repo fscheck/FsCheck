@@ -15,13 +15,12 @@ type NUnitTest() =
     member __.RevUnit (x:char) =
         List.rev [x] = [x]
 
-    // Parallelism for PropertyAttribute not implemented for Nunit yet
-    // [<Property(Parallelism = 8)>]
-//    member __.Async (i:int) =
-//        async { 
-//            do! Async.Sleep 1500
-//            return true
-//        }
+    [<Property(Parallelism = 8)>]
+    member __.Async (i:int) =
+        async { 
+            do! Async.Sleep 1500
+            return true
+        }
   
     [<Property>]
     member __.RevApp (x:string) xs =
