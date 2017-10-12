@@ -31,26 +31,23 @@ module RunnerInternals =
 
         member __.Result = result.Value
         member __.Sink = sink
-        override __.Equals other =
-            match other with
-            | :? ProbeRunner as pr -> 
-                let resultEq = 
-                    match pr.Result, __.Result with
-                    | TestResult.True (td1, so1), TestResult.True (td2, so2) -> 
-                        so1 = so2 && cmpTestData (td1, td2)
-                    | TestResult.False (td1, oa1, sa1, o1, r1, rr1, s1), TestResult.False (td2, oa2, sa2, o2, r2, rr2, s2) -> 
-                        cmpTestData (td1, td2) && 
-                        cmpOutcome (o1, o2) && 
-                        Enumerable.SequenceEqual (oa1, oa2) && 
-                        Enumerable.SequenceEqual (sa1, sa2) &&
-                        r1 = r2 &&
-                        rr1 = rr2 &&
-                        s1 = s2
-                    | TestResult.Exhausted td1, TestResult.Exhausted td2 ->
-                        cmpTestData (td1, td2)
-                    | a1, b1-> false
-                resultEq && Enumerable.SequenceEqual (pr.Sink, sink)
-            | _ -> false
+        member __.IsSame (pr:ProbeRunner) =
+            let resultEq = 
+                match pr.Result, __.Result with
+                | TestResult.True (td1, so1), TestResult.True (td2, so2) -> 
+                    so1 = so2 && cmpTestData (td1, td2)
+                | TestResult.False (td1, oa1, sa1, o1, r1, rr1, s1), TestResult.False (td2, oa2, sa2, o2, r2, rr2, s2) -> 
+                    cmpTestData (td1, td2) && 
+                    cmpOutcome (o1, o2) && 
+                    Enumerable.SequenceEqual (oa1, oa2) && 
+                    Enumerable.SequenceEqual (sa1, sa2) &&
+                    r1 = r2 &&
+                    rr1 = rr2 &&
+                    s1 = s2
+                | TestResult.Exhausted td1, TestResult.Exhausted td2 ->
+                    cmpTestData (td1, td2)
+                | a1, b1-> false
+            resultEq && Enumerable.SequenceEqual (pr.Sink, sink)
         interface IRunner with
             override __.OnStartFixture _ = ()
             override __.OnArguments (ntest, args, _) = 
@@ -72,7 +69,7 @@ module RunnerInternals =
         FsCheck.Runner.check { config with Replay = replay; Runner = runner1; ParallelRunConfig = Some { MaxDegreeOfParallelism = Environment.ProcessorCount } } p
         let runner2 = ProbeRunner () 
         FsCheck.Runner.check { config with Replay = replay; Runner = runner2; ParallelRunConfig = None } p
-        runner1.Equals runner2
+        runner1.IsSame runner2
             
     [<Fact>]
     let ``parallelTest produces same sequence as test on success`` () =
@@ -294,14 +291,15 @@ module Runner =
         let runs = Convert.ToInt32(Math.Min(a,100000u)) + 1
         let rnd = Random.create ()
         let runner = ProbeRunner ()
-        let cfg = {Config.Quick with 
-            Replay = Some {Rnd = rnd; Size = None}
-            MaxTest = runs
-            StartSize = 0
-            EndSize = runs
-            MaxFail = 1000
-            Runner = runner
-        }   
+        let cfg = 
+            { Config.Quick with 
+                Replay = Some {Rnd = rnd; Size = None}
+                MaxTest = runs
+                StartSize = 0
+                EndSize = runs
+                MaxFail = 1000
+                Runner = runner
+            }   
         Check.One (cfg, f)
         match runner.TestData () with
         | None -> true
