@@ -163,3 +163,5 @@ docs/tools/XmlWriter
 project.lock.json
 .vscode
 
+# Paket
+.paket/Paket.Restore.targets

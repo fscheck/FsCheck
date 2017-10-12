@@ -24,7 +24,7 @@ description
 
     All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
 dependencies
-    FsCheck >= CURRENTVERSION
+    FsCheck = CURRENTVERSION
     xunit.extensibility.execution ~> LOCKEDVERSION
 files
     bin/Release/FsCheck.Xunit.dll ==> lib/net452

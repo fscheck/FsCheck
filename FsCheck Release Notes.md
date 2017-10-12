@@ -1,6 +1,10 @@
+
 ### 3.0.0-alpha2 - To be released
 * Remove PCL builds. NET Standard is the way forward. Latest FSharp.Core builds don't even include PCL versions. As a result of the FSharp.Core dependency, FsCheck targets NET Standard 1.6.
 
+* Remove Prop.within.
+
+* Remove tuple and list testables.
 
 ### 3.0.0-alpha1 - 26 September 2017
 * Update random number generator to SplitMix algorithm. (with thanks to Jack Pappas for making it fast)
@@ -8,6 +12,9 @@
 * Add support for parallel and async testing. (by Sergey - great effort!)
 
 * Simplify sampling data: Gen.sample et al.
+
+### 2.10.4 - To be released
+* Change NuGet dependency of FsCheck.Xunit and FsCheck.NUnit on FsCheck to strict equality constraint.
 
 ### 2.10.3 - 26 September 2017
 * Don't escape newline and tab characters.
