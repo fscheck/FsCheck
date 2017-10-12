@@ -250,21 +250,3 @@ module private Testable =
         static member Arrow() =
             { new Testable<('a->'b)> with
                 member __.Property f = forAll Arb.from f }
-        static member Tuple2() =
-            { new Testable<'a*'b> with
-                member __.Property ((a,b)) = a .& b }
-        static member Tuple3() =
-            { new Testable<'a*'b*'c> with
-                member __.Property ((a,b,c)) = a .& b .& c }
-        static member Tuple4() =
-            { new Testable<'a*'b*'c*'d> with
-                member __.Property ((a,b,c,d)) = a .& b .& c .& d }
-        static member Tuple5() =
-            { new Testable<'a*'b*'c*'d*'e> with
-                member __.Property ((a,b,c,d,e)) = a .& b .& c .& d .& e }
-        static member Tuple6() =
-            { new Testable<'a*'b*'c*'d*'e*'f> with
-                member __.Property ((a,b,c,d,e,f)) = a .& b .& c .& d .& e .& f}
-        static member List() =
-            { new Testable<list<'a>> with
-                member __.Property l = List.fold (.&) (property <| List.head l) (List.tail l) }
