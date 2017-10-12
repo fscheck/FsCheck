@@ -4,7 +4,6 @@ open System
 
 [<NoComparison; RequireQualifiedAccess>]
 type Outcome = 
-    | Timeout of int
     | Exception of exn
     | False
     | True
@@ -26,8 +25,6 @@ type Result =
         match (l.Outcome,r.Outcome) with
         | (Outcome.Exception _,_) -> l //here a potential exception in r is thrown away...
         | (_,Outcome.Exception _) -> r
-        | (Outcome.Timeout _,_) -> l
-        | (_,Outcome.Timeout _) -> r
         | (Outcome.False,_) -> l
         | (_,Outcome.False) -> r
         | (_,Outcome.True) -> l
@@ -37,8 +34,6 @@ type Result =
         match (l.Outcome, r.Outcome) with
         | (Outcome.Exception _,_) -> r
         | (_,Outcome.Exception _) -> l
-        | (Outcome.Timeout _,_) -> l
-        | (_,Outcome.Timeout _) -> r
         | (_,Outcome.False) -> l
         | (Outcome.False,_) -> r
         | (Outcome.True,_) -> l
@@ -76,8 +71,6 @@ module internal Res =
     let failed = { result with Outcome = Outcome.False } |> Value
 
     let exc e = { result with Outcome = Outcome.Exception e } |> Value
-
-    let timeout i = { result with Outcome = Outcome.Timeout i } |> Value
 
     let succeeded = { result with Outcome = Outcome.True } |> Value
 

@@ -468,11 +468,6 @@ module Runner =
         | TestResult.False (data, originalArgs, args, Outcome.Exception exc, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
             + sprintf "with exception:%s%O%s" newline exc newline
-        | TestResult.False (data, _, args, Outcome.Timeout i, originalSeed, lastSeed, lastSize) -> 
-            sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A)%sLast step was invoked with size of %i and seed of (%A):%s" 
-                name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) originalSeed newline lastSize lastSeed newline
-            + maybePrintLabels data.Labels 
-            + sprintf "%s%s" (args |> argumentsToString) newline
         | TestResult.False (data, originalArgs, args, _, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
         | TestResult.Exhausted data -> 
