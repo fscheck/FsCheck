@@ -209,7 +209,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                           | TestResult.Exhausted _ ->
                             summary.Failed <- summary.Failed + 1
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
-                          | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, originalSeed, lastSeed, lastSize)  ->
+                          | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Failed e, originalSeed, lastSeed, lastSize)  ->
                             summary.Failed <- summary.Failed + 1
                             let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs originalSeed lastSeed lastSize)
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(message, e))

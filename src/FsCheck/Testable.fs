@@ -4,12 +4,11 @@ open System
 
 [<NoComparison; RequireQualifiedAccess>]
 type Outcome = 
-    | Exception of exn
-    | False
-    | True
+    | Failed of exn
+    | Passed
     | Rejected 
     /// determines for which Outcome the result should be shrunk, or shrinking should continue.
-    member internal x.Shrink = match x with Exception _ -> true | False -> true | _ -> false 
+    member internal x.Shrink = match x with Failed _ -> true | _ -> false 
 
 ///The result of one execution of a property.
 [<NoComparison>]
@@ -23,28 +22,23 @@ type Result =
     static member resAnd l r = 
         //printfn "And of l %A and r %A" l.Outcome r.Outcome
         match (l.Outcome,r.Outcome) with
-        | (Outcome.Exception _,_) -> l //here a potential exception in r is thrown away...
-        | (_,Outcome.Exception _) -> r
-        | (Outcome.False,_) -> l
-        | (_,Outcome.False) -> r
-        | (_,Outcome.True) -> l
-        | (Outcome.True,_) -> r
+        | (Outcome.Failed _,_) -> l //here a potential Failed in r is thrown away...
+        | (_,Outcome.Failed _) -> r
+        | (_,Outcome.Passed) -> l
+        | (Outcome.Passed,_) -> r
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
     static member resOr l r =
         match (l.Outcome, r.Outcome) with
-        | (Outcome.Exception _,_) -> r
-        | (_,Outcome.Exception _) -> l
-        | (_,Outcome.False) -> l
-        | (Outcome.False,_) -> r
-        | (Outcome.True,_) -> l
-        | (_,Outcome.True) -> r
+        | (Outcome.Failed _,_) -> r
+        | (_,Outcome.Failed _) -> l
+        | (Outcome.Passed,_) -> l
+        | (_,Outcome.Passed) -> r
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
 
 type ResultContainer = 
     | Value of Result
     | Future of Threading.Tasks.Task<Result>
     static member (&&&) (l,r) = 
-        //printfn "And of l %A and r %A" l.Outcome r.Outcome
         match (l,r) with
         | (Value vl,Value vr) -> Result.resAnd vl vr |> Value
         | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.resAnd x.Result vr) |> Future
@@ -68,11 +62,11 @@ module internal Res =
         Arguments   = []
       }
 
-    let failed = { result with Outcome = Outcome.False } |> Value
+    let failed = { result with Outcome = Outcome.Failed (exn "Expected true, got false.") } |> Value
 
-    let exc e = { result with Outcome = Outcome.Exception e } |> Value
+    let exc e = { result with Outcome = Outcome.Failed e } |> Value
 
-    let succeeded = { result with Outcome = Outcome.True } |> Value
+    let succeeded = { result with Outcome = Outcome.Passed } |> Value
 
     let rejected = { result with Outcome = Outcome.Rejected } |> Value
 
@@ -147,12 +141,12 @@ module private Testable =
         let ofTaskBool (b :Threading.Tasks.Task<bool>) = 
             ofResult <| Res.future (b.ContinueWith (fun (x :Threading.Tasks.Task<bool>) -> 
                 if x.IsCompleted then
-                    if x.Result then Outcome.True else Outcome.False
-                else Outcome.Exception x.Exception))
+                    if x.Result then Outcome.Passed else Outcome.Failed (exn "Expected true, got false.")
+                else Outcome.Failed x.Exception))
         
         let ofTask (b :Threading.Tasks.Task) = 
             ofResult <| Res.future (b.ContinueWith (fun (x :Threading.Tasks.Task) -> 
-                if x.IsCompleted then Outcome.True else Outcome.Exception x.Exception))
+                if x.IsCompleted then Outcome.Passed else Outcome.Failed x.Exception))
 
         let mapRoseResult f a = property a |> Property.GetGen |> Gen.map f |> Property
 

@@ -10,9 +10,8 @@ module RunnerHelper =
         { NumberOfTests = nt2; NumberOfShrinks = ns2; Stamps = sx2; Labels = lx2 } -> 
             nt1 = nt2 && ns1 = ns2 && Enumerable.SequenceEqual (sx1, sx2) && Enumerable.SequenceEqual (lx1, lx2)
     let cmpOutcome = function
-        | Outcome.Exception ex1, Outcome.Exception ex2 -> ex1.Equals ex2
-        | Outcome.False, Outcome.False -> true
-        | Outcome.True, Outcome.True -> true
+        | Outcome.Failed ex1, Outcome.Failed ex2 -> ex1.Message.Equals ex2.Message
+        | Outcome.Passed, Outcome.Passed -> true
         | Outcome.Rejected, Outcome.Rejected -> true
         | _, _ -> false  
 

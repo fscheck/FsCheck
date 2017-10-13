@@ -60,10 +60,10 @@ module Property =
         let addLabel label (res:Result) = { res with Labels = Set.add label res.Labels }
         let andCombine prop1 prop2 :Result = let (r1:Result,r2) = determineResult prop1, determineResult prop2 in Result.resAnd r1 r2
         match prop with
-        | Unit ->   { result with Outcome= Outcome.True }
-        | Bool true -> { result with Outcome= Outcome.True }
-        | Bool false -> { result with Outcome= Outcome.False }
-        | Exception  -> { result with Outcome= Outcome.Exception (InvalidOperationException() :> exn)}
+        | Unit ->   { result with Outcome= Outcome.Passed }
+        | Bool true -> { result with Outcome= Outcome.Passed }
+        | Bool false -> { result with Outcome= Outcome.Failed (exn "")}
+        | Exception  -> { result with Outcome= Outcome.Failed (InvalidOperationException() :> exn)}
         | ForAll (i,prop) -> determineResult prop |> addArgument i
         | Implies (true,prop) -> determineResult prop
         | Implies (false,_) -> { result with Outcome= Outcome.Rejected }
@@ -103,9 +103,8 @@ module Property =
             | TestResult.Exhausted td -> td
 
         match r0.Outcome, r1 with
-        | Outcome.Exception _, TestResult.False(_,_,_,Outcome.Exception _,_,_,_) -> r0.Labels = testData.Labels
-        | Outcome.False, TestResult.False(_,_,_,Outcome.False,_,_,_) -> r0.Labels = testData.Labels
-        | Outcome.True, TestResult.True _ -> (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
+        | Outcome.Failed _, TestResult.False(_,_,_,Outcome.Failed _,_,_,_) -> r0.Labels = testData.Labels
+        | Outcome.Passed, TestResult.True _ -> (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
         | Outcome.Rejected,TestResult.Exhausted _ -> true
         | _ -> false
     

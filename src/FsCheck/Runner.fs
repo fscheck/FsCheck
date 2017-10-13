@@ -180,7 +180,7 @@ module Runner =
         match result.Outcome with
             | Outcome.Rejected -> 
                 seq {yield g; yield Failed result}
-            | Outcome.True -> 
+            | Outcome.Passed -> 
                 seq {yield g; yield Passed result}
             | o when o.Shrink -> 
                 seq {yield g; yield Falsified result; yield! shrinkResultValue result (shrinks.GetEnumerator ())}
@@ -204,7 +204,7 @@ module Runner =
         match result.Outcome with
         | Outcome.Rejected -> 
             seq {yield g; yield Failed result} |> OutcomeSeqOrFuture.Value
-        | Outcome.True -> 
+        | Outcome.Passed -> 
             seq {yield g; yield Passed result} |> OutcomeSeqOrFuture.Value
         | o when o.Shrink -> 
             match shrinkResultTaskIter result (shrinks.GetEnumerator ()) with
@@ -465,7 +465,7 @@ module Runner =
             if suppressOutput then ""
             else sprintf "%sOk, passed %i test%s%s"
                     name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stampsToString)
-        | TestResult.False (data, originalArgs, args, Outcome.Exception exc, originalSeed, lastSeed, lastSize) -> 
+        | TestResult.False (data, originalArgs, args, Outcome.Failed exc, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
             + sprintf "with exception:%s%O%s" newline exc newline
         | TestResult.False (data, originalArgs, args, _, originalSeed, lastSeed, lastSize) -> 
