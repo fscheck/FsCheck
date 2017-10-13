@@ -6,7 +6,7 @@ open System.Runtime.CompilerServices
 ///Configure the test run with a quick configuration.
 type Configuration() =
     let mutable maxTest = Config.Quick.MaxTest
-    let mutable maxFail = Config.Quick.MaxFail
+    let mutable maxFail = Config.Quick.MaxRejected
     let mutable name = Config.Quick.Name
     let mutable every = Config.Quick.Every
     let mutable everyShrink = Config.Quick.EveryShrink
@@ -85,7 +85,7 @@ type Configuration() =
 
     member internal __.ToConfig() =
         { MaxTest = maxTest
-          MaxFail = maxFail 
+          MaxRejected = maxFail 
           Name = name
           Every = every
           EveryShrink = everyShrink

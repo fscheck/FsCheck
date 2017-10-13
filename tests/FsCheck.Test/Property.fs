@@ -98,13 +98,13 @@ module Property =
     let private areSame (r0:Result) (r1:TestResult) =
         let testData =
             match r1 with 
-            | TestResult.True (td,_) -> td
-            | TestResult.False (td,_,_,_,_,_,_) -> td
+            | TestResult.Passed (td,_) -> td
+            | TestResult.Failed (td,_,_,_,_,_,_) -> td
             | TestResult.Exhausted td -> td
 
         match r0.Outcome, r1 with
-        | Outcome.Failed _, TestResult.False(_,_,_,Outcome.Failed _,_,_,_) -> r0.Labels = testData.Labels
-        | Outcome.Passed, TestResult.True _ -> (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
+        | Outcome.Failed _, TestResult.Failed(_,_,_,Outcome.Failed _,_,_,_) -> r0.Labels = testData.Labels
+        | Outcome.Passed, TestResult.Passed _ -> (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
         | Outcome.Rejected,TestResult.Exhausted _ -> true
         | _ -> false
     

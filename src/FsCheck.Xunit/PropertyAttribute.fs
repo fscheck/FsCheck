@@ -86,7 +86,7 @@ module internal PropertyConfig =
                                     |> Option.map (fun i -> { MaxDegreeOfParallelism = i })
                                     |> orElse Config.Default.ParallelRunConfig
               MaxTest        = propertyConfig.MaxTest        |> orDefault Config.Default.MaxTest
-              MaxFail        = propertyConfig.MaxFail        |> orDefault Config.Default.MaxFail
+              MaxRejected    = propertyConfig.MaxFail        |> orDefault Config.Default.MaxRejected
               StartSize      = propertyConfig.StartSize      |> orDefault Config.Default.StartSize
               EndSize        = propertyConfig.EndSize        |> orDefault Config.Default.EndSize
               QuietOnSuccess = propertyConfig.QuietOnSuccess |> orDefault Config.Default.QuietOnSuccess
@@ -202,18 +202,18 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                     timer.Aggregate(fun () -> Check.Method(config, runMethod, ?target=target))
 
                     match xunitRunner.Result with
-                          | TestResult.True _ ->
+                          | TestResult.Passed _ ->
                             let output = Runner.onFinishedToString "" xunitRunner.Result
                             outputHelper.WriteLine(output)
                             new TestPassed(test, timer.Total, outputHelper.Output) :> TestResultMessage
                           | TestResult.Exhausted _ ->
                             summary.Failed <- summary.Failed + 1
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
-                          | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Failed e, originalSeed, lastSeed, lastSize)  ->
+                          | TestResult.Failed (testdata, originalArgs, shrunkArgs, Outcome.Failed e, originalSeed, lastSeed, lastSize)  ->
                             summary.Failed <- summary.Failed + 1
                             let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs originalSeed lastSeed lastSize)
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(message, e))
-                          | TestResult.False _ ->
+                          | TestResult.Failed _ ->
                             summary.Failed <- summary.Failed + 1
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
                 with

@@ -35,7 +35,7 @@ type PropertyAttribute() =
     inherit TestAttribute()
 
     let mutable maxTest = Config.Default.MaxTest
-    let mutable maxFail = Config.Default.MaxFail
+    let mutable maxFail = Config.Default.MaxRejected
     let mutable startSize = Config.Default.StartSize
     let mutable endSize = Config.Default.EndSize
     let mutable verbose = false
@@ -152,7 +152,7 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         let testRunner = NunitRunner()
         let config = { Config.Default with
                         MaxTest = attr.MaxTest
-                        MaxFail = attr.MaxFail
+                        MaxRejected = attr.MaxFail
                         StartSize = attr.StartSize
                         EndSize = attr.EndSize
                         Every = if attr.Verbose then Config.Verbose.Every else Config.Quick.Every
@@ -170,16 +170,16 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
                      else Some context.TestObject
         Check.Method(config, x.Method.MethodInfo, ?target = target)
         match testRunner.Result with
-        | TestResult.True _ ->
+        | TestResult.Passed _ ->
             if not attr.QuietOnSuccess then
                 printfn "%s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(ResultState(TestStatus.Passed))
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg))
-        | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Failed e, originalSeed, lastSeed, lastSize)  ->
+        | TestResult.Failed (testdata, originalArgs, shrunkArgs, Outcome.Failed e, originalSeed, lastSeed, lastSize)  ->
             let msg = sprintf "%s" (Runner.onFailureToString "" testdata originalArgs shrunkArgs originalSeed lastSeed lastSize)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg))
-        | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, originalSeed, lastSeed, lastSize) ->
+        | TestResult.Failed (testdata, originalArgs, shrunkArgs, outcome, originalSeed, lastSeed, lastSize) ->
             let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg))

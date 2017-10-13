@@ -12,9 +12,9 @@ type TestData =
 
 [<NoEquality;NoComparison;RequireQualifiedAccess>]
 type TestResult = 
-    | True of TestData
+    | Passed of TestData
                 * bool(*suppress output*)
-    | False of TestData 
+    | Failed of TestData 
                 * list<obj>(*the original arguments that produced the failed test*)
                 * list<obj>(*the shrunk arguments that produce a failed test*)
                 * Outcome(*possibly exception or timeout that falsified the property*) 
@@ -52,7 +52,7 @@ type Config =
     { ///The maximum number of tests that are run.
       MaxTest       : int
       ///The maximum number of tests where values are rejected, e.g. as the result of ==>
-      MaxFail       : int
+      MaxRejected   : int
       ///If set, the seed to use to start testing. Allows reproduction of previous runs.
       Replay        : Replay option
       ///Name of the test.
@@ -88,12 +88,12 @@ module Runner =
     [<NoEquality;NoComparison>]
     type private TestStep = 
         | Generated of (list<obj> * Rnd * int)   //generated arguments, Rnd and size used (test not yet executed)
-        | Passed of Result                          //one test passed
-        | Falsified of Result                       //falsified the property
-        | Failed of Result                          //generated arguments did not pass precondition
-        | Shrink of Result                          //shrunk falsified result succesfully
-        | NoShrink of Result                        //could not falsify given result; so unsuccesful shrink.
-        | EndShrink of Result                       //gave up shrinking; (possibly) shrunk result is given
+        | Passed of Result                       //one test passed
+        | Failed of Result                       //falsified the property
+        | Rejected of Result                     //generated arguments did not pass precondition
+        | Shrink of Result                       //shrunk falsified result succesfully
+        | NoShrink of Result                     //could not falsify given result; so unsuccesful shrink.
+        | EndShrink of Result                    //gave up shrinking; (possibly) shrunk result is given
         
     [<NoEquality;NoComparison>]
     type private OutcomeSeqOrFuture =
@@ -179,13 +179,13 @@ module Runner =
 
         match result.Outcome with
             | Outcome.Rejected -> 
-                seq {yield g; yield Failed result}
+                seq {yield g; yield Rejected result}
             | Outcome.Passed -> 
                 seq {yield g; yield Passed result}
             | o when o.Shrink -> 
-                seq {yield g; yield Falsified result; yield! shrinkResultValue result (shrinks.GetEnumerator ())}
+                seq {yield g; yield Failed result; yield! shrinkResultValue result (shrinks.GetEnumerator ())}
             | _ ->
-                seq {yield g; yield Falsified result; yield EndShrink result}
+                seq {yield g; yield Failed result; yield EndShrink result}
 
     let private test isReplay initSize resize rnd0 gen =    
         //Since we're not runing test for parallel scenarios it's impossible to discover `ResultContainer.Future` inside `result`
@@ -203,16 +203,16 @@ module Runner =
         let g = Generated (result.Arguments, rnd, usedSize)
         match result.Outcome with
         | Outcome.Rejected -> 
-            seq {yield g; yield Failed result} |> OutcomeSeqOrFuture.Value
+            seq {yield g; yield Rejected result} |> OutcomeSeqOrFuture.Value
         | Outcome.Passed -> 
             seq {yield g; yield Passed result} |> OutcomeSeqOrFuture.Value
         | o when o.Shrink -> 
             match shrinkResultTaskIter result (shrinks.GetEnumerator ()) with
-            | OutcomeSeqOrFuture.Value v -> seq {yield g; yield Falsified result; yield! v} |> OutcomeSeqOrFuture.Value
+            | OutcomeSeqOrFuture.Value v -> seq {yield g; yield Failed result; yield! v} |> OutcomeSeqOrFuture.Value
             | OutcomeSeqOrFuture.Future t -> t.ContinueWith (fun (xs :Threading.Tasks.Task<seq<TestStep>>) -> 
-                seq {yield g; yield Falsified result; yield! xs.Result}) |> OutcomeSeqOrFuture.Future         
+                seq {yield g; yield Failed result; yield! xs.Result}) |> OutcomeSeqOrFuture.Future         
         | _ ->
-            seq {yield g; yield Falsified result; yield EndShrink result} |> OutcomeSeqOrFuture.Value
+            seq {yield g; yield Failed result; yield EndShrink result} |> OutcomeSeqOrFuture.Value
 
     let private testStep rnd (size :float) ((Gen eval) as gen) =
             let usedSize = size |> round |> int
@@ -348,7 +348,7 @@ module Runner =
     let private parallelTest config initSize resize rnd0 gen =
         let steps = stepsSeq resize (initSize, rnd0)
         let pd = Option.fold (fun _ pc -> if pc.MaxDegreeOfParallelism <> -1 then pc.MaxDegreeOfParallelism else Environment.ProcessorCount) 1 config.ParallelRunConfig
-        let parSeq = ParTestSeq (steps, config.MaxTest, config.MaxFail, pd, gen)
+        let parSeq = ParTestSeq (steps, config.MaxTest, config.MaxRejected, pd, gen)
         parSeq :> seq<_>
 
 
@@ -365,10 +365,10 @@ module Runner =
         let testResult =
             let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
             match testStep with
-                | Passed _ -> TestResult.True (testData, config.QuietOnSuccess)
-                | Falsified result -> TestResult.False ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
-                | Failed _ -> TestResult.Exhausted testData
-                | EndShrink result -> TestResult.False ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
+                | Passed _ -> TestResult.Passed (testData, config.QuietOnSuccess)
+                | Failed result -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
+                | Rejected _ -> TestResult.Exhausted testData
+                | EndShrink result -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
                 | _ -> failwith "Test ended prematurely"
         config.Runner.OnFinished(config.Name,testResult)
 
@@ -379,7 +379,7 @@ module Runner =
         let shrinkNb = ref 0
         let tryShrinkNb = ref 0
         let origArgs = ref []
-        let lastStep = ref (Failed Res.rejectedV)
+        let lastStep = ref (Rejected Res.rejectedV)
         let seed, size = match config.Replay with None -> Random.create(), None | Some s -> s.Rnd, s.Size
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
         let lastSeed = ref seed
@@ -398,8 +398,8 @@ module Runner =
                     config.Runner.OnArguments(!testNb, args, config.Every)
                     true
                 | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest && size.IsNone //stop if we have enough tests or this was fast-forward single test run
-                | Falsified result -> origArgs := result.Arguments; testNb := !testNb + 1; true //falsified, true to continue with shrinking
-                | Failed _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxFail //failed, stop if we have too much failed tests
+                | Failed result -> origArgs := result.Arguments; testNb := !testNb + 1; true //failed, true to continue with shrinking
+                | Rejected _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxRejected //rejected, stop if we have too much failed tests
                 | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Runner.OnShrink(result.Arguments, config.EveryShrink); true
                 | NoShrink _ -> tryShrinkNb := !tryShrinkNb + 1; true
                 | EndShrink _ -> false )
@@ -461,14 +461,14 @@ module Runner =
         let stampsToString s = s |> Seq.map entry |> Seq.toList |> display
         let name = if String.IsNullOrEmpty(name) then String.Empty else (name+"-")
         match testResult with
-        | TestResult.True (data, suppressOutput) ->
+        | TestResult.Passed (data, suppressOutput) ->
             if suppressOutput then ""
             else sprintf "%sOk, passed %i test%s%s"
                     name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stampsToString)
-        | TestResult.False (data, originalArgs, args, Outcome.Failed exc, originalSeed, lastSeed, lastSize) -> 
+        | TestResult.Failed (data, originalArgs, args, Outcome.Failed exc, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
             + sprintf "with exception:%s%O%s" newline exc newline
-        | TestResult.False (data, originalArgs, args, _, originalSeed, lastSeed, lastSize) -> 
+        | TestResult.Failed (data, originalArgs, args, _, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
         | TestResult.Exhausted data -> 
             sprintf "%sArguments exhausted after %i test%s%s" 
@@ -563,7 +563,7 @@ type Config with
     ///The quick configuration only prints a summary result at the end of the test.
     static member Quick =
             { MaxTest       = 100
-              MaxFail       = 1000
+              MaxRejected   = 1000
               Replay        = None
               Name          = ""
               StartSize     = 1
@@ -592,7 +592,7 @@ type Config with
                 printf "%s" (everyShrink args)
             member __.OnFinished(name,testResult) = 
                 match testResult with
-                | TestResult.True _ -> printf "%s" (onFinishedToString name testResult)
+                | TestResult.Passed _ -> printf "%s" (onFinishedToString name testResult)
                 | _ -> failwithf "%s" (onFinishedToString name testResult)
 
         }

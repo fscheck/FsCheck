@@ -33,9 +33,9 @@ module RunnerInternals =
         member __.IsSame (pr:ProbeRunner) =
             let resultEq = 
                 match pr.Result, __.Result with
-                | TestResult.True (td1, so1), TestResult.True (td2, so2) -> 
+                | TestResult.Passed (td1, so1), TestResult.Passed (td2, so2) -> 
                     so1 = so2 && cmpTestData (td1, td2)
-                | TestResult.False (td1, oa1, sa1, o1, r1, rr1, s1), TestResult.False (td2, oa2, sa2, o2, r2, rr2, s2) -> 
+                | TestResult.Failed (td1, oa1, sa1, o1, r1, rr1, s1), TestResult.Failed (td2, oa2, sa2, o2, r2, rr2, s2) -> 
                     cmpTestData (td1, td2) && 
                     cmpOutcome (o1, o2) && 
                     Enumerable.SequenceEqual (oa1, oa2) && 
@@ -88,7 +88,7 @@ module RunnerInternals =
     let ``parallelTest produces same sequence as test on discard`` () =
         let body _ = true
         let arb = Arb.fromGen (Gen.constant 1 |> Gen.map (fun _ -> Prop.discard ()))
-        let config = { Config.Quick with MaxTest = 30000; MaxFail = 100000; EndSize = 30000 }
+        let config = { Config.Quick with MaxTest = 30000; MaxRejected = 100000; EndSize = 30000 }
         if not <| check arb body config then failwith "assertion failure!"
     
     type Tree = Leaf of int | Branch of Tree * Tree
@@ -270,8 +270,8 @@ module Runner =
     type ProbeRunner () =
         let mutable result = None
         member __.TestData () = match result.Value with
-                                | TestResult.True (t, _) -> None
-                                | TestResult.False (t, oa, sa, o, r, rr, s) -> Some (t, oa, sa, o, r, rr, s)
+                                | TestResult.Passed (t, _) -> None
+                                | TestResult.Failed (t, oa, sa, o, r, rr, s) -> Some (t, oa, sa, o, r, rr, s)
                                 | TestResult.Exhausted t -> None
         interface IRunner with
             override __.OnStartFixture _ = ()
@@ -296,7 +296,7 @@ module Runner =
                 MaxTest = runs
                 StartSize = 0
                 EndSize = runs
-                MaxFail = 1000
+                MaxRejected = 1000
                 Runner = runner
             }   
         Check.One (cfg, f)
