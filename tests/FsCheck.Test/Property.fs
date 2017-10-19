@@ -1,4 +1,4 @@
-﻿
+
 namespace FsCheck.Test
 
 module Property =
@@ -8,6 +8,8 @@ module Property =
     open FsCheck.Xunit
     open System
     open Arb
+    open System.Threading.Tasks
+    open Swensen.Unquote
     
     let internal curry f = fun a b -> f (a,b)
 
@@ -156,7 +158,39 @@ module Property =
         let a = Prop.ofTestable <| lazy failwith "crash"
         let b =  Prop.ofTestable true
         a .|. b
-            
-        
-        
 
+    [<Fact>]
+    let ``Task-asynchronous tests should be passable``() =
+        let resultRunner = GetResultRunner()
+        let config = { Config.Quick with Runner = resultRunner; MaxTest = 1; }
+        let tcs = TaskCompletionSource()
+        tcs.SetResult(())
+        Check.One (config, Prop.ofTestable (tcs.Task :> Task))
+        test <@ match resultRunner.Result with
+                | TestResult.Passed(_,_) -> true
+                | TestResult.Failed(_,_,_,_,_,_,_) -> false
+                | TestResult.Exhausted _ -> false @>
+    
+    [<Fact>]
+    let ``Task-asynchronous tests should be failable by raising an exception``() =
+        let resultRunner = GetResultRunner()
+        let config = { Config.Quick with Runner = resultRunner; MaxTest = 1; }
+        let tcs = TaskCompletionSource()
+        tcs.SetException(exn "fail")
+        Check.One (config, Prop.ofTestable (tcs.Task :> Task))
+        test <@ match resultRunner.Result with
+                | TestResult.Passed(_,_) -> false
+                | TestResult.Failed(_,_,_,_,_,_,_) -> true
+                | TestResult.Exhausted _ -> false @>
+
+    [<Fact>]
+    let ``Task-asynchronous tests should be failable by cancellation``() =
+        let resultRunner = GetResultRunner()
+        let config = { Config.Quick with Runner = resultRunner; MaxTest = 1; }
+        let tcs = TaskCompletionSource()
+        tcs.SetCanceled()
+        Check.One (config, Prop.ofTestable (tcs.Task :> Task))
+        test <@ match resultRunner.Result with
+                | TestResult.Passed(_,_) -> false
+                | TestResult.Failed(_,_,_,_,_,_,_) -> true
+                | TestResult.Exhausted _ -> false @>
