@@ -1,4 +1,4 @@
-﻿namespace FsCheck
+namespace FsCheck
 
 open System
 
@@ -138,15 +138,15 @@ module private Testable =
          
         let ofBool b = ofResult <| if b then Res.succeeded else Res.failed
         
-        let ofTaskBool (b :Threading.Tasks.Task<bool>) = 
+        let ofTaskBool (b:Threading.Tasks.Task<bool>) = 
             ofResult <| Res.future (b.ContinueWith (fun (x :Threading.Tasks.Task<bool>) -> 
-                if x.IsCompleted then
-                    if x.Result then Outcome.Passed else Outcome.Failed (exn "Expected true, got false.")
-                else Outcome.Failed x.Exception))
+                if x.IsFaulted then Outcome.Failed x.Exception
+                else
+                    if x.Result then Outcome.Passed else Outcome.Failed (exn "Expected true, got false.")))
         
-        let ofTask (b :Threading.Tasks.Task) = 
+        let ofTask (b:Threading.Tasks.Task) = 
             ofResult <| Res.future (b.ContinueWith (fun (x :Threading.Tasks.Task) -> 
-                if x.IsCompleted then Outcome.Passed else Outcome.Failed x.Exception))
+                if x.IsFaulted then Outcome.Failed x.Exception else Outcome.Passed))
 
         let mapRoseResult f a = property a |> Property.GetGen |> Gen.map f |> Property
 

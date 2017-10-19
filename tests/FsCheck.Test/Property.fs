@@ -1,4 +1,4 @@
-﻿
+
 namespace FsCheck.Test
 
 module Property =
@@ -8,6 +8,7 @@ module Property =
     open FsCheck.Xunit
     open System
     open Arb
+    open System.Threading.Tasks
     
     let internal curry f = fun a b -> f (a,b)
 
@@ -156,7 +157,20 @@ module Property =
         let a = Prop.ofTestable <| lazy failwith "crash"
         let b =  Prop.ofTestable true
         a .|. b
-            
-        
-        
-
+    
+    let private unitGen =
+        Gen.constant ()
+    
+    [<Property>]
+    let ``Task-asynchronous tests should be failable``() =
+        Prop.forAll (Arb.fromGen unitGen) <| fun () ->
+            let resultRunner = GetResultRunner()
+            let config = { Config.Quick with Runner = resultRunner; MaxTest = 1; }
+            let fail = Action(fun () -> failwith "fail");
+            let task = System.Threading.Tasks.Task.Run fail
+            Check.One (config, Prop.ofTestable task)
+            Prop.ofTestable <|
+                match resultRunner.Result with
+                  | TestResult.Passed(_,_) -> false
+                  | TestResult.Failed(_,_,_,_,_,_,_) -> true
+                  | TestResult.Exhausted _ -> false
