@@ -9,8 +9,10 @@ module Arbitrary =
     open System
     open System.Globalization
     open System.Collections.Generic
+#if !NETSTANDARD1_6
     open System.Net
     open System.Net.Mail
+#endif
     open Helpers
     open Arb
     open Swensen.Unquote
@@ -503,7 +505,7 @@ module Arbitrary =
     [<Fact>]
     let Guid () =
         generate<Guid> |> sample 10 |> ignore
-
+#if !NETSTANDARD1_6
     [<Fact>]
     let IPAddress () =
         generate<IPAddress> |> sample 10 |> ignore
@@ -524,7 +526,7 @@ module Arbitrary =
     [<Property>]
     let ``IPv6Address is only IPv6`` (IPv6Address address) =
         address.AddressFamily = System.Net.Sockets.AddressFamily.InterNetworkV6
-        |> assertTrue
+#endif
 
     [<Property>]
     let ``HostName is useful in an Uri`` (HostName host) =
@@ -534,8 +536,8 @@ module Arbitrary =
     [<Property>]
     let ``HostName correctly turns to string`` (HostName expected as value) =
         expected = string value
-        |> assertTrue
 
+#if !NETSTANDARD1_6
     [<Fact>]
     let MailAddress () =
         generate<MailAddress> |> sample 10 |> ignore
@@ -544,7 +546,7 @@ module Arbitrary =
     let ``MailAddress shrinks`` (value: MailAddress) =
         shrink value
         |> Seq.forall (fun shrunkv -> shrunkv.ToString().Length < value.ToString().Length || shrunkv.Host <> value.Host)
-        |> assertTrue
+#endif
 
     [<Property>]
     let Bigint (value:bigint) =

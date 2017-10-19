@@ -6,16 +6,19 @@
     <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81</PackageTargetFallback>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;NETCOREAPP1_1;NETSTANDARD1_6</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="../FsCheck.Test/Helpers.fs">
-      <Link>Helpers.fs</Link>
-    </Compile>
-    <Compile Include="../FsCheck.Test/Random.fs">
-      <Link>Random.fs</Link>
-    </Compile>
-    <Compile Include="../FsCheck.Test/Property.fs">
-      <Link>Property.fs</Link>
-    </Compile>
+    <Compile Include="../FsCheck.Test/Helpers.fs" Link="Helpers.fs" />
+    <Compile Include="../FsCheck.Test/Random.fs" Link="Random.fs" />
+    <Compile Include="../FsCheck.Test/TypeClass.fs" Link="TypeClass.fs" />    
+    <Compile Include="../FsCheck.Test/Gen.fs" Link="Gen.fs" />
+    <Compile Include="../FsCheck.Test/Arbitrary.fs" Link="Arbitrary.fs" />    
+    <Compile Include="../FsCheck.Test/Property.fs" Link="Property.fs" />
+    <Compile Include="../FsCheck.Test/StateMachine.fs" Link="StateMachine.fs" />    
+    <Compile Include="../FsCheck.Test/Runner.fs" Link="Runner.fs" />
   </ItemGroup>
 
   <ItemGroup>
