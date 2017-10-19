@@ -79,7 +79,7 @@ type Rnd =
 
 //
 [<AbstractClass; Sealed>]
-type internal Random () =
+type Random () =
     static let defaultGen = System.DateTime.UtcNow.Ticks |> uint64 |> Rnd.mix64variant13 |> ref
 
     static member DefaultGen = defaultGen

@@ -87,6 +87,7 @@
     <Compile Include="RunnerExtensions.fs" />
     <None Include="Script.fsx" />
     <None Include="paket.template" />
+    <None Include="Proto.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
