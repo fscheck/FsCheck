@@ -220,7 +220,7 @@ module BugReproIssue344 =
                 override __.Shrinker _ =
                     Seq.initInfinite (fun i -> IntWrapper(i + 2))
             }
-
+#if !NETSTANDARD1_6 //Stacktrace not defined
     [<Fact>]
     let ``Shrinks dont cause a stackoverflow``() =
 
@@ -245,7 +245,7 @@ module BugReproIssue344 =
         thread2.Start()
         thread2.Join()
         if tooManyFrames then failwith "too many frames, possible stackoverflow detected"
-
+#endif
 
 module Override =
     open System
