@@ -8,6 +8,80 @@ open FsCheck.Experimental
 open System.Collections.Generic
 open System.Data
 
+module ShrinkStream =
+    type Context<'T> = {
+        Next: 'T -> unit
+        Stop: unit -> unit
+    }
+    
+    [<Struct>]
+    type ShrinkResult = Success | Fail
+
+    type ICall = 
+        abstract Shrink: ShrinkResult -> unit
+        abstract Constant: unit -> unit
+
+    type ShrinkStream<'T> = ShrinkStream of (Context<'T> -> ICall)
+
+    let noShrink a :ShrinkStream<'T> = 
+        fun ctx ->
+            { new ICall with
+                member __.Shrink _ = ctx.Stop()
+                member __.Constant () = ctx.Next a }
+        |> ShrinkStream
+
+    let shrinks a shrinker :ShrinkStream<'T> =
+        fun ctx ->
+            let mutable current = a
+            let mutable options :'T[] = null
+            let mutable optionIndex = 0
+            let nextOrStop() =
+                if optionIndex >= options.Length then 
+                    ctx.Stop()
+                else
+                    current <- options.[optionIndex]
+                    ctx.Next current
+            { new ICall with
+                member __.Shrink res =
+                    match res with
+                    | Success -> 
+                        options <- shrinker current
+                        optionIndex <- 0
+                    | Fail ->
+                        optionIndex <- optionIndex + 1
+                    nextOrStop()
+                member __.Constant () = 
+                    ctx.Next current }
+        |> ShrinkStream
+
+    let map (f:'T->'U) (ShrinkStream source:ShrinkStream<'T>) :ShrinkStream<'U> =
+        fun ctx ->
+            source { Next = fun t -> ctx.Next (f t)
+                     Stop = ctx.Stop }
+        |> ShrinkStream
+
+    let join (ShrinkStream sources:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
+        fun ctx ->
+            let nextOuter = { Next = fun (ShrinkStream str) -> (str ctx).Constant()
+                              Stop = ctx.Stop }
+            //let nextInner = { Next = ctx.Next
+            { new ICall with
+                override __.Constant () = (sources nextOuter).Constant()
+                override __.Shrink shrinkResult = () }
+            //sources { Next = fun (ShrinkStream inner) -> (inner ctx).
+        |> ShrinkStream
+
+    //let bind (ShrinkStream source:ShrinkStream<'T>) (mapping:'T -> ShrinkStream<'U>) :ShrinkStream<'U> =
+    //    fun ctx ->
+    //        let res = ShrinkResult.Success
+    //        source { Next = fun elem -> let (ShrinkStream u) = mapping elem in (u ctx).Constant() // constant because keep the inner prop constant makes most sense
+    //                 Stop = fun () -> (s ctx).Shrink res }  // can start shrinking inner?
+
+    //    |> ShrinkStream
+
+
+    //join = concat = map + bind    
+
 type Size = int
 
 // this is the "local" state of the gen computation.
@@ -20,12 +94,6 @@ type Context<'T> = {
 // each time this function is called, Context.Next is called with the next value,
 // and the context is changed.
 type CallNext = unit -> unit
-
-type ShrinkResult = bool
-
-type ICallNext =
-    abstract Random: unit -> unit
-    abstract Shrink: ShrinkResult -> unit 
 
 type GenStream<'T> = GenStream of (Context<'T> -> CallNext)
 
