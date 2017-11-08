@@ -60,16 +60,26 @@ module ShrinkStream =
                      Stop = ctx.Stop }
         |> ShrinkStream
 
-    let join (ShrinkStream sources:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
+    let apply (ShrinkStream f:ShrinkStream<'T->'U>) (ShrinkStream source:ShrinkStream<'T>) :ShrinkStream<'U> =
         fun ctx ->
-            let nextOuter = { Next = fun (ShrinkStream str) -> (str ctx).Constant()
-                              Stop = ctx.Stop }
-            //let nextInner = { Next = ctx.Next
-            { new ICall with
-                override __.Constant () = (sources nextOuter).Constant()
-                override __.Shrink shrinkResult = () }
-            //sources { Next = fun (ShrinkStream inner) -> (inner ctx).
+    //        let constantOuter = { Next = fun (ShrinkStream str) -> (str ctx).Constant()
+    ////                              Stop = ctx.Stop }
+            f { Next = fun f -> ctx.Next (f t)
+                   Stop = ctx.Stop }
         |> ShrinkStream
+
+    //let join (ShrinkStream sources:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
+    //    fun ctx ->
+    //        let constantOuter = { Next = fun (ShrinkStream str) -> (str ctx).Constant()
+    //                              Stop = ctx.Stop }
+    //        let shrinkOuter = { Next = fun (ShrinkStream str) -> (str ctx).Shring
+    //        { new ICall with
+    //            override __.Constant () = (sources constantOuter).Constant()
+    //            override __.Shrink shrinkResult = 
+    //                sources (nextOuter
+    //        }
+    //        //sources { Next = fun (ShrinkStream inner) -> (inner ctx).
+    //    |> ShrinkStream
 
     //let bind (ShrinkStream source:ShrinkStream<'T>) (mapping:'T -> ShrinkStream<'U>) :ShrinkStream<'U> =
     //    fun ctx ->
