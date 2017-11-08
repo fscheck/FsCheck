@@ -1,4 +1,4 @@
-### 2.10.4 - To be released
+### 2.10.4 - 8 November 2017
 * Change NuGet dependency of FsCheck.Xunit and FsCheck.NUnit on FsCheck to strict equality constraint.
 
 * Add specific dependency group to nuspec for net45 so that NuGet does not download a bunch of packages needlessly.
