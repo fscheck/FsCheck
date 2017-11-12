@@ -140,7 +140,7 @@ module private Testable =
     let private shrinking shrink x pf =
         let promoteRose m = Gen (fun s r -> Rose.map (fun (Gen m') -> m' s r) m)
         //cache is important here to avoid re-evaluation of property
-        let rec props x = MkRose (lazy (property (pf x) |> Property.GetGen), shrink x |> Seq.map props |> Seq.cache)
+        let rec props x = MkRose (lazy (pf x), shrink x |> Seq.map props |> Seq.cache)
         promoteRose (props x)
         |> Gen.map Rose.join
      
