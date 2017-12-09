@@ -1,6 +1,9 @@
 ﻿namespace FsCheck.Xunit
 
 open System
+open System.Linq;
+open System.Reflection
+open System.Threading
 open System.Threading.Tasks
 
 open FsCheck
@@ -151,20 +154,56 @@ type public PropertyAttribute() =
 [<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
 type public PropertiesAttribute() = inherit PropertyAttribute()
 
-/// The xUnit2 test runner for the PropertyAttribute that executes the test via FsCheck
-type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
-    inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
+/// The xUnit2 test case runner for the PropertyAttribute that executes the test via FsCheck
+type PropertyTestCaseRunner(testCase: IXunitTestCase, displayName: string, skipReason: string, constructorArguments: obj[], testMethodArguments: obj[], messageBus: IMessageBus, aggregator: ExceptionAggregator, cancellationTokenSource: CancellationTokenSource) =
+    inherit XunitTestCaseRunner(testCase, displayName, skipReason, constructorArguments, testMethodArguments, messageBus, aggregator, cancellationTokenSource)
 
-    new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, null)
+    member this.Test = new XunitTest(this.TestCase, this.DisplayName)
 
-    member this.Init(output:TestOutputHelper) =
-        let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
+    member this.TryRunBeforeMethod (timer: ExecutionTimer) (beforeAfterAttribute: BeforeAfterTestAttribute) =
+        if cancellationTokenSource.IsCancellationRequested then
+            false
+        else
+            let attributeName = beforeAfterAttribute.GetType().Name
+
+            if not (messageBus.QueueMessage(new BeforeTestStarting(this.Test, attributeName))) then
+                cancellationTokenSource.Cancel();
+                false
+            else
+                try
+                    try
+                        let testMethod = this.TestMethod
+                        timer.Aggregate(fun () -> beforeAfterAttribute.Before(testMethod))
+                        true
+                    with
+                    | ex-> 
+                        aggregator.Add(ex)
+                        false
+                finally
+                    if not (messageBus.QueueMessage(new BeforeTestFinished(this.Test, attributeName))) then
+                        cancellationTokenSource.Cancel();
+
+    member this.RunAfterMethod (timer: ExecutionTimer) (beforeAfterAttribute: BeforeAfterTestAttribute) =
+
+        let attributeName = beforeAfterAttribute.GetType().Name;
+        if not (messageBus.QueueMessage(new AfterTestStarting(this.Test, attributeName))) then
+            cancellationTokenSource.Cancel();
+
+        let testMethod = this.TestMethod
+        aggregator.Run(fun () -> timer.Aggregate(fun () -> beforeAfterAttribute.After(testMethod)));
+
+        if not (messageBus.QueueMessage(new AfterTestFinished(this.Test, attributeName))) then
+            cancellationTokenSource.Cancel();
+
+    member this.Init(output: TestOutputHelper) =
+        let factAttribute = this.TestCase.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
         let arbitrariesOnClass =
-            this.TestMethod.TestClass.Class.GetCustomAttributes(Type.GetType("FsCheck.Xunit.ArbitraryAttribute"))
+            this.TestCase.TestMethod.TestClass.Class.GetCustomAttributes(Type.GetType("FsCheck.Xunit.ArbitraryAttribute"))
                 |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
                 |> Seq.toArray
+
         let generalAttribute = 
-            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<PropertiesAttribute>) 
+            this.TestCase.TestMethod.TestClass.Class.GetCustomAttributes(typeof<PropertiesAttribute>) 
                 |> Seq.tryFind (fun _ -> true)
 
         let config =
@@ -179,11 +218,14 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
         { config with Arbitrary = Array.append config.Arbitrary arbitrariesOnClass }
         |> PropertyConfig.toConfig output 
 
-    override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
-        let test = new XunitTest(this, this.DisplayName)
+    override this.RunTestAsync() =
         let summary = new RunSummary(Total = 1);
         let outputHelper = new TestOutputHelper()
+        let test = this.Test
+        let testMethod = this.TestMethod
+        let messageBus = this.MessageBus
         outputHelper.Initialize(messageBus, test)
+        let testCase = this.TestCase
         let testExec() =
             
             let config = this.Init(outputHelper)
@@ -191,17 +233,24 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             let result =
                 try
                     let xunitRunner = if config.Runner :? XunitRunner then (config.Runner :?> XunitRunner) else new XunitRunner()
-                    let runMethod = this.TestMethod.Method.ToRuntimeMethod()
+                    let runMethod = testCase.TestMethod.Method.ToRuntimeMethod()
                     let target =
                         constructorArguments
                             |> Array.tryFind (fun x -> x :? TestOutputHelper)
                             |> Option.iter (fun x -> (x :?> TestOutputHelper).Initialize(messageBus, test))
-                        let testClass = this.TestMethod.TestClass.Class.ToRuntimeType()
-                        if this.TestMethod.TestClass <> null && not this.TestMethod.Method.IsStatic then
+                        let testClass = testCase.TestMethod.TestClass.Class.ToRuntimeType()
+                        if testCase.TestMethod.TestClass <> null && not testCase.TestMethod.Method.IsStatic then
                             Some (test.CreateTestClass(testClass, constructorArguments, messageBus, timer, cancellationTokenSource))
                         else None
 
+                    let afterAttributes =
+                        this.BeforeAfterAttributes.ToList()
+                            |> Seq.filter (this.TryRunBeforeMethod timer)
+                            |> Seq.toList
+
                     timer.Aggregate(fun () -> Check.Method(config, runMethod, ?target=target))
+
+                    afterAttributes |> Seq.iter (this.RunAfterMethod timer)
 
                     match xunitRunner.Result with
                           | TestResult.True _ ->
@@ -229,12 +278,12 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             summary.Time <- summary.Time + result.ExecutionTime
             if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, result.Output))) then
                 cancellationTokenSource.Cancel() |> ignore
-            if not (messageBus.QueueMessage(new TestCaseFinished(this, summary.Time, summary.Total, summary.Failed, summary.Skipped))) then
+            if not (messageBus.QueueMessage(new TestCaseFinished(testCase, summary.Time, summary.Total, summary.Failed, summary.Skipped))) then
                 cancellationTokenSource.Cancel() |> ignore
 
             summary
 
-        if not (messageBus.QueueMessage(new TestCaseStarting(this))) then
+        if not (messageBus.QueueMessage(new TestCaseStarting(testCase))) then
             cancellationTokenSource.Cancel() |> ignore
 
         if not (messageBus.QueueMessage(new TestStarting(test))) then
@@ -244,11 +293,22 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             summary.Skipped <- summary.Skipped + 1
             if not(messageBus.QueueMessage(new TestSkipped(test, this.SkipReason))) then
                 cancellationTokenSource.Cancel() |> ignore
-            if not(messageBus.QueueMessage(new TestCaseFinished(this, decimal 1, 0, 0, 1))) then
+            if not(messageBus.QueueMessage(new TestCaseFinished(testCase, decimal 1, 0, 0, 1))) then
                 cancellationTokenSource.Cancel() |> ignore
             Task.FromResult(summary)
         else
             Task.Run(testExec)
+
+
+/// The xUnit2 test case responsible for constructing the runner for the PropertyAttribute
+type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
+    inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
+
+    new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, null)
+
+    override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
+        let testCaseRunner = new PropertyTestCaseRunner(this, this.DisplayName, this.SkipReason, constructorArguments, this.TestMethodArguments, messageBus, aggregator, cancellationTokenSource)
+        testCaseRunner.RunAsync()
 
 /// xUnit2 test case discoverer to link the method with the PropertyAttribute to the PropertyTestCase
 /// so the test can be run via FsCheck.
