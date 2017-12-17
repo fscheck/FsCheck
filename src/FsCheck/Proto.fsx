@@ -2,7 +2,7 @@
 open System.Reflection
 open Microsoft.FSharp.Reflection
 
-#r "bin\Release\FsCheck.dll"
+#r @"bin\Release\FsCheck.dll"
 open FsCheck
 open FsCheck.Experimental
 open System.Collections.Generic
@@ -11,86 +11,149 @@ open System.Data
 module ShrinkStream =
     type Context<'T> = {
         Next: 'T -> unit
-        Stop: unit -> unit
+        //Root: 'T ref
     }
-    
-    [<Struct>]
-    type ShrinkResult = Success | Fail
 
     type ICall = 
-        abstract Shrink: ShrinkResult -> unit
-        abstract Constant: unit -> unit
+        /// Move to the next possible shrink and call Next 
+        /// if there is one. If there are no more shrinks, don't
+        /// call Next.
+        abstract Shrink: unit -> unit
+        /// Take the current value as start for a new set of shrink
+        /// possibilities.
+        abstract Root: unit -> unit
+        /// Call Next with the current value. 
+        abstract Current: unit -> unit
 
     type ShrinkStream<'T> = ShrinkStream of (Context<'T> -> ICall)
 
-    let noShrink a :ShrinkStream<'T> = 
+    let noShrink a : ShrinkStream<'T> = 
         fun ctx ->
             { new ICall with
-                member __.Shrink _ = ctx.Stop()
-                member __.Constant () = ctx.Next a }
+                member __.Shrink () = ()
+                member __.Root () = ()
+                member __.Current () = ctx.Next a
+            }
         |> ShrinkStream
 
-    let shrinks a shrinker :ShrinkStream<'T> =
+    let shrinks a shrinker : ShrinkStream<'T> =
         fun ctx ->
-            let mutable current = a
-            let mutable options :'T[] = null
-            let mutable optionIndex = 0
-            let nextOrStop() =
-                if optionIndex >= options.Length then 
-                    ctx.Stop()
-                else
-                    current <- options.[optionIndex]
-                    ctx.Next current
+            let mutable currentRoot = a
+            let mutable current = currentRoot
+            let mutable options :'T[] = shrinker currentRoot
+            let mutable optionIndex = 0                
             { new ICall with
-                member __.Shrink res =
-                    match res with
-                    | Success -> 
-                        options <- shrinker current
-                        optionIndex <- 0
-                    | Fail ->
+                member __.Shrink () =
+                    if optionIndex < options.Length then
+                        current <- options.[optionIndex]
+                        ctx.Next current
                         optionIndex <- optionIndex + 1
-                    nextOrStop()
-                member __.Constant () = 
-                    ctx.Next current }
+                member __.Root () =
+                    currentRoot <- current
+                    options <- shrinker current
+                    optionIndex <- 0
+                member __.Current () = 
+                    ctx.Next current 
+            }
         |> ShrinkStream
 
     let map (f:'T->'U) (ShrinkStream source:ShrinkStream<'T>) :ShrinkStream<'U> =
         fun ctx ->
-            source { Next = fun t -> ctx.Next (f t)
-                     Stop = ctx.Stop }
+            source { Next = fun t -> ctx.Next (f t) }
         |> ShrinkStream
 
-    let apply (ShrinkStream f:ShrinkStream<'T->'U>) (ShrinkStream source:ShrinkStream<'T>) :ShrinkStream<'U> =
+    let inline private withNext ctx nextFun =
+        { Next = nextFun }
+    
+    let apply (ShrinkStream f:ShrinkStream<'T -> 'U>) (ShrinkStream a:ShrinkStream<'T>) :ShrinkStream<'U> =
         fun ctx ->
-    //        let constantOuter = { Next = fun (ShrinkStream str) -> (str ctx).Constant()
-    ////                              Stop = ctx.Stop }
-            f { Next = fun f -> ctx.Next (f t)
-                   Stop = ctx.Stop }
+            let mutable called = false
+            let mutable lastF = Unchecked.defaultof<'T -> 'U>
+            let f = f (withNext ctx (fun f -> lastF <- f; called <- true))
+            let inline tryShrinkF () = 
+                called <- false
+                f.Shrink()
+                called
+            let mutable lastA = Unchecked.defaultof<'T>
+            let a = a (withNext ctx (fun a -> lastA <- a; called <- true))
+            let inline tryShrinkA () = 
+                called <- false
+                a.Shrink()
+                called
+            let inline callNext() =
+                ctx.Next (lastF lastA)
+            { new ICall with
+                member __.Shrink () = 
+                    if tryShrinkF() then
+                        callNext()
+                    elif tryShrinkA() then
+                        callNext()
+                member __.Root () = 
+                    f.Root()
+                    a.Root()
+                member __.Current () =
+                    callNext()
+            }
         |> ShrinkStream
-
-    //let join (ShrinkStream sources:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
-    //    fun ctx ->
-    //        let constantOuter = { Next = fun (ShrinkStream str) -> (str ctx).Constant()
-    //                              Stop = ctx.Stop }
-    //        let shrinkOuter = { Next = fun (ShrinkStream str) -> (str ctx).Shring
-    //        { new ICall with
-    //            override __.Constant () = (sources constantOuter).Constant()
-    //            override __.Shrink shrinkResult = 
-    //                sources (nextOuter
-    //        }
-    //        //sources { Next = fun (ShrinkStream inner) -> (inner ctx).
-    //    |> ShrinkStream
-
-    //let bind (ShrinkStream source:ShrinkStream<'T>) (mapping:'T -> ShrinkStream<'U>) :ShrinkStream<'U> =
-    //    fun ctx ->
-    //        let res = ShrinkResult.Success
-    //        source { Next = fun elem -> let (ShrinkStream u) = mapping elem in (u ctx).Constant() // constant because keep the inner prop constant makes most sense
-    //                 Stop = fun () -> (s ctx).Shrink res }  // can start shrinking inner?
-
-    //    |> ShrinkStream
-
-
-    //join = concat = map + bind    
+    
+    let join (ShrinkStream sources:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
+        fun ctx ->
+            let innerStreams = ResizeArray<ICall>()
+            let mutable innerStreamsComplete = [||]
+            let mutable innerAdded = false
+            let mutable innerCalled = false
+            let sourcesNext = sources { Next = fun (ShrinkStream inner) -> 
+                innerStreams.Add (inner { Next = (fun t -> ctx.Next t; innerCalled <- true) })
+                innerAdded <- true }
+            let tryShrinkOuter() =
+                innerAdded <- false
+                sourcesNext.Shrink()
+                innerAdded
+            let tryShrinkInner i =
+                innerCalled <- false
+                innerStreams.[i].Shrink()
+                innerStreamsComplete.[i] <- not innerCalled
+                innerCalled
+            let mutable shrinkingOuter = true
+            let mutable innerIndex = 0
+            { new ICall with
+                member __.Shrink() =
+                    if shrinkingOuter && tryShrinkOuter() then
+                        innerStreams.[innerStreams.Count-1].Current()
+                    elif innerIndex < innerStreams.Count then
+                        if shrinkingOuter then //first call into inner shinkers - outer shrinking complete
+                            shrinkingOuter <- false
+                            innerStreamsComplete <- Array.create innerStreams.Count false
+                        while not innerStreamsComplete.[innerIndex] 
+                                && innerIndex < innerStreams.Count 
+                                && not (tryShrinkInner innerIndex) do
+                            innerIndex <- innerIndex + 1
+                        
+                        
+                    
+                    // here iterate through the tree of shrink possibilities, breadth first
+                    // i.e. take one element at a time off each of the inner streams until they are all exhausted
+                member __.Root() = ()
+                    //maybe:
+                    //sources.Root()
+                    //let (ShrinkStream g) = lastInner
+                    //(g ctx).Root()
+                member __.Current() =
+                    (sources { Next = fun (ShrinkStream inner) -> (inner ctx).Current() }).Current()
+            }
+            //let constantOuter = { Next = fun (ShrinkStream str) -> (str ctx).Constant()
+            //                      Stop = ctx.Stop }
+            //let shrinkOuter = { Next = fun (ShrinkStream str) -> (str ctx).Shring
+            //{ new ICall with
+            //    override __.Constant () = (sources constantOuter).Constant()
+            //    override __.Shrink shrinkResult = 
+            //        sources (nextOuter
+            //}
+            //sources { Next = fun (ShrinkStream inner) -> (inner ctx).
+        |> ShrinkStream
+    
+    let bind (source:ShrinkStream<'T>) (mapping:'T -> ShrinkStream<'U>) :ShrinkStream<'U> =
+        source |> map mapping |> join  
 
 type Size = int
 
@@ -99,27 +162,41 @@ type Context<'T> = {
     Next: 'T -> unit
     Reject: unit -> unit
     Size: Size ref
-    Seed: Rnd ref }
+    Seed: Rnd ref 
+    ShrinkRoot : 'T ref }    
 
 // each time this function is called, Context.Next is called with the next value,
 // and the context is changed.
-type CallNext = unit -> unit
+type ICallNext = 
+    abstract Next: unit -> unit
+    abstract Shrink: unit -> unit
 
-type GenStream<'T> = GenStream of (Context<'T> -> CallNext)
+type GenStream<'T> = GenStream of (Context<'T> -> ICallNext)
 
 let choose (lo,hi) =
     fun ctx -> 
-        fun () -> ctx.Next <| Random.rangeInt(lo, hi, !ctx.Seed, ctx.Seed)
+        let mutable current = lo
+        { new ICallNext with 
+            member __.Next () = 
+                ctx.ShrinkRoot := Random.rangeInt(lo, hi, !ctx.Seed, ctx.Seed)
+                ctx.Next !ctx.ShrinkRoot
+            member __.Shrink () =  
+                if !ctx.ShrinkRoot <> lo then ctx.ShrinkRoot := !ctx.ShrinkRoot - 1
+                ctx.Next !ctx.ShrinkRoot } //shrink straight to lo
     |> GenStream
 
 let constant (t:'T) : GenStream<'T> =
     fun ctx -> 
-        fun () -> ctx.Next t
+        { new ICallNext with 
+            member __.Next () = ctx.Next t
+            member __.Shrink () = ctx.Next t }
     |> GenStream
 
-let reject : GenStream<'T> =
+let reject<'T> : GenStream<'T> =
     fun ctx -> 
-        fun () -> ctx.Reject ()
+        { new ICallNext with
+            member __.Next () = ctx.Reject ()
+            member __.Shrink () = ctx.Reject () }
     |> GenStream
 
 let resize size gen : GenStream<'T> =
@@ -150,11 +227,22 @@ let sized (sfun:Size -> GenStream<'T>) : GenStream<'T> =
 //                 Seed = ctx.Seed }
 //    |> GenStream
 
-let inline withNext ctx next =
+let inline withNext ctx next :Context<'T> =
     { Next = next
       Reject = ctx.Reject
       Size = ctx.Size
-      Seed = ctx.Seed }
+      Seed = ctx.Seed
+      ShrinkRoot = ref Unchecked.defaultof<'T>
+    }
+
+let inline withNextAndShrinkRoot ctx next :Context<'T> =
+    { Next = next
+      Reject = ctx.Reject
+      Size = ctx.Size
+      Seed = ctx.Seed
+      ShrinkRoot = ctx.ShrinkRoot
+    }
+
 
 let map (f:'T->'U) (GenStream src) : GenStream<'U> =
     fun ctx ->
@@ -168,12 +256,68 @@ let where (f:'T->bool) (GenStream src) : GenStream<'T> =
 
 let apply (GenStream f) ((GenStream a):GenStream<'T>) : GenStream<'U> =
     fun ctx ->
-        f (withNext ctx <| fun f -> a (withNext ctx <| fun a -> ctx.Next (f a)) ())
+        let mutable called = false
+        let mutable lastF = Unchecked.defaultof<'T -> 'U>
+        let f = f (withNext ctx (fun f -> lastF <- f; called <- true))
+        let inline tryShrinkF () = 
+            called <- false
+            f.Shrink()
+            called
+        let mutable lastA = Unchecked.defaultof<'T>
+        let a = a (withNext ctx (fun a -> lastA <- a; called <- true))
+        let inline tryShrinkA () = 
+            called <- false
+            a.Shrink()
+            called
+        let inline callNext() =
+            ctx.Next (lastF lastA)
+        { new ICallNext with
+            member __.Next () = 
+                f.Next()
+                a.Next()
+                callNext()
+            member __.Shrink () = 
+                if tryShrinkF() then
+                    callNext()
+                elif tryShrinkA() then
+                    callNext()
+        }
     |> GenStream    
     
 let collect (mapping:'T -> GenStream<'U>) (GenStream source) : GenStream<'U> =
     fun ctx ->
-        source (withNext ctx <| fun t -> let (GenStream g) = mapping t in g ctx ())
+        let mutable called = false
+        let mutable lastGenStreamU = Unchecked.defaultof<Context<'U> -> ICallNext>
+        let mutable lastU = Unchecked.defaultof<'U>
+        let mutable lastT = Unchecked.defaultof<'T>
+        let inline tryShrinkSource () = 
+            called <- false
+            (source (withNext ctx (fun t -> lastT <- t; called <- true))).Shrink()
+            called        
+        let inline tryShrinkU () = 
+            called <- false
+            (lastGenStreamU (withNextAndShrinkRoot ctx (fun a -> lastU <- a; called <- true))).Shrink()
+            called
+        let inline callNext() =
+            ctx.Next lastU
+        let inline callMapping () =
+            let str = mapping lastT
+            let (GenStream g) = str
+            lastGenStreamU <- g
+        { new ICallNext with
+            member __.Next () = 
+                (source (withNext ctx (fun t -> lastT <- t))).Next()
+                callMapping()
+                (lastGenStreamU (withNext ctx (fun u -> lastU <- u))).Next()
+                callNext()
+            member __.Shrink () = 
+                if tryShrinkSource() then
+                    callMapping()
+                    (lastGenStreamU (withNextAndShrinkRoot ctx (fun u -> lastU <- u))).Shrink() //tell shrink root is set??
+                    callNext()
+                elif tryShrinkU() then
+                    callNext()
+        }
     |> GenStream
 
 let inline bind (m:GenStream<'T>) (k:'T->GenStream<'U>) = collect k m
@@ -182,6 +326,59 @@ type GenStream<'T> with
     static member inline (>>=)(m,k) = bind m k
     static member inline (<*>)(f,a) = apply f a
     static member inline (<!>)(f,a) = map f a
+
+let scanResults seed size ((GenStream gen):GenStream<'T>) =
+    let result = ref Unchecked.defaultof<'T>
+    let rejected = ref 0
+    let mutable haveResult = false
+    let one =  gen { Next = fun r -> haveResult <- true; result := r
+                     Reject = fun () -> rejected := !rejected + 1;
+                     Size = ref size
+                     Seed = ref seed
+                     ShrinkRoot = ref Unchecked.defaultof<'T> }
+    let next() =
+        while not haveResult do one.Next()
+        haveResult <- false
+    next, result, rejected
+
+let toSeq seed size (gen:GenStream<'T>) : seq<'T> =
+    let next, result, _ = scanResults seed size gen
+    Seq.initInfinite (fun _ -> next(); !result)
+
+let sampleWithSeed seed size nbSamples (gen:GenStream<'T>) : 'T[] =
+    let next, result, _ = scanResults seed size gen
+    [| for i in 0..nbSamples-1 do 
+         next()
+         yield !result |]
+
+let sampleWithSeedRej seed size nbSamples (gen:GenStream<'T>) : 'T[] * int =
+    let next, result, rejected = scanResults seed size gen
+    [| for i in 0..nbSamples-1 do 
+         next()
+         yield !result |], !rejected
+
+let shrink ((GenStream gen):GenStream<'T>) =
+    let result = ref Unchecked.defaultof<'T>
+    let rejected = ref 0
+    let mutable haveResult = false
+    let ctx = { Next = fun r -> haveResult <- true; result := r
+                Reject = fun () -> rejected := !rejected + 1;
+                Size = ref 100
+                Seed = ref <| Random.create()
+                ShrinkRoot = ref Unchecked.defaultof<'T> }
+    let one =  gen ctx
+    one.Next()
+    [| yield !ctx.ShrinkRoot
+       one.Shrink()
+       while haveResult do
+            haveResult <- false
+            yield !ctx.ShrinkRoot |]
+
+
+let g =
+    choose (0,10)
+    |> collect (fun i -> choose(-i,i))
+    |> shrink
 
 let sequence (gens:GenStream<'T> list) : GenStream<'T list> =
     fun ctx ->
@@ -246,34 +443,7 @@ module GenStreamBuilder =
     ///The workflow function for generators, e.g. gen { ... }
     let rnd = GenStreamBuilder()
 
-let scanResults seed size ((GenStream gen):GenStream<'T>) =
-    let result = ref Unchecked.defaultof<'T>
-    let rejected = ref 0
-    let mutable haveResult = false
-    let one =  gen { Next = fun r -> haveResult <- true; result := r
-                     Reject = fun () -> rejected := !rejected + 1;
-                     Size = ref size
-                     Seed = ref seed  }
-    let next() =
-        while not haveResult do one()
-        haveResult <- false
-    next, result, rejected
 
-let toSeq seed size (gen:GenStream<'T>) : seq<'T> =
-    let next, result, _ = scanResults seed size gen
-    Seq.initInfinite (fun _ -> next(); !result)
-
-let sampleWithSeed seed size nbSamples (gen:GenStream<'T>) : 'T[] =
-    let next, result, _ = scanResults seed size gen
-    [| for i in 0..nbSamples-1 do 
-         next()
-         yield !result |]
-
-let sampleWithSeedRej seed size nbSamples (gen:GenStream<'T>) : 'T[] * int =
-    let next, result, rejected = scanResults seed size gen
-    [| for i in 0..nbSamples-1 do 
-         next()
-         yield !result |], !rejected
 
 let inline shuffleInPlace (arr: _ array) =
     // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
