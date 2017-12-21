@@ -278,9 +278,9 @@ Target "CI" DoNothing
   =?> ("BuildVersion", isAppVeyorBuild)
   ==> "AssemblyInfo"
   ==> "Build"
+  ==> "RunTests"
   =?> ("Build.NetCore", isDotnetSDKInstalled)
   =?> ("RunTests.NetCore", isDotnetSDKInstalled)
-  ==> "RunTests"
 
 "RunTests"
   ==> "CleanDocs"

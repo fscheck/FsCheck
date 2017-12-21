@@ -9,4 +9,4 @@ matrix:
       dotnet: 2.0.0
 
 script:
-  - ./build.sh GenerateDocs
+  - ./build.sh RunTests
