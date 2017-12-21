@@ -12,7 +12,7 @@ NUGET
     NUnit (3.8.1)
     NUnit3TestAdapter (3.8.0) - version_in_path: true
     Octokit (0.26)
-    Unquote (3.2)
+    Unquote (4.0)
     xunit (2.2)
       xunit.assert (2.2)
       xunit.core (2.2)
