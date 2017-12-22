@@ -24,7 +24,11 @@
 
   <ItemGroup>
     <PackageReference Include="Unquote" Version="3.2.*" />
-    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta1-build3642" />
+
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+
     <ProjectReference Include="../../src/FsCheck.Xunit.netcore/FsCheck.Xunit.netcore.fsproj" />
   </ItemGroup>
 
