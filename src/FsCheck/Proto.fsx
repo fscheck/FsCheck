@@ -162,14 +162,17 @@ type Context<'T> = {
     Next: 'T -> unit
     Reject: unit -> unit
     Size: Size ref
-    Seed: Rnd ref }    
+    Seed: Rnd ref }
 
 type IStream = 
     /// Each time Generate is called, a new random element is generated
     /// and either Next or Reject is called on the context.
     abstract Generate: unit -> unit
+    /// Take the last generated element and use it as the root for subsequent Shrink
+    /// calls.
+    abstract PrepareShrinkFromCurrent: unit -> unit
     /// Each time Shrink is called, a smaller element than the last generated or shrunk
-    /// if found. If it exists, Next or Reject is called. If it does not, nothing is called.
+    /// is found. If it exists, Next or Reject is called. If it does not, nothing is called.
     abstract Shrink: unit -> unit
 
 type GenStream<'T> = GenStream of (Context<'T> -> IStream)
@@ -177,32 +180,54 @@ type GenStream<'T> = GenStream of (Context<'T> -> IStream)
 let choose (lo,hi) =
     fun ctx -> 
         let mutable current = lo
-        { new IStream with 
+        let mutable shrinks = [| |]
+        let mutable shrinkIdx = 0
+            
+        let inline callNext v =
+            current <- v
+            ctx.Next v
+
+        let inline printState m =
+            printfn "%s current=%i shrinks=%A shrinkId=%i" m current shrinks shrinkIdx 
+
+        { new IStream with
             member __.Generate () = 
-                current <- Random.rangeInt(lo, hi, !ctx.Seed, ctx.Seed)
-                ctx.Next current
+               printState "Generate"
+               callNext (Random.rangeInt(lo, hi, !ctx.Seed, ctx.Seed))
+
             member __.Shrink () =  
-                // this is a simplification - we should keep a current root (last succesful shrink)
-                // and the shrink we've last tried. Then there should be a signal to make
-                // the last tried shrink the root.
-                if current > lo then 
-                    current <- current - 1
-                    ctx.Next current 
-                }
+                printState "Shrink"
+                if shrinkIdx < shrinks.Length then 
+                    ctx.Next shrinks.[shrinkIdx]
+                    shrinkIdx <- shrinkIdx + 1
+
+            member __.PrepareShrinkFromCurrent () =
+                printState "PrepareShrink"
+                let currIdx = shrinkIdx - 1 
+                if currIdx >= 0 && currIdx < shrinks.Length then current <- shrinks.[currIdx]
+                shrinks <- [| let mutable c = current
+                              while c > lo do
+                                  c <- c - 1
+                                  yield c |]
+                shrinkIdx <- 0
+        }
     |> GenStream
 
 let constant (t:'T) : GenStream<'T> =
-    fun ctx -> 
+    fun ctx ->
         { new IStream with 
             member __.Generate () = ctx.Next t
-            member __.Shrink () = ctx.Next t }
+            member __.Shrink () = ()
+            member __.PrepareShrinkFromCurrent () = () }
     |> GenStream
 
 let reject<'T> : GenStream<'T> =
     fun ctx -> 
         { new IStream with
             member __.Generate () = ctx.Reject ()
-            member __.Shrink () = ctx.Reject () }
+            member __.Shrink () = ()
+            member __.PrepareShrinkFromCurrent () = ()
+        }
     |> GenStream
 
 let resize size gen : GenStream<'T> =
@@ -289,6 +314,9 @@ let apply (GenStream f) ((GenStream a):GenStream<'T>) : GenStream<'U> =
                     callNext()
                 elif not rejected && tryShrinkA() then
                     callNext()
+            member __.PrepareShrinkFromCurrent () =
+                f.PrepareShrinkFromCurrent()
+                a.PrepareShrinkFromCurrent()
         }
     |> GenStream    
  
@@ -334,6 +362,9 @@ let collect (mapping:'T -> GenStream<'U>) (GenStream source) : GenStream<'U> =
                     callNext()
                 elif not rejected && tryShrinkU() then
                     callNext()
+            member __.PrepareShrinkFromCurrent() =
+                source.PrepareShrinkFromCurrent()
+                lastStreamU.PrepareShrinkFromCurrent()
         }
     |> GenStream
 
@@ -373,7 +404,7 @@ let sampleWithSeedRej seed size nbSamples (gen:GenStream<'T>) : 'T[] * int =
          next()
          yield !result |], !rejected
 
-let shrink ((GenStream gen):GenStream<'T>) =
+let shrink check  ((GenStream gen):GenStream<'T>)  =
     let mutable result = Unchecked.defaultof<'T>
     let mutable rejected = 0
     let mutable haveResult = false
@@ -384,10 +415,12 @@ let shrink ((GenStream gen):GenStream<'T>) =
     let one =  gen ctx
     
     [| one.Generate()
+       one.PrepareShrinkFromCurrent()
        while haveResult do
-            yield result             
+            yield result
             haveResult <- false
             one.Shrink()
+            if check result then one.PrepareShrinkFromCurrent()
     |]
 
 
@@ -396,16 +429,16 @@ let g =
     |> where (fun i -> i > 5)
     |> map char
   //  |> collect (fun i -> choose(-i,i))
-    |> shrink
+    |> shrink (fun v -> int v < 8)
 
 let g2 =
     (fun a b c -> (a,b,c)) <!> choose(0,10) <*> choose(30,40) <*> (choose(120,130) |> map char)
-    |> shrink
+    |> shrink (fun (a,b,c) -> a < 5 && b > 35)
 
 let g3 =
     choose (0,20)
     |> collect (fun i -> choose(-i,i))
-    |> shrink
+    |> shrink ((=) 0)
 
 
 let sequence (gens:GenStream<'T> list) : GenStream<'T list> =
