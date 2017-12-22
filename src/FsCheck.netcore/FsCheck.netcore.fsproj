@@ -3,8 +3,7 @@
   <PropertyGroup>
     <AssemblyName>FsCheck</AssemblyName>
     <TargetFramework>netstandard1.6</TargetFramework>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\FsCheck.XML</DocumentationFile>
-    <DebugType>portable</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
