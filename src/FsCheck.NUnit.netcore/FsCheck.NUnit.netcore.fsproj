@@ -19,7 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="../FsCheck.netcore/FsCheck.netcore.fsproj" />
     <PackageReference Include="NUnit" Version="3.8.1" />
-    <DotNetCliToolReference Include="dotnet-mergenupkg" Version="1.0.*" />
+    <DotNetCliToolReference Include="dotnet-mergenupkg" Version="2.0.*" />
   </ItemGroup>
 
 </Project>

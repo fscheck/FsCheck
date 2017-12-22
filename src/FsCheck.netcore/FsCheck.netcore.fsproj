@@ -65,7 +65,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="dotnet-mergenupkg" Version="1.0.*" />
+    <DotNetCliToolReference Include="dotnet-mergenupkg" Version="2.0.*" />
   </ItemGroup>
 
 </Project>
