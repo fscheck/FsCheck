@@ -256,7 +256,7 @@ Target "Build.NetCore" (fun _ ->
 )
 
 Target "RunTests.NetCore" (fun _ ->
-    shellExec "dotnet" "xunit" "tests/FsCheck.Test.netcore"
+    shellExec "dotnet" "test" "tests/FsCheck.Test.netcore"
 )
 
 Target "Nuget.AddNetCore" (fun _ ->
