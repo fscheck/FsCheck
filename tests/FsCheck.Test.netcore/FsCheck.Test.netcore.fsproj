@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <AssemblyName>FsCheck.Test</AssemblyName>
-    <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81</PackageTargetFallback>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
@@ -23,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unquote" Version="3.2.*" />
+    <PackageReference Include="Unquote" Version="4.0.0" />
 
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
