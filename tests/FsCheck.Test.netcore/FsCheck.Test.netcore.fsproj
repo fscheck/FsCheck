@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unquote" Version="3.2.*" />
+    <PackageReference Include="Unquote" Version="4.0.*" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta1-build3642" />
     <ProjectReference Include="../../src/FsCheck.Xunit.netcore/FsCheck.Xunit.netcore.fsproj" />
   </ItemGroup>
