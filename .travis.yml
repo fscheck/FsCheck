@@ -9,4 +9,4 @@ matrix:
       dotnet: 2.0.3
 
 script:
-  - ./build.sh RunTests
+  - ./build.sh CI
