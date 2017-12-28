@@ -661,13 +661,13 @@ type Check =
     ///Check all public static methods on the given type that have a testable return type with quick configuration
     static member QuickThrowOnFailureAll<'Test>() = Check.All(Config.QuickThrowOnFailure,typeof<'Test>)
 
-    /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration
+    /// Check all public static methods on the given type that have a testable return type with the verbose configuration
     static member VerboseAll test = Check.All(Config.Verbose,test)
 
-    /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration
+    /// Check all public static methods on the given type that have a testable return type with the verbose configuration
     static member VerboseAll<'Test>() = Check.All(Config.Verbose,typeof<'Test>)
 
-    /// Check all public static methods on the given type that have a testable return type with vthe erbose configuration,
+    /// Check all public static methods on the given type that have a testable return type with the verbose configuration,
     ///and throws on failure or exhaustion.
     static member VerboseThrowOnFailureAll test = Check.All(Config.VerboseThrowOnFailure,test)
 

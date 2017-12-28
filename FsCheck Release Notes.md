@@ -1,4 +1,3 @@
-
 ### 3.0.0-alpha2 - 19 October 2017
 * Remove PCL builds. NET Standard is the way forward. Latest FSharp.Core builds don't even include PCL versions. As a result of the FSharp.Core dependency, FsCheck targets NET Standard 1.6.
 
@@ -15,8 +14,15 @@
 
 * Simplify sampling data: Gen.sample et al.
 
-### 2.10.4 - To be released
+### 2.10.5 - 28 December 2017
+* NuGet Packaging updates. (by Enrico Sada)
+
+* Small performance improvements in Gen.apply and mapN.
+
+### 2.10.4 - 8 November 2017
 * Change NuGet dependency of FsCheck.Xunit and FsCheck.NUnit on FsCheck to strict equality constraint.
+
+* Add specific dependency group to nuspec for net45 so that NuGet does not download a bunch of packages needlessly.
 
 ### 2.10.3 - 26 September 2017
 * Don't escape newline and tab characters.

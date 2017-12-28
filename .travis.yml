@@ -6,7 +6,7 @@ matrix:
       dist: trusty
       sudo: required
       mono: latest
-      dotnet: 1.1.0
+      dotnet: 2.0.3
 
 script:
-  - ./build.sh GenerateDocs
+  - ./build.sh RunTests

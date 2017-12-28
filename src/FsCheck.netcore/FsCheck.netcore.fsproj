@@ -1,10 +1,11 @@
-﻿<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <AssemblyName>FsCheck</AssemblyName>
     <TargetFramework>netstandard1.6</TargetFramework>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\FsCheck.XML</DocumentationFile>
-    <DebugType>portable</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\FsCheck\AssemblyInfo.fs">
       <Link>AssemblyInfo.fs</Link>
@@ -59,8 +60,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FSharp.Core" Version="4.1.*" />
-    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
-    <DotNetCliToolReference Include="dotnet-mergenupkg" Version="1.0.*" />
+    <DotNetCliToolReference Include="dotnet-mergenupkg" Version="2.*" />
   </ItemGroup>
 </Project>

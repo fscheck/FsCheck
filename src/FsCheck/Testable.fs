@@ -167,7 +167,7 @@ module private Testable =
         let promoteRose (m:Rose<Gen<_>>) : Gen<Rose<_>> = 
             Gen (fun s r -> let mr = Rose.map (fun (Gen m') -> (m' s r).Value) m in GeneratedValue (mr,r))
         //cache is important here to avoid re-evaluation of property
-        let rec props x = MkRose (lazy (property (pf x) |> Property.GetGen), shrink x |> Seq.map props |> Seq.cache)
+        let rec props x = MkRose (lazy (pf x), shrink x |> Seq.map props |> Seq.cache)
         promoteRose (props x)
         |> Gen.map Rose.join
     

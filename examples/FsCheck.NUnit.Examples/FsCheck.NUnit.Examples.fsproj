@@ -61,7 +61,7 @@
       </PropertyGroup>
     </When>
   </Choose>
-  <Import Project="..\..\packages\NUnit3TestAdapter.3.8.0\build\$(__paket__NUnit3TestAdapter_props).props" Condition="Exists('..\..\packages\NUnit3TestAdapter.3.8.0\build\$(__paket__NUnit3TestAdapter_props).props')" Label="Paket" />
+  <Import Project="..\..\packages\NUnit3TestAdapter.3.9.0\build\$(__paket__NUnit3TestAdapter_props).props" Condition="Exists('..\..\packages\NUnit3TestAdapter.3.9.0\build\$(__paket__NUnit3TestAdapter_props).props')" Label="Paket" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
     <Compile Include="PropertyExamples.fs" />

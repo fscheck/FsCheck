@@ -389,14 +389,9 @@ module Arb =
         ///Generate arbitrary decimal.
         static member Decimal() =
             let genDecimal = 
-                gen {
-                    let! lo = generate
-                    let! mid = generate
-                    let! hi = generate
-                    let! isNegative = generate
-                    let! scale = Gen.choose(0, 28) |> Gen.map byte
-                    return System.Decimal(lo, mid, hi, isNegative, scale)
-                }
+                    Gen.map5 (fun lo mid hi isNegative scale -> Decimal(lo, mid, hi, isNegative, scale))
+                             generate generate generate generate (Gen.choose(0, 28) |> Gen.map byte)
+                    
             let shrinkDecimal d =
                 let (|<|) x y = abs x < abs y
                 seq {

@@ -273,23 +273,25 @@ Target "Nuget.AddNetCore" (fun _ ->
 // Run all targets by default. Invoke 'build <Target>' to override
 
 Target "CI" DoNothing
+Target "Tests" DoNothing
 
 "Clean"
   =?> ("BuildVersion", isAppVeyorBuild)
   ==> "AssemblyInfo"
   ==> "Build"
+  ==> "RunTests"
   =?> ("Build.NetCore", isDotnetSDKInstalled)
   =?> ("RunTests.NetCore", isDotnetSDKInstalled)
-  ==> "RunTests"
+  ==> "Tests"
 
-"RunTests"
+"Tests"
   ==> "CleanDocs"
 //  ==> "GenerateDocsJa"
   ==> "GenerateDocs"
 //  =?> ("ReleaseDocs", isLocalBuild)
   ==> "Release"
 
-"RunTests"
+"Tests"
   ==> "PaketPack"
   =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
   ==> "PaketPush"
@@ -298,7 +300,7 @@ Target "CI" DoNothing
 "GenerateDocs"
   ==> "CI"
 
-"RunTests"
+"Tests"
   ==> "PaketPack" 
   =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
   ==> "CI"

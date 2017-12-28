@@ -1,10 +1,9 @@
-﻿<Project Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <AssemblyName>FsCheck.NUnit</AssemblyName>
     <TargetFramework>netstandard1.6</TargetFramework>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\FsCheck.NUnit.XML</DocumentationFile>
-    <DebugType>portable</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,11 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FSharp.Core" Version="4.1.*" />
-    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
     <ProjectReference Include="../FsCheck.netcore/FsCheck.netcore.fsproj" />
     <PackageReference Include="NUnit" Version="3.8.1" />
-    <DotNetCliToolReference Include="dotnet-mergenupkg" Version="1.0.*" />
+    <DotNetCliToolReference Include="dotnet-mergenupkg" Version="2.*" />
   </ItemGroup>
 
 </Project>
