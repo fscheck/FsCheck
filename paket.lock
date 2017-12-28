@@ -9,8 +9,8 @@ NUGET
       FSharpVSPowerTools.Core (>= 2.3 < 2.4)
     FSharpVSPowerTools.Core (2.3)
       FSharp.Compiler.Service (>= 2.0.0.3)
-    NUnit (3.8.1)
-    NUnit3TestAdapter (3.8.0) - version_in_path: true
+    NUnit (3.9)
+    NUnit3TestAdapter (3.9.0) - version_in_path: true
     Octokit (0.26)
     Unquote (4.0)
     xunit (2.2)
