@@ -103,15 +103,15 @@ so when we run this specification we can check that FsCheck does the right thing
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">StateMachine</span><span class="o">.</span><span class="i">toProperty</span> <span class="i">spec</span>)
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (3 shrinks) (StdGen (1470054448,296373744)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (3 shrinks) (StdGen (281224261,296393813)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
 (3, Setup Counter)
 inc -&gt; 4
 inc -&gt; 5
-inc -&gt; 6
-dec -&gt; 5
-inc -&gt; 6
+dec -&gt; 4
+inc -&gt; 5
+dec -&gt; 4
 
 Shrunk:
 (3, Setup Counter)

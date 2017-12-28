@@ -90,11 +90,11 @@ configuration.QuietOnSuccess <span class="o">=</span> <span class="k">true</span
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 2 tests (1 shrink) (StdGen (1451140240,296373744)):
+ListProperties.reverse is original-Falsifiable, after 1 test (1 shrink) (StdGen (262597066,296393813)):
 Original:
-[-1; 0]
+[0; -1]
 Shrunk:
-[1; 0]</code></pre></td></tr></table>
+[0; 1]</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
 you can also use Check.QuickAll to test all the top level functions in a certain module.
 However, the type of a module is not directly accessible via F#, so you can use the following trick:</p>
