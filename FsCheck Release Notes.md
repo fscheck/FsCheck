@@ -1,4 +1,7 @@
-### 2.10.5 - To be released
+### 2.10.5 - 28 December 2017
+* NuGet Packaging updates. (by Enrico Sada)
+
+* Small performance improvements in Gen.apply and mapN.
 
 ### 2.10.4 - 8 November 2017
 * Change NuGet dependency of FsCheck.Xunit and FsCheck.NUnit on FsCheck to strict equality constraint.
