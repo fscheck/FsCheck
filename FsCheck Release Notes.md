@@ -1,3 +1,5 @@
+### 2.10.6 - To be released
+
 ### 2.10.5 - 28 December 2017
 * NuGet Packaging updates. (by Enrico Sada)
 
