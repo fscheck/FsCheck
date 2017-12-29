@@ -11,4 +11,4 @@ SET TARGET="RunTests"
 
 IF NOT [%1]==[] (set TARGET="%1")
 
-"packages\FAKE\tools\FAKE.exe" "build.fsx" "target=%TARGET%"
+"packages\build\FAKE\tools\FAKE.exe" "build.fsx" "target=%TARGET%"

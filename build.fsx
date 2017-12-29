@@ -1,8 +1,8 @@
 // --------------------------------------------------------------------------------------
 // FAKE build script 
 // --------------------------------------------------------------------------------------
-
-#r @"./packages/FAKE/tools/FakeLib.dll"
+#I "packages/build/FAKE/tools"
+#r "FakeLib.dll"
 
 open Fake 
 open Fake.Git
@@ -119,8 +119,8 @@ Target "Build" (fun _ ->
 Target "RunTests" (fun _ ->
     !! testAssemblies
     |> xUnit2 (fun p ->
-            {p with
-                ToolPath = "packages/xunit.runner.console/tools/xunit.console.exe"
+            { p with
+                //ToolPath = "packages/build/xunit.runner.console/tools/xunit.console.exe"
                 //The NoAppDomain setting requires care.
                 //On mono, it needs to be true otherwise xunit won't work due to a Mono bug.
                 //On .NET, it needs to be false otherwise Unquote won't work because it won't be able to load the FsCheck assembly.
@@ -204,7 +204,7 @@ Target "ReleaseDocs" (fun _ ->
     Branches.push tempDocsDir
 )
 
-#load "paket-files/fsharp/FAKE/modules/Octokit/Octokit.fsx"
+#load "paket-files/build/fsharp/FAKE/modules/Octokit/Octokit.fsx"
 open Octokit 
 
 Target "Release" (fun _ ->
