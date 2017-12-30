@@ -1,5 +1,6 @@
-### 3.0.0-alpha3 - To be released
-* Allow FSharp.Core >= 4.0 for .NET Desktop builds.
+
+### 3.0.0-alpha3 - 30 December 2017
+* NuGet packaging: relax FSharp.Core constraint to 4.0 and higher for .NET Desktop.
 
 ### 3.0.0-alpha2 - 19 October 2017
 * Remove PCL builds. NET Standard is the way forward. Latest FSharp.Core builds don't even include PCL versions. As a result of the FSharp.Core dependency, FsCheck targets NET Standard 1.6.
@@ -17,7 +18,8 @@
 
 * Simplify sampling data: Gen.sample et al.
 
-### 2.10.6 - To be released
+### 2.10.6 - 30 December 2017
+* NuGet packaging: relax FSharp.Core constraint to 4.0 and higher for .NET Desktop and PCL targets.
 
 ### 2.10.5 - 28 December 2017
 * NuGet Packaging updates. (by Enrico Sada)
