@@ -1,4 +1,5 @@
-### 2.10.6 - To be released
+### 2.10.6 - 30 December 2017
+* NuGet packaging: relax FSharp.Core constraint to 4.0 and higher for .NET Desktop and PCL targets.
 
 ### 2.10.5 - 28 December 2017
 * NuGet Packaging updates. (by Enrico Sada)
