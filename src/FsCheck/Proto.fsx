@@ -42,48 +42,164 @@ module Shrink =
                                 yield c |]
             let mutable shrinkIdx = 0
             { Shrink = fun () ->  
-                        if shrinkIdx < shrinks.Length then 
-                            ctx.Next shrinks.[shrinkIdx]
+                        if shrinkIdx < shrinks.Length then
+                            // get next first, so the ctx.Next call is in tail position
+                            // (alternative is to increment shrinkIdx after calling ctx.Next)
+                            let next = shrinks.[shrinkIdx]
                             shrinkIdx <- shrinkIdx + 1
+                            ctx.Next next
                         else
                             ctx.Done()
               GetShrinks = fun () ->
                             let currIdx = shrinkIdx - 1
                             let current = if currIdx >= 0 && currIdx < shrinks.Length then shrinks.[currIdx] else current
-                            if current = lo then ctx.Shrinks empty else ctx.Shrinks <| choose current (lo,hi)
+                            if current = lo then 
+                                ctx.Shrinks empty 
+                            else 
+                                ctx.Shrinks <| choose current (lo,hi)
             }
 
     let rec map f (str:ShrinkStream<'T>) : ShrinkStream<'U> =
-        fun { Next=next; Done=don; Shrinks=shrink } ->
-            str { Next = fun e -> next (f e)
-                  Done = don
-                  Shrinks = fun s -> shrink (map f s)}
+        fun ctx ->
+            str { Next = fun e -> ctx.Next (f e)
+                  Done = ctx.Done
+                  Shrinks = fun s -> ctx.Shrinks (map f s)}
 
     let rec where pred (str:ShrinkStream<'T>) : ShrinkStream<'T> =
         fun ctx ->
-            let rec str' = str { ctx with Next = fun e -> if pred e then ctx.Next e else str'.Shrink()
-                                          Shrinks = fun s -> ctx.Shrinks (where pred s) }
-            str'
+            let mutable more = false
+            let str' = 
+                str { ctx with Next = fun e -> if pred e then more <- false; ctx.Next e else more <- true
+                               Done = fun () -> more <-false; ctx.Done()
+                               Shrinks = fun s -> ctx.Shrinks (where pred s) }
+            { Shrink = fun () ->
+                str'.Shrink()
+                while more do str'.Shrink()
+              GetShrinks = str'.GetShrinks }
 
     let rec apply currentF currentA (f:ShrinkStream<'T->'U>) (a:ShrinkStream<'T>)  : ShrinkStream<'U> =
-        fun { Next=next; Done=don; Shrinks=shrink } ->
+        fun ctx ->
             let mutable currentF = currentF
             let mutable currentA = currentA
             let mutable fShrinkStream = f
-            let aCtx = { Next = fun e -> currentA <- e; next (currentF currentA)
-                         Done = don
-                         Shrinks = fun s -> shrink <| apply currentF currentA fShrinkStream s }
+            let aCtx = { Next = fun e -> currentA <- e; ctx.Next (currentF currentA)
+                         Done = ctx.Done
+                         Shrinks = fun s -> ctx.Shrinks <| apply currentF currentA fShrinkStream s }
             let aStr = lazy a aCtx // for reason for lazy see remark in Gen.apply
-            f { Next = fun e -> currentF <- e; next (currentF currentA)
+            f { Next = fun e -> currentF <- e; ctx.Next (currentF currentA)
                 Done = fun () -> aStr.Value.Shrink() 
                 Shrinks = fun s -> fShrinkStream <- s; aStr.Value.GetShrinks() }
 
     let rec join (strs:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
         fun ctx ->
-            let mutable currentInner = Unchecked.defaultof<ShrinkStream<'T>>
-            strs { Next = fun str -> currentInner <- str; (str ctx).Shrink() 
-                   Done = fun () -> (currentInner ctx).Shrink()
+            let mutable currentInner = Unchecked.defaultof<Shrinker>
+            strs { Next = fun str -> currentInner <- str ctx; currentInner.Shrink() 
+                   Done = fun () -> currentInner.Shrink()
                    Shrinks = fun s -> ctx.Shrinks <| join s }
+
+    let rec elements current (shrinkers:ShrinkStream<'T>[]) : ShrinkStream<'T[]> =
+        fun ctx ->
+            let ts = Array.copy current
+            let mutable idx = 0
+            let rec sCtx = 
+                { Next = fun st -> ts.[idx] <- st
+                                   ctx.Next (Array.copy ts)
+                  Done = fun () -> ts.[idx] <- current.[idx] // restore prev element
+                                   idx <- idx + 1
+                                   if idx < ts.Length then shrinkersShrink.[idx].Shrink()
+                                   else ctx.Done()
+                  Shrinks = fun s -> 
+                    let newShrinkers = Array.copy shrinkers
+                    newShrinkers.[idx] <- s
+                    ctx.Shrinks <| elements ts newShrinkers
+                }
+            and shrinkersShrink:_[] = shrinkers |> Array.map (fun s -> s sCtx)
+            { Shrink = fun () -> 
+                if idx < ts.Length then
+                    shrinkersShrink.[idx].Shrink()
+                else
+                    ctx.Done()
+              GetShrinks = fun () -> 
+                if idx < ts.Length then
+                    shrinkersShrink.[idx].GetShrinks()
+                else
+                    ctx.Shrinks empty
+                }
+
+    let rec array (current:'T[]) : ShrinkStream<'T[]> =
+        fun ctx ->
+            let mutable idx = 0
+            let mutable next = [||]
+            { Shrink = fun () ->
+                if idx < current.Length then
+                    next <- Array.zeroCreate (current.Length-1)
+                    Array.blit current 0 next 0 idx
+                    Array.blit current (idx+1) next idx (current.Length-1-idx)
+                    idx <- idx + 1
+                    ctx.Next next
+                else
+                    ctx.Done()
+              GetShrinks = fun () ->
+                ctx.Shrinks <| array next
+            }
+
+    let rec append (s1:ShrinkStream<'T>) (s2:ShrinkStream<'T>) : ShrinkStream<'T> =
+        fun ctx ->
+            let mutable shrinks1 = Unchecked.defaultof<ShrinkStream<'T>>
+            let shrinker2 = s2 { ctx with Shrinks = fun shrinks2 -> ctx.Shrinks <| append shrinks1 shrinks2 }
+            s1 { ctx with Done = fun () -> shrinker2.Shrink()
+                          Shrinks = fun s -> shrinks1 <-s; shrinker2.GetShrinks()
+            }
+
+    let rec arrayOf (current:'T[]) (elems:ShrinkStream<'T>[]) : ShrinkStream<'T[]> =
+        append (array current) (elements current elems)
+    
+    let toSeq (str:ShrinkStream<'T>) =
+        let mutable next = Unchecked.defaultof<'T>
+        let mutable isDone = false
+        let ctx = { Next = fun n -> next <- n
+                    Done = fun () -> isDone <- true
+                    Shrinks = fun s -> () }
+        seq {
+            // if you put this let outside of the seq, 
+            // it keeps the state of shrinking accross calls
+            let shrink = str ctx
+            isDone <- false
+            shrink.Shrink()
+            while not isDone do
+                yield next
+                shrink.Shrink()
+        }
+
+let s = [| for i in 1..5 -> Shrink.choose 0 (-i ,i) |]
+        |> Shrink.arrayOf (Array.zeroCreate 5)
+        |> Shrink.toSeq
+        |> Seq.toArray
+
+module ShrinkArrayTest =
+    let s = Shrink.array [| 1;2;3;4 |]
+            |> Shrink.toSeq
+            |> Seq.toArray
+
+module ShrinkApplyTest =
+    let f = Shrink.choose 10 (1,10) |> Shrink.map (*)// |> Shrink.shrinksOf |> Seq.toArray
+    let a = Shrink.choose 30 (20,40) //|> Shrink.shrinksOf |> Seq.toArray
+    let s = Shrink.apply ((+) 10) 30 f a
+            |> Shrink.toSeq
+            |> Seq.toArray
+
+module ShrinkJoinTest =
+    let s = Shrink.choose 10 (1,10) 
+            |> Shrink.map (fun i -> Shrink.choose i (-5,i))
+            |> Shrink.join
+            |> Shrink.toSeq
+            |> Seq.toArray
+
+module ShrinkSequenceTest =
+    let s = [| for i in 1..10 -> Shrink.choose 0 (-i ,i) |]
+            |> Shrink.elements (Array.zeroCreate 10)
+            |> Shrink.toSeq
+            |> Seq.toArray
 
 /// The state of the GenStream computation.
 type Context<'T> = { 
@@ -96,7 +212,7 @@ type Context<'T> = {
 
 (*
 Generator used to be an interface.
-Note in the below it's important that we write
+But I had to write
 abstract Generate: (unit -> unit)
 mind the parens. This makes this into a property that returns a thunk
 The thunk is the important bit, not the property. 
@@ -108,7 +224,7 @@ if we do the latter.
 
 But if we have to do that, we might as well make Generator into
 a record type, so we don't have to worry about the thunk
-being re-evaluated.
+being re-created every time we call Generate.
 *)
 
 type Generator = {  
@@ -386,56 +502,44 @@ module GenStreamBuilder =
     ///The workflow function for generators.
     let rnd = GenStreamBuilder()
                                          
-let fold (folder:'State -> 'T -> 'State) (state:GenStream<'State>) (gens:seq<GenStream<'T>>) : GenStream<'State> =
-    
+let fold (folder:'State -> 'T -> 'State) (GenStream state:GenStream<'State>) (gens:seq<GenStream<'T>>) : GenStream<'State> =
     fun ctx ->
-        let mutable rejected = false
-        let mutable called = false
-        let mutable element = Unchecked.defaultof<'T>
-        let context = withNextReject ctx (fun r -> element <- r; called <- true) (fun () -> rejected <- true; ctx.Reject())
-        let nexts = gens |> Array.map (fun (GenStream g) -> g context)
-        let mutable genIdx = 0
-        let mutable res = Array.zeroCreate nexts.Length
-        let mutable current = Unchecked.defaultof<'T[]>
-        let mutable currentIdx = 0
-        let inline callNext r =
-            current <- r
-            ctx.Next current
-        { new Generator with
-            override __.Generate() =
-                rejected <- false
-                // build up the result, stop and don't call next if rejected,
-                // but keep the state and the result of previous elements.
-                while not rejected && genIdx < nexts.Length do
-                    let next = nexts.[genIdx]
-                    next.Generate()
-                    if not rejected then
-                        res.[genIdx] <- element
-                        genIdx <- genIdx + 1
+        let mutable currState = Unchecked.defaultof<'State>
+        let stateGen = state (withNext ctx (fun st -> currState <- st) (fun shr -> ()))
+        let gens = gens |> Seq.toArray
+        let ts = Array.zeroCreate gens.Length
+        let mutable index = 0
+        let gCtx = withNext ctx (fun st -> ts.[index] <- st)
+                                (fun shr -> ())
+        let gensGen = gens |> Array.map (fun (GenStream g) -> g gCtx)
+        { Generate = fun () -> 
+            stateGen.Generate()
+            for i in 0..ts.Length-1 do
+                index <- i
+                gensGen.[i].Generate()
+            ctx.Next (Array.fold folder currState ts)
+          GetShrinks = fun () -> () }
+    |> GenStream
 
-                if not rejected then
-                    callNext res
-                    genIdx <- 0
-                    res <- Array.zeroCreate nexts.Length
-            override __.PrepareShrinkFromCurrent() =
-                nexts |> Seq.iter (fun s -> s.PrepareShrinkFromCurrent())
-                current <- res
-            override __.GetShrinks() =
-                rejected <- false
-                called <- false
+let fresh (GenStream f:GenStream<unit -> 'T>) : GenStream<'T> =
+    fun ctx ->
+        f (withNext ctx (fun f -> ctx.Next <| f())
+                        (fun shr -> ctx.Shrinks (Shrink.map (fun f -> f()) shr)))
+    |> GenStream        
 
-                while not called && not rejected && currentIdx < nexts.Length do
-                    let next = nexts.[currentIdx]
-                    next.GetShrinks()
-                    if not rejected then
-                        currentIdx <- currentIdx + 1
-                
-                if called then
-                    let res = current |> Array.mapi (fun i e -> if i=currentIdx-1 then element else e)
-                    ctx.Next res
-                    if currentIdx >= nexts.Length then
-                        currentIdx <- 0
-        }
+let sequenceArr (gens:GenStream<'T>[]) : GenStream<'T[]> =
+    fun ctx ->
+        let ts = Array.zeroCreate gens.Length
+        let mutable index = 0
+        let gCtx = withNext ctx (fun st -> ts.[index] <- st)
+                                (fun shr -> ())
+        let gensGen = gens |> Array.map (fun (GenStream g) -> g gCtx)
+        { Generate = fun () -> 
+            for i in 0..ts.Length-1 do
+                index <- i
+                gensGen.[i].Generate()
+            ctx.Next (Array.copy ts)
+          GetShrinks = fun () -> () }
     |> GenStream
 
 let sequence (gens:GenStream<'T> list) : GenStream<'T list> =
@@ -483,6 +587,9 @@ let listOf (GenStream gen) : GenStream<list<'T>> =
               let! sizes = piles k n
               return! sequence [ for size in sizes -> resize size gen ] }
 
+let seed = Random.create()
+let size = 100
+let nbSamples = 1000_000
 
 let test =
     choose(1,10) >>= fun a ->
@@ -512,7 +619,7 @@ let s2 = Gen.choose (0,100)
 
 let seq1 = [ for i in 1..10 -> choose(0,i) ] |> sequence |> sampleWithSeed seed size nbSamples
 let seq2 = [ for i in 1..10 -> Gen.choose(0,i) ] |> Gen.sequence |> Gen.sampleWithSeed seed size nbSamples
-
+let seq3 = [ for i in 1..10 -> choose(0,i) ] |> sqc |> sampleWithSeed seed size nbSamples
 //let g =
 //    choose (0,20)
 //    |> where (fun i -> i > 5)
@@ -528,3 +635,19 @@ let seq2 = [ for i in 1..10 -> Gen.choose(0,i) ] |> Gen.sequence |> Gen.sampleWi
 //    choose (0,20)
 //    |> collect (fun i -> choose(-i,i))
 //    |> shrink ((=) 0)
+
+// this is kind of obscured I feel but what it does is:
+// - remove each element, one by one. I.e. for a list of length N you get N shrinks of length N-1.
+// - shrink each element  one by one, keeping the others intact. (back to front, but order hardly matters
+//      and is just a result of implementation)
+
+let rec shrinkList l =
+    let shrink x = seq { for i in x-1..(-1)..0 -> i }
+    match l with
+    | [] ->         Seq.empty
+    | (x::xs) ->    seq { yield xs
+                          for xs' in shrinkList xs -> x::xs' 
+                          for x' in shrink x -> x'::xs }
+
+
+shrinkList [0;1;2;3] |> Seq.toArray
