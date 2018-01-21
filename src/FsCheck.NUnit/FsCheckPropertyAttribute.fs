@@ -181,10 +181,10 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
             testResult.SetResult(ResultState(TestStatus.Passed))
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
-            testResult.SetResult(new ResultState(TestStatus.Failed, msg))
+            testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
         | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
             let msg = sprintf "%s" (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
-            testResult.SetResult(new ResultState(TestStatus.Failed, msg))
+            testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
         | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed) ->
             let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
-            testResult.SetResult(new ResultState(TestStatus.Failed, msg))
+            testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
