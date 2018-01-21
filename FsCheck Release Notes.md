@@ -1,3 +1,8 @@
+### 2.10.7 - To be released
+* Fix FsCheck.NUnit issue - failure output was not shown. (by adj123)
+
+* Add C# Implies extension method. (by adj123)
+
 ### 2.10.6 - 30 December 2017
 * NuGet packaging: relax FSharp.Core constraint to 4.0 and higher for .NET Desktop and PCL targets.
 
