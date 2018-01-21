@@ -40,7 +40,7 @@ type PropertyExtensions =
     ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
     [<Extension>]
     static member Implies(condition, property:Func<bool>) = 
-        property.When(condition)
+        PropertyExtensions.When(property, condition)
 
     //Classify test cases. Test cases satisfying the condition are assigned the classification given.
     [<Extension>]
