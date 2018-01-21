@@ -9,18 +9,6 @@ open NUnit.Framework
 open NUnit.Framework.Interfaces
 open NUnit.Framework.Internal
 
-///help consumers remove the unneeded classes
-[<Obsolete("This class is no longer needed for running NUnit v3.", true)>]
-type FsCheckTestCaseBuilder() =
-    do
-        failwith "This class is no longer needed for running NUnit v3."
-
-///help consumers remove the unneeded classes
-[<Obsolete("This class is no longer needed for running NUnit v3.", true)>]
-type FsCheckAddin() =
-    do
-        failwith "This class is no longer needed for running NUnit v3."
-
 //can not be an anonymous type because of let mutable.
 type private NunitRunner() =
     let mutable result = None
@@ -47,17 +35,21 @@ type PropertyAttribute() =
     inherit TestAttribute()
 
     let mutable maxTest = Config.Default.MaxTest
-    let mutable maxFail = Config.Default.MaxFail
+    let mutable maxFail = Config.Default.MaxRejected
     let mutable startSize = Config.Default.StartSize
     let mutable endSize = Config.Default.EndSize
     let mutable verbose = false
     let mutable quietOnSuccess = false
     let mutable replay = null
+    let mutable parallelism = -1
     let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
 
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
     member __.Replay with get() = replay and set(v) = replay <- v
+    ///If set, run tests in parallel. Useful for Task/async related work and heavy number crunching
+    ///Environment.ProcessorCount have been found to be useful default.
+    member __.Parallelism with get() = parallelism and set(v) = parallelism <- v
     ///The maximum number of tests that are run.
     member __.MaxTest with get() = maxTest and set(v) = maxTest <- v
     ///The maximum number of tests where values are rejected, e.g. as the result of ==>
@@ -149,17 +141,18 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         testResult.RecordException(x.FilterException <| ex, failureSite)
 
     member private x.RunTestMethod context testResult =
-        let parseStdGen (str: string) =
+        let parseReplay (str: string) =
             //if someone sets this, we want it to throw if it fails
             let split = str.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
-            let elem1 = Int32.Parse(split.[0])
-            let elem2 = Int32.Parse(split.[1])
-            Random.StdGen (elem1,elem2)
+            let seed = UInt64.Parse(split.[0])
+            let gamma = UInt64.Parse(split.[1])
+            let size = if split.Length = 3 then Some <| Convert.ToInt32(UInt32.Parse(split.[2])) else None
+            { Rnd = Rnd (seed,gamma); Size = size }
         let attr = x.GetFsCheckPropertyAttribute()
         let testRunner = NunitRunner()
         let config = { Config.Default with
                         MaxTest = attr.MaxTest
-                        MaxFail = attr.MaxFail
+                        MaxRejected = attr.MaxFail
                         StartSize = attr.StartSize
                         EndSize = attr.EndSize
                         Every = if attr.Verbose then Config.Verbose.Every else Config.Quick.Every
@@ -167,7 +160,9 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
                         Arbitrary = attr.Arbitrary |> Array.toList
                         Replay = match attr.Replay with
                                     | null -> Config.Default.Replay
-                                    | s -> parseStdGen s |> Some
+                                    | s -> parseReplay s |> Some
+                        ParallelRunConfig = if attr.Parallelism <= 0 
+                                            then None else Some { MaxDegreeOfParallelism = attr.Parallelism }
                         Runner = testRunner }
 
         let target = if x.Fixture <> null then Some x.Fixture
@@ -175,16 +170,16 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
                      else Some context.TestObject
         Check.Method(config, x.Method.MethodInfo, ?target = target)
         match testRunner.Result with
-        | TestResult.True _ ->
+        | TestResult.Passed _ ->
             if not attr.QuietOnSuccess then
                 printfn "%s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(ResultState(TestStatus.Passed))
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
-            testResult.SetResult(new ResultState(TestStatus.Failed, msg))
-        | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
-            let msg = sprintf "%s" (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
-            testResult.SetResult(new ResultState(TestStatus.Failed, msg))
-        | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed) ->
+            testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
+        | TestResult.Failed (testdata, originalArgs, shrunkArgs, Outcome.Failed e, originalSeed, lastSeed, lastSize)  ->
+            let msg = sprintf "%s" (Runner.onFailureToString "" testdata originalArgs shrunkArgs originalSeed lastSeed lastSize)
+            testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
+        | TestResult.Failed (testdata, originalArgs, shrunkArgs, outcome, originalSeed, lastSeed, lastSize) ->
             let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
-            testResult.SetResult(new ResultState(TestStatus.Failed, msg))
+            testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)

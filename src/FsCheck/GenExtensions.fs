@@ -3,22 +3,17 @@
 open Gen
 open System
 open System.Collections.Generic
+open System.Runtime.InteropServices
 
 ///Extension methods to build generators - contains among other the Linq methods.
 [<AbstractClass; Sealed; System.Runtime.CompilerServices.Extension>]
 type GenExtensions = 
 
-    ///Generates a value with maximum size n.
+     ///Generates numberOfSample values with the given (optional) seed and of the given (optional) size, which defaults to 50.
     //[category: Generating test values]
     [<System.Runtime.CompilerServices.Extension>]
-    static member Eval(generator, size, random) =
-        eval size random generator
-
-    ///Generates n values of the given size.
-    //[category: Generating test values]
-    [<System.Runtime.CompilerServices.Extension>]
-    static member Sample(generator, size, numberOfSamples) =
-        sample size numberOfSamples generator
+    static member Sample(generator, numberOfSamples, [<DefaultParameterValue(Nullable<Rnd>());Optional>] seed:Nullable<Rnd>, [<DefaultParameterValue(50);Optional>] size) =
+        sampleWithSeed (if seed.HasValue then seed.Value else Random.create()) size numberOfSamples generator
 
     /// Allows type annotations in LINQ expressions
     [<System.Runtime.CompilerServices.Extension>]

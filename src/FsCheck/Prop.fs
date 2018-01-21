@@ -18,6 +18,9 @@ module Prop =
     let forAllFunc1Bool (arb:Arbitrary<'Value>) (body:Func<'Value,bool>) = forAll arb body.Invoke
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let forAllFunc1TaskBool (arb:Arbitrary<'Value>) (body:Func<'Value,Threading.Tasks.Task<bool>>) = forAll arb body.Invoke
+
+    [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let forAllFunc1Prop (arb:Arbitrary<'Value>) (body:Func<'Value,Property>) = forAll arb body.Invoke
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
@@ -25,6 +28,9 @@ module Prop =
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let forAllFunc1BoolDef (body:Func<'Value,bool>) = property body.Invoke
+
+    [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let forAllFunc1TaskBoolDef (body:Func<'Value,Threading.Tasks.Task<bool>>) = property body.Invoke
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let forAllFunc1PropDef (body:Func<'Value,Property>) = property body.Invoke
@@ -80,7 +86,12 @@ module Prop =
        property <| try ignore p.Value; Res.failed with :? 'Exception -> Res.succeeded
 
     let private stamp str = 
-        let add res = { res with Stamp = str :: res.Stamp } 
+        let add res = 
+            match res with
+            | ResultContainer.Value r -> { r with Stamp = str :: r.Stamp } |> Value
+            | ResultContainer.Future t -> t.ContinueWith (fun (rt :Threading.Tasks.Task<Result>) -> 
+                let r = rt.Result
+                { r with Stamp = str :: r.Stamp }) |> Future
         Prop.mapResult add
 
     ///Classify test cases. Test cases satisfying the condition are assigned the classification given.
@@ -99,21 +110,13 @@ module Prop =
     ///Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let label l : ('Testable -> Property) = 
-        let add res = { res with Labels = Set.add l res.Labels }
+        let add res = 
+            match res with
+            | ResultContainer.Value r -> { r with Labels = Set.add l r.Labels } |> Value
+            | ResultContainer.Future t -> t.ContinueWith (fun (rt :Threading.Tasks.Task<Result>) -> 
+                let r = rt.Result
+                { r with Labels = Set.add l r.Labels }) |> Future
         Prop.mapResult add
-
-    ///Fails the property if it does not complete within t milliseconds. Note that the called property gets a
-    ///cancel signal, but whether it responds to that is up to the property; the execution may not actually stop.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let within time (lazyProperty:Lazy<'Testable>) =
-        try 
-            let test = new Func<_>(fun () -> property lazyProperty.Value)
-            let asyncTest = Async.FromBeginEnd(test.BeginInvoke, test.EndInvoke)
-            Async.RunSynchronously(asyncTest, timeout = time)
-        with
-            :? TimeoutException -> 
-                Async.CancelDefaultToken()
-                property (Res.timeout time)
 
     /// Turns a testable type into a property. Testables are unit, boolean, Lazy testables, Gen testables, functions
     /// from a type for which a generator is know to a testable, tuples up to 6 tuple containing testables, and lists

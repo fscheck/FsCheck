@@ -1,4 +1,4 @@
-﻿
+
 namespace FsCheck.Test
 
 module Property =
@@ -8,6 +8,8 @@ module Property =
     open FsCheck.Xunit
     open System
     open Arb
+    open System.Threading.Tasks
+    open Swensen.Unquote
     
     let internal curry f = fun a b -> f (a,b)
 
@@ -58,25 +60,25 @@ module Property =
         let addStamp stamp res = { res with Stamp = stamp :: res.Stamp }
         let addArgument arg res = { res with Arguments = arg :: res.Arguments }
         let addLabel label (res:Result) = { res with Labels = Set.add label res.Labels }
-        let andCombine prop1 prop2 :Result = let (r1:Result,r2) = determineResult prop1, determineResult prop2 in r1 &&& r2
+        let andCombine prop1 prop2 :Result = let (r1:Result,r2) = determineResult prop1, determineResult prop2 in Result.resAnd r1 r2
         match prop with
-        | Unit ->   { result with Outcome=Outcome.True }
-        | Bool true -> { result with Outcome=Outcome.True }
-        | Bool false -> { result with Outcome=Outcome.False }
-        | Exception  -> { result with Outcome=Outcome.Exception (InvalidOperationException() :> exn)}
+        | Unit ->   { result with Outcome= Outcome.Passed }
+        | Bool true -> { result with Outcome= Outcome.Passed }
+        | Bool false -> { result with Outcome= Outcome.Failed (exn "")}
+        | Exception  -> { result with Outcome= Outcome.Failed (InvalidOperationException() :> exn)}
         | ForAll (i,prop) -> determineResult prop |> addArgument i
         | Implies (true,prop) -> determineResult prop
-        | Implies (false,_) -> { result with Outcome=Outcome.Rejected }
+        | Implies (false,_) -> { result with Outcome= Outcome.Rejected }
         | Classify (true,stamp,prop) -> determineResult prop |> addStamp stamp
         | Classify (false,_,prop) -> determineResult prop
         | Collect (i,prop) -> determineResult prop |> addStamp (sprintf "%A" i)
         | Label (l,prop) -> determineResult prop |> addLabel l
         | And (prop1, prop2) -> andCombine prop1 prop2
-        | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in r1 ||| r2
+        | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in Result.resOr r1 r2
         | LazyProp prop -> determineResult prop
         | Tuple2 (prop1,prop2) -> andCombine prop1 prop2
-        | Tuple3 (prop1,prop2,prop3) -> (andCombine prop1 prop2) &&& (determineResult prop3)
-        | List props -> List.fold (fun st p -> st &&& determineResult p) (List.head props |> determineResult) (List.tail props)
+        | Tuple3 (prop1,prop2,prop3) -> Result.resAnd (andCombine prop1 prop2) (determineResult prop3)
+        | List props -> List.fold (fun st p -> Result.resAnd st (determineResult p)) (List.head props |> determineResult) (List.tail props)
         
     let rec private toProperty prop =
         match prop with
@@ -98,15 +100,13 @@ module Property =
     let private areSame (r0:Result) (r1:TestResult) =
         let testData =
             match r1 with 
-            | TestResult.True (td,_) -> td
-            | TestResult.False (td,_,_,_,_) -> td
+            | TestResult.Passed (td,_) -> td
+            | TestResult.Failed (td,_,_,_,_,_,_) -> td
             | TestResult.Exhausted td -> td
 
         match r0.Outcome, r1 with
-        | Outcome.Timeout i, TestResult.False(_,_,_,Outcome.Timeout j,_) when i = j -> r0.Labels = testData.Labels
-        | Outcome.Exception _, TestResult.False(_,_,_,Outcome.Exception _,_) -> r0.Labels = testData.Labels
-        | Outcome.False, TestResult.False(_,_,_,Outcome.False,_) -> r0.Labels = testData.Labels
-        | Outcome.True, TestResult.True _ -> (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
+        | Outcome.Failed _, TestResult.Failed(_,_,_,Outcome.Failed _,_,_,_) -> r0.Labels = testData.Labels
+        | Outcome.Passed, TestResult.Passed _ -> (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
         | Outcome.Rejected,TestResult.Exhausted _ -> true
         | _ -> false
     
@@ -145,7 +145,7 @@ module Property =
         Prop.forAll (Arb.fromGen symPropGen) (fun symprop ->
             let expected = determineResult symprop
             let resultRunner = GetResultRunner()
-            let config = { Config.Quick with Runner = resultRunner; MaxTest = 2  }
+            let config = { Config.Quick with Runner = resultRunner; MaxTest = 2; }
             Check.One(config,toProperty symprop)
             let actual = resultRunner.Result
             areSame expected actual
@@ -158,7 +158,39 @@ module Property =
         let a = Prop.ofTestable <| lazy failwith "crash"
         let b =  Prop.ofTestable true
         a .|. b
-            
-        
-        
 
+    [<Fact>]
+    let ``Task-asynchronous tests should be passable``() =
+        let resultRunner = GetResultRunner()
+        let config = { Config.Quick with Runner = resultRunner; MaxTest = 1; }
+        let tcs = TaskCompletionSource()
+        tcs.SetResult(())
+        Check.One (config, Prop.ofTestable (tcs.Task :> Task))
+        test <@ match resultRunner.Result with
+                | TestResult.Passed(_,_) -> true
+                | TestResult.Failed(_,_,_,_,_,_,_) -> false
+                | TestResult.Exhausted _ -> false @>
+    
+    [<Fact>]
+    let ``Task-asynchronous tests should be failable by raising an exception``() =
+        let resultRunner = GetResultRunner()
+        let config = { Config.Quick with Runner = resultRunner; MaxTest = 1; }
+        let tcs = TaskCompletionSource()
+        tcs.SetException(exn "fail")
+        Check.One (config, Prop.ofTestable (tcs.Task :> Task))
+        test <@ match resultRunner.Result with
+                | TestResult.Passed(_,_) -> false
+                | TestResult.Failed(_,_,_,_,_,_,_) -> true
+                | TestResult.Exhausted _ -> false @>
+
+    [<Fact>]
+    let ``Task-asynchronous tests should be failable by cancellation``() =
+        let resultRunner = GetResultRunner()
+        let config = { Config.Quick with Runner = resultRunner; MaxTest = 1; }
+        let tcs = TaskCompletionSource()
+        tcs.SetCanceled()
+        Check.One (config, Prop.ofTestable (tcs.Task :> Task))
+        test <@ match resultRunner.Result with
+                | TestResult.Passed(_,_) -> false
+                | TestResult.Failed(_,_,_,_,_,_,_) -> true
+                | TestResult.Exhausted _ -> false @>

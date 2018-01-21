@@ -17,7 +17,6 @@
     <Compile Include="../FsCheck.Test/Gen.fs" Link="Gen.fs" />
     <Compile Include="../FsCheck.Test/Arbitrary.fs" Link="Arbitrary.fs" />    
     <Compile Include="../FsCheck.Test/Property.fs" Link="Property.fs" />
-    <Compile Include="../FsCheck.Test/Commands.fs" Link="Commands.fs" />
     <Compile Include="../FsCheck.Test/StateMachine.fs" Link="StateMachine.fs" />    
     <Compile Include="../FsCheck.Test/Runner.fs" Link="Runner.fs" />
   </ItemGroup>

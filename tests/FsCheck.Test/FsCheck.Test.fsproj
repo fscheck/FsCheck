@@ -12,7 +12,7 @@
     <Name>FsCheck.Test</Name>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
+    <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
     <ResolveNuGetPackages>false</ResolveNuGetPackages>
@@ -80,7 +80,6 @@
     <Compile Include="Gen.fs" />
     <Compile Include="Arbitrary.fs" />
     <Compile Include="Property.fs" />
-    <Compile Include="Commands.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="StateMachine.fs" />
     <None Include="paket.references" />

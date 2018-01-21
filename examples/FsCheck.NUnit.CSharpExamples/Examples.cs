@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using FsCheck.NUnit.CSharpExamples.ClassesToTest;
 using NUnit.Framework;
 
 namespace FsCheck.NUnit.CSharpExamples
@@ -22,18 +21,10 @@ namespace FsCheck.NUnit.CSharpExamples
             return Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs));
         }
 
-        [Property(Replay = "54321,67584", Verbose = true)]
+        [Property(Replay = "54321,67585", Verbose = true)]
         public bool Replay(int x)
         {
             return Int32.MaxValue >= x;
-        }
-
-        //TODO: do not call toProperty.
-        // Note this one should fail
-        [Property]
-        public Property Counter_shouldFail()
-        {
-            return new CounterSpec().ToProperty();
         }
     }
 }

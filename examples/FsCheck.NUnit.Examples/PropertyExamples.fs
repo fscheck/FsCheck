@@ -10,10 +10,17 @@ type NUnitTest() =
     [<Test>]
     member __.NormalTest() =
         ignore true
-
+        
     [<Property>]
     member __.RevUnit (x:char) =
         List.rev [x] = [x]
+
+    [<Property(Parallelism = 8)>]
+    member __.Async (i:int) =
+        async { 
+            do! Async.Sleep 1500
+            return true
+        }
   
     [<Property>]
     member __.RevApp (x:string) xs =
@@ -25,7 +32,7 @@ type NUnitTest() =
     member __.MaxLe (x:float) y =
         (x <= y) ==> (lazy (max  x y = y))
 
-    [<Property( Replay="54321,67584", Verbose = true )>]
+    [<Property( Replay="54321,67585", Verbose = true )>]
     member __.Replay x =
         System.Int32.MaxValue >= x
 

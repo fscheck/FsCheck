@@ -4,16 +4,36 @@
 // Using them internally within FsCheck is important for performance reasons.
 #nowarn "10001"
 
-open Random
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="T">The type of the generated value.</typeparam>
+/// <typeparam name="TState">The type of the generator's state value.</typeparam>
+[<Struct>]
+type GeneratedValue<'T, 'TState> (value : 'T, newState : 'TState) =
+    member __.Value = value
+    member __.UpdatedState = newState
 
-type internal IGen = 
+[<Interface>]
+type internal IGen =
     abstract AsGenObject : Gen<obj>
-    
+
 ///Generator of a random value, based on a size parameter and a randomly generated int.
-and [<NoEquality;NoComparison>] Gen<'a> = 
-    private Gen of (int -> StdGen -> 'a)
+and [<NoEquality;NoComparison>] Gen<'a> =
+    private Gen of (int -> Rnd -> GeneratedValue<'a, Rnd>)
         ///map the given function to the value in the generator, yielding a new generator of the result type.
-        member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> = match x with (Gen g) -> Gen (fun n r -> f (g n r))
+        member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> =
+            let (Gen g) = x
+            Gen (fun size rngState ->
+                // Use the generator to generate a random value.
+                let generatedValue = g size rngState
+
+                // Apply the mapping to the generated value.
+                let mappedValue = f generatedValue.Value
+
+                // Return the generated+mapped value and the updated PRNG state.
+                GeneratedValue (mappedValue, generatedValue.UpdatedState))
+
     interface IGen with
         member x.AsGenObject = x.Map box
 
@@ -50,18 +70,20 @@ type Arbitrary<'a>() =
 [<AutoOpen>]
 module GenBuilder =
 
-    let inline private result x = Gen (fun _ _ -> x)
+    let inline private result x = Gen (fun _ r -> GeneratedValue(x,r))
 
     let inline internal apply (Gen f) (Gen a) = 
-        Gen (fun n r0 -> let r1,r2 = split r0
-                         let f' = f n r1
-                         let a' = a n r2
-                         f' a')
+        Gen (fun n r0 -> let f' = f n r0
+                         let a' = a n f'.UpdatedState
+                         GeneratedValue (f'.Value a'.Value, a'.UpdatedState))
+
 
     let inline internal bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
-        Gen (fun n r0 -> let r1,r2 = split r0
-                         let (Gen m') = k (m n r1) 
-                         m' n r2)
+        Gen (fun n r0 ->
+            let v_r1 = m n r0
+            let (Gen m') = k v_r1.Value
+            m' n v_r1.UpdatedState)
+
 
     let inline private delay (f : unit -> Gen<_>) : Gen<_> = 
         Gen (fun n r -> match f() with (Gen g) -> g n r)
@@ -69,11 +91,9 @@ module GenBuilder =
     let inline private doWhile p (Gen m) =
         let go pred size rInit =
             let mutable r = rInit
-            while pred() do
-                let r1,r2 = split r
-                m size r1 |> ignore
-                r <- r2
-        Gen (fun n r -> go p n r)
+            while pred() do r <- (m size r).UpdatedState
+            r            
+        Gen (fun n r -> GeneratedValue ((), go p n r))
 
     let inline private tryFinally (Gen m) handler = 
         Gen (fun n r -> try m n r finally handler ())
@@ -89,7 +109,7 @@ module GenBuilder =
         member __.Delay(f) : Gen<_> = delay f
         member __.Combine(m1, m2) = bind m1 (fun () -> m2)
         member __.TryFinally(m, handler) = tryFinally m handler
-        member __.TryWith(Gen m, handler) = Gen (fun n r -> try m n r with e -> handler e)
+        member __.TryWith(Gen m, handler) = Gen (fun n r -> try m n r with e -> GeneratedValue(handler e,r))
         member __.Using (a, k) =  using a k
         member __.ReturnFrom (g:Gen<_>) = g
         member __.While(p, m:Gen<_>) = doWhile p m
@@ -114,7 +134,6 @@ type WeightAndValue<'a> =
 module Gen =
 
     open Common
-    open Random
     open System
     open System.Collections.Generic
     open System.ComponentModel
@@ -157,25 +176,32 @@ module Gen =
     [<CompiledName("Resize")>]
     let resize newSize (Gen m) = Gen (fun _ r -> m newSize r)
 
-    ///Generates a value of the give size with the given seed.
-    //[category: Generating test values]
-    [<CompiledName("Eval")>]
-    let eval size seed (Gen m) =
-        m size seed
-
-    ///Generates n values of the given size.
+    ///Generates n values of the given size and starting with the given seed.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sample size n generator  = 
-        let rec sample i seed samples =
-            if i = 0 then samples
-            else sample (i-1) (Random.stdSplit seed |> snd) (eval size seed generator :: samples)
-        sample n (Random.newSeed()) []
+    let sampleWithSeed seed size nbSamples (Gen generator) :'T[] = 
+        let mutable s = seed
+        [| for i in 1..nbSamples do
+            let sv = generator size s
+            s <- sv.UpdatedState
+            yield sv.Value |]
+
+    ///Generates a given number of values with a new seed and a given size.
+    //[category: Generating test values]
+    [<CompiledName("Sample")>]
+    let sampleWithSize size nbSamples gen : 'T[]= sampleWithSeed (Random.create()) size nbSamples gen
+
+    ///Generates a given number of values with a new seed and a size of 50.
+    //[category: Generating test values]
+    [<CompiledName("Sample")>]
+    let sample nbSamples gen : 'T[] = sampleWithSize 50 nbSamples gen
 
     ///Generates an integer between l and h, inclusive.
     //[category: Creating generators]
     [<CompiledName("Choose")>]
-    let choose (l, h) = Gen (fun _ r -> range (l,h) r |> fst) 
+    let choose (l,h) = Gen (fun _ r ->
+        let x, r = Random.rangeInt (l,h,r)
+        GeneratedValue (x, r))
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
@@ -344,27 +370,21 @@ module Gen =
     let sequence l = 
         let rec go gs acc size r0 = 
             match gs with
-            | [] -> List.rev acc
+            | [] ->
+                GeneratedValue (List.rev acc, r0)
             | (Gen g)::gs' ->
-                let r1,r2 = split r0
-                let y = g size r1
-                go gs' (y::acc) size r2
+                let y_r1 = g size r0
+                go gs' (y_r1.Value::acc) size y_r1.UpdatedState
         Gen(fun n r -> go (Seq.toList l) [] n r)
 
     /// Sequence the given enumerable of generators into a generator of an enumerable.
     //[category: Creating generators from generators]
     [<CompiledName("Sequence")>]
     let sequenceToSeq generators = 
-        // This implementation is similar to that for arrays and lists but is specialized
-        // to sequences to avoid intermediate conversion to an intermediate list.
-        Gen <| fun size rnd ->
-            seq {
-            let mutable r' = rnd
-            for (Gen g) in generators do
-                let r1, r2 = split r'
-                r' <- r2
-                yield g size r1
-            }
+        if Object.ReferenceEquals (null, generators) then
+            nullArg "generators"
+
+        generators |> sequence |> map List.toSeq
 
     /// Sequence the given array of generators into a generator of a array.
     //[category: Creating generators from generators]
@@ -373,19 +393,7 @@ module Gen =
         if Object.ReferenceEquals (null, generators) then
             nullArg "generators"
 
-        // This implementation is the same as that used for lists and sequences,
-        // but is specialized for arrays (to avoid intermediate allocations which
-        // would otherwise be caused by conversion to/from list or seq).
-        Gen <| fun size rnd ->
-            let result = Array.zeroCreate generators.Length
-            let mutable r' = rnd
-            for i = 0 to generators.Length - 1 do
-                let (Gen g) = generators.[i]
-                let r1, r2 = split r'
-                r' <- r2
-                result.[i] <- g size r1
-
-            result
+        generators |> sequence |> map List.toArray
 
     ///Generates a list of given length, containing values generated by the given generator.
     //[category: Creating generators from generators]
@@ -443,13 +451,6 @@ module Gen =
     [<CompiledName("TryFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
     let tryFilter predicate generator = tryWhere predicate generator
 
-    ///Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
-    ///if the given original generator did not generate any values that satisfied the predicate, after trying to
-    ///get values by increasing its size.
-    //[category: Creating generators from generators]
-    [<Obsolete("This function will be removed in a future version of FsCheck. Please use the synonyms tryWhere or tryFilter instead.");CompiledName("SuchThatOption"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let suchThatOption = tryWhere
-
     ///Generates a value that satisfies a predicate. Contrary to tryWhere, this function keeps re-trying
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
     ///the predicate is satisfied.
@@ -473,13 +474,6 @@ module Gen =
     //[category: Creating generators from generators]
     [<CompiledName("Filter");EditorBrowsable(EditorBrowsableState.Never)>]
     let filter predicate generator = where predicate generator
-
-    ///Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
-    ///by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
-    ///the predicate is satisfied.
-    //[category: Creating generators from generators]
-    [<Obsolete("This function will be removed in a future version of FsCheck. Please use the synonyms where or filter instead.");CompiledName("SuchThat")>]
-    let rec suchThat = where
 
     /// Generates a random array of length k where the sum of
     /// all elements equals the given sum.
@@ -597,7 +591,8 @@ module Gen =
     let apply (f:Gen<'a -> 'b>) (gn:Gen<'a>) : Gen<'b> = apply f gn
 
     ///Promote the given function f to a function generator. Only used for generating arbitrary functions.
-    let internal promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)
+    let internal promote f = Gen (fun n r -> let r1,r2 = Random.split r 
+                                             GeneratedValue ((fun a -> let (Gen m) = f a in (m n r1).Value),r2))
 
     ///Basic co-arbitrary generator transformer, which is dependent on an int.
     ///Only used for generating arbitrary functions.
@@ -605,7 +600,7 @@ module Gen =
         let counter = ref 1
         let toCounter = new Dictionary<'a,int>()
         let mapToInt (value:'a) =
-            if (box value) = null then 0
+            if isNull (box value) then 0
             else
                 lock toCounter (fun _ ->
                     let (found,result) = toCounter.TryGetValue value
@@ -615,7 +610,7 @@ module Gen =
                         toCounter.Add(value,!counter)
                         counter := !counter + 1
                         !counter - 1)
-        let rec rands r0 = seq { let r1,r2 = split r0 in yield r1; yield! (rands r2) }
+        let rec rands r0 = seq { let r1,r2 = Random.split r0 in yield r1; yield! (rands r2) }
         fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.

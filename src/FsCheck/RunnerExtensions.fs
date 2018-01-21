@@ -6,7 +6,7 @@ open System.Runtime.CompilerServices
 ///Configure the test run with a quick configuration.
 type Configuration() =
     let mutable maxTest = Config.Quick.MaxTest
-    let mutable maxFail = Config.Quick.MaxFail
+    let mutable maxFail = Config.Quick.MaxRejected
     let mutable name = Config.Quick.Name
     let mutable every = Config.Quick.Every
     let mutable everyShrink = Config.Quick.EveryShrink
@@ -15,6 +15,7 @@ type Configuration() =
     let mutable quietOnSuccess = Config.Quick.QuietOnSuccess
     let mutable runner = Config.Quick.Runner
     let mutable replay = Config.Quick.Replay
+    let mutable parallelRunConfig = Config.Quick.ParallelRunConfig
 
     ///The quick configuration only prints a summary result at the end of the test.
     static member Quick = new Configuration()
@@ -72,14 +73,19 @@ type Configuration() =
     ///A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit. 
     member __.Runner with get() = runner and set(v) = runner <- v
 
-    ///If set, the seed to use to start testing. Allows reproduction of previous runs.
+    ///If not null, the seed to use to start testing. Allows reproduction of previous runs.
     member __.Replay 
-        with get() = (match replay with None -> Unchecked.defaultof<Random.StdGen> | Some s -> s)
-        and set(v) = match box v with null -> () | _ -> replay <- Some v
+        with get() = (match replay with None -> Unchecked.defaultof<uint64*uint64*int> | Some s -> (s.Rnd.Seed,s.Rnd.Gamma,defaultArg s.Size 0))
+        and set(v) = replay <- Some <| let s,g,size = v in { Rnd = Random.createWithSeedAndGamma (s,g); Size = if size = -1 then None else Some size }
+        
+    ///If set, inputs for property generation and property evaluation will be runned in parallel.
+    member __.ParallelRunConfig 
+        with get() = (match parallelRunConfig with None -> Unchecked.defaultof<ParallelRunConfig> | Some c -> c)
+        and set(v) = parallelRunConfig <- Some <| v
 
     member internal __.ToConfig() =
         { MaxTest = maxTest
-          MaxFail = maxFail 
+          MaxRejected = maxFail 
           Name = name
           Every = every
           EveryShrink = everyShrink
@@ -89,6 +95,7 @@ type Configuration() =
           Runner = runner
           Replay = replay
           Arbitrary = []
+          ParallelRunConfig = parallelRunConfig
         }
 
 
