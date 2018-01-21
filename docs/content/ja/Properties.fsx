@@ -129,26 +129,14 @@ Check.Quick expectDivideByZero
 
 例えば、 *)
 
-(***hide***)
-//TODO: figure out why this does not exit cleanly. If I eval, 
-//FSharp.Formatting formats this file nicely, but hangs on any
-//subsequent file. I suspect this has to do with some thread
-//not closing cleanly...
-//(***define-output:timesOut***)
-
-(***do-not-eval***)
 let timesOut (a:int) = 
     lazy
         if a>10 then
-            do System.Threading.Thread.Sleep(3000)
+            do Threading.Thread.Sleep(3000)
             true
         else 
             true
     |> Prop.within 1000
-Check.Quick timesOut
-
-(***hide***)
-//(***include-output:timesOut***)
 
 (**
 第一引数は与えられた遅延性質が実行して良い最大の時間です。もしそれよりも長く実行していると、

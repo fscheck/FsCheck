@@ -286,9 +286,9 @@ Target "Tests" DoNothing
 
 "Tests"
   ==> "CleanDocs"
-  ==> "GenerateDocsJa"
+//  ==> "GenerateDocsJa"
   ==> "GenerateDocs"
-  =?> ("ReleaseDocs", isLocalBuild)
+//  =?> ("ReleaseDocs", isLocalBuild)
   ==> "Release"
 
 "Tests"

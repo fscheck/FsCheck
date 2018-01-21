@@ -1,7 +1,7 @@
 ﻿namespace FsCheck
 
 ///Haskell typeclass concept simulation. For internal use.
-module TypeClass =
+module internal TypeClass =
 
     open System
     open System.Collections.Generic
@@ -92,6 +92,7 @@ module TypeClass =
 
         let instances = defaultArg instances Map.empty
         let keySet map = map |> Map.toSeq |> Seq.map fst |> Set.ofSeq
+
         let memo = new Dictionary<_,_>() //should fix memo bug since the memo table is re-initialized when a new registration is done
          
         member __.Class = typedefof<'TypeClass>

@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{0B883240-C311-4AA9-92EF-0E3C471B0077}"
 	ProjectSection(SolutionItems) = preProject
@@ -47,7 +47,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D
 		Docs\content\Properties.fsx = Docs\content\Properties.fsx
 		Docs\content\QuickStart.fsx = Docs\content\QuickStart.fsx
 		Docs\content\RunningTests.fsx = Docs\content\RunningTests.fsx
-		Docs\content\StatefulTesting.fsx = Docs\content\StatefulTesting.fsx
 		docs\content\StatefulTestingNew.fsx = docs\content\StatefulTestingNew.fsx
 		docs\tools\templates\template.cshtml = docs\tools\templates\template.cshtml
 		Docs\content\TestData.fsx = Docs\content\TestData.fsx
@@ -61,7 +60,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ja", "ja", "{34021B41-3EED-
 		docs\content\ja\Properties.fsx = docs\content\ja\Properties.fsx
 		docs\content\ja\QuickStart.fsx = docs\content\ja\QuickStart.fsx
 		docs\content\ja\RunningTests.fsx = docs\content\ja\RunningTests.fsx
-		docs\content\ja\StatefulTesting.fsx = docs\content\ja\StatefulTesting.fsx
 		docs\content\ja\TestData.fsx = docs\content\ja\TestData.fsx
 		docs\content\ja\TipsAndTricks.fsx = docs\content\ja\TipsAndTricks.fsx
 	EndProjectSection
@@ -69,14 +67,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.XUnit.CSharpExamples", "examples\FsCheck.XUnit.CSharpExamples\FsCheck.XUnit.CSharpExamples.csproj", "{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp.DocSnippets", "docs\csharp\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PCL", "PCL", "{08B3CD84-5D0A-45AF-80A7-3998117F983C}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Portable.Profile7", "src\FsCheck.Portable.Profile7\FsCheck.Portable.Profile7.fsproj", "{474F0377-247A-444D-8EF7-AD6C786A6526}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Portable.Profile78", "src\FsCheck.Portable.Profile78\FsCheck.Portable.Profile78.fsproj", "{2F39D1FB-7C12-49D3-BAAD-E20DB9F31A73}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Portable.Profile259", "src\FsCheck.Portable.Profile259\FsCheck.Portable.Profile259.fsproj", "{20F79E8F-C87D-4E6C-AD6C-B16518519292}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -128,18 +118,6 @@ Global
 		{6AB84678-E55F-4387-A040-67312735D089}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AB84678-E55F-4387-A040-67312735D089}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AB84678-E55F-4387-A040-67312735D089}.Release|Any CPU.Build.0 = Release|Any CPU
-		{474F0377-247A-444D-8EF7-AD6C786A6526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{474F0377-247A-444D-8EF7-AD6C786A6526}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{474F0377-247A-444D-8EF7-AD6C786A6526}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{474F0377-247A-444D-8EF7-AD6C786A6526}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2F39D1FB-7C12-49D3-BAAD-E20DB9F31A73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F39D1FB-7C12-49D3-BAAD-E20DB9F31A73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2F39D1FB-7C12-49D3-BAAD-E20DB9F31A73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F39D1FB-7C12-49D3-BAAD-E20DB9F31A73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20F79E8F-C87D-4E6C-AD6C-B16518519292}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20F79E8F-C87D-4E6C-AD6C-B16518519292}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20F79E8F-C87D-4E6C-AD6C-B16518519292}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20F79E8F-C87D-4E6C-AD6C-B16518519292}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,9 +131,9 @@ Global
 		{34021B41-3EED-409A-AF7C-6EC2BD4371B2} = {6B36173B-D4E0-4CF4-840D-3F3016653F85}
 		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 		{6AB84678-E55F-4387-A040-67312735D089} = {6B36173B-D4E0-4CF4-840D-3F3016653F85}
-		{474F0377-247A-444D-8EF7-AD6C786A6526} = {08B3CD84-5D0A-45AF-80A7-3998117F983C}
-		{2F39D1FB-7C12-49D3-BAAD-E20DB9F31A73} = {08B3CD84-5D0A-45AF-80A7-3998117F983C}
-		{20F79E8F-C87D-4E6C-AD6C-B16518519292} = {08B3CD84-5D0A-45AF-80A7-3998117F983C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6D6278A4-5CF7-4677-99D1-7BF43899AEC4}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = examples\FsCheck.Examples\FsCheck.Examples.fsproj

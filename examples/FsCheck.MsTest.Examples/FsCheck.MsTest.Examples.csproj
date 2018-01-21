@@ -40,11 +40,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClassesToTest\Counter.cs" />
-    <Compile Include="ClassesToTest\CounterSpec.cs" />
     <Compile Include="ClassesToTest\Doc.cs" />
     <Compile Include="ClassesToTest\EnumerableExtensions.cs" />
-    <Compile Include="CounterTest.cs" />
     <Compile Include="DocGen.cs" />
     <Compile Include="DocTest.cs" />
     <Compile Include="SampleTests.cs" />

@@ -14,7 +14,7 @@ NUGET
       xunit.extensibility.core (2.2)
       xunit.extensibility.execution (2.2)
     xunit.extensibility.core (2.2)
-      xunit.abstractions (>= 2.0.1) - restriction: || (== net452) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
+      xunit.abstractions (>= 2.0.1) - restriction: || (== net452) (&& (== net452) (== portable-net45+win8)) (&& (== net452) (== portable-net45+win8+wp8)) (&& (== net452) (== portable-net45+win8+wp8+wpa81)) (&& (== portable-net45+win8) (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8) (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1)) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
     xunit.extensibility.execution (2.2)
       xunit.extensibility.core (2.2) - restriction: || (== net452) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
     xunit.runner.visualstudio (2.2.0) - version_in_path: true

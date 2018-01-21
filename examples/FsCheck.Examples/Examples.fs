@@ -10,7 +10,7 @@ open System.Collections.Generic
 open Prop
 
 //init bug
-let sizedString =  Arb.generate<char> |> Gen.sample 10 10
+let sizedString =  Arb.generate<char> |> Gen.sample 10
     
 
 //---too early initialization bug (put this first): fixed---
@@ -26,6 +26,13 @@ Arb.register<Generators>() |> ignore
 //        { new Arbitrary<int64>() with
 //            override x.Arbitrary = arbitrary |> fmapGen int64 }
 //overwriteGenerators<NoInstancesFails>()
+
+
+let prop_lameTask (x:int) =
+    if x=0 then false else true
+    |> Threading.Tasks.Task.FromResult
+Check.Quick prop_lameTask
+
 
 type TestEnum =
     | First = 0
@@ -189,6 +196,20 @@ Check.Quick (withNonEmptyString blah)
 let prop_Exc = forAll (Arb.fromGenShrink(Gen.resize 100 Arb.generate,Arb.shrink)) (fun (s:string) -> failwith "error")
 Check.Quick("prop_Exc",prop_Exc)
 
+//-----------------async--------
+let asyncWork (i :int) =
+    async {
+        let s = Async.Sleep i   
+        let c = Async.Sleep 1500
+        let t = 
+            [s; c]
+            |> Seq.map Async.StartAsTask
+            |> System.Threading.Tasks.Task.WhenAny
+        let! x = Async.AwaitTask t
+        return true
+    }
+let config = { Config.QuickThrowOnFailure with ParallelRunConfig = Some { MaxDegreeOfParallelism = 1 } }
+Check.One (config, asyncWork)  
 
 //-----------------test reflective shrinking--------
 type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }

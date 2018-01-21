@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using FsCheck;
 
 namespace FsCheck.CSharpExamples
@@ -44,11 +45,15 @@ namespace FsCheck.CSharpExamples
                 throw new NotImplementedException();
             }
         }
-
+        
         static void Main(string[] args)
         {
+
+            Prop.ForAll<int>((i => Task.FromResult(i < 1000)))
+                .QuickCheck("Task");
+
             //A simple example
-            
+
             Prop.ForAll<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs, new Eq()))
                 .QuickCheck("RevRev");
 
@@ -170,13 +175,16 @@ namespace FsCheck.CSharpExamples
             // replay
             Prop.ForAll<string>(s => s == null)
                 .Label("Replay")
-                .Check(new Configuration { MaxNbOfTest = 1, Replay = Random.StdGen.NewStdGen(1, 1) });
+                .Check(new Configuration { MaxNbOfTest = 1, Replay = Tuple.Create(1UL, 1UL, -1) });
 
             Console.WriteLine();
 
             Prop.ForAll((IEnumerable<int> a, IEnumerable<int> b) => 
                             a.Except(b).Count() <= a.Count())
                 .QuickCheck();
+
+            Arb.Generate<int>().Sample(10);
+            Arb.Generate<int>().Sample(10, size:25);
 
             Console.ReadKey();
         }

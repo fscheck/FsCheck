@@ -28,19 +28,11 @@ type XunitRunner() =
         override __.OnFinished(_ ,testResult) =
             result <- Some testResult
 
-///Override Arbitrary instances for FsCheck tests within the attributed class
-///or module.
-[<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
-[<Obsolete("Please use PropertiesAttribute instead.")>]
-type ArbitraryAttribute(types:Type[]) =
-    inherit Attribute()
-    new(typ:Type) = ArbitraryAttribute([|typ|])
-    member __.Arbitrary = types
-
 type internal PropertyConfig =
     { MaxTest        : Option<int>
       MaxFail        : Option<int>
       Replay         : Option<string>
+      Parallelism    : Option<int>
       StartSize      : Option<int>
       EndSize        : Option<int>
       Verbose        : Option<bool>
@@ -59,6 +51,7 @@ module internal PropertyConfig =
         { MaxTest        = None
           MaxFail        = None
           Replay         = None
+          Parallelism    = None
           StartSize      = None
           EndSize        = None
           Verbose        = None
@@ -69,26 +62,31 @@ module internal PropertyConfig =
         { MaxTest        = extra.MaxTest        |> orElse original.MaxTest
           MaxFail        = extra.MaxFail        |> orElse original.MaxFail
           Replay         = extra.Replay         |> orElse original.Replay
+          Parallelism    = extra.Parallelism    |> orElse original.Parallelism
           StartSize      = extra.StartSize      |> orElse original.StartSize
           EndSize        = extra.EndSize        |> orElse original.EndSize
           Verbose        = extra.Verbose        |> orElse original.Verbose
           QuietOnSuccess = extra.QuietOnSuccess |> orElse original.QuietOnSuccess
           Arbitrary      = Array.append extra.Arbitrary original.Arbitrary }
 
-    let parseStdGen (str: string) =
+    let parseReplay (str: string) =
         //if someone sets this, we want it to throw if it fails
         let split = str.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
-        let elem1 = Int32.Parse(split.[0])
-        let elem2 = Int32.Parse(split.[1])
-        Random.StdGen (elem1,elem2)
+        let seed = UInt64.Parse(split.[0])
+        let gamma = UInt64.Parse(split.[1])
+        let size = if split.Length = 3 then Some <| Convert.ToInt32(UInt32.Parse(split.[2])) else None
+        { Rnd = Rnd (seed,gamma); Size = size }
 
     let toConfig (output : TestOutputHelper) propertyConfig =
         { Config.Default with
               Replay         = propertyConfig.Replay 
-                               |> Option.map parseStdGen 
+                               |> Option.map parseReplay 
                                |> orElse Config.Default.Replay
+              ParallelRunConfig    = propertyConfig.Parallelism 
+                                    |> Option.map (fun i -> { MaxDegreeOfParallelism = i })
+                                    |> orElse Config.Default.ParallelRunConfig
               MaxTest        = propertyConfig.MaxTest        |> orDefault Config.Default.MaxTest
-              MaxFail        = propertyConfig.MaxFail        |> orDefault Config.Default.MaxFail
+              MaxRejected    = propertyConfig.MaxFail        |> orDefault Config.Default.MaxRejected
               StartSize      = propertyConfig.StartSize      |> orDefault Config.Default.StartSize
               EndSize        = propertyConfig.EndSize        |> orDefault Config.Default.EndSize
               QuietOnSuccess = propertyConfig.QuietOnSuccess |> orDefault Config.Default.QuietOnSuccess
@@ -112,6 +110,7 @@ type public PropertyAttribute() =
     inherit FactAttribute()
     let mutable config = PropertyConfig.zero
     let mutable replay = null
+    let mutable parallelism = -1
     let mutable maxTest = -1
     let mutable maxFail = -1
     let mutable startSize = -1
@@ -119,10 +118,13 @@ type public PropertyAttribute() =
     let mutable verbose = false
     let mutable arbitrary = [||]
     let mutable quietOnSuccess = false
-
+    
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
     member __.Replay with get() = replay and set(v) = replay <- v; config <- {config with Replay = Some v}
+    ///If set, run tests in parallel. Useful for Task/async related work and heavy number crunching
+    ///Environment.ProcessorCount have been found to be useful default.
+    member __.Parallelism with get() = parallelism and set(v) = parallelism <- v; config <- {config with Parallelism = Some v}
     ///The maximum number of tests that are run.
     member __.MaxTest with get() = maxTest and set(v) = maxTest <- v; config <- {config with MaxTest = Some v}
     ///The maximum number of tests where values are rejected, e.g. as the result of ==>
@@ -159,10 +161,6 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
     member this.Init(output:TestOutputHelper) =
         let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
-        let arbitrariesOnClass =
-            this.TestMethod.TestClass.Class.GetCustomAttributes(Type.GetType("FsCheck.Xunit.ArbitraryAttribute"))
-                |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
-                |> Seq.toArray
         let generalAttribute = 
             this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<PropertiesAttribute>) 
                 |> Seq.tryFind (fun _ -> true)
@@ -176,7 +174,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             | None ->
                 factAttribute.GetNamedArgument "Config"
         
-        { config with Arbitrary = Array.append config.Arbitrary arbitrariesOnClass }
+        { config with Arbitrary = config.Arbitrary }
         |> PropertyConfig.toConfig output 
 
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
@@ -204,18 +202,18 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                     timer.Aggregate(fun () -> Check.Method(config, runMethod, ?target=target))
 
                     match xunitRunner.Result with
-                          | TestResult.True _ ->
+                          | TestResult.Passed _ ->
                             let output = Runner.onFinishedToString "" xunitRunner.Result
                             outputHelper.WriteLine(output)
                             new TestPassed(test, timer.Total, outputHelper.Output) :> TestResultMessage
                           | TestResult.Exhausted _ ->
                             summary.Failed <- summary.Failed + 1
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
-                          | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
+                          | TestResult.Failed (testdata, originalArgs, shrunkArgs, Outcome.Failed e, originalSeed, lastSeed, lastSize)  ->
                             summary.Failed <- summary.Failed + 1
-                            let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
+                            let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs originalSeed lastSeed lastSize)
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(message, e))
-                          | TestResult.False _ ->
+                          | TestResult.Failed _ ->
                             summary.Failed <- summary.Failed + 1
                             upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
                 with

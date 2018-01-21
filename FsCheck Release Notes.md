@@ -1,3 +1,23 @@
+
+### 3.0.0-alpha3 - 30 December 2017
+* NuGet packaging: relax FSharp.Core constraint to 4.0 and higher for .NET Desktop.
+
+### 3.0.0-alpha2 - 19 October 2017
+* Remove PCL builds. NET Standard is the way forward. Latest FSharp.Core builds don't even include PCL versions. As a result of the FSharp.Core dependency, FsCheck targets NET Standard 1.6.
+
+* Remove Prop.within.
+
+* Remove tuple and list testables.
+
+* Bug fix: Tasks that were faulted or canceled were not detected as test failures (by chrisoverzero)
+
+### 3.0.0-alpha1 - 26 September 2017
+* Update random number generator to SplitMix algorithm. (with thanks to Jack Pappas for making it fast)
+
+* Add support for parallel and async testing. (by Sergey - great effort!)
+
+* Simplify sampling data: Gen.sample et al.
+
 ### 2.10.6 - 30 December 2017
 * NuGet packaging: relax FSharp.Core constraint to 4.0 and higher for .NET Desktop and PCL targets.
 
