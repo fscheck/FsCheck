@@ -1,4 +1,4 @@
-### 2.10.7 - To be released
+### 2.10.7 - 29 January 2018
 * Fix FsCheck.NUnit issue - failure output was not shown. (by adj123)
 
 * Add C# Implies extension method. (by adj123)
