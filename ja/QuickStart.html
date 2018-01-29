@@ -56,11 +56,11 @@
 <p>を定義すると、このような結果を確認できるでしょう:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (1 shrink) (StdGen (1818520813,296394649)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (4 shrinks) (StdGen (1291410692,296406723)):
 Original:
-[1; -1]
+[0; 1; 0; 0; 2]
 Shrunk:
-[1; 0]</code></pre></td></tr></table>
+[0; 1]</code></pre></td></tr></table>
 <p>FsCheck は反例の <em>シュリンク</em> (訳註: 推定による絞り込みのこと)も行うので、テストケースを失敗させる最小の反例を見つけようとします。
 反例は確かに最小、つまりリストは少なくともテストを失敗するための２つの異なる要素を持っています。FsCheck はより小さな反例を
 (何らかの方法で)何回見つけてシュリンクを進めたかを表示します。</p>
@@ -81,9 +81,9 @@ Shrunk:
 </code></pre>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 6 tests (6 shrinks) (StdGen (1819261359,296394649)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 10 tests (10 shrinks) (StdGen (1292551503,296406723)):
 Original:
-[4.940656458e-324; 0.0; nan; 1.797693135e+308; nan; 4.940656458e-324; 0.5]
+[-1.666666667; nan; 0.0; 0.0; -1.0; 0.0; 0.0; 0.0; 0.0; 4.940656458e-324; 0.0]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <h2>FsCheck を他のテスティングフレームワークで使う</h2>
