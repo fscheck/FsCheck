@@ -98,7 +98,7 @@ type Machine<'Actual,'Model>(maxNumberOfCommands:int) =
     new() = Machine(-1)
     member __.MaxNumberOfCommands = maxNumberOfCommands
 
-    abstract Setup : Arbitrary<Setup<'Actual,'Model>>
+    abstract Setup : Gen<Setup<'Actual,'Model>>
     abstract TearDown : TearDown<'Actual>
     default __.TearDown = TearDown<_>()
  
@@ -106,8 +106,8 @@ type Machine<'Actual,'Model>(maxNumberOfCommands:int) =
     ///Preconditions are still checked, so even if a Command is returned, it is not chosen
     ///if its precondition does not hold.
     abstract Next : 'Model -> Gen<Operation<'Actual,'Model>>
-    abstract ShrinkOperations : list<Operation<'Actual,'Model>> -> seq<list<Operation<'Actual,'Model>>>
-    default __.ShrinkOperations s = Arb.Default.FsList().Shrinker s
+    //abstract ShrinkOperations : list<Operation<'Actual,'Model>> -> seq<list<Operation<'Actual,'Model>>>
+    //default __.ShrinkOperations s = Arb.Default.FsList().Shrinker s
 
 [<StructuredFormatDisplayAttribute("{StructuredToString}")>]
 type MachineRun<'Actual, 'Model> =
@@ -181,7 +181,7 @@ type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) =
                               return MethodCall<'Actual>(meth, List.toArray parameters) :> Operation<'Actual,ObjectMachineModel> })
         |> Gen.oneof
 
-    override __.Setup = ctors |> Arb.fromGen
+    override __.Setup = ctors
     override __.TearDown = upcast DisposeCall<'Actual>()
     override __.Next _ = instanceMethods
 
@@ -254,7 +254,7 @@ module StateMachine =
                     return [state],[]
             }
         Gen.sized (fun size ->
-            gen { let! setup = spec.Setup |> Arb.toGen
+            gen { let! setup = spec.Setup
                   let initialModel = setup.Model()
                   let maxNum = spec.MaxNumberOfCommands
                   let usedSize = if maxNum < 0 then size else maxNum 
@@ -265,51 +265,51 @@ module StateMachine =
                            UsedSize = usedSize }
             })
 
-    [<CompiledName("Shrink")>]
-    let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
-        let runModels initial (operations:seq<Operation<'Actual,'Model>>) =
-            let addProvided (set:HashSet<_>) (op:IOperation) =
-                set.UnionWith op.Provides
-                set
-            let hasNeeds (op:IOperation) (provided:HashSet<_>) =
-                let r = provided.IsSupersetOf op.Needs
-                r
+    //[<CompiledName("Shrink")>]
+    //let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
+    //    let runModels initial (operations:seq<Operation<'Actual,'Model>>) =
+    //        let addProvided (set:HashSet<_>) (op:IOperation) =
+    //            set.UnionWith op.Provides
+    //            set
+    //        let hasNeeds (op:IOperation) (provided:HashSet<_>) =
+    //            let r = provided.IsSupersetOf op.Needs
+    //            r
 
-            operations
-            |> Seq.scan (fun (provided, _, Lazy model) operation -> 
-                 if hasNeeds operation provided && operation.Pre model then
-                    addProvided provided operation, Some operation, lazy operation.Run model
-                 else 
-                    provided, None, lazy model)
-                (HashSet<IOperationResult>(), 
-                 None,
-                 lazy initial)
-            |> Seq.choose (fun (_, op, Lazy model) -> op |> Option.map (fun op -> (op,model)))
-            //|> Seq.distinct
+    //        operations
+    //        |> Seq.scan (fun (provided, _, Lazy model) operation -> 
+    //             if hasNeeds operation provided && operation.Pre model then
+    //                addProvided provided operation, Some operation, lazy operation.Run model
+    //             else 
+    //                provided, None, lazy model)
+    //            (HashSet<IOperationResult>(), 
+    //             None,
+    //             lazy initial)
+    //        |> Seq.choose (fun (_, op, Lazy model) -> op |> Option.map (fun op -> (op,model)))
+    //        //|> Seq.distinct
 
-        let chooseModels setup operations =
-            let initialModel = fst setup
-            let transitions = runModels initialModel operations |> Seq.toList
-            //printf "transitions %A" transitions
-            let ok = not <| List.isEmpty transitions
-            if ok then 
-                Some { run with Operations = transitions; Setup = setup } 
-            else 
-                None 
+    //    let chooseModels setup operations =
+    //        let initialModel = fst setup
+    //        let transitions = runModels initialModel operations |> Seq.toList
+    //        //printf "transitions %A" transitions
+    //        let ok = not <| List.isEmpty transitions
+    //        if ok then 
+    //            Some { run with Operations = transitions; Setup = setup } 
+    //        else 
+    //            None 
 
-        //try to shrink the list of operations
-        let shrinkOps =
-            run.Operations 
-            |> List.map fst
-            |> spec.ShrinkOperations
-            |> Seq.choose (chooseModels run.Setup)
+    //    //try to shrink the list of operations
+    //    let shrinkOps =
+    //        run.Operations 
+    //        |> List.map fst
+    //        |> spec.ShrinkOperations
+    //        |> Seq.choose (chooseModels run.Setup)
 
-        //try to srhink the initial setup state
-        let shrinkSetup =
-            Arb.toShrink spec.Setup (snd run.Setup) 
-            |> Seq.choose (fun setup -> chooseModels (setup.Model(),setup) (List.map fst run.Operations))
+    //    //try to srhink the initial setup state
+    //    let shrinkSetup =
+    //        Arb.toShrink spec.Setup (snd run.Setup) 
+    //        |> Seq.choose (fun setup -> chooseModels (setup.Model(),setup) (List.map fst run.Operations))
 
-        Seq.append shrinkOps shrinkSetup
+    //    Seq.append shrinkOps shrinkSetup
         
     /// Check one run, i.e. create a property from a single run.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
@@ -332,20 +332,21 @@ module StateMachine =
 
     ///Check all generated runs, i.e. create a property from an arbitrarily generated run.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let forAll (arb:Arbitrary<MachineRun<'Actual,'Model>>) = 
+    let forAll (arb:Gen<MachineRun<'Actual,'Model>>) = 
         Prop.forAll arb forOne
 
     ///Turn a machine specification into a property.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toProperty (spec:Machine<'Actual,'Model>) = 
-        forAll (Arb.fromGenShrink(generate spec, shrink spec))
+        //forAll (Arb.fromGenShrink(generate spec, shrink spec))
+        forAll (generate spec)
 
 [<AbstractClass;Sealed;Extension>]
 type StateMachineExtensions =
     [<Extension>]
     static member ToProperty(specification: Machine<'Actual,'Model>) = StateMachine.toProperty specification
     [<Extension>]
-    static member ToProperty(arbitraryRun:Arbitrary<MachineRun<'Actual,'Model>>) = StateMachine.forAll arbitraryRun
+    static member ToProperty(arbitraryRun:Gen<MachineRun<'Actual,'Model>>) = StateMachine.forAll arbitraryRun
     [<Extension>]
     static member ToProperty(run: MachineRun<'Actual,'Model>) = StateMachine.forOne run
 

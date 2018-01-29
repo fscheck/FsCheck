@@ -9,19 +9,19 @@ module Prop =
 
     ///Quantified property combinator. Provide a custom test data generator to a property.
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let forAll (arb:Arbitrary<'Value>) (body:'Value -> 'Testable) = forAll arb body
+    let forAll (arb:Gen<'Value>) (body:'Value -> 'Testable) = forAll arb body
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let forAllAction1 (arb:Arbitrary<'Value>) (body:Action<'Value>) = forAll arb body.Invoke
+    let forAllAction1 (arb:Gen<'Value>) (body:Action<'Value>) = forAll arb body.Invoke
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let forAllFunc1Bool (arb:Arbitrary<'Value>) (body:Func<'Value,bool>) = forAll arb body.Invoke
+    let forAllFunc1Bool (arb:Gen<'Value>) (body:Func<'Value,bool>) = forAll arb body.Invoke
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let forAllFunc1TaskBool (arb:Arbitrary<'Value>) (body:Func<'Value,Threading.Tasks.Task<bool>>) = forAll arb body.Invoke
+    let forAllFunc1TaskBool (arb:Gen<'Value>) (body:Func<'Value,Threading.Tasks.Task<bool>>) = forAll arb body.Invoke
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let forAllFunc1Prop (arb:Arbitrary<'Value>) (body:Func<'Value,Property>) = forAll arb body.Invoke
+    let forAllFunc1Prop (arb:Gen<'Value>) (body:Func<'Value,Property>) = forAll arb body.Invoke
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let forAllAction1Def (body:Action<'Value>) = property body.Invoke
@@ -36,13 +36,13 @@ module Prop =
     let forAllFunc1PropDef (body:Func<'Value,Property>) = property body.Invoke
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let forAllAction2 (arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>) (body:Action<'V1,'V2>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
+    let forAllAction2 (arb1:Gen<'V1>,arb2:Gen<'V2>) (body:Action<'V1,'V2>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let forAllFunc2Bool (arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>) (body:Func<'V1,'V2,bool>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
+    let forAllFunc2Bool (arb1:Gen<'V1>,arb2:Gen<'V2>) (body:Func<'V1,'V2,bool>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let forAllFunc2Prop (arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>) (body:Func<'V1,'V2,Property>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
+    let forAllFunc2Prop (arb1:Gen<'V1>,arb2:Gen<'V2>) (body:Func<'V1,'V2,Property>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let forAllAction2Def (body:Action<'V1,'V2>) = property body.Invoke
@@ -54,15 +54,15 @@ module Prop =
     let forAllFunc2PropDef (body:Func<'V1,'V2,Property>) = property body.Invoke
     
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let forAllAction3 (arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>,arb3:Arbitrary<'V3>) (body:Action<'V1,'V2,'V3>) = 
+    let forAllAction3 (arb1:Gen<'V1>,arb2:Gen<'V2>,arb3:Gen<'V3>) (body:Action<'V1,'V2,'V3>) = 
         forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> forAll arb3 (fun v3 -> body.Invoke(v1,v2,v3))))
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let forAllFunc3Bool (arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>,arb3:Arbitrary<'V3>) (body:Func<'V1,'V2,'V3,bool>) = 
+    let forAllFunc3Bool (arb1:Gen<'V1>,arb2:Gen<'V2>,arb3:Gen<'V3>) (body:Func<'V1,'V2,'V3,bool>) = 
         forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> forAll arb3 (fun v3 -> body.Invoke(v1,v2,v3))))
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let forAllFunc3Prop (arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>,arb3:Arbitrary<'V3>) (body:Func<'V1,'V2,'V3,Property>) = 
+    let forAllFunc3Prop (arb1:Gen<'V1>,arb2:Gen<'V2>,arb3:Gen<'V3>) (body:Func<'V1,'V2,'V3,Property>) = 
         forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> forAll arb3 (fun v3 -> body.Invoke(v1,v2,v3))))
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]

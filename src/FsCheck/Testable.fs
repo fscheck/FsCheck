@@ -74,41 +74,8 @@ module internal Res =
 
     let future (t :Threading.Tasks.Task<Outcome>) = t.ContinueWith (fun (x :Threading.Tasks.Task<Outcome>) -> { result with Outcome = x.Result }) |> Future
 
-//A rose is a pretty tree
-//Draw it and you'll see.
-//A Rose<Result> is used to keep, in a lazy way, a Result and the possible shrinks for the value in the node.
-//The fst value is the current Result, and the list contains the properties yielding possibly shrunk results.
-//Each of those can in turn have their own shrinks. 
-[<NoEquality;NoComparison>]
-type Rose<'a> = internal MkRose of Lazy<'a> * seq<Rose<'a>>
-
-module internal Rose =
-
-    let rec map f (a:Rose<_>) = match a with MkRose (x,rs) -> MkRose (lazy (f x.Value), rs |> Seq.map (map f))
-       
-    //careful here: we can't pattern match as follows, as this will result in evaluation:
-    //let rec join (MkRose (Lazy (MkRose(x,ts)),tts)) 
-    //instead, define everything inside the MkRose, as a lazily evaluated expression. Haskell would use an irrefutable
-    //pattern here (is this possible using an active pattern? -> to investigate!) 
-    let rec join (MkRose (r,tts)) =
-        //bweurgh. Need to match twice to keep it lazy.
-        let x = lazy (match r with (Lazy (MkRose (x,_))) -> x.Value)
-        let ts = Seq.append (Seq.map join tts) (match r with (Lazy (MkRose (_,ts))) -> ts)
-        MkRose (x,ts) 
-      //first shrinks outer quantification; makes most sense
-      //first shrinks inner quantification: MkRose (x,(ts ++ Seq.map join tts))
-
-    let ret x = MkRose (lazy x,Seq.empty)
-    
-    let bind m k = join ( map k m ) 
-
-    let map2 f r1 r2 =  bind r1 (fun r1' -> bind r2 (fun r2' -> ret <| f r1' r2'))
-                                     
-    let ofLazy x = MkRose (x,Seq.empty)
-
-
 ///A Property can be checked by FsCheck.
-type Property = private Property of Gen<Rose<ResultContainer>> with static member internal GetGen (Property g) = g
+type Property = private Property of Gen<ResultContainer> with static member internal GetGen (Property g) = g
 
 module private Testable =
 
@@ -131,10 +98,8 @@ module private Testable =
 
     module internal Prop = 
     
-        let ofRoseResult t : Property = Property <| gen { return t }
-
         let ofResult (r:ResultContainer) : Property = 
-            ofRoseResult <| Rose.ret r
+            Property <| gen { return r }
          
         let ofBool b = ofResult <| if b then Res.succeeded else Res.failed
         
@@ -152,9 +117,7 @@ module private Testable =
                     | (_,true) -> Outcome.Failed x.Exception
                     | (true,_) -> Outcome.Failed <| exn "The Task was canceled."))
 
-        let mapRoseResult f a = property a |> Property.GetGen |> Gen.map f |> Property
-
-        let mapResult f = mapRoseResult (Rose.map f)
+        let mapResult f a = property a |> Property.GetGen |> Gen.map f |> Property
 
         let safeForce (body:Lazy<_>) =
             try
@@ -162,14 +125,6 @@ module private Testable =
             with
             | :? DiscardException -> ofResult Res.rejected
             | e -> ofResult (Res.exc e)
-
-    let private shrinking shrink x pf =
-        let promoteRose (m:Rose<Gen<_>>) : Gen<Rose<_>> = 
-            Gen (fun s r -> let mr = Rose.map (fun (Gen m') -> (m' s r).Value) m in GeneratedValue (mr,r))
-        //cache is important here to avoid re-evaluation of property
-        let rec props x = MkRose (lazy (pf x), shrink x |> Seq.map props |> Seq.cache)
-        promoteRose (props x)
-        |> Gen.map Rose.join
     
     let private evaluate body a =
         let argument a res = 
@@ -185,20 +140,17 @@ module private Testable =
             | :? DiscardException -> Prop.ofResult Res.rejected
             | e -> Prop.ofResult (Res.exc e)
         |> Property.GetGen 
-        |> Gen.map (Rose.map (argument a))
+        |> Gen.map (argument a)
 
 
-    let forAll (arb:Arbitrary<_>) body : Property =
-        let generator = arb.Generator
-        let shrinker = arb.Shrinker
-        gen { let! a = generator
-              return! shrinking shrinker a (fun a' -> evaluate body a')}
+    let forAll (arb:Gen<_>) body : Property =
+        arb >>= evaluate body
         |> Property
 
     let private combine f a b:Property = 
         let pa = property a |> Property.GetGen
         let pb = property b |> Property.GetGen
-        Gen.map2 (Rose.map2 f) pa pb
+        Gen.map2 f pa pb
         |> Property
 
     let (.&) l r = combine (&&&) l r
@@ -224,12 +176,12 @@ module private Testable =
         static member Async() =
             { new Testable<Async<unit>> with
                 member __.Property b = Prop.ofTask <| Async.StartAsTask b }
-        static member Lazy() =
-            { new Testable<Lazy<'a>> with
-                member __.Property b =
-                    let promoteLazy (m:Lazy<_>) = 
-                        Gen (fun s r -> GeneratedValue ((Rose.join <| Rose.ofLazy (lazy (match m.Value with (Gen g) -> (g s r).Value))), r))
-                    promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
+        //static member Lazy() =
+        //    { new Testable<Lazy<'a>> with
+        //        member __.Property b =
+        //            let promoteLazy (m:Lazy<_>) = 
+        //                Gen (fun s r -> GeneratedValue ((Rose.join <| Rose.ofLazy (lazy (match m.Value with (Gen g) -> (g s r).Value))), r))
+        //            promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
         static member Result() =
             { new Testable<Result> with
                 member __.Property res = Prop.ofResult <| Value res }
@@ -242,9 +194,6 @@ module private Testable =
         static member Gen() =
             { new Testable<Gen<'a>> with
                 member __.Property gena = gen { let! a = gena in return! property a |> Property.GetGen } |> Property }
-        static member RoseResult() =
-            { new Testable<Rose<ResultContainer>> with
-                member __.Property rosea = gen { return rosea } |> Property }
         static member Arrow() =
             { new Testable<('a->'b)> with
-                member __.Property f = forAll Arb.from f }
+                member __.Property f = forAll Arb.generate f }

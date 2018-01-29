@@ -589,7 +589,38 @@ let listOf (GenStream gen) : GenStream<list<'T>> =
 
 let seed = Random.create()
 let size = 100
-let nbSamples = 1000_000
+
+let nbSamples = 1_000_000
+
+let promote (f:'T -> Gen<'U>) : Gen<'T->'U> = 
+    fun ctx ->
+        { new IStream with
+            member __.Generate() = 
+                let mutable nextU = Unchecked.defaultof<'U>
+                let fCtx = { Next = fun u -> nextU <- u
+                             Reject = id
+                             Size = ref !ctx.Size
+                             Seed = ref <| Rnd() }
+                Random.split (!ctx.Seed, ctx.Seed, fCtx.Seed)
+                ctx.Next (fun a -> let (Gen m) = f a in (m fCtx).Generate(); nextU)
+            member __.PrepareShrinkFromCurrent() = ()
+            member __.Shrink() = ()
+        }
+    |> Gen
+
+
+// a recursive implementation of sequence to prove that the stack doesn't overflow
+//let rec sqc l =
+//    match l with
+//    | [] -> constant []
+//    | m::ms ->
+//        bind m (fun x ->
+//            bind (sqc ms) (fun xs -> constant (x::xs)))
+
+//let r = sqc [ for i in 1..1_000_000_000 -> constant i]
+
+//r |> sampleWithSeed seed size 1
+
 
 let test =
     choose(1,10) >>= fun a ->
@@ -636,6 +667,7 @@ let seq3 = [ for i in 1..10 -> choose(0,i) ] |> sqc |> sampleWithSeed seed size 
 //    |> collect (fun i -> choose(-i,i))
 //    |> shrink ((=) 0)
 
+
 // this is kind of obscured I feel but what it does is:
 // - remove each element, one by one. I.e. for a list of length N you get N shrinks of length N-1.
 // - shrink each element  one by one, keeping the others intact. (back to front, but order hardly matters
@@ -651,3 +683,15 @@ let rec shrinkList l =
 
 
 shrinkList [0;1;2;3] |> Seq.toArray
+
+let shrink target current =
+        [|if current <> target then yield target
+          let mutable c = current
+          while abs (c - target) > 1L do
+            c <- c - (c - target) / 2L
+            yield c
+        |]
+int Char.MaxValue
+shrink 0L 23L ///|> Seq.toArray
+
+shrink 100L -112L

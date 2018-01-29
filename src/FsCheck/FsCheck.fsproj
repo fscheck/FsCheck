@@ -74,10 +74,10 @@
     <Compile Include="Random.fs" />
     <Compile Include="Reflect.fs" />
     <Compile Include="TypeClass.fs" />
+    <Compile Include="Shrink.fs" />
     <Compile Include="Gen.fs" />
     <Compile Include="ReflectArbitrary.fs" />
     <Compile Include="Arbitrary.fs" />
-    <Compile Include="ArbitraryExtensions.fs" />
     <Compile Include="GenExtensions.fs" />
     <Compile Include="Testable.fs" />
     <Compile Include="Prop.fs" />

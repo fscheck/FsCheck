@@ -4,103 +4,176 @@
 // Using them internally within FsCheck is important for performance reasons.
 #nowarn "10001"
 
-/// <summary>
-/// 
-/// </summary>
-/// <typeparam name="T">The type of the generated value.</typeparam>
-/// <typeparam name="TState">The type of the generator's state value.</typeparam>
-[<Struct>]
-type GeneratedValue<'T, 'TState> (value : 'T, newState : 'TState) =
-    member __.Value = value
-    member __.UpdatedState = newState
+// recursive references
+#nowarn "40"
+
+type Size = int
+
+/// The state of the GenStream computation.
+type Context<'T> = { 
+    Next: 'T -> unit
+    Reject: unit -> unit
+    Size: Size ref
+    Seed: Rnd ref
+    Shrinks: ShrinkStream<'T> -> unit
+}
+
+(*
+Generator used to be an interface.
+But I had to write
+abstract Generate: (unit -> unit)
+mind the parens. This makes this into a property that returns a thunk
+The thunk is the important bit, not the property. 
+If we'd write the more usual:
+abstract Generate: unit -> unit
+we are much more prone to stack overflows. For some reason, the
+F# compiler does not recognize that our calls are in tail position
+if we do the latter.
+
+But if we have to do that, we might as well make Generator into
+a record type, so we don't have to worry about the thunk
+being re-created every time we call Generate.
+*)
+
+type Generator = {  
+    /// Each time Generate is called, a new random element is generated
+    /// and either Next or Reject is called on the context.
+    Generate: unit -> unit
+    /// Create a new ShrinkStream from the last
+    /// generated element and pass it to Shrinks on the context.
+    GetShrinks: unit -> unit
+}
 
 [<Interface>]
 type internal IGen =
     abstract AsGenObject : Gen<obj>
 
-///Generator of a random value, based on a size parameter and a randomly generated int.
-and [<NoEquality;NoComparison>] Gen<'a> =
-    private Gen of (int -> Rnd -> GeneratedValue<'a, Rnd>)
-        ///map the given function to the value in the generator, yielding a new generator of the result type.
-        member internal x.Map<'a,'b> (f: 'a -> 'b) : Gen<'b> =
-            let (Gen g) = x
-            Gen (fun size rngState ->
-                // Use the generator to generate a random value.
-                let generatedValue = g size rngState
-
-                // Apply the mapping to the generated value.
-                let mappedValue = f generatedValue.Value
-
-                // Return the generated+mapped value and the updated PRNG state.
-                GeneratedValue (mappedValue, generatedValue.UpdatedState))
+///Generator and shrinker values T.
+and Gen<'T> = Gen of (Context<'T> -> Generator) with
+    /// Map the given function to the value in the generator, yielding a new generator of the result type.
+    member internal src.Map<'U> (f: 'T -> 'U) : Gen<'U> =
+        fun { Next=next; Shrinks=shrinks; Reject=reject; Size=size; Seed=seed } ->
+            let (Gen src) = src
+            src { Next    = fun a -> next (f a)
+                  Shrinks = fun str -> shrinks (Shrink.map f str)
+                  Reject=reject; Size=size; Seed=seed }
+        |> Gen
 
     interface IGen with
         member x.AsGenObject = x.Map box
 
-//private interface for reflection
-type internal IArbitrary =
-    abstract GeneratorObj : Gen<obj>
-    abstract ShrinkerObj : obj -> seq<obj>
-
-[<AbstractClass>]
-type Arbitrary<'a>() =
-    ///Returns a generator for 'a.
-    abstract Generator      : Gen<'a>
-    ///Returns a sequence of the immediate shrinks of the given value. The immediate shrinks should not include
-    ///doubles or the given value itself. The default implementation returns the empty sequence (i.e. no shrinking).
-    abstract Shrinker       : 'a -> seq<'a>
-    default __.Shrinker _ = 
-        Seq.empty
-    interface IArbitrary with
-        member x.GeneratorObj = (x.Generator :> IGen).AsGenObject
-        member x.ShrinkerObj (o:obj) : seq<obj> =
-            let tryUnbox v =
-                try
-                    Some (unbox v)
-                with
-                    | _ -> None
-
-            match tryUnbox o with
-                | Some v -> x.Shrinker v |> Seq.map box
-                | None -> Seq.empty
-
-
-
-///Computation expression builder for Gen.
+/// Computation expression builder for Gen.
 [<AutoOpen>]
 module GenBuilder =
 
-    let inline private result x = Gen (fun _ r -> GeneratedValue(x,r))
+    let inline private result t =
+        fun ctx ->
+            { Generate = fun () -> ctx.Next t
+              GetShrinks = fun () -> ctx.Shrinks <| Shrink.empty
+            }
+        |> Gen
+
+    let inline withNext ctx next shrink : Context<'T> =
+        { Next = next
+          Reject = ctx.Reject
+          Size = ctx.Size
+          Seed = ctx.Seed
+          Shrinks = shrink
+        }
+
+    //let inline withNextReject ctx next reject : Context<'T> =
+    //    { Next = next
+    //      Reject = reject
+    //      Size = ctx.Size
+    //      Seed = ctx.Seed
+    //    }
 
     let inline internal apply (Gen f) (Gen a) = 
-        Gen (fun n r0 -> let f' = f n r0
-                         let a' = a n f'.UpdatedState
-                         GeneratedValue (f'.Value a'.Value, a'.UpdatedState))
+        fun ctx ->
+            let mutable lastF = Unchecked.defaultof<'T -> 'U>
+            let mutable lastA = Unchecked.defaultof<'T>
+            let mutable fShrinkStream = Unchecked.defaultof<ShrinkStream<'T->'U>>
+            let aCtx = withNext ctx (fun a -> lastA <- a
+                                              ctx.Next (lastF lastA))
+                                    (fun s -> ctx.Shrinks <| Shrink.apply lastF lastA fShrinkStream s)
+            // genA is lazy here because otherwise the recursive call into a (by passing it aCtx) consumes
+            // a stackframe, as it is not in tail position. The call to f is fine because it is in tail 
+            // position.
+            let genA = lazy a aCtx
+            f (withNext ctx (fun f -> lastF <- f
+                                      genA.Value.Generate())
+                            (fun s -> fShrinkStream <- s
+                                      genA.Value.GetShrinks()))
+        |> Gen   
 
+    let inline internal shrinks genCtx (Gen str:Gen<'T>) : ShrinkStream<'T> =
+        fun ctx ->
+            let mutable generatedOne = false
+            let mutable shrinkStream = Unchecked.defaultof<Shrinker>
+            let rec strCtx = { genCtx with Next = ctx.Next
+                                           Reject = fun () -> (str strCtx).Generate() // potential infinite or very long loop
+                                           Shrinks = fun s -> shrinkStream <- s ctx }
+            { Shrink = fun () ->
+                    if not generatedOne then
+                        let gen = str strCtx
+                        gen.Generate()
+                        gen.GetShrinks()
+                    else
+                        shrinkStream.Shrink()
+              GetShrinks = fun () ->
+                    shrinkStream.GetShrinks()
+            }
 
     let inline internal bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
-        Gen (fun n r0 ->
-            let v_r1 = m n r0
-            let (Gen m') = k v_r1.Value
-            m' n v_r1.UpdatedState)
+         fun ctx ->
+            let mutable lastStreamU = Unchecked.defaultof<Generator>
+            let mutable lastU = Unchecked.defaultof<'U>
+            let mutable lastT = Unchecked.defaultof<'T>
+            let mutable mShrinkStream = Unchecked.defaultof<ShrinkStream<'T>>
 
+            let uCtx = withNext ctx (fun a -> lastU <- a; ctx.Next lastU) ctx.Shrinks
+            let inline setLastStreamU() =
+                let (Gen g) = k lastT
+                lastStreamU <- g uCtx
+            let m = m (withNext ctx (fun t -> lastT <- t; setLastStreamU(); lastStreamU.Generate())
+                                    (fun s -> mShrinkStream <- s
+                                              let sstr = s |> Shrink.map (k >> shrinks ctx)
+                                              ctx.Shrinks <| Shrink.join sstr))
+            m
+        |> Gen
 
-    let inline private delay (f : unit -> Gen<_>) : Gen<_> = 
-        Gen (fun n r -> match f() with (Gen g) -> g n r)
+    let inline private delay (f : unit -> Gen<'T>) : Gen<'T> = 
+        // f can have side effects so must be executed every time.
+        fun ctx ->
+            let inline run() =
+                let (Gen g) = f ()
+                g ctx
+            { Generate = fun () ->
+                    let forced = run()
+                    forced.Generate()
+              GetShrinks = fun () ->
+                    let forced = run()
+                    forced.GetShrinks()
+            }
+        |> Gen
 
-    let inline private doWhile p (Gen m) =
-        let go pred size rInit =
-            let mutable r = rInit
-            while pred() do r <- (m size r).UpdatedState
-            r            
-        Gen (fun n r -> GeneratedValue ((), go p n r))
+    let inline private doWhile p (Gen gen) =
+        fun ctx ->
+            let ignoreNext = withNext ctx (fun _ -> ()) (fun _ -> ()) |> gen
+            { Generate = fun () ->
+                    while p() do ignoreNext.Generate()
+                    ctx.Next ()
+              GetShrinks = fun () ->
+                    ctx.Shrinks Shrink.empty
+            }
+        |> Gen
 
-    let inline private tryFinally (Gen m) handler = 
-        Gen (fun n r -> try m n r finally handler ())
+    //let inline private tryFinally (Gen m) handler = 
+    //    Gen (fun n r -> try m n r finally handler ())
 
     let inline private dispose (x: #System.IDisposable) = x.Dispose()
 
-    let inline private using r f = tryFinally (f r) (fun () -> dispose r)
+//    let inline private using r f = tryFinally (f r) (fun () -> dispose r)
 
     ///The workflow type for generators.
     type GenBuilder internal() =
@@ -108,8 +181,8 @@ module GenBuilder =
         member __.Bind(m, k) : Gen<_> = bind m k
         member __.Delay(f) : Gen<_> = delay f
         member __.Combine(m1, m2) = bind m1 (fun () -> m2)
-        member __.TryFinally(m, handler) = tryFinally m handler
-        member __.TryWith(Gen m, handler) = Gen (fun n r -> try m n r with e -> GeneratedValue(handler e,r))
+//        member __.TryFinally(m, handler) = tryFinally m handler
+//        member __.TryWith(Gen m, handler) = Gen (fun n r -> try m n r with e -> GeneratedValue(handler e,r))
         member __.Using (a, k) =  using a k
         member __.ReturnFrom (g:Gen<_>) = g
         member __.While(p, m:Gen<_>) = doWhile p m
@@ -121,14 +194,6 @@ module GenBuilder =
 
     ///The workflow function for generators, e.g. gen { ... }
     let gen = GenBuilder()
-
-///2-tuple containing a weight and a value, used in some Gen methods to indicate
-///the probability of a value.
-[<NoComparison>]
-type WeightAndValue<'a> =
-    { Weight: int
-      Value : 'a
-    }
 
 ///Combinators to build custom random generators for any type.
 module Gen =
@@ -163,7 +228,7 @@ module Gen =
     ///Obtain the current size. sized g calls g, passing it the current size as a parameter.
     //[category: Managing size]
     [<CompiledName("Sized"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let sized fgen = Gen (fun n r -> let (Gen m) = fgen n in m n r)
+    let sized sfun = Gen (fun ctx -> let (Gen g) = sfun !ctx.Size in g ctx)
 
     ///Obtain the current size. sized g calls g, passing it the current size as a parameter.
     //[category: Managing size]
@@ -174,17 +239,38 @@ module Gen =
     ///Override the current size of the test. resize n g invokes generator g with size parameter n.
     //[category: Managing size]
     [<CompiledName("Resize")>]
-    let resize newSize (Gen m) = Gen (fun _ r -> m newSize r)
+    let resize size (Gen gen) =
+        fun ctx -> 
+            let original = !ctx.Size
+            try
+                ctx.Size := size
+                gen ctx
+            finally
+                ctx.Size := original
+        |> Gen
+
+    let private scanResults seed size ((Gen gen):Gen<'T>) =
+        let result = ref Unchecked.defaultof<'T>
+        let rejected = ref 0
+        let mutable haveResult = false
+        let one =  gen { Next = fun r -> haveResult <- true; result := r
+                         Reject = fun () -> rejected := !rejected + 1;
+                         Shrinks = fun s -> () //not shrinking here at the moment
+                         Size = ref size
+                         Seed = ref seed }
+        let next() =
+            while not haveResult do one.Generate()
+            haveResult <- false
+        next, result, rejected
 
     ///Generates n values of the given size and starting with the given seed.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sampleWithSeed seed size nbSamples (Gen generator) :'T[] = 
-        let mutable s = seed
-        [| for i in 1..nbSamples do
-            let sv = generator size s
-            s <- sv.UpdatedState
-            yield sv.Value |]
+    let sampleWithSeed seed size nbSamples (gen:Gen<'T>) : 'T[] =
+        let next, result, _ = scanResults seed size gen
+        [| for i in 0..nbSamples-1 do 
+             next()
+             yield !result |]
 
     ///Generates a given number of values with a new seed and a given size.
     //[category: Generating test values]
@@ -196,12 +282,65 @@ module Gen =
     [<CompiledName("Sample")>]
     let sample nbSamples gen : 'T[] = sampleWithSize 50 nbSamples gen
 
-    ///Generates an integer between l and h, inclusive.
+    let inline internal primitiveStream generate shrink = 
+        fun ctx -> 
+            let mutable current = Unchecked.defaultof<'a> 
+            let generate = generate ctx
+            { Generate = fun () ->
+                current <- generate ()
+                ctx.Next current
+              GetShrinks = fun () -> 
+                ctx.Shrinks <| Shrink.shrink current shrink
+            }
+        |> Gen
+
+    /// Generates a random int64 uniformly distributed between lo and hi (both inclusive),
+    /// and shrinks towards target.
+    //[category: Creating generators]
+    let choose64Around target (lo,hi) =
+        let (lo,hi) = if hi < lo then (hi,lo) else (lo,hi)
+
+        let generate ctx =
+            fun () -> Random.rangeInt64(lo, hi, !ctx.Seed, ctx.Seed)
+
+        let shrink current =
+            seq { if current <> target then 
+                        yield target
+                  let mutable c = current
+                  while abs (c - target) > 1L do
+                        c <- c - (c - target) / 2L
+                        yield c }
+
+        primitiveStream generate shrink
+
+    let inline internal withShrinkStream (str:'T-> ShrinkStream<'T>) (Gen genF:Gen<'T>) : Gen<'T> =
+        fun ctx ->  
+            let mutable current = Unchecked.defaultof<'T>
+            let gen = genF (withNext ctx (fun e -> current <- e; ctx.Next e) (fun shr -> ()))
+            { Generate = fun () ->
+                gen.Generate()
+              GetShrinks = fun () ->
+                ctx.Shrinks (str current)
+            }
+        |> Gen
+
+    let shrink (shrinker:'T -> seq<'T>) (gen:Gen<'T>) : Gen<'T> =
+        withShrinkStream (fun cur -> Shrink.shrink cur shrinker) gen
+
+    /// Generates a random int64 uniformly distributed between lo and hi (both inclusive),
+    /// and shrinks towards lo.
+    //[category: Creating generators]
+    let choose64 (lo,hi) = choose64Around lo (lo,hi)
+
+    /// Generates a random int uniformly distributed between lo and hi (both inclusive),
+    /// and shrinks towards lo.
+    //[category: Creating generators]
+    let chooseAround target (lo,hi) = choose64Around (int64 target) (int64 lo, int64 hi) |> map int
+
+    ///Generates an integer between l and h, inclusive. Shrink to lo.
     //[category: Creating generators]
     [<CompiledName("Choose")>]
-    let choose (l,h) = Gen (fun _ r ->
-        let x, r = Random.rangeInt (l,h,r)
-        GeneratedValue (x, r))
+    let choose (lo,hi) = chooseAround lo (lo,hi)
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]
@@ -238,7 +377,7 @@ module Gen =
     ///equal probability.
     //[category: Creating generators from generators]
     [<CompiledName("OneOf")>]
-    let oneof gens = gen.Bind(elements gens, id)
+    let oneof gens = bind (elements gens) id
 
     ///Build a generator that generates a value from one of the given generators, with
     ///equal probability.
@@ -267,32 +406,7 @@ module Gen =
         if tot <= 0 then 
             invalidArg "xs" "Frequency was called with a sum of probabilities less than or equal to 0. No elements can be generated."
         else
-            gen.Bind(choose (1,tot), pick 0)
-
-    let private frequencyOfWeighedSeq ws = 
-        ws |> Seq.map (fun wv -> (wv.Weight, wv.Value)) |> frequency
-
-    /// <summary>
-    /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    /// given probabilities. The sum of the probabilities must be larger than zero.
-    /// </summary>
-    /// <param name="weightedValues">Sequence of weighted generators.</param>
-    /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
-    //[category: Creating generators from generators]
-    [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let frequencySeqWeightAndValue ( weightedValues : seq<WeightAndValue<Gen<'a>>> ) =
-        weightedValues |> frequencyOfWeighedSeq
-
-    /// <summary>
-    /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
-    /// given probabilities. The sum of the probabilities must be larger than zero.
-    /// </summary>
-    /// <param name="weightedValues">Array of weighted generators.</param>
-    /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
-    //[category: Creating generators from generators]
-    [<CompiledName("Frequency"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let frequencyWeightAndValueArr ( [<ParamArrayAttribute>] weightedValues : WeightAndValue<Gen<'a>>[] ) =
-        weightedValues |> frequencyOfWeighedSeq
+            bind (choose (1,tot)) (pick 0)
 
     /// <summary>
     /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
@@ -364,18 +478,42 @@ module Gen =
         map (fun (_, y, _) -> y) g,
         map (fun (_, _, z) -> z) g
 
+    let inline sequenceToArrImpl (generators:Gen<'T>[]) shrinker : Gen<'T[]> =
+        fun ctx ->
+            let values = Array.zeroCreate generators.Length
+            let shrinkers = Array.zeroCreate<ShrinkStream<'T>> generators.Length
+            let mutable index = 0
+            let gCtx = withNext ctx (fun st -> values.[index] <- st)
+                                    (fun shr -> shrinkers.[index] <- shr)
+            let gensGen = generators |> Array.map (fun (Gen g) -> g gCtx)
+
+            { Generate = fun () -> 
+                for i in 0..values.Length-1 do
+                    index <- i
+                    gensGen.[i].Generate()
+                ctx.Next (Array.copy values)
+              GetShrinks = fun () -> 
+                for i in 0..values.Length-1 do
+                    index <- i
+                    gensGen.[i].GetShrinks()
+                ctx.Shrinks <| shrinker (Array.copy values) shrinkers }
+        |> Gen
+
+
+    /// Sequence the given array of generators into a generator of a array.
+    //[category: Creating generators from generators]
+    [<CompiledName("Sequence")>]
+    let sequenceToArr ([<ParamArrayAttribute>]generators:Gen<'T>[]) : Gen<'T[]> =
+        if Object.ReferenceEquals (null, generators) then
+            nullArg "generators"
+
+        sequenceToArrImpl generators Shrink.elements
+
     /// Sequence the given enumerable of generators into a generator of a list.
     //[category: Creating generators from generators]
     [<CompiledName("SequenceToList"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let sequence l = 
-        let rec go gs acc size r0 = 
-            match gs with
-            | [] ->
-                GeneratedValue (List.rev acc, r0)
-            | (Gen g)::gs' ->
-                let y_r1 = g size r0
-                go gs' (y_r1.Value::acc) size y_r1.UpdatedState
-        Gen(fun n r -> go (Seq.toList l) [] n r)
+    let sequence (gens:Gen<'T> seq) : Gen<'T list> =
+        gens |> Seq.toArray |> sequenceToArr |> map List.ofArray 
 
     /// Sequence the given enumerable of generators into a generator of an enumerable.
     //[category: Creating generators from generators]
@@ -384,16 +522,7 @@ module Gen =
         if Object.ReferenceEquals (null, generators) then
             nullArg "generators"
 
-        generators |> sequence |> map List.toSeq
-
-    /// Sequence the given array of generators into a generator of a array.
-    //[category: Creating generators from generators]
-    [<CompiledName("Sequence")>]
-    let sequenceToArr ([<ParamArrayAttribute>]generators:array<Gen<_>>) = 
-        if Object.ReferenceEquals (null, generators) then
-            nullArg "generators"
-
-        generators |> sequence |> map List.toArray
+        generators |> Seq.toArray |> sequenceToArr |> map (fun a -> a :> seq<_>)
 
     ///Generates a list of given length, containing values generated by the given generator.
     //[category: Creating generators from generators]
@@ -498,18 +627,32 @@ module Gen =
         if k <= 0 then
             constant [||]
         else
-            gen.Bind(genSorted k sum sum, shuffleInPlace)
-  
+            bind (genSorted k sum sum) shuffleInPlace
 
+    /// Generates an array of a specified length.
+    //[category: Creating generators from generators]
+    [<CompiledName("ArrayOf")>]
+    let arrayOfLength n (g: Gen<'a>) : Gen<'a[]> =
+        // For compatibility with the way `listOfLength` is implemented,
+        // if the length is negative we just return an empty array.
+        if n < 1 then Array.empty else Array.create n g
+        |> sequenceToArr
+
+    /// Generates an array using the specified generator. The maximum length is the size+1.
+    //[category: Creating generators from generators]
+    [<CompiledName("ArrayOf")>]
+    let arrayOf (g: Gen<'a>) : Gen<'a[]> = 
+       sized <| fun n ->
+             gen { let! k = choose(0, n)
+                   let! sizes = piles k n
+                   return! sequenceToArrImpl [| for size in sizes -> resize size g |] Shrink.arrayThenElements }
+  
     /// Generates a list of random length. The maximum length depends on the
     /// size parameter.
     //[category: Creating generators from generators]
     [<CompiledName("ListOf")>]
     let listOf gn =
-        sized <| fun n ->
-            gen { let! k = choose (0,n)
-                  let! sizes = piles k n
-                  return! sequence [ for size in sizes -> resize size gn ] }
+        arrayOf gn |> map Array.toList
 
     /// Generates a non-empty list of random length. The maximum length 
     /// depends on the size parameter.
@@ -546,24 +689,6 @@ module Gen =
         subListOf s
         |> map (fun l -> new List<_>(l) :> IList<_>)
 
-    /// Generates an array of a specified length.
-    //[category: Creating generators from generators]
-    [<CompiledName("ArrayOf")>]
-    let arrayOfLength n (g: Gen<'a>) : Gen<'a[]> =
-        // For compatibility with the way `listOfLength` is implemented,
-        // if the length is negative we just return an empty array.
-        if n < 1 then Array.empty else Array.create n g
-        |> sequenceToArr
-
-    /// Generates an array using the specified generator. The maximum length is the size+1.
-    //[category: Creating generators from generators]
-    [<CompiledName("ArrayOf")>]
-    let arrayOf (g: Gen<'a>) : Gen<'a[]> = 
-       sized <| fun n ->
-             gen { let! k = choose(0, n)
-                   let! sizes = piles k n
-                   return! sequenceToArr [| for size in sizes -> resize size g |]}
-
     /// Generates a 2D array of the given dimensions.
     //[category: Creating generators from generators]
     [<CompiledName("Array2DOf")>]
@@ -583,45 +708,54 @@ module Gen =
 
     ///Generate an option value that is 'None' 1/8 of the time.
     //[category: Creating generators from generators]
-    let optionOf g = frequency [(1, gen { return None }); (7, map Some g)]
+    let optionOf g = frequency [(1, constant None); (7, map Some g)]
 
     ///Apply the given Gen function to the given generator, aka the applicative <*> operator.
     //[category: Creating generators from generators]
     [<CompiledName("Apply")>]
-    let apply (f:Gen<'a -> 'b>) (gn:Gen<'a>) : Gen<'b> = apply f gn
+    let apply (f:Gen<'T->'U>) (gn:Gen<'T>) : Gen<'U> = apply f gn
 
-    ///Promote the given function f to a function generator. Only used for generating arbitrary functions.
-    let internal promote f = Gen (fun n r -> let r1,r2 = Random.split r 
-                                             GeneratedValue ((fun a -> let (Gen m) = f a in (m n r1).Value),r2))
-
-    ///Basic co-arbitrary generator transformer, which is dependent on an int.
-    ///Only used for generating arbitrary functions.
-    let internal variant<'a,'b when 'a:equality>  =
-        let counter = ref 1
-        let toCounter = new Dictionary<'a,int>()
-        let mapToInt (value:'a) =
-            if isNull (box value) then 0
+    /// Generate an F# function, of type FSharpFunc. The functions are pure,
+    /// i.e. if called with the same input, the same output value is produced.
+    let pureFunction<'T,'U when 'T:equality> (Gen u:Gen<'U>) : Gen<'T->'U> = 
+        let getOrAdd (map:IDictionary<_,_>) (value:'T) create =
+            if isNull (box value) then Unchecked.defaultof<'U>
             else
-                lock toCounter (fun _ ->
-                    let (found,result) = toCounter.TryGetValue value
+                lock map (fun _ ->
+                    let (found,result) = map.TryGetValue value
                     if found then 
                         result
                     else
-                        toCounter.Add(value,!counter)
-                        counter := !counter + 1
-                        !counter - 1)
-        let rec rands r0 = seq { let r1,r2 = Random.split r0 in yield r1; yield! (rands r2) }
-        fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
+                        let result = create()
+                        map.Add(value,result)
+                        result)
+
+        fun ctx ->
+            { Generate = fun () ->
+                    let mutable nextU = Unchecked.defaultof<'U>
+                    let fCtx = { Next = fun u -> nextU <- u
+                                 Reject = id // what about rejects...?
+                                 Shrinks = fun _ -> () // can we shrink?
+                                 Size = ref !ctx.Size
+                                 Seed = ref <| Rnd() }
+                    Random.split (!ctx.Seed, ctx.Seed, fCtx.Seed)
+
+                    let map = new Dictionary<'T,'U>()
+                    let fGen = u fCtx
+                    ctx.Next (fun a -> getOrAdd map a (fun () -> fGen.Generate(); nextU))
+              GetShrinks = fun () -> ()
+            }
+        |> Gen
 
 ///Operators for Gen.
-type Gen<'a> with
+type Gen<'T> with
 
-    /// Lifted function application = apply f to a, all in the Gen applicative functor.
+    /// Apply f to a.
     static member (<*>) (f, a) = apply f a
 
-    /// Like <*>, but puts f in a Gen first.
+    /// Map f over a.
     static member (<!>) (f, a) = Gen.constant f <*> a
 
-    /// Bind operator; runs the first generator, then feeds the result
+    /// Runs the first generator, then feeds the result
     /// to the second generator function.
     static member (>>=) (m,k) = bind m k
