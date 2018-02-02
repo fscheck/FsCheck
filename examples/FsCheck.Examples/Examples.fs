@@ -16,8 +16,7 @@ let sizedString =  Arb.generate<char> |> Gen.sample 10
 //---too early initialization bug (put this first): fixed---
 type Generators =
   static member Int64() =
-    { new Arbitrary<int64>() with
-        override x.Generator = Arb.generate<int> |> Gen.map int64 }
+    Arb.generate<int> |> Gen.map int64
 Arb.register<Generators>() |> ignore
 
 //check that registering typeclass instances with a class that does not define any no longer fails silently
@@ -72,25 +71,27 @@ type Smart<'a> =
         member x.Display = x.ToString()
     
 
-type SmartShrinker =
-    static member Smart() =
-        { new Arbitrary<Smart<'a>>() with
-            override x.Generator = Arb.generate |> Gen.map (fun arb -> Smart (0,arb))
-            override x.Shrinker (Smart (i,x)) = 
-                let ys = Seq.zip {0..Int32.MaxValue} (Arb.shrink x) |> Seq.map Smart 
-                let i' = Math.Max(0,i-2)
-                let rec interleave left right =
-                    match (left,right) with
-                    | ([],rs) -> rs
-                    | (ls,[]) -> ls
-                    | (l::ls,r::rs) -> l::r::(interleave ls rs)
-                interleave (Seq.take i' ys |> Seq.toList) (Seq.skip i' ys |> Seq.toList) |> List.toSeq
-        }
+//type SmartShrinker =
+//    static member Smart() =
+//        let shrinker (Smart (i,x)) = 
+//            let ys = Seq.zip {0..Int32.MaxValue} (Arb.shrink x) |> Seq.map Smart 
+//            let i' = Math.Max(0,i-2)
+//            let rec interleave left right =
+//                match (left,right) with
+//                | ([],rs) -> rs
+//                | (ls,[]) -> ls
+//                | (l::ls,r::rs) -> l::r::(interleave ls rs)
+//            interleave (Seq.take i' ys |> Seq.toList) (Seq.skip i' ys |> Seq.toList) |> List.toSeq
 
-Arb.register<SmartShrinker>() |> ignore
+//        Arb.generate 
+//        |> Gen.map (fun arb -> Smart (0,arb))
+//        |> Gen.shrink shrinker
 
-let smartShrink (Smart (_,i)) = i < 20
-Check.Quick smartShrink
+
+//Arb.register<SmartShrinker>() |> ignore
+
+//let smartShrink (Smart (_,i)) = i < 20
+//Check.Quick smartShrink
 
 //-------------examples from QuickCheck paper-------------
 let prop_RevUnit (x:char) = List.rev [x] = [x]
@@ -189,11 +190,11 @@ Check.Quick testProp2
 
 let blah (s:string) = if s = "" then raise (new System.Exception("foo")) else s.Length > 3
 
-let private withNonEmptyString (p : string -> 'a) = forAll (Gen.elements [ "A"; "AA"; "AAA" ] |> Arb.fromGen) p
+let private withNonEmptyString (p : string -> 'a) = forAll (Gen.elements [ "A"; "AA"; "AAA" ]) p
 
 Check.Quick (withNonEmptyString blah)
 
-let prop_Exc = forAll (Arb.fromGenShrink(Gen.resize 100 Arb.generate,Arb.shrink)) (fun (s:string) -> failwith "error")
+let prop_Exc = forAll (Gen.resize 100 Arb.generate) (fun (s:string) -> failwith "error")
 Check.Quick("prop_Exc",prop_Exc)
 
 //-----------------async--------

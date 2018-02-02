@@ -124,21 +124,22 @@ module GenBuilder =
                     shrinkStream.GetShrinks()
             }
 
-    let inline internal bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
+    let inline internal bind ((Gen m) : Gen<'T>) (k : 'T -> Gen<'U>) : Gen<_> = 
          fun ctx ->
-            let mutable lastStreamU = Unchecked.defaultof<Generator>
+            let mutable lastGenU = Unchecked.defaultof<Generator>
             let mutable lastU = Unchecked.defaultof<'U>
             let mutable lastT = Unchecked.defaultof<'T>
-            let mutable mShrinkStream = Unchecked.defaultof<ShrinkStream<'T>>
+            let mutable shrinkStreamU = Unchecked.defaultof<ShrinkStream<'U>>
 
-            let uCtx = withNext ctx (fun a -> lastU <- a; ctx.Next lastU) ctx.Shrinks
-            let inline setLastStreamU() =
-                let (Gen g) = k lastT
-                lastStreamU <- g uCtx
-            let m = m (withNext ctx (fun t -> lastT <- t; setLastStreamU(); lastStreamU.Generate())
-                                    (fun s -> mShrinkStream <- s
+            let rec uCtx = withNext ctx (fun a -> lastU <- a; ctx.Next lastU)
+                                        (fun s -> shrinkStreamU <- s)
+            let inline setLastStreamU() =              
+                let (Gen g) = k lastT  
+                lastGenU <- g uCtx
+            let m = m (withNext ctx (fun t -> lastT <- t; setLastStreamU(); lastGenU.Generate())
+                                    (fun s -> lastGenU.GetShrinks()
                                               let sstr = s |> Shrink.map (k >> shrinks ctx)
-                                              ctx.Shrinks <| Shrink.join sstr))
+                                              ctx.Shrinks <| Shrink.join shrinkStreamU sstr))
             m
         |> Gen
 

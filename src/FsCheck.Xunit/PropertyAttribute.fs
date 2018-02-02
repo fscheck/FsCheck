@@ -74,7 +74,7 @@ module internal PropertyConfig =
         let split = str.Trim('(',')').Split([|","|], StringSplitOptions.RemoveEmptyEntries)
         let seed = UInt64.Parse(split.[0])
         let gamma = UInt64.Parse(split.[1])
-        let size = if split.Length = 3 then Some <| Convert.ToInt32(UInt32.Parse(split.[2])) else None
+        let size = int32 (UInt32.Parse(split.[2]))
         { Rnd = Rnd (seed,gamma); Size = size }
 
     let toConfig (output : TestOutputHelper) propertyConfig =

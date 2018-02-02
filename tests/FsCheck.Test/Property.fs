@@ -52,7 +52,7 @@ module Property =
                   
     let rec private determineResult prop =
         let result =
-          { Outcome     = Outcome.Rejected
+          { Outcome     = Outcome.Passed
             Stamp       = []
             Labels       = Set.empty
             Arguments   = []
@@ -68,7 +68,7 @@ module Property =
         | Exception  -> { result with Outcome= Outcome.Failed (InvalidOperationException() :> exn)}
         | ForAll (i,prop) -> determineResult prop |> addArgument i
         | Implies (true,prop) -> determineResult prop
-        | Implies (false,_) -> { result with Outcome= Outcome.Rejected }
+        | Implies (false,_) -> { result with Outcome= Outcome.Passed }
         | Classify (true,stamp,prop) -> determineResult prop |> addStamp stamp
         | Classify (false,_,prop) -> determineResult prop
         | Collect (i,prop) -> determineResult prop |> addStamp (sprintf "%A" i)
@@ -85,7 +85,7 @@ module Property =
         | Unit -> Prop.ofTestable ()
         | Bool b -> Prop.ofTestable b
         | Exception -> Prop.ofTestable (lazy (raise <| InvalidOperationException()))
-        | ForAll (i,prop) -> Prop.forAll (Gen.constant i |> Arb.fromGen) (fun _ -> toProperty prop)
+        | ForAll (i,prop) -> Prop.forAll (Gen.constant i) (fun _ -> toProperty prop)
         | Implies (b,prop) -> b ==> (toProperty prop)
         | Classify (b,stamp,prop) -> Prop.classify b stamp (toProperty prop)
         | Collect (i,prop) -> Prop.collect i (toProperty prop)
@@ -107,7 +107,7 @@ module Property =
         match r0.Outcome, r1 with
         | Outcome.Failed _, TestResult.Failed(_,_,_,Outcome.Failed _,_,_,_) -> r0.Labels = testData.Labels
         | Outcome.Passed, TestResult.Passed _ -> (r0.Stamp |> Set.ofSeq) = (testData.Stamps |> Seq.map snd |> Seq.concat |> Set.ofSeq)
-        | Outcome.Rejected,TestResult.Exhausted _ -> true
+        | Outcome.Passed,TestResult.Exhausted _ -> true
         | _ -> false
     
     let rec private depth (prop:SymProp) =
@@ -142,7 +142,7 @@ module Property =
 
     [<Property>]
     let DSL() = 
-        Prop.forAll (Arb.fromGen symPropGen) (fun symprop ->
+        Prop.forAll symPropGen (fun symprop ->
             let expected = determineResult symprop
             let resultRunner = GetResultRunner()
             let config = { Config.Quick with Runner = resultRunner; MaxTest = 2; }

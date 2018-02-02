@@ -30,9 +30,9 @@ namespace FsCheck.MsTest.Examples
 
         private class MyArbitraries
         {
-            public static Arbitrary<Doc> Doc()
+            public static Gen<Doc> Doc()
             {
-                return Gen.Sized(DocGenenerator.Generator).ToArbitrary();
+                return Gen.Sized(DocGenenerator.Generator);
             }            
         }        
     }

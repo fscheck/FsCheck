@@ -82,12 +82,13 @@ module Shrink =
                 Done = fun () -> aStr.Value.Shrink() 
                 Shrinks = fun s -> fShrinkStream <- s; aStr.Value.GetShrinks() }
 
-    let rec join (strs:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
+    let rec join (current:ShrinkStream<'T>) (strs:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
         fun ctx ->
-            let mutable currentInner = Unchecked.defaultof<Shrinker>
-            strs { Next = fun str -> currentInner <- str ctx; currentInner.Shrink() 
+            let mutable currentStream = current
+            let mutable currentInner = current ctx
+            strs { Next = fun str -> currentStream <- str; currentInner <- str ctx; currentInner.Shrink() 
                    Done = fun () -> currentInner.Shrink()
-                   Shrinks = fun s -> ctx.Shrinks <| join s }
+                   Shrinks = fun s -> ctx.Shrinks <| join currentStream s }
 
     /// Shrinks an array by keeping the lenght of the array the same, and shrinking
     /// each element according to the given shrinkers one by one, first to last.

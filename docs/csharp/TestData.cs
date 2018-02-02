@@ -66,8 +66,8 @@ namespace CSharp.DocSnippets {
 
         //[MyGenerators]
         public class MyGenerators {
-            public static Arbitrary<Tree> Trees() {
-                return Arb.From(SafeTree());
+            public static Gen<Tree> Trees() {
+                return SafeTree();
             }
         }
         //[/MyGenerators]

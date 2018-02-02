@@ -12,9 +12,8 @@ module RunnerHelper =
     let cmpOutcome = function
         | Outcome.Failed ex1, Outcome.Failed ex2 -> ex1.Message.Equals ex2.Message
         | Outcome.Passed, Outcome.Passed -> true
-        | Outcome.Rejected, Outcome.Rejected -> true
         | _, _ -> false  
-
+(*
 module RunnerInternals =
     open System
     open Xunit
@@ -140,9 +139,9 @@ module RunnerInternals =
         let arb = Arb.from<Integer>
         let config = { Config.Quick with MaxTest = 300000; EndSize = 300000 }
         if check arb body config then failwith "assertion failure!"
-
+*)
 module Runner =
-    open RunnerHelper
+    //open RunnerHelper
     open System
     open Xunit
     open FsCheck
@@ -152,13 +151,13 @@ module Runner =
 
     type TestArbitrary1 =
         static member PositiveDouble() =
-            Arb.Default.Float()
-            |> Arb.mapFilter abs (fun t -> t >= 0.0)
+            Arb.Default.Float
+            |> Gen.map abs
 
     type TestArbitrary2 =
         static member NegativeDouble() =
-            Arb.Default.Float()
-            |> Arb.mapFilter (abs >> ((-) 0.0)) (fun t -> t <= 0.0)
+            Arb.Default.Float
+            |> Gen.map (fun f -> -abs f)
 
     [<Property( Arbitrary=[| typeof<TestArbitrary2>; typeof<TestArbitrary1> |] )>]
     let ``should register Arbitrary instances from Config in last to first order``(underTest:float) =
@@ -189,10 +188,8 @@ module Runner =
                             then Prop.discard()
                             else a
             }
-
-        let myArb = Arb.fromGen myGen
         
-        Check.QuickThrowOnFailure <| Prop.forAll myArb (fun a -> a <= 3)
+        Check.QuickThrowOnFailure <| Prop.forAll myGen (fun a -> a <= 3)
 
     [<Fact>]
     let ``should discard case with discardexception in test``() =
@@ -215,7 +212,7 @@ module Runner =
         let doOne(s1,s2) =
             try
                 Check.One(
-                    {Config.QuickThrowOnFailure with Replay = Some <| {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = None}},
+                    {Config.QuickThrowOnFailure with Replay = Some <| {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = Config.Quick.StartSize}},
                     fun a -> a < 5
                 )
                 "should have failed"
@@ -234,7 +231,7 @@ module Runner =
         let doOne(s1,s2) =
             try
                 Check.One( 
-                    {Config.QuickThrowOnFailure with Replay = Some {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = None}},
+                    {Config.QuickThrowOnFailure with Replay = Some {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = Config.Quick.StartSize}},
                     fun a (_:list<char>, _:array<int*double>) (_:DateTime) -> a < 10
                 )
                 "should have failed"
@@ -254,15 +251,11 @@ module Runner =
         
     type IntegerGen =
         static member Integer() =
-            {new Arbitrary<Integer>() with
-                override x.Generator = Arb.generate<int> |> Gen.map Integer
-                override x.Shrinker t = Seq.empty }
+            Arb.generate<int> |> Gen.map Integer
 
     type UIntegerGen =
             static member UInteger() =
-                {new Arbitrary<UInteger>() with
-                    override x.Generator = Arb.generate<uint32> |> Gen.map UInteger
-                    override x.Shrinker t = Seq.empty }
+                 Arb.generate<uint32> |> Gen.map UInteger
     
     Arb.register<UIntegerGen> ()
     Arb.register<IntegerGen> ()
@@ -292,7 +285,7 @@ module Runner =
         let runner = ProbeRunner ()
         let cfg = 
             { Config.Quick with 
-                Replay = Some {Rnd = rnd; Size = None}
+                Replay = Some {Rnd = rnd; Size = Config.Quick.StartSize}
                 MaxTest = runs
                 StartSize = 0
                 EndSize = runs
@@ -303,12 +296,12 @@ module Runner =
         match runner.TestData () with
         | None -> true
         | Some (td1, oa1, sa1, o1, r1, rr1, s1) ->
-            Check.One ({cfg with Replay = Some {Rnd = rr1; Size = Some s1}}, f)
+            Check.One ({cfg with Replay = Some {Rnd = rr1; Size = s1}}, f)
             match runner.TestData () with
             | None -> false
             | Some (td2, oa2, sa2, o2, r2, rr2, s2) ->
                 cmpTestData (td1, td2) && 
-                cmpOutcome (o1, o2) && 
+                RunnerHelper.cmpOutcome (o1, o2) && 
                 Enumerable.SequenceEqual (oa1, oa2) && 
                 Enumerable.SequenceEqual (sa1, sa2) &&
                 rr1 = r2 &&
@@ -366,7 +359,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = Some size})
+        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = size})
 
     [<Fact>]
     let ``Replay with no fast-forward``() =
@@ -374,7 +367,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = None})
+        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = config.StartSize})
 
     type TypeToInstantiate() =
         [<Property>]
@@ -410,21 +403,21 @@ module BugReproIssue195 =
     open FsCheck.Xunit
     open System
 
-    let intStr = Arb.Default.Int32() |> Arb.toGen |> Gen.map string
+    let intStr = Arb.Default.Int32 |> Gen.map string
 
     // since this used to go via from<string>, it memoized the string generator, meaning at
     // registration time for the string generator below, a duplicate key exception was thrown.
     // this was fixed by using Default.String() in StringWithoutNullChars instead, and a bunch
     // of other similar cases in the default generator was fixed as well.
-    let breaksIt = Arb.Default.StringWithoutNullChars() |> ignore
+    let breaksIt = Arb.Default.StringWithoutNullChars |> ignore
 
     type BrokenGen = 
-        static member String() = intStr |> Arb.fromGen
+        static member String = intStr 
 
     [<Property(Arbitrary = [| typeof<BrokenGen> |])>]
     let ``broken`` (s : String) = s |> ignore
     
-    
+ (*   
 // see https://github.com/fscheck/FsCheck/issues/344
 // Consider a test, where the first iteration failed, but all subsequent shrinks passed.
 // Each successfull shrink caused the stackframe to grow by 2-3 frames, causing a stackoverflow.
@@ -478,7 +471,7 @@ module BugReproIssue344 =
         thread2.Join()
         if tooManyFrames then failwith "too many frames, possible stackoverflow detected"
 #endif
-
+*)
 module Override =
     open System
     open FsCheck
@@ -487,7 +480,7 @@ module Override =
     type Calc = { Float: float }
 
     type Arbitraries =
-        static member Float() = Arb.Default.NormalFloat() |> Arb.convert float NormalFloat
+        static member Float = Arb.Default.NormalFloat |> Gen.map float
         //static member Calc() = Arb.Default.Derive<Calc>()
 
     [<Fact>]

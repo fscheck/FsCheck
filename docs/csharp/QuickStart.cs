@@ -6,7 +6,7 @@ using global::Xunit;
 
 namespace CSharp
 {
-    class QuickStart
+    public class QuickStart
     {
         public static void Samples([CallerFilePath] string file = "")
         {

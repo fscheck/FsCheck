@@ -16,7 +16,7 @@ module Arbitrary =
     open Helpers
     open Arb
     open Swensen.Unquote
-    
+(* 
     [<Property>]
     let Unit() = 
         assertTrue ( generate<unit> |> sample 10 |> Seq.forall ((=) ()) )
@@ -595,3 +595,4 @@ module Arbitrary =
     [<Fact>]
     let ``Derive generator for private two case union``() =
         generate<PrivateUnion> |> sample 10 |> ignore
+*)

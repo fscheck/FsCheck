@@ -60,8 +60,8 @@ namespace CSharp.DocSnippets
             //[/lazy]
 
             //[insertWithArb]
-            var orderedList = Arb.From<int[]>()
-                                 .MapFilter(xs => xs.OrderBy(i => i).ToArray(), xs => xs.IsOrdered());
+            var orderedList = Arb.Generate<int[]>()
+                                 .Select(xs => xs.OrderBy(i => i).ToArray());
 
             Prop.ForAll<int>(x => Prop.ForAll(orderedList, xs => xs.Insert(x).IsOrdered()))
                 .QuickCheck();

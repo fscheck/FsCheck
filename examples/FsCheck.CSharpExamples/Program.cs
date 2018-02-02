@@ -137,8 +137,8 @@ namespace FsCheck.CSharpExamples
             var chooseBool = Gen.OneOf( Gen.Constant( true), Gen.Constant(false));
 
             var chooseBool2 = Gen.Frequency(
-                new WeightAndValue<Gen<bool>>(2, Gen.Constant(true)),
-                new WeightAndValue<Gen<bool>>(1, Gen.Constant(false)));
+                Tuple.Create(2, Gen.Constant(true)),
+                Tuple.Create(1, Gen.Constant(false)));
 
             //the size of test data : see matrix method
 
@@ -194,29 +194,19 @@ namespace FsCheck.CSharpExamples
             return Gen.Sized(s => gen.Resize(Convert.ToInt32(Math.Sqrt(s))));
         }
 
-        public class ArbitraryLong : Arbitrary<long>
-        {
-            public override Gen<long> Generator
-            {
-	            get {
-                    return Gen.Sized(s => Gen.Choose(-s, s))
-                        .Select(i => Convert.ToInt64(i));
-                }
-            }
-        }
-
-
         public class MyArbitraries
         {
-            public static Arbitrary<long> Long() { return new ArbitraryLong(); }
+            public static Gen<long> Long() => 
+                Gen.Sized(s => Gen.Choose(-s, s))
+                   .Select(i => Convert.ToInt64(i));
 
-            public static Arbitrary<IEnumerable<T>> Enumerable<T>() {
-                return Arb.Default.Array<T>().Convert(x => (IEnumerable<T>)x, x => (T[])x);
-            }
+            public static Gen<IEnumerable<T>> Enumerable<T>() =>
+                Arb.Default.Array<T>().Select(x => (IEnumerable<T>)x);
+            
 
-            public static Arbitrary<StringBuilder> StringBuilder() {
-                return Arb.Generate<string>().Select(x => new StringBuilder(x)).ToArbitrary();
-            }
+            public static Gen<StringBuilder> StringBuilder() =>
+                Arb.Generate<string>().Select(x => new StringBuilder(x));
+            
         }
         
     }
