@@ -208,6 +208,15 @@ module Gen =
     [<CompiledName("Constant")>]
     let constant v = gen.Return v
 
+    ///Rejects every value.
+    //[category: Creating generators]
+    let reject<'T> : Gen<'T> =
+        fun ctx -> 
+            { Generate = fun () -> ctx.Reject ()
+              GetShrinks = fun () -> ctx.Shrinks <| Shrink.empty
+            }
+        |> Gen
+
     ///Generate a fresh instance every time the generator is called. Useful for mutable objects.
     ///See also constant.
     //[category: Creating generators]

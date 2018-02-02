@@ -25,17 +25,17 @@ type PropertyExtensions =
     ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
     [<Extension>]
     static member When(property:bool, condition) = 
-        Prop.given condition (property,Prop.ofTestable Res.rejected)
+        Prop.given condition (property,Prop.ofTestable Gen.reject)
 
     ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
     [<Extension>]
     static member When(property:Action, condition) = 
-        Prop.given condition (PropertyExtensions.ToProperty property, Prop.ofTestable Res.rejected)
+        Prop.given condition (PropertyExtensions.ToProperty property, Prop.ofTestable Gen.reject)
 
     ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
     [<Extension>]
     static member When(property:Func<bool>, condition) = 
-        Prop.given condition (PropertyExtensions.ToProperty property, Prop.ofTestable Res.rejected)
+        Prop.given condition (PropertyExtensions.ToProperty property, Prop.ofTestable Gen.reject)
 
     ///Conditional property combinator. Resulting property holds if the property holds when the condition does.
     [<Extension>]

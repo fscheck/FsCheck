@@ -135,7 +135,7 @@ module PropOperators =
     open Testable
 
     ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
-    let (==>) condition (assertion:'Testable) = Prop.given condition (assertion,property Res.rejected)
+    let (==>) condition (assertion:'Testable) = Prop.given condition (assertion,property Gen.reject)
 
     ///Add the given label to the property. Property on the left hand side, label on the right.
     let (|@) x y = (Common.flip Prop.label) x y

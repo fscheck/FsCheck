@@ -6,7 +6,6 @@ open System
 type Outcome = 
     | Failed of exn
     | Passed
-    | Rejected 
     /// determines for which Outcome the result should be shrunk, or shrinking should continue.
     member internal x.Shrink = match x with Failed _ -> true | _ -> false 
 
@@ -17,23 +16,21 @@ type Result =
         Stamp       : list<string>
         Labels      : Set<string>
         Arguments   : list<obj> } 
-    ///Returns a new result that is Succeeded if and only if both this
-    ///and the given Result are Succeeded.
+    ///Returns a new result that is Passed if and only if both this
+    ///and the given Result are Passed.
     static member resAnd l r = 
         //printfn "And of l %A and r %A" l.Outcome r.Outcome
         match (l.Outcome,r.Outcome) with
         | (Outcome.Failed _,_) -> l //here a potential Failed in r is thrown away...
         | (_,Outcome.Failed _) -> r
-        | (_,Outcome.Passed) -> l
-        | (Outcome.Passed,_) -> r
-        | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
+        | _                    -> l // must be both success...but shouldn't other fields be merged?
+
     static member resOr l r =
         match (l.Outcome, r.Outcome) with
         | (Outcome.Failed _,_) -> r
         | (_,Outcome.Failed _) -> l
-        | (Outcome.Passed,_) -> l
-        | (_,Outcome.Passed) -> r
-        | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
+        | _                    -> l // must be both success...but shouldn't other fields be merged?
+
 
 type ResultContainer = 
     | Value of Result
@@ -55,24 +52,20 @@ type ResultContainer =
 
 module internal Res =
 
-    let private result =
-      { Outcome     = Outcome.Rejected
+    let emptyPassed =
+      { Outcome     = Outcome.Passed
         Stamp       = []
         Labels      = Set.empty
         Arguments   = []
       }
 
-    let failed = { result with Outcome = Outcome.Failed (exn "Expected true, got false.") } |> Value
+    let failed = { emptyPassed with Outcome = Outcome.Failed (exn "Expected true, got false.") } |> Value
 
-    let exc e = { result with Outcome = Outcome.Failed e } |> Value
+    let exc e = { emptyPassed with Outcome = Outcome.Failed e } |> Value
 
-    let succeeded = { result with Outcome = Outcome.Passed } |> Value
+    let succeeded = emptyPassed |> Value
 
-    let rejected = { result with Outcome = Outcome.Rejected } |> Value
-
-    let rejectedV = { result with Outcome = Outcome.Rejected }
-
-    let future (t :Threading.Tasks.Task<Outcome>) = t.ContinueWith (fun (x :Threading.Tasks.Task<Outcome>) -> { result with Outcome = x.Result }) |> Future
+    let future (t :Threading.Tasks.Task<Outcome>) = t.ContinueWith (fun (x :Threading.Tasks.Task<Outcome>) -> { emptyPassed with Outcome = x.Result }) |> Future
 
 ///A Property can be checked by FsCheck.
 type Property = private Property of Gen<ResultContainer> with static member internal GetGen (Property g) = g
@@ -123,7 +116,7 @@ module private Testable =
             try
                 property body.Value
             with
-            | :? DiscardException -> ofResult Res.rejected
+//            | :? DiscardException -> ofResult Res.rejected
             | e -> ofResult (Res.exc e)
     
     let private evaluate body a =
@@ -137,7 +130,7 @@ module private Testable =
         try 
             body a |> property
         with
-            | :? DiscardException -> Prop.ofResult Res.rejected
+  //          | :? DiscardException -> Prop.ofResult Res.rejected
             | e -> Prop.ofResult (Res.exc e)
         |> Property.GetGen 
         |> Gen.map (argument a)

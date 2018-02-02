@@ -38,7 +38,7 @@ type IRunner =
 type Replay =
     {
       Rnd: Rnd
-      Size: int option
+      Size: Size
     }
 
 type ParallelRunConfig =
@@ -101,8 +101,37 @@ module Runner =
         | Future of Threading.Tasks.Task<seq<TestStep>>
  
 
- 
-    //let shrink check ((GenStream gen):GenStream<'T>)  =
+    //let scanResults seed size (Gen gen:Gen<'T>) =
+    //    let result = ref Unchecked.defaultof<'T>
+    //    let rejected = ref 0
+    //    let mutable haveResult = false
+    //    let one =  gen { Next = fun r -> haveResult <- true; result := r
+    //                     Reject = fun () -> rejected := !rejected + 1;
+    //                     Shrinks = fun s -> () //not shrinking here at the moment
+    //                     Size = ref size
+    //                     Seed = ref seed }
+    //    let next() =
+    //        while not haveResult do one.Generate()
+    //        haveResult <- false
+    //    next, result, rejected
+
+    //let toSeq seed size (gen:Gen<'T>) : seq<'T> =
+    //    let next, result, _ = scanResults seed size gen
+    //    Seq.initInfinite (fun _ -> next(); !result)
+
+    //let sampleWithSeed seed size nbSamples (gen:Gen<'T>) : 'T[] =
+    //    let next, result, _ = scanResults seed size gen
+    //    [| for i in 0..nbSamples-1 do 
+    //         next()
+    //         yield !result |]
+
+    //let sampleWithSeedRej seed size nbSamples (gen:Gen<'T>) : 'T[] * int =
+    //    let next, result, rejected = scanResults seed size gen
+    //    [| for i in 0..nbSamples-1 do 
+    //         next()
+    //         yield !result |], !rejected
+
+    //let shrink check (Gen gen:Gen<'T>) =
     //    let mutable result = Unchecked.defaultof<'T>
     //    let mutable rejected = 0
     //    let mutable haveResult = false
@@ -125,6 +154,27 @@ module Runner =
     //            if check result then (shrinkStream shrCtx).GetShrinks()
     //    |]
 
+    //let private test isReplay (initSize:Size) (resize:Size->Size) (rnd0:Rnd) gen = 
+    //    let current = ref Unchecked.defaultof<'T>
+    //    let nbRejected = ref 0
+    //    let mutable haveCurrent = false
+    //    let size = ref initSize
+    //    let seed = ref rnd0
+    //    let mutable shrinkStream = Unchecked.defaultof<ShrinkStream<'T>>
+    //    let shrCtx = { Next = fun r -> current := r
+    //                   Done = fun () -> haveCurrent <- false
+    //                   Shrinks = fun s -> shrinkStream <- s }
+    //    let one =  gen { Next = fun r -> haveCurrent <- true; current := r
+    //                     Reject = fun () -> haveCurrent <- true; nbRejected := !nbRejected + 1;
+    //                     Shrinks = fun s -> shrinkStream <- s
+    //                     Size = size
+    //                     Seed = seed }
+    //    let next() =
+    //        while not haveCurrent do one.Generate()
+    //        haveCurrent <- false
+    //    next, current, nbRejected
+        
+(*
     let rec private shrinkResultValue (result:Result) (shrinks:IEnumerator<Rose<Result>>) =
         seq { 
             if (shrinks.MoveNext ()) then
@@ -224,160 +274,161 @@ module Runner =
             let source = stepsSeq resize (initSize, rnd0)
             Seq.collect (testSingle gen') source
 
-    //let private outcomeSeq result (shrinks :seq<_>) rnd usedSize = 
-    //    let g = Generated (result.Arguments, rnd, usedSize)
-    //    match result.Outcome with
-    //    | Outcome.Rejected -> 
-    //        seq {yield g; yield Rejected result} |> OutcomeSeqOrFuture.Value
-    //    | Outcome.Passed -> 
-    //        seq {yield g; yield Passed result} |> OutcomeSeqOrFuture.Value
-    //    | o when o.Shrink -> 
-    //        match shrinkResultTaskIter result (shrinks.GetEnumerator ()) with
-    //        | OutcomeSeqOrFuture.Value v -> seq {yield g; yield Failed result; yield! v} |> OutcomeSeqOrFuture.Value
-    //        | OutcomeSeqOrFuture.Future t -> t.ContinueWith (fun (xs :Threading.Tasks.Task<seq<TestStep>>) -> 
-    //            seq {yield g; yield Failed result; yield! xs.Result}) |> OutcomeSeqOrFuture.Future         
-    //    | _ ->
-    //        seq {yield g; yield Failed result; yield EndShrink result} |> OutcomeSeqOrFuture.Value
+    let private outcomeSeq result (shrinks :seq<_>) rnd usedSize = 
+        let g = Generated (result.Arguments, rnd, usedSize)
+        match result.Outcome with
+        | Outcome.Rejected -> 
+            seq {yield g; yield Rejected result} |> OutcomeSeqOrFuture.Value
+        | Outcome.Passed -> 
+            seq {yield g; yield Passed result} |> OutcomeSeqOrFuture.Value
+        | o when o.Shrink -> 
+            match shrinkResultTaskIter result (shrinks.GetEnumerator ()) with
+            | OutcomeSeqOrFuture.Value v -> seq {yield g; yield Failed result; yield! v} |> OutcomeSeqOrFuture.Value
+            | OutcomeSeqOrFuture.Future t -> t.ContinueWith (fun (xs :Threading.Tasks.Task<seq<TestStep>>) -> 
+                seq {yield g; yield Failed result; yield! xs.Result}) |> OutcomeSeqOrFuture.Future         
+        | _ ->
+            seq {yield g; yield Failed result; yield EndShrink result} |> OutcomeSeqOrFuture.Value
 
-    //let private testStep rnd (size :float) ((Gen eval) as gen) =
-    //        let usedSize = size |> round |> int
-    //        let result, shrinks =
-    //            try
-    //                let (MkRose (Lazy result, shrinks)) = (eval usedSize rnd).Value
-    //                result, shrinks
-    //            with :? DiscardException ->
-    //                Res.rejected, Seq.empty
+    let private testStep rnd (size :float) ((Gen eval) as gen) =
+            let usedSize = size |> round |> int
+            let result, shrinks =
+                try
+                    let (MkRose (Lazy result, shrinks)) = (eval usedSize rnd).Value
+                    result, shrinks
+                with :? DiscardException ->
+                    Res.rejected, Seq.empty
 
-    //        match result with
-    //        | ResultContainer.Value r -> outcomeSeq r shrinks rnd usedSize
-    //        | ResultContainer.Future t -> t.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
-    //            match outcomeSeq x.Result shrinks rnd usedSize with
-    //            | OutcomeSeqOrFuture.Value v -> Threading.Tasks.Task.FromResult v
-    //            | OutcomeSeqOrFuture.Future t -> t) |> Threading.Tasks.TaskExtensions.Unwrap |> OutcomeSeqOrFuture.Future
+            match result with
+            | ResultContainer.Value r -> outcomeSeq r shrinks rnd usedSize
+            | ResultContainer.Future t -> t.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
+                match outcomeSeq x.Result shrinks rnd usedSize with
+                | OutcomeSeqOrFuture.Value v -> Threading.Tasks.Task.FromResult v
+                | OutcomeSeqOrFuture.Future t -> t) |> Threading.Tasks.TaskExtensions.Unwrap |> OutcomeSeqOrFuture.Future
 
-    //let private outcomeSeqFutureCont (xs :Threading.Tasks.Task<seq<TestStep>>) (state :obj) =
-    //    match state with 
-    //    | :? (int * Threading.CancellationToken * array<seq<TestStep>> * int) as state ->
-    //        let (j, ct, results, iters) = state
-    //        if (not ct.IsCancellationRequested) && j < iters then
-    //            results.[j] <- xs.Result
-    //    | _ -> raise (System.ArgumentException ("state"))
+    let private outcomeSeqFutureCont (xs :Threading.Tasks.Task<seq<TestStep>>) (state :obj) =
+        match state with 
+        | :? (int * Threading.CancellationToken * array<seq<TestStep>> * int) as state ->
+            let (j, ct, results, iters) = state
+            if (not ct.IsCancellationRequested) && j < iters then
+                results.[j] <- xs.Result
+        | _ -> raise (System.ArgumentException ("state"))
 
-//    let private tpWorkerFun (state :obj) =
-//        match state with 
-//        | :? ((Rnd * float) array * (int ref) * int * Gen<Rose<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken) as state ->
-//            let (steps, i, iters, gen, results, ct) = state
-//            let mutable j = 0
-//            while (not ct.IsCancellationRequested) && j < iters do
-//                j <- Threading.Interlocked.Increment (i) - 1
-//                if j < iters then
-//                    let rnd, size = steps.[j]
-//                    let res = testStep rnd size gen
-//                    match res with
-//                    | OutcomeSeqOrFuture.Value xs -> results.[j] <- xs
-//                    | OutcomeSeqOrFuture.Future ts -> 
-//                        ts.ContinueWith (outcomeSeqFutureCont, (j, ct, results, iters)) |> ignore                    
-//        | _ -> raise (System.ArgumentException ("state"))
+    let private tpWorkerFun (state :obj) =
+        match state with 
+        | :? ((Rnd * float) array * (int ref) * int * Gen<Rose<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken) as state ->
+            let (steps, i, iters, gen, results, ct) = state
+            let mutable j = 0
+            while (not ct.IsCancellationRequested) && j < iters do
+                j <- Threading.Interlocked.Increment (i) - 1
+                if j < iters then
+                    let rnd, size = steps.[j]
+                    let res = testStep rnd size gen
+                    match res with
+                    | OutcomeSeqOrFuture.Value xs -> results.[j] <- xs
+                    | OutcomeSeqOrFuture.Future ts -> 
+                        ts.ContinueWith (outcomeSeqFutureCont, (j, ct, results, iters)) |> ignore                    
+        | _ -> raise (System.ArgumentException ("state"))
 
-//    ///Enumerates over `steps` seq publishing every item to `tpWorkerFun` via `ThreadPool.QueueUserWorkItem`
-//    ///Waits for `tpWorkerFun` to populate `results` array
-//    ///Order is preserved by sitting in busy loop & checking current entry in `results` 
-//    ///    and yielding processor to other threads if cell haven't been populated yet
-//    ///To be lean in allocated space first assumes that test would pass and creates `result` of size `maxTest`
-//    ///    reallocates `result` to hold `maxFail` entries if test is falsified
-//    ///Other strategies can be considered to trade between allocated memory, overall running time and amount of cross-process communication:
-//    ///    - publish to `tpWorkerFun` more than one entry at a time
-//    ///    - allocate `results` in lesser chunks in iterative manner
-//    ///    - change busy loop with yelding to waiting on conditional variables (tested, leads to slower runing time)
-//    type private ParSeqEnumerator (steps :IEnumerable<(Rnd * float)>, maxTest, maxFail, maxDegreeOfParallelism, gen) =   
-//        let size = maxTest + maxFail
-//        let luckySeq = steps |> Seq.take maxTest
-//        let unluckySeq = steps |> Seq.skip maxTest |> Seq.take maxFail
-//        let mutable results = Array.zeroCreate<seq<TestStep>> maxTest
-//        let mutable i = 0
-//        let indexT = ref 0
-//        let indexF = ref 0
-//        let mutable current = Unchecked.defaultof<TestStep>
-//        let mutable subE = Linq.Enumerable.Empty<TestStep>().GetEnumerator ()
-//        let mutable cts = new Threading.CancellationTokenSource ()
-//        let mutable started = false
-//        let mutable firstRun = true
-//        let run xs index =
-//            let xs = Array.ofSeq xs
-//            for i in 0..(Math.Min (Array.length xs, maxDegreeOfParallelism)) do
-//                Threading.ThreadPool.QueueUserWorkItem (
-//                    new Threading.WaitCallback (tpWorkerFun),
-//                    (xs, index, Array.length xs, gen, results, cts.Token)) |> ignore
-//        let moveNextInner () = 
-//            if subE.MoveNext () then
-//                current <- subE.Current; true  
-//            else
-//                subE.Dispose (); false    
-//        let moveNextOuter () =
-//            if i = maxTest && firstRun then
-//                results <- Array.zeroCreate<seq<TestStep>> maxFail
-//                i <- 0
-//                run unluckySeq indexF
-//                firstRun <- false
-//            while isNull results.[i] do
-//#if NETSTANDARD1_6
-//                Threading.Thread.Sleep (1) |> ignore
-//#else
-//                Threading.Thread.Yield () |> ignore
-//#endif
-//            subE <- results.[i].GetEnumerator ()
-//            i <- i + 1
-//        interface IEnumerator<TestStep> with
-//            member __.MoveNext () = 
-//                if not started then
-//                    run luckySeq indexT; started <- true
-//                let mutable running = true
-//                let mutable moved = false
-//                while running do
-//                    if i >= size then
-//                        running <- false
-//                    else
-//                        if moveNextInner () then
-//                            running <- false
-//                            moved <- true
-//                        else
-//                            moveNextOuter ()
-//                moved
-//            member __.Current :TestStep = current
-//            member __.Current :obj = box current
-//            member __.Reset () = 
-//                cts.Cancel ()
-//                cts.Dispose ()
-//                cts <- new Threading.CancellationTokenSource ()
-//                started <- false
-//                firstRun <- true
-//                results <- Array.zeroCreate<seq<TestStep>> maxTest
-//                current <- Unchecked.defaultof<TestStep>
-//                i <- 0
-//                indexT := 0
-//                indexF := 0
-//                subE.Dispose ()
-//        interface IDisposable with
-//            member __.Dispose () = 
-//                cts.Cancel ()
-//                subE.Dispose ()
-//                cts.Dispose ()
-
-
-//    type private ParTestSeq (steps, maxTest, maxFail, maxDegreeOfParallelism, gen) =   
-//        let enumerator () = new ParSeqEnumerator (steps, maxTest, maxFail, maxDegreeOfParallelism, gen)
-//        interface IEnumerable<TestStep> with
-//            member __.GetEnumerator () = enumerator () :> IEnumerator<TestStep>
-//            member __.GetEnumerator () = enumerator () :> System.Collections.IEnumerator
-
-//    let private parallelTest config initSize resize rnd0 gen =
-//        let steps = stepsSeq resize (initSize, rnd0)
-//        let pd = Option.fold (fun _ pc -> if pc.MaxDegreeOfParallelism <> -1 then pc.MaxDegreeOfParallelism else Environment.ProcessorCount) 1 config.ParallelRunConfig
-//        let parSeq = ParTestSeq (steps, config.MaxTest, config.MaxRejected, pd, gen)
-//        parSeq :> seq<_>
+    ///Enumerates over `steps` seq publishing every item to `tpWorkerFun` via `ThreadPool.QueueUserWorkItem`
+    ///Waits for `tpWorkerFun` to populate `results` array
+    ///Order is preserved by sitting in busy loop & checking current entry in `results` 
+    ///    and yielding processor to other threads if cell haven't been populated yet
+    ///To be lean in allocated space first assumes that test would pass and creates `result` of size `maxTest`
+    ///    reallocates `result` to hold `maxFail` entries if test is falsified
+    ///Other strategies can be considered to trade between allocated memory, overall running time and amount of cross-process communication:
+    ///    - publish to `tpWorkerFun` more than one entry at a time
+    ///    - allocate `results` in lesser chunks in iterative manner
+    ///    - change busy loop with yelding to waiting on conditional variables (tested, leads to slower runing time)
+    type private ParSeqEnumerator (steps :IEnumerable<(Rnd * float)>, maxTest, maxFail, maxDegreeOfParallelism, gen) =   
+        let size = maxTest + maxFail
+        let luckySeq = steps |> Seq.take maxTest
+        let unluckySeq = steps |> Seq.skip maxTest |> Seq.take maxFail
+        let mutable results = Array.zeroCreate<seq<TestStep>> maxTest
+        let mutable i = 0
+        let indexT = ref 0
+        let indexF = ref 0
+        let mutable current = Unchecked.defaultof<TestStep>
+        let mutable subE = Linq.Enumerable.Empty<TestStep>().GetEnumerator ()
+        let mutable cts = new Threading.CancellationTokenSource ()
+        let mutable started = false
+        let mutable firstRun = true
+        let run xs index =
+            let xs = Array.ofSeq xs
+            for i in 0..(Math.Min (Array.length xs, maxDegreeOfParallelism)) do
+                Threading.ThreadPool.QueueUserWorkItem (
+                    new Threading.WaitCallback (tpWorkerFun),
+                    (xs, index, Array.length xs, gen, results, cts.Token)) |> ignore
+        let moveNextInner () = 
+            if subE.MoveNext () then
+                current <- subE.Current; true  
+            else
+                subE.Dispose (); false    
+        let moveNextOuter () =
+            if i = maxTest && firstRun then
+                results <- Array.zeroCreate<seq<TestStep>> maxFail
+                i <- 0
+                run unluckySeq indexF
+                firstRun <- false
+            while isNull results.[i] do
+#if NETSTANDARD1_6
+                Threading.Thread.Sleep (1) |> ignore
+#else
+                Threading.Thread.Yield () |> ignore
+#endif
+            subE <- results.[i].GetEnumerator ()
+            i <- i + 1
+        interface IEnumerator<TestStep> with
+            member __.MoveNext () = 
+                if not started then
+                    run luckySeq indexT; started <- true
+                let mutable running = true
+                let mutable moved = false
+                while running do
+                    if i >= size then
+                        running <- false
+                    else
+                        if moveNextInner () then
+                            running <- false
+                            moved <- true
+                        else
+                            moveNextOuter ()
+                moved
+            member __.Current :TestStep = current
+            member __.Current :obj = box current
+            member __.Reset () = 
+                cts.Cancel ()
+                cts.Dispose ()
+                cts <- new Threading.CancellationTokenSource ()
+                started <- false
+                firstRun <- true
+                results <- Array.zeroCreate<seq<TestStep>> maxTest
+                current <- Unchecked.defaultof<TestStep>
+                i <- 0
+                indexT := 0
+                indexF := 0
+                subE.Dispose ()
+        interface IDisposable with
+            member __.Dispose () = 
+                cts.Cancel ()
+                subE.Dispose ()
+                cts.Dispose ()
 
 
-    let private testsDone config testStep origArgs ntest nshrinks originalSeed lastSeed lastSize stamps =
+    type private ParTestSeq (steps, maxTest, maxFail, maxDegreeOfParallelism, gen) =   
+        let enumerator () = new ParSeqEnumerator (steps, maxTest, maxFail, maxDegreeOfParallelism, gen)
+        interface IEnumerable<TestStep> with
+            member __.GetEnumerator () = enumerator () :> IEnumerator<TestStep>
+            member __.GetEnumerator () = enumerator () :> System.Collections.IEnumerator
+
+    let private parallelTest config initSize resize rnd0 gen =
+        let steps = stepsSeq resize (initSize, rnd0)
+        let pd = Option.fold (fun _ pc -> if pc.MaxDegreeOfParallelism <> -1 then pc.MaxDegreeOfParallelism else Environment.ProcessorCount) 1 config.ParallelRunConfig
+        let parSeq = ParTestSeq (steps, config.MaxTest, config.MaxRejected, pd, gen)
+        parSeq :> seq<_>
+
+*)
+
+    let private toTable stamps ntest =
         let entry (n,xs) = (100 * n / ntest),xs
         let table = stamps 
                     |> Seq.filter (not << List.isEmpty)
@@ -386,54 +437,131 @@ module Runner =
                     |> Seq.map (fun (l, ls) -> (Seq.length ls, l))
                     |> Seq.sortBy fst
                     |> Seq.map entry
+        table
 
+    let private testsDone config testStep origArgs ntest nshrinks originalSeed lastSeed lastSize stamps =
         let testResult =
-            let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
+            let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = toTable stamps ntest; Labels = Set.empty }
             match testStep with
-                | Passed _ -> TestResult.Passed (testData, config.QuietOnSuccess)
-                | Failed result -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
-                | Rejected _ -> TestResult.Exhausted testData
+                | Passed _         -> TestResult.Passed (testData, config.QuietOnSuccess)
+                | Rejected _       -> TestResult.Exhausted testData
+                | Failed result    -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
                 | EndShrink result -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
                 | _ -> failwith "Test ended prematurely"
         config.Runner.OnFinished(config.Name,testResult)
 
 
-    let private runner config prop = 
-        let testNb = ref 0
-        let failedNb = ref 0
-        let shrinkNb = ref 0
-        let tryShrinkNb = ref 0
-        let origArgs = ref []
-        let lastStep = ref (Rejected Res.rejectedV)
-        let seed, size = match config.Replay with None -> Random.create(), None | Some s -> s.Rnd, s.Size
+
+    let private runner (config:Config) (Property genResult) = 
+        let initSeed, initSize = match config.Replay with None -> Random.create(), config.StartSize | Some s -> s.Rnd, s.Size
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
-        let lastSeed = ref seed
-        let lastSize = ref (defaultArg size config.StartSize)
-        let testSeq = 
-            //if config.ParallelRunConfig.IsSome && size.IsNone then //no point to run single test in parallel
-            //    parallelTest config 
-            //else 
-                test size.IsSome
-        testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
-        |> Common.takeWhilePlusLast (fun step ->
-            lastStep := step
-            match step with
-                | Generated (args, seed, size) ->
-                    lastSeed := seed; lastSize := size
-                    config.Runner.OnArguments(!testNb, args, config.Every)
-                    true
-                | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest && size.IsNone //stop if we have enough tests or this was fast-forward single test run
-                | Failed result -> origArgs := result.Arguments; testNb := !testNb + 1; true //failed, true to continue with shrinking
-                | Rejected _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxRejected //rejected, stop if we have too much failed tests
-                | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Runner.OnShrink(result.Arguments, config.EveryShrink); true
-                | NoShrink _ -> tryShrinkNb := !tryShrinkNb + 1; true
-                | EndShrink _ -> false )
-        |> Seq.fold (fun acc elem ->
-            match elem with
-                | Passed result -> (result.Stamp :: acc)
+        //Since we're not runing test for parallel scenarios it's impossible to discover `ResultContainer.Future` inside `result`
+        let (Gen gen) =
+            genResult 
+            |> Gen.map (fun rc -> match rc with ResultContainer.Value r -> r | ResultContainer.Future t -> t.Result)
+        let inline inc r = r := r.Value + 1
+        let nbTests = ref 0
+        let nbRejected = ref 0
+        let nbShrinks = ref 0
+        let nbTryShrink = ref 0
+        let generated = Array.zeroCreate<Result> config.MaxTest
+        let currentShrink = ref Res.emptyPassed
+        let mutable shrinkingDone = false
+        let size = ref initSize
+        let seed = ref initSeed
+        let mutable shrinkStream = Unchecked.defaultof<ShrinkStream<Result>>
+        let mutable shrinker = Unchecked.defaultof<Shrinker>
+        let mutable rejected = false
+        let shrinkContext = { Next = fun r -> currentShrink := r;
+                              Done = fun () -> shrinkingDone <- true
+                              Shrinks = fun s -> shrinkStream <- s }
+        let generator =  gen { Next = fun r -> rejected <- false; generated.[!nbTests] <- r; inc nbTests
+                               Reject = fun () -> rejected <- true; inc nbRejected
+                               Shrinks = fun s -> shrinkStream <- s
+                               Size = size
+                               Seed = seed }
+        let continueGenerating r =
+            match r.Outcome with
+            | Outcome.Passed -> !nbTests < config.MaxTest && !nbRejected < config.MaxRejected
+            | Outcome.Failed _ -> false
+
+        let shrink r = match r.Outcome with Outcome.Failed _ -> true | _ -> false
+
+        let goodShrink r =
+            match r.Outcome with
+            | Outcome.Passed -> false
+            | Outcome.Failed _ -> true
+
+        let mutable lastSeed = !seed
+        let mutable lastSize = !size
+        while !nbTests = 0 || continueGenerating generated.[!nbTests-1] do 
+            lastSeed <- !seed
+            lastSize <- !size
+            generator.Generate()
+            if (not rejected) then
+                size := float initSize + float !nbTests * increaseSizeStep |> round |> int
+        
+        currentShrink := generated.[!nbTests-1]
+        if shrink !currentShrink then
+            generator.GetShrinks()
+            shrinker <- shrinkStream shrinkContext
+            shrinker.Shrink()
+            while not shrinkingDone do
+                if goodShrink currentShrink.Value then
+                    inc nbShrinks
+                    nbTryShrink := 0
+                    // re-shrink from the current value
+                    shrinker.GetShrinks()
+                    shrinker <- shrinkStream shrinkContext
+                else
+                    inc nbTryShrink
+                shrinker.Shrink()
+                
+        let stamps = 
+            generated
+            |> Array.fold (fun acc elem ->
+            match elem.Outcome with
+                | Outcome.Passed -> (elem.Stamp :: acc)
                 | _ -> acc
             ) [] 
-        |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed !lastSeed !lastSize
+        let testResult =
+            let result = generated.[!nbTests-1]
+            let testData = { NumberOfTests = !nbTests; NumberOfShrinks = !nbShrinks; Stamps = toTable stamps !nbTests; Labels = Set.empty }
+            match result.Outcome with
+                | Outcome.Passed when !nbTests = config.MaxTest -> 
+                    TestResult.Passed (testData, config.QuietOnSuccess)
+                | Outcome.Passed -> 
+                    TestResult.Exhausted testData
+                | Outcome.Failed _ -> 
+                    TestResult.Failed ({ testData with Labels=result.Labels }, result.Arguments, currentShrink.Value.Arguments, currentShrink.Value.Outcome, initSeed, lastSeed, lastSize)
+        config.Runner.OnFinished(config.Name,testResult)
+
+
+        //let testSeq = 
+        //    if config.ParallelRunConfig.IsSome && size.IsNone then //no point to run single test in parallel
+        //        parallelTest config 
+        //    else 
+        //        test size.IsSome
+        //testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
+        //|> Common.takeWhilePlusLast (fun step ->
+        //    lastStep := step
+        //    match step with
+        //        | Generated (args, seed, size) ->
+        //            lastSeed := seed; lastSize := size
+        //            config.Runner.OnArguments(!testNb, args, config.Every)
+        //            true
+        //        | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest && size.IsNone //stop if we have enough tests or this was fast-forward single test run
+        //        | Failed result -> origArgs := result.Arguments; testNb := !testNb + 1; true //failed, true to continue with shrinking
+        //        | Rejected _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxRejected //rejected, stop if we have too much failed tests
+        //        | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Runner.OnShrink(result.Arguments, config.EveryShrink); true
+        //        | NoShrink _ -> tryShrinkNb := !tryShrinkNb + 1; true
+        //        | EndShrink _ -> false )
+        //|> Seq.fold (fun acc elem ->
+        //    match elem with
+        //        | Passed result -> (result.Stamp :: acc)
+        //        | _ -> acc
+        //    ) [] 
+        //|> testsDone config !lastStep !origArgs !testNb !shrinkNb seed !lastSeed !lastSize
 
     let private newline = Environment.NewLine
 
