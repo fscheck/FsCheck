@@ -482,7 +482,7 @@ module Runner =
                                Seed = seed }
         let continueGenerating r =
             match r.Outcome with
-            | Outcome.Passed -> !nbTests < config.MaxTest && !nbRejected < config.MaxRejected
+            | Outcome.Passed -> !nbTests < config.MaxTest 
             | Outcome.Failed _ -> false
 
         let shrink r = match r.Outcome with Outcome.Failed _ -> true | _ -> false
@@ -494,15 +494,19 @@ module Runner =
 
         let mutable lastSeed = !seed
         let mutable lastSize = !size
-        while !nbTests = 0 || continueGenerating generated.[!nbTests-1] do 
+        while (!nbTests = 0 || continueGenerating generated.[!nbTests-1])
+                && !nbRejected < config.MaxRejected do 
             lastSeed <- !seed
             lastSize <- !size
             generator.Generate()
-            if (not rejected) then
-                size := float initSize + float !nbTests * increaseSizeStep |> round |> int
+            // total number of tests is nbTests + nbRejected, and we have to increase the
+            // size even when we have a rejected value, otherwise all values might be rejected
+            // (e.g. list.Length > 2 like preconditions). But this does mean that when there are rejections,
+            // the eventual size is bigger than config.EndSize.
+            size := float initSize + float (!nbTests + !nbRejected) * increaseSizeStep |> round |> int
         
-        currentShrink := generated.[!nbTests-1]
-        if shrink !currentShrink then
+        if !nbTests > 0 && shrink generated.[!nbTests-1] then
+            currentShrink := generated.[!nbTests-1]
             generator.GetShrinks()
             shrinker <- shrinkStream shrinkContext
             shrinker.Shrink()
@@ -518,22 +522,25 @@ module Runner =
                 shrinker.Shrink()
                 
         let stamps = 
-            generated
+            generated.[0..!nbTests-1]
             |> Array.fold (fun acc elem ->
             match elem.Outcome with
                 | Outcome.Passed -> (elem.Stamp :: acc)
                 | _ -> acc
             ) [] 
         let testResult =
-            let result = generated.[!nbTests-1]
             let testData = { NumberOfTests = !nbTests; NumberOfShrinks = !nbShrinks; Stamps = toTable stamps !nbTests; Labels = Set.empty }
-            match result.Outcome with
-                | Outcome.Passed when !nbTests = config.MaxTest -> 
-                    TestResult.Passed (testData, config.QuietOnSuccess)
-                | Outcome.Passed -> 
-                    TestResult.Exhausted testData
-                | Outcome.Failed _ -> 
-                    TestResult.Failed ({ testData with Labels=result.Labels }, result.Arguments, currentShrink.Value.Arguments, currentShrink.Value.Outcome, initSeed, lastSeed, lastSize)
+            if !nbTests > 0 then
+                let result = generated.[!nbTests-1]
+                match result.Outcome with
+                    | Outcome.Passed when !nbTests = config.MaxTest -> 
+                        TestResult.Passed (testData, config.QuietOnSuccess)
+                    | Outcome.Passed -> 
+                        TestResult.Exhausted testData
+                    | Outcome.Failed _ -> 
+                        TestResult.Failed ({ testData with Labels=result.Labels }, result.Arguments, currentShrink.Value.Arguments, currentShrink.Value.Outcome, initSeed, lastSeed, lastSize)
+            else
+                TestResult.Exhausted testData
         config.Runner.OnFinished(config.Name,testResult)
 
 
@@ -616,16 +623,16 @@ module Runner =
         match testResult with
         | TestResult.Passed (data, suppressOutput) ->
             if suppressOutput then ""
-            else sprintf "%sOk, passed %i %s%s"
-                    name data.NumberOfTests (pluralize data.NumberOfTests "test") (data.Stamps |> stampsToString)
+            else sprintf "%sOk, passed %s%s"
+                    name (pluralize data.NumberOfTests "test") (data.Stamps |> stampsToString)
         | TestResult.Failed (data, originalArgs, args, Outcome.Failed exc, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
             + sprintf "with exception:%s%O%s" newline exc newline
         | TestResult.Failed (data, originalArgs, args, _, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
         | TestResult.Exhausted data -> 
-            sprintf "%sArguments exhausted after %i %s%s" 
-                name data.NumberOfTests (pluralize data.NumberOfTests "test") (data.Stamps |> stampsToString )
+            sprintf "%sArguments exhausted after %s%s" 
+                name (pluralize data.NumberOfTests "test") (data.Stamps |> stampsToString)
 
     let onArgumentsToString n args = 
         sprintf "%i:%s%s%s" n newline (argumentsToString args) newline

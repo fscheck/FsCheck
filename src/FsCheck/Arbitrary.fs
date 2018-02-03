@@ -196,7 +196,7 @@ module Arb =
         static member DoNotSizeUInt16 = Gen.chooseAround 0 (0, int UInt16.MaxValue) |> Gen.map (uint16 >> DoNotSize)
             
         ///Generate arbitrary int32 that is between -size and size.
-        static member Int32 = Gen.sized (fun n -> Gen.choose (-n,n))
+        static member Int32 = Gen.choose64AroundSized 0L (fun s -> int64 -s, int64 s) |> Gen.map int
 
         ///Generate arbitrary int32 that is unrestricted by size.
         static member DoNotSizeInt32 = Gen.choose64Around 0L (int64 Int32.MinValue, int64 Int32.MaxValue) |> Gen.map (int >> DoNotSize)

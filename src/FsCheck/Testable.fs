@@ -169,12 +169,20 @@ module private Testable =
         static member Async() =
             { new Testable<Async<unit>> with
                 member __.Property b = Prop.ofTask <| Async.StartAsTask b }
-        //static member Lazy() =
-        //    { new Testable<Lazy<'a>> with
-        //        member __.Property b =
-        //            let promoteLazy (m:Lazy<_>) = 
-        //                Gen (fun s r -> GeneratedValue ((Rose.join <| Rose.ofLazy (lazy (match m.Value with (Gen g) -> (g s r).Value))), r))
-        //            promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
+        static member Lazy() =
+            { new Testable<Lazy<'a>> with
+                member __.Property b =
+                    let promoteLazy (m:Lazy<Gen<_>>) = 
+                        fun ctx ->
+                            { Generate = fun () ->
+                                let (Gen g) = m.Value
+                                (g ctx).Generate()
+                              GetShrinks = fun () ->
+                                let (Gen g) = m.Value
+                                (g ctx).GetShrinks()
+                            }
+                        |> Gen
+                    promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
         static member Result() =
             { new Testable<Result> with
                 member __.Property res = Prop.ofResult <| Value res }

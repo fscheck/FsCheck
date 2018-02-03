@@ -235,10 +235,24 @@ module Gen =
     [<CompiledName("Map"); EditorBrowsable(EditorBrowsableState.Never)>]
     let map f (gen:Gen<_>) = gen.Map f
 
+    // sized is inefficient
+    // because it needs to re-create the generator whenever the size changes.
+    // but the size is part of the context...
+
     ///Obtain the current size. sized g calls g, passing it the current size as a parameter.
     //[category: Managing size]
     [<CompiledName("Sized"); EditorBrowsable(EditorBrowsableState.Never)>]
-    let sized sfun = Gen (fun ctx -> let (Gen g) = sfun !ctx.Size in g ctx)
+    let sized sfun = 
+        fun ctx -> 
+            let inline getG() = let (Gen g) = sfun !ctx.Size in g ctx
+            { Generate = fun () ->
+                let g = getG() //this is about as inefficient as bind and delay, because effectively it's a partial evaluation boundary.
+                g.Generate()
+              GetShrinks = fun () ->
+                let g = getG()
+                g.GetShrinks()
+            }  
+        |> Gen
 
     ///Obtain the current size. sized g calls g, passing it the current size as a parameter.
     //[category: Managing size]
@@ -251,12 +265,7 @@ module Gen =
     [<CompiledName("Resize")>]
     let resize size (Gen gen) =
         fun ctx -> 
-            let original = !ctx.Size
-            try
-                ctx.Size := size
-                gen ctx
-            finally
-                ctx.Size := original
+            gen { ctx with Size = ref size }
         |> Gen
 
     let private scanResults seed size ((Gen gen):Gen<'T>) =
@@ -265,7 +274,7 @@ module Gen =
         let mutable haveResult = false
         let one =  gen { Next = fun r -> haveResult <- true; result := r
                          Reject = fun () -> rejected := !rejected + 1;
-                         Shrinks = fun s -> () //not shrinking here at the moment
+                         Shrinks = fun s -> ()
                          Size = ref size
                          Seed = ref seed }
         let next() =
@@ -285,7 +294,7 @@ module Gen =
     ///Generates a given number of values with a new seed and a given size.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sampleWithSize size nbSamples gen : 'T[]= sampleWithSeed (Random.create()) size nbSamples gen
+    let sampleWithSize size nbSamples gen : 'T[] = sampleWithSeed (Random.create()) size nbSamples gen
 
     ///Generates a given number of values with a new seed and a size of 50.
     //[category: Generating test values]
@@ -307,11 +316,13 @@ module Gen =
     /// Generates a random int64 uniformly distributed between lo and hi (both inclusive),
     /// and shrinks towards target.
     //[category: Creating generators]
-    let choose64Around target (lo,hi) =
-        let (lo,hi) = if hi < lo then (hi,lo) else (lo,hi)
+    let choose64AroundSized target f =
+        let inline maybeSwap (lo,hi) = if hi < lo then (hi,lo) else (lo,hi)
 
         let generate ctx =
-            fun () -> Random.rangeInt64(lo, hi, !ctx.Seed, ctx.Seed)
+            fun () -> 
+                let (lo,hi) = maybeSwap (f ctx.Size.Value)
+                Random.rangeInt64(lo, hi, !ctx.Seed, ctx.Seed)
 
         let shrink current =
             seq { if current <> target then 
@@ -322,6 +333,8 @@ module Gen =
                         yield c }
 
         primitiveStream generate shrink
+
+    let choose64Around target interval = choose64AroundSized target (fun _ -> interval)
 
     let inline internal withShrinkStream (str:'T-> ShrinkStream<'T>) (Gen genF:Gen<'T>) : Gen<'T> =
         fun ctx ->  
@@ -351,6 +364,8 @@ module Gen =
     //[category: Creating generators]
     [<CompiledName("Choose")>]
     let choose (lo,hi) = chooseAround lo (lo,hi)
+
+    
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
     //[category: Creating generators]

@@ -7,6 +7,11 @@ open FsCheck
 open FsCheck.Experimental
 open System.Collections.Generic
 
+Arb.generate<list<int>> |> Gen.sampleWithSize 50 10
+
+Prop.forAll (Arb.generate<int>) (fun (a:int) -> printfn "%i" a)
+|> Check.Quick
+
 type Pid = int
 type Name = string
 type ProcessRegistry() =
