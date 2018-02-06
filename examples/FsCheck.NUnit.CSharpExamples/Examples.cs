@@ -21,7 +21,7 @@ namespace FsCheck.NUnit.CSharpExamples
             return Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs));
         }
 
-        [Property(Replay = "54321,67585", Verbose = true)]
+        [Property(Replay = "54321,67585,1", Verbose = true)]
         public bool Replay(int x)
         {
             return Int32.MaxValue >= x;

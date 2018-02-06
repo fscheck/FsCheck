@@ -10,7 +10,7 @@ namespace FsCheck.XUnit.CSharpExamples
         // 86
         // Shrunk:
         // 80
-        [Property(Replay = "17234047130667642678,3215559178322092721")]
+        [Property(Replay = "17234047130667642678,3215559178322092721,1")]
         public bool ShouldFail_0(int i)
         {
             return i < 80;
