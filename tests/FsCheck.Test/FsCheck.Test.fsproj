@@ -78,6 +78,7 @@
     <Compile Include="Helpers.fs" />
     <Compile Include="Random.fs" />
     <Compile Include="TypeClass.fs" />
+    <Compile Include="Shrink.fs" />
     <Compile Include="Gen.fs" />
     <Compile Include="Arbitrary.fs" />
     <Compile Include="Property.fs" />

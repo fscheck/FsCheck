@@ -20,35 +20,25 @@ and ShrinkStream<'T> = ShrinkCont<'T> -> Shrinker
 
 module Shrink =
 
-    let rec empty : ShrinkStream<'T> =
+    let rec empty<'T> : ShrinkStream<'T> =
         fun ctx ->
             { Shrink = ctx.Done
               GetShrinks = fun () -> ctx.Shrinks empty
             }
 
-    let rec choose current (lo,hi) : ShrinkStream<int> =
+    /// Create a ShrinkStream from the given current value and shrinking function.
+    let rec ofShrinker (current:'T) (shrinker:'T -> 'T seq) : ShrinkStream<'T> =
         fun ctx ->
-            let shrinks = [| let mutable c = current
-                             while c > lo do
-                                c <- c - 1
-                                yield c |]
-            let mutable shrinkIdx = 0
-            { Shrink = fun () ->  
-                        if shrinkIdx < shrinks.Length then
-                            // get next first, so the ctx.Next call is in tail position
-                            // (alternative is to increment shrinkIdx after calling ctx.Next)
-                            let next = shrinks.[shrinkIdx]
-                            shrinkIdx <- shrinkIdx + 1
-                            ctx.Next next
-                        else
-                            ctx.Done()
+            let mutable current = current
+            let mutable enumerator = (shrinker current).GetEnumerator()
+            { Shrink = fun () ->
+                if enumerator.MoveNext() then 
+                    current <- enumerator.Current
+                    ctx.Next current
+                else
+                    ctx.Done()
               GetShrinks = fun () ->
-                            let currIdx = shrinkIdx - 1
-                            let current = if currIdx >= 0 && currIdx < shrinks.Length then shrinks.[currIdx] else current
-                            if current = lo then 
-                                ctx.Shrinks empty 
-                            else 
-                                ctx.Shrinks <| choose current (lo,hi)
+                ctx.Shrinks <| ofShrinker current shrinker
             }
 
     let rec map f (str:ShrinkStream<'T>) : ShrinkStream<'U> =
@@ -127,7 +117,7 @@ module Shrink =
     let rec array (current:'T[]) : ShrinkStream<'T[]> =
         fun ctx ->
             let mutable idx = 0
-            let mutable next = [||]
+            let mutable next = current
             { Shrink = fun () ->
                 if idx < current.Length then
                     next <- Array.zeroCreate (current.Length-1)
@@ -171,20 +161,14 @@ module Shrink =
                 yield next
                 shrink.Shrink()
         }
+
+    let getShrinks (str:ShrinkStream<'T>) =
+        let mutable result = Unchecked.defaultof<ShrinkStream<'T>>
+        (str { Next = fun a -> ()
+               Done = id
+               Shrinks = fun s -> result <- s}).GetShrinks()
+        result
     
-    /// Create a ShrinkStream from the given current value and shrinking function.
-    let rec shrink (current:'T) (shrinker:'T -> 'T seq) : ShrinkStream<'T> =
-        fun ctx ->
-            let mutable current = Unchecked.defaultof<'T>
-            let mutable enumerator = Seq.empty<'T>.GetEnumerator()
-            let ctx = { ctx with Next = (fun n -> current <- n; ctx.Next n) }
-            { Shrink = fun () ->
-                if enumerator.MoveNext() then 
-                    ctx.Next enumerator.Current
-                else
-                    ctx.Done()
-              GetShrinks = fun () ->
-                ctx.Shrinks <| shrink current shrinker
-            }
+
 
 

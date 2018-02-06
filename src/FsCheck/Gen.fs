@@ -309,7 +309,7 @@ module Gen =
                 current <- generate ()
                 ctx.Next current
               GetShrinks = fun () -> 
-                ctx.Shrinks <| Shrink.shrink current shrink
+                ctx.Shrinks <| Shrink.ofShrinker current shrink
             }
         |> Gen
 
@@ -348,7 +348,7 @@ module Gen =
         |> Gen
 
     let shrink (shrinker:'T -> seq<'T>) (gen:Gen<'T>) : Gen<'T> =
-        withShrinkStream (fun cur -> Shrink.shrink cur shrinker) gen
+        withShrinkStream (fun cur -> Shrink.ofShrinker cur shrinker) gen
 
     /// Generates a random int64 uniformly distributed between lo and hi (both inclusive),
     /// and shrinks towards lo.
