@@ -207,24 +207,24 @@ module Runner =
         let result = Runner.argumentsToString [stringWithControlChar]
         test <@ result.StartsWith("Some (Choice1Of2 \"1234\\001 fadf") @>
 
-    [<Fact>]
-    let ``should replay property with one generator``() =
-        let doOne(s1,s2) =
-            try
-                Check.One(
-                    {Config.QuickThrowOnFailure with Replay = Some <| {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = Config.Quick.StartSize}},
-                    fun a -> a < 5
-                )
-                "should have failed"
-            with e ->
-                e.Message
-        let same =
-            Seq.initInfinite (fun _ -> doOne(123UL,654321UL))
-            |> Seq.take(5)
-            |> Seq.distinct
-        1 =! Seq.length same
-        "should have failed" <>! Seq.head same
-        test <@ (Seq.head same).Contains "(123,654321)" @>
+    //[<Fact>]
+    //let ``should replay property with one generator``() =
+    //    let doOne(s1,s2) =
+    //        try
+    //            Check.One(
+    //                {Config.QuickThrowOnFailure with Replay = Some <| {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = Config.Quick.StartSize}},
+    //                fun a -> a < 5
+    //            )
+    //            "should have failed"
+    //        with e ->
+    //            e.Message
+    //    let same =
+    //        Seq.initInfinite (fun _ -> doOne(123UL,654321UL))
+    //        |> Seq.take(5)
+    //        |> Seq.distinct
+    //    1 =! Seq.length same
+    //    "should have failed" <>! Seq.head same
+    //    test <@ (Seq.head same).Contains "(123,654321)" @>
 
     //[<Fact>]
     //let ``should replay property with complex set of generators``() =

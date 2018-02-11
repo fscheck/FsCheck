@@ -2,6 +2,8 @@
 
 namespace FsCheck
 
+open System.Collections.Generic
+
 type ShrinkCont<'T> = {
     Next: 'T -> unit
     Done: unit -> unit
@@ -29,16 +31,16 @@ module Shrink =
     /// Create a ShrinkStream from the given current value and shrinking function.
     let rec ofShrinker (current:'T) (shrinker:'T -> 'T seq) : ShrinkStream<'T> =
         fun ctx ->
-            let mutable current = current
-            let mutable enumerator = (shrinker current).GetEnumerator()
+            let enumerator = (shrinker current).GetEnumerator()
             { Shrink = fun () ->
                 if enumerator.MoveNext() then 
-                    current <- enumerator.Current
-                    ctx.Next current
+                    ctx.Next enumerator.Current
                 else
                     ctx.Done()
               GetShrinks = fun () ->
-                ctx.Shrinks <| ofShrinker current shrinker
+                // this enumerator.Current call can fail if Shrink and thus MoveNext hasn't
+                // been called yet, but that should not happen during normal operation.
+                ctx.Shrinks <| ofShrinker enumerator.Current shrinker
             }
 
     let rec map f (str:ShrinkStream<'T>) : ShrinkStream<'U> =
@@ -71,6 +73,17 @@ module Shrink =
             f { Next = fun e -> currentF <- e; ctx.Next (currentF currentA)
                 Done = fun () -> aStr.Value.Shrink() 
                 Shrinks = fun s -> fShrinkStream <- s; aStr.Value.GetShrinks() }
+
+    //seems to recurse forever in some very preliminary testing
+    //let rec distinct (current:'T) (source:ShrinkStream<'T>) : ShrinkStream<'T> =
+    //    fun ctx ->
+    //        let seen = new HashSet<'T>([| current |])
+    //        let rec shrinker = source sourceCtx
+    //        and sourceCtx = { ctx with Next = fun e -> 
+    //                                           if seen.Contains(e) then shrinker.Shrink()
+    //                                           else seen.Add(e) |> ignore; ctx.Next e
+    //                                   Shrinks = fun s -> ctx.Shrinks <| distinct current s }
+    //        source sourceCtx
 
     let rec join (current:ShrinkStream<'T>) (strs:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
         fun ctx ->

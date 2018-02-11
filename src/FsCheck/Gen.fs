@@ -24,11 +24,11 @@ But I had to write
 abstract Generate: (unit -> unit)
 mind the parens. This makes this into a property that returns a thunk
 The thunk is the important bit, not the property. 
-If we'd write the more usual:
+The usual:
 abstract Generate: unit -> unit
-we are much more prone to stack overflows. For some reason, the
+is prone to stack overflow even when tail recursive. For some reason, the
 F# compiler does not recognize that our calls are in tail position
-if we do the latter.
+if we do the latter. See ToTailOrNotToTail.fsx for a demonstration.
 
 But if we have to do that, we might as well make Generator into
 a record type, so we don't have to worry about the thunk
@@ -66,7 +66,7 @@ and Gen<'T> = Gen of (Context<'T> -> Generator) with
 [<AutoOpen>]
 module GenBuilder =
 
-    let inline private result t =
+    let private result t =
         fun ctx ->
             { Generate = fun () -> ctx.Next t
               GetShrinks = fun () -> ctx.Shrinks <| Shrink.empty
@@ -81,14 +81,7 @@ module GenBuilder =
           Shrinks = shrink
         }
 
-    //let inline withNextReject ctx next reject : Context<'T> =
-    //    { Next = next
-    //      Reject = reject
-    //      Size = ctx.Size
-    //      Seed = ctx.Seed
-    //    }
-
-    let inline internal apply (Gen f) (Gen a) = 
+    let internal apply (Gen f) (Gen a) = 
         fun ctx ->
             let mutable lastF = Unchecked.defaultof<'T -> 'U>
             let mutable lastA = Unchecked.defaultof<'T>
@@ -106,55 +99,58 @@ module GenBuilder =
                                       genA.Value.GetShrinks()))
         |> Gen   
 
-    let inline internal shrinks genCtx (Gen str:Gen<'T>) : ShrinkStream<'T> =
+    let internal shrinks genCtx (Gen gen:Gen<'T>) : ShrinkStream<'T> =
         fun ctx ->
             let mutable generatedOne = false
             let mutable shrinkStream = Unchecked.defaultof<Shrinker>
             let rec strCtx = { genCtx with Next = ctx.Next
-                                           Reject = fun () -> (str strCtx).Generate() // potential infinite or very long loop
+                                           Reject = fun () -> generator.Generate() // potential infinite or very long loop
                                            Shrinks = fun s -> shrinkStream <- s ctx }
+            and generator = gen strCtx
             { Shrink = fun () ->
                     if not generatedOne then
-                        let gen = str strCtx
-                        gen.Generate()
-                        gen.GetShrinks()
+                        generator.Generate()
+                        generatedOne <- true
+                        generator.GetShrinks()
                     else
                         shrinkStream.Shrink()
               GetShrinks = fun () ->
                     shrinkStream.GetShrinks()
             }
 
-    let inline internal bind ((Gen m) : Gen<'T>) (k : 'T -> Gen<'U>) : Gen<_> = 
+    let internal bind ((Gen m) : Gen<'T>) (k : 'T -> Gen<'U>) : Gen<_> = 
          fun ctx ->
-            let mutable lastGenU = Unchecked.defaultof<Generator>
             let mutable lastU = Unchecked.defaultof<'U>
-            let mutable lastT = Unchecked.defaultof<'T>
             let mutable shrinkStreamU = Unchecked.defaultof<ShrinkStream<'U>>
 
-            let rec uCtx = withNext ctx (fun a -> lastU <- a; ctx.Next lastU)
+            let rec uCtx = withNext ctx (fun a -> lastU <- a
+                                                  //printfn "lastU %A" a
+                                                  ctx.Next lastU)
                                         (fun s -> shrinkStreamU <- s)
-            let inline setLastStreamU() =              
-                let (Gen g) = k lastT  
-                lastGenU <- g uCtx
-            let m = m (withNext ctx (fun t -> lastT <- t; setLastStreamU(); lastGenU.Generate())
+            let (Gen g) = result Unchecked.defaultof<'U>    
+            let mutable lastGenU = g uCtx //only thing that matters here is that it generates empty shrinks
+            let m = m (withNext ctx (fun t -> let (Gen g) = k t  
+                                              lastGenU <- g uCtx
+                                              //System.Diagnostics.Debugger.Break()
+                                              //printfn "t %A" t
+                                              lastGenU.Generate())
                                     (fun s -> lastGenU.GetShrinks()
                                               let sstr = s |> Shrink.map (k >> shrinks ctx)
                                               ctx.Shrinks <| Shrink.join shrinkStreamU sstr))
             m
         |> Gen
 
-    let inline private delay (f : unit -> Gen<'T>) : Gen<'T> = 
+    let private delay (f : unit -> Gen<'T>) : Gen<'T> = 
         // f can have side effects so must be executed every time.
         fun ctx ->
-            let inline run() =
-                let (Gen g) = f ()
-                g ctx
+            let (Gen g) = result Unchecked.defaultof<'T>   
+            let mutable generator = g ctx
             { Generate = fun () ->
-                    let forced = run()
-                    forced.Generate()
+                    let (Gen g) = f ()
+                    generator <- g ctx
+                    generator.Generate()
               GetShrinks = fun () ->
-                    let forced = run()
-                    forced.GetShrinks()
+                    generator.GetShrinks()
             }
         |> Gen
 
@@ -244,13 +240,14 @@ module Gen =
     [<CompiledName("Sized"); EditorBrowsable(EditorBrowsableState.Never)>]
     let sized sfun = 
         fun ctx -> 
-            let inline getG() = let (Gen g) = sfun !ctx.Size in g ctx
+            let mutable lastGen = Unchecked.defaultof<Generator>
             { Generate = fun () ->
-                let g = getG() //this is about as inefficient as bind and delay, because effectively it's a partial evaluation boundary.
-                g.Generate()
+                //this is about as inefficient as bind and delay, because effectively it's a partial evaluation boundary.
+                let (Gen g) = sfun !ctx.Size 
+                lastGen <- g ctx
+                lastGen.Generate()
               GetShrinks = fun () ->
-                let g = getG()
-                g.GetShrinks()
+                lastGen.GetShrinks()
             }  
         |> Gen
 
@@ -272,21 +269,24 @@ module Gen =
         let result = ref Unchecked.defaultof<'T>
         let rejected = ref 0
         let mutable haveResult = false
+        let shrinks = ref Unchecked.defaultof<ShrinkStream<'T>>
         let one =  gen { Next = fun r -> haveResult <- true; result := r
                          Reject = fun () -> rejected := !rejected + 1;
-                         Shrinks = fun s -> ()
+                         Shrinks = fun s -> shrinks := s
                          Size = ref size
                          Seed = ref seed }
         let next() =
             while not haveResult do one.Generate()
             haveResult <- false
-        next, result, rejected
+        let shrink() =
+            one.GetShrinks()
+        next, result, rejected, shrink, shrinks
 
     ///Generates n values of the given size and starting with the given seed.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
     let sampleWithSeed seed size nbSamples (gen:Gen<'T>) : 'T[] =
-        let next, result, _ = scanResults seed size gen
+        let next, result, _, _ ,_ = scanResults seed size gen
         [| for i in 0..nbSamples-1 do 
              next()
              yield !result |]
@@ -301,6 +301,12 @@ module Gen =
     [<CompiledName("Sample")>]
     let sample nbSamples gen : 'T[] = sampleWithSize 50 nbSamples gen
 
+    let toShrink gen : 'T * ShrinkStream<'T> =
+        let next,result,_,shrink,shrinks =  scanResults (Random.create()) 50 gen
+        next()
+        shrink()
+        !result,!shrinks
+
     let inline internal primitiveStream generate shrink = 
         fun ctx -> 
             let mutable current = Unchecked.defaultof<'a> 
@@ -312,6 +318,25 @@ module Gen =
                 ctx.Shrinks <| Shrink.ofShrinker current shrink
             }
         |> Gen
+
+    /// Preconditions: 
+    /// 1. current <> target
+    /// 2. Must be signed type
+    let inline private moveCloser current target (overflow:byref<bool>) (diff:byref<_>) =
+        let one = LanguagePrimitives.GenericOne
+        let two = one + one
+        diff <- current - target
+        // this is why the precondition is necessary: if current = target, the else branch detects
+        // a false overflow for MinValue and MinValue
+        overflow <- if target > LanguagePrimitives.GenericZero then diff > current else diff < current
+        //if current > target then diff < current else current < diff
+        if overflow then
+            if current > target then
+                current / two - one
+            else
+                current / two + one
+        else
+            current - diff / two
 
     /// Generates a random int64 uniformly distributed between lo and hi (both inclusive),
     /// and shrinks towards target.
@@ -326,13 +351,45 @@ module Gen =
 
         let shrink current =
             seq { if current <> target then 
-                        yield target
-                  let mutable c = current
-                  while abs (c - target) > 1L do
-                        c <- c - (c - target) / 2L
-                        yield c }
+                      yield target
+                      let mutable overflow = false
+                      let mutable diff = LanguagePrimitives.GenericZero
+                      let mutable c = moveCloser current target &overflow &diff
+                      while overflow || abs diff > LanguagePrimitives.GenericOne do
+                           yield c
+                           c <- moveCloser c target &overflow &diff
+            }
 
         primitiveStream generate shrink
+
+    ///// Generates a random int64 uniformly distributed between lo and hi (both inclusive),
+    ///// and shrinks towards target.
+    ////[category: Creating generators]
+    //let chooseu64AroundSized target f =
+    //    let inline maybeSwap (lo,hi) = if hi < lo then (hi,lo) else (lo,hi)
+
+    //    let inline toUnsigned v =
+    //        if v < 0L then v + Int64.MaxValue + 1L |> uint64
+    //        else uint64 v + uint64 Int64.MaxValue + 1UL 
+
+    //    let inline toSigned v =
+            
+
+    //    let generate ctx =
+    //        fun () -> 
+    //            let (lo,hi) = maybeSwap (f ctx.Size.Value)
+    //            Random.rangeInt64(lo, hi, !ctx.Seed, ctx.Seed)
+    //            |> toUnsigned
+
+    //    let shrink current =
+    //        seq { if current <> target then 
+    //                    yield target
+    //              let mutable c = current
+    //              while (c - target) > 1UL do
+    //                    c <- c - (c - target) / 2UL
+    //                    yield c }
+
+    //    primitiveStream generate shrink
 
     let choose64Around target interval = choose64AroundSized target (fun _ -> interval)
 
@@ -412,7 +469,7 @@ module Gen =
         // Effectively the same as:
         //  generators |> oneof
         // but specialized to arrays for performance.
-        gen.Bind(elementsArr generators, id)
+        bind (elementsArr generators) id
 
     /// <summary>
     /// Build a generator that generates a value from one of the generators in the given non-empty seq, with
@@ -422,16 +479,24 @@ module Gen =
     /// <exception cref="System.ArgumentException">Thrown if the sum of the probabilities is less than or equal to 0.</exception>
     //[category: Creating generators from generators]
     [<CompiledName("Frequency")>]
-    let frequency xs =
+    let frequency xs : Gen<'T> =
+        // this implementation would likely be faster if specialized by
+        // passing the context to each of the given generators beforehand, instead of using bind.
+
         let xs = Seq.toArray xs
         let tot = Array.sumBy fst xs
+
+        if tot <= 0 then 
+            invalidArg "xs" "Frequency was called with a sum of probabilities less than or equal to 0. No elements can be generated."
+
         let rec pick i n =
             let k,x = xs.[i]
             if n<=k then x else pick (i+1) (n-k)
-        if tot <= 0 then 
-            invalidArg "xs" "Frequency was called with a sum of probabilities less than or equal to 0. No elements can be generated."
-        else
-            bind (choose (1,tot)) (pick 0)
+        // to avoid the same generator from xs being chosen multiple times during shrinking,
+        // we override the default shrinking strategy to only include the generators that are before
+        // the generator that was chosen.
+        bind (choose (1,tot) |> shrink (fun i -> xs |> Seq.map fst |> Seq.scan (+) 0 |> Seq.tail |> Seq.takeWhile (fun f -> f < i)))
+             (pick 0)
 
     /// <summary>
     /// Build a generator that generates a value from one of the generators in the given non-empty seq, with

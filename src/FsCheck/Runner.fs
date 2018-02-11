@@ -505,13 +505,16 @@ module Runner =
             // the eventual size is bigger than config.EndSize.
             size := float initSize + float (!nbTests + !nbRejected) * increaseSizeStep |> round |> int
         
+        let mutable lastGoodShrink = currentShrink.Value
         if !nbTests > 0 && shrink generated.[!nbTests-1] then
             currentShrink := generated.[!nbTests-1]
+            lastGoodShrink <- currentShrink.Value
             generator.GetShrinks()
             shrinker <- shrinkStream shrinkContext
             shrinker.Shrink()
             while not shrinkingDone do
                 if goodShrink currentShrink.Value then
+                    lastGoodShrink <- currentShrink.Value
                     inc nbShrinks
                     nbTryShrink := 0
                     // re-shrink from the current value
@@ -538,7 +541,9 @@ module Runner =
                     | Outcome.Passed -> 
                         TestResult.Exhausted testData
                     | Outcome.Failed _ -> 
-                        TestResult.Failed ({ testData with Labels=result.Labels }, result.Arguments, currentShrink.Value.Arguments, currentShrink.Value.Outcome, initSeed, lastSeed, lastSize)
+                        TestResult.Failed ({ testData with Labels=result.Labels }, result.Arguments, 
+                                            lastGoodShrink.Arguments, lastGoodShrink.Outcome, 
+                                            initSeed, lastSeed, lastSize)
             else
                 TestResult.Exhausted testData
         config.Runner.OnFinished(config.Name,testResult)
@@ -628,8 +633,9 @@ module Runner =
         | TestResult.Failed (data, originalArgs, args, Outcome.Failed exc, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
             + sprintf "with exception:%s%O%s" newline exc newline
-        | TestResult.Failed (data, originalArgs, args, _, originalSeed, lastSeed, lastSize) -> 
+        | TestResult.Failed (data, originalArgs, args, oc, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
+            + sprintf "with non failure outcome (this should not happen):%s%O%s" newline oc newline
         | TestResult.Exhausted data -> 
             sprintf "%sArguments exhausted after %s%s" 
                 name (pluralize data.NumberOfTests "test") (data.Stamps |> stampsToString)

@@ -137,7 +137,7 @@ module private Testable =
 
 
     let forAll (arb:Gen<_>) body : Property =
-        arb >>= evaluate body
+        arb >>= (evaluate body)
         |> Property
 
     let private combine f a b:Property = 

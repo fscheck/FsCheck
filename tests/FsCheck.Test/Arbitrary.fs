@@ -16,129 +16,130 @@ module Arbitrary =
     open Helpers
     open Arb
     open Swensen.Unquote
-(* 
-    [<Property>]
+
+    [<Fact>]
     let Unit() = 
         assertTrue ( generate<unit> |> sample 10 |> Seq.forall ((=) ()) )
-        assertTrue ( shrink<unit>() |> Seq.isEmpty )
+        assertTrue ( generate<unit> |> Gen.toShrink |> snd |> Shrink.toSeq |> Seq.isEmpty )
     
-    [<Property>]
-    let Boolean (b:bool) =
+    [<Fact>]
+    let Boolean() =
         assertTrue ( generate<bool> |> sample 10 |> Seq.forall (fun _ -> true) )
-        assertTrue ( shrink<bool> b |> Seq.isEmpty )
+        let b,bseq = generate<bool> |> Gen.toShrink
+        let bseq = bseq |> Shrink.toSeq
+        test <@ if b then Seq.exactlyOne bseq = false
+                else Seq.isEmpty bseq @>
     
     [<Property>]
-    let Int16 (NonNegativeInt size) (v:int16) =
+    let Int16 (NonNegativeInt size) =
         assertTrue ( generate<int16> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> -size <= int v && int v <= size) )
-        assertTrue ( shrink<int16> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v) )
+        assertShrinks<int16> (fun v shrunkv -> shrunkv <=! abs v)
 
-    [<Property>]
-    let DoNotSizeInt16 (DoNotSize v as doNotSizeV) =
+    [<Fact>]
+    let DoNotSizeInt16() =
         //could theoretically go wrong, if all the values do happen to be zero.
         assertTrue ( generate<DoNotSize<int16>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0s) )
-        assertTrue ( shrink<DoNotSize<int16>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= abs v) )
+        assertShrinks<DoNotSize<int16>> (fun (DoNotSize v) (DoNotSize shrunkv) -> shrunkv <=! abs v)
 
     [<Property>]
-    let UInt16 (NonNegativeInt size) (v:uint16) =
+    let UInt16 (NonNegativeInt size) =
         assertTrue (  generate<uint16> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> int v <= size) )
-        assertTrue (  shrink<uint16> v |> Seq.forall (fun shrunkv -> shrunkv <= v) )
+        assertShrinks<uint16> (fun v shrunkv -> shrunkv <! v)
 
-    [<Property>]
-    let DoNotSizeUInt16 (DoNotSize v as doNotSizeV) =
+    [<Fact>]
+    let DoNotSizeUInt16() =
         //could theoretically go wrong, if all the values do happen to be zero.
         assertTrue (  generate<DoNotSize<uint16>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0us) )
-        assertTrue (  shrink<DoNotSize<uint16>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= v) )
+        assertShrinks<DoNotSize<uint16>> (fun (DoNotSize v) (DoNotSize shrunkv) -> shrunkv <! v)
 
     [<Property>]
-    let Int32 (NonNegativeInt size) (v:int) =
+    let Int32 (NonNegativeInt size) =
         assertTrue (  generate<int> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> -size <= v && v <= size) )
-        assertTrue (  shrink<int> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v) )
+        assertShrinks<int> (fun v shrunkv -> shrunkv <=! abs v)
 
-    [<Property>]
-    let DoNotSizeInt32 (DoNotSize v as doNotSizeV) =
+    [<Fact>]
+    let DoNotSizeInt32() =
         //could theoretically go wrong, if all the values do happen to be zero.
         assertTrue (  generate<DoNotSize<int>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0) )
-        assertTrue (  shrink<DoNotSize<int>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= abs v) )
+        assertShrinks<DoNotSize<int>> (fun (DoNotSize v) (DoNotSize shrunkv) -> shrunkv <=! abs v)
 
     [<Property>]
-    let UInt32 (NonNegativeInt size) (v:uint32) =
+    let UInt32 (NonNegativeInt size) =
         assertTrue ( generate<uint32> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> int v <= size) )
-        assertTrue ( shrink<uint32> v |> Seq.forall (fun shrunkv -> shrunkv <= v) )
+        assertShrinks<uint32> (fun v shrunkv -> shrunkv <! v)
 
-    [<Property>]
-    let DoNotSizeUInt32 (DoNotSize v as doNotSizeV) =
+    [<Fact>]
+    let DoNotSizeUInt32() =
         //could theoretically go wrong, if all the values do happen to be zero.
         assertTrue (  generate<DoNotSize<uint32>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0u) )
-        assertTrue (  shrink<DoNotSize<uint32>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= v) )
+        assertShrinks<DoNotSize<uint32>> (fun (DoNotSize v) (DoNotSize shrunkv) -> shrunkv <! v)
 
     [<Property>]
-    let Int64 (NonNegativeInt size) (value: int64) = 
+    let Int64(NonNegativeInt size) = 
         assertTrue ( generate<int64> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> -(int64 size) <= v && v <= int64 size) )
-        assertTrue ( shrink<int64> value |> Seq.forall (fun shrunkv -> (int shrunkv) <= abs (int value)) )
+        assertShrinks<int64> (fun v shrunkv -> shrunkv <=! abs v)
                 
-    [<Property>]
-    let DoNotSizeInt64 (DoNotSize v as doNotSizeV) =
+    [<Fact>]
+    let DoNotSizeInt64() =
         //could theoretically go wrong, if all the values do happen to be zero.
         assertTrue ( generate<DoNotSize<int64>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0L) )
-        assertTrue ( shrink<DoNotSize<int64>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= abs v) )
+        assertShrinks<DoNotSize<int64>> (fun (DoNotSize v) (DoNotSize shrunkv) -> shrunkv <=! abs v)
 
     [<Property>]
-    let UInt64 (NonNegativeInt size) (v:uint64) =
+    let UInt64 (NonNegativeInt size) =
         assertTrue ( generate<uint64> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> int v <= size) )
-        assertTrue ( shrink<uint64> v |> Seq.forall (fun shrunkv -> shrunkv <= v) )
+        assertShrinks<uint64> (fun v shrunkv -> shrunkv <! v)
 
-    [<Property>]
-    let DoNotSizeUInt64 (DoNotSize v as doNotSizeV) =
+    [<Fact>]
+    let DoNotSizeUInt64() =
         //could theoretically go wrong, if all the values do happen to be zero.
         assertTrue ( generate<DoNotSize<uint64>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0UL) )
-        assertTrue ( shrink<DoNotSize<uint64>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= v) )
+        assertShrinks<DoNotSize<uint64>> (fun (DoNotSize v) (DoNotSize shrunkv) -> shrunkv <! v)
 
     [<Property>]
-    let Double (NonNegativeInt size) (value:float) =
+    let Double (NonNegativeInt size) =
         assertTrue ( generate<float> |> Gen.resize size |> sample 10
                 |> Seq.forall (fun v -> 
                     (-2.0 * float size <= v && v <= 2.0 * float size )
                     || Double.IsNaN(v) || Double.IsInfinity(v)
                     || v = Double.Epsilon || v = Double.MaxValue || v = Double.MinValue) )
-        assertTrue ( shrink<float> value 
-                |> Seq.forall (fun shrunkv -> shrunkv = 0.0 || shrunkv <= abs value) )
+        assertShrinks<float> (fun v shrunkv -> test <@ shrunkv = 0.0 || shrunkv <= abs v @>)
         
     [<Property>]
-    let Single (NonNegativeInt size) (value:float32) =
+    let Single (NonNegativeInt size) =
         assertTrue ( generate<float32> |> Gen.resize size |> sample 10
                 |> Seq.forall (fun v -> 
                     (-2.0f * float32 size <= v && v <= 2.0f * float32 size )
                     || Single.IsNaN(v) || Single.IsInfinity(v)
                     || v = Single.Epsilon || v = Single.MaxValue || v = Single.MinValue) )
-        assertTrue ( shrink<float32> value 
-                |> Seq.forall (fun shrunkv -> shrunkv = 0.0f || shrunkv <= abs value) )
+        assertShrinks<float32> (fun v shrunkv -> test <@ shrunkv = 0.0f || shrunkv <= abs v @> )
 
-    [<Property>]
-    let Byte (value:byte) =
+    [<Fact>]
+    let Byte () =
         assertTrue ( generate<byte> |> sample 10 |> Seq.forall (fun _ -> true) ) //just check that we can generate bytes
-        assertTrue ( shrink<byte> value |> Seq.forall (fun shrunkv -> (int shrunkv) <= abs (int value)) )
+        assertShrinks<byte> (fun v shrunkv -> shrunkv <! v)
         
-    [<Property>]
-    let SByte (value:sbyte) =
+    [<Fact>]
+    let SByte () =
         assertTrue ( generate<sbyte> |> sample 10 |> Seq.forall (fun _ -> true) ) //just check that we can generate sbytes
-        assertTrue ( shrink<sbyte> value |> Seq.forall (fun shrunkv -> int shrunkv <= abs (int value) ) )
+        assertShrinks<sbyte> (fun v shrunkv -> shrunkv <! abs v)
 
-    [<Property>]
-    let Char (value:char) =
+    [<Fact>]
+    let Char () =
         assertTrue ( generate<char> |> sample 10 |> Seq.forall (fun v -> v >= Char.MinValue && (int v) <= 127) )
-        assertTrue ( shrink<char> value |> Seq.forall (fun shrunkv -> isIn  ['a';'b';'c'] shrunkv ) )
+        assertShrinks<char> (fun v shrunkv -> abs ((int shrunkv) - (int 'a')) <! abs ((int v) - (int 'a')) )
 
-    [<Property>]
-    let String (value:string) =
-        assertTrue ( generate<string> |> sample 10 |> Seq.forall (fun _ -> true) )
-            //or the lenght of the string is shorter, or one of its values have been shrunk
-        assertTrue ( shrink<string> value |> Seq.forall (fun s -> s = null || String.length s < String.length value || (String.exists (isIn ['a';'b';'c']) s))  )
+    [<Fact>]
+    let String () =
+        //assertTrue ( generate<string> |> sample 10 |> Seq.forall (fun _ -> true) )
+        //or the lenght of the string is shorter, or one of its values have been shrunk
+        assertShrinks<string> (fun v shrunkv -> test <@ v = null || String.length shrunkv <= String.length v @>)
 
     [<Property>]
     let ``Non-empty string`` (NonEmptyString v) = 
         not (System.String.IsNullOrEmpty v)
         |> assertTrue
-      
+(*      
     [<Property>]
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
         assertTrue ( generate<int*char> |> sample 10 |> Seq.forall (fun _ -> true) )

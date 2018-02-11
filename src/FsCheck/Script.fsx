@@ -7,6 +7,136 @@ open FsCheck
 open FsCheck.Experimental
 open System.Collections.Generic
 
+false < true
+uint64 Int64.MaxValue + uint64 Int64.MaxValue + 1UL
+13848750606405358206UL  < 9250757139101164796UL
+
+9250757139101164796UL - uint64 Int64.MaxValue
+
+//Int64.MinValue + Int64.MaxValue + 1L |> uint64
+
+/// Preconditions: 
+/// 1. current <> target
+/// 2. Must be signed type
+let inline moveCloser current target (overflow:byref<bool>) (diff:byref<_>) =
+    let one = LanguagePrimitives.GenericOne
+    let two = one + one
+    diff <- current - target
+    // this is why the precondition is necessary: if current = target, the else branch detects
+    // a false overflow for MinValue and MinValue
+    overflow <- if target > LanguagePrimitives.GenericZero then diff > current else diff < current
+    //if current > target then diff < current else current < diff
+    if overflow then
+        if current > target then
+            current / two - one
+        else
+            current / two + one
+    else
+        current - diff / two
+        //if current > target then current - diff / two
+        //else current + diff / two
+
+let inline shrink current target =
+    seq {  if current <> target then 
+               yield target
+               let mutable overflow = false
+               let mutable diff = LanguagePrimitives.GenericZero
+               let mutable c = moveCloser current target &overflow &diff
+               while overflow || abs diff > LanguagePrimitives.GenericOne do
+                    yield c
+                    c <- moveCloser c target &overflow &diff //c - (c - target) / 2L
+        }
+shrink 110y 100y |> Seq.toArray
+shrink 100y 110y |> Seq.toArray
+shrink -110y 100y |> Seq.toArray
+shrink 100y -110y |> Seq.toArray
+shrink 100y 0y |> Seq.toArray
+shrink -100y 0y |> Seq.toArray
+
+//shrink 110uy 100uy |> Seq.toArray
+//shrink 100uy 110uy |> Seq.toArray
+
+
+shrink SByte.MaxValue SByte.MinValue |> Seq.toArray
+shrink SByte.MinValue SByte.MaxValue |> Seq.toArray
+shrink SByte.MinValue SByte.MinValue |> Seq.toArray
+shrink SByte.MaxValue SByte.MaxValue |> Seq.toArray
+
+//shrink Byte.MaxValue Byte.MinValue |> Seq.toArray
+//shrink Byte.MinValue Byte.MaxValue |> Seq.toArray
+//shrink Byte.MinValue Byte.MinValue |> Seq.toArray
+//shrink Byte.MaxValue Byte.MaxValue |> Seq.toArray
+
+
+SByte.MaxValue - SByte.MinValue
+SByte.MinValue - SByte.MaxValue
+
+let inline overflows current target =
+    printfn "current = %A target = %A" current target
+    let diff = current - target
+    printfn "diff = %A" diff
+    // this is why the precondition is necessary: if current = target, the else branch detects
+    // a false overflow for MinValue and MinValue
+    //if current > target then diff < current else current < diff
+    if target > LanguagePrimitives.GenericZero then diff > current else diff < current
+
+overflows SByte.MaxValue SByte.MinValue = true
+overflows SByte.MinValue SByte.MaxValue = true
+overflows 110y 100y = false
+overflows 100y 110y = false
+overflows -63y 127y = true
+
+overflows Byte.MaxValue Byte.MinValue
+overflows Byte.MinValue Byte.MaxValue
+overflows 110uy 100uy
+overflows 100uy 110uy
+
+
+Int64.MinValue < (Int64.MaxValue - Int64.MinValue)
+a - b = r => a >= r 
+a = b  + r
+
+let inline printBits (v:int64) = printfn "%64s" <| Convert.ToString(v,2)
+
+let target = 1234243L
+let value = 99999999L
+let differentBits = target ^^^ value
+
+let setHighestBitInMaskToZero mask (originalValue:int64) =
+    let mutable mask = mask;
+
+    mask <- mask ||| (mask >>> 1)
+    mask <- mask ||| (mask >>> 2)
+    mask <- mask ||| (mask >>> 4)
+    mask <- mask ||| (mask >>> 8)
+    mask <- mask ||| (mask >>> 16)
+    mask <- mask ||| (mask >>> 32)
+    
+    mask <- mask >>> 1;
+
+    originalValue &&& mask
+
+let v2 = setHighestBitInMaskToZero differentBits value
+
+printBits target
+printBits value
+printBits differentBits
+printBits v2
+
+t  v
+00 00 -> []
+01 00 -> [01]
+10 00 -> [10]
+11 00 -> [01;10]
+
+0101
+1011
+
+0101  clear 1000 and set 0100
+0011  clear 0100 and srt 01=010
+0001
+
+
 Arb.generate<list<int>> |> Gen.sampleWithSize 50 10
 
 Prop.forAll (Arb.generate<int>) (fun (a:int) -> printfn "%i" a)
