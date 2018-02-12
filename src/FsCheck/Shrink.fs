@@ -30,18 +30,21 @@ module Shrink =
 
     /// Create a ShrinkStream from the given current value and shrinking function.
     let rec ofShrinker (current:'T) (shrinker:'T -> 'T seq) : ShrinkStream<'T> =
-        fun ctx ->
-            let enumerator = (shrinker current).GetEnumerator()
-            { Shrink = fun () ->
-                if enumerator.MoveNext() then 
-                    ctx.Next enumerator.Current
-                else
-                    ctx.Done()
-              GetShrinks = fun () ->
-                // this enumerator.Current call can fail if Shrink and thus MoveNext hasn't
-                // been called yet, but that should not happen during normal operation.
-                ctx.Shrinks <| ofShrinker enumerator.Current shrinker
-            }
+        let rec this =
+            fun ctx ->
+                let enumerator = (shrinker current).GetEnumerator()
+                let mutable enumerated = false            
+                { Shrink = fun () ->
+                    if enumerator.MoveNext() then 
+                        enumerated <- true
+                        ctx.Next enumerator.Current
+                    else
+                        ctx.Done()
+                  GetShrinks = fun () ->
+                    let res = if enumerated then ofShrinker enumerator.Current shrinker else this
+                    ctx.Shrinks <| res
+                }
+        this
 
     let rec map f (str:ShrinkStream<'T>) : ShrinkStream<'U> =
         fun ctx ->
@@ -87,11 +90,14 @@ module Shrink =
 
     let rec join (current:ShrinkStream<'T>) (strs:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
         fun ctx ->
-            let mutable currentStream = current
-            let mutable currentInner = current ctx
-            strs { Next = fun str -> currentStream <- str; currentInner <- str ctx; currentInner.Shrink() 
+            let mutable currentShrinks = Unchecked.defaultof<ShrinkStream<'T>>
+            let innerCtx = { ctx with Shrinks = fun s -> currentShrinks <- s }
+            let mutable currentInner = current innerCtx
+            strs { Next = fun str -> currentInner <- str innerCtx
+                                     currentInner.Shrink() 
                    Done = fun () -> currentInner.Shrink()
-                   Shrinks = fun s -> ctx.Shrinks <| join currentStream s }
+                   Shrinks = fun s -> currentInner.GetShrinks()
+                                      ctx.Shrinks <| join currentShrinks s }
 
     /// Shrinks an array by keeping the lenght of the array the same, and shrinking
     /// each element according to the given shrinkers one by one, first to last.
@@ -158,30 +164,31 @@ module Shrink =
     let rec arrayThenElements (current:'T[]) (elems:ShrinkStream<'T>[]) : ShrinkStream<'T[]> =
         append (array current) (elements current elems)
     
-    let toSeq (str:ShrinkStream<'T>) =
+    let shrink (isGoodShrink:'T -> bool) (str:ShrinkStream<'T>) =
         let mutable next = Unchecked.defaultof<'T>
         let mutable isDone = false
+        let mutable shrinks = str
         let ctx = { Next = fun n -> next <- n
                     Done = fun () -> isDone <- true
-                    Shrinks = fun s -> () }
+                    Shrinks = fun s -> shrinks <- s }
         seq {
+            isDone <- false
             // if you put this let outside of the seq, 
             // it keeps the state of shrinking accross calls
-            let shrink = str ctx
-            isDone <- false
-            shrink.Shrink()
+            let mutable shrinker = shrinks ctx
+            shrinker.Shrink()
             while not isDone do
                 yield next
-                shrink.Shrink()
+                if isGoodShrink next then
+                    shrinker.GetShrinks()
+                    shrinker <- shrinks ctx
+                    shrinker.Shrink()
+                else
+                    shrinker.Shrink()
         }
 
-    let getShrinks (str:ShrinkStream<'T>) =
-        let mutable result = Unchecked.defaultof<ShrinkStream<'T>>
-        (str { Next = fun a -> ()
-               Done = id
-               Shrinks = fun s -> result <- s}).GetShrinks()
-        result
-    
+    let toSeq (str:ShrinkStream<'T>) =
+        shrink (fun _ -> false) str    
 
 
 

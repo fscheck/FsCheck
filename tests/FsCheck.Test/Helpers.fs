@@ -23,6 +23,13 @@ module Helpers =
     let assertShrinks<'T> foreachShrink =
         assertShrinksFrom 10 Arb.generate<'T> foreachShrink
 
+    //type ShrinkTree<'T> = ShrinkTree of 'T * seq<ShrinkTree<'T>> 
+
+    //let toShrinkTree (gen:Gen<'T>) : ShrinkTree<'T> =
+    //    let rec helper (current:'T) (stream:ShrinkStream<'T>) =
+    //        ShrinkTree (current, stream |> Shrink.toSeq |> Seq.map (fun curr -> helper curr (Shrink.getShrinks stream)
+
+
     open global.Xunit
     open System.Threading
     open System.Threading.Tasks
