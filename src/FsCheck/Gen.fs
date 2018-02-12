@@ -15,7 +15,7 @@ type Context<'T> = {
     Reject: unit -> unit
     Size: Size ref
     Seed: Rnd ref
-    Shrinks: ShrinkStream<'T> -> unit
+    Shrinks: Shrink<'T> -> unit
 }
 
 (*
@@ -85,7 +85,7 @@ module GenBuilder =
         fun ctx ->
             let mutable lastF = Unchecked.defaultof<'T -> 'U>
             let mutable lastA = Unchecked.defaultof<'T>
-            let mutable fShrinkStream = Unchecked.defaultof<ShrinkStream<'T->'U>>
+            let mutable fShrinkStream = Unchecked.defaultof<Shrink<'T->'U>>
             let aCtx = withNext ctx (fun a -> lastA <- a
                                               ctx.Next (lastF lastA))
                                     (fun s -> ctx.Shrinks <| Shrink.apply lastF lastA fShrinkStream s)
@@ -99,7 +99,7 @@ module GenBuilder =
                                       genA.Value.GetShrinks()))
         |> Gen   
 
-    let internal shrinks genCtx (Gen gen:Gen<'T>) : ShrinkStream<'T> =
+    let internal shrinks genCtx (Gen gen:Gen<'T>) : Shrink<'T> =
         fun ctx ->
             let mutable generatedOne = false
             let mutable shrinkStream = Unchecked.defaultof<Shrinker>
@@ -121,7 +121,7 @@ module GenBuilder =
     let internal bind ((Gen m) : Gen<'T>) (k : 'T -> Gen<'U>) : Gen<_> = 
          fun ctx ->
             let mutable lastU = Unchecked.defaultof<'U>
-            let mutable shrinkStreamU = Unchecked.defaultof<ShrinkStream<'U>>
+            let mutable shrinkStreamU = Unchecked.defaultof<Shrink<'U>>
 
             let rec uCtx = withNext ctx (fun a -> lastU <- a
                                                   //printfn "lastU %A" a
@@ -269,7 +269,7 @@ module Gen =
         let result = ref Unchecked.defaultof<'T>
         let rejected = ref 0
         let mutable haveResult = false
-        let shrinks = ref Unchecked.defaultof<ShrinkStream<'T>>
+        let shrinks = ref Unchecked.defaultof<Shrink<'T>>
         let one =  gen { Next = fun r -> haveResult <- true; result := r
                          Reject = fun () -> rejected := !rejected + 1;
                          Shrinks = fun s -> shrinks := s
@@ -301,7 +301,7 @@ module Gen =
     [<CompiledName("Sample")>]
     let sample nbSamples gen : 'T[] = sampleWithSize 50 nbSamples gen
 
-    let toShrink gen : 'T * ShrinkStream<'T> =
+    let toShrink gen : 'T * Shrink<'T> =
         let next,result,_,shrink,shrinks =  scanResults (Random.create()) 50 gen
         next()
         shrink()
@@ -393,7 +393,7 @@ module Gen =
 
     let choose64Around target interval = choose64AroundSized target (fun _ -> interval)
 
-    let inline internal withShrinkStream (str:'T-> ShrinkStream<'T>) (Gen genF:Gen<'T>) : Gen<'T> =
+    let inline internal withShrinkStream (str:'T-> Shrink<'T>) (Gen genF:Gen<'T>) : Gen<'T> =
         fun ctx ->  
             let mutable current = Unchecked.defaultof<'T>
             let gen = genF (withNext ctx (fun e -> current <- e; ctx.Next e) (fun shr -> ()))
@@ -571,7 +571,7 @@ module Gen =
     let inline sequenceToArrImpl (generators:Gen<'T>[]) shrinker : Gen<'T[]> =
         fun ctx ->
             let values = Array.zeroCreate generators.Length
-            let shrinkers = Array.zeroCreate<ShrinkStream<'T>> generators.Length
+            let shrinkers = Array.zeroCreate<Shrink<'T>> generators.Length
             let mutable index = 0
             let gCtx = withNext ctx (fun st -> values.[index] <- st)
                                     (fun shr -> shrinkers.[index] <- shr)
@@ -597,7 +597,7 @@ module Gen =
         if Object.ReferenceEquals (null, generators) then
             nullArg "generators"
 
-        sequenceToArrImpl generators Shrink.elements
+        sequenceToArrImpl generators Shrink.arrayElements
 
     /// Sequence the given enumerable of generators into a generator of a list.
     //[category: Creating generators from generators]

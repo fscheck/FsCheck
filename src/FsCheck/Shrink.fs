@@ -7,7 +7,7 @@ open System.Collections.Generic
 type ShrinkCont<'T> = {
     Next: 'T -> unit
     Done: unit -> unit
-    Shrinks: ShrinkStream<'T> -> unit
+    Shrinks: Shrink<'T> -> unit
 }
 
 and Shrinker = {
@@ -18,18 +18,18 @@ and Shrinker = {
     GetShrinks: unit -> unit
 }
 
-and ShrinkStream<'T> = ShrinkCont<'T> -> Shrinker
+and Shrink<'T> = ShrinkCont<'T> -> Shrinker
 
 module Shrink =
 
-    let rec empty<'T> : ShrinkStream<'T> =
+    let rec empty<'T> : Shrink<'T> =
         fun ctx ->
             { Shrink = ctx.Done
               GetShrinks = fun () -> ctx.Shrinks empty
             }
 
     /// Create a ShrinkStream from the given current value and shrinking function.
-    let rec ofShrinker (current:'T) (shrinker:'T -> 'T seq) : ShrinkStream<'T> =
+    let rec ofShrinker (current:'T) (shrinker:'T -> 'T seq) : Shrink<'T> =
         let rec this =
             fun ctx ->
                 let enumerator = (shrinker current).GetEnumerator()
@@ -46,13 +46,13 @@ module Shrink =
                 }
         this
 
-    let rec map f (str:ShrinkStream<'T>) : ShrinkStream<'U> =
+    let rec map f (str:Shrink<'T>) : Shrink<'U> =
         fun ctx ->
             str { Next = fun e -> ctx.Next (f e)
                   Done = ctx.Done
                   Shrinks = fun s -> ctx.Shrinks (map f s)}
 
-    let rec where pred (str:ShrinkStream<'T>) : ShrinkStream<'T> =
+    let rec where pred (str:Shrink<'T>) : Shrink<'T> =
         fun ctx ->
             let mutable more = false
             let str' = 
@@ -64,7 +64,7 @@ module Shrink =
                 while more do str'.Shrink()
               GetShrinks = str'.GetShrinks }
 
-    let rec apply currentF currentA (f:ShrinkStream<'T->'U>) (a:ShrinkStream<'T>)  : ShrinkStream<'U> =
+    let rec apply currentF currentA (f:Shrink<'T->'U>) (a:Shrink<'T>)  : Shrink<'U> =
         fun ctx ->
             let mutable currentF = currentF
             let mutable currentA = currentA
@@ -88,9 +88,9 @@ module Shrink =
     //                                   Shrinks = fun s -> ctx.Shrinks <| distinct current s }
     //        source sourceCtx
 
-    let rec join (current:ShrinkStream<'T>) (strs:ShrinkStream<ShrinkStream<'T>>) : ShrinkStream<'T> =
+    let rec join (current:Shrink<'T>) (strs:Shrink<Shrink<'T>>) : Shrink<'T> =
         fun ctx ->
-            let mutable currentShrinks = Unchecked.defaultof<ShrinkStream<'T>>
+            let mutable currentShrinks = Unchecked.defaultof<Shrink<'T>>
             let innerCtx = { ctx with Shrinks = fun s -> currentShrinks <- s }
             let mutable currentInner = current innerCtx
             strs { Next = fun str -> currentInner <- str innerCtx
@@ -101,7 +101,7 @@ module Shrink =
 
     /// Shrinks an array by keeping the lenght of the array the same, and shrinking
     /// each element according to the given shrinkers one by one, first to last.
-    let rec elements current (shrinkers:ShrinkStream<'T>[]) : ShrinkStream<'T[]> =
+    let rec arrayElements current (shrinkers:Shrink<'T>[]) : Shrink<'T[]> =
         fun ctx ->
             let ts = Array.copy current
             let mutable idx = 0
@@ -115,7 +115,7 @@ module Shrink =
                   Shrinks = fun s -> 
                     let newShrinkers = Array.copy shrinkers
                     newShrinkers.[idx] <- s
-                    ctx.Shrinks <| elements ts newShrinkers
+                    ctx.Shrinks <| arrayElements ts newShrinkers
                 }
 
             and shrinkersShrink:_[] = shrinkers |> Array.map (fun s -> s sCtx)
@@ -133,7 +133,7 @@ module Shrink =
 
     /// Shrinks an array by keeping the elements the same but successively removing
     /// one element from the array.
-    let rec array (current:'T[]) : ShrinkStream<'T[]> =
+    let rec array (current:'T[]) : Shrink<'T[]> =
         fun ctx ->
             let mutable idx = 0
             let mutable next = current
@@ -151,9 +151,9 @@ module Shrink =
             }
 
     /// Append to shrinkstreams - shrinks in the first are tried first, then the second.
-    let rec append (s1:ShrinkStream<'T>) (s2:ShrinkStream<'T>) : ShrinkStream<'T> =
+    let rec append (s1:Shrink<'T>) (s2:Shrink<'T>) : Shrink<'T> =
         fun ctx ->
-            let mutable shrinks1 = Unchecked.defaultof<ShrinkStream<'T>>
+            let mutable shrinks1 = Unchecked.defaultof<Shrink<'T>>
             let shrinker2 = s2 { ctx with Shrinks = fun shrinks2 -> ctx.Shrinks <| append shrinks1 shrinks2 }
             s1 { ctx with Done = fun () -> shrinker2.Shrink()
                           Shrinks = fun s -> shrinks1 <-s; shrinker2.GetShrinks()
@@ -161,10 +161,14 @@ module Shrink =
 
     /// Shrinks an array by first removing each element in turn, then shrinking each element
     /// according to the given element shrinkers.
-    let rec arrayThenElements (current:'T[]) (elems:ShrinkStream<'T>[]) : ShrinkStream<'T[]> =
-        append (array current) (elements current elems)
+    let rec arrayThenElements (current:'T[]) (elems:Shrink<'T>[]) : Shrink<'T[]> =
+        append (array current) (arrayElements current elems)
     
-    let shrink (isGoodShrink:'T -> bool) (str:ShrinkStream<'T>) =
+    /// Return the list of shrinks that would be tried, determining success
+    /// of the shrink by calling the given isGoodShrink function.
+    /// The shrink that is considered the best is the last returned good shrink.
+    /// For exploring shrinking behavior.
+    let search (isGoodShrink:'T -> bool) (good:'T -> 'U) (bad:'T->'U) (str:Shrink<'T>) : seq<'U> =
         let mutable next = Unchecked.defaultof<'T>
         let mutable isDone = false
         let mutable shrinks = str
@@ -178,17 +182,23 @@ module Shrink =
             let mutable shrinker = shrinks ctx
             shrinker.Shrink()
             while not isDone do
-                yield next
                 if isGoodShrink next then
+                    yield good next
                     shrinker.GetShrinks()
                     shrinker <- shrinks ctx
-                    shrinker.Shrink()
                 else
-                    shrinker.Shrink()
+                    yield bad next
+                shrinker.Shrink()
         }
 
-    let toSeq (str:ShrinkStream<'T>) =
-        shrink (fun _ -> false) str    
+    /// Returns the shrinks that would be tried
+    /// as if each shrink fails.
+    /// For exploring shrinking behavior.
+    let badShrinks (str:Shrink<'T>) =
+        search (fun _ -> false) id id str
 
-
-
+    /// Returns the shrinks that would be tried
+    /// as if each shrink is succesful.
+    /// For exploring shrinking behavior.
+    let goodShrinks (str:Shrink<'T>) =
+        search (fun _ -> true) id id str

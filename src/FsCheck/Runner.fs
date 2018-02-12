@@ -469,7 +469,7 @@ module Runner =
         let mutable shrinkingDone = false
         let size = ref initSize
         let seed = ref initSeed
-        let mutable shrinkStream = Unchecked.defaultof<ShrinkStream<Result>>
+        let mutable shrinkStream = Unchecked.defaultof<Shrink<Result>>
         let mutable shrinker = Unchecked.defaultof<Shrinker>
         let mutable rejected = false
         let shrinkContext = { Next = fun r -> currentShrink := r;

@@ -20,13 +20,13 @@ module Arbitrary =
     [<Fact>]
     let Unit() = 
         assertTrue ( generate<unit> |> sample 10 |> Seq.forall ((=) ()) )
-        assertTrue ( generate<unit> |> Gen.toShrink |> snd |> Shrink.toSeq |> Seq.isEmpty )
+        assertTrue ( generate<unit> |> Gen.toShrink |> snd |> Shrink.badShrinks |> Seq.isEmpty )
     
     [<Fact>]
     let Boolean() =
         assertTrue ( generate<bool> |> sample 10 |> Seq.forall (fun _ -> true) )
         let b,bseq = generate<bool> |> Gen.toShrink
-        let bseq = bseq |> Shrink.toSeq
+        let bseq = bseq |> Shrink.badShrinks
         test <@ if b then Seq.exactlyOne bseq = false
                 else Seq.isEmpty bseq @>
     
@@ -131,7 +131,7 @@ module Arbitrary =
 
     [<Fact>]
     let String () =
-        //assertTrue ( generate<string> |> sample 10 |> Seq.forall (fun _ -> true) )
+        assertTrue ( generate<string> |> sample 10 |> Seq.forall (fun _ -> true) )
         //or the lenght of the string is shorter, or one of its values have been shrunk
         assertShrinks<string> (fun v shrunkv -> test <@ v = null || String.length shrunkv <= String.length v @>)
 
@@ -139,43 +139,43 @@ module Arbitrary =
     let ``Non-empty string`` (NonEmptyString v) = 
         not (System.String.IsNullOrEmpty v)
         |> assertTrue
-(*      
-    [<Property>]
-    let ``2-Tuple``((valuei:int,valuec:char) as value) =
+
+    [<Fact>]
+    let ``2-Tuple``() =
         assertTrue ( generate<int*char> |> sample 10 |> Seq.forall (fun _ -> true) )
-            //or the first value is shrunk, or the second
-        assertTrue ( shrink value |> Seq.forall (fun (i,c) -> shrink valuei |> Seq.exists ((=) i) || shrink valuec |> Seq.exists ((=) c)) )
+        //or the first value is shrunk, or the second
+        assertShrinks<int*int64> (fun (iv,iv64) (i,i64) -> test <@ i < abs iv || i64 < abs iv64 @>)
     
-    [<Property>]
-    let ``3-Tuple``((valuei:int,valuec:char,valueb:bool) as value) =
+    [<Fact>]
+    let ``3-Tuple``() =
         assertTrue ( generate<int*char*bool> |> sample 10 |> Seq.forall (fun _ -> true) )
-            //or the first value is shrunk, or the second, or the third
-        assertTrue ( shrink value |> Seq.forall (fun (i,c,b) -> shrink valuei |> Seq.exists ((=) i) 
-                                                                || shrink valuec |> Seq.exists ((=) c)
-                                                                || shrink valueb |> Seq.exists ((=) b)) )
-     
-    [<Property>]
-    let Option (value:option<int>) =
+        //or the first value is shrunk, or the second, or the third
+        assertShrinks<int*int64*bool> (fun (iv,iv64,bv) (i,i64,b) -> test <@ i < abs iv || i64 < abs iv64 || b < bv @>)
+    
+    [<Fact>]
+    let Option () =
         assertTrue ( generate<option<int>> |> sample 10 |> Seq.forall (fun _ -> true) )
-        assertTrue ( shrink value 
-                |> (fun shrinks -> match value with 
-                                   | None -> shrinks = Seq.empty 
-                                   | Some v ->  Seq.forall2 (=) shrinks (seq { yield None; for x' in shrink v -> Some x' }) ) )
+        assertShrinks<option<int>> 
+            (fun v shrunkv -> match v with 
+                              | None -> failwith "There should be no shrinks for None"
+                              | Some v -> test <@ shrunkv.IsNone || shrunkv.Value < abs v @>)
 
-    [<Property>]
-    let NonNull (value:NonNull<string>) = 
+    [<Fact>]
+    let NonNull () = 
         assertTrue ( generate<NonNull<string>> |> sample 10 |> Seq.forall (fun (NonNull x) -> x <> null) )
-        assertTrue ( Seq.forall (fun (NonNull x) -> x <> null) (shrink value) )
+        assertShrinks<NonNull<string>> (fun _ (NonNull x) -> x <>! null)
 
-    [<Property>]
-    let Nullable (value:Nullable<int>) =
+    [<Fact>]
+    let Nullable () =
         generate<Nullable<int>> |> sample 10 |> ignore
-        let shrinks = shrink value 
-        if value.HasValue then 
-            assertTrue (Seq.forall2 (=) shrinks (seq { yield Nullable(); for x' in shrink value.Value -> Nullable x' }))
-        else 
-            assertTrue (shrinks = Seq.empty)
-
+        assertShrinks<Nullable<int>> (fun value shrunkv ->
+            if value.HasValue then
+                // need to put the extra let in the quotation or the compiler complains about capturing
+                // local variables.
+                test <@ shrunkv = Nullable<int>() || let s,v = shrunkv,value in s.Value < abs v.Value @>
+            else 
+                failwith "There should be no shrinks for null")
+(*
     let testFunction (f: _ -> _) (vs: _ list) =
         let tabledF = Function<_,_>.From f
         assertTrue (List.map tabledF.Value vs = List.map f vs)
