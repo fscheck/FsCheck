@@ -23,7 +23,7 @@ GROUP Build
 RESTRICTION: == net461
 NUGET
   remote: https://www.nuget.org/api/v2
-    FAKE (4.64.3)
+    FAKE (4.64.6)
     FSharp.Compiler.Service (2.0.0.6)
     FSharp.Formatting (2.14.4)
       FSharp.Compiler.Service (2.0.0.6)
@@ -34,5 +34,5 @@ NUGET
     xunit.runner.console (2.3.1)
 GITHUB
   remote: fsharp/FAKE
-    modules/Octokit/Octokit.fsx (642a01a5e17b870f816cdd7ee09115e018b786f0)
+    modules/Octokit/Octokit.fsx (8f21aabb0974b0f4c7b7dab674b2ea2691a9db8c)
       Octokit (>= 0.20)
