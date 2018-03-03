@@ -48,10 +48,10 @@
       <span class="k">lazy</span> (<span class="i">List</span><span class="o">.</span><span class="i">map</span> <span class="i">f</span> <span class="i">l</span> <span class="o">=</span> (<span class="c">(*f &lt;|*)</span> <span class="i">List</span><span class="o">.</span><span class="i">head</span> <span class="i">l</span>) <span class="o">::</span> <span class="i">List</span><span class="o">.</span><span class="i">map</span> <span class="i">f</span> (<span class="i">List</span><span class="o">.</span><span class="i">tail</span> <span class="i">l</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">mapRec</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (1332169646,296406723)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (4 shrinks) (StdGen (880902008,296419800)):
 Original:
-{ 0-&gt;1; 1-&gt;2 }
-[1; 0]
+{ 0-&gt;1; 1-&gt;3 }
+[1; 1; 0]
 Shrunk:
 { 0-&gt;0; 1-&gt;0 }
 [1]</code></pre></td></tr></table>
@@ -89,13 +89,13 @@ Function は関数を出力し、また関数をシュリンクするために�
 <span class="k">let</span> <span class="i">testCompare</span> (<span class="i">i</span><span class="o">:</span><span class="i">int</span>) (<span class="i">j</span><span class="o">:</span><span class="i">int</span>) <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span class="i">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span class="i">j</span><span class="o">-</span><span class="n">1</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">testCompare</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (1 shrink) (StdGen (1334181086,296406723)):
-Label of failing property: 1 = -1
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (882322826,296419800)):
+Label of failing property: 3 = -1
 Original:
 2
-0
+1
 Shrunk:
-0
+1
 0</code></pre></td></tr></table>
 <p>もちろん、あなたがよく使用する任意の演算子や関数に対してこれを行うことが出来ます。</p>
 <h2>FsCheck のテストを実行するためのいくつかの方法</h2>

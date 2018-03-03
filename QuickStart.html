@@ -60,9 +60,9 @@ Prop.ForAll(revRevIsOrig).QuickCheck();</code></pre></td></tr></table>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">revIsOrig</span> (<span class="i">xs</span><span class="o">:</span><span class="i">list</span><span class="o">&lt;</span><span class="i">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span class="i">List</span><span class="o">.</span><span class="i">rev</span> <span class="i">xs</span> <span class="o">=</span> <span class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (3 shrinks) (StdGen (1507339456,296406723)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (3 shrinks) (StdGen (1005270091,296419800)):
 Original:
-[0; -1; 2]
+[-1; 0; 0; 0]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>In C#:</p>
@@ -88,9 +88,9 @@ To see this error, ask FsCheck to generate lists of floats:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">revRevIsOrigFloat</span> (<span class="i">xs</span><span class="o">:</span><span class="i">list</span><span class="o">&lt;</span><span class="i">float</span><span class="o">&gt;</span>) <span class="o">=</span> <span class="i">List</span><span class="o">.</span><span class="i">rev</span>(<span class="i">List</span><span class="o">.</span><span class="i">rev</span> <span class="i">xs</span>) <span class="o">=</span> <span class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 7 tests (7 shrinks) (StdGen (1507919849,296406723)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (8 shrinks) (StdGen (1005660360,296419800)):
 Original:
-[nan; 2.0; 0.0; -1.0; infinity; 0.0; 0.0; -0.3333333333]
+[0.0; 0.0; 0.0; 0.0; 0.0; 0.0; nan; 0.0; 0.0]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <p>That said, the example in C# using floats actually works!</p>
