@@ -1,3 +1,6 @@
+### 2.10.8 - 3 March 2018
+* Add some C# extension members to combine boolean properties. (by Stijn Moreels)
+
 ### 2.10.7 - 29 January 2018
 * Fix FsCheck.NUnit issue - failure output was not shown. (by adj123)
 
