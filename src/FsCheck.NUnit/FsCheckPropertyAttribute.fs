@@ -99,6 +99,7 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         TestExecutionContext.CurrentContext.CurrentResult <- testResult
         try
             try
+                use _testContext = new TestExecutionContext.IsolatedContext()
                 x.RunSetUp()
                 x.RunTestCase context testResult
             with
@@ -182,9 +183,6 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
-        | TestResult.False (testdata, originalArgs, shrunkArgs, Outcome.Exception e, seed)  ->
-            let msg = sprintf "%s" (Runner.onFailureToString "" testdata originalArgs shrunkArgs seed)
-            testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
-        | TestResult.False (testdata, originalArgs, shrunkArgs, outcome, seed) ->
+        | TestResult.False _ ->
             let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
