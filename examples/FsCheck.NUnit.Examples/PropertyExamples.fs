@@ -37,6 +37,14 @@ type NUnitTest() =
     member __.UnhandledException_ShouldPrint (xs : int list) =
         Assert.IsTrue(List.length xs < 6, "this message should be visible in test explorer")
 
+    [<Property; Ignore("reason")>]
+    member __.ShouldIgnore (xs : int list) =
+        false
+
+    [<Property; Category("foobar")>]
+    member __.ShouldApplyCategory (xs : int list) =
+        false
+
     // Note: should fail
     [<Property( Verbose = true )>]
     member __.RevIdVerbose_shouldFail (xs:int[]) =
