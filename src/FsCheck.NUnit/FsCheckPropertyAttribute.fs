@@ -82,7 +82,15 @@ type PropertyAttribute() =
 
     interface ISimpleTestBuilder with
         override __.BuildFrom(mi, suite) =
-            FsCheckTestMethod(mi, suite) :> TestMethod
+            let method = FsCheckTestMethod(mi, suite) :> TestMethod
+
+            mi.GetCustomAttributes<CategoryAttribute>(true) 
+            |> Array.iter (fun cattr -> cattr.ApplyToTest method)
+
+            mi.GetCustomAttributes<IgnoreAttribute>(true)
+            |> Array.iter (fun cattr -> cattr.ApplyToTest method)
+
+            method
 
     interface IWrapTestMethod with
         override __.Wrap command:Internal.Commands.TestCommand =
