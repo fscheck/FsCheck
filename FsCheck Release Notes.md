@@ -1,4 +1,5 @@
-### 2.10.9 - To be released
+### 2.10.9 - 10 April 2018
+* FsCheck.NUnit: Bugs fixed and added support for Ignore and Category attributes. (by Eirik Tsarpalis)
 
 ### 2.10.8 - 3 March 2018
 * Add some C# extension members to combine boolean properties. (by Stijn Moreels)
