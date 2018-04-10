@@ -1,3 +1,5 @@
+### 2.10.10 - To be released
+
 ### 2.10.9 - 10 April 2018
 * FsCheck.NUnit: Bugs fixed and added support for Ignore and Category attributes. (by Eirik Tsarpalis)
 
