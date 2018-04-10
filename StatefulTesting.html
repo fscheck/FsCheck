@@ -80,10 +80,10 @@ fails the test if a postcondition does not hold.</p>
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> (<span class="i">Command</span><span class="o">.</span><span class="i">toProperty</span> <span class="i">spec</span>)
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 11 tests (8 shrinks) (StdGen (1020846434,296419800)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 15 tests (12 shrinks) (StdGen (206904611,296435301)):
 Label of failing property: model: 2 &lt;&gt; Counter=1
 Original:
-[inc; inc; inc; dec; dec; inc; inc; inc; inc; inc; dec; dec]
+[inc; dec; dec; dec; inc; inc; inc; inc; inc; dec; dec; inc; dec; dec; inc; inc]
 Shrunk:
 [inc; inc; inc; dec]</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.</p>

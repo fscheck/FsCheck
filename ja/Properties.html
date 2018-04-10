@@ -73,7 +73,7 @@ FsCheck は異なる型(object の派生型)を含むリストを生成したか
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">tooEager</span> <span class="i">a</span> <span class="o">=</span> <span class="i">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> (<span class="n">1</span><span class="o">/</span><span class="i">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span class="i">a</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">tooEager</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (836237802,296419800)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (0 shrinks) (StdGen (2121998,296435301)):
 Original:
 0
 with exception:
@@ -141,7 +141,7 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertTrivial</span>
 </code></pre>
 <p>この条件が真になるテストケースは自明であると分類され、全体における自明なテストケースの比率が報告されます:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 19 tests (31% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 28 tests (39% trivial).</code></pre></td></tr></table>
 <h3>テストケースの分類</h3>
 <p>性質は <code>classify &lt;condition&gt; &lt;string&gt; &lt;property&gt;</code> という形式を取ることがあります。</p>
 <p>例えば、</p>
@@ -152,10 +152,10 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertClassify</span>
 </code></pre>
 <p>条件を満足するテストケースは与えられた分類に割り当てられ、分類の分布はテスト後に報告されます:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 15 tests.
-40% at-head.
-26% at-tail, at-head.
-26% at-tail.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 13 tests.
+38% at-tail.
+30% at-tail, at-head.
+30% at-head.</code></pre></td></tr></table>
 <p>1つのテストケースは複数の分類に当てはまる場合があることに注意してください。</p>
 <h3>データの値の収集</h3>
 <p>性質は <code>collect &lt;expression&gt; &lt;property&gt;</code> という形式を取ることがあります。</p>
@@ -167,11 +167,11 @@ within が、性質が実行されているスレッドをキャンセルしよ�
 </code></pre>
 <p>collect の引数はテストケースごとに評価され、値の分布が報告されます。
 この引数の型は <code>sprintf "%A"</code> を用いて出力されます:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 11 tests.
-36% 0.
-27% 2.
-27% 1.
-9% 3.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 21 tests.
+47% 0.
+38% 1.
+9% 2.
+4% 6.</code></pre></td></tr></table>
 <h3>観測の連結</h3>
 <p>ここで説明した観測は何らかの方法で連結されるかもしれません。テストケースそれぞれにおける
 全ての観測は連結されており、これらの連結の分布は報告されます。例えば</p>
@@ -182,12 +182,13 @@ within が、性質が実行されているスレッドをキャンセルしよ�
     <span class="o">|&gt;</span> <span class="i">Prop</span><span class="o">.</span><span class="i">collect</span> (<span class="i">List</span><span class="o">.</span><span class="i">length</span> <span class="i">xs</span>)
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">insertCombined</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 15 tests.
-33% 1, at-tail.
-33% 1, at-head.
-20% 0, at-tail, at-head.
-6% 2, at-tail.
-6% 2, at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 14 tests.
+28% 1, at-head.
+21% 0, at-tail, at-head.
+14% 2, at-tail.
+14% 2, at-head.
+14% 1, at-tail.
+7% 3, at-head.</code></pre></td></tr></table>
 <h2>And, Or およびラベル</h2>
 <p>性質は</p>
 <ul>
@@ -206,11 +207,11 @@ within が、性質が実行されているスレッドをキャンセルしよ�
   (<span class="i">res</span> <span class="o">&lt;</span> <span class="i">m</span> <span class="o">+</span> <span class="i">n</span>) <span class="o">|@</span> <span class="s">&quot;result not sum&quot;</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">complex</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (852973674,296419800)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (19126292,296435301)):
 Label of failing property: result not sum
 Original:
-1
-2
+0
+-1
 Shrunk:
 0
 0</code></pre></td></tr></table>
@@ -225,7 +226,7 @@ Shrunk:
       <span class="s">&quot;lt2&quot;</span>  <span class="o">@|</span> (<span class="i">res</span> <span class="o">&gt;</span> <span class="i">n</span>))
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">multiply</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (853674170,296419800)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (19751241,296435301)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1

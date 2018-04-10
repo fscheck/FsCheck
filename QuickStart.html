@@ -60,11 +60,11 @@ Prop.ForAll(revRevIsOrig).QuickCheck();</code></pre></td></tr></table>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">revIsOrig</span> (<span class="i">xs</span><span class="o">:</span><span class="i">list</span><span class="o">&lt;</span><span class="i">int</span><span class="o">&gt;</span>) <span class="o">=</span> <span class="i">List</span><span class="o">.</span><span class="i">rev</span> <span class="i">xs</span> <span class="o">=</span> <span class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (3 shrinks) (StdGen (1005270091,296419800)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (3 shrinks) (StdGen (187204611,296435301)):
 Original:
-[-1; 0; 0; 0]
+[0; -2; -2]
 Shrunk:
-[1; 0]</code></pre></td></tr></table>
+[0; 1]</code></pre></td></tr></table>
 <p>In C#:</p>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>[]<span class="o">&gt;</span>(xs <span class="o">=</span><span class="o">&gt;</span> xs.Reverse().SequenceEqual(xs))
     .QuickCheck();</code></pre></td></tr></table>
@@ -88,9 +88,9 @@ To see this error, ask FsCheck to generate lists of floats:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="i">revRevIsOrigFloat</span> (<span class="i">xs</span><span class="o">:</span><span class="i">list</span><span class="o">&lt;</span><span class="i">float</span><span class="o">&gt;</span>) <span class="o">=</span> <span class="i">List</span><span class="o">.</span><span class="i">rev</span>(<span class="i">List</span><span class="o">.</span><span class="i">rev</span> <span class="i">xs</span>) <span class="o">=</span> <span class="i">xs</span>
 <span class="i">Check</span><span class="o">.</span><span class="i">Quick</span> <span class="i">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (8 shrinks) (StdGen (1005660360,296419800)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (1 shrink) (StdGen (187517149,296435301)):
 Original:
-[0.0; 0.0; 0.0; 0.0; 0.0; 0.0; nan; 0.0; 0.0]
+[nan; -1.333333333]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <p>That said, the example in C# using floats actually works!</p>
