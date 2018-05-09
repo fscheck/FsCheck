@@ -503,7 +503,6 @@ module Gen =
 
     [<Fact>]
     let ``sublistof for an array with single element should generate not only empty list``() =
-        // occassionally there have been bugs where large array generations causes stack overflow
         let summedResults = 
             [0..1000] 
             |> Seq.map(fun _ -> [1] |> Gen.subListOf |> sample 1 |> List.head)
