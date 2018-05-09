@@ -500,3 +500,12 @@ module Gen =
     let ``generating large array should work``() =
         // occassionally there have been bugs where large array generations causes stack overflow
         Gen.choose(0,100) |> Gen.arrayOf |> Gen.sample 30000 100
+
+    [<Fact>]
+    let ``sublistof for an array with single element should generate not only empty list``() =
+        // occassionally there have been bugs where large array generations causes stack overflow
+        let d = 
+            [0..1000] 
+            |> Seq.map(fun _ -> [1] |> Gen.subListOf |> sample 1 |> List.head)
+            |> Seq.sumBy(fun x -> x |> List.sum)
+        test <@ d > 0 @>  

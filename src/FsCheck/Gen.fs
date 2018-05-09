@@ -533,7 +533,8 @@ module Gen =
     let subListOf l =
         let elems = Array.ofSeq l
         gen {// Generate indices into the array (up to the number of elements)
-             let! size = choose(0, elems.Length-1)
+             let maxNumberOfElements = if elems.Length = 1 then 1 else elems.Length-1
+             let! size = choose(0, maxNumberOfElements)
              let! indices = listOfLength size (choose(0, elems.Length-1)) 
              let subSeq = indices |> Seq.distinct |> Seq.map (fun i -> elems.[i])
              return List.ofSeq subSeq }
