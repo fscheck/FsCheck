@@ -503,8 +503,8 @@ module Gen =
 
     [<Fact>]
     let ``sublistof for an array with single element should generate not only empty list``() =
-        let summedResults = 
-            [0..1000] 
-            |> Seq.map(fun _ -> [1] |> Gen.subListOf |> sample 1 |> List.head)
-            |> Seq.sumBy(fun x -> x |> List.sum)
-        test <@ summedResults > 0 @>  
+        let result = 
+            Gen.subListOf [1] 
+            |> Gen.sample 100 100
+            |> Seq.contains [1]
+        test <@ result @>  
