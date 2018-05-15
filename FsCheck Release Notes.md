@@ -1,4 +1,5 @@
-### 2.10.10 - To be released
+### 2.10.10 - 15 May 2018
+* Gen.subListOf can now generate the entire given list, where previously it would always generate a strict sublist. (by Michał Niegrzybowski)
 
 ### 2.10.9 - 10 April 2018
 * FsCheck.NUnit: Bugs fixed and added support for Ignore and Category attributes. (by Eirik Tsarpalis)
