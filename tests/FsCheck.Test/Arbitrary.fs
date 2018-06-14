@@ -288,9 +288,10 @@ module Arbitrary =
         shrink t
         |> Seq.forall (fun v -> ((v.Offset.Hours = 0 || v.Offset.Minutes = 0) && v.DateTime = t.DateTime)
                                 || (v.Offset.Hours = 0 && v.Offset.Minutes = 0 
-                                        && (v.Second = 0 
-                                            || (v.Second = 0 && v.Minute = 0) 
-                                            || (v.Second = 0 && v.Minute = 0 && v.Hour = 0))))
+                                        && (v.Millisecond = 0 // TODO: all cases below are redundant
+                                            || (v.Millisecond = 0 && v.Second = 0)
+                                            || (v.Millisecond = 0 && v.Second = 0 && v.Minute = 0) 
+                                            || (v.Millisecond = 0 && v.Second = 0 && v.Minute = 0 && v.Hour = 0))))
 
     [<Fact>]
     let KeyValuePair () =
