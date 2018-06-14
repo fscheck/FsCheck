@@ -260,9 +260,11 @@ module Arbitrary =
     [<Property>]
     let ``DateTime shrinks seconds, minutes and hours`` (value:DateTime) =
         shrink value
-        |> Seq.forall (fun v -> v.Second = 0 
-                                 || (v.Second = 0 && v.Minute = 0) 
-                                 || (v.Second = 0 && v.Minute = 0 && v.Hour = 0) )
+        |> Seq.forall (fun v -> v.Kind = DateTimeKind.Unspecified   // TODO: all the cases below are redundant?
+                                 || (v.Kind = DateTimeKind.Unspecified && v.Millisecond = 0)
+                                 || (v.Kind = DateTimeKind.Unspecified && v.Millisecond = 0 && v.Second = 0 )
+                                 || (v.Kind = DateTimeKind.Unspecified && v.Millisecond = 0 && v.Second = 0 && v.Minute = 0) 
+                                 || (v.Kind = DateTimeKind.Unspecified && v.Millisecond = 0 && v.Second = 0 && v.Minute = 0 && v.Hour = 0) )
 
     [<Fact>]
     let ``TimeSpan``() =
