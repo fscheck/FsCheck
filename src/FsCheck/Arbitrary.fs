@@ -197,8 +197,7 @@ module Arb =
                         |> Seq.takeWhile ((|>|) n) }
         |> Seq.distinct
 
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let inline shrinkDate (d:DateTime) =
+    let internal shrinkDate (d:DateTime) =
         if d.Kind <> DateTimeKind.Unspecified then
             seq { yield DateTime.SpecifyKind(d, DateTimeKind.Unspecified) }
         elif d.Millisecond <> 0 then
@@ -757,16 +756,16 @@ module Arb =
         static member TimeSpan() =
             let genTimeSpan = generate |> Gen.map (fun (DoNotSize ticks) -> TimeSpan ticks)
             let shrink (t: TimeSpan) = 
-                if t.Days > 0 then
+                if t.Days <> 0 then
                     seq { yield TimeSpan(0, t.Hours, t.Minutes, t.Seconds, t.Milliseconds) }
-                elif t.Hours > 0 then
+                elif t.Hours <> 0 then
                     seq { yield TimeSpan(0, 0, t.Minutes, t.Seconds, t.Milliseconds) }
-                elif t.Minutes > 0 then
+                elif t.Minutes <> 0 then
                     seq { yield TimeSpan(0, 0, 0, t.Seconds, t.Milliseconds) }
-                elif t.Seconds > 0 then
+                elif t.Seconds <> 0 then
                     seq { yield TimeSpan(0, 0, 0, 0, t.Milliseconds) }
-                elif t.Milliseconds > 0 then
-                    seq { yield TimeSpan(0L) }
+                elif t.Milliseconds <> 0 then
+                    seq { yield TimeSpan.Zero }
                 else
                     Seq.empty
             fromGenShrink (genTimeSpan, shrink)
