@@ -787,7 +787,7 @@ module Arb =
             let genDate = gen { 
                             let! t = generate<DateTime>
                             let! tz = genTimeZone
-                            return DateTimeOffset(t, tz) }
+                            return DateTimeOffset(DateTime.SpecifyKind(t, DateTimeKind.Unspecified), tz) }
             let shrink (d: DateTimeOffset) =
                 seq {
                     for ts in shrinkTimeZone d.Offset ->
