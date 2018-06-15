@@ -258,11 +258,22 @@ module Arbitrary =
         1900 <= value.Year && value.Year <= 2100
 
     [<Property>]
-    let ``DateTime shrinks seconds, minutes and hours`` (value:DateTime) =
-        shrink value
-        |> Seq.forall (fun v -> v.Second = 0 
-                                 || (v.Second = 0 && v.Minute = 0) 
-                                 || (v.Second = 0 && v.Minute = 0 && v.Hour = 0) )
+    let ``DateTime shrinks incrementally remove kind and time components`` (value:DateTime) =
+        let rec checkShrink (value:DateTime) =
+            let shrinks = shrink value
+            if value.Kind <> DateTimeKind.Unspecified then
+                shrinks |> Seq.forall (fun v -> v.Kind = DateTimeKind.Unspecified && checkShrink v)
+            elif value.Millisecond <> 0 then
+                shrinks |> Seq.forall (fun v -> v.Kind = DateTimeKind.Unspecified && v.Millisecond = 0 && checkShrink v)
+            elif value.Second <> 0 then
+                shrinks |> Seq.forall (fun v -> v.Kind = DateTimeKind.Unspecified && v.Millisecond = 0 && v.Second = 0 && checkShrink v)
+            elif value.Minute <> 0 then
+                shrinks |> Seq.forall (fun v -> v.Kind = DateTimeKind.Unspecified && v.Millisecond = 0 && v.Second = 0 && v.Minute = 0 && checkShrink v)
+            elif value.Hour <> 0 then
+                shrinks |> Seq.forall (fun v -> v.Kind = DateTimeKind.Unspecified && v.Millisecond = 0 && v.Second = 0 && v.Minute = 0 && v.Hour = 0 && checkShrink v)
+            else
+                Seq.isEmpty shrinks
+        checkShrink value
 
     [<Fact>]
     let ``TimeSpan``() =
@@ -270,12 +281,21 @@ module Arbitrary =
 
     [<Property>]
     let ``TimeSpan shrinks`` (value: TimeSpan) =
-        shrink value
-        |> Seq.forall (fun v -> v.Days = 0
-                                || (v.Days = 0 && v.Hours = 0)
-                                || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0)
-                                || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0)
-                                || (v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0 || v.Milliseconds = 0))
+        let rec checkShrink (value:TimeSpan) =
+            let shrinks = shrink value
+            if value.Days <> 0 then
+                shrinks |> Seq.forall (fun v -> v.Days = 0 && checkShrink v)
+            elif value.Hours <> 0 then
+                shrinks |> Seq.forall (fun v -> v.Days = 0 && v.Hours = 0 && checkShrink v)
+            elif value.Minutes <> 0 then
+                shrinks |> Seq.forall (fun v -> v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && checkShrink v)
+            elif value.Seconds <> 0 then
+                shrinks |> Seq.forall (fun v -> v.Days = 0 && v.Hours = 0 && v.Minutes = 0 && v.Seconds = 0 && checkShrink v)
+            elif value.Milliseconds <> 0 then
+                shrinks |> Seq.forall (fun v -> v.Ticks = 0L && checkShrink v)
+            else
+                Seq.isEmpty shrinks
+        checkShrink value
 
     [<Fact>]
     let DateTimeOffset() =
@@ -286,9 +306,10 @@ module Arbitrary =
         shrink t
         |> Seq.forall (fun v -> ((v.Offset.Hours = 0 || v.Offset.Minutes = 0) && v.DateTime = t.DateTime)
                                 || (v.Offset.Hours = 0 && v.Offset.Minutes = 0 
-                                        && (v.Second = 0 
-                                            || (v.Second = 0 && v.Minute = 0) 
-                                            || (v.Second = 0 && v.Minute = 0 && v.Hour = 0))))
+                                        && (v.Millisecond = 0 // TODO: all cases below are redundant
+                                            || (v.Millisecond = 0 && v.Second = 0)
+                                            || (v.Millisecond = 0 && v.Second = 0 && v.Minute = 0) 
+                                            || (v.Millisecond = 0 && v.Second = 0 && v.Minute = 0 && v.Hour = 0))))
 
     [<Fact>]
     let KeyValuePair () =
