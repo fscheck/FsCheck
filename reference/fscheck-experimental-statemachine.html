@@ -67,6 +67,7 @@
           <p>Check all generated runs, i.e. create a property from an arbitrarily generated run.</p>
 
 
+              <p>CompiledName: <code>ForAll</code></p>
         </td>
       </tr>
       <tr>
@@ -87,6 +88,7 @@
           <p>Check one run, i.e. create a property from a single run.</p>
 
 
+              <p>CompiledName: <code>ForOne</code></p>
         </td>
       </tr>
       <tr>
@@ -115,8 +117,8 @@
             operation name runModel check
           </code>
           <div class="tip" id="141">
-            <strong>Signature:</strong> name:string -&gt; runModel:(&#39;Model -&gt; &#39;Model) -&gt; check:(&#39;Actual * &#39;Model -&gt; &#39;?210174) -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
-                          <strong>Type parameters:</strong> 'Model, 'Actual, '?210174          </div>
+            <strong>Signature:</strong> name:string -&gt; runModel:(&#39;Model -&gt; &#39;Model) -&gt; check:(&#39;Actual * &#39;Model -&gt; &#39;?210179) -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
+                          <strong>Type parameters:</strong> 'Model, 'Actual, '?210179          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L223-223" class="github-link">
@@ -191,8 +193,8 @@
             operationWithPrecondition (...)
           </code>
           <div class="tip" id="145">
-            <strong>Signature:</strong> name:string -&gt; preCondition:(&#39;Model -&gt; bool) -&gt; runModel:(&#39;Model -&gt; &#39;Model) -&gt; check:(&#39;Actual * &#39;Model -&gt; &#39;?210170) -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
-                          <strong>Type parameters:</strong> 'Model, 'Actual, '?210170          </div>
+            <strong>Signature:</strong> name:string -&gt; preCondition:(&#39;Model -&gt; bool) -&gt; runModel:(&#39;Model -&gt; &#39;Model) -&gt; check:(&#39;Actual * &#39;Model -&gt; &#39;?210175) -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
+                          <strong>Type parameters:</strong> 'Model, 'Actual, '?210175          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L215-215" class="github-link">
@@ -210,8 +212,8 @@
             setup actual model
           </code>
           <div class="tip" id="146">
-            <strong>Signature:</strong> actual:(unit -&gt; &#39;?210158) -&gt; model:(unit -&gt; &#39;?210159) -&gt; Setup&lt;&#39;?210158,&#39;?210159&gt;<br />
-                          <strong>Type parameters:</strong> '?210158, '?210159          </div>
+            <strong>Signature:</strong> actual:(unit -&gt; &#39;?210163) -&gt; model:(unit -&gt; &#39;?210164) -&gt; Setup&lt;&#39;?210163,&#39;?210164&gt;<br />
+                          <strong>Type parameters:</strong> '?210163, '?210164          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L193-193" class="github-link">
@@ -229,8 +231,8 @@
             setupFunc actual model
           </code>
           <div class="tip" id="147">
-            <strong>Signature:</strong> actual:Func&lt;&#39;?210161&gt; -&gt; model:Func&lt;&#39;?210162&gt; -&gt; Setup&lt;&#39;?210161,&#39;?210162&gt;<br />
-                          <strong>Type parameters:</strong> '?210161, '?210162          </div>
+            <strong>Signature:</strong> actual:Func&lt;&#39;?210166&gt; -&gt; model:Func&lt;&#39;?210167&gt; -&gt; Setup&lt;&#39;?210166,&#39;?210167&gt;<br />
+                          <strong>Type parameters:</strong> '?210166, '?210167          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L199-199" class="github-link">
@@ -267,8 +269,8 @@
             tearDown run
           </code>
           <div class="tip" id="149">
-            <strong>Signature:</strong> run:(&#39;?210164 -&gt; unit) -&gt; TearDown&lt;&#39;?210164&gt;<br />
-                          <strong>Type parameters:</strong> '?210164          </div>
+            <strong>Signature:</strong> run:(&#39;?210169 -&gt; unit) -&gt; TearDown&lt;&#39;?210169&gt;<br />
+                          <strong>Type parameters:</strong> '?210169          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L205-205" class="github-link">
@@ -286,8 +288,8 @@
             tearDownAction run
           </code>
           <div class="tip" id="150">
-            <strong>Signature:</strong> run:Action&lt;&#39;?210166&gt; -&gt; TearDown&lt;&#39;?210166&gt;<br />
-                          <strong>Type parameters:</strong> '?210166          </div>
+            <strong>Signature:</strong> run:Action&lt;&#39;?210171&gt; -&gt; TearDown&lt;&#39;?210171&gt;<br />
+                          <strong>Type parameters:</strong> '?210171          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L210-210" class="github-link">
@@ -316,6 +318,7 @@
           <p>Turn a machine specification into a property.</p>
 
 
+              <p>CompiledName: <code>ToProperty</code></p>
         </td>
       </tr>
     </tbody>
