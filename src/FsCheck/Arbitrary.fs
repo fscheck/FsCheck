@@ -187,7 +187,6 @@ module Arb =
     let shrink<'Value> (a:'Value) = from<'Value>.Shrinker a
 
     ///A generic shrinker that should work for most number-like types.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
     let inline shrinkNumber n =
         let (|>|) x y = abs x > abs y 
         let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
@@ -215,10 +214,8 @@ module Arb =
 
     let internal getShrink t = arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
 
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toGen (arb:Arbitrary<'Value>) = arb.Generator
 
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toShrink (arb:Arbitrary<'Value>) = arb.Shrinker
 
     /// Construct an Arbitrary instance from a generator.
@@ -244,7 +241,7 @@ module Arb =
       
     ///Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
     ///based on a Arbitrary instance for the source type and two mapping functions.
-    [<CompiledName("Convert"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Convert")>]
     let convert convertTo convertFrom (a:Arbitrary<'a>) =
         { new Arbitrary<'b>() with
            override __.Generator = a.Generator |> Gen.map convertTo
@@ -253,7 +250,7 @@ module Arb =
 
     /// Return an Arbitrary instance that is a filtered version of an existing arbitrary instance.
     /// The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter with the given predicate.
-    [<CompiledName("Filter"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Filter")>]
     let filter pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
            override __.Generator = a.Generator |> Gen.where pred
@@ -265,7 +262,7 @@ module Arb =
     /// and the shrinks are filtered using Seq.filter with the given predicate.
     ///This is sometimes useful if using just a filter would reduce the chance of getting a good value
     ///from the generator - and you can map the value instead. E.g. PositiveInt.
-    [<CompiledName("MapFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("MapFilter")>]
     let mapFilter mapper pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
            override __.Generator = a.Generator |> Gen.map mapper |> Gen.where pred

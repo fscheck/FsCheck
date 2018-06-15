@@ -39,7 +39,7 @@ module Command =
     open Arb
     open Prop
 
-    [<CompiledName("Create"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Create")>]
     let create preCondition runActual runModel checkPostCondition =
         { new Command<'Actual,'Model>() with
             override __.RunActual pre = runActual pre
@@ -93,7 +93,7 @@ module Command =
         Seq.toList >> shrink >> Seq.where satisfiesPres >> Seq.map List.toSeq
 
     ///Turn a specification into a property, allowing you to specify generator and shrinker.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("ToPropertyWith")>]
     let toPropertyWith (spec:ICommandGenerator<'Actual,'Model>) (generator:Gen<Command<'Actual,'Model> seq>) shrinker =
         let rec applyCommands (actual,model) (cmds:list<Command<_,_>>) =
             match cmds with
@@ -112,7 +112,7 @@ module Command =
                           |> Prop.classify (l.Length > 6) "long sequences (>6 commands)" )
      
     ///Turn a specification into a property.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("ToProperty")>]
     let toProperty (spec:ICommandGenerator<'Actual,'Model>) =   
         toPropertyWith spec (generate spec) (shrink spec)
     
