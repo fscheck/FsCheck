@@ -77,6 +77,14 @@ module internal ReflectArbitrary =
             let g = productGen fields create
             box g
 
+#if !PCL
+        elif isValueTupleType t then
+            let fields = getValueTupleElements t
+            let create elems = makeValueTuple (elems,t)
+            let g = productGen fields create
+            box g
+#endif
+
         elif isTupleType t then
             let fields = FSharpType.GetTupleElements t
             let create elems = FSharpValue.MakeTuple (elems,t)
@@ -205,6 +213,14 @@ module internal ReflectArbitrary =
             let read = getRecordReader t
             let childrenTypes = getRecordFieldTypes t
             shrinkChildren read make o childrenTypes
+
+#if !PCL      
+        elif isValueTupleType t then
+            let childrenTypes = getValueTupleElements t
+            let make = fun tuple -> makeValueTuple(tuple,t)
+            let read = getValueTupleFields t
+            shrinkChildren read make o childrenTypes
+#endif
 
         elif isTupleType t then
             let childrenTypes = FSharpType.GetTupleElements t

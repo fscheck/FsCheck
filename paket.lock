@@ -4,6 +4,7 @@ NUGET
     FSharp.Core (4.0.0.1) - redirects: force
     NUnit (3.9)
     NUnit3TestAdapter (3.9.0) - version_in_path: true
+    System.ValueTuple (4.5)
     Unquote (4.0)
     xunit (2.2)
       xunit.assert (2.2)

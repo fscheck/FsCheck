@@ -65,6 +65,7 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="dotnet-mergenupkg" Version="2.*" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
 </Project>
