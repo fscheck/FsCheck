@@ -13,7 +13,21 @@ module internal Reflect =
     let isUnionType ty = FSharpType.IsUnion(ty, true)
 
     let isTupleType ty = FSharpType.IsTuple ty
+#if !PCL
+    let isValueTupleType (ty:Type) = ty.GetTypeInfo().IsGenericType && ty.GetGenericTypeDefinition().FullName.StartsWith("System.ValueTuple`")
 
+    let getValueTupleElements (ty:Type) = ty.GenericTypeArguments
+    
+    let makeValueTuple (tupleElements:obj[],tupleType:Type) =
+        let ctor = tupleType.GetTypeInfo().GetConstructors().[0]
+        ctor.Invoke(tupleElements)
+
+    let getValueTupleFields (ty:Type) (valueTuple:obj) : obj[] =
+        let tyInfo = ty.GetTypeInfo()
+        let nbOfFields = tyInfo.GetGenericArguments().Length
+        if nbOfFields > 7 then failwith "ValueTuples with more than 7 fields are not supported out of the box at this point."
+        [| for i in 1..nbOfFields -> tyInfo.GetField(sprintf "Item%i" i).GetValue(valueTuple) |]
+#endif
     let getPublicCtors (ty: Type) = ty.GetTypeInfo().DeclaredConstructors |> Seq.filter (fun c -> c.IsPublic)
 
     let getProperties (ty: Type) = ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic)
@@ -25,6 +39,8 @@ module internal Reflect =
         && Seq.length (getPublicCtors ty) = 1
         && not (ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic) |> Seq.exists (fun p -> p.CanWrite))
         && ty.GetRuntimeFields() |> Seq.filter (fun m -> not m.IsStatic && m.IsPublic) |> Seq.forall (fun f -> f.IsInitOnly)
+
+
 
     let isCSharpDtoType (ty: Type) =
         let typeinfo = ty.GetTypeInfo()

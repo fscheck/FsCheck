@@ -590,3 +590,17 @@ module Arbitrary =
     [<Fact>]
     let ``Derive generator for private two case union``() =
         generate<PrivateUnion> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``2-ValueTuple``(struct (valuei:int,valuec:char) as value) =
+        (   generate<struct (int*char)> |> sample 10 |> List.forall (fun _ -> true)
+            //or the first value is shrunk, or the second
+        ,   shrink value |> Seq.forall (fun struct (i,c) -> shrink valuei |> Seq.exists ((=) i) || shrink valuec |> Seq.exists ((=) c))  )
+    
+    [<Property>]
+    let ``3-ValueTuple``(struct (valuei:int,valuec:char,valueb:bool) as value) =
+        (   generate<struct (int*char*bool)> |> sample 10 |> List.forall (fun _ -> true)
+            //or the first value is shrunk, or the second, or the third
+        ,   shrink value |> Seq.forall (fun struct (i,c,b) -> shrink valuei |> Seq.exists ((=) i) 
+                                                              || shrink valuec |> Seq.exists ((=) c)
+                                                              || shrink valueb |> Seq.exists ((=) b))   )

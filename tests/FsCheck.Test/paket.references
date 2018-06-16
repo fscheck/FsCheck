@@ -2,3 +2,4 @@ xunit.runner.visualstudio
 Unquote
 xunit.core
 FSharp.Core
+System.ValueTuple

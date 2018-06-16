@@ -507,4 +507,35 @@ module Gen =
             Gen.subListOf [1] 
             |> Gen.sample 100 100
             |> Seq.contains [1]
-        test <@ result @>  
+        test <@ result @>
+
+    [<Property>]
+    let ValueTuple2 (a : int) (b : char) =
+        Gen.valueTuple2 (Gen.constant a) (Gen.constant b)
+        |> sample1
+        |> ((=) struct (a, b))
+
+
+    [<Property>]
+    let ValueTuple3 (a : int) (b : char) (c : bool) =
+        Gen.valueTuple3 (Gen.constant a) (Gen.constant b) (Gen.constant c)
+        |> sample1
+        |> ((=) struct (a, b, c))
+
+    [<Property>]
+    let ValueTuple4 (a : int) (b : char) (c : bool) (d : int) =
+        Gen.valueTuple4 (Gen.constant a) (Gen.constant b) (Gen.constant c) (Gen.constant d)
+        |> sample1
+        |> ((=) struct (a, b, c, d))
+
+    [<Property>]
+    let ValueTuple5 (a : int) (b : char) (c : bool) (d : int) (e : char) =
+        Gen.valueTuple5 (Gen.constant a) (Gen.constant b) (Gen.constant c) (Gen.constant d) (Gen.constant e)
+        |> sample1
+        |> ((=) struct (a, b, c, d, e))
+
+    [<Property>]
+    let ValueTuple6 (a : int) (b : char) (c : bool) (d : int) (e : char) (f : bool) =
+        Gen.valueTuple6 (Gen.constant a) (Gen.constant b) (Gen.constant c) (Gen.constant d) (Gen.constant e) (Gen.constant f)
+        |> sample1
+        |> ((=) struct (a, b, c, d, e, f))
