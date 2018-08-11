@@ -144,10 +144,12 @@ module Arbitrary =
     [<Property>]
     let ``Non-empty string`` (NonEmptyString v) = not (System.String.IsNullOrEmpty v)
       
+#if !NETSTANDARD1_6
     [<Property>]
     let ``XML value is serializable`` (XmlValue value) =
         let doc = System.Xml.XmlDocument()
         doc.LoadXml (sprintf "<Root>%s</Root>" value)
+#endif
 
     [<Property>]
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
