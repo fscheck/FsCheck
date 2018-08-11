@@ -856,7 +856,8 @@ module Arb =
             |> filter (fun s -> not (String.IsNullOrEmpty s) && not (String.exists ((=) '\000') s))
             |> convert NonEmptyString string
 
-#if !PCL
+#if PCL || NETSTANDARD1_6
+#else
         static member XmlValue() =
             Default.String()
             |> mapFilter 
