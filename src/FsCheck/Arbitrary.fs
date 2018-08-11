@@ -54,6 +54,11 @@ type StringNoNulls = StringNoNulls of string with
     member x.Get = match x with StringNoNulls r -> r
     override x.ToString() = x.Get
 
+///Represents a string that can be serializable as a XML value.
+type XmlValue = XmlValue of string with
+    member x.Get = match x with XmlValue v -> v
+    override x.ToString() = x.Get
+
 ///Represents an integer interval.
 type Interval = Interval of int * int with
     member x.Left = match x with Interval (l,_) -> l
@@ -850,6 +855,13 @@ module Arb =
             Default.String()
             |> filter (fun s -> not (String.IsNullOrEmpty s) && not (String.exists ((=) '\000') s))
             |> convert NonEmptyString string
+
+        static member XmlValue() =
+            Default.String()
+            |> mapFilter 
+                (System.Net.WebUtility.HtmlEncode)
+                (String.forall System.Xml.XmlConvert.IsXmlChar)
+            |> convert XmlValue string
 
         static member Set() = 
             Default.FsList()
