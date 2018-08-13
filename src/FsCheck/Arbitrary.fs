@@ -55,8 +55,8 @@ type StringNoNulls = StringNoNulls of string with
     override x.ToString() = x.Get
 
 ///Represents a string that can be serializable as a XML value.
-type XmlValue = XmlValue of string with
-    member x.Get = match x with XmlValue v -> v
+type XmlEncodedString = XmlEncodedString of string with
+    member x.Get = match x with XmlEncodedString v -> v
     override x.ToString() = x.Get
 
 ///Represents an integer interval.
@@ -858,12 +858,12 @@ module Arb =
 
 #if PCL || NETSTANDARD1_6
 #else
-        static member XmlValue() =
+        static member XmlEncodedString() =
             Default.String()
             |> mapFilter 
                 (System.Net.WebUtility.HtmlEncode)
                 (String.forall System.Xml.XmlConvert.IsXmlChar)
-            |> convert XmlValue string
+            |> convert XmlEncodedString string
 #endif
 
         static member Set() = 

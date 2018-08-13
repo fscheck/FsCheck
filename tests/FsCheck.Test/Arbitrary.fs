@@ -146,7 +146,7 @@ module Arbitrary =
       
 #if !NETSTANDARD1_6
     [<Property>]
-    let ``XML value is serializable`` (XmlValue value) =
+    let ``XML encoded string is serializable`` (XmlEncodedString value) =
         let doc = System.Xml.XmlDocument()
         doc.LoadXml (sprintf "<Root>%s</Root>" value)
 #endif
