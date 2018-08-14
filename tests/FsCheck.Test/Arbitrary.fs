@@ -144,6 +144,13 @@ module Arbitrary =
     [<Property>]
     let ``Non-empty string`` (NonEmptyString v) = not (System.String.IsNullOrEmpty v)
       
+#if !NETSTANDARD1_6
+    [<Property>]
+    let ``XML encoded string is serializable`` (XmlEncodedString value) =
+        let doc = System.Xml.XmlDocument()
+        doc.LoadXml (sprintf "<Root>%s</Root>" value)
+#endif
+
     [<Property>]
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
         (   generate<int*char> |> sample 10 |> List.forall (fun _ -> true)

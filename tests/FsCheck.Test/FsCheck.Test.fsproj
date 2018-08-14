@@ -99,6 +99,7 @@
       <Name>FsCheck.Xunit</Name>
       <Project>{26A87ED0-9836-45F6-A88E-603DA8FCD856}</Project>
     </ProjectReference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v4.5.2'">
