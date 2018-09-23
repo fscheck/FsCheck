@@ -40,6 +40,18 @@ type NUnitTest() =
     member __.ReplayBroken_shouldFail (x:float) y =
         true
 
+    [<Property>]
+    member __.PrintUnhandledException_ShouldFail (xs : int list) =
+        Assert.IsTrue(List.length xs < 6, "this message should be visible in test explorer")
+
+    [<Property; Ignore("reason")>]
+    member __.ShouldIgnore (xs : int list) =
+        false
+
+    [<Property; Category("foobar")>]
+    member __.ShouldApplyCategory (xs : int) =
+        true
+
     // Note: should fail
     [<Property( Verbose = true )>]
     member __.RevIdVerbose_shouldFail (xs:int[]) =

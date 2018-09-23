@@ -74,7 +74,15 @@ type PropertyAttribute() =
 
     interface ISimpleTestBuilder with
         override __.BuildFrom(mi, suite) =
-            FsCheckTestMethod(mi, suite) :> TestMethod
+            let method = FsCheckTestMethod(mi, suite) :> TestMethod
+
+            mi.GetCustomAttributes<CategoryAttribute>(true) 
+            |> Array.iter (fun cattr -> cattr.ApplyToTest method)
+
+            mi.GetCustomAttributes<IgnoreAttribute>(true)
+            |> Array.iter (fun cattr -> cattr.ApplyToTest method)
+
+            method
 
     interface IWrapTestMethod with
         override __.Wrap command:Internal.Commands.TestCommand =
@@ -91,6 +99,7 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         TestExecutionContext.CurrentContext.CurrentResult <- testResult
         try
             try
+                use _testContext = new TestExecutionContext.IsolatedContext()
                 x.RunSetUp()
                 x.RunTestCase context testResult
             with
@@ -177,9 +186,6 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
-        | TestResult.Failed (testdata, originalArgs, shrunkArgs, Outcome.Failed e, originalSeed, lastSeed, lastSize)  ->
-            let msg = sprintf "%s" (Runner.onFailureToString "" testdata originalArgs shrunkArgs originalSeed lastSeed lastSize)
-            testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
-        | TestResult.Failed (testdata, originalArgs, shrunkArgs, outcome, originalSeed, lastSeed, lastSize) ->
+        | TestResult.Failed _ ->
             let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)

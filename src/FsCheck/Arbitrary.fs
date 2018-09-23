@@ -172,7 +172,6 @@ module Arb =
     let shrink<'Value> (a:'Value) = from<'Value>.Shrinker a
 
     ///A generic shrinker that should work for most number-like types.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
     let inline shrinkNumber n =
         let (|>|) x y = abs x > abs y 
         let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
@@ -182,14 +181,26 @@ module Arb =
                         |> Seq.takeWhile ((|>|) n) }
         |> Seq.distinct
 
+    let internal shrinkDate (d:DateTime) =
+        if d.Kind <> DateTimeKind.Unspecified then
+            seq { yield DateTime.SpecifyKind(d, DateTimeKind.Unspecified) }
+        elif d.Millisecond <> 0 then
+            seq { yield DateTime(d.Year,d.Month,d.Day,d.Hour,d.Minute,d.Second) }
+        elif d.Second <> 0 then
+            seq { yield DateTime(d.Year,d.Month,d.Day,d.Hour,d.Minute,0) }
+        elif d.Minute <> 0 then
+            seq { yield DateTime(d.Year,d.Month,d.Day,d.Hour,0,0) }
+        elif d.Hour <> 0 then
+            seq { yield DateTime(d.Year,d.Month,d.Day) }
+        else
+            Seq.empty
+
     let internal getGenerator t = arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.GeneratorObj)
 
     let internal getShrink t = arbitrary.Value.GetInstance t |> unbox<IArbitrary> |> (fun arb -> arb.ShrinkerObj)
 
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toGen (arb:Arbitrary<'Value>) = arb.Generator
 
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
     let toShrink (arb:Arbitrary<'Value>) = arb.Shrinker
 
     /// Construct an Arbitrary instance from a generator.
@@ -215,7 +226,7 @@ module Arb =
       
     ///Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
     ///based on a Arbitrary instance for the source type and two mapping functions.
-    [<CompiledName("Convert"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Convert")>]
     let convert convertTo convertFrom (a:Arbitrary<'a>) =
         { new Arbitrary<'b>() with
            override __.Generator = a.Generator |> Gen.map convertTo
@@ -224,7 +235,7 @@ module Arb =
 
     /// Return an Arbitrary instance that is a filtered version of an existing arbitrary instance.
     /// The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter with the given predicate.
-    [<CompiledName("Filter"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Filter")>]
     let filter pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
            override __.Generator = a.Generator |> Gen.where pred
@@ -236,7 +247,7 @@ module Arb =
     /// and the shrinks are filtered using Seq.filter with the given predicate.
     ///This is sometimes useful if using just a filter would reduce the chance of getting a good value
     ///from the generator - and you can map the value instead. E.g. PositiveInt.
-    [<CompiledName("MapFilter"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("MapFilter")>]
     let mapFilter mapper pred (a:Arbitrary<'a>) =
         { new Arbitrary<'a>() with
            override __.Generator = a.Generator |> Gen.map mapper |> Gen.where pred
@@ -648,7 +659,7 @@ module Arb =
             |> convert (fun f -> Action<_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
 
         ///Generates an arbitrary DateTime between 1900 and 2100. 
-        ///A DateTime is shrunk by removing its second, minute and hour components.
+        ///A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour components.
         static member DateTime() = 
             let genDate = gen {  let! y = Gen.choose(1900,2100)
                                  let! m = Gen.choose(1, 12)
@@ -656,32 +667,34 @@ module Arb =
                                  let! h = Gen.choose(0,23)
                                  let! min = Gen.choose(0,59)
                                  let! sec = Gen.choose(0,59)
-                                 return DateTime(y, m, d, h, min, sec) }
-            let shrinkDate (d:DateTime) = 
-                if d.Second <> 0 then
-                    seq { yield DateTime(d.Year,d.Month,d.Day,d.Hour,d.Minute,0) }
-                elif d.Minute <> 0 then
-                    seq { yield DateTime(d.Year,d.Month,d.Day,d.Hour,0,0) }
-                elif d.Hour <> 0 then
-                    seq { yield DateTime(d.Year,d.Month,d.Day) }
-                else
-                    Seq.empty
+                                 let! ms = Gen.choose(0,999)
+                                 let! kind = Gen.elements [DateTimeKind.Unspecified; DateTimeKind.Utc; DateTimeKind.Local]
+                                 return DateTime(y, m, d, h, min, sec, ms, kind) }
             fromGenShrink (genDate,shrinkDate)
+
+        ///Generate arbitrary DateTime that is unrestricted by size.
+        ///A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour components.
+        static member DoNotSizeDateTime() =
+            let genDate = gen {  let! (DoNotSize ticks) = generate<DoNotSize<int64>>
+                                 let! kind = Gen.elements [DateTimeKind.Unspecified; DateTimeKind.Utc; DateTimeKind.Local]
+                                 return DateTime(abs ticks, kind) }
+            fromGenShrink (genDate,shrinkDate)
+            |> convert DoNotSize DoNotSize.Unwrap
 
         ///Generates an arbitrary TimeSpan. A TimeSpan is shrunk by removing days, hours, minutes, second and milliseconds.
         static member TimeSpan() =
             let genTimeSpan = generate |> Gen.map (fun (DoNotSize ticks) -> TimeSpan ticks)
             let shrink (t: TimeSpan) = 
-                if t.Days > 0 then
+                if t.Days <> 0 then
                     seq { yield TimeSpan(0, t.Hours, t.Minutes, t.Seconds, t.Milliseconds) }
-                elif t.Hours > 0 then
+                elif t.Hours <> 0 then
                     seq { yield TimeSpan(0, 0, t.Minutes, t.Seconds, t.Milliseconds) }
-                elif t.Minutes > 0 then
+                elif t.Minutes <> 0 then
                     seq { yield TimeSpan(0, 0, 0, t.Seconds, t.Milliseconds) }
-                elif t.Seconds > 0 then
+                elif t.Seconds <> 0 then
                     seq { yield TimeSpan(0, 0, 0, 0, t.Milliseconds) }
-                elif t.Milliseconds > 0 then
-                    seq { yield TimeSpan(0L) }
+                elif t.Milliseconds <> 0 then
+                    seq { yield TimeSpan.Zero }
                 else
                     Seq.empty
             fromGenShrink (genTimeSpan, shrink)
@@ -702,7 +715,7 @@ module Arb =
             let genDate = gen { 
                             let! t = generate<DateTime>
                             let! tz = genTimeZone
-                            return DateTimeOffset(t, tz) }
+                            return DateTimeOffset(DateTime.SpecifyKind(t, DateTimeKind.Unspecified), tz) }
             let shrink (d: DateTimeOffset) =
                 seq {
                     for ts in shrinkTimeZone d.Offset ->

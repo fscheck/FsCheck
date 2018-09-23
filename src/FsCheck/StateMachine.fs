@@ -189,7 +189,7 @@ module StateMachine =
     open System
     open System.ComponentModel
 
-    [<CompiledName("Setup"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Setup")>]
     let setup actual model =
         { new Setup<_,_>() with
             override __.Actual() = actual()
@@ -201,7 +201,7 @@ module StateMachine =
             override __.Actual() = actual.Invoke()
             override __.Model() = model.Invoke() }
 
-    [<CompiledName("TearDown"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("TearDown")>]
     let tearDown run =
         { new TearDown<_>() with
             override __.Actual actual = run actual }
@@ -211,7 +211,7 @@ module StateMachine =
         { new TearDown<_>() with
             override __.Actual actual = run.Invoke actual }
 
-    [<CompiledName("Operation"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Operation")>]
     let operationWithPrecondition name preCondition runModel check =
         { new Operation<'Actual,'Model>() with
             override __.Run pre = runModel pre
@@ -219,7 +219,7 @@ module StateMachine =
             override __.Pre model = preCondition model
             override __.ToString() = name }
 
-    [<CompiledName("Operation"); EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Operation")>]
     let operation name runModel check =
         { new Operation<'Actual,'Model>() with
             override __.Run pre = runModel pre
@@ -312,7 +312,7 @@ module StateMachine =
         Seq.append shrinkOps shrinkSetup
         
     /// Check one run, i.e. create a property from a single run.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("ForOne")>]
     let forOne { Setup = _:'Model,setup; Operations = operations; TearDown = teardown; UsedSize = usedSize } =
             let rec run actual (operations:list<Operation<'Actual,'Model> * _>) property =
                 match operations with
@@ -331,12 +331,12 @@ module StateMachine =
                  |> Prop.classify (-1 = usedSize) "artificial sequences"
 
     ///Check all generated runs, i.e. create a property from an arbitrarily generated run.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("ForAll")>]
     let forAll (arb:Arbitrary<MachineRun<'Actual,'Model>>) = 
         Prop.forAll arb forOne
 
     ///Turn a machine specification into a property.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("ToProperty")>]
     let toProperty (spec:Machine<'Actual,'Model>) = 
         forAll (Arb.fromGenShrink(generate spec, shrink spec))
 

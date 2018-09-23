@@ -17,7 +17,21 @@
 
 * Simplify sampling data: Gen.sample et al.
 
-### 2.10.7 - To be released
+### 2.11.0 - 15 June 2018
+* DateTime now also generates kind and milliseconds (by Matthew Peacock)
+* Removed EditorBrowsable.Never from all but the obsoleted methods. F# intellisense now also honors these attributes, and so they
+were hiding a bunch of methods unnecessarily. The upshot is that C# users will see more of the API that is F# specific.
+
+### 2.10.10 - 15 May 2018
+* Gen.subListOf can now generate the entire given list, where previously it would always generate a strict sublist. (by Michał Niegrzybowski)
+
+### 2.10.9 - 10 April 2018
+* FsCheck.NUnit: Bugs fixed and added support for Ignore and Category attributes. (by Eirik Tsarpalis)
+
+### 2.10.8 - 3 March 2018
+* Add some C# extension members to combine boolean properties. (by Stijn Moreels)
+
+### 2.10.7 - 29 January 2018
 * Fix FsCheck.NUnit issue - failure output was not shown. (by adj123)
 
 * Add C# Implies extension method. (by adj123)

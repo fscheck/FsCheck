@@ -2,12 +2,11 @@
 
   <PropertyGroup>
     <AssemblyName>FsCheck.Test</AssemblyName>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
-    <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81</PackageTargetFallback>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>DEBUG;NETCOREAPP1_1;NETSTANDARD1_6</DefineConstants>
+    <DefineConstants>DEBUG;NETCOREAPP2_0;NETSTANDARD1_6</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unquote" Version="3.2.*" />
+    <PackageReference Include="Unquote" Version="4.0.*" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta1-build3642" />
     <ProjectReference Include="../../src/FsCheck.Xunit.netcore/FsCheck.Xunit.netcore.fsproj" />
   </ItemGroup>

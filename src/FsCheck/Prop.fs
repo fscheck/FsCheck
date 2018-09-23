@@ -8,7 +8,7 @@ module Prop =
     open System.ComponentModel
 
     ///Quantified property combinator. Provide a custom test data generator to a property.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("ForAll")>]
     let forAll (arb:Arbitrary<'Value>) (body:'Value -> 'Testable) = forAll arb body
 
     [<CompiledName("ForAll"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
@@ -75,13 +75,13 @@ module Prop =
     let forAllFunc3PropDef (body:Func<'V1,'V2,'V3,Property>) = property body.Invoke
 
     ///Depending on the condition, return the first testable if true and the second if false.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Given")>]
     let given condition (iftrue:'TestableIfTrue, ifFalse:'TestableIfFalse) = 
         if condition then property iftrue else property ifFalse
 
     ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
     ///and a failure otherwise.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Throws")>]
     let throws<'Exception, 'Testable when 'Exception :> exn> (p : Lazy<'Testable>) = 
        property <| try ignore p.Value; Res.failed with :? 'Exception -> Res.succeeded
 
@@ -95,20 +95,20 @@ module Prop =
         Prop.mapResult add
 
     ///Classify test cases. Test cases satisfying the condition are assigned the classification given.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Classify")>]
     let classify b name : ('Testable -> Property) = if b then stamp name else property
 
     ///Count trivial cases. Test cases for which the condition is True are classified as trivial.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Trivial")>]
     let trivial b : ('Testable -> Property) = classify b "trivial"
 
     ///Collect data values. The argument of collect is evaluated in each test case, 
     ///and the distribution of values is reported, using sprintf "%A".
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Collect")>]
     let collect (v:'CollectedValue) : ('Testable -> Property) = stamp <| sprintf "%A" v
 
     ///Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("Label")>]
     let label l : ('Testable -> Property) = 
         let add res = 
             match res with
@@ -121,7 +121,7 @@ module Prop =
     /// Turns a testable type into a property. Testables are unit, boolean, Lazy testables, Gen testables, functions
     /// from a type for which a generator is know to a testable, tuples up to 6 tuple containing testables, and lists
     /// containing testables.
-    [<EditorBrowsable(EditorBrowsableState.Never)>]
+    [<CompiledName("OfTestable")>]
     let ofTestable (testable:'Testable) =
         property testable
 
