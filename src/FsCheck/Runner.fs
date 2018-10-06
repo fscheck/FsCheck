@@ -240,18 +240,24 @@ module Runner =
 
     let private tpWorkerFun (state :obj) =
         match state with 
-        | :? ((Rnd * float) array * (int ref) * int * Gen<Rose<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken) as state ->
-            let (steps, i, iters, gen, results, ct) = state
-            let mutable j = 0
-            while (not ct.IsCancellationRequested) && j < iters do
-                j <- Threading.Interlocked.Increment (i) - 1
-                if j < iters then
-                    let rnd, size = steps.[j]
-                    let res = testStep rnd size gen
-                    match res with
-                    | OutcomeSeqOrFuture.Value xs -> results.[j] <- xs
-                    | OutcomeSeqOrFuture.Future ts -> 
-                        ts.ContinueWith (outcomeSeqFutureCont, (j, ct, results, iters)) |> ignore                    
+        | :? ((Rnd * float) array * (int ref) * int * Gen<Rose<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken * TypeClass<Arbitrary<obj>>) as state ->
+            let (steps, i, iters, gen, results, ct, defaultArb) = state
+            let oldValue = Arb.arbitrary.Value
+            try
+                Arb.arbitrary.Value <- defaultArb
+                let mutable j = 0
+                while (not ct.IsCancellationRequested) && j < iters do
+                    j <- Threading.Interlocked.Increment (i) - 1
+                    if j < iters then
+                        let rnd, size = steps.[j]
+                        let res = testStep rnd size gen
+                        match res with
+                        | OutcomeSeqOrFuture.Value xs -> results.[j] <- xs
+                        | OutcomeSeqOrFuture.Future ts -> 
+                            ts.ContinueWith (outcomeSeqFutureCont, (j, ct, results, iters)) |> ignore
+            finally
+                Arb.arbitrary.Value <- oldValue
+            
         | _ -> raise (System.ArgumentException ("state"))
 
     ///Enumerates over `steps` seq publishing every item to `tpWorkerFun` via `ThreadPool.QueueUserWorkItem`
@@ -282,7 +288,7 @@ module Runner =
             for i in 0..(Math.Min (Array.length xs, maxDegreeOfParallelism)) do
                 Threading.ThreadPool.QueueUserWorkItem (
                     new Threading.WaitCallback (tpWorkerFun),
-                    (xs, index, Array.length xs, gen, results, cts.Token)) |> ignore
+                    (xs, index, Array.length xs, gen, results, cts.Token, Arb.arbitrary.Value)) |> ignore
         let moveNextInner () = 
             if subE.MoveNext () then
                 current <- subE.Current; true  

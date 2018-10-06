@@ -134,12 +134,34 @@ module RunnerInternals =
                 override x.Shrinker t = Seq.empty }
 
     [<Fact>]
-    let ``parallelTest doesnt works with custom non threadsafe arb`` () =
+    let ``parallelTest does not work with custom non threadsafe arb`` () =
         Arb.register<IntegerGen> ()
         let body i = true
         let arb = Arb.from<Integer>
         let config = { Config.Quick with MaxTest = 300000; EndSize = 300000 }
         if check arb body config then failwith "assertion failure!"
+    
+    type Input =
+        | String of string
+        | Int of int
+
+    type NonNullStringArb =
+        static member NonNullString () =
+            Arb.Default.String ()
+            |> Arb.filter(isNull>>not)
+
+    [<Fact>]
+    let ``parallelTest propagates Arb register to threads``() =
+        Arb.register<NonNullStringArb>() |> ignore
+        let prop = function
+            | String s -> not (isNull s)
+            | Int _ -> true
+
+        let config = { Config.QuickThrowOnFailure with 
+                        MaxTest = 100; 
+                        ParallelRunConfig = Some { MaxDegreeOfParallelism = System.Environment.ProcessorCount } }
+
+        Check.One(config, prop)
 
 module Runner =
     open RunnerHelper

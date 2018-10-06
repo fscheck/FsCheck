@@ -1,3 +1,6 @@
+### 3.0.0-alpha4 - To be released
+* Propagate thread-local arbitraries to thread pool threads that are executing tests.
+
 ### 3.0.0-alpha3 - 30 December 2017
 * NuGet packaging: relax FSharp.Core constraint to 4.0 and higher for .NET Desktop.
 
