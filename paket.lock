@@ -2,7 +2,7 @@ RESTRICTION: || (== net452) (== portable-net45+win8) (== portable-net45+win8+wp8
 NUGET
   remote: https://www.nuget.org/api/v2
     FSharp.Core (4.0.0.1) - redirects: force
-    NUnit (3.9)
+    NUnit (3.10.1)
     NUnit3TestAdapter (3.10.0) - version_in_path: true
     Unquote (4.0)
     xunit (2.2)
