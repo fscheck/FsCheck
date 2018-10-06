@@ -17,7 +17,7 @@ NUGET
       xunit.abstractions (>= 2.0.1) - restriction: || (== net452) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
     xunit.extensibility.execution (2.2)
       xunit.extensibility.core (2.2) - restriction: || (== net452) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
-    xunit.runner.visualstudio (2.2.0) - version_in_path: true
+    xunit.runner.visualstudio (2.4.0) - version_in_path: true
 
 GROUP Build
 RESTRICTION: == net461
@@ -31,7 +31,7 @@ NUGET
     FSharpVSPowerTools.Core (2.3)
       FSharp.Compiler.Service (>= 2.0.0.3)
     Octokit (0.29)
-    xunit.runner.console (2.3.1)
+    xunit.runner.console (2.4)
 GITHUB
   remote: fsharp/FAKE
     modules/Octokit/Octokit.fsx (b011a602d0b690fb80a30e5b97df53523d6c4b23)
