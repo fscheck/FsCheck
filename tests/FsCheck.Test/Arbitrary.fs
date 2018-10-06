@@ -139,6 +139,13 @@ module Arbitrary =
         not (System.String.IsNullOrEmpty v)
         |> assertTrue
       
+#if !NETSTANDARD1_6
+    [<Property>]
+    let ``XML encoded string is serializable`` (XmlEncodedString value) =
+        let doc = System.Xml.XmlDocument()
+        doc.LoadXml (sprintf "<Root>%s</Root>" value)
+#endif
+
     [<Property>]
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
         assertTrue ( generate<int*char> |> sample 10 |> Seq.forall (fun _ -> true) )
