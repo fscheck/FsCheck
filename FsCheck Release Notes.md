@@ -1,4 +1,4 @@
-### 3.0.0-alpha4 - To be released
+### 3.0.0-alpha4 - 6 October 2018
 * Propagate thread-local arbitraries to thread pool threads that are executing tests.
 
 ### 3.0.0-alpha3 - 30 December 2017
