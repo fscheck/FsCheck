@@ -18,8 +18,25 @@ module private Helper =
                 Runner.onFinishedToString name testResult |> testOutputHelper.WriteLine
         }
 
+    let private throwingRunner (testOutputHelper: ITestOutputHelper) =
+        { new IRunner with
+            member __.OnStartFixture t =
+                testOutputHelper.WriteLine (Runner.onStartFixtureToString t)
+            member __.OnArguments (ntest,args, every) =
+                testOutputHelper.WriteLine (every ntest args)
+            member __.OnShrink(args, everyShrink) =
+                testOutputHelper.WriteLine (everyShrink args)
+            member __.OnFinished(name,testResult) = 
+                match testResult with
+                | TestResult.True _ -> testOutputHelper.WriteLine (Runner.onFinishedToString name testResult)
+                | _ -> failwithf "%s" (Runner.onFinishedToString name testResult)
+        }
+
     let writeToXunit config (testOutputHelper: ITestOutputHelper) =
         { config with Runner = runner testOutputHelper }
+
+    let writeToXunitThrow config (testOutputHelper: ITestOutputHelper) =
+        { config with Runner = throwingRunner testOutputHelper }
 
 [<AbstractClass;Sealed;Extension>]
 type CheckExtensions =
@@ -31,7 +48,7 @@ type CheckExtensions =
         Check.One(testName,Helper.writeToXunit Config.Quick testOutputHelper,property)
     [<Extension>]
     static member QuickCheckThrowOnFailure(property:Property, testOutputHelper: ITestOutputHelper) =
-        Check.One(Helper.writeToXunit Config.QuickThrowOnFailure testOutputHelper,property)
+        Check.One(Helper.writeToXunitThrow Config.QuickThrowOnFailure testOutputHelper,property)
     [<Extension>]
     static member VerboseCheck(property:Property, testOutputHelper: ITestOutputHelper) =
         Check.One(Helper.writeToXunit Config.Verbose testOutputHelper, property)
@@ -40,4 +57,4 @@ type CheckExtensions =
         Check.One(testName, Helper.writeToXunit Config.Verbose testOutputHelper, property)
     [<Extension>]
     static member VerboseCheckThrowOnFailure(property:Property, testOutputHelper: ITestOutputHelper) =
-        Check.One(Helper.writeToXunit Config.VerboseThrowOnFailure testOutputHelper,property)
+        Check.One(Helper.writeToXunitThrow Config.VerboseThrowOnFailure testOutputHelper,property)
