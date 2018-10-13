@@ -27,21 +27,28 @@ type GenExtensions =
 
     ///Map the given function to the value in the generator, yielding a new generator of the result type.
     [<Extension>]
-    static member Select(g:Gen<_>, selector : Func<_,_>) = g.Map(fun a -> selector.Invoke(a))
+    static member Select(g:Gen<_>, selector : Func<_,_>) = 
+        if selector = null then nullArg "selector"
+        g.Map(fun a -> selector.Invoke(a))
 
     ///Generates a value that satisfies a predicate. This function keeps re-trying
     ///by increasing the size of the original generator ad infinitum.  Make sure there is a high chance that 
     ///the predicate is satisfied.
     [<Extension>]
-    static member Where(g:Gen<_>, predicate : Func<_,_>) = where (fun a -> predicate.Invoke(a)) g
+    static member Where(g:Gen<_>, predicate : Func<_,_>) = 
+        if predicate = null then nullArg "predicate"
+        where (fun a -> predicate.Invoke(a)) g
     
     [<Extension>]
-    static member SelectMany(source:Gen<_>, f:Func<_, Gen<_>>) = 
+    static member SelectMany(source:Gen<_>, f:Func<_, Gen<_>>) =
+        if f = null then nullArg "f" 
         gen { let! a = source
               return! f.Invoke(a) }
     
     [<Extension>]
     static member SelectMany(source:Gen<_>, f:Func<_, Gen<_>>, select:Func<_,_,_>) =
+        if f = null then nullArg "f"
+        if select = null then nullArg "select"
         gen { let! a = source
               let! b = f.Invoke(a)
               return select.Invoke(a,b) }
@@ -145,18 +152,20 @@ type GenExtensions =
     //[category: Creating generators from generators]
     [<Extension>]
     static member Zip (generator, other, resultSelector : Func<_, _, _>) =
+        if resultSelector = null then nullArg "resultSelector"
         zip generator other |> map resultSelector.Invoke
 
     ///Combine two generators into a generator of 3-tuples.
     //[category: Creating generators from generators]
     [<Extension>]
-    static member Zip3 (generator, second, third) =
+    static member Zip (generator, second, third) =
         zip3 generator second third
 
     ///Combine two generators into a new generator of the result of the given result selector.
     //[category: Creating generators from generators]
     [<Extension>]
-    static member Zip3 (generator, second, third, resultSelector : Func<_, _, _, _>) =
+    static member Zip (generator, second, third, resultSelector : Func<_, _, _, _>) =
+        if resultSelector = null then nullArg "resultSelector"
         zip3 generator second third |> map resultSelector.Invoke
 
     ///Build a generator that generates a value from two generators  with qual probability.
