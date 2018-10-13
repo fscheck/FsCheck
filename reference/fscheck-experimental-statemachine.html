@@ -37,7 +37,7 @@
 <h1>StateMachine</h1>
 <p>
   <span>Namespace: FsCheck.Experimental</span><br />
-</p>
+  </p>
 <div class="xmldoc">
 </div>
 
@@ -53,14 +53,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '138', 138)" onmouseover="showTip(event, '138', 138)">
-            forAll arb
+            forAll(arb)
           </code>
           <div class="tip" id="138">
             <strong>Signature:</strong> arb:Arbitrary&lt;MachineRun&lt;&#39;Actual,&#39;Model&gt;&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L335-335" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L335-335" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -74,14 +78,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '139', 139)" onmouseover="showTip(event, '139', 139)">
-            forOne arg1
+            forOne(arg1)
           </code>
           <div class="tip" id="139">
             <strong>Signature:</strong> MachineRun&lt;&#39;Actual,&#39;Model&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForOne&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L316-316" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L316-316" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -95,14 +103,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '140', 140)" onmouseover="showTip(event, '140', 140)">
-            generate spec
+            generate(spec)
           </code>
           <div class="tip" id="140">
             <strong>Signature:</strong> spec:Machine&lt;&#39;Actual,&#39;Model&gt; -&gt; Gen&lt;MachineRun&lt;&#39;Actual,&#39;Model&gt;&gt;<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Generate&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L242-242" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L242-242" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -117,11 +129,15 @@
             operation name runModel check
           </code>
           <div class="tip" id="141">
-            <strong>Signature:</strong> name:string -&gt; runModel:(&#39;Model -&gt; &#39;Model) -&gt; check:(&#39;Actual * &#39;Model -&gt; &#39;?210309) -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
-                          <strong>Type parameters:</strong> 'Model, 'Actual, '?210309          </div>
+            <strong>Signature:</strong> name:string -&gt; runModel:(&#39;Model -&gt; &#39;Model) -&gt; check:(&#39;Actual * &#39;Model -&gt; &#39;?201756) -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
+                          <strong>Type parameters:</strong> 'Model, 'Actual, '?201756                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Operation&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L223-223" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L223-223" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -137,10 +153,15 @@
           </code>
           <div class="tip" id="142">
             <strong>Signature:</strong> name:string -&gt; runModel:Func&lt;&#39;Model,&#39;Model&gt; -&gt; check:Action&lt;&#39;Actual,&#39;Model&gt; -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Operation&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L238-238" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L238-238" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -156,10 +177,15 @@
           </code>
           <div class="tip" id="143">
             <strong>Signature:</strong> name:string -&gt; runModel:Func&lt;&#39;Model,&#39;Model&gt; -&gt; check:Func&lt;&#39;Actual,&#39;Model,bool&gt; -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Operation&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L234-234" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L234-234" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -175,10 +201,15 @@
           </code>
           <div class="tip" id="144">
             <strong>Signature:</strong> name:string -&gt; runModel:Func&lt;&#39;Model,&#39;Model&gt; -&gt; check:Func&lt;&#39;Actual,&#39;Model,Property&gt; -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Operation&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L230-230" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L230-230" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -190,14 +221,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '145', 145)" onmouseover="showTip(event, '145', 145)">
-            operationWithPrecondition (...)
+            operationWithPrecondition(...)
           </code>
           <div class="tip" id="145">
-            <strong>Signature:</strong> name:string -&gt; preCondition:(&#39;Model -&gt; bool) -&gt; runModel:(&#39;Model -&gt; &#39;Model) -&gt; check:(&#39;Actual * &#39;Model -&gt; &#39;?210305) -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
-                          <strong>Type parameters:</strong> 'Model, 'Actual, '?210305          </div>
+            <strong>Signature:</strong> name:string -&gt; preCondition:(&#39;Model -&gt; bool) -&gt; runModel:(&#39;Model -&gt; &#39;Model) -&gt; check:(&#39;Actual * &#39;Model -&gt; &#39;?201752) -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />
+                          <strong>Type parameters:</strong> 'Model, 'Actual, '?201752                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Operation&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L215-215" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L215-215" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -212,11 +247,15 @@
             setup actual model
           </code>
           <div class="tip" id="146">
-            <strong>Signature:</strong> actual:(unit -&gt; &#39;?210293) -&gt; model:(unit -&gt; &#39;?210294) -&gt; Setup&lt;&#39;?210293,&#39;?210294&gt;<br />
-                          <strong>Type parameters:</strong> '?210293, '?210294          </div>
+            <strong>Signature:</strong> actual:(unit -&gt; &#39;?201740) -&gt; model:(unit -&gt; &#39;?201741) -&gt; Setup&lt;&#39;?201740,&#39;?201741&gt;<br />
+                          <strong>Type parameters:</strong> '?201740, '?201741                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Setup&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L193-193" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L193-193" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -231,11 +270,16 @@
             setupFunc actual model
           </code>
           <div class="tip" id="147">
-            <strong>Signature:</strong> actual:Func&lt;&#39;?210296&gt; -&gt; model:Func&lt;&#39;?210297&gt; -&gt; Setup&lt;&#39;?210296,&#39;?210297&gt;<br />
-                          <strong>Type parameters:</strong> '?210296, '?210297          </div>
+            <strong>Signature:</strong> actual:Func&lt;&#39;?201743&gt; -&gt; model:Func&lt;&#39;?201744&gt; -&gt; Setup&lt;&#39;?201743,&#39;?201744&gt;<br />
+                          <strong>Type parameters:</strong> '?201743, '?201744                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Setup&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L199-199" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L199-199" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -251,10 +295,14 @@
           </code>
           <div class="tip" id="148">
             <strong>Signature:</strong> spec:Machine&lt;&#39;Actual,&#39;Model&gt; -&gt; run:MachineRun&lt;&#39;Actual,&#39;Model&gt; -&gt; seq&lt;MachineRun&lt;&#39;Actual,&#39;Model&gt;&gt;<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Shrink&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L269-269" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L269-269" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -266,14 +314,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '149', 149)" onmouseover="showTip(event, '149', 149)">
-            tearDown run
+            tearDown(run)
           </code>
           <div class="tip" id="149">
-            <strong>Signature:</strong> run:(&#39;?210299 -&gt; unit) -&gt; TearDown&lt;&#39;?210299&gt;<br />
-                          <strong>Type parameters:</strong> '?210299          </div>
+            <strong>Signature:</strong> run:(&#39;?201746 -&gt; unit) -&gt; TearDown&lt;&#39;?201746&gt;<br />
+                          <strong>Type parameters:</strong> '?201746                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;TearDown&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L205-205" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L205-205" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -285,14 +337,19 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '150', 150)" onmouseover="showTip(event, '150', 150)">
-            tearDownAction run
+            tearDownAction(run)
           </code>
           <div class="tip" id="150">
-            <strong>Signature:</strong> run:Action&lt;&#39;?210301&gt; -&gt; TearDown&lt;&#39;?210301&gt;<br />
-                          <strong>Type parameters:</strong> '?210301          </div>
+            <strong>Signature:</strong> run:Action&lt;&#39;?201748&gt; -&gt; TearDown&lt;&#39;?201748&gt;<br />
+                          <strong>Type parameters:</strong> '?201748                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;TearDown&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L210-210" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L210-210" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -304,14 +361,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '151', 151)" onmouseover="showTip(event, '151', 151)">
-            toProperty spec
+            toProperty(spec)
           </code>
           <div class="tip" id="151">
             <strong>Signature:</strong> spec:Machine&lt;&#39;Actual,&#39;Model&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ToProperty&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L340-340" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/StateMachine.fs#L340-340" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

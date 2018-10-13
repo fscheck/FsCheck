@@ -46,72 +46,91 @@
           <td class="type-name">
             <a href="fscheck-arbitrary-1.html">Arbitrary<'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-arbitraryextensions.html">ArbitraryExtensions</a>
           </td>
-          <td class="xmldoc"><p>Extensons to transform Arbitrary instances into other Arbitrary instances.</p>
+          <td class="xmldoc">
+          <p>Extensons to transform Arbitrary instances into other Arbitrary instances.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-check.html">Check</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-checkextensions.html">CheckExtensions</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-command-2.html">Command<'Actual, 'Model></a>
           </td>
-          <td class="xmldoc"><p>A single command describes pre and post conditions and the model for a single method under test.
+          <td class="xmldoc">
+          <p>A single command describes pre and post conditions and the model for a single method under test.
 The post-conditions are the invariants that will be checked; when these do not hold the test fails.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-commandextensions.html">CommandExtensions</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-config.html">Config</a>
           </td>
-          <td class="xmldoc"><p>For configuring a run.</p>
+          <td class="xmldoc">
+          <p>For configuring a run.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-configuration.html">Configuration</a>
           </td>
-          <td class="xmldoc"><p>Configure the test run with a quick configuration.</p>
+          <td class="xmldoc">
+          <p>Configure the test run with a quick configuration.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-donotshrink-1.html">DoNotShrink<'a></a>
           </td>
-          <td class="xmldoc"><p>Use the generator for 'a, but don't shrink.</p>
+          <td class="xmldoc">
+          <p>Use the generator for 'a, but don't shrink.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-donotsize-1.html">DoNotSize<'a></a>
           </td>
-          <td class="xmldoc"><p>Whereas most types are restricted by a size that grows
+          <td class="xmldoc">
+          <p>Whereas most types are restricted by a size that grows
 as the test gets further, by applying this type the underlying
 type will ignore this size and always generate from the full range.
 Note that this only makes a difference for types that have a range -
@@ -119,21 +138,33 @@ currently Int16, Int32, Int64 have DoNotSize Arbitrary instances.
 This is typically (and at least currently) only applicable for value types
 that are comparable, hence the type constraints.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-dontshrink-1.html">DontShrink<'a></a>
           </td>
-          <td class="xmldoc"><p>Use the generator for 'a, but don't shrink.</p>
+          <td class="xmldoc">
+              <div class="alert alert-warning">
+              <strong>WARNING: </strong> This API is obsolete
+              <p>Renamed to DoNotShrink.</p>
+              </div> 
+          <p>Use the generator for 'a, but don't shrink.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-dontsize-1.html">DontSize<'a></a>
           </td>
-          <td class="xmldoc"><p>Whereas most types are restricted by a size that grows
+          <td class="xmldoc">
+              <div class="alert alert-warning">
+              <strong>WARNING: </strong> This API is obsolete
+              <p>Renamed to DoNotSize.</p>
+              </div> 
+          <p>Whereas most types are restricted by a size that grows
 as the test gets further, by applying this type the underlying
 type will ignore this size and always generate from the full range.
 Note that this only makes a difference for types that have a range -
@@ -141,241 +172,304 @@ currently Int16, Int32, Int64 have DontSize Arbitrary instances.
 This is typically (and at least currently) only applicable for value types
 that are comparable, hence the type constraints.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-fixedlengtharray-1.html">FixedLengthArray<'a></a>
           </td>
-          <td class="xmldoc"><p>Represents an array whose length does not change when shrinking.</p>
+          <td class="xmldoc">
+          <p>Represents an array whose length does not change when shrinking.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-function-2.html">Function<'a, 'b></a>
           </td>
-          <td class="xmldoc"><p>A function (F# function) that can be displayed and shrunk.</p>
+          <td class="xmldoc">
+          <p>A function (F# function) that can be displayed and shrunk.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-gen-1.html">Gen<'a></a>
           </td>
-          <td class="xmldoc"><p>Generator of a random value, based on a size parameter and a randomly generated int.</p>
+          <td class="xmldoc">
+          <p>Generator of a random value, based on a size parameter and a randomly generated int.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-genextensions.html">GenExtensions</a>
           </td>
-          <td class="xmldoc"><p>Extension methods to build generators - contains among other the Linq methods.</p>
+          <td class="xmldoc">
+          <p>Extension methods to build generators - contains among other the Linq methods.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-hostname.html">HostName</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-icommandgenerator-2.html">ICommandGenerator<'Actual, 'Model></a>
           </td>
-          <td class="xmldoc"><p>Defines the initial state for actual and model object, and allows to define the generator to use
+          <td class="xmldoc">
+          <p>Defines the initial state for actual and model object, and allows to define the generator to use
 for the next state, based on the model.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-ipv4address.html">IPv4Address</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-ipv6address.html">IPv6Address</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-irunner.html">IRunner</a>
           </td>
-          <td class="xmldoc"><p>For implementing your own test runner.</p>
+          <td class="xmldoc">
+          <p>For implementing your own test runner.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-intwithminmax.html">IntWithMinMax</a>
           </td>
-          <td class="xmldoc"><p>Represents an int that can include int.MinValue and int.MaxValue.</p>
+          <td class="xmldoc">
+          <p>Represents an int that can include int.MinValue and int.MaxValue.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-interval.html">Interval</a>
           </td>
-          <td class="xmldoc"><p>Represents an integer interval.</p>
+          <td class="xmldoc">
+          <p>Represents an integer interval.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-negativeint.html">NegativeInt</a>
           </td>
-          <td class="xmldoc"><p>Represents an int &lt; 0</p>
+          <td class="xmldoc">
+          <p>Represents an int &lt; 0</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonemptyarray-1.html">NonEmptyArray<'a></a>
           </td>
-          <td class="xmldoc"><p>Represents a non-empty array.</p>
+          <td class="xmldoc">
+          <p>Represents a non-empty array.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonemptyset-1.html">NonEmptySet<'a></a>
           </td>
-          <td class="xmldoc"><p>Represents a non-empty Set.</p>
+          <td class="xmldoc">
+          <p>Represents a non-empty Set.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonemptystring.html">NonEmptyString</a>
           </td>
-          <td class="xmldoc"><p>Represents a string that is not null or empty, and does not contain any null characters ('\000')</p>
+          <td class="xmldoc">
+          <p>Represents a string that is not null or empty, and does not contain any null characters ('\000')</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonnegativeint.html">NonNegativeInt</a>
           </td>
-          <td class="xmldoc"><p>Represents an int &gt;= 0</p>
+          <td class="xmldoc">
+          <p>Represents an int &gt;= 0</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonnull-1.html">NonNull<'a></a>
           </td>
-          <td class="xmldoc"><p>Wrap a type in NonNull to prevent null being generated for the wrapped type.</p>
+          <td class="xmldoc">
+          <p>Wrap a type in NonNull to prevent null being generated for the wrapped type.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-nonzeroint.html">NonZeroInt</a>
           </td>
-          <td class="xmldoc"><p>Represents an int <> 0</p>
+          <td class="xmldoc">
+          <p>Represents an int <> 0</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-normalfloat.html">NormalFloat</a>
           </td>
-          <td class="xmldoc"><p>Represents a float that is not NaN or Infinity.</p>
+          <td class="xmldoc">
+          <p>Represents a float that is not NaN or Infinity.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-outcome.html">Outcome</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-positiveint.html">PositiveInt</a>
           </td>
-          <td class="xmldoc"><p>Represents an int &gt; 0</p>
+          <td class="xmldoc">
+          <p>Represents an int &gt; 0</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-property.html">Property</a>
           </td>
-          <td class="xmldoc"><p>A Property can be checked by FsCheck.</p>
+          <td class="xmldoc">
+          <p>A Property can be checked by FsCheck.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-propertyextensions.html">PropertyExtensions</a>
           </td>
-          <td class="xmldoc"><p>Extensons to construct Properties.</p>
+          <td class="xmldoc">
+          <p>Extensons to construct Properties.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-result.html">Result</a>
           </td>
-          <td class="xmldoc"><p>The result of one execution of a property.</p>
+          <td class="xmldoc">
+          <p>The result of one execution of a property.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-rose-1.html">Rose<'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-stringnonulls.html">StringNoNulls</a>
           </td>
-          <td class="xmldoc"><p>Represents a string that does not contain null characters ('\000')</p>
+          <td class="xmldoc">
+          <p>Represents a string that does not contain null characters ('\000')</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-testdata.html">TestData</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-testresult.html">TestResult</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-throwingfunction-2.html">ThrowingFunction<'a, 'b></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-weightandvalue-1.html">WeightAndValue<'a></a>
           </td>
-          <td class="xmldoc"><p>2-tuple containing a weight and a value, used in some Gen methods to indicate
+          <td class="xmldoc">
+          <p>2-tuple containing a weight and a value, used in some Gen methods to indicate
 the probability of a value.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-xmlencodedstring.html">XmlEncodedString</a>
           </td>
-          <td class="xmldoc"><p>Represents a string that can be serializable as a XML value.</p>
+          <td class="xmldoc">
+          <p>Represents a string that can be serializable as a XML value.</p>
 
-</td>
+
+          </td>
         </tr>
     </tbody>
   </table>
@@ -388,74 +482,94 @@ the probability of a value.</p>
           <td class="module-name">
             <a href="fscheck-arb.html">Arb</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="module-name">
             <a href="fscheck-arbpatterns.html">ArbPatterns</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="module-name">
             <a href="fscheck-command.html">Command</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="module-name">
             <a href="fscheck-gen.html">Gen</a>
           </td>
-          <td class="xmldoc"><p>Combinators to build custom random generators for any type.</p>
+          <td class="xmldoc">
+          <p>Combinators to build custom random generators for any type.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="module-name">
             <a href="fscheck-genbuilder.html">GenBuilder</a>
           </td>
-          <td class="xmldoc"><p>Computation expression builder for Gen.</p>
+          <td class="xmldoc">
+          <p>Computation expression builder for Gen.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="module-name">
             <a href="fscheck-prop.html">Prop</a>
           </td>
-          <td class="xmldoc"><p>Combinators to build properties, which define the property to be tested, with some
+          <td class="xmldoc">
+          <p>Combinators to build properties, which define the property to be tested, with some
 convenience methods to investigate the generated arguments and any found counter-examples.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="module-name">
             <a href="fscheck-propoperators.html">PropOperators</a>
           </td>
-          <td class="xmldoc"><p>Operators for Prop.</p>
+          <td class="xmldoc">
+          <p>Operators for Prop.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="module-name">
             <a href="fscheck-random.html">Random</a>
           </td>
-          <td class="xmldoc"><p>Generate random numbers based on splitting seeds. Based Hugs' Random implementation.</p>
+          <td class="xmldoc">
+          <p>Generate random numbers based on splitting seeds. Based Hugs' Random implementation.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="module-name">
             <a href="fscheck-runner.html">Runner</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="module-name">
             <a href="fscheck-typeclass.html">TypeClass</a>
           </td>
-          <td class="xmldoc"><p>Haskell typeclass concept simulation. For internal use.</p>
+          <td class="xmldoc">
+          <p>Haskell typeclass concept simulation. For internal use.</p>
 
-</td>
+
+          </td>
         </tr>
     </tbody>
   </table>
@@ -472,97 +586,127 @@ convenience methods to investigate the generated arguments and any found counter
           <td class="type-name">
             <a href="fscheck-experimental-disposecall-1.html">DisposeCall<'Actual></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-ioperation.html">IOperation</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-ioperationresult.html">IOperationResult</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-machine-2.html">Machine<'Actual, 'Model></a>
           </td>
-          <td class="xmldoc"><p>Defines the initial state for actual and model object, and allows to define the generator to use
+          <td class="xmldoc">
+          <p>Defines the initial state for actual and model object, and allows to define the generator to use
 for the next state, based on the model.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-machinerun-2.html">MachineRun<'Actual, 'Model></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-methodcall-1.html">MethodCall<'Actual></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-new-1.html">New<'Actual></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-objectmachine-1.html">ObjectMachine<'Actual></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-objectmachinemodel.html">ObjectMachineModel</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-operation-2.html">Operation<'Actual, 'Model></a>
           </td>
-          <td class="xmldoc"><p>An operation describes pre and post conditions and the model for a single operation under test.
+          <td class="xmldoc">
+          <p>An operation describes pre and post conditions and the model for a single operation under test.
 The post-conditions are the invariants that will be checked; when these do not hold the test fails.</p>
 
-</td>
+
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-operationresult-1.html">OperationResult<'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-setup-2.html">Setup<'Actual, 'Model></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-statemachineextensions.html">StateMachineExtensions</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-stopoperation-2.html">StopOperation<'Actual, 'Model></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="fscheck-experimental-teardown-1.html">TearDown<'Actual></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
     </tbody>
   </table>
@@ -575,7 +719,9 @@ The post-conditions are the invariants that will be checked; when these do not h
           <td class="module-name">
             <a href="fscheck-experimental-statemachine.html">StateMachine</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
     </tbody>
   </table>

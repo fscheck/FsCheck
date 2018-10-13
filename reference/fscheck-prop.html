@@ -37,7 +37,7 @@
 <h1>Prop</h1>
 <p>
   <span>Namespace: FsCheck</span><br />
-</p>
+  </p>
 <div class="xmldoc">
 <p>Combinators to build properties, which define the property to be tested, with some
 convenience methods to investigate the generated arguments and any found counter-examples.</p>
@@ -60,10 +60,14 @@ convenience methods to investigate the generated arguments and any found counter
           </code>
           <div class="tip" id="79">
             <strong>Signature:</strong> b:bool -&gt; name:string -&gt; &#39;Testable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Testable          </div>
+                          <strong>Type parameters:</strong> 'Testable                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Classify&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L88-88" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L88-88" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -77,14 +81,18 @@ convenience methods to investigate the generated arguments and any found counter
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '80', 80)" onmouseover="showTip(event, '80', 80)">
-            collect v
+            collect(v)
           </code>
           <div class="tip" id="80">
             <strong>Signature:</strong> v:&#39;CollectedValue -&gt; &#39;Testable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'CollectedValue, 'Testable          </div>
+                          <strong>Type parameters:</strong> 'CollectedValue, 'Testable                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Collect&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L97-97" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L97-97" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -99,14 +107,18 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '81', 81)" onmouseover="showTip(event, '81', 81)">
-            discard ()
+            discard()
           </code>
           <div class="tip" id="81">
-            <strong>Signature:</strong> unit -&gt; &#39;?210497<br />
-                          <strong>Type parameters:</strong> '?210497          </div>
+            <strong>Signature:</strong> unit -&gt; &#39;?201944<br />
+                          <strong>Type parameters:</strong> '?201944                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Discard&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L126-126" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L126-126" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -122,10 +134,14 @@ and the distribution of values is reported, using sprintf "%A".</p>
           </code>
           <div class="tip" id="82">
             <strong>Signature:</strong> arb:Arbitrary&lt;&#39;Value&gt; -&gt; body:(&#39;Value -&gt; &#39;Testable) -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Value, 'Testable          </div>
+                          <strong>Type parameters:</strong> 'Value, 'Testable                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L12-12" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L12-12" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -143,10 +159,15 @@ and the distribution of values is reported, using sprintf "%A".</p>
           </code>
           <div class="tip" id="83">
             <strong>Signature:</strong> arb:Arbitrary&lt;&#39;Value&gt; -&gt; body:Action&lt;&#39;Value&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L15-15" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L15-15" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -158,14 +179,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '84', 84)" onmouseover="showTip(event, '84', 84)">
-            forAllAction1Def body
+            forAllAction1Def(body)
           </code>
           <div class="tip" id="84">
             <strong>Signature:</strong> body:Action&lt;&#39;Value&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L24-24" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L24-24" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -177,14 +203,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '85', 85)" onmouseover="showTip(event, '85', 85)">
-            forAllAction2 (arb1, arb2) body
+            forAllAction2(arb1, arb2) body
           </code>
           <div class="tip" id="85">
             <strong>Signature:</strong> (arb1:Arbitrary&lt;&#39;V1&gt; * arb2:Arbitrary&lt;&#39;V2&gt;) -&gt; body:Action&lt;&#39;V1,&#39;V2&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L33-33" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L33-33" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -196,14 +227,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '86', 86)" onmouseover="showTip(event, '86', 86)">
-            forAllAction2Def body
+            forAllAction2Def(body)
           </code>
           <div class="tip" id="86">
             <strong>Signature:</strong> body:Action&lt;&#39;V1,&#39;V2&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L42-42" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L42-42" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -215,14 +251,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '87', 87)" onmouseover="showTip(event, '87', 87)">
-            forAllAction3 (arb1, arb2, arb3) body
+            forAllAction3(arb1, arb2, arb3) body
           </code>
           <div class="tip" id="87">
             <strong>Signature:</strong> (arb1:Arbitrary&lt;&#39;V1&gt; * arb2:Arbitrary&lt;&#39;V2&gt; * arb3:Arbitrary&lt;&#39;V3&gt;) -&gt; body:Action&lt;&#39;V1,&#39;V2,&#39;V3&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L51-51" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L51-51" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -234,14 +275,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '88', 88)" onmouseover="showTip(event, '88', 88)">
-            forAllAction3Def body
+            forAllAction3Def(body)
           </code>
           <div class="tip" id="88">
             <strong>Signature:</strong> body:Action&lt;&#39;V1,&#39;V2,&#39;V3&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L63-63" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L63-63" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -257,10 +303,15 @@ and the distribution of values is reported, using sprintf "%A".</p>
           </code>
           <div class="tip" id="89">
             <strong>Signature:</strong> arb:Arbitrary&lt;&#39;Value&gt; -&gt; body:Func&lt;&#39;Value,bool&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L18-18" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L18-18" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -272,14 +323,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '90', 90)" onmouseover="showTip(event, '90', 90)">
-            forAllFunc1BoolDef body
+            forAllFunc1BoolDef(body)
           </code>
           <div class="tip" id="90">
             <strong>Signature:</strong> body:Func&lt;&#39;Value,bool&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L27-27" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L27-27" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -295,10 +351,15 @@ and the distribution of values is reported, using sprintf "%A".</p>
           </code>
           <div class="tip" id="91">
             <strong>Signature:</strong> arb:Arbitrary&lt;&#39;Value&gt; -&gt; body:Func&lt;&#39;Value,Property&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L21-21" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L21-21" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -310,14 +371,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '92', 92)" onmouseover="showTip(event, '92', 92)">
-            forAllFunc1PropDef body
+            forAllFunc1PropDef(body)
           </code>
           <div class="tip" id="92">
             <strong>Signature:</strong> body:Func&lt;&#39;Value,Property&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L30-30" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L30-30" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -329,14 +395,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '93', 93)" onmouseover="showTip(event, '93', 93)">
-            forAllFunc2Bool (arb1, arb2) body
+            forAllFunc2Bool(arb1, arb2) body
           </code>
           <div class="tip" id="93">
             <strong>Signature:</strong> (arb1:Arbitrary&lt;&#39;V1&gt; * arb2:Arbitrary&lt;&#39;V2&gt;) -&gt; body:Func&lt;&#39;V1,&#39;V2,bool&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L36-36" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L36-36" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -348,14 +419,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '94', 94)" onmouseover="showTip(event, '94', 94)">
-            forAllFunc2BoolDef body
+            forAllFunc2BoolDef(body)
           </code>
           <div class="tip" id="94">
             <strong>Signature:</strong> body:Func&lt;&#39;V1,&#39;V2,bool&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L45-45" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L45-45" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -367,14 +443,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '95', 95)" onmouseover="showTip(event, '95', 95)">
-            forAllFunc2Prop (arb1, arb2) body
+            forAllFunc2Prop(arb1, arb2) body
           </code>
           <div class="tip" id="95">
             <strong>Signature:</strong> (arb1:Arbitrary&lt;&#39;V1&gt; * arb2:Arbitrary&lt;&#39;V2&gt;) -&gt; body:Func&lt;&#39;V1,&#39;V2,Property&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L39-39" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L39-39" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -386,14 +467,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '96', 96)" onmouseover="showTip(event, '96', 96)">
-            forAllFunc2PropDef body
+            forAllFunc2PropDef(body)
           </code>
           <div class="tip" id="96">
             <strong>Signature:</strong> body:Func&lt;&#39;V1,&#39;V2,Property&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L48-48" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L48-48" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -405,14 +491,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '97', 97)" onmouseover="showTip(event, '97', 97)">
-            forAllFunc3Bool (arb1, arb2, arb3) body
+            forAllFunc3Bool(arb1, arb2, arb3) body
           </code>
           <div class="tip" id="97">
             <strong>Signature:</strong> (arb1:Arbitrary&lt;&#39;V1&gt; * arb2:Arbitrary&lt;&#39;V2&gt; * arb3:Arbitrary&lt;&#39;V3&gt;) -&gt; body:Func&lt;&#39;V1,&#39;V2,&#39;V3,bool&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L55-55" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L55-55" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -424,14 +515,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '98', 98)" onmouseover="showTip(event, '98', 98)">
-            forAllFunc3BoolDef body
+            forAllFunc3BoolDef(body)
           </code>
           <div class="tip" id="98">
             <strong>Signature:</strong> body:Func&lt;&#39;V1,&#39;V2,&#39;V3,bool&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L66-66" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L66-66" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -443,14 +539,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '99', 99)" onmouseover="showTip(event, '99', 99)">
-            forAllFunc3Prop (arb1, arb2, arb3) body
+            forAllFunc3Prop(arb1, arb2, arb3) body
           </code>
           <div class="tip" id="99">
             <strong>Signature:</strong> (arb1:Arbitrary&lt;&#39;V1&gt; * arb2:Arbitrary&lt;&#39;V2&gt; * arb3:Arbitrary&lt;&#39;V3&gt;) -&gt; body:Func&lt;&#39;V1,&#39;V2,&#39;V3,Property&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L59-59" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L59-59" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -462,14 +563,19 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '100', 100)" onmouseover="showTip(event, '100', 100)">
-            forAllFunc3PropDef body
+            forAllFunc3PropDef(body)
           </code>
           <div class="tip" id="100">
             <strong>Signature:</strong> body:Func&lt;&#39;V1,&#39;V2,&#39;V3,Property&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3          </div>
+                          <strong>Type parameters:</strong> 'V1, 'V2, 'V3                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ForAll&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L69-69" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L69-69" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -485,10 +591,14 @@ and the distribution of values is reported, using sprintf "%A".</p>
           </code>
           <div class="tip" id="101">
             <strong>Signature:</strong> condition:bool -&gt; (iftrue:&#39;TestableIfTrue * ifFalse:&#39;TestableIfFalse) -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'TestableIfTrue, 'TestableIfFalse          </div>
+                          <strong>Type parameters:</strong> 'TestableIfTrue, 'TestableIfFalse                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Given&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L73-73" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L73-73" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -502,14 +612,18 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '102', 102)" onmouseover="showTip(event, '102', 102)">
-            label l
+            label(l)
           </code>
           <div class="tip" id="102">
             <strong>Signature:</strong> l:string -&gt; &#39;Testable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Testable          </div>
+                          <strong>Type parameters:</strong> 'Testable                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Label&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L101-101" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L101-101" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -523,14 +637,18 @@ and the distribution of values is reported, using sprintf "%A".</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '103', 103)" onmouseover="showTip(event, '103', 103)">
-            ofTestable testable
+            ofTestable(testable)
           </code>
           <div class="tip" id="103">
             <strong>Signature:</strong> testable:&#39;Testable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Testable          </div>
+                          <strong>Type parameters:</strong> 'Testable                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;OfTestable&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L122-122" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L122-122" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -546,14 +664,18 @@ containing testables.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '104', 104)" onmouseover="showTip(event, '104', 104)">
-            throws p
+            throws(p)
           </code>
           <div class="tip" id="104">
             <strong>Signature:</strong> p:Lazy&lt;&#39;Testable&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Exception, 'Testable          </div>
+                          <strong>Type parameters:</strong> 'Exception, 'Testable                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Throws&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L79-79" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L79-79" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -568,14 +690,18 @@ and a failure otherwise.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '105', 105)" onmouseover="showTip(event, '105', 105)">
-            trivial b
+            trivial(b)
           </code>
           <div class="tip" id="105">
             <strong>Signature:</strong> b:bool -&gt; &#39;Testable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Testable          </div>
+                          <strong>Type parameters:</strong> 'Testable                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Trivial&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L92-92" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L92-92" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -593,10 +719,14 @@ and a failure otherwise.</p>
           </code>
           <div class="tip" id="106">
             <strong>Signature:</strong> time:int -&gt; lazyProperty:Lazy&lt;&#39;Testable&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Testable          </div>
+                          <strong>Type parameters:</strong> 'Testable                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Within&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L108-108" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L108-108" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

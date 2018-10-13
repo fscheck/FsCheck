@@ -36,7 +36,13 @@
 
 <h1>ArbitraryExtensions</h1>
 <p>
-  <span>Namespace: FsCheck</span><br />
+
+    <span>Namespace: FsCheck</span><br />
+            <span>
+            Attributes: <br />
+[&lt;Extension&gt;]<br />
+            
+        </span>
 </p>
 <div class="xmldoc">
 <p>Extensons to transform Arbitrary instances into other Arbitrary instances.</p>
@@ -52,14 +58,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '269', 269)" onmouseover="showTip(event, '269', 269)">
-            Convert(arb, convertTo, convertFrom)
+            ArbitraryExtensions.Convert(...)
           </code>
           <div class="tip" id="269">
-            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?209509&gt; * convertTo:Func&lt;&#39;?209509,&#39;?209510&gt; * convertFrom:Func&lt;&#39;?209510,&#39;?209509&gt;) -&gt; Arbitrary&lt;&#39;?209510&gt;<br />
-                          <strong>Type parameters:</strong> '?209509, '?209510          </div>
+            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?200956&gt; * convertTo:Func&lt;&#39;?200956,&#39;?200957&gt; * convertFrom:Func&lt;&#39;?200957,&#39;?200956&gt;) -&gt; Arbitrary&lt;&#39;?200957&gt;<br />
+                          <strong>Type parameters:</strong> '?200956, '?200957                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;Extension&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L11-11" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L11-11" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -73,14 +83,18 @@ based on a Arbitrary instance for the source type and two mapping functions.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '270', 270)" onmouseover="showTip(event, '270', 270)">
-            Filter(arb, filter)
+            ArbitraryExtensions.Filter(arb, filter)
           </code>
           <div class="tip" id="270">
-            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?209512&gt; * filter:Func&lt;&#39;?209512,bool&gt;) -&gt; Arbitrary&lt;&#39;?209512&gt;<br />
-                          <strong>Type parameters:</strong> '?209512          </div>
+            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?200959&gt; * filter:Func&lt;&#39;?200959,bool&gt;) -&gt; Arbitrary&lt;&#39;?200959&gt;<br />
+                          <strong>Type parameters:</strong> '?200959                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;Extension&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L17-17" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L17-17" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -94,14 +108,18 @@ The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter w
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '271', 271)" onmouseover="showTip(event, '271', 271)">
-            MapFilter(arb, map, filter)
+            ArbitraryExtensions.MapFilter(...)
           </code>
           <div class="tip" id="271">
-            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?209514&gt; * map:Func&lt;&#39;?209514,&#39;?209514&gt; * filter:Func&lt;&#39;?209514,bool&gt;) -&gt; Arbitrary&lt;&#39;?209514&gt;<br />
-                          <strong>Type parameters:</strong> '?209514          </div>
+            <strong>Signature:</strong> (arb:Arbitrary&lt;&#39;?200961&gt; * map:Func&lt;&#39;?200961,&#39;?200961&gt; * filter:Func&lt;&#39;?200961,bool&gt;) -&gt; Arbitrary&lt;&#39;?200961&gt;<br />
+                          <strong>Type parameters:</strong> '?200961                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;Extension&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L26-26" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L26-26" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

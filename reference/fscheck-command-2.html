@@ -36,7 +36,13 @@
 
 <h1>Command<'Actual, 'Model></h1>
 <p>
-  <span>Namespace: FsCheck</span><br />
+
+    <span>Namespace: FsCheck</span><br />
+            <span>
+            Attributes: <br />
+[&lt;AbstractClass&gt;]<br />
+            
+        </span>
 </p>
 <div class="xmldoc">
 <p>A single command describes pre and post conditions and the model for a single method under test.
@@ -57,10 +63,10 @@ The post-conditions are the invariants that will be checked; when these do not h
           </code>
           <div class="tip" id="298">
             <strong>Signature:</strong> unit -&gt; Command&lt;&#39;Actual,&#39;Model&gt;<br />
-                      </div>
+                                  </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L8-8" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L8-8" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -80,15 +86,15 @@ The post-conditions are the invariants that will be checked; when these do not h
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '299', 299)" onmouseover="showTip(event, '299', 299)">
-            Post(arg1, arg2)
+            x.Post(arg1, arg2)
           </code>
           <div class="tip" id="299">
             <strong>Signature:</strong> (&#39;Actual * &#39;Model) -&gt; Property<br />
               <strong>Modifiers:</strong> abstract<br />
-                      </div>
+                                  </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L18-18" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L18-18" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -102,15 +108,15 @@ object and fails the property if they do not match.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '300', 300)" onmouseover="showTip(event, '300', 300)">
-            Pre(arg1)
+            x.Pre(arg1)
           </code>
           <div class="tip" id="300">
             <strong>Signature:</strong> &#39;Model -&gt; bool<br />
               <strong>Modifiers:</strong> abstract<br />
-                      </div>
+                                  </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L15-15" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L15-15" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -124,15 +130,15 @@ but the command will not be executed.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '301', 301)" onmouseover="showTip(event, '301', 301)">
-            RunActual(arg1)
+            x.RunActual(arg1)
           </code>
           <div class="tip" id="301">
             <strong>Signature:</strong> &#39;Actual -&gt; &#39;Actual<br />
               <strong>Modifiers:</strong> abstract<br />
-                      </div>
+                                  </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L10-10" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L10-10" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -145,15 +151,15 @@ but the command will not be executed.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '302', 302)" onmouseover="showTip(event, '302', 302)">
-            RunModel(arg1)
+            x.RunModel(arg1)
           </code>
           <div class="tip" id="302">
             <strong>Signature:</strong> &#39;Model -&gt; &#39;Model<br />
               <strong>Modifiers:</strong> abstract<br />
-                      </div>
+                                  </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L12-12" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L12-12" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

@@ -37,7 +37,7 @@
 <h1>Command</h1>
 <p>
   <span>Namespace: FsCheck</span><br />
-</p>
+  </p>
 <div class="xmldoc">
 </div>
 
@@ -53,14 +53,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
-            create (...)
+            create(...)
           </code>
           <div class="tip" id="16">
             <strong>Signature:</strong> preCondition:(&#39;Model -&gt; bool) option -&gt; runActual:(&#39;Actual -&gt; &#39;Actual) -&gt; runModel:(&#39;Model -&gt; &#39;Model) -&gt; checkPostCondition:(&#39;Actual * &#39;Model -&gt; Property) -&gt; Command&lt;&#39;Actual,&#39;Model&gt;<br />
-                          <strong>Type parameters:</strong> 'Model, 'Actual          </div>
+                          <strong>Type parameters:</strong> 'Model, 'Actual                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Create&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L43-43" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L43-43" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -72,14 +76,19 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
-            createFuncBool (...)
+            createFuncBool(...)
           </code>
           <div class="tip" id="17">
             <strong>Signature:</strong> runActual:Func&lt;&#39;Actual,&#39;Actual&gt; -&gt; runModel:Func&lt;&#39;Model,&#39;Model&gt; -&gt; postCondition:Func&lt;&#39;Actual,&#39;Model,bool&gt; -&gt; Command&lt;&#39;Actual,&#39;Model&gt;<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Create&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L55-55" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L55-55" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -91,14 +100,19 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
-            createFuncProp (...)
+            createFuncProp(...)
           </code>
           <div class="tip" id="18">
             <strong>Signature:</strong> runActual:Func&lt;&#39;Actual,&#39;Actual&gt; -&gt; runModel:Func&lt;&#39;Model,&#39;Model&gt; -&gt; postCondition:Func&lt;&#39;Actual,&#39;Model,Property&gt; -&gt; Command&lt;&#39;Actual,&#39;Model&gt;<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Create&quot;)&gt;]<br />
+[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L51-51" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L51-51" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -110,14 +124,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
-            generate spec
+            generate(spec)
           </code>
           <div class="tip" id="19">
             <strong>Signature:</strong> spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; Gen&lt;seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;&gt;<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Generate&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L61-61" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L61-61" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -132,14 +150,23 @@ satisfies the given specification.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
-            generateCommands spec
+            generateCommands(spec)
           </code>
           <div class="tip" id="20">
             <strong>Signature:</strong> spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; Gen&lt;seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;&gt;<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;GenerateCommands&quot;)&gt;]<br />
+[&lt;Obsolete(&quot;Renamed to Command.generate or Command.Generate.&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L80-80" class="github-link">
+              <div class="alert alert-warning">
+              <strong>WARNING: </strong> This API is obsolete
+              <p>Renamed to Command.generate or Command.Generate.</p>
+              </div> 
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L80-80" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -154,14 +181,18 @@ satisfies the given specification.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
-            shrink spec
+            shrink(spec)
           </code>
           <div class="tip" id="21">
             <strong>Signature:</strong> spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt; -&gt; seq&lt;seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;&gt;<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Shrink&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L87-87" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L87-87" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -176,14 +207,18 @@ the reduced sequence satisfies the given specification.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
-            toProperty spec
+            toProperty(spec)
           </code>
           <div class="tip" id="22">
             <strong>Signature:</strong> spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ToProperty&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L116-116" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L116-116" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -201,10 +236,14 @@ the reduced sequence satisfies the given specification.</p>
           </code>
           <div class="tip" id="23">
             <strong>Signature:</strong> spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; generator:Gen&lt;seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;&gt; -&gt; shrinker:(seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt; -&gt; seq&lt;seq&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;&gt;) -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Actual, 'Model          </div>
+                          <strong>Type parameters:</strong> 'Actual, 'Model                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;ToPropertyWith&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L97-97" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Commands.fs#L97-97" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

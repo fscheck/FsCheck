@@ -37,7 +37,7 @@
 <h1>Arb</h1>
 <p>
   <span>Namespace: FsCheck</span><br />
-</p>
+  </p>
 <div class="xmldoc">
 </div>
 
@@ -53,7 +53,9 @@
           <td class="type-name">
             <a href="fscheck-arb-default.html">Default</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc">
+          
+          </td>
         </tr>
     </tbody>
   </table>
@@ -74,10 +76,14 @@
           </code>
           <div class="tip" id="1">
             <strong>Signature:</strong> convertTo:(&#39;a -&gt; &#39;b) -&gt; convertFrom:(&#39;b -&gt; &#39;a) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 'a, 'b          </div>
+                          <strong>Type parameters:</strong> 'a, 'b                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Convert&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L250-250" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L250-250" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -96,10 +102,14 @@ based on a Arbitrary instance for the source type and two mapping functions.</p>
           </code>
           <div class="tip" id="2">
             <strong>Signature:</strong> pred:(&#39;a -&gt; bool) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+                          <strong>Type parameters:</strong> 'a                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Filter&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L259-259" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L259-259" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -114,14 +124,18 @@ The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter w
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
-            from 
+            from
           </code>
           <div class="tip" id="3">
             <strong>Signature:</strong> Arbitrary&lt;&#39;Value&gt;<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;From&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L184-184" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L184-184" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -135,14 +149,18 @@ The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter w
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
-            fromGen gen
+            fromGen(gen)
           </code>
           <div class="tip" id="4">
             <strong>Signature:</strong> gen:Gen&lt;&#39;Value&gt; -&gt; Arbitrary&lt;&#39;Value&gt;<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;From&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L229-229" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L229-229" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -157,14 +175,18 @@ Shrink is not supported for this type.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
-            fromGenShrink (gen, shrinker)
+            fromGenShrink(gen, shrinker)
           </code>
           <div class="tip" id="5">
             <strong>Signature:</strong> (gen:Gen&lt;&#39;Value&gt; * shrinker:(&#39;Value -&gt; seq&lt;&#39;Value&gt;)) -&gt; Arbitrary&lt;&#39;Value&gt;<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;From&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L236-236" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L236-236" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -178,14 +200,18 @@ Shrink is not supported for this type.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
-            fromGenShrinkFunc (gen, shrinker)
+            fromGenShrinkFunc(gen, shrinker)
           </code>
           <div class="tip" id="6">
             <strong>Signature:</strong> (gen:Gen&lt;&#39;Value&gt; * shrinker:Func&lt;&#39;Value,seq&lt;&#39;Value&gt;&gt;) -&gt; Arbitrary&lt;&#39;Value&gt;<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;From&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L244-244" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L244-244" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -199,14 +225,18 @@ Shrink is not supported for this type.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
-            generate 
+            generate
           </code>
           <div class="tip" id="7">
             <strong>Signature:</strong> Gen&lt;&#39;Value&gt;<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Generate&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L188-188" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L188-188" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -224,10 +254,14 @@ Shrink is not supported for this type.</p>
           </code>
           <div class="tip" id="8">
             <strong>Signature:</strong> mapper:(&#39;a -&gt; &#39;a) -&gt; pred:(&#39;a -&gt; bool) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a          </div>
+                          <strong>Type parameters:</strong> 'a                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;MapFilter&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L271-271" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L271-271" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -245,14 +279,18 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
-            register ()
+            register()
           </code>
           <div class="tip" id="9">
             <strong>Signature:</strong> unit -&gt; TypeClassComparison<br />
-                          <strong>Type parameters:</strong> 't          </div>
+                          <strong>Type parameters:</strong> 't                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Register&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L180-180" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L180-180" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -266,14 +304,18 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
-            registerByType t
+            registerByType(t)
           </code>
           <div class="tip" id="10">
             <strong>Signature:</strong> t:Type -&gt; TypeClassComparison<br />
-                      </div>
+                                    <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Register&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L172-172" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L172-172" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -287,14 +329,18 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
-            shrink a
+            shrink(a)
           </code>
           <div class="tip" id="11">
             <strong>Signature:</strong> a:&#39;Value -&gt; seq&lt;&#39;Value&gt;<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                        <span>
+            <strong>Attributes:</strong><br />
+[&lt;CompiledName(&quot;Shrink&quot;)&gt;]<br />
+          </span>
+          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L192-192" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L192-192" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -308,14 +354,14 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
-            shrinkNumber n
+            shrinkNumber(n)
           </code>
           <div class="tip" id="12">
-            <strong>Signature:</strong> n:^?210819 -&gt; seq&lt;^?210819&gt;<br />
-                          <strong>Type parameters:</strong> ^?210819, ^?210820, ^?210821, ^?210822          </div>
+            <strong>Signature:</strong> n:^?202280 -&gt; seq&lt;^?202280&gt;<br />
+                          <strong>Type parameters:</strong> ^?202280, ^?202281, ^?202282, ^?202283                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L195-195" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L195-195" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -328,14 +374,14 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
-            toGen arb
+            toGen(arb)
           </code>
           <div class="tip" id="13">
             <strong>Signature:</strong> arb:Arbitrary&lt;&#39;Value&gt; -&gt; Gen&lt;&#39;Value&gt;<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L222-222" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L222-222" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -346,14 +392,14 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
-            toShrink arb
+            toShrink(arb)
           </code>
           <div class="tip" id="14">
             <strong>Signature:</strong> arb:Arbitrary&lt;&#39;Value&gt; -&gt; &#39;Value -&gt; seq&lt;&#39;Value&gt;<br />
-                          <strong>Type parameters:</strong> 'Value          </div>
+                          <strong>Type parameters:</strong> 'Value                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L224-224" class="github-link">
+                      <a href="http://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L224-224" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
