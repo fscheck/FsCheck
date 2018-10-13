@@ -1,5 +1,11 @@
+### 2.12.0 - 6 October 2018
+* Update NUnit to 3.10.1.
+
+* Add Arbitrary instance for XML encoded string. (by Stijn Moreels)
+
 ### 2.11.0 - 15 June 2018
 * DateTime now also generates kind and milliseconds (by Matthew Peacock)
+
 * Removed EditorBrowsable.Never from all but the obsoleted methods. F# intellisense now also honors these attributes, and so they
 were hiding a bunch of methods unnecessarily. The upshot is that C# users will see more of the API that is F# specific.
 
