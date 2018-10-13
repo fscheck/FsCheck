@@ -23,12 +23,37 @@ module GenExtensions =
             <@ GenExtensions.SelectMany (Arb.generate<string>, f=null) @>
     
     [<Fact>]
+    let ``SelectMany binder``() =
+        let act =
+            lazy GenExtensions.SelectMany (
+                Arb.generate<string>, 
+                f=null, 
+                select=new Func<string, string, string>(fun x y -> x + y))
+
+        Prop.throws<ArgumentNullException, _> act
+        |> Check.QuickThrowOnFailure
+
+    [<Fact>]
+    let ``SelectMany mapper``() =
+        let act = 
+            lazy GenExtensions.SelectMany (
+                Arb.generate<string>, 
+                new Func<string, Gen<string>> (Gen.constant),
+                select=null)
+
+        Prop.throws<ArgumentNullException, _> act
+        |> Check.QuickThrowOnFailure
+
+    [<Fact>]
     let Zip () =
-        raises<ArgumentNullException> 
-            <@ GenExtensions.Zip (
+        let act =
+            lazy GenExtensions.Zip (
                 Arb.generate<TimeSpan>, 
                 Arb.generate<DateTimeOffset>, 
-                resultSelector=null) @>
+                resultSelector=null)
+
+        Prop.throws<ArgumentNullException, _> act
+        |> Check.QuickThrowOnFailure
 
     [<Fact>]
     let Zip3 () =
