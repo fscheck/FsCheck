@@ -13,8 +13,9 @@ nuget NUnit3TestAdapter version_in_path: true
 group Build
     framework: net461
     source https://www.nuget.org/api/v2
+	source https://ci.appveyor.com/nuget/fsharp-formatting
 
     nuget FAKE
     github fsharp/FAKE modules/Octokit/Octokit.fsx
-    nuget FSharp.Formatting
+    nuget FSharp.Formatting prerelease
     nuget xunit.runner.console
