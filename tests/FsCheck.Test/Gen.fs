@@ -158,7 +158,8 @@ module Gen =
         Seq.ofList l
         |> Gen.traverseToSeq Gen.constant
         |> sample1
-        |> ((=) (Seq.ofList l))
+        |> List.ofSeq
+        |> ((=) l)
 
     [<Property>]
     let TraverseToArr (a:array<char>) =
@@ -175,10 +176,12 @@ module Gen =
 
     [<Property>]
     let SequenceToSeq (l:list<byte>) =
-        Seq.map Gen.constant l
+        Seq.ofList l
+        |> Seq.map Gen.constant
         |> Gen.sequenceToSeq
         |> sample1
-        |> ((=) (Seq.ofList l))
+        |> List.ofSeq
+        |> ((=) l)
      
     [<Property>]
     let SequenceToArr (a:array<char>) =
