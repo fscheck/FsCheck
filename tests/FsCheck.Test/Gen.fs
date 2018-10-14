@@ -148,12 +148,45 @@ module Gen =
         |> ((=) (v,v,v,v))
     
     [<Property>]
+    let Traverse (l:list<int>) =
+        Gen.traverse Gen.constant l
+        |> sample1
+        |> ((=) l)
+
+    [<Property>]
+    let TraverseToSeq (l:list<byte>) =
+        Seq.ofList l
+        |> Gen.traverseToSeq Gen.constant
+        |> sample1
+        |> ((=) (Seq.ofList l))
+
+    [<Property>]
+    let TraverseToArr (a:array<char>) =
+        Gen.traverseToArr Gen.constant a
+        |> sample1
+        |> ((=) a)
+
+    [<Property>]
     let Sequence (l:list<int>) =
         l |> List.map Gen.constant
         |> Gen.sequence
         |> sample1
         |> ((=) l)
+
+    [<Property>]
+    let SequenceToSeq (l:list<byte>) =
+        Seq.map Gen.constant l
+        |> Gen.sequenceToSeq
+        |> sample1
+        |> ((=) (Seq.ofList l))
      
+    [<Property>]
+    let SequenceToArr (a:array<char>) =
+        Array.map Gen.constant a
+        |> Gen.sequenceToArr
+        |> sample1
+        |> ((=) a)
+
     [<Property>]
     let ListOfLength (v:char) (PositiveInt length) =
         Gen.listOfLength length (Gen.constant v)
