@@ -338,8 +338,9 @@ module Gen =
         map (fun (_, y, _) -> y) g,
         map (fun (_, _, z) -> z) g
 
-     /// Traverse the given enumerable into a generator of a list using the specified binder function to create generators.
-     ///[category: Create generators from generators]
+    /// Traverse the given enumerable into a generator of a list using the specified binder function to create generators.
+    ///[category: Create generators from generators]
+    [<CompiledName("CollectToList")>]
     let collect f l =
         let rec go gs acc size r0 = 
             match gs with
@@ -357,6 +358,7 @@ module Gen =
 
     /// Traverse the given enumerable into a generator of an enumerable using the specified binder function to create generators.
     ///[category: Create generators from generators]
+    [<CompiledName("Collect")>]
     let collectToSeq f l =
         // This implementation is similar to that for arrays and lists but is specialized
         // to sequences to avoid intermediate conversion to an intermediate list.
@@ -376,6 +378,7 @@ module Gen =
 
     /// Traverse the given array into a generator of an array using the specified binder function to create generators.
     ///[category: Creating generators from generators]
+    [<CompiledName("CollectToArray")>]
     let collectToArr f ([<ParamArray>]xs:array<_>) =
         if Object.ReferenceEquals (null, xs) then
             nullArg "generators"
