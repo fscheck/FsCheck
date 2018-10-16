@@ -776,9 +776,9 @@ module Arb =
         /// A DateTimeOffset is shrunk first by shrinking its offset, then by removing its second, minute and hour components.
         static member DateTimeOffset() =
             let genTimeZone = gen {
-                                let! hours = Gen.choose(-14, 14)
+                                let! hours = Gen.choose(-12, 14)
                                 let! minutes =
-                                    if abs hours = 14 then
+                                    if hours = -12 || hours = 14 then
                                         Gen.constant 0
                                     else
                                         Gen.choose(0, 59)
