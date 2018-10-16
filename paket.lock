@@ -2,8 +2,8 @@ RESTRICTION: || (== net452) (== portable-net45+win8) (== portable-net45+win8+wp8
 NUGET
   remote: https://www.nuget.org/api/v2
     FSharp.Core (4.0.0.1) - redirects: force
-    NUnit (3.9)
-    NUnit3TestAdapter (3.9.0) - version_in_path: true
+    NUnit (3.10.1)
+    NUnit3TestAdapter (3.10.0) - version_in_path: true
     Unquote (4.0)
     xunit (2.2)
       xunit.assert (2.2)
@@ -17,22 +17,63 @@ NUGET
       xunit.abstractions (>= 2.0.1) - restriction: || (== net452) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
     xunit.extensibility.execution (2.2)
       xunit.extensibility.core (2.2) - restriction: || (== net452) (&& (== portable-net45+win8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8) (>= netstandard1.1)) (&& (== portable-net45+win8+wp8+wpa81) (>= netstandard1.1))
-    xunit.runner.visualstudio (2.2.0) - version_in_path: true
+    xunit.runner.visualstudio (2.4.0) - version_in_path: true
 
 GROUP Build
 RESTRICTION: == net461
 NUGET
   remote: https://www.nuget.org/api/v2
-    FAKE (4.64.11)
-    FSharp.Compiler.Service (2.0.0.6)
-    FSharp.Formatting (2.14.4)
-      FSharp.Compiler.Service (2.0.0.6)
-      FSharpVSPowerTools.Core (>= 2.3 < 2.4)
-    FSharpVSPowerTools.Core (2.3)
-      FSharp.Compiler.Service (>= 2.0.0.3)
+    FAKE (4.64.13)
+    FSharp.Compiler.Service (22.0.3)
+      FSharp.Core (>= 4.1.18)
+      Microsoft.DiaSymReader (>= 1.1)
+      Microsoft.DiaSymReader.PortablePdb (>= 1.2)
+      System.Collections.Immutable (>= 1.3.1)
+      System.Reflection.Metadata (>= 1.4.2)
+      System.ValueTuple (>= 4.4)
+    FSharp.Core (4.5.2)
+    Microsoft.AspNet.Razor (3.2.6)
+    Microsoft.DiaSymReader (1.3)
+    Microsoft.DiaSymReader.PortablePdb (1.5)
+      Microsoft.DiaSymReader (>= 1.3)
+      System.Collections (>= 4.3)
+      System.Collections.Immutable (>= 1.5)
+      System.Diagnostics.Debug (>= 4.3)
+      System.Globalization (>= 4.3)
+      System.IO (>= 4.3)
+      System.Linq (>= 4.3)
+      System.Reflection (>= 4.3)
+      System.Reflection.Metadata (>= 1.6)
+      System.Reflection.Primitives (>= 4.3)
+      System.Runtime (>= 4.3)
+      System.Runtime.Extensions (>= 4.3)
+      System.Runtime.InteropServices (>= 4.3)
+      System.Text.Encoding (>= 4.3)
+      System.Threading (>= 4.3)
     Octokit (0.29)
-    xunit.runner.console (2.3.1)
+    System.Collections (4.3)
+    System.Collections.Immutable (1.5)
+    System.Diagnostics.Debug (4.3)
+    System.Globalization (4.3)
+    System.IO (4.3)
+    System.Linq (4.3)
+    System.Reflection (4.3)
+    System.Reflection.Metadata (1.6)
+      System.Collections.Immutable (>= 1.5)
+    System.Reflection.Primitives (4.3)
+    System.Runtime (4.3)
+    System.Runtime.Extensions (4.3)
+    System.Runtime.InteropServices (4.3)
+    System.Text.Encoding (4.3)
+    System.Threading (4.3)
+    System.ValueTuple (4.5)
+    xunit.runner.console (2.4)
+  remote: https://ci.appveyor.com/nuget/fsharp-formatting
+    FSharp.Formatting (3.0.0-beta12)
+      FSharp.Compiler.Service (>= 22.0.3 < 23.0)
+      Microsoft.AspNet.Razor (>= 3.2.4 < 4.0)
+      System.ValueTuple (>= 4.4 < 5.0)
 GITHUB
   remote: fsharp/FAKE
-    modules/Octokit/Octokit.fsx (b011a602d0b690fb80a30e5b97df53523d6c4b23)
+    modules/Octokit/Octokit.fsx (e87cbfd45bbba17d7e49f7922ae39b88ccddec2b)
       Octokit (>= 0.20)

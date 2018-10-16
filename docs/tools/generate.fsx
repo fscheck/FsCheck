@@ -28,9 +28,8 @@ let info =
 #r "FakeLib.dll"
 open Fake
 open System.IO
-open Fake.FileHelper
 open FSharp.Literate
-open FSharp.MetadataFormat
+open FSharp.Formatting.Razor
 
 // When called from 'build.fsx', use the public project URL as <root>
 // otherwise, use the current 'output' directory.
@@ -65,7 +64,7 @@ let copyFiles () =
 let buildReference () =
   CleanDir (output @@ "reference")
   for lib in referenceBinaries do
-    MetadataFormat.Generate
+    RazorMetadataFormat.Generate
       ( dllFile =       bin @@ lib, 
         outDir =        output @@ "reference", 
         layoutRoots =   layoutRoots, 
@@ -79,7 +78,7 @@ let buildDocumentation () =
   let subdirs = Directory.EnumerateDirectories(content, "*", SearchOption.AllDirectories)
   for dir in Seq.append [content] subdirs do
     let sub = if dir.Length > content.Length then dir.Substring(content.Length + 1) else ""
-    Literate.ProcessDirectory
+    RazorLiterate.ProcessDirectory
       ( dir, docTemplate, output @@ sub, replacements = ("root", root)::info,
         layoutRoots = layoutRoots, fsiEvaluator = new FsiEvaluator(), lineNumbers=false, generateAnchors=true )
 

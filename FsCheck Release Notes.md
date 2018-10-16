@@ -1,5 +1,16 @@
+### 2.12.1 - To be released
+* Fix FsCheck.Xunit's CheckExtensions so that the throwing methods actually throw on failure.
+
+* Add new generator extensions for C#: Zip, Zip3, Or and OrNull. (by Stijn Moreels)
+
+### 2.12.0 - 6 October 2018
+* Update NUnit to 3.10.1.
+
+* Add Arbitrary instance for XML encoded string. (by Stijn Moreels)
+
 ### 2.11.0 - 15 June 2018
 * DateTime now also generates kind and milliseconds (by Matthew Peacock)
+
 * Removed EditorBrowsable.Never from all but the obsoleted methods. F# intellisense now also honors these attributes, and so they
 were hiding a bunch of methods unnecessarily. The upshot is that C# users will see more of the API that is F# specific.
 
