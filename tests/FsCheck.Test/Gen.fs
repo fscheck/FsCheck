@@ -148,22 +148,22 @@ module Gen =
         |> ((=) (v,v,v,v))
     
     [<Property>]
-    let Traverse (l:list<int>) =
-        Gen.traverse Gen.constant l
+    let Collect (l:list<int>) =
+        Gen.collect Gen.constant l
         |> sample1
         |> ((=) l)
 
     [<Property>]
-    let TraverseToSeq (l:list<byte>) =
+    let CollectToSeq (l:list<byte>) =
         Seq.ofList l
-        |> Gen.traverseToSeq Gen.constant
+        |> Gen.collectToSeq Gen.constant
         |> sample1
         |> List.ofSeq
         |> ((=) l)
 
     [<Property>]
-    let TraverseToArr (a:array<char>) =
-        Gen.traverseToArr Gen.constant a
+    let CollectToArr (a:array<char>) =
+        Gen.collectToArr Gen.constant a
         |> sample1
         |> ((=) a)
 

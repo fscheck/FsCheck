@@ -164,7 +164,7 @@ type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) =
     static let skipMethods = [ "GetType"; "Finalize"; "MemberwiseClone"; "Dispose"; "System-IDisposable-Dispose"] |> Set.ofList
     let methodFilter = defaultArg methodFilter (fun mi -> not <| Set.contains mi.Name skipMethods)
     let parameterGenerator (parameters:seq<ParameterInfo>) =
-        parameters |> Gen.traverse (fun p -> Arb.getGenerator p.ParameterType)
+        parameters |> Gen.collect (fun p -> Arb.getGenerator p.ParameterType)
 
     let ctors = 
         typeof<'Actual>.GetTypeInfo().DeclaredConstructors
