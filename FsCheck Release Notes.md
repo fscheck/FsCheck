@@ -1,7 +1,11 @@
-### 2.12.1 - To be released
+### 2.12.1 - 18 October 2018
 * Fix FsCheck.Xunit's CheckExtensions so that the throwing methods actually throw on failure.
 
 * Add new generator extensions for C#: Zip, Zip3, Or and OrNull. (by Stijn Moreels)
+
+* Add Gen.collect and variations. (by Stijn Moreels)
+
+* Fix to offset of DateTimeOffset generator. (by Evgeny Grebenyuk)
 
 ### 2.12.0 - 6 October 2018
 * Update NUnit to 3.10.1.
