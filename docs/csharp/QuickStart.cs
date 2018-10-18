@@ -9,9 +9,9 @@ using global::Xunit;
 
 namespace CSharp
 {
-    class QuickStart
+    public class QuickStart
     {
-        public static void Samples([CallerFilePath] string file = "")
+        internal static void Samples([CallerFilePath] string file = "")
         {
             //[revRevIsOrig]
             Func<int[],bool> revRevIsOrig = xs => xs.Reverse().Reverse().SequenceEqual( xs );

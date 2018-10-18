@@ -1,1 +1,2 @@
-FSharp.Core framework: profile78
+group portable
+	FSharp.Core framework: profile78
