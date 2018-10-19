@@ -18,4 +18,5 @@ group Build
     nuget FAKE
     github fsharp/FAKE modules/Octokit/Octokit.fsx
     nuget FSharp.Formatting prerelease
+	nuget FSharp.Formatting.CommandTool prerelease
     nuget xunit.runner.console

@@ -23,7 +23,7 @@ GROUP Build
 RESTRICTION: == net461
 NUGET
   remote: https://www.nuget.org/api/v2
-    FAKE (4.64.13)
+    FAKE (5.8.4)
     FSharp.Compiler.Service (22.0.3)
       FSharp.Core (>= 4.1.18)
       Microsoft.DiaSymReader (>= 1.1)
@@ -50,7 +50,7 @@ NUGET
       System.Runtime.InteropServices (>= 4.3)
       System.Text.Encoding (>= 4.3)
       System.Threading (>= 4.3)
-    Octokit (0.29)
+    Octokit (0.32)
     System.Collections (4.3)
     System.Collections.Immutable (1.5)
     System.Diagnostics.Debug (4.3)
@@ -73,7 +73,8 @@ NUGET
       FSharp.Compiler.Service (>= 22.0.3 < 23.0)
       Microsoft.AspNet.Razor (>= 3.2.4 < 4.0)
       System.ValueTuple (>= 4.4 < 5.0)
+    FSharp.Formatting.CommandTool (3.0.0-beta12)
 GITHUB
   remote: fsharp/FAKE
-    modules/Octokit/Octokit.fsx (e87cbfd45bbba17d7e49f7922ae39b88ccddec2b)
+    modules/Octokit/Octokit.fsx (a53f9ed83f5c2c147c9c5fd5a4d97977719eee17)
       Octokit (>= 0.20)
