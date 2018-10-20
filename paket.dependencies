@@ -2,12 +2,12 @@ source https://www.nuget.org/api/v2
 
 framework: auto-detect
 
-nuget FSharp.Core = 4.2.3 redirects: force
+nuget FSharp.Core = 4.2.3
 
 nuget Unquote
-nuget xunit
+nuget xunit = 2.2
 nuget xunit.runner.visualstudio version_in_path: true
-nuget NUnit
+nuget NUnit = 3.10.1
 nuget NUnit3TestAdapter version_in_path: true
 nuget MSTest.TestFramework
 nuget MSTest.TestAdapter version_in_path: true

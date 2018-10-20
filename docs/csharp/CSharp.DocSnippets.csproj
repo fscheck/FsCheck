@@ -11,7 +11,6 @@
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>

@@ -415,36 +415,6 @@ Target.create "Release" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
-// .NET Core SDK and .NET Core
-
-let assertExitCodeZero x = if x = 0 then () else failwithf "Command failed with exit code %i" x
-let isDotnetSDKInstalled = try Shell.Exec("dotnet", "--version") = 0 with _ -> false
-let shellExec cmd args dir =
-    printfn "%s %s" cmd args
-    Shell.Exec(cmd, args, dir) |> assertExitCodeZero
-
-Target.create "Build.NetCore" (fun _ ->
-    shellExec "dotnet" (sprintf "restore /p:Version=%s FsCheck.netcore.sln" buildVersion) "."
-    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.netcore"
-    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.Xunit.netcore"
-    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.NUnit.netcore"
-)
-
-Target.create "RunTests.NetCore" (fun _ ->
-    shellExec "dotnet" "xunit" "tests/FsCheck.Test.netcore"
-)
-
-Target.create "Nuget.AddNetCore" (fun _ ->
-
-    for name in [ "FsCheck"; "FsCheck.NUnit"; "FsCheck.Xunit" ] do
-        let nupkg = sprintf "../../bin/%s.%s.nupkg" name buildVersion
-        let netcoreNupkg = sprintf "bin/Release/%s.%s.nupkg" name buildVersion
-
-        shellExec "dotnet" (sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg) (sprintf "src/%s.netcore/" name)
-
-)
-
-// --------------------------------------------------------------------------------------
 // Run all targets by default. Invoke 'build <Target>' to override
 
 Target.create "CI" ignore
@@ -455,8 +425,6 @@ Target.create "Tests" ignore
   ==> "AssemblyInfo"
   ==> "Build"
   ==> "RunTests"
-  =?> ("Build.NetCore", isDotnetSDKInstalled)
-  =?> ("RunTests.NetCore", isDotnetSDKInstalled)
   ==> "Tests"
 
 "Build"
@@ -470,7 +438,6 @@ Target.create "Tests" ignore
 
 "Tests"
   ==> "PaketPack"
-  =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
   ==> "PaketPush"
   ==> "Release"
 
@@ -478,8 +445,7 @@ Target.create "Tests" ignore
   ==> "CI"
 
 "Tests"
-  ==> "PaketPack" 
-  =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
+  ==> "PaketPack"
   ==> "CI"
 
 Target.runOrDefault "RunTests"

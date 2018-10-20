@@ -8,7 +8,6 @@
   <ItemGroup>
     <Compile Include="PropertyExamples.fs" />
     <None Include="paket.references" />
-    <Content Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/FsCheck/FsCheck.fsproj" />
