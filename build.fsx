@@ -385,14 +385,8 @@ Target.create "ReleaseDocs" (fun _ ->
 open Octokit 
 
 Target.create "Release" (fun _ ->
-    let user =
-        match Environment.getBuildParam "github-user" with
-        | s when not (String.IsNullOrWhiteSpace s) -> s
-        | _ -> UserInput.getUserInput "Username: "
-    let pw =
-        match Environment.getBuildParam "github-pw" with
-        | s when not (String.IsNullOrWhiteSpace s) -> s
-        | _ -> UserInput.getUserPassword "Password: "
+    let user = Environment.environVarOrDefault "github-user" (UserInput.getUserInput "Username: ")
+    let pw = Environment.environVarOrDefault "github-pw" (UserInput.getUserPassword "Password: ")
     let remote =
         CommandHelper.getGitResult "" "remote -v"
         |> Seq.filter (fun (s: string) -> s.EndsWith("(push)"))
