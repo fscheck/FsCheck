@@ -39,7 +39,7 @@ let releaseNotes = "FsCheck Release Notes.md"
 let solution = if Environment.isMono then "FsCheck-mono.sln" else "FsCheck.sln"
 
 /// Pattern specifying assemblies to be tested
-let testAssemblies = "tests/**/bin/Release/*.Test.dll"
+let testAssemblies = "tests/**/bin/Release/net452/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
