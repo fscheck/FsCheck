@@ -1,7 +1,7 @@
 ﻿(*** hide ***)
-#I "../../src/FsCheck/bin/Release"
-#I "../../src/FsCheck.Xunit/bin/Release"
-#I "../../src/FsCheck.NUnit/bin/Release"
+#I "../../src/FsCheck/bin/Release/net452"
+#I "../../src/FsCheck.Xunit/bin/Release/net452"
+#I "../../src/FsCheck.NUnit/bin/Release/net452"
 #r @"../../packages/xunit.abstractions/lib/net35/xunit.abstractions.dll"
 #r @"../../packages/xunit.extensibility.core/lib/netstandard1.1/xunit.core.dll"
 #r @"../../packages/NUnit/lib/net45/nunit.framework.dll"

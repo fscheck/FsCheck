@@ -159,7 +159,7 @@ Target.create "PaketPush" (fun _ ->
 // Generate the documentation
 
 // Paths with template/source/output locations
-let bin        = __SOURCE_DIRECTORY__ @@ "src/FsCheck.Xunit/bin/Release" //might not work in the future
+let bin        = __SOURCE_DIRECTORY__ @@ "src/FsCheck.Xunit/bin/Release/net452" //might not work in the future
 let content    = __SOURCE_DIRECTORY__ @@ "docs/content"
 let output     = __SOURCE_DIRECTORY__ @@ "docs/output"
 let files      = __SOURCE_DIRECTORY__ @@ "docs/files"
