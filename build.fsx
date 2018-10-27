@@ -114,10 +114,7 @@ Target.create "CleanDocs" (fun _ ->
 Target.create "Build" (fun _ ->
     DotNet.restore id solution
     !! solution
-    |> MSBuild.runRelease (fun par -> 
-        { par with MaxCpuCount = Some (Some Environment.ProcessorCount)
-                   DoRestore = true
-        }) "" "Rebuild"
+    |> MSBuild.runRelease (fun par -> { par with MaxCpuCount = Some (Some Environment.ProcessorCount) }) "" "Rebuild"
     |> ignore
 )
 
