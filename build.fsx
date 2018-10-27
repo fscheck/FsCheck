@@ -36,7 +36,7 @@ type ProjectInfo =
 let releaseNotes = "FsCheck Release Notes.md"
 
 /// Solution or project files to be built during the building process
-let solution = if Environment.isMono then "FsCheck-mono.sln" else "FsCheck.sln"
+let solution = "FsCheck.sln"
 
 /// Pattern specifying assemblies to be tested
 let testAssemblies = "tests/**/bin/Release/net452/*.Test.dll"
