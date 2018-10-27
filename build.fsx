@@ -116,7 +116,7 @@ Target.create "Build" (fun _ ->
     !! solution
     |> MSBuild.runRelease (fun par -> 
         { par with MaxCpuCount = Some (Some Environment.ProcessorCount)
-                   DoRestore = true; RestorePackagesFlag = true
+                   DoRestore = true
         }) "" "Rebuild"
     |> ignore
 )
