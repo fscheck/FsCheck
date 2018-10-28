@@ -28,6 +28,8 @@ dependencies
 		FSharp.Core >= LOCKEDVERSION
 	framework: netstandard1.6
 		FSharp.Core >= LOCKEDVERSION
+	framework: netstandard2.0
+		FSharp.Core >= LOCKEDVERSION
 	framework: netstandard1.0
 		FSharp.Core >= LOCKEDVERSION-portable
 files
@@ -35,6 +37,8 @@ files
     bin/Release/net452/FsCheck.xml ==> lib/net452
 	bin/Release/netstandard1.6/FsCheck.dll ==> lib/netstandard1.6
     bin/Release/netstandard1.6/FsCheck.xml ==> lib/netstandard1.6
+	bin/Release/netstandard2.0/FsCheck.dll ==> lib/netstandard2.0
+    bin/Release/netstandard2.0/FsCheck.xml ==> lib/netstandard2.0
 	bin/Release/netstandard1.0/FsCheck.dll ==> lib/netstandard1.0
     bin/Release/netstandard1.0/FsCheck.xml ==> lib/netstandard1.0
     

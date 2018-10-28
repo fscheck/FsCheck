@@ -31,3 +31,5 @@ files
     bin/Release/net452/FsCheck.NUnit.xml ==> lib/net452
 	bin/Release/netstandard1.6/FsCheck.NUnit.dll ==> lib/netstandard1.6
     bin/Release/netstandard1.6/FsCheck.NUnit.xml ==> lib/netstandard1.6
+	bin/Release/netstandard2.0/FsCheck.NUnit.dll ==> lib/netstandard2.0
+    bin/Release/netstandard2.0/FsCheck.NUnit.xml ==> lib/netstandard2.0
