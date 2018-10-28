@@ -218,7 +218,7 @@ module BugReproIssue344 =
                     Gen.constant (IntWrapper 1)
                 // ... and count upwards with each shrink
                 override __.Shrinker _ =
-                    Seq.initInfinite (fun i -> IntWrapper(i + 2))
+                    Seq.initInfinite (fun i -> IntWrapper(i + 2)) |> Seq.take 200
             }
 #if !NETSTANDARD1_6 //Stacktrace not defined
     [<Fact>]
@@ -237,10 +237,9 @@ module BugReproIssue344 =
                     false
                 else
                     if x.I >= 200 then
-                        // after 200 iterations, check the frame count and abort
+                        // after 200 iterations, check the frame count
                         let st = new StackTrace()
                         tooManyFrames <- st.FrameCount > 200
-                        Thread.CurrentThread.Abort()
                     true))
         thread2.Start()
         thread2.Join()

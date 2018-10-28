@@ -27,6 +27,7 @@ dependencies
     FsCheck = CURRENTVERSION
     NUnit ~> 3.10 >= 3.10.1
 files
-    bin/Release/FsCheck.NUnit.dll ==> lib/net452
-    bin/Release/FsCheck.NUnit.pdb ==> lib/net452
-    bin/Release/FsCheck.NUnit.xml ==> lib/net452
+    bin/Release/net452/FsCheck.NUnit.dll ==> lib/net452
+    bin/Release/net452/FsCheck.NUnit.xml ==> lib/net452
+	bin/Release/netstandard1.6/FsCheck.NUnit.dll ==> lib/netstandard1.6
+    bin/Release/netstandard1.6/FsCheck.NUnit.xml ==> lib/netstandard1.6

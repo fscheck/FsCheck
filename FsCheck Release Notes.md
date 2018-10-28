@@ -1,3 +1,5 @@
+### 2.13.0 - To be released
+
 ### 2.12.1 - 18 October 2018
 * Fix FsCheck.Xunit's CheckExtensions so that the throwing methods actually throw on failure.
 

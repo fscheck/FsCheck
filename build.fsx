@@ -36,10 +36,10 @@ type ProjectInfo =
 let releaseNotes = "FsCheck Release Notes.md"
 
 /// Solution or project files to be built during the building process
-let solution = if Environment.isMono then "FsCheck-mono.sln" else "FsCheck.sln"
+let solution = "FsCheck.sln"
 
 /// Pattern specifying assemblies to be tested
-let testAssemblies = "tests/**/bin/Release/*.Test.dll"
+let testAssemblies = "tests/**/bin/Release/net452/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
@@ -112,6 +112,7 @@ Target.create "CleanDocs" (fun _ ->
 // Build library & test project
 
 Target.create "Build" (fun _ ->
+    DotNet.restore id solution
     !! solution
     |> MSBuild.runRelease (fun par -> { par with MaxCpuCount = Some (Some Environment.ProcessorCount) }) "" "Rebuild"
     |> ignore
@@ -155,7 +156,7 @@ Target.create "PaketPush" (fun _ ->
 // Generate the documentation
 
 // Paths with template/source/output locations
-let bin        = __SOURCE_DIRECTORY__ @@ "src/FsCheck.Xunit/bin/Release" //might not work in the future
+let bin        = __SOURCE_DIRECTORY__ @@ "src/FsCheck.Xunit/bin/Release/net452" //might not work in the future
 let content    = __SOURCE_DIRECTORY__ @@ "docs/content"
 let output     = __SOURCE_DIRECTORY__ @@ "docs/output"
 let files      = __SOURCE_DIRECTORY__ @@ "docs/files"
@@ -385,14 +386,8 @@ Target.create "ReleaseDocs" (fun _ ->
 open Octokit 
 
 Target.create "Release" (fun _ ->
-    let user =
-        match Environment.getBuildParam "github-user" with
-        | s when not (String.IsNullOrWhiteSpace s) -> s
-        | _ -> UserInput.getUserInput "Username: "
-    let pw =
-        match Environment.getBuildParam "github-pw" with
-        | s when not (String.IsNullOrWhiteSpace s) -> s
-        | _ -> UserInput.getUserPassword "Password: "
+    let user = Environment.environVarOrDefault "github-user" (UserInput.getUserInput "Username: ")
+    let pw = Environment.environVarOrDefault "github-pw" (UserInput.getUserPassword "Password: ")
     let remote =
         CommandHelper.getGitResult "" "remote -v"
         |> Seq.filter (fun (s: string) -> s.EndsWith("(push)"))
@@ -415,36 +410,6 @@ Target.create "Release" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
-// .NET Core SDK and .NET Core
-
-let assertExitCodeZero x = if x = 0 then () else failwithf "Command failed with exit code %i" x
-let isDotnetSDKInstalled = try Shell.Exec("dotnet", "--version") = 0 with _ -> false
-let shellExec cmd args dir =
-    printfn "%s %s" cmd args
-    Shell.Exec(cmd, args, dir) |> assertExitCodeZero
-
-Target.create "Build.NetCore" (fun _ ->
-    shellExec "dotnet" (sprintf "restore /p:Version=%s FsCheck.netcore.sln" buildVersion) "."
-    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.netcore"
-    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.Xunit.netcore"
-    shellExec "dotnet" (sprintf "pack /p:Version=%s --configuration Release" buildVersion) "src/FsCheck.NUnit.netcore"
-)
-
-Target.create "RunTests.NetCore" (fun _ ->
-    shellExec "dotnet" "xunit" "tests/FsCheck.Test.netcore"
-)
-
-Target.create "Nuget.AddNetCore" (fun _ ->
-
-    for name in [ "FsCheck"; "FsCheck.NUnit"; "FsCheck.Xunit" ] do
-        let nupkg = sprintf "../../bin/%s.%s.nupkg" name buildVersion
-        let netcoreNupkg = sprintf "bin/Release/%s.%s.nupkg" name buildVersion
-
-        shellExec "dotnet" (sprintf """mergenupkg --source "%s" --other "%s" --framework netstandard1.6 """ nupkg netcoreNupkg) (sprintf "src/%s.netcore/" name)
-
-)
-
-// --------------------------------------------------------------------------------------
 // Run all targets by default. Invoke 'build <Target>' to override
 
 Target.create "CI" ignore
@@ -455,8 +420,6 @@ Target.create "Tests" ignore
   ==> "AssemblyInfo"
   ==> "Build"
   ==> "RunTests"
-  =?> ("Build.NetCore", isDotnetSDKInstalled)
-  =?> ("RunTests.NetCore", isDotnetSDKInstalled)
   ==> "Tests"
 
 "Build"
@@ -470,7 +433,6 @@ Target.create "Tests" ignore
 
 "Tests"
   ==> "PaketPack"
-  =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
   ==> "PaketPush"
   ==> "Release"
 
@@ -478,8 +440,7 @@ Target.create "Tests" ignore
   ==> "CI"
 
 "Tests"
-  ==> "PaketPack" 
-  =?> ("Nuget.AddNetCore", isDotnetSDKInstalled)
+  ==> "PaketPack"
   ==> "CI"
 
 Target.runOrDefault "RunTests"
