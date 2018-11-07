@@ -54,6 +54,11 @@ type StringNoNulls = StringNoNulls of string with
     member x.Get = match x with StringNoNulls r -> r
     override x.ToString() = x.Get
 
+// Represents a string that is not null, empty or consists only of white-space characters and does not contain any null characters ('\000')
+type NonWhiteSpaceString = NonWhiteSpaceString of string with
+    member x.Get = match x with NonWhiteSpaceString s -> s
+    override x.ToString() = x.Get
+
 ///Represents a string that can be serializable as a XML value.
 type XmlEncodedString = XmlEncodedString of string with
     member x.Get = match x with XmlEncodedString v -> v
@@ -855,6 +860,12 @@ module Arb =
             Default.String()
             |> filter (fun s -> not (String.IsNullOrEmpty s) && not (String.exists ((=) '\000') s))
             |> convert NonEmptyString string
+
+        static member NonWhiteSpaceString() =
+            Default.String()
+            |> filter (fun s -> not (String.IsNullOrWhiteSpace s) && not (String.exists ((=) '\000') s))
+            |> convert NonWhiteSpaceString string
+
 
 #if NETSTANDARD1_0 || NETSTANDARD1_6
 #else
