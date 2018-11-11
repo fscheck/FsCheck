@@ -24,7 +24,7 @@
     <div class="container">
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li><a href="http://github.com/fscheck/FsCheck/fork">Fork me on GitHub</a></li>
+          <li><a href="https://github.com/fscheck/FsCheck/fork">Fork me on GitHub</a></li>
         </ul>
         <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
       </div>
@@ -37,7 +37,17 @@
 <p><em>Caveat: since this is in the FsCheck.Experimental namespace for now, the rules of semantic versioning do
 not apply to this particular part of the API. In other words, minor version releases may break your code.</em></p>
 <p>Let's look at the following simple class, which has an artificial bug:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="rt">Counter</span><span class="pn">(</span><span class="o">?</span><span onmouseout="hideTip(event, 'fs5', 6)" onmouseover="showTip(event, 'fs5', 6)" class="id">initial</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs6', 7)" onmouseover="showTip(event, 'fs6', 7)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="rt">Counter</span><span class="pn">(</span><span class="o">?</span><span onmouseout="hideTip(event, 'fs5', 6)" onmouseover="showTip(event, 'fs5', 6)" class="id">initial</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs6', 7)" onmouseover="showTip(event, 'fs6', 7)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span>
     <span class="k">let</span> <span class="k">mutable</span> <span onmouseout="hideTip(event, 'fs7', 8)" onmouseover="showTip(event, 'fs7', 8)" class="mv">n</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="fn">defaultArg</span> <span onmouseout="hideTip(event, 'fs5', 10)" onmouseover="showTip(event, 'fs5', 10)" class="id">initial</span> <span class="n">0</span>
     <span class="k">member</span> <span class="id">__</span><span class="pn">.</span><span class="fn">Inc</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> 
         <span class="c">//silly bug</span>
@@ -46,12 +56,41 @@ not apply to this particular part of the API. In other words, minor version rele
     <span class="k">member</span> <span onmouseout="hideTip(event, 'fs9', 17)" onmouseover="showTip(event, 'fs9', 17)" class="id">__</span><span class="pn">.</span><span class="fn">Dec</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span class="k">if</span> <span onmouseout="hideTip(event, 'fs7', 18)" onmouseover="showTip(event, 'fs7', 18)" class="mv">n</span> <span class="o">&lt;=</span> <span class="n">0</span> <span class="k">then</span> <span onmouseout="hideTip(event, 'fs10', 19)" onmouseover="showTip(event, 'fs10', 19)" class="fn">failwithf</span> <span class="s">&quot;Precondition fail&quot;</span> <span class="k">else</span> <span onmouseout="hideTip(event, 'fs7', 20)" onmouseover="showTip(event, 'fs7', 20)" class="mv">n</span> <span class="k">&lt;-</span> <span onmouseout="hideTip(event, 'fs7', 21)" onmouseover="showTip(event, 'fs7', 21)" class="mv">n</span> <span class="o">-</span> <span class="n">1</span><span class="pn">;</span> <span onmouseout="hideTip(event, 'fs7', 22)" onmouseover="showTip(event, 'fs7', 22)" class="mv">n</span>
     <span class="k">member</span> <span onmouseout="hideTip(event, 'fs9', 23)" onmouseover="showTip(event, 'fs9', 23)" class="id">__</span><span class="pn">.</span><span class="fn">Reset</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs7', 24)" onmouseover="showTip(event, 'fs7', 24)" class="mv">n</span> <span class="k">&lt;-</span> <span class="n">0</span>
     <span class="k">override</span> <span onmouseout="hideTip(event, 'fs9', 25)" onmouseover="showTip(event, 'fs9', 25)" class="id">__</span><span class="pn">.</span><span class="fn">ToString</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 26)" onmouseover="showTip(event, 'fs11', 26)" class="fn">sprintf</span> <span class="s">&quot;Counter = </span><span class="pf">%i</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs7', 27)" onmouseover="showTip(event, 'fs7', 27)" class="mv">n</span>
-</code></pre>
+</code></pre></td>
+</tr>
+</table>
 <p>As a model to test this class we can use an int value which is an abstraction of the object's internal state. The
 idea is that each operation on the class (in this case, Inc, Dec and Reset) affects both the model object and the actual object, and
 after each such operation, the model and the actual instance should still be equivalent.</p>
 <p>With this idea in mind, you can write a specification of the Counter class using an int model as follows:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 28)" onmouseover="showTip(event, 'fs12', 28)" class="id">spec</span> <span class="o">=</span>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+<span class="l">26: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 28)" onmouseover="showTip(event, 'fs12', 28)" class="id">spec</span> <span class="o">=</span>
     <span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 29)" onmouseover="showTip(event, 'fs13', 29)" class="id">inc</span> <span class="o">=</span> 
         <span class="pn">{</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs14', 30)" onmouseover="showTip(event, 'fs14', 30)" class="rt">Operation</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs4', 31)" onmouseover="showTip(event, 'fs4', 31)" class="rt">Counter</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs6', 32)" onmouseover="showTip(event, 'fs6', 32)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">(</span><span class="pn">)</span> <span class="k">with</span>
             <span class="k">member</span> <span class="id">__</span><span class="pn">.</span><span class="fn">Run</span> <span onmouseout="hideTip(event, 'fs15', 33)" onmouseover="showTip(event, 'fs15', 33)" class="id">m</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs15', 34)" onmouseover="showTip(event, 'fs15', 34)" class="id">m</span> <span class="o">+</span> <span class="n">1</span>
@@ -77,7 +116,9 @@ after each such operation, the model and the actual instance should still be equ
     <span class="pn">{</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs30', 83)" onmouseover="showTip(event, 'fs30', 83)" class="rt">Machine</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs4', 84)" onmouseover="showTip(event, 'fs4', 84)" class="rt">Counter</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs6', 85)" onmouseover="showTip(event, 'fs6', 85)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">(</span><span class="pn">)</span> <span class="k">with</span>
         <span class="k">member</span> <span class="id">__</span><span class="pn">.</span><span class="fn">Setup</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs31', 86)" onmouseover="showTip(event, 'fs31', 86)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs32', 87)" onmouseover="showTip(event, 'fs32', 87)" class="id">choose</span> <span class="pn">(</span><span class="n">0</span><span class="pn">,</span><span class="n">3</span><span class="pn">)</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs31', 88)" onmouseover="showTip(event, 'fs31', 88)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs33', 89)" onmouseover="showTip(event, 'fs33', 89)" class="id">map</span> <span onmouseout="hideTip(event, 'fs25', 90)" onmouseover="showTip(event, 'fs25', 90)" class="fn">create</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs34', 91)" onmouseover="showTip(event, 'fs34', 91)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs35', 92)" onmouseover="showTip(event, 'fs35', 92)" class="id">fromGen</span>
         <span class="k">member</span> <span onmouseout="hideTip(event, 'fs36', 93)" onmouseover="showTip(event, 'fs36', 93)" class="id">__</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs37', 94)" onmouseover="showTip(event, 'fs37', 94)" class="fn">Next</span> <span class="id">_</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs31', 95)" onmouseover="showTip(event, 'fs31', 95)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs38', 96)" onmouseover="showTip(event, 'fs38', 96)" class="id">elements</span> <span class="pn">[</span> <span onmouseout="hideTip(event, 'fs13', 97)" onmouseover="showTip(event, 'fs13', 97)" class="id">inc</span><span class="pn">;</span> <span onmouseout="hideTip(event, 'fs22', 98)" onmouseover="showTip(event, 'fs22', 98)" class="id">dec</span> <span class="pn">]</span> <span class="pn">}</span>
-</code></pre>
+</code></pre></td>
+</tr>
+</table>
 <p>Let's break this down a bit. A specification is put together as an object that is a subtype of the abstract class <code>Machine&lt;'TypeUnderTest,'ModelType&gt;</code>.
 What you're actually defining is a state machine which can simultaneously apply operations, or state transitions, to the actual system
 under test (in this case, a simple object) and a model of the system under test.</p>
@@ -101,38 +142,34 @@ silly, for demonstration purposes) precondition that the value should be strictl
 so when we run this specification we can check that FsCheck does the right thing here (testing the test library, very meta...)</p>
 <p>We also override ToString in each <code>Operation</code> so that counter-examples can be printed.</p>
 <p>A specification can be checked as follows:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs39', 99)" onmouseover="showTip(event, 'fs39', 99)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 100)" onmouseover="showTip(event, 'fs40', 100)" class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs41', 101)" onmouseover="showTip(event, 'fs41', 101)" class="m">StateMachine</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs42', 102)" onmouseover="showTip(event, 'fs42', 102)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs12', 103)" onmouseover="showTip(event, 'fs12', 103)" class="id">spec</span><span class="pn">)</span>
-</code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 11 tests (9 shrinks) (StdGen (129124733,296510006)):
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs39', 99)" onmouseover="showTip(event, 'fs39', 99)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 100)" onmouseover="showTip(event, 'fs40', 100)" class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs41', 101)" onmouseover="showTip(event, 'fs41', 101)" class="m">StateMachine</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs42', 102)" onmouseover="showTip(event, 'fs42', 102)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs12', 103)" onmouseover="showTip(event, 'fs12', 103)" class="id">spec</span><span class="pn">)</span>
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (777520938,296521705)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
-(2, Setup Counter)
-inc -&gt; 3
-inc -&gt; 4
-inc -&gt; 5
-inc -&gt; 6
-dec -&gt; 5
-inc -&gt; 6
-inc -&gt; 7
-dec -&gt; 6
-inc -&gt; 7
-dec -&gt; 6
-dec -&gt; 5
-dec -&gt; 4
-
-Shrunk:
-(2, Setup Counter)
-inc -&gt; 3
+(3, Setup Counter)
 inc -&gt; 4
 inc -&gt; 5</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence of operations that leads to it.</p>
 <p>But what has actually happened? Using the generators from the <code>Machine</code> methods, FsCheck tries to generate a random sequence of operations, for example:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">{</span><span class="id">Setup</span> <span class="o">=</span> <span class="pn">(</span><span class="n">0</span><span class="pn">,</span> <span class="id">Setup</span> <span class="id">Counter</span><span class="pn">)</span><span class="pn">;</span>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">{</span><span class="id">Setup</span> <span class="o">=</span> <span class="pn">(</span><span class="n">0</span><span class="pn">,</span> <span class="id">Setup</span> <span class="id">Counter</span><span class="pn">)</span><span class="pn">;</span>
  <span class="id">Operations</span> <span class="o">=</span>
   <span class="pn">[</span><span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">1</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">dec</span><span class="pn">,</span> <span class="n">0</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">1</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">2</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">3</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">4</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">5</span><span class="pn">)</span><span class="pn">;</span>
    <span class="pn">(</span><span class="id">dec</span><span class="pn">,</span> <span class="n">4</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">dec</span><span class="pn">,</span> <span class="n">3</span><span class="pn">)</span><span class="pn">]</span><span class="pn">;</span>
  <span class="id">TearDown</span> <span class="o">=</span> <span class="id">TearDown</span> <span class="id">Counter</span><span class="pn">;</span><span class="pn">}</span>
-</code></pre>
+</code></pre></td>
+</tr>
+</table>
 <p>You can read this as a trace of the operations: the counter started off in state <code>0</code>, then using operation <code>inc</code> when to state <code>1</code>, then using operation <code>dec</code>
 went to state <code>0</code> and so on.</p>
 <p>This sequence is first generated using the model only, i.e. no operations are actually applied to any <code>Counter</code> objects. After generating a full trace, the operations
@@ -191,9 +228,9 @@ although the original sequence contains a few superfluous operations, FsCheck no
             <li><a href="/FsCheck/index.html">Home page</a></li>
             <li class="divider"></li>
             <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
-            <li><a href="http://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
-            <li><a href="http://github.com/fscheck/FsCheck/blob/master/License.txt">License</a></li>
-            <li><a href="http://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+            <li><a href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+            <li><a href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License</a></li>
+            <li><a href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
             <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
             
             <li class="nav-header">Getting started</li>
@@ -225,7 +262,7 @@ although the original sequence contains a few superfluous operations, FsCheck no
         </div>
       </div>
     </div>
-    <a href="http://github.com/fscheck/FsCheck">
+    <a href="https://github.com/fscheck/FsCheck">
       <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
     </a>
   </body>
