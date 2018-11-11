@@ -144,6 +144,9 @@ module Arbitrary =
     [<Property>]
     let ``Non-empty string`` (NonEmptyString v) = not (System.String.IsNullOrEmpty v)
       
+    [<Property>]
+    let ``Non-whitespace string`` (NonWhiteSpaceString s) = not (System.String.IsNullOrWhiteSpace s)
+
 #if !NETSTANDARD1_6
     [<Property>]
     let ``XML encoded string is serializable`` (XmlEncodedString value) =
