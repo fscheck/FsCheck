@@ -24,8 +24,22 @@ description
 
     Properties are written in F#, C# or VB. FsCheck helps you to define properties, observe the distribution of test data, and define test data generators. Crucially, when a property fails, FsCheck automatically displays a minimal counter example.
 dependencies
-	FSharp.Core >= LOCKEDVERSION
+	framework: net452
+		FSharp.Core >= LOCKEDVERSION
+	framework: netstandard1.6
+		FSharp.Core >= LOCKEDVERSION
+	framework: netstandard2.0
+		FSharp.Core >= LOCKEDVERSION
+	framework: netstandard1.0
+		FSharp.Core >= LOCKEDVERSION-portable
 files
-    bin/Release/FsCheck.dll ==> lib/net452
-    bin/Release/FsCheck.pdb ==> lib/net452
-    bin/Release/FsCheck.xml ==> lib/net452
+    bin/Release/net452/FsCheck.dll ==> lib/net452
+    bin/Release/net452/FsCheck.xml ==> lib/net452
+	bin/Release/netstandard1.6/FsCheck.dll ==> lib/netstandard1.6
+    bin/Release/netstandard1.6/FsCheck.xml ==> lib/netstandard1.6
+	bin/Release/netstandard2.0/FsCheck.dll ==> lib/netstandard2.0
+    bin/Release/netstandard2.0/FsCheck.xml ==> lib/netstandard2.0
+	bin/Release/netstandard1.0/FsCheck.dll ==> lib/netstandard1.0
+    bin/Release/netstandard1.0/FsCheck.xml ==> lib/netstandard1.0
+    
+

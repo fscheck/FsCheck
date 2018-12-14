@@ -2,7 +2,7 @@
 
 module internal Data =
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_0 || NETSTANDARD1_6
 
     let cultureNames = [
                 "af"; "af-ZA";

@@ -27,7 +27,10 @@ dependencies
     FsCheck = CURRENTVERSION
     xunit.extensibility.execution ~> LOCKEDVERSION
 files
-    bin/Release/FsCheck.Xunit.dll ==> lib/net452
-    bin/Release/FsCheck.Xunit.pdb ==> lib/net452
-    bin/Release/FsCheck.Xunit.xml ==> lib/net452
+    bin/Release/net452/FsCheck.Xunit.dll ==> lib/net452
+    bin/Release/net452/FsCheck.Xunit.xml ==> lib/net452
+	bin/Release/netstandard1.6/FsCheck.Xunit.dll ==> lib/netstandard1.6
+    bin/Release/netstandard1.6/FsCheck.Xunit.xml ==> lib/netstandard1.6
+	bin/Release/netstandard2.0/FsCheck.Xunit.dll ==> lib/netstandard2.0
+    bin/Release/netstandard2.0/FsCheck.Xunit.xml ==> lib/netstandard2.0
 

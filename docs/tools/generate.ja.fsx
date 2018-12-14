@@ -26,11 +26,14 @@ let info =
 #load "../../packages/build/FSharp.Formatting/FSharp.Formatting.fsx"
 #r "NuGet.Core.dll"
 #r "FakeLib.dll"
-open Fake
+
+open Fake.Core
+open Fake.IO
+open Fake.IO.FileSystemOperators
+
 open System.IO
-open Fake.FileHelper
 open FSharp.Literate
-open FSharp.MetadataFormat
+open FSharp.Formatting.Razor
 
 // When called from 'build.fsx', use the public project URL as <root>
 // otherwise, use the current 'output' directory.
@@ -57,10 +60,10 @@ let layoutRoots =
 
 // Copy static files and CSS + JS from F# Formatting
 let copyFiles () =
-  CopyRecursive files output true |> Log "Copying file: "
-  ensureDirectory (output @@ "content")
-  CopyRecursive (formatting @@ "styles") (output @@ "content") true 
-    |> Log "Copying styles and scripts: "
+  Shell.copyRecursive files output true |> Trace.logItems "Copying file: "
+  Directory.ensure (output @@ "content")
+  Shell.copyRecursive (formatting @@ "styles") (output @@ "content") true 
+    |> Trace.logItems "Copying styles and scripts: "
 
 // Build documentation from `fsx` and `md` files in `docs/content`
 let buildDocumentation () =
@@ -68,7 +71,7 @@ let buildDocumentation () =
                 |> Seq.filter (fun x -> x.Contains "ja")
   for dir in Seq.append [content] subdirs do
     let sub = if dir.Length > content.Length then dir.Substring(content.Length + 1) else ""
-    Literate.ProcessDirectory
+    RazorLiterate.ProcessDirectory
       ( dir, docTemplate, outputJa @@ sub, replacements = ("root", root)::info,
         layoutRoots = layoutRoots, fsiEvaluator = new FsiEvaluator(), lineNumbers=false )
 

@@ -6,7 +6,7 @@
 
 open System
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_0 || NETSTANDARD1_6
 #else
 open System.Net
 open System.Net.Mail
@@ -50,6 +50,11 @@ type NonEmptyString = NonEmptyString of string with
 ///Represents a string that does not contain null characters ('\000')
 type StringNoNulls = StringNoNulls of string with
     member x.Get = match x with StringNoNulls r -> r
+    override x.ToString() = x.Get
+
+// Represents a string that is not null, empty or consists only of white-space characters and does not contain any null characters ('\000')
+type NonWhiteSpaceString = NonWhiteSpaceString of string with
+    member x.Get = match x with NonWhiteSpaceString s -> s
     override x.ToString() = x.Get
 
 ///Represents a string that can be serializable as a XML value.
@@ -121,7 +126,7 @@ type DoNotSize<'a when 'a : struct and 'a : comparison> =
     DoNotSize of 'a with
     static member Unwrap(DoNotSize a) : 'a = a
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_0 || NETSTANDARD1_6
 #else
 type IPv4Address = IPv4Address of IPAddress
 type IPv6Address = IPv6Address of IPAddress
@@ -600,6 +605,8 @@ module Arb =
 
                                         NullReferenceException()
                                         OutOfMemoryException()
+#if NETSTANDARD1_0
+#else
 #if NETSTANDARD1_6
 #else
                                         NotFiniteNumberException()
@@ -609,6 +616,7 @@ module Arb =
                                         IO.FileLoadException()
                                         KeyNotFoundException()
                                         IO.PathTooLongException()
+#endif                                
                                      |]
 
         ///Generate a Function value that can be printed and shrunk. Function values can be generated for types 'a->'b 
@@ -708,9 +716,9 @@ module Arb =
         /// A DateTimeOffset is shrunk first by shrinking its offset, then by removing its second, minute and hour components.
         static member DateTimeOffset() =
             let genTimeZone = gen {
-                                let! hours = Gen.choose(-14, 14)
-                                let! minutes = 
-                                    if abs hours = 14 then 
+                                let! hours = Gen.choose(-12, 14)
+                                let! minutes =
+                                    if hours = -12 || hours = 14 then
                                         Gen.constant 0
                                     else 
                                         Gen.choose(0, 59)
@@ -788,7 +796,13 @@ module Arb =
             |> filter (fun s -> not (String.IsNullOrEmpty s) && not (String.exists ((=) '\000') s))
             |> convert NonEmptyString string
 
-#if PCL || NETSTANDARD1_6
+        static member NonWhiteSpaceString() =
+            Default.String()
+            |> filter (fun s -> not (String.IsNullOrWhiteSpace s) && not (String.exists ((=) '\000') s))
+            |> convert NonWhiteSpaceString string
+
+
+#if NETSTANDARD1_0 || NETSTANDARD1_6
 #else
         static member XmlEncodedString() =
             Default.String()
@@ -869,7 +883,7 @@ module Arb =
             |> convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
 
         static member Culture() =
-#if NETSTANDARD1_6
+#if NETSTANDARD1_0 || NETSTANDARD1_6
             let cultures = 
                 cultureNames |> Seq.choose (fun name -> try Some (CultureInfo name) with _ -> None)
                       |> Seq.append [ CultureInfo.InvariantCulture; 
@@ -903,7 +917,7 @@ module Arb =
                 return Guid((a: int),b,c,d,e,f,g,h,i,j,k)
             } |> fromGen
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_0 || NETSTANDARD1_6
 #else
         static member IPv4Address() =
             let generator =
@@ -985,7 +999,7 @@ module Arb =
 
             fromGenShrink (host, shrinkHost)
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_0 || NETSTANDARD1_6
 #else
         static member MailAddress() =
             let isValidUser (user: string) = 

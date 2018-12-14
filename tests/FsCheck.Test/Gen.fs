@@ -147,12 +147,48 @@ module Gen =
                 |> ((=) (v,v,v,v)) )
     
     [<Property>]
+    let Collect (l:list<int>) =
+        Gen.collect Gen.constant l
+        |> sample1
+        |> ((=) l)
+
+    [<Property>]
+    let CollectToSeq (l:list<byte>) =
+        Seq.ofList l
+        |> Gen.collectToSeq Gen.constant
+        |> sample1
+        |> List.ofSeq
+        |> ((=) l)
+
+    [<Property>]
+    let CollectToArr (a:array<char>) =
+        Gen.collectToArr Gen.constant a
+        |> sample1
+        |> ((=) a)
+
+    [<Property>]
     let Sequence (l:list<int>) =
-        assertTrue ( l |> List.map Gen.constant
-                |> Gen.sequence
-                |> sample1
-                |> ((=) l) )
+        l |> List.map Gen.constant
+        |> Gen.sequence
+        |> sample1
+        |> ((=) l)
+
+    [<Property>]
+    let SequenceToSeq (l:list<byte>) =
+        Seq.ofList l
+        |> Seq.map Gen.constant
+        |> Gen.sequenceToSeq
+        |> sample1
+        |> List.ofSeq
+        |> ((=) l)
      
+    [<Property>]
+    let SequenceToArr (a:array<char>) =
+        Array.map Gen.constant a
+        |> Gen.sequenceToArr
+        |> sample1
+        |> ((=) a)
+
     [<Property>]
     let ListOfLength (v:char) (PositiveInt length) =
         assertTrue ( Gen.listOfLength length (Gen.constant v)

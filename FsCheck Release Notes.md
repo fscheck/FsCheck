@@ -20,6 +20,24 @@
 
 * Simplify sampling data: Gen.sample et al.
 
+### 2.13.0 - 11 November 2018
+* Stop shipping Portable Class Libraries (PCL), which are essentially deprecated by Microsoft in favor of .NET Standard. FsCheck now targets .NET Standard 1.0 (which takes the place of 3 PCLs that were previously included, while it still run on all those platforms and more), .NET Standard 1.6 (which is the lowest version modern FSharp.Core versions support) and .NET Standard 2.0 (which is advised by NuGet so clients don't need to download as much stuff if they can target 2.0 or higher). FsCheck also still targets .NET Framework 4.5.2 and upwards as a convenience.
+
+* FsCheck.Xunit and FsCheck.NUnit similarly target .NET Standard 1.6 and 2.0, as well as .NET Framework 4.5.2. They've never targeted PCL before.
+
+* It's my hope and expectation that this makes FsCheck usable on the same range of platforms (and more) as before, while greatly simplifying development: there is now just one solution (instead of three), and only one FsCheck project (instead of five) and so on.
+
+* Add NonWhiteSpaceString to default generated types. (by Stijn Moreels)
+
+### 2.12.1 - 18 October 2018
+* Fix FsCheck.Xunit's CheckExtensions so that the throwing methods actually throw on failure.
+
+* Add new generator extensions for C#: Zip, Zip3, Or and OrNull. (by Stijn Moreels)
+
+* Add Gen.collect and variations. (by Stijn Moreels)
+
+* Fix to offset of DateTimeOffset generator. (by Evgeny Grebenyuk)
+
 ### 2.12.0 - 6 October 2018
 * Update NUnit to 3.10.1.
 
