@@ -593,7 +593,7 @@ module Arbitrary =
         let shrunk = shrink value
         // check that A gets smaller (length-wise)
         shrunk
-        |> Seq.forall (fun shrunkv -> shrunkv.A.Length = 0 || shrunkv.A.Length <= value.A.Length)
+        |> Seq.forall (fun shrunkv -> shrunkv.A = null || shrunkv.A.Length = 0 || shrunkv.A.Length <= value.A.Length)
         &&
         // check that B gets smaller (in absolute value)
         shrunk
