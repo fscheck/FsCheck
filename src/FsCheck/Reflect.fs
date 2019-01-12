@@ -101,6 +101,16 @@ module internal Reflect =
         let f     = l.Compile ()
         f.Invoke
 
+    let getCSharpDtoReader (recordType: Type) =
+        if isCSharpDtoType recordType then
+            let properties = getProperties recordType
+                             |> Seq.filter (fun p -> p.CanWrite)
+                             |> Seq.map (fun p -> p.GetValue)
+                             |> Seq.toArray
+            let lookup o = Array.map (fun f -> f o) properties
+            lookup
+        else
+            failwithf "The input type must be a DTO class. Got %A" recordType
 
     /// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
     let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list = 

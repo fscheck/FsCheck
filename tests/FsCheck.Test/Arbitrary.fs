@@ -588,6 +588,30 @@ module Arbitrary =
     let ``Derive generator for concrete DTO class with writable properties``() =
         generate<FakeDto> |> sample 10 |> ignore
 
+    [<Property>]
+    let ``Derive generator for concrete DTO class shrinks`` (value: FakeDto) =
+        let shrunk = shrink value
+        // check that A gets smaller (length-wise)
+        shrunk
+        |> Seq.forall (fun shrunkv -> shrunkv.A = null || shrunkv.A.Length = 0 || shrunkv.A.Length <= value.A.Length)
+        &&
+        // check that B gets smaller (in absolute value)
+        shrunk
+        |> Seq.forall (fun shrunkv -> shrunkv.B = 0 || shrunkv.B <= abs value.B)
+        &&
+        // check that C gets smaller (in absolute value, or to null)
+        shrunk
+        |> Seq.forall (fun shrunkv ->
+                        if value.C.HasValue then
+                            (not shrunkv.C.HasValue)
+                            || shrunkv.C.Value = 0
+                            || shrunkv.C.Value <= abs value.C.Value
+                        else
+                            not shrunkv.C.HasValue)
+        &&
+        // check that D gets smaller (length-wise)
+        shrunk
+        |> Seq.forall (fun shrunkv -> shrunkv.D.Count = 0 || shrunkv.D.Count <= value.D.Count)
 
     type PrivateRecord = private { a: int; b: string }
 

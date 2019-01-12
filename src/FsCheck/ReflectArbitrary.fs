@@ -212,6 +212,12 @@ module internal ReflectArbitrary =
             let read = FSharpValue.GetTupleFields
             shrinkChildren read make o childrenTypes
 
+        elif isCSharpDtoType t then
+            let make = getCSharpDtoConstructor t
+            let read = getCSharpDtoReader t
+            let childrenTypes = getCSharpDtoFields t
+            shrinkChildren read make o childrenTypes
+
         else
             Seq.empty
 
