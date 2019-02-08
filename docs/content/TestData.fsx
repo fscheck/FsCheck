@@ -127,7 +127,7 @@ the code F# generates for the type definition above. Assuming that, `unsafeTree`
 
 However, a recursive generator like this may fail to terminate with a 
 StackOverflowException, or produce very large results. To avoid this, 
-recursive generators should always use the size control mechanis:*)
+recursive generators should always use the size control mechanism:*)
 
 let tree =
     let rec tree' s = 
