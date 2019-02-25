@@ -19,7 +19,7 @@ module Random =
         Random.createWithSeed UInt64.MinValue |> ignore
         Random.createWithSeed UInt64.MaxValue |> ignore
         
-    // theese tests may be helpful to check Random progress guarantees. See #356
+    // these tests may be helpful to check Random progress guarantees. See #356
     [<Property(Replay = "10538531436017130025,14826463994991344553", MaxTest = 30000, EndSize = 30000)>]
     let ``Random should not hang on 30k ints`` () =
         true

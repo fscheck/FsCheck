@@ -449,7 +449,7 @@ module BugReproIssue195 =
     
 // see https://github.com/fscheck/FsCheck/issues/344
 // Consider a test, where the first iteration failed, but all subsequent shrinks passed.
-// Each successfull shrink caused the stackframe to grow by 2-3 frames, causing a stackoverflow.
+// Each successful shrink caused the stackframe to grow by 2-3 frames, causing a stackoverflow.
 module BugReproIssue344 =
     
     open FsCheck

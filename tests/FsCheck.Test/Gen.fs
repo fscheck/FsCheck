@@ -66,7 +66,7 @@ module Gen =
 
     [<Fact>]
     let ``frequency should throw argument exception if no element can be generated``() =
-        let prop = lazy (Gen.frequency [(0,Gen.constant 1)]) //used lazy since unqoute couldn't handle generator directly
+        let prop = lazy (Gen.frequency [(0,Gen.constant 1)]) //used lazy since unquote couldn't handle generator directly
         raises<System.ArgumentException> <@ prop.Value @>
         
     
@@ -520,7 +520,7 @@ module Gen =
 
     [<Fact>]
     let ``generating large array should work``() =
-        // occassionally there have been bugs where large array generations causes stack overflow
+        // occasionally there have been bugs where large array generations causes stack overflow
         Gen.choose(0,100) |> Gen.arrayOf |> Gen.sampleWithSize 30000 100
 
     [<Fact>]

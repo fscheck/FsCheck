@@ -131,7 +131,7 @@ module Arbitrary =
     [<Property>]
     let String (value:string) =
         assertTrue ( generate<string> |> sample 10 |> Seq.forall (fun _ -> true) )
-            //or the lenght of the string is shorter, or one of its values have been shrunk
+            //or the length of the string is shorter, or one of its values have been shrunk
         assertTrue ( shrink<string> value |> Seq.forall (fun s -> s = null || String.length s < String.length value || (String.exists (isIn ['a';'b';'c']) s))  )
 
     [<Property>]
