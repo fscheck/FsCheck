@@ -149,7 +149,7 @@ module Gen =
     [<CompiledName("Fresh")>]
     let fresh fv = gen { let a = fv() in return a }
 
-    ///Generate a fresh instance every time the generators called. Useful for mutable objects.
+    ///Generate a fresh instance every time the generator is called. Useful for mutable objects.
     ///See also constant.
     //[category: Creating generators]
     [<CompiledName("Fresh"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false) >]
