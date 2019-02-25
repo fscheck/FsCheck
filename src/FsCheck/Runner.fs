@@ -30,7 +30,7 @@ type IRunner =
     abstract member OnStartFixture: System.Type -> unit
     ///Called whenever arguments are generated and after the test is run.
     abstract member OnArguments: int * list<obj> * (int -> list<obj> -> string) -> unit
-    ///Called on a succesful shrink.
+    ///Called on a successful shrink.
     abstract member OnShrink: list<obj> * (list<obj> -> string) -> unit
     ///Called whenever all tests are done, either True, False or Exhausted.
     abstract member OnFinished: string * TestResult -> unit
@@ -65,7 +65,7 @@ type Config =
       QuietOnSuccess: bool
       ///What to print when new arguments args are generated in test n
       Every         : int -> list<obj> -> string
-      ///What to print every time a counter-example is succesfully shrunk
+      ///What to print every time a counter-example is successfully shrunk
       EveryShrink   : list<obj> -> string 
       ///The Arbitrary instances on this class will be merged in back to front order, i.e. instances for the same generated type at the front
       ///of the list will override those at the back. The instances on Arb.Default are always known, and are at the back (so they can always be
@@ -73,7 +73,7 @@ type Config =
       Arbitrary     : list<Type>
       ///A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit. 
       Runner        : IRunner
-      ///If set, inputs for property generation and property evaluation will be runned in parallel. 
+      ///If set, inputs for property generation and property evaluation will be run in parallel. 
       ParallelRunConfig : ParallelRunConfig option
     }
 
@@ -91,8 +91,8 @@ module Runner =
         | Passed of Result                       //one test passed
         | Failed of Result                       //falsified the property
         | Rejected of Result                     //generated arguments did not pass precondition
-        | Shrink of Result                       //shrunk falsified result succesfully
-        | NoShrink of Result                     //could not falsify given result; so unsuccesful shrink.
+        | Shrink of Result                       //shrunk falsified result successfully
+        | NoShrink of Result                     //could not falsify given result; so unsuccessful shrink.
         | EndShrink of Result                    //gave up shrinking; (possibly) shrunk result is given
         
     [<NoEquality;NoComparison>]
@@ -188,7 +188,7 @@ module Runner =
                 seq {yield g; yield Failed result; yield EndShrink result}
 
     let private test isReplay initSize resize rnd0 gen =    
-        //Since we're not runing test for parallel scenarios it's impossible to discover `ResultContainer.Future` inside `result`
+        //Since we're not running test for parallel scenarios it's impossible to discover `ResultContainer.Future` inside `result`
         let gen' = gen |> Gen.map (Rose.map (fun rc -> 
                 match rc with 
                 | ResultContainer.Value r -> r 
@@ -269,7 +269,7 @@ module Runner =
     ///Other strategies can be considered to trade between allocated memory, overall running time and amount of cross-process communication:
     ///    - publish to `tpWorkerFun` more than one entry at a time
     ///    - allocate `results` in lesser chunks in iterative manner
-    ///    - change busy loop with yelding to waiting on conditional variables (tested, leads to slower runing time)
+    ///    - change busy loop with yielding to waiting on conditional variables (tested, leads to slower running time)
     type private ParSeqEnumerator (steps :IEnumerable<(Rnd * float)>, maxTest, maxFail, maxDegreeOfParallelism, gen) =   
         let size = maxTest + maxFail
         let luckySeq = steps |> Seq.take maxTest
@@ -609,12 +609,12 @@ type Config with
         }
 
     ///Like the Quick configuration, only throws an exception with the error message if the test fails or is exhausted.
-    ///Useful for use within other unit testing frameworks that usually adopt this methodolgy to signal failure.
+    ///Useful for use within other unit testing frameworks that usually adopt this methodology to signal failure.
     static member QuickThrowOnFailure =
         { Config.Quick with Runner = Config.throwingRunner }
 
     ///Like the Verbose configuration, only throws an exception with the error message if the test fails or is exhausted.
-    ///Useful for use within other unit testing frameworks that usually adopt this methodolgy to signal failure.
+    ///Useful for use within other unit testing frameworks that usually adopt this methodology to signal failure.
     static member VerboseThrowOnFailure =
         { Config.Verbose with Runner = Config.throwingRunner }
 

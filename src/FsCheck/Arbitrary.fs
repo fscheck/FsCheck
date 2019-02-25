@@ -367,7 +367,7 @@ module Arb =
             |> convert DoNotSize DoNotSize.Unwrap
 
         ///Generates arbitrary 64 bit floats, NaN, NegativeInfinity, PositiveInfinity, 
-        ///Maxvalue, MinValue, Epsilon included fairly frequently.
+        ///MaxValue, MinValue, Epsilon included fairly frequently.
         static member Float() = 
             let generator =
                 Gen.frequency [(6, Gen.map3 Default.fraction generate generate generate)
@@ -1081,7 +1081,7 @@ module Arb =
             fromGenShrink (generator, shrinker)
 #endif
 
-        ///Arbitray instance for BigInteger.
+        ///Arbitrary instance for BigInteger.
         static member BigInt() =
             Default.Int32()
             |> convert bigint int
@@ -1096,7 +1096,7 @@ module Arb =
         ///(i.e. either classes having a single constructor with immutable values  
         ///or DTO classes with a default constructor and public property setters).
         static member Derive() =
-            //taking out this generator makes sure that the memoization table in reflectGenObj
+            //taking out this generator makes sure that the memorization table in reflectGenObj
             //is used properly.
             let generator = ReflectArbitrary.reflectGenObj getGenerator
             { new Arbitrary<'a>() with

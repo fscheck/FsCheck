@@ -2,7 +2,7 @@
 
 open System
 
-///Extensons to transform Arbitrary instances into other Arbitrary instances.
+///Extensions to transform Arbitrary instances into other Arbitrary instances.
 [<System.Runtime.CompilerServices.Extension>]
 type ArbitraryExtensions =
     ///Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),

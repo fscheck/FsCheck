@@ -198,7 +198,7 @@ module internal ReflectArbitrary =
                 seq { yield! size0Cases() 
                       yield! children()
                       yield! shrunkChildren }
-            | _ -> failwith "Unxpected union size" 
+            | _ -> failwith "Unexpected union size" 
 
         elif isRecordType t then 
             let make = getRecordConstructor t
