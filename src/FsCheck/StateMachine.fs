@@ -67,7 +67,7 @@ type Operation<'Actual,'Model>() =
             sets |> Seq.iter (fun s -> s.Reset())
             gets.Clear()
             sets.Clear()
-    ///Excecutes the command on the object under test, and returns a property that must hold.
+    ///Executes the command on the object under test, and returns a property that must hold.
     ///This property typically compares the state of the model with the state of the object after
     ///execution of the command.
     abstract Check : 'Actual * 'Model  -> Property
@@ -304,7 +304,7 @@ module StateMachine =
             |> spec.ShrinkOperations
             |> Seq.choose (chooseModels run.Setup)
 
-        //try to srhink the initial setup state
+        //try to shrink the initial setup state
         let shrinkSetup =
             Arb.toShrink spec.Setup (snd run.Setup) 
             |> Seq.choose (fun setup -> chooseModels (setup.Model(),setup) (List.map fst run.Operations))

@@ -166,7 +166,7 @@ type GenExtensions =
         if resultSelector = null then nullArg "resultSelector"
         zip3 generator second third |> map resultSelector.Invoke
 
-    ///Build a generator that generates a value from two generators  with qual probability.
+    ///Build a generator that generates a value from two generators  with equal probability.
     //[category: Creating generators from generators]
     [<Extension>]
     static member Or (generator, other) =

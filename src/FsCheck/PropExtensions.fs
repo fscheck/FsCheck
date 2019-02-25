@@ -3,7 +3,7 @@
 open System
 open System.Runtime.CompilerServices
 
-///Extensons to construct Properties.
+///Extensions to construct Properties.
 [<Extension>]
 type PropertyExtensions =
 
