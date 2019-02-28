@@ -487,7 +487,7 @@ module Arb =
                 }
             fromGenShrink (genDecimal, shrinkDecimal)
             
-        ///Generate arbitrary complex, that is shrunk by removing imaginary part and shrinking real part
+        ///Generate arbitrary complex, that is shrunk by removing imaginary part and shrinking both parts
         static member Complex() =
             let gen = 
                 Gen.two generate<float>
