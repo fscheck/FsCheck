@@ -502,6 +502,18 @@ module Arbitrary =
     let ``Decimal shrinks`` (value: decimal) =
         shrink<decimal> value 
         |> Seq.forall (fun shrunkv -> shrunkv = 0m || shrunkv <= abs value)
+    
+    [<Fact>]
+    let Complex() =
+        generate<Numerics.Complex> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``Shrinking of Complex produce value without imaginary part`` (c : Numerics.Complex) =
+        let shrinked = shrink c
+        if c.Imaginary <> 0.0 then
+            Seq.exists (fun (sh : Numerics.Complex) -> sh.Imaginary = 0.0) shrinked
+        else
+            true
 
     [<Fact>]
     let Culture() =

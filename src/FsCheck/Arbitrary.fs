@@ -487,6 +487,21 @@ module Arb =
                 }
             fromGenShrink (genDecimal, shrinkDecimal)
             
+        ///Generate arbitrary complex, that is shrunk by removing imaginary part and shrinking real part
+        static member Complex() =
+            let gen = 
+                Gen.two generate<float>
+                |> Gen.map (fun (r, i) -> Numerics.Complex(r, i))
+            let shrinker (c : Numerics.Complex) =
+                seq {
+                    if c.Imaginary <> 0.0 then
+                        yield Numerics.Complex(c.Real, 0.0)
+                }
+                |> Seq.append (
+                    shrink (c.Real, c.Imaginary)
+                    |> Seq.map (fun (r, i) -> Numerics.Complex(r, i)))
+            fromGenShrink (gen, shrinker)
+        
         ///Generates arbitrary chars, between ASCII codes Char.MinValue and 127.
         static member Char() = 
             let generator = Gen.choose (int Char.MinValue, 127) |> Gen.map char
