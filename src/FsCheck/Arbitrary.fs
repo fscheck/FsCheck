@@ -500,6 +500,7 @@ module Arb =
                 |> Seq.append (
                     shrink (c.Real, c.Imaginary)
                     |> Seq.map (fun (r, i) -> Numerics.Complex(r, i)))
+                |> Seq.distinct
             fromGenShrink (gen, shrinker)
         
         ///Generates arbitrary chars, between ASCII codes Char.MinValue and 127.
