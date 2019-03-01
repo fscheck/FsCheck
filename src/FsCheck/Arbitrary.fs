@@ -486,7 +486,27 @@ module Arb =
                     if truncated |<| d then yield truncated
                 }
             fromGenShrink (genDecimal, shrinkDecimal)
-            
+
+#if !NETSTANDARD1_0
+        ///Generate arbitrary complex, that is shrunk by removing imaginary part and shrinking both parts
+        static member Complex() =
+            let gen = 
+                Gen.two generate<float>
+                |> Gen.map Numerics.Complex
+            let shrinker (c : Numerics.Complex) =
+                match (c.Real, c.Imaginary) with
+                | (r, 0.0) -> 
+                    shrink r
+                    |> Seq.map (fun r -> Numerics.Complex(r, 0.0))
+                | (r, i) ->
+                    let realOnly = seq { yield Numerics.Complex(r, 0.0)}
+                    let shrunk =
+                        shrink (r, i)
+                        |> Seq.filter ((<>) (r, 0.0)) //We have already produced real-only
+                        |> Seq.map Numerics.Complex
+                    Seq.append realOnly shrunk
+            fromGenShrink (gen, shrinker)
+#endif  
         ///Generates arbitrary chars, between ASCII codes Char.MinValue and 127.
         static member Char() = 
             let generator = Gen.choose (int Char.MinValue, 127) |> Gen.map char
