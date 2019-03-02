@@ -846,9 +846,14 @@ module Arb =
 
         ///Generates an interval between two non-negative integers.
         static member Interval() =
-            gen { let! start,offset = Gen.two generate
-                  return Interval (abs start,abs start+abs offset) }//TODO: shrinker
-            |> fromGen
+            let generator = 
+                  gen { let! start,offset = Gen.two generate
+                  return Interval (abs start,abs start+abs offset) }
+            let shrinker (i : Interval) =
+                (i.Left, i.Right - i.Left)
+                |> shrink
+                |> Seq.map (fun (right, length) -> Interval(right, right + length))
+            fromGenShrink(generator, shrinker)
 
 
         static member StringWithoutNullChars() =

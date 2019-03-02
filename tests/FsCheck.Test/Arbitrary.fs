@@ -372,6 +372,16 @@ module Arbitrary =
     let ``NegativeInt shrinks negative ints`` (value:NegativeInt ) =
         shrink value |> Seq.forall (fun (NegativeInt v) -> v < 0)
 
+    [<Property>]
+    let ``Interval after shrinking is smaller than origin`` (i : Interval) =
+        let shrunk = shrink i
+        let isWithoutDuplicates = (shrunk |> Seq.distinct |> Seq.length) = (Seq.length shrunk)
+        let isSmaller = 
+            shrunk
+            |> Seq.map (fun i -> match i with Interval (right, left) -> (right, left))
+            |> Seq.forall (fun (right, left) -> (right <= i.Right) && (right - left <= i.Right - i.Left))
+        (isSmaller && isWithoutDuplicates)
+
     type TestEnum =
         | A = 0
         | B = 3
