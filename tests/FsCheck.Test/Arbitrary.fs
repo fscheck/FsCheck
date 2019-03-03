@@ -512,6 +512,19 @@ module Arbitrary =
     let ``Decimal shrinks`` (value: decimal) =
         shrink<decimal> value 
         |> Seq.forall (fun shrunkv -> shrunkv = 0m || shrunkv <= abs value)
+    
+    [<Fact>]
+    let Complex() =
+        generate<Numerics.Complex> |> sample 10
+
+    [<Property>]
+    let ``Complex shrinking produce values without duplicates and at least one without imaginary part`` (c : Numerics.Complex) =
+        let shrunk = shrink c
+        let isDistinct = (shrunk |> Seq.distinct |> Seq.length) = (Seq.length shrunk)
+        if c.Imaginary <> 0.0 then
+            isDistinct && Seq.exists (fun (sh : Numerics.Complex) -> sh.Imaginary = 0.0) shrunk
+        else
+            isDistinct
 
     [<Fact>]
     let Culture() =
