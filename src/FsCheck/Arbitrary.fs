@@ -852,7 +852,7 @@ module Arb =
             let shrinker (i : Interval) =
                 (i.Left, i.Right - i.Left)
                 |> shrink
-                |> Seq.map (fun (right, length) -> Interval(right, right + length))
+                |> Seq.map (fun (start, offset) -> Interval(start, start + offset))
             fromGenShrink(generator, shrinker)
 
 

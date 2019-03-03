@@ -378,8 +378,8 @@ module Arbitrary =
         let isWithoutDuplicates = (shrunk |> Seq.distinct |> Seq.length) = (Seq.length shrunk)
         let isSmaller = 
             shrunk
-            |> Seq.map (fun i -> match i with Interval (right, left) -> (right, left))
-            |> Seq.forall (fun (right, left) -> (right <= i.Right) && (right - left <= i.Right - i.Left))
+            |> Seq.map (fun i -> match i with Interval (start, end') -> (start, end'))
+            |> Seq.forall (fun (start, end') -> (start <= i.Left) && (end' - start <= i.Right - i.Left))
         (isSmaller && isWithoutDuplicates)
 
     type TestEnum =
