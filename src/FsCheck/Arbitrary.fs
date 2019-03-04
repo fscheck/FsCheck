@@ -502,7 +502,7 @@ module Arb =
                     let realOnly = seq { yield Numerics.Complex(r, 0.0)}
                     let shrunk =
                         shrink (r, i)
-                        |> Seq.filter ((<>) (r, 0.0)) //We have already produced real-only
+                        |> Seq.filter (fun (sr, si) -> not (si = 0.0 && sr.Equals r)) //We use Equals to properly compare NaNs
                         |> Seq.map Numerics.Complex
                     Seq.append realOnly shrunk
             fromGenShrink (gen, shrinker)
