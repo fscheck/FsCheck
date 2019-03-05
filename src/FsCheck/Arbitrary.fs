@@ -1007,6 +1007,35 @@ module Arb =
                 return Guid((a: int),b,c,d,e,f,g,h,i,j,k)
             } |> fromGen
 
+#if !NETSTANDARD1_0
+        /// Generates a System.ConsoleKeyInfo instance.
+        /// Shrinks by reducing number of special key modifiers
+        static member ConsoleKeyInfo() =
+            let generator = 
+                gen {
+                    let! char = generate
+                    let! key = generate
+                    let! shift = generate
+                    let! alt = generate
+                    let! ctrl = generate
+                    return ConsoleKeyInfo(char, key, shift, alt, ctrl)
+                }
+            let shrinker (cki : ConsoleKeyInfo) =
+                let toBools (m : ConsoleModifiers) = (
+                    (m &&& ConsoleModifiers.Shift) <> enum<ConsoleModifiers>(0),
+                    (m &&& ConsoleModifiers.Alt) <> enum<ConsoleModifiers>(0),
+                    (m &&& ConsoleModifiers.Control) <> enum<ConsoleModifiers>(0))
+                let (shift, alt, ctrl) = toBools cki.Modifiers
+                seq {
+                    if shift then yield (false, alt, ctrl)
+                    if alt then yield (shift, false, ctrl)
+                    if ctrl then yield (shift, alt, false)
+                }
+                |> Seq.map (fun (shift, alt, ctrl) -> 
+                    ConsoleKeyInfo(cki.KeyChar, cki.Key, shift, alt, ctrl))
+            fromGenShrink(generator, shrinker)
+#endif
+
 #if NETSTANDARD1_0 || NETSTANDARD1_6
 #else
         static member IPv4Address() =
