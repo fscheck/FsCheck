@@ -539,6 +539,19 @@ module Arbitrary =
     [<Fact>]
     let Guid () =
         generate<Guid> |> sample 10 |> ignore
+
+    [<Fact>]
+    let ConsoleKeyInfo () =
+        generate<ConsoleKeyInfo> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``ConsoleKeyInfo shrinker produce distinct sequence without origin`` (cki : ConsoleKeyInfo) =
+        let shrunk = shrink cki
+        let isDistinct = (shrunk |> Seq.distinct |> Seq.length) = (Seq.length shrunk)
+        let hasOrigin = shrunk |> Seq.contains cki
+        (isDistinct && not hasOrigin)
+
+    
 #if !NETSTANDARD1_6
     [<Fact>]
     let IPAddress () =
