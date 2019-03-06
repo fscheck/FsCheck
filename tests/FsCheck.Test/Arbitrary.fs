@@ -461,8 +461,9 @@ module Arbitrary =
             (shrunkFlags |> Seq.isEmpty) &&
             (shrunkSimple |> Seq.isEmpty)
         else
-            (shrunkFlags |> Seq.contains (enum<IntFlags> 0)) &&
+            not (shrunkFlags |> Seq.isEmpty) &&
             (shrunkSimple |> Seq.isEmpty)
+        |> Prop.collect (flags, shrunkFlags)
 
     [<Fact>]
     let ``FsList shrunk is at minimum n-1``() =

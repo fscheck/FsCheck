@@ -221,11 +221,25 @@ module internal ReflectArbitrary =
         elif t.GetTypeInfo().IsEnum then
             let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
             if isFlags then
-                let zero = Enum.ToObject(t, 0)
-                if zero = o then
-                    Seq.empty
-                else
-                    seq {yield zero}
+                let vals: Array = System.Enum.GetValues(t)
+                let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> System.Enum]
+                let elementType = System.Enum.GetUnderlyingType t
+                let n = Convert.ChangeType(o, elementType)
+                let inline helper (e : 'a) =
+                    seq {
+                        for i in elems do
+                            let _i = unbox<'a> i
+                            if (e &&& (~~~ _i) <> e) then yield e &&& (~~~ _i) :> obj
+                    }
+                if   elementType = typeof<byte>   then helper<byte> (unbox<byte> n)
+                elif elementType = typeof<sbyte>  then helper<sbyte> (unbox<sbyte> n)
+                elif elementType = typeof<uint16> then helper<uint16> (unbox<uint16> n)
+                elif elementType = typeof<int16>  then helper<int16> (unbox<int16> n)
+                elif elementType = typeof<uint32> then helper<uint32> (unbox<uint32> n)
+                elif elementType = typeof<int>    then helper<int> (unbox<int> n)
+                elif elementType = typeof<uint64> then helper<uint64> (unbox<uint64> n)
+                elif elementType = typeof<int64>  then helper<int64> (unbox<int64> n)
+                else invalidArg "t" (sprintf "Unexpected underlying enum type: %O" elementType)                    
             else
                 Seq.empty
 
