@@ -218,6 +218,17 @@ module internal ReflectArbitrary =
             let childrenTypes = getCSharpDtoFields t
             shrinkChildren read make o childrenTypes
 
+        elif t.GetTypeInfo().IsEnum then
+            let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
+            if isFlags then
+                let zero = Enum.ToObject(t, 0)
+                if zero = o then
+                    Seq.empty
+                else
+                    seq {yield zero}
+            else
+                Seq.empty
+
         else
             Seq.empty
 

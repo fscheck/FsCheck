@@ -452,6 +452,17 @@ module Arbitrary =
     [<Property>]
     let ``Can create 64-bit integer flags enumeration`` (value : LongFlags) =
         List.exists (fun e -> e = int64 value) [0L..7L]
+    
+    [<Property>]
+    let ``Only enums marked as flags are shrunk`` (flags : IntFlags) (simple : TestEnum) =
+        let shrunkFlags = shrink flags
+        let shrunkSimple = shrink simple
+        if flags = enum<IntFlags> 0 then
+            (shrunkFlags |> Seq.isEmpty) &&
+            (shrunkSimple |> Seq.isEmpty)
+        else
+            (shrunkFlags |> Seq.contains (enum<IntFlags> 0)) &&
+            (shrunkSimple |> Seq.isEmpty)
 
     [<Fact>]
     let ``FsList shrunk is at minimum n-1``() =
