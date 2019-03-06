@@ -229,16 +229,18 @@ module internal ReflectArbitrary =
                     seq {
                         for i in elems do
                             let _i = unbox<'a> i
-                            if (e &&& (~~~ _i) <> e) then yield e &&& (~~~ _i) :> obj
+                            let withoutFlag = e &&& (~~~ _i)
+                            if (withoutFlag <> e) then yield withoutFlag :> obj
                     }
-                if   elementType = typeof<byte>   then helper<byte> (unbox<byte> n)
-                elif elementType = typeof<sbyte>  then helper<sbyte> (unbox<sbyte> n)
-                elif elementType = typeof<uint16> then helper<uint16> (unbox<uint16> n)
-                elif elementType = typeof<int16>  then helper<int16> (unbox<int16> n)
-                elif elementType = typeof<uint32> then helper<uint32> (unbox<uint32> n)
-                elif elementType = typeof<int>    then helper<int> (unbox<int> n)
-                elif elementType = typeof<uint64> then helper<uint64> (unbox<uint64> n)
-                elif elementType = typeof<int64>  then helper<int64> (unbox<int64> n)
+                    |> Seq.distinct
+                if   elementType = typeof<byte>   then helper (unbox<byte> n)
+                elif elementType = typeof<sbyte>  then helper (unbox<sbyte> n)
+                elif elementType = typeof<uint16> then helper (unbox<uint16> n)
+                elif elementType = typeof<int16>  then helper (unbox<int16> n)
+                elif elementType = typeof<uint32> then helper (unbox<uint32> n)
+                elif elementType = typeof<int>    then helper (unbox<int> n)
+                elif elementType = typeof<uint64> then helper (unbox<uint64> n)
+                elif elementType = typeof<int64>  then helper (unbox<int64> n)
                 else invalidArg "t" (sprintf "Unexpected underlying enum type: %O" elementType)                    
             else
                 Seq.empty
