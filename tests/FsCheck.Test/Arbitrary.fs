@@ -453,17 +453,18 @@ module Arbitrary =
     let ``Can create 64-bit integer flags enumeration`` (value : LongFlags) =
         List.exists (fun e -> e = int64 value) [0L..7L]
     
-    type ShrunkResult = {Original: IntFlags; Shrunk: seq<IntFlags>}
+    type SimpleEnum = A = 0 | B = 1 | C = 2
+    type [<Flags>] FlagsEnum = None = 0 | A = 1 | B = 2 | C = 4 | All = 7
+    type FlagsShrunkResult = {Original: FlagsEnum; Shrunk: seq<FlagsEnum>}
     [<Property>]
-    let ``Only enums marked as flags are shrunk`` (flags : IntFlags) (simple : TestEnum) =
-
+    let ``Only enums marked as flags are shrunk`` (flags : FlagsEnum) (simple : SimpleEnum) =
         let shrunkFlags = shrink flags
         let shrunkSimple = shrink simple
-        if flags = enum<IntFlags> 0 then
+        if flags = FlagsEnum.None then
             (shrunkFlags |> Seq.isEmpty) &&
             (shrunkSimple |> Seq.isEmpty)
         else
-            not (shrunkFlags |> Seq.isEmpty)
+            not (shrunkFlags |> Seq.isEmpty) &&
             (shrunkSimple |> Seq.isEmpty)
         |> Prop.collect {Original = flags; Shrunk = shrunkFlags}
 
