@@ -229,8 +229,12 @@ module internal ReflectArbitrary =
                     seq {
                         for i in elems do
                             let _i = unbox<'a> i
-                            let withoutFlag = e &&& (~~~ _i)
-                            if (withoutFlag <> e) then yield withoutFlag :> obj
+                            let isPowerOf2 =
+                                (_i <> LanguagePrimitives.GenericZero) && 
+                                ((_i &&& (_i - LanguagePrimitives.GenericOne)) = LanguagePrimitives.GenericZero) 
+                            if isPowerOf2 then
+                                let withoutFlag = e &&& (~~~ _i)
+                                if (withoutFlag <> e) then yield withoutFlag :> obj
                     }
                     |> Seq.distinct
                 if   elementType = typeof<byte>   then helper (unbox<byte> n)
