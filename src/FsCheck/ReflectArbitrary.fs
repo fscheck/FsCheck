@@ -9,35 +9,50 @@ module internal ReflectArbitrary =
     open Reflect
     open Gen
     open Gen
+    open System.Diagnostics
 
-    let inline private orElems<'a when 'a : (static member (|||) : 'a * 'a -> 'a) and 'a : (static member Zero : 'a)>
-        t
-        (els : Enum list) =
-
-        let v : 'a =
-            els
-            |> List.map (box >> unbox)
-            |> List.fold (|||) LanguagePrimitives.GenericZero
-        Enum.ToObject (t, v) :?> Enum    
+    let inline isPowerOf2 n =
+        (n <> LanguagePrimitives.GenericZero) && 
+        ((n &&& (n - LanguagePrimitives.GenericOne)) = LanguagePrimitives.GenericZero) 
 
     /// Generate a random enum of the type specified by the System.Type
     let enumOfType (t: System.Type) : Gen<Enum> =
        let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
        let vals: Array = System.Enum.GetValues(t)
-       let elems = elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> System.Enum] 
+       let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> System.Enum]     
        if isFlags then
            let elementType = System.Enum.GetUnderlyingType t
-           if   elementType = typeof<byte>   then listOf elems |> map (orElems<byte>   t)
-           elif elementType = typeof<sbyte>  then listOf elems |> map (orElems<sbyte>  t)
-           elif elementType = typeof<uint16> then listOf elems |> map (orElems<uint16> t)
-           elif elementType = typeof<int16>  then listOf elems |> map (orElems<int16>  t)
-           elif elementType = typeof<uint32> then listOf elems |> map (orElems<uint32> t)
-           elif elementType = typeof<int>    then listOf elems |> map (orElems<int>    t)
-           elif elementType = typeof<uint64> then listOf elems |> map (orElems<uint64> t)
-           elif elementType = typeof<int64>  then listOf elems |> map (orElems<int64>  t)
+           let inline helper (primaries : 'a list) =
+               Gen.elements [true; false]
+               |> Gen.listOfLength primaries.Length
+               |> Gen.map (
+                   fun bools ->
+                       bools
+                       |> List.indexed
+                       |> List.map (
+                           fun (index, b) ->
+                               if b then primaries.[index] else LanguagePrimitives.GenericZero )
+                       |> List.fold (|||) LanguagePrimitives.GenericZero )
+               |> Gen.map (fun e -> Enum.ToObject (t, e) :?> Enum)
+           if   elementType = typeof<byte>   then
+               elems |> List.map (fun e -> box e |> unbox<byte>) |> List.filter isPowerOf2 |> helper
+           elif elementType = typeof<sbyte>  then 
+               elems |> List.map (fun e -> box e |> unbox<sbyte>) |> List.filter isPowerOf2 |> helper
+           elif elementType = typeof<uint16> then
+               elems |> List.map (fun e -> box e |> unbox<uint16>) |> List.filter isPowerOf2 |> helper
+           elif elementType = typeof<int16>  then
+               elems |> List.map (fun e -> box e |> unbox<int16>) |> List.filter isPowerOf2 |> helper
+           elif elementType = typeof<uint32> then
+               elems |> List.map (fun e -> box e |> unbox<uint32>) |> List.filter isPowerOf2 |> helper
+           elif elementType = typeof<int>    then
+               elems |> List.map (fun e -> box e |> unbox<int>) |> List.filter isPowerOf2 |> helper
+           elif elementType = typeof<uint64> then 
+               elems |> List.map (fun e -> box e |> unbox<uint64>) |> List.filter isPowerOf2 |> helper
+           elif elementType = typeof<int64>  then
+               elems |> List.map (fun e -> box e |> unbox<int64>) |> List.filter isPowerOf2 |> helper
            else invalidArg "t" (sprintf "Unexpected underlying enum type: %O" elementType)
        else 
-           elems
+           Gen.elements elems
 
     let private reflectObj getGenerator t =
 
@@ -229,10 +244,7 @@ module internal ReflectArbitrary =
                     seq {
                         for i in elems do
                             let _i = unbox<'a> i
-                            let isPowerOf2 =
-                                (_i <> LanguagePrimitives.GenericZero) && 
-                                ((_i &&& (_i - LanguagePrimitives.GenericOne)) = LanguagePrimitives.GenericZero) 
-                            if isPowerOf2 then
+                            if isPowerOf2 _i then
                                 let withoutFlag = e &&& (~~~ _i)
                                 if (withoutFlag <> e) then yield withoutFlag :> obj
                     }
