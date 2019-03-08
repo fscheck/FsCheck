@@ -8,8 +8,6 @@ module internal ReflectArbitrary =
     open Microsoft.FSharp.Reflection
     open Reflect
     open Gen
-    open Gen
-    open System.Diagnostics
 
     let inline isPowerOf2 n =
         (n <> LanguagePrimitives.GenericZero) && 
@@ -19,10 +17,11 @@ module internal ReflectArbitrary =
     let enumOfType (t: System.Type) : Gen<Enum> =
        let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
        let vals: Array = System.Enum.GetValues(t)
-       let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> System.Enum]     
+       let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i)]     
        if isFlags then
            let elementType = System.Enum.GetUnderlyingType t
-           let inline helper (primaries : 'a list) =
+           let inline helper (elements : 'a list) =
+               let primaries = elements |> List.filter isPowerOf2
                Gen.elements [true; false]
                |> Gen.listOfLength primaries.Length
                |> Gen.map (
@@ -35,24 +34,24 @@ module internal ReflectArbitrary =
                        |> List.fold (|||) LanguagePrimitives.GenericZero )
                |> Gen.map (fun e -> Enum.ToObject (t, e) :?> Enum)
            if   elementType = typeof<byte>   then
-               elems |> List.map (fun e -> box e |> unbox<byte>) |> List.filter isPowerOf2 |> helper
+               elems |> List.map unbox<byte>   |> helper
            elif elementType = typeof<sbyte>  then 
-               elems |> List.map (fun e -> box e |> unbox<sbyte>) |> List.filter isPowerOf2 |> helper
+               elems |> List.map unbox<sbyte>  |> helper
            elif elementType = typeof<uint16> then
-               elems |> List.map (fun e -> box e |> unbox<uint16>) |> List.filter isPowerOf2 |> helper
+               elems |> List.map unbox<uint16> |> helper
            elif elementType = typeof<int16>  then
-               elems |> List.map (fun e -> box e |> unbox<int16>) |> List.filter isPowerOf2 |> helper
+               elems |> List.map unbox<int16>  |> helper
            elif elementType = typeof<uint32> then
-               elems |> List.map (fun e -> box e |> unbox<uint32>) |> List.filter isPowerOf2 |> helper
+               elems |> List.map unbox<uint32> |> helper
            elif elementType = typeof<int>    then
-               elems |> List.map (fun e -> box e |> unbox<int>) |> List.filter isPowerOf2 |> helper
+               elems |> List.map unbox<int>    |> helper
            elif elementType = typeof<uint64> then 
-               elems |> List.map (fun e -> box e |> unbox<uint64>) |> List.filter isPowerOf2 |> helper
+               elems |> List.map unbox<uint64> |> helper
            elif elementType = typeof<int64>  then
-               elems |> List.map (fun e -> box e |> unbox<int64>) |> List.filter isPowerOf2 |> helper
+               elems |> List.map unbox<int64>  |> helper
            else invalidArg "t" (sprintf "Unexpected underlying enum type: %O" elementType)
        else 
-           Gen.elements elems
+           Gen.elements (List.map (fun (o : obj) -> o :?> Enum) elems)
 
     let private reflectObj getGenerator t =
 
@@ -237,7 +236,7 @@ module internal ReflectArbitrary =
             let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
             if isFlags then
                 let vals: Array = System.Enum.GetValues(t)
-                let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> System.Enum]
+                let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i) ]
                 let elementType = System.Enum.GetUnderlyingType t
                 let n = Convert.ChangeType(o, elementType)
                 let inline helper (e : 'a) =
