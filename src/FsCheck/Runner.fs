@@ -245,10 +245,8 @@ module Runner =
     let onShrinkToString args =
         sprintf "shrink:%s%s%s" newline (argumentsToString args) newline
 
-#if NETSTANDARD1_0
     let internal printf fmt = 
         Printf.kprintf Diagnostics.Debug.WriteLine fmt
-#endif
     
     ///A runner that prints results to the standard output.
     let consoleRunner =
