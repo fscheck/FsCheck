@@ -675,3 +675,7 @@ module Arbitrary =
     [<Fact>]
     let ``Derive generator for private two case union``() =
         generate<PrivateUnion> |> sample 10 |> ignore
+
+    [<Fact>]
+    let Type() =
+        generate<Type> |> sample 10 |> ignore

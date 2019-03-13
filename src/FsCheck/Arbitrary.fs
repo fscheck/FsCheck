@@ -1204,6 +1204,29 @@ module Arb =
         static member BigInt() =
             Default.Int32()
             |> convert bigint int
+        
+        ///Arbitrary instance for System.Type. Do not support shrinking
+        static member Type() =
+            let nonGeneric = Gen.elements [
+                typeof<int32>; typeof<byte>; //Primitives
+                typeof<string>; //Immutable reference type, sealed 
+                typeof<Enum>; //Derived from ValueType, but not value type itself
+                typeof<System.Text.StringBuilder>; //Mutable reference type
+                typeof<Type>;
+                typeof<Array>;
+                typeof<Object>
+            ]
+            let rec genericHelper degree (types: Type list) =
+                let genericBuilder (types : Type list) (template : Type) =
+                    template.GetGenericTypeDefinition().MakeGenericType (List.toArray types)
+                Gen.map2 
+                    genericBuilder
+                    (Gen.listOfLength degree nonGeneric)
+                    (Gen.elements types)                     
+            let genericOne = genericHelper 1 [typeof<List<_>>; typeof<System.Threading.Tasks.Task<_>>]               
+            let genericTwo = genericHelper 2 [typeof<Dictionary<_,_>>; typeof<KeyValuePair<_,_>>] 
+            Gen.frequency [(2, nonGeneric); (1, genericOne); (1, genericTwo)]
+            |> fromGen
 
         ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
         [<Obsolete("Renamed to DoNotShrink.")>]
