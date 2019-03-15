@@ -439,8 +439,8 @@ module Arb =
                 |> fun n -> (float (n >>> 11)) * (1.0 / float (1UL <<< 53))
                 |> BitConverter.GetBytes
                 |> fun b -> BitConverter.ToDouble(b, 0)
-            Gen.listOfLength 8 generate<byte>
-            |> Gen.map (List.toArray >> toFloat)        
+            Gen.arrayOfLength 8 generate<byte>
+            |> Gen.map toFloat        
         
         /// Generates a "normal" 64 bit floats between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
         static member NormalFloat() =
