@@ -431,45 +431,59 @@ module Arb =
             fromGenShrink (gen,shrink)
             |> convert DoNotSize DoNotSize.Unwrap
 
+        ///Generates float in range [0; 1) with uniform distribution.
+        ///See "Generating uniform doubles in the unit interval" at http://xoshiro.di.unimi.it/ 
+        static member private stdFloatGen =
+            let toFloat (bytes : byte[]) =
+                BitConverter.ToUInt64(bytes, 0)
+                |> fun n -> (float (n >>> 11)) * (1.0 / float (1UL <<< 53))
+                |> BitConverter.GetBytes
+                |> fun b -> BitConverter.ToDouble(b, 0)
+            Gen.listOfLength 8 generate<byte>
+            |> Gen.map (List.toArray >> toFloat)        
+        
+        /// Generates a "normal" 64 bit floats between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
+        static member NormalFloat() =
+            let generator = Gen.sized (fun size ->
+                Gen.map2
+                    (fun (f : float) isNegative -> 
+                        let value = f * float size
+                        if isNegative then -value else value)
+                    Default.stdFloatGen
+                    generate<bool>
+                )
+            let shrinker fl =
+                let (|<|) x y = abs x < abs y
+                seq { 
+                        yield 0.0
+                        if fl < 0.0 then yield -fl
+                        let truncated = truncate fl
+                        if truncated |<| fl then yield truncated }
+                |> Seq.distinct               
+            fromGenShrink(generator, shrinker)
+            |> convert NormalFloat float
+
         ///Generates arbitrary 64 bit floats, NaN, NegativeInfinity, PositiveInfinity, 
         ///Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float() = 
             let generator =
-                Gen.frequency [(6, Gen.map3 Default.fraction generate generate generate)
+                Gen.frequency [(6, Default.NormalFloat().Generator |> Gen.map (fun (NormalFloat f) -> f))
                               ;(1, Gen.elements [ Double.NaN; Double.NegativeInfinity; Double.PositiveInfinity])
                               ;(1, Gen.elements [ Double.MaxValue; Double.MinValue; Double.Epsilon])]
             let shrinker fl =
-                let (|<|) x y = abs x < abs y
-                seq {   if Double.IsInfinity fl || Double.IsNaN fl then 
-                            yield 0.0
-                        else
-                            if fl < 0.0 then yield -fl
-                            let truncated = truncate fl
-                            if truncated |<| fl then yield truncated }
-                |> Seq.distinct
+                if Double.IsInfinity fl || Double.IsNaN fl then seq {yield 0.0}
+                else Default.NormalFloat().Shrinker (NormalFloat fl) |> Seq.map (fun (NormalFloat f) -> f)
             fromGenShrink(generator, shrinker)
-
-        /// Generates a "normal" 64 bit floats (without NaN, Infinity, Epsilon, MinValue, MaxValue)
-        static member NormalFloat() =
-            fromGenShrink(Gen.map3 Default.fraction generate generate generate, Default.Float().Shrinker)
-            |> convert NormalFloat float
 
         ///Generates arbitrary 32 bit floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
         static member Float32() = 
             let generator =
-                let fraction a b c = float32 (Default.fraction a b c)
-                Gen.frequency   [(6, Gen.map3 fraction generate generate generate)
-                                ;(1, Gen.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity])
-                                ;(1, Gen.elements [ Single.MaxValue; Single.MinValue; Single.Epsilon])]
+                Gen.frequency [(6, Default.NormalFloat().Generator |> Gen.map (fun (NormalFloat f) -> float32 f))
+                              ;(1, Gen.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity])
+                              ;(1, Gen.elements [ Single.MaxValue; Single.MinValue; Single.Epsilon])]
             let shrinker fl =
-                let (|<|) x y = abs x < abs y
-                seq {   if Single.IsInfinity fl || Single.IsNaN fl then 
-                            yield 0.0f
-                        else
-                            if fl < 0.0f then yield -fl
-                            let truncated = truncate fl
-                            if truncated |<| fl then yield truncated }
-                |> Seq.distinct
+                if Single.IsInfinity fl || Single.IsNaN fl then seq {yield 0.0f}
+                else Default.NormalFloat().Shrinker (fl |> float |> NormalFloat) |> Seq.map (fun (NormalFloat f) -> f |> float32)
             fromGenShrink (generator,shrinker)
 
         ///Generate arbitrary decimal.
