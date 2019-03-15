@@ -432,6 +432,9 @@ module Arb =
             |> convert DoNotSize DoNotSize.Unwrap
 
         ///Generates float in range [0; 1) with uniform distribution.
+        ///NOTE: Uniform distribution means that for all subranges of same length < 1 the probabilities of generating value in these subranges are equal.
+        ///It DOES NOT means that all representable float values in range [0; 1) is equally likely to appear.
+        ///Actually, most of the values in range [0; 1) is NEVER generated.
         ///See "Generating uniform doubles in the unit interval" at http://xoshiro.di.unimi.it/ 
         static member private stdFloatGen =
             let toFloat (bytes : byte[]) =
