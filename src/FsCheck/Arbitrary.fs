@@ -437,7 +437,7 @@ module Arb =
         ///Actually, most of the values in range [0; 1) is NEVER generated.
         ///See "Generating uniform doubles in the unit interval" at http://xoshiro.di.unimi.it/ 
         static member private stdFloatGen =
-            let toFloat (bytes : byte[]) =
+            let toFloat bytes =
                 BitConverter.ToUInt64(bytes, 0)
                 |> fun n -> (float (n >>> 11)) * (1.0 / float (1UL <<< 53))
                 |> BitConverter.GetBytes
@@ -449,16 +449,16 @@ module Arb =
         static member NormalFloat() =
             let generator = Gen.sized (fun size ->
                 Gen.map2
-                    (fun (f : float) isNegative -> 
+                    (fun f isNegative -> 
                         let value = f * float size
                         if isNegative then -value else value)
                     Default.stdFloatGen
-                    generate<bool>
+                    generate
                 )
             let shrinker fl =
                 let (|<|) x y = abs x < abs y
                 seq { 
-                        yield 0.0
+                        if fl <> 0.0 then yield 0.0
                         if fl < 0.0 then yield -fl
                         let truncated = truncate fl
                         if truncated |<| fl then yield truncated }
@@ -498,6 +498,7 @@ module Arb =
             let shrinkDecimal d =
                 let (|<|) x y = abs x < abs y
                 seq {
+                    if d <> 0m then yield 0m
                     if d < 0m then yield -d
                     let truncated = truncate d
                     if truncated |<| d then yield truncated
