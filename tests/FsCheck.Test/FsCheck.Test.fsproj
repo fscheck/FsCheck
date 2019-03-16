@@ -15,6 +15,7 @@
     <Compile Include="Gen.fs" />
     <Compile Include="GenExtensions.fs" />
     <Compile Include="Arbitrary.fs" />
+    <Compile Include="ArbitraryConstructor.fs" />
     <Compile Include="Property.fs" />
     <Compile Include="Commands.fs" />
     <Compile Include="Runner.fs" />
