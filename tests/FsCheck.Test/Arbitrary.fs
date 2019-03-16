@@ -101,7 +101,7 @@ module Arbitrary =
     let Double (NonNegativeInt size) (value:float) =
         (   generate<float> |> Gen.resize size |> sample 10
             |> List.forall (fun v -> 
-                (-2.0 * float size <= v && v <= 2.0 * float size )
+                (float -size <= v && v <= float size )
                 || Double.IsNaN(v) || Double.IsInfinity(v)
                 || v = Double.Epsilon || v = Double.MaxValue || v = Double.MinValue)
         ,   shrink<float> value 
@@ -112,7 +112,7 @@ module Arbitrary =
     let Single (NonNegativeInt size) (value:float32) =
         (   generate<float32> |> Gen.resize size |> sample 10
             |> List.forall (fun v -> 
-                (-2.0f * float32 size <= v && v <= 2.0f * float32 size )
+                (float32 -size <= v && v <= float32 size )
                 || Single.IsNaN(v) || Single.IsInfinity(v)
                 || v = Single.Epsilon || v = Single.MaxValue || v = Single.MinValue)
         ,   shrink<float32> value 
