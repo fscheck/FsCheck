@@ -8,16 +8,20 @@ module ArbitraryConstructor =
     open System
     open FsCheck.Experimental
     open FsCheck.Experimental.ArbitraryConstructor
+    
+    type SystemOriginSpec =
+        static member gen() =
+            let assembly = typeof<string>.Assembly
+            let spec = TypeSpec(assembly |> Seq.singleton)
+            spec |> typeGen |> Arb.fromGen   
 
-    [<Fact>]
-    let ``Can retrieve types``() =
-        let assembly = typeof<string>.Assembly
-        let constr = TypeConstraints(assembly |> Seq.singleton)
-        typeFrom constr |> ignore
+    [<Property(Arbitrary = [|typeof<SystemOriginSpec>|])>]
+    let ``Can retrieve types`` (t : Type) =
+        true |> Prop.collect t
     
     [<Property(MaxTest = 1)>]
     let ``Object parent equals to usnspecified parent``() =
         let assembly = typeof<string>.Assembly
-        let constrA = TypeConstraints(assembly |> Seq.singleton, requiredParents = [typeof<obj>])
-        let constrB = TypeConstraints(assembly |> Seq.singleton, requiredParents = [])
-        (typeFrom constrA |> Seq.length) = (typeFrom constrB |> Seq.length)
+        let specA = TypeSpec(assembly |> Seq.singleton, requiredParents = [typeof<obj>])
+        let specB = TypeSpec(assembly |> Seq.singleton, requiredParents = [])
+        ( specA |> typesMatchingSpec |> Seq.length) = (specB |> typesMatchingSpec |> Seq.length)
