@@ -486,13 +486,25 @@ module Arb =
                 else Default.NormalFloat().Shrinker (fl |> float |> NormalFloat) |> Seq.map (fun (NormalFloat f) -> f |> float32)
             fromGenShrink (generator,shrinker)
 
-        ///Generate arbitrary decimal.
+        ///Generates uniformly distributed Decimal in range [0; 1].
+        static member private stdDecimalGen =
+            //Decimal format can represent every value of form [0..10^k]/(10^k) where k < 28.
+            //The bigger k we use, the more values we can possibly generate in range [0; 1].
+            //But Gen.choose returns int32, so this solution use k = 9.
+            //Enhance it!
+            let tenPow9 = 1_000_000_000
+            Gen.choose(0, tenPow9)
+            |> Gen.map Decimal
+            |> Gen.map (fun d -> d / (Decimal tenPow9))
+
+         ///Generates arbitrary decimal between -size and size.
         static member Decimal() =
-            let genDecimal = 
-                    Gen.map5 (fun lo mid hi isNegative scale -> Decimal(lo, mid, hi, isNegative, scale))
-                             generate generate generate generate (Gen.choose(0, 28) |> Gen.map byte)
-                    
-            let shrinkDecimal d =
+            let generator = Gen.sized (fun size ->
+                gen {
+                    let! d = Default.stdDecimalGen
+                    return d * (Decimal size)
+                })
+            let shrinker d =
                 let (|<|) x y = abs x < abs y
                 seq {
                     if d <> 0m then yield 0m
@@ -500,7 +512,20 @@ module Arb =
                     let truncated = truncate d
                     if truncated |<| d then yield truncated
                 }
-            fromGenShrink (genDecimal, shrinkDecimal)
+            fromGenShrink(generator, shrinker)
+
+        ///Generates arbitrary decimal unrestricted by size.
+        static member DoNotSizeDecimal() =
+            let generator = 
+                Gen.map5 
+                    (fun lo mid hi isNegative scale -> Decimal(lo, mid, hi, isNegative, scale))
+                    (generate |> Gen.map DoNotSize.Unwrap)
+                    (generate |> Gen.map DoNotSize.Unwrap)
+                    (generate |> Gen.map DoNotSize.Unwrap)
+                    (generate |> Gen.map DoNotSize.Unwrap)
+                    (Gen.choose(0, 28) |> Gen.map byte)                               
+            fromGenShrink (generator, Default.Decimal().Shrinker)
+            |> convert DoNotSize DoNotSize.Unwrap
 
 #if !NETSTANDARD1_0
         ///Generate arbitrary complex, that is shrunk by removing imaginary part and shrinking both parts
