@@ -17,7 +17,7 @@ module internal ReflectArbitrary =
     let enumOfType (t: System.Type) : Gen<Enum> =
        let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
        let vals: Array = System.Enum.GetValues(t)
-       let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i)]     
+       let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i)] |> List.distinct  
        if isFlags then
            let elementType = System.Enum.GetUnderlyingType t
            let inline helper (elements : 'a list) =
