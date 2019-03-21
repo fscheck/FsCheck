@@ -27,10 +27,9 @@ module internal ReflectArbitrary =
                |> Gen.map (
                    fun bools ->
                        bools
-                       |> List.indexed
-                       |> List.map (
-                           fun (index, b) ->
-                               if b then primaries.[index] else LanguagePrimitives.GenericZero )
+                       |> List.map2 
+                           (fun flag isChecked -> if isChecked then flag else LanguagePrimitives.GenericZero )
+                           primaries    
                        |> List.fold (|||) LanguagePrimitives.GenericZero )
                |> Gen.map (fun e -> Enum.ToObject (t, e) :?> Enum)
            if   elementType = typeof<byte>   then
