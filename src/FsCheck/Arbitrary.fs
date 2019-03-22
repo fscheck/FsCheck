@@ -133,7 +133,7 @@ type DoNotShrink<'a> = DoNotShrink of 'a
 ///as the test gets further, by applying this type the underlying
 ///type will ignore this size and always generate from the full range.
 ///Note that this only makes a difference for types that have a range -
-///currently Int16, Int32, Int64 have DoNotSize Arbitrary instances.
+///currently integer types, TimeSpan and Decimal have DoNotSize Arbitrary instances.
 ///This is typically (and at least currently) only applicable for value types
 ///that are comparable, hence the type constraints.
 type DoNotSize<'a when 'a : struct and 'a : comparison> = 
@@ -279,7 +279,7 @@ module Arb =
            override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
   
-    ///A collection of default generators.
+    ///A collection of default Arbitrary instances for some types.
     type Default with
         ///Generates (), of the unit type.
         static member Unit() = 
@@ -342,7 +342,7 @@ module Arb =
             fromGenShrink ( Gen.sized (fun n -> Gen.choose (-n,n)),
                             shrinkNumber)
 
-        ///Generate arbitrary int32 that is unrestricted by size.
+        ///Generate arbitrary int32 that is uniformly distributed in the whole range of int32 values.
         [<Obsolete("Renamed to DoNotSizeInt32.")>]
         static member DontSizeInt32() =
             //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
@@ -353,7 +353,7 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generate arbitrary int32 that is unrestricted by size.
+        ///Generate arbitrary int32 that is uniformly distributed in the whole range of int32 values.
         static member DoNotSizeInt32() =
             //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
             //so using this trick instead
@@ -368,7 +368,7 @@ module Arb =
             Default.Int32()
             |> convert (abs >> uint32) int
 
-        ///Generate arbitrary uint32 that is unrestricted by size.
+        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
         [<Obsolete("Renamed to DoNotSizeUInt32.")>]
         static member DontSizeUInt32() =
             let gen =
@@ -377,7 +377,7 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert (uint32 >> DoNotSize) DoNotSize.Unwrap
 
-        ///Generate arbitrary uint32 that is unrestricted by size.
+        ///Generate arbitrary uint32 that is uniformly distributed in the whole range of uint32 values.
         static member DoNotSizeUInt32() =
             let gen =
                 Gen.two generate<DoNotSize<uint16>>
@@ -393,7 +393,7 @@ module Arb =
             from<int32>
             |> convert int64 int32
 
-        ///Generate arbitrary int64 that is unrestricted by size.
+        ///Generate arbitrary int64 that is uniformly distributed in the whole range of int64 values.
         [<Obsolete("Renamed to DoNotSizeInt64.")>]
         static member DontSizeInt64() =
             let gen =
@@ -402,7 +402,7 @@ module Arb =
             fromGenShrink (gen,shrinkNumber)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generate arbitrary int64 that is unrestricted by size.
+        ///Generate arbitrary int64 that is uniformly distributed in the whole range of int64 values.
         static member DoNotSizeInt64() =
             let gen =
                 Gen.two generate<DoNotSize<uint32>>
@@ -415,7 +415,7 @@ module Arb =
             from<int>
             |> convert (abs >> uint64) int
 
-        ///Generate arbitrary uint64 that is unrestricted by size.
+        ///Generate arbitrary uint64 that is uniformly distributed in the whole range of uint64 values.
         [<Obsolete("Renamed to DoNotSizeUInt64.")>]
         static member DontSizeUInt64() =
             let gen =
@@ -424,7 +424,7 @@ module Arb =
             fromGenShrink (gen,shrink)
             |> convert DoNotSize DoNotSize.Unwrap
         
-        ///Generate arbitrary uint64 that is unrestricted by size.
+        ///Generate arbitrary uint64 that is uniformly distributed in the whole range of uint64 values.
         static member DoNotSizeUInt64() =
             let gen =
                 Gen.two generate<DoNotSize<uint32>>
@@ -432,7 +432,7 @@ module Arb =
             fromGenShrink (gen,shrink)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generates float in range [0; 1) with uniform distribution.
+        ///Generates uniformly distributed floats in range [0; 1).
         ///NOTE: Uniform distribution means that generated value is equally likely to be in each subrange of same length 
         ///It DOES NOT means that all representable float values in range [0; 1) are equally likely to appear.
         ///Actually, most of the values in range [0; 1) are NEVER generated.
