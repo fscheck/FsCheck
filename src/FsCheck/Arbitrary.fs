@@ -489,6 +489,7 @@ module Arb =
 
         ///Generates uniformly distributed Decimal values in range [0; 1).
         static member private stdDecimalGen =
+#if !NETSTANDARD1_0
             gen {
                 let tenPow7 = 1_000_000_0
                 let! p1, p2, p3, p4 = 
@@ -507,8 +508,21 @@ module Arb =
                     mant / tenPow7 / tenPow7 / tenPow7 / tenPow7
                 return res
             }
+//.NET Standard 1.0 doesn't have explicit conversion from bigint to decimal.
+//Thus, in this case we use only 9 significant bits.
+//It isn't that trivial to implement own conversion and corefx one use
+//private fields of BigInteger.
+#else 
+            let tenPow9 = 1_000_000_000
+            Gen.choose(0, tenPow9 - 1)
+            |> Gen.map Decimal
+            |> Gen.map (fun d -> d / (Decimal tenPow9)) 
+#endif
 
-         ///Generates arbitrary decimal between -size and size.
+        ///Generates arbitrary decimal between -size and size.
+#if NETSTANDARD1_0
+        ///NOTE: .NET Standard 1.0 version use only 9 significant digits.
+#endif
         static member Decimal() =
             let generator = Gen.sized (fun size ->
                 gen {
