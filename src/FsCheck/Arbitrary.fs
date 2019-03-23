@@ -487,16 +487,26 @@ module Arb =
                 else Default.NormalFloat().Shrinker (fl |> float |> NormalFloat) |> Seq.map (fun (NormalFloat f) -> f |> float32)
             fromGenShrink (generator,shrinker)
 
-        ///Generates uniformly distributed Decimal in range [0; 1].
+        ///Generates uniformly distributed Decimal values in range [0; 1).
         static member private stdDecimalGen =
-            //Decimal format can represent every value of form [0..10^k]/(10^k) where k < 28.
-            //The bigger k we use, the more values we can possibly generate in range [0; 1].
-            //But Gen.choose returns int32, so this solution use k = 9.
-            //Enhance it!
-            let tenPow9 = 1_000_000_000
-            Gen.choose(0, tenPow9)
-            |> Gen.map Decimal
-            |> Gen.map (fun d -> d / (Decimal tenPow9))
+            gen {
+                let tenPow7 = 1_000_000_0
+                let! p1, p2, p3, p4 = 
+                    Gen.choose(0, tenPow7 - 1) 
+                    |> Gen.map bigint 
+                    |> Gen.four
+                let mant =
+                    let tenPow7 = bigint tenPow7
+                    p1 * tenPow7 * tenPow7 * tenPow7 +
+                    p2 * tenPow7 * tenPow7 +
+                    p3 * tenPow7 +
+                    p4
+                let res =
+                    let tenPow7 = decimal tenPow7
+                    let mant = decimal mant
+                    mant / tenPow7 / tenPow7 / tenPow7 / tenPow7
+                return res
+            }
 
          ///Generates arbitrary decimal between -size and size.
         static member Decimal() =

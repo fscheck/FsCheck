@@ -519,14 +519,20 @@ module Arbitrary =
     let ``Map with string key``() =
         generate<Map<string, char>> |> sample 10 |> List.exists (fun x -> not x.IsEmpty)
 
-    [<Fact>]
-    let Decimal() =
-        generate<decimal> |> sample 10 |> ignore
+    [<Property>]
+    let Decimal (size : PositiveInt) =
+        generate<decimal> 
+        |> Gen.sample size.Get 10 
+        |> List.forall (fun d -> abs d < decimal size.Get)
 
     [<Property>]
     let ``Decimal shrinks`` (value: decimal) =
         shrink<decimal> value 
         |> Seq.forall (fun shrunkv -> shrunkv = 0m || shrunkv <= abs value)
+
+    [<Fact>]
+    let DoNotSizeDecimal() =
+        generate<DoNotSize<decimal>> |> sample 10 |> ignore
     
     [<Fact>]
     let Complex() =
