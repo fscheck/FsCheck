@@ -438,13 +438,10 @@ module Arb =
         ///Actually, most of the values in range [0; 1) are NEVER generated.
         ///See "Generating uniform doubles in the unit interval" at http://xoshiro.di.unimi.it/ 
         static member private stdFloatGen =
-            let toFloat bytes =
-                BitConverter.ToUInt64(bytes, 0)
-                |> fun n -> (float (n >>> 11)) * (1.0 / float (1UL <<< 53))
-                |> BitConverter.GetBytes
-                |> fun b -> BitConverter.ToDouble(b, 0)
-            Gen.arrayOfLength 8 generate<byte>
-            |> Gen.map toFloat        
+            gen {
+                let! n = generate<DoNotSize<uint64>> |> Gen.map DoNotSize.Unwrap
+                return (float (n >>> 11)) * (1.0 / float (1UL <<< 53))
+            }      
         
         /// Generates a "normal" 64 bit floats between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
         static member NormalFloat() =
