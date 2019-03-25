@@ -438,10 +438,8 @@ module Arb =
         ///Actually, most of the values in range [0; 1) are NEVER generated.
         ///See "Generating uniform doubles in the unit interval" at http://xoshiro.di.unimi.it/ 
         static member private stdFloatGen =
-            gen {
-                let! n = generate<DoNotSize<uint64>> |> Gen.map DoNotSize.Unwrap
-                return (float (n >>> 11)) * (1.0 / float (1UL <<< 53))
-            }      
+            generate<DoNotSize<uint64>>
+            |> Gen.map (fun (DoNotSize n) -> (float (n >>> 11)) * (1.0 / float (1UL <<< 53)))     
         
         /// Generates a "normal" 64 bit floats between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
         static member NormalFloat() =
@@ -490,24 +488,23 @@ module Arb =
         ///Generates uniformly distributed Decimal values in range [0; 1).
         static member private stdDecimalGen =
 #if !NETSTANDARD1_0
-            gen {
-                let tenPow7 = 1_000_000_0
-                let! p1, p2, p3, p4 = 
-                    Gen.choose(0, tenPow7 - 1) 
-                    |> Gen.map bigint 
-                    |> Gen.four
-                let mant =
-                    let tenPow7 = bigint tenPow7
-                    p1 * tenPow7 * tenPow7 * tenPow7 +
-                    p2 * tenPow7 * tenPow7 +
-                    p3 * tenPow7 +
-                    p4
-                let res =
+            let tenPow7 = 1_000_000_0
+            let p = 
+                Gen.choose(0, tenPow7 - 1) 
+                |> Gen.map bigint  
+            Gen.map4
+                (fun p1 p2 p3 p4 ->
+                let tenPow7 = bigint tenPow7
+                p1 * tenPow7 * tenPow7 * tenPow7 +
+                p2 * tenPow7 * tenPow7 +
+                p3 * tenPow7 +
+                p4)
+                p p p p
+            |> Gen.map
+                (fun mant ->
                     let tenPow7 = decimal tenPow7
                     let mant = decimal mant
-                    mant / tenPow7 / tenPow7 / tenPow7 / tenPow7
-                return res
-            }
+                    mant / tenPow7 / tenPow7 / tenPow7 / tenPow7)
 //.NET Standard 1.0 doesn't have explicit conversion from bigint to decimal.
 //Thus, in this case we use only 9 significant bits.
 //It isn't that trivial to implement own conversion and corefx one use
@@ -525,10 +522,9 @@ module Arb =
 #endif
         static member Decimal() =
             let generator = Gen.sized (fun size ->
-                gen {
-                    let! d = Default.stdDecimalGen
-                    return d * (Decimal size)
-                })
+                Default.stdDecimalGen
+                |> Gen.map (fun d -> d * Decimal size)
+                )
             let shrinker d =
                 let (|<|) x y = abs x < abs y
                 seq {
@@ -610,7 +606,7 @@ module Arb =
         ///Generate a nullable value that is null 1/8 of the time.
         static member Nullable() = 
             { new Arbitrary<Nullable<'a>>() with
-                override __.Generator = Gen.frequency [(1, gen { return Nullable() }); (7, Gen.map Nullable generate)]
+                override __.Generator = Gen.frequency [(1, Gen.fresh Nullable); (7, Gen.map Nullable generate)]
                 override __.Shrinker o =
                     if o.HasValue
                         then seq { yield Nullable(); for x' in shrink o.Value -> Nullable x' }
@@ -891,11 +887,7 @@ module Arb =
 
         static member KeyValuePair() =
             let genKeyValuePair =
-                gen {
-                    let! key = generate
-                    let! value = generate
-                    return KeyValuePair(key, value)
-                }
+                Gen.map2 (fun k v -> KeyValuePair(k, v)) generate generate
             let shrinkKeyValuePair (kvp:KeyValuePair<_,_>) = 
                 seq { for key in shrink kvp.Key do
                         for value in shrink kvp.Value do
@@ -932,8 +924,9 @@ module Arb =
         ///Generates an interval between two non-negative integers.
         static member Interval() =
             let generator = 
-                  gen { let! start,offset = Gen.two generate
-                  return Interval (abs start,abs start+abs offset) }
+                generate
+                |> Gen.two
+                |> Gen.map (fun (start, offset) -> Interval (abs start, abs start + abs offset))
             let shrinker (i : Interval) =
                 (i.Left, i.Right - i.Left)
                 |> shrink
