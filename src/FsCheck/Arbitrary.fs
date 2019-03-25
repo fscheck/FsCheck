@@ -1058,9 +1058,9 @@ module Arb =
 
         static member Guid() =
             gen {
-                let! a = generate
-                let! b = generate
-                let! c = generate
+                let! (DoNotSize a) = generate
+                let! (DoNotSize b) = generate
+                let! (DoNotSize c) = generate
                 let! d = generate
                 let! e = generate
                 let! f = generate
