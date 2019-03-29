@@ -589,9 +589,12 @@ module Gen =
     /// Generates a 2D array of the given dimensions.
     //[category: Creating generators from generators]
     [<CompiledName("Array2DOf")>]
-    let array2DOfDim (rows: int,cols: int) (g: Gen<'a>)  = 
-        gen { let! arr1 = arrayOfLength (rows * cols) g
-              return Array2D.init rows cols (fun r c -> arr1.[cols*r + c]) }
+    let array2DOfDim (rows: int,cols: int) (g: Gen<'a>)  = sized (fun size ->
+        gen {
+            let length = rows * cols
+            let! sizes = piles length size
+            let! gens = Array.init length (fun i -> resize sizes.[i] g) |> sequenceToArr
+            return Array2D.init rows cols (fun r c -> gens.[cols*r + c]) })
 
     /// Generates a 2D array. The square root of the size is the maximum number of rows and columns.
     //[category: Creating generators from generators]
