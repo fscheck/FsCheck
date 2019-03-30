@@ -301,7 +301,7 @@ module Arb =
                             >> Seq.filter (fun e -> -128 <= e && e <= 127) //the int shrinker shrinks -128 to 128 which overflows
                             >> Seq.map sbyte)
 
-        ///Generates int16 values between -size and size.
+        ///Generates int16 values that are between -size and size.
         static member Int16() =
             Default.Int32()
             |> convert int16 int
@@ -319,7 +319,7 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert (int16 >> DoNotSize) (DoNotSize.Unwrap >> int)
 
-        ///Generates uint16 values between 0 and size.
+        ///Generates uint16 values that are between 0 and size.
         static member UInt16() =
             Default.Int32()
             |> convert (abs >> uint16) int
@@ -337,7 +337,7 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert (uint16 >> DoNotSize) (DoNotSize.Unwrap >> int)
             
-        ///Generates int32 values between -size and size.
+        ///Generates int32 values that are between -size and size.
         static member Int32() = 
             fromGenShrink ( Gen.sized (fun n -> Gen.choose (-n,n)),
                             shrinkNumber)
@@ -363,7 +363,7 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generates uint32 values between 0 and size.
+        ///Generates uint32 values that are between 0 and size.
         static member UInt32() =
             Default.Int32()
             |> convert (abs >> uint32) int
@@ -385,7 +385,7 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert (uint32 >> DoNotSize) DoNotSize.Unwrap
 
-        ///Generates int64 values between -size and size.
+        ///Generates int64 values that are between -size and size.
         ///Note that since the size is an int32, this does not actually cover the full
         ///range of int64. See DoNotSize<int64> instead.
         static member Int64() =
@@ -410,7 +410,7 @@ module Arb =
             fromGenShrink (gen,shrinkNumber)
             |> convert DoNotSize DoNotSize.Unwrap
         
-        ///Generates uint64 values between 0 and size.
+        ///Generates uint64 values that are between 0 and size.
         static member UInt64() =
             from<int>
             |> convert (abs >> uint64) int
@@ -441,7 +441,7 @@ module Arb =
             generate<DoNotSize<uint64>>
             |> Gen.map (fun (DoNotSize n) -> (float (n >>> 11)) * (1.0 / float (1UL <<< 53)))     
         
-        ///Generates float values between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
+        ///Generates float values that are between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
         ///Shrinks by yielding zero, abs of the origin and the truncated origin.
         static member NormalFloat() =
             let generator = Gen.sized (fun size ->
@@ -463,7 +463,7 @@ module Arb =
             fromGenShrink(generator, shrinker)
             |> convert NormalFloat float
 
-        ///Generates float values between -size and size, NaN, NegativeInfinity, PositiveInfinity, 
+        ///Generates float values that are between -size and size, NaN, NegativeInfinity, PositiveInfinity, 
         ///MaxValue, MinValue, Epsilon included fairly frequently.
         ///Shrinks by yielding zero, abs of the origin and the truncated origin.
         static member Float() = 
@@ -476,7 +476,7 @@ module Arb =
                 else Default.NormalFloat().Shrinker (NormalFloat fl) |> Seq.map (fun (NormalFloat f) -> f)
             fromGenShrink(generator, shrinker)
 
-        ///Generates float32 values between -size and size, NaN, NegativeInfinity, PositiveInfinity, 
+        ///Generates float32 values that are between -size and size, NaN, NegativeInfinity, PositiveInfinity, 
         ///MaxValue, MinValue, Epsilon included fairly frequently.
         ///Shrinks by yielding zero, abs of the origin and the truncated origin.
         static member Float32() = 
@@ -520,7 +520,7 @@ module Arb =
             |> Gen.map (fun d -> d / (Decimal tenPow9)) 
 #endif
 
-        ///Generates decimal values between -size and size.
+        ///Generates decimal values that are between -size and size.
 #if NETSTANDARD1_0
         ///NOTE: .NET Standard 1.0 version use only 9 significant digits.
 #endif
