@@ -612,6 +612,9 @@ module Gen =
     [<CompiledName("Apply")>]
     let apply (f:Gen<'a -> 'b>) (gn:Gen<'a>) : Gen<'b> = apply f gn
 
+    // Modify a size using the given function and invoke the given Gen with this size
+    let scale f g = sized (fun size -> resize (f size) g)
+    
     ///Promote the given function f to a function generator. Only used for generating arbitrary functions.
     let internal promote f = Gen (fun n r -> fun a -> let (Gen m) = f a in m n r)
 
