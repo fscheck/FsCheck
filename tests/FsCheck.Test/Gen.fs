@@ -317,8 +317,8 @@ module Gen =
             && (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
     
     [<Property>]
-    let ``Scale works`` (PositiveInt size) =
-        let g = Gen.scale (fun n -> n / 10) Arb.generate<int>
+    let ``ScaleSize works`` (PositiveInt size) =
+        let g = Gen.scaleSize (fun n -> n / 10) Arb.generate<int>
         g |> Gen.sample size 100 |> List.forall (fun i -> i <= size / 10) 
 
     type MaybeNull =
