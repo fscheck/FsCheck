@@ -618,6 +618,17 @@ the generator by the return type of each static member.
 
 Also note that in this case we actually didn't need to write a generator or shrinker: FsCheck can 
 derive suitable instances using reflection for discriminated unions, record types and enums.
+
+### Notes about the default Generators and Shrinkers
+
+Most of the default Arbitrary instances are documented with xml comments that can be discovered via IntelliSense.
+However, there are some important things to notice that are listed here to avoid much duplicating comments.
+
+- Most of the default sized generators of the number-like types produce the uniformly distributed values in the ranges specified in the comments.
+- The same thing with the default DoNotSize generators of the number-like types except Decimal.
+- Most of the default generators of the collection types are just "wrappers" around the F# list.
+ 
+Thus, you can assume that they are generated and shrinked the same way.
     
 ## Useful methods on the Arb module
 
