@@ -155,20 +155,20 @@ type GenExtensions =
         if resultSelector = null then nullArg "resultSelector"
         zip generator other |> map resultSelector.Invoke
 
-    ///Combine two generators into a generator of 3-tuples.
+    ///Combine three generators into a generator of 3-tuples.
     //[category: Creating generators from generators]
     [<Extension>]
     static member Zip (generator, second, third) =
         zip3 generator second third
 
-    ///Combine two generators into a new generator of the result of the given result selector.
+    ///Combine three generators into a new generator of the result of the given result selector.
     //[category: Creating generators from generators]
     [<Extension>]
     static member Zip (generator, second, third, resultSelector : Func<_, _, _, _>) =
         if resultSelector = null then nullArg "resultSelector"
         zip3 generator second third |> map resultSelector.Invoke
 
-    ///Build a generator that generates a value from two generators  with qual probability.
+    ///Build a generator that generates a value from two generators with equal probability.
     //[category: Creating generators from generators]
     [<Extension>]
     static member Or (generator, other) =
