@@ -178,4 +178,4 @@ type GenExtensions =
     //[category: Creating generators from generators]
     [<Extension>]
     static member OrNull (generator) =
-        oneof [ generator; constant null ]
+        frequency [ (7, generator); (1, constant null) ]
