@@ -179,3 +179,9 @@ type GenExtensions =
     [<Extension>]
     static member OrNull (generator) =
         frequency [ (7, generator); (1, constant null) ]
+
+    ///Modify a size using the given function before passing it to the given generator.
+    //[category: Creating generators from generators]
+    [<Extension>]
+    static member ScaleSize(generator, scaleFunc) =
+        scaleSize scaleFunc generator
