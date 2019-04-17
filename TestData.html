@@ -184,7 +184,7 @@ the code F# generates for the type definition above. Assuming that, <code>unsafe
 }</code></pre></td></tr></table>
 <p>However, a recursive generator like this may fail to terminate with a
 StackOverflowException, or produce very large results. To avoid this,
-recursive generators should always use the size control mechanis:</p>
+recursive generators should always use the size control mechanism:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -308,7 +308,7 @@ values between a minimum and maximum value, both inclusive:</p>
 but any value would do; it wouldn't change the result.</p>
 <p>While <code>Gen.choose (0, 9)</code> generates a single integer value, <code>Gen.sample 0 10</code>
 generates 10 sample values:</p>
-<table class="pre"><tr><td><pre><code>[6; 9; 0; 3; 4; 7; 1; 5; 9; 3]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[1; 2; 5; 5; 1; 0; 0; 1; 1; 4]</code></pre></td></tr></table>
 <p>If you supply values in the 'wrong order', <code>Gen.choose</code> will follow
 <a href="https://en.wikipedia.org/wiki/Robustness_principle">Postel's law</a> and 'know
 what you meant':</p>
@@ -321,7 +321,7 @@ what you meant':</p>
 <p>In this example, the first value is greater than the second value, but
 <code>Gen.choose</code> will happily interpret this as a range, and produce values between
 42 and 99, both included:</p>
-<table class="pre"><tr><td><pre><code>[53; 90; 67; 46; 81; 60; 95; 74; 51; 47]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[61; 62; 99; 76; 55; 90; 69; 46; 83; 60]</code></pre></td></tr></table>
 <p>Since both values are included, if you set both to the same value, you'll
 effectively constrain the generator to that single value, and it'll behave like
 <code>Gen.constant</code>.</p>
@@ -343,7 +343,7 @@ the result.</p>
 </table>
 <p>The result of this expression is a list of ten sample values. Each value is
 a single integer drawn from the collection of numbers:</p>
-<table class="pre"><tr><td><pre><code>[1453; 1337; 7; -273; 42; -100; 1453; 1337; 7; -273]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[42; -100; 1453; 1337; 7; -273; 42; -100; 1453; 1453]</code></pre></td></tr></table>
 <p>All elements are equally likely to be drawn from the collection; we say that
 the random function has a uniform distribution. One easy way to affect the
 distribution is to put more than one identical element into the collection:</p>
@@ -355,7 +355,7 @@ distribution is to put more than one identical element into the collection:</p>
 </table>
 <p>In the above example, the value <code>"foo"</code> appears twice, so is twice as likely
 to be drawn from the collection:</p>
-<table class="pre"><tr><td><pre><code>["foo"; "foo"; "foo"; "bar"; "bar"; "foo"; "bar"; "foo"; "foo"; "bar"]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>["foo"; "bar"; "bar"; "foo"; "foo"; "foo"; "foo"; "bar"; "foo"; "foo"]</code></pre></td></tr></table>
 <p>The above examples all use <code>list</code> values as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -377,7 +377,7 @@ argument, it's <code>3</code> in this example, which means only values from the 
 </table>
 <p>The result of this expression is a list of ten sample values. Each value is
 a single character drawn from the segment <code>['a'; 'b'; 'c']</code>:</p>
-<table class="pre"><tr><td><pre><code>['a'; 'a'; 'b'; 'b'; 'c'; 'c'; 'a'; 'a'; 'a'; 'c']</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>['b'; 'c'; 'c'; 'a'; 'a'; 'b'; 'b'; 'c'; 'a'; 'b']</code></pre></td></tr></table>
 <p>Let's run <code>Gen.growingElements</code> again, with the same input but with size <code>7</code>:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
@@ -387,7 +387,7 @@ a single character drawn from the segment <code>['a'; 'b'; 'c']</code>:</p>
 </table>
 <p>The result of this expression is a list of ten sample values. Each value is
 now a single character drawn from the segment <code>['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g']</code>:</p>
-<table class="pre"><tr><td><pre><code>['c'; 'e'; 'c'; 'e'; 'c'; 'e'; 'c'; 'e'; 'c'; 'e']</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>['c'; 'a'; 'a'; 'b'; 'e'; 'c'; 'b'; 'g'; 'd'; 'f']</code></pre></td></tr></table>
 <p>The above examples all use <code>list</code> values as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -405,7 +405,7 @@ produce a <code>Gen&lt;byte&gt;</code> from a <code>Gen&lt;int&gt;</code> is to 
 </table>
 <p>This example uses the <code>byte</code> <em>function</em> to cast any <code>int</code> created by
 <code>Gen.choose (0, 127)</code> to a <code>byte</code> value:</p>
-<table class="pre"><tr><td><pre><code>[31uy; 104uy; 57uy; 9uy; 43uy; 88uy; 90uy; 89uy; 59uy; 127uy]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[85uy; 10uy; 106uy; 21uy; 127uy; 28uy; 12uy; 5uy; 125uy; 32uy]</code></pre></td></tr></table>
 <p>This is only a basic example of the concept of <code>Gen.map</code>. In this particular
 example, you could also have used <code>Gen.elements [0uy..127uy]</code> to achieve the
 same result without using <code>Gen.map</code>, so let's consider a second
@@ -425,10 +425,10 @@ combine <code>Gen.map</code> with an anymous function to get the desired date:</
 </table>
 <p>In this example, the generated <code>DateTime</code> value is immediately formatted as
 a <code>string</code>, so that the output is more readable:</p>
-<table class="pre"><tr><td><pre><code>["2019-11-24 00:00:00Z"; "2019-11-15 00:00:00Z"; "2019-11-28 00:00:00Z";
- "2019-11-19 00:00:00Z"; "2019-11-02 00:00:00Z"; "2019-11-23 00:00:00Z";
- "2019-11-06 00:00:00Z"; "2019-11-27 00:00:00Z"; "2019-11-10 00:00:00Z";
- "2019-11-24 00:00:00Z"]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>["2019-11-14 00:00:00Z"; "2019-11-25 00:00:00Z"; "2019-11-21 00:00:00Z";
+ "2019-11-24 00:00:00Z"; "2019-11-24 00:00:00Z"; "2019-11-07 00:00:00Z";
+ "2019-11-03 00:00:00Z"; "2019-11-03 00:00:00Z"; "2019-11-10 00:00:00Z";
+ "2019-11-06 00:00:00Z"]</code></pre></td></tr></table>
 <p>This causes the resulting generator to have the type <code>Gen&lt;string&gt;</code>, but if
 you omit calling <code>ToString "u"</code>, its type would have been <code>Gen&lt;DateTime&gt;</code>.</p>
 <h4><a name="Lists" class="anchor" href="#Lists">Lists</a></h4>
@@ -446,7 +446,7 @@ you can use <code>Gen.constant</code> to generate lists that all contain the sam
 <p>This combination uses <code>Gen.constant 42</code> as an individual generator, and then
 generates lists containing the the number 42. While the value(s) in the list is
 always 42, the length of the generated lists varies.</p>
-<table class="pre"><tr><td><pre><code>[[42]; [42]; []; []; []; []; [42]; [42]; [42]; []]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[]; []; [42]; []; [42]; [42]; []; [42]; [42]; []]</code></pre></td></tr></table>
 <p>The length of the generated list is determined by the <code>size</code> argument. In
 this example, the <code>size</code> argument is <code>1</code>, so the generated lists are short.
 Note that while there's a correlation beteen <code>size</code> and the length of the
@@ -461,10 +461,10 @@ lists, you can't rely on a deterministic length. For that, there's
 <p>This example uses <code>Gen.choose (24, 42)</code> in order to generate individual
 integer values between 24 and 42. It then pipes this generator into
 <code>Gen.listOfLength 5</code> in order to generate lists with exactly five elements:</p>
-<table class="pre"><tr><td><pre><code>[[36; 38; 28; 42; 26]; [33; 36; 38; 28; 42]; [38; 33; 36; 38; 28];
- [29; 38; 33; 36; 38]; [27; 29; 38; 33; 36]; [24; 27; 29; 38; 33];
- [29; 24; 27; 29; 38]; [27; 29; 24; 27; 29]; [37; 27; 29; 24; 27];
- [35; 37; 27; 29; 24]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[37; 40; 30; 25; 27]; [35; 37; 40; 30; 25]; [32; 35; 37; 40; 30];
+ [31; 32; 35; 37; 40]; [28; 31; 32; 35; 37]; [26; 28; 31; 32; 35];
+ [42; 26; 28; 31; 32]; [28; 42; 26; 28; 31]; [39; 28; 42; 26; 28];
+ [26; 39; 28; 42; 26]]</code></pre></td></tr></table>
 <p>Notice that all sample lists have exactly five elements.</p>
 <p>You can also use <code>Gen.nonEmptyListOf</code> to create lists that are guaranteed to
 have at least one element. Like the other list generators, it uses a
@@ -478,11 +478,11 @@ single-value generator to generate its elements:</p>
 <p>Like <code>Gen.listOf</code>, <code>Gen.nonEmptyListOf</code> uses <code>size</code> to control the length
 of the generated lists. They may still be small, but the larger the <code>size</code>
 argument, the larger the lists may become.</p>
-<table class="pre"><tr><td><pre><code>[["foo"; "bar"; "foo"; "foo"; "bar"; "foo"; "bar"; "bar"; "baz"; "bar"; "baz";
-  "foo"; "foo"; "baz"]; ["baz"; "foo"; "bar"; "foo"; "foo"; "bar"; "foo"; "bar"];
- ["baz"; "baz"; "foo"];
- ["foo"; "baz"; "baz"; "foo"; "bar"; "foo"; "foo"; "bar"; "foo"; "bar"; "bar";
-  "baz"; "bar"; "baz"; "foo"; "foo"; "baz"; "foo"; "bar"; "bar"]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[["baz"; "foo"; "foo"; "bar"; "foo"; "bar"; "baz"; "baz"; "bar"];
+ ["foo"; "baz"; "foo"; "foo"; "bar"; "foo"; "bar"; "baz"; "baz"; "bar"; "baz";
+  "foo"; "foo"; "baz"; "foo"; "bar"; "bar"; "foo"; "bar"; "foo"];
+ ["baz"; "foo"; "baz"; "foo"; "foo"; "bar"; "foo"; "bar"];
+ ["baz"; "baz"; "foo"; "baz"; "foo"; "foo"; "bar"; "foo"; "bar"]]</code></pre></td></tr></table>
 <p>In this example, each element is drawn from the small set "foo", "bar", and
 "baz". The lists are guaranteed to have at least a single element, but may be
 longer.</p>
@@ -502,9 +502,9 @@ random permutation of a given finite sequence.</p>
 example, but any value would do; it wouldn't change the result.</p>
 <p>The result of this expression is a list of lists, where each list contains
 the original input list, but shuffled:</p>
-<table class="pre"><tr><td><pre><code>[[|"baz"; "qux"; "bar"; "foo"|]; [|"bar"; "foo"; "qux"; "baz"|];
- [|"bar"; "baz"; "qux"; "foo"|]; [|"baz"; "foo"; "bar"; "qux"|];
- [|"foo"; "qux"; "baz"; "bar"|]; [|"foo"; "bar"; "baz"; "qux"|]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[|"baz"; "foo"; "bar"; "qux"|]; [|"qux"; "baz"; "foo"; "bar"|];
+ [|"foo"; "baz"; "bar"; "qux"|]; [|"bar"; "foo"; "qux"; "baz"|];
+ [|"baz"; "bar"; "foo"; "qux"|]; [|"qux"; "foo"; "bar"; "baz"|]]</code></pre></td></tr></table>
 <p>The above example uses a <code>list</code> value as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -529,8 +529,8 @@ can use integers:</p>
 <p><code>Gen.two</code> uses a single-value generator to create a generator of two-element
 tuples. This example generates 10 sample points, where each coordinate is
 between -100 and 100:</p>
-<table class="pre"><tr><td><pre><code>[(-78, -63); (-4, 57); (-85, -53); (7, 61); (10, -16); (-59, 19); (70, 18);
- (53, -60); (-95, -45); (22, 40)]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[(46, 59); (61, 68); (1, 79); (69, 87); (-90, -52); (-85, 22); (4, 95); (53, 15);
+ (-46, 58); (-93, -9)]</code></pre></td></tr></table>
 <p>If you want to model a coordinate system in three-dimensional space, you may
 decide to use floating points instead:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
@@ -543,10 +543,10 @@ decide to use floating points instead:</p>
 from between -10 and 10, with two decimals; that defines a <code>Gen&lt;float&gt;</code>.
 Second, <code>Gen.three</code> takes that <code>Gen&lt;float&gt;</code> and turns it into a
 <code>Gen&lt;float * float * float&gt;</code>:</p>
-<table class="pre"><tr><td><pre><code>[(4.91, -0.35, 8.58); (9.05, 8.86, -7.14); (-3.98, -5.88, -8.75);
- (2.85, 3.85, -3.95); (-3.05, -3.01, 4.27); (-4.05, -6.16, -7.38);
- (-2.79, -4.41, -5.36); (-7.67, -0.4, -9.85); (-7.19, -2.53, 3.1);
- (-5.0, 4.27, 1.4)]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[(-2.25, -6.85, 2.05); (6.66, 8.38, 8.78); (-6.16, 0.03, -6.22);
+ (2.75, 8.34, 0.51); (9.94, -1.73, 5.52); (-1.16, -6.51, -7.76);
+ (6.03, 5.15, -2.75); (-5.07, -6.55, 3.98); (2.12, 3.39, 8.99);
+ (-8.98, -4.96, -4.29)]</code></pre></td></tr></table>
 <p>Finally, <code>Gen.four</code> transforms a single-value generator into a generator of
 four-element tuples. As all the other <em>combinators</em> in the <code>Gen</code> module, you
 can combine it with other functions to define more specific values. Imagine,
@@ -575,8 +575,8 @@ Third, you can pipe that generator into <code>Gen.map</code>, using the construc
 overload of <code>Version</code> that takes four integers; in F# 4, constructors can be
 treated as functions, and a constructor with four arguments can be treated as a
 function that takes a four-element tuple.</p>
-<table class="pre"><tr><td><pre><code>["3.5.5.2"; "0.7.5.9"; "8.5.6.5"; "3.7.3.4"; "1.0.0.6"; "1.1.0.3"; "9.8.9.2";
- "8.6.0.9"; "4.7.0.5"; "5.4.1.3"]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>["3.4.1.5"; "9.7.9.8"; "1.2.5.9"; "5.5.6.2"; "4.0.0.3"; "6.3.6.6"; "0.8.4.7";
+ "2.1.5.0"; "7.3.2.1"; "9.2.3.4"]</code></pre></td></tr></table>
 <p>This example composes the <code>Version</code> constructor with the <code>string</code> function,
 in order to produce a more readable output. The resulting generator has the
 type <code>Gen&lt;string&gt;</code>, but if you remove the <code>string</code> composition, the type would
@@ -607,8 +607,8 @@ remove all pairs where the elements are equal. Subsequently, you can use
 </table>
 <p>This expression generates 10 sample lists, each containing two different
 numbers:</p>
-<table class="pre"><tr><td><pre><code>[[30; 89]; [12; 82]; [66; 47]; [82; 40]; [64; 5]; [18; 35]; [61; 42]; [14; 29];
- [83; 93]; [100; 37]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[44; 93]; [98; 86]; [80; 51]; [34; 44]; [53; 9]; [35; 2]; [89; 67]; [71; 60];
+ [87; 25]; [41; 18]]</code></pre></td></tr></table>
 <p>When using <code>Gen.filter</code>, be sure to provide a predicate with a high chance
 of returning <code>true</code>. If the predicate discards 'too many' candidates, it may
 cause tests to run slower, or to not terminate at all. If your filter is
@@ -732,6 +732,14 @@ to get a feeling of how to write such Arbitrary instances. The Arb module should
 the generator by the return type of each static member.</p>
 <p>Also note that in this case we actually didn't need to write a generator or shrinker: FsCheck can
 derive suitable instances using reflection for discriminated unions, record types and enums.</p>
+<h3><a name="Notes-about-the-default-Generators-and-Shrinkers" class="anchor" href="#Notes-about-the-default-Generators-and-Shrinkers">Notes about the default Generators and Shrinkers</a></h3>
+<p>Most of the default Arbitrary instances are documented with xml comments that can be discovered via IntelliSense.
+However, there are some important things to notice that are listed here to avoid much duplicating comments.</p>
+<ul>
+<li>Most of the default sized generators of the number-like types produce the uniformly distributed values in the ranges specified in the comments.</li>
+<li>The same thing with the default DoNotSize generators of the number-like types except Decimal.</li>
+<li>Most of the default generators of the collection types are just "wrappers" around the F# list. Thus, you can assume that they are generated and shrinked the same way.</li>
+</ul>
 <h2><a name="Useful-methods-on-the-Arb-module" class="anchor" href="#Useful-methods-on-the-Arb-module">Useful methods on the Arb module</a></h2>
 <ul>
 <li><code>Arb.from&lt;'a&gt;</code> returns the registered Arbitrary instance for the given type 'a</li>
@@ -770,10 +778,10 @@ derive suitable instances using reflection for discriminated unions, record type
 <div class="tip" id="fs23">union case Tree.Leaf: int -&gt; Tree</div>
 <div class="tip" id="fs24">union case Tree.Branch: Tree * Tree -&gt; Tree</div>
 <div class="tip" id="fs25">val unsafeTree : unit -&gt; Gen&lt;Tree&gt;</div>
-<div class="tip" id="fs26">val map : f:(&#39;a -&gt; &#39;b) -&gt; gen:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;b&gt;</div>
+<div class="tip" id="fs26">val map : f:(&#39;b -&gt; &#39;c) -&gt; gen:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;c&gt;</div>
 <div class="tip" id="fs27">module Arb<br /><br />from FsCheck</div>
 <div class="tip" id="fs28">val generate&lt;&#39;Value&gt; : Gen&lt;&#39;Value&gt;</div>
-<div class="tip" id="fs29">val map2 : f:(&#39;c -&gt; &#39;d -&gt; &#39;e) -&gt; a:Gen&lt;&#39;c&gt; -&gt; b:Gen&lt;&#39;d&gt; -&gt; Gen&lt;&#39;e&gt;</div>
+<div class="tip" id="fs29">val map2 : f:(&#39;a18 -&gt; &#39;a19 -&gt; &#39;a20) -&gt; a:Gen&lt;&#39;a18&gt; -&gt; b:Gen&lt;&#39;a19&gt; -&gt; Gen&lt;&#39;a20&gt;</div>
 <div class="tip" id="fs30">val x : Tree</div>
 <div class="tip" id="fs31">val y : Tree</div>
 <div class="tip" id="fs32">val tree : Gen&lt;Tree&gt;</div>
@@ -783,12 +791,12 @@ derive suitable instances using reflection for discriminated unions, record type
 <div class="tip" id="fs36">val invalidArg : argumentName:string -&gt; message:string -&gt; &#39;T</div>
 <div class="tip" id="fs37">val constant : v:&#39;b -&gt; Gen&lt;&#39;b&gt;</div>
 <div class="tip" id="fs38">val sample : size:int -&gt; n:int -&gt; generator:Gen&lt;&#39;b&gt; -&gt; &#39;b list</div>
-<div class="tip" id="fs39">val elements : xs:seq&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a&gt;</div>
+<div class="tip" id="fs39">val elements : xs:seq&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;</div>
 <div class="tip" id="fs40">val growingElements : xs:seq&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a&gt;</div>
 <div class="tip" id="fs41">Multiple items<br />val byte : value:&#39;T -&gt; byte (requires member op_Explicit)<br /><br />--------------------<br />type byte = Byte</div>
 <div class="tip" id="fs42">Multiple items<br />type DateTime =<br />&#160;&#160;struct<br />&#160;&#160;&#160;&#160;new : ticks:int64 -&gt; DateTime + 10 overloads<br />&#160;&#160;&#160;&#160;member Add : value:TimeSpan -&gt; DateTime<br />&#160;&#160;&#160;&#160;member AddDays : value:float -&gt; DateTime<br />&#160;&#160;&#160;&#160;member AddHours : value:float -&gt; DateTime<br />&#160;&#160;&#160;&#160;member AddMilliseconds : value:float -&gt; DateTime<br />&#160;&#160;&#160;&#160;member AddMinutes : value:float -&gt; DateTime<br />&#160;&#160;&#160;&#160;member AddMonths : months:int -&gt; DateTime<br />&#160;&#160;&#160;&#160;member AddSeconds : value:float -&gt; DateTime<br />&#160;&#160;&#160;&#160;member AddTicks : value:int64 -&gt; DateTime<br />&#160;&#160;&#160;&#160;member AddYears : value:int -&gt; DateTime<br />&#160;&#160;&#160;&#160;...<br />&#160;&#160;end<br /><br />--------------------<br />DateTime ()<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />DateTime(ticks: int64) : DateTime<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />DateTime(ticks: int64, kind: DateTimeKind) : DateTime<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />DateTime(year: int, month: int, day: int) : DateTime<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />DateTime(year: int, month: int, day: int, calendar: Globalization.Calendar) : DateTime<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />DateTime(year: int, month: int, day: int, hour: int, minute: int, second: int) : DateTime<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />DateTime(year: int, month: int, day: int, hour: int, minute: int, second: int, kind: DateTimeKind) : DateTime<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />DateTime(year: int, month: int, day: int, hour: int, minute: int, second: int, calendar: Globalization.Calendar) : DateTime<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />DateTime(year: int, month: int, day: int, hour: int, minute: int, second: int, millisecond: int) : DateTime<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />DateTime(year: int, month: int, day: int, hour: int, minute: int, second: int, millisecond: int, kind: DateTimeKind) : DateTime<br />&#160;&#160;&#160;<em>(+0 other overloads)</em></div>
-<div class="tip" id="fs43">val listOf : gn:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a list&gt;</div>
-<div class="tip" id="fs44">val listOfLength : n:int -&gt; arb:Gen&lt;&#39;a18&gt; -&gt; Gen&lt;&#39;a18 list&gt;</div>
+<div class="tip" id="fs43">val listOf : gn:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b list&gt;</div>
+<div class="tip" id="fs44">val listOfLength : n:int -&gt; arb:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b list&gt;</div>
 <div class="tip" id="fs45">val nonEmptyListOf : gn:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b list&gt;</div>
 <div class="tip" id="fs46">val shuffle : xs:seq&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a array&gt;</div>
 <div class="tip" id="fs47">val two : g:Gen&lt;&#39;a18&gt; -&gt; Gen&lt;&#39;a18 * &#39;a18&gt;</div>

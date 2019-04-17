@@ -134,7 +134,7 @@ The post-conditions are the invariants that will be checked; when these do not h
 as the test gets further, by applying this type the underlying
 type will ignore this size and always generate from the full range.
 Note that this only makes a difference for types that have a range -
-currently Int16, Int32, Int64 have DoNotSize Arbitrary instances.
+currently integer types, TimeSpan and Decimal have DoNotSize Arbitrary instances.
 This is typically (and at least currently) only applicable for value types
 that are comparable, hence the type constraints.</p>
 

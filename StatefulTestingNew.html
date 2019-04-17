@@ -148,10 +148,26 @@ so when we run this specification we can check that FsCheck does the right thing
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (777520938,296521705)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 10 tests (6 shrinks) (StdGen (850688727,296584891)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
-(3, Setup Counter)
+(1, Setup Counter)
+inc -&gt; 2
+inc -&gt; 3
+dec -&gt; 2
+dec -&gt; 1
+inc -&gt; 2
+inc -&gt; 3
+inc -&gt; 4
+dec -&gt; 3
+inc -&gt; 4
+inc -&gt; 5
+inc -&gt; 6
+
+Shrunk:
+(1, Setup Counter)
+inc -&gt; 2
+inc -&gt; 3
 inc -&gt; 4
 inc -&gt; 5</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence of operations that leads to it.</p>
@@ -209,12 +225,12 @@ although the original sequence contains a few superfluous operations, FsCheck no
 <div class="tip" id="fs30">Multiple items<br />type Machine&lt;&#39;Actual,&#39;Model&gt; =<br />&#160;&#160;new : unit -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;<br />&#160;&#160;new : maxNumberOfCommands:int -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;<br />&#160;&#160;abstract member Next : &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;<br />&#160;&#160;abstract member ShrinkOperations : Operation&lt;&#39;Actual,&#39;Model&gt; list -&gt; seq&lt;Operation&lt;&#39;Actual,&#39;Model&gt; list&gt;<br />&#160;&#160;abstract member Setup : Arbitrary&lt;Setup&lt;&#39;Actual,&#39;Model&gt;&gt;<br />&#160;&#160;abstract member TearDown : TearDown&lt;&#39;Actual&gt;<br />&#160;&#160;override ShrinkOperations : s:Operation&lt;&#39;Actual,&#39;Model&gt; list -&gt; seq&lt;Operation&lt;&#39;Actual,&#39;Model&gt; list&gt;<br />&#160;&#160;member MaxNumberOfCommands : int<br />&#160;&#160;override TearDown : TearDown&lt;&#39;Actual&gt;<br /><br />--------------------<br />new : unit -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;<br />new : maxNumberOfCommands:int -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;</div>
 <div class="tip" id="fs31">Multiple items<br />module Gen<br /><br />from FsCheck<br /><br />--------------------<br />type Gen&lt;&#39;a&gt; =<br />&#160;&#160;private | Gen of (int -&gt; StdGen -&gt; &#39;a)<br />&#160;&#160;&#160;&#160;interface IGen<br />&#160;&#160;&#160;&#160;member private Map : f:(&#39;a -&gt; &#39;b) -&gt; Gen&lt;&#39;b&gt;<br />&#160;&#160;&#160;&#160;static member ( &gt;&gt;= ) : m:Gen&lt;&#39;a1&gt; * k:(&#39;a1 -&gt; Gen&lt;&#39;a2&gt;) -&gt; Gen&lt;&#39;a2&gt;<br />&#160;&#160;&#160;&#160;static member ( &lt;!&gt; ) : f:(&#39;a1 -&gt; &#39;a2) * a:Gen&lt;&#39;a1&gt; -&gt; Gen&lt;&#39;a2&gt;<br />&#160;&#160;&#160;&#160;static member ( &lt;*&gt; ) : f:Gen&lt;(&#39;a1 -&gt; &#39;a2)&gt; * a:Gen&lt;&#39;a1&gt; -&gt; Gen&lt;&#39;a2&gt;</div>
 <div class="tip" id="fs32">val choose : l:int * h:int -&gt; Gen&lt;int&gt;</div>
-<div class="tip" id="fs33">val map : f:(&#39;a -&gt; &#39;b) -&gt; gen:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;b&gt;</div>
+<div class="tip" id="fs33">val map : f:(&#39;b -&gt; &#39;c) -&gt; gen:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;c&gt;</div>
 <div class="tip" id="fs34">module Arb<br /><br />from FsCheck</div>
 <div class="tip" id="fs35">val fromGen : gen:Gen&lt;&#39;Value&gt; -&gt; Arbitrary&lt;&#39;Value&gt;</div>
 <div class="tip" id="fs36">val __ : Machine&lt;Counter,int&gt;</div>
 <div class="tip" id="fs37">abstract member Machine.Next : &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;</div>
-<div class="tip" id="fs38">val elements : xs:seq&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a&gt;</div>
+<div class="tip" id="fs38">val elements : xs:seq&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;</div>
 <div class="tip" id="fs39">type Check =<br />&#160;&#160;static member All : config:Config -&gt; unit<br />&#160;&#160;static member All : config:Config * test:Type -&gt; unit<br />&#160;&#160;static member Method : config:Config * methodInfo:MethodInfo * ?target:obj -&gt; unit<br />&#160;&#160;static member One : config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member One : name:string * config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : name:string * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member QuickAll : unit -&gt; unit<br />&#160;&#160;static member QuickAll : test:Type -&gt; unit<br />&#160;&#160;static member QuickThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;...</div>
 <div class="tip" id="fs40">static member Check.Quick : property:&#39;Testable -&gt; unit<br />static member Check.Quick : name:string * property:&#39;Testable -&gt; unit</div>
 <div class="tip" id="fs41">module StateMachine<br /><br />from FsCheck.Experimental</div>

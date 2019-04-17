@@ -114,10 +114,10 @@ fails the test if a postcondition does not hold.</p>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (6 shrinks) (StdGen (731001027,296521705)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (1 shrink) (StdGen (806468692,296584891)):
 Label of failing property: model: 2 &lt;&gt; Counter=1
 Original:
-[inc; dec; inc; dec; inc; inc; dec; inc; inc; dec]
+[inc; inc; inc; dec; dec]
 Shrunk:
 [inc; inc; inc; dec]</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.</p>
@@ -254,7 +254,7 @@ Shrunk:
 <div class="tip" id="fs24">abstract member ICommandGenerator.Next : &#39;Model -&gt; Gen&lt;Command&lt;&#39;Actual,&#39;Model&gt;&gt;</div>
 <div class="tip" id="fs25">val model : int</div>
 <div class="tip" id="fs26">Multiple items<br />module Gen<br /><br />from FsCheck<br /><br />--------------------<br />type Gen&lt;&#39;a&gt; =<br />&#160;&#160;private | Gen of (int -&gt; StdGen -&gt; &#39;a)<br />&#160;&#160;&#160;&#160;interface IGen<br />&#160;&#160;&#160;&#160;member private Map : f:(&#39;a -&gt; &#39;b) -&gt; Gen&lt;&#39;b&gt;<br />&#160;&#160;&#160;&#160;static member ( &gt;&gt;= ) : m:Gen&lt;&#39;a1&gt; * k:(&#39;a1 -&gt; Gen&lt;&#39;a2&gt;) -&gt; Gen&lt;&#39;a2&gt;<br />&#160;&#160;&#160;&#160;static member ( &lt;!&gt; ) : f:(&#39;a1 -&gt; &#39;a2) * a:Gen&lt;&#39;a1&gt; -&gt; Gen&lt;&#39;a2&gt;<br />&#160;&#160;&#160;&#160;static member ( &lt;*&gt; ) : f:Gen&lt;(&#39;a1 -&gt; &#39;a2)&gt; * a:Gen&lt;&#39;a1&gt; -&gt; Gen&lt;&#39;a2&gt;</div>
-<div class="tip" id="fs27">val elements : xs:seq&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a&gt;</div>
+<div class="tip" id="fs27">val elements : xs:seq&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;</div>
 <div class="tip" id="fs28">type Check =<br />&#160;&#160;static member All : config:Config -&gt; unit<br />&#160;&#160;static member All : config:Config * test:Type -&gt; unit<br />&#160;&#160;static member Method : config:Config * methodInfo:MethodInfo * ?target:obj -&gt; unit<br />&#160;&#160;static member One : config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member One : name:string * config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : name:string * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member QuickAll : unit -&gt; unit<br />&#160;&#160;static member QuickAll : test:Type -&gt; unit<br />&#160;&#160;static member QuickThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;...</div>
 <div class="tip" id="fs29">static member Check.Quick : property:&#39;Testable -&gt; unit<br />static member Check.Quick : name:string * property:&#39;Testable -&gt; unit</div>
 <div class="tip" id="fs30">val toProperty : spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; Property</div>

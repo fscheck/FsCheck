@@ -109,9 +109,9 @@ configuration.QuietOnSuccess <span class="o">=</span> <span class="k">true</span
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 1 test (1 shrink) (StdGen (686334613,296521705)):
+ListProperties.reverse is original-Falsifiable, after 1 test (1 shrink) (StdGen (762852620,296584891)):
 Original:
-[-1; 0]
+[1; -1]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
@@ -502,7 +502,7 @@ appears as normal.</p>
 <div class="tip" id="fs16">val i : int</div>
 <div class="tip" id="fs17">val mygen : Arbitrary&lt;int&gt;</div>
 <div class="tip" id="fs18">module Arb<br /><br />from FsCheck</div>
-<div class="tip" id="fs19">type Default =<br />&#160;&#160;static member Array : unit -&gt; Arbitrary&lt;&#39;a []&gt;<br />&#160;&#160;static member Array2D : unit -&gt; Arbitrary&lt;&#39;a0 [,]&gt;<br />&#160;&#160;static member Arrow : unit -&gt; Arbitrary&lt;(&#39;a -&gt; &#39;b)&gt; (requires equality)<br />&#160;&#160;static member BigInt : unit -&gt; Arbitrary&lt;bigint&gt;<br />&#160;&#160;static member Bool : unit -&gt; Arbitrary&lt;bool&gt;<br />&#160;&#160;static member Byte : unit -&gt; Arbitrary&lt;byte&gt;<br />&#160;&#160;static member Char : unit -&gt; Arbitrary&lt;char&gt;<br />&#160;&#160;static member Culture : unit -&gt; Arbitrary&lt;CultureInfo&gt;<br />&#160;&#160;static member DateTime : unit -&gt; Arbitrary&lt;DateTime&gt;<br />&#160;&#160;static member DateTimeOffset : unit -&gt; Arbitrary&lt;DateTimeOffset&gt;<br />&#160;&#160;...</div>
+<div class="tip" id="fs19">type Default =<br />&#160;&#160;static member Array : unit -&gt; Arbitrary&lt;&#39;a []&gt;<br />&#160;&#160;static member Array2D : unit -&gt; Arbitrary&lt;&#39;a0 [,]&gt;<br />&#160;&#160;static member Arrow : unit -&gt; Arbitrary&lt;(&#39;a -&gt; &#39;b)&gt; (requires equality)<br />&#160;&#160;static member BigInt : unit -&gt; Arbitrary&lt;bigint&gt;<br />&#160;&#160;static member Bool : unit -&gt; Arbitrary&lt;bool&gt;<br />&#160;&#160;static member Byte : unit -&gt; Arbitrary&lt;byte&gt;<br />&#160;&#160;static member Char : unit -&gt; Arbitrary&lt;char&gt;<br />&#160;&#160;static member Complex : unit -&gt; Arbitrary&lt;Complex&gt;<br />&#160;&#160;static member ConsoleKeyInfo : unit -&gt; Arbitrary&lt;ConsoleKeyInfo&gt;<br />&#160;&#160;static member Culture : unit -&gt; Arbitrary&lt;CultureInfo&gt;<br />&#160;&#160;...</div>
 <div class="tip" id="fs20">static member Arb.Default.Int32 : unit -&gt; Arbitrary&lt;int&gt;</div>
 <div class="tip" id="fs21">val mapFilter : mapper:(&#39;a -&gt; &#39;a) -&gt; pred:(&#39;a -&gt; bool) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;a&gt;</div>
 <div class="tip" id="fs22">type Math =<br />&#160;&#160;static val PI : float<br />&#160;&#160;static val E : float<br />&#160;&#160;static member Abs : value:sbyte -&gt; sbyte + 6 overloads<br />&#160;&#160;static member Acos : d:float -&gt; float<br />&#160;&#160;static member Asin : d:float -&gt; float<br />&#160;&#160;static member Atan : d:float -&gt; float<br />&#160;&#160;static member Atan2 : y:float * x:float -&gt; float<br />&#160;&#160;static member BigMul : a:int * b:int -&gt; int64<br />&#160;&#160;static member Ceiling : d:decimal -&gt; decimal + 1 overload<br />&#160;&#160;static member Cos : d:float -&gt; float<br />&#160;&#160;...</div>
@@ -519,15 +519,15 @@ appears as normal.</p>
 <div class="tip" id="fs33">val k : int</div>
 <div class="tip" id="fs34">val abs : value:&#39;T -&gt; &#39;T (requires member Abs)</div>
 <div class="tip" id="fs35">type Double =<br />&#160;&#160;struct<br />&#160;&#160;&#160;&#160;member CompareTo : value:obj -&gt; int + 1 overload<br />&#160;&#160;&#160;&#160;member Equals : obj:obj -&gt; bool + 1 overload<br />&#160;&#160;&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;&#160;&#160;member GetTypeCode : unit -&gt; TypeCode<br />&#160;&#160;&#160;&#160;member ToString : unit -&gt; string + 3 overloads<br />&#160;&#160;&#160;&#160;static val MinValue : float<br />&#160;&#160;&#160;&#160;static val MaxValue : float<br />&#160;&#160;&#160;&#160;static val Epsilon : float<br />&#160;&#160;&#160;&#160;static val NegativeInfinity : float<br />&#160;&#160;&#160;&#160;static val PositiveInfinity : float<br />&#160;&#160;&#160;&#160;...<br />&#160;&#160;end</div>
-<div class="tip" id="fs36">static member Arb.Default.Float : unit -&gt; Arbitrary&lt;double&gt;</div>
-<div class="tip" id="fs37">val t : double</div>
+<div class="tip" id="fs36">static member Arb.Default.Float : unit -&gt; Arbitrary&lt;float&gt;</div>
+<div class="tip" id="fs37">val t : float</div>
 <div class="tip" id="fs38">Multiple items<br />type PropertiesAttribute =<br />&#160;&#160;inherit PropertyAttribute<br />&#160;&#160;new : unit -&gt; PropertiesAttribute<br /><br />--------------------<br />new : unit -&gt; PropertiesAttribute</div>
 <div class="tip" id="fs39">Multiple items<br />type Arbitrary&lt;&#39;a&gt; =<br />&#160;&#160;interface IArbitrary<br />&#160;&#160;new : unit -&gt; Arbitrary&lt;&#39;a&gt;<br />&#160;&#160;abstract member Shrinker : &#39;a -&gt; seq&lt;&#39;a&gt;<br />&#160;&#160;abstract member Generator : Gen&lt;&#39;a&gt;<br />&#160;&#160;override Shrinker : &#39;a -&gt; seq&lt;&#39;a&gt;<br /><br />--------------------<br />new : unit -&gt; Arbitrary&lt;&#39;a&gt;</div>
-<div class="tip" id="fs40">type Negative =<br />&#160;&#160;static member Double : unit -&gt; Arbitrary&lt;double&gt;</div>
+<div class="tip" id="fs40">type Negative =<br />&#160;&#160;static member Double : unit -&gt; Arbitrary&lt;float&gt;</div>
 <div class="tip" id="fs41">val ( should use Arb instances from enclosing module ) : underTest:float -&gt; bool</div>
 <div class="tip" id="fs42">val underTest : float</div>
 <div class="tip" id="fs43">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />--------------------<br />type float = Double<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; = float</div>
-<div class="tip" id="fs44">type Positive =<br />&#160;&#160;static member Double : unit -&gt; Arbitrary&lt;double&gt;</div>
+<div class="tip" id="fs44">type Positive =<br />&#160;&#160;static member Double : unit -&gt; Arbitrary&lt;float&gt;</div>
 <div class="tip" id="fs45">val ( should use Arb instance on method ) : underTest:float -&gt; bool</div>
 <div class="tip" id="fs46">val ( property 1 ) : input:&#39;a -&gt; bool</div>
 <div class="tip" id="fs47">val input : &#39;a</div>

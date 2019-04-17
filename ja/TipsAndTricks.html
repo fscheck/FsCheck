@@ -60,12 +60,12 @@
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1394458442,296521705)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1404378501,296584891)):
 Original:
-{ 0-&gt;2; 2-&gt;1 }
-[2]
+{ 0-&gt;2; 1-&gt;2 }
+[1]
 Shrunk:
-{ 0-&gt;2; 2-&gt;0 }
+{ 0-&gt;2; 1-&gt;0 }
 [0]</code></pre></td></tr></table>
 <p><code>Function&lt;'a,'b&gt;</code> 型は呼ばれていたすべての引数、および生成した結果の写像を記録します。
 性質では、例のようにパターンマッチによって実際の関数を抽出することが出来ます。
@@ -124,10 +124,10 @@ Function は関数を出力し、また関数をシュリンクするために�
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (1 shrink) (StdGen (1396958302,296521705)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1406916852,296584891)):
 Label of failing property: 1 = -1
 Original:
-0
+2
 2
 Shrunk:
 0

@@ -82,9 +82,11 @@ Prop.ForAll(revRevIsOrig).QuickCheck();</code></pre></td></tr></table>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (556329055,296521705)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (647466560,296584891)):
 Original:
-[1; 0]</code></pre></td></tr></table>
+[0; -1]
+Shrunk:
+[0; 1]</code></pre></td></tr></table>
 <p>In C#:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
@@ -116,9 +118,9 @@ To see this error, ask FsCheck to generate lists of floats:</p>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 18 tests (7 shrinks) (StdGen (556936547,296521705)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (3 shrinks) (StdGen (648039918,296584891)):
 Original:
-[1.0; 2.0; -3.6; nan; -3.0; 4.940656458e-324; 4.0; nan]
+[nan; 0.6063025685; 0.9564376715; 1.797693135e+308]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <p>That said, the example in C# using floats actually works!</p>

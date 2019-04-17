@@ -63,13 +63,13 @@ FsCheck can even shrink <code>Function</code>s. For example:</p>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (960459641,296521705)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (4 shrinks) (StdGen (1018130709,296584891)):
 Original:
-{ 0-&gt;1; 1-&gt;3 }
-[1]
+{ 0-&gt;4; 1-&gt;3; 2-&gt;1 }
+[2; 0]
 Shrunk:
-{ 0-&gt;1; 1-&gt;0 }
-[0]</code></pre></td></tr></table>
+{ 0-&gt;0; 1-&gt;3; 2-&gt;0 }
+[1]</code></pre></td></tr></table>
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
 records a map of all the arguments it was called with, and the result it produced.
 In your properties, you can extract the actual function by pattern matching as in the example.
@@ -130,11 +130,11 @@ define your own labelling equality combinator:</p>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (962860153,296521705)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (2 shrinks) (StdGen (1020368259,296584891)):
 Label of failing property: 1 = -1
 Original:
-1
-0
+2
+4
 Shrunk:
 0
 0</code></pre></td></tr></table>

@@ -57,39 +57,21 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '155', 155)" onmouseover="showTip(event, '155', 155)">
+          <code onmouseout="hideTip(event, '156', 156)" onmouseover="showTip(event, '156', 156)">
             Default.Array()
           </code>
-          <div class="tip" id="155">
+          <div class="tip" id="156">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;&#39;a []&gt;<br />
                           <strong>Type parameters:</strong> 'a                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L567-567" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L659-659" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a rank 1 array.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '156', 156)" onmouseover="showTip(event, '156', 156)">
-            Default.Array2D()
-          </code>
-          <div class="tip" id="156">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;&#39;?9530 [,]&gt;<br />
-                          <strong>Type parameters:</strong> '?9530                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L601-601" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generate a rank 2, zero based array.</p>
+          <p>Generates a rank 1 arrays.
+The length of the generated array is between 0 and the test size + 1.
+The sum of the sizes of the elements is equal to the size of the generated array.</p>
 
 
         </td>
@@ -98,19 +80,19 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '157', 157)" onmouseover="showTip(event, '157', 157)">
-            Default.Arrow()
+            Default.Array2D()
           </code>
           <div class="tip" id="157">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;(&#39;a -&gt; &#39;b)&gt;<br />
-                          <strong>Type parameters:</strong> 'a, 'b                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;&#39;?9536 [,]&gt;<br />
+                          <strong>Type parameters:</strong> '?9536                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L621-621" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L695-695" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a function value. Function values can be generated for types 'a-&gt;'b where 'b has an Arbitrary instance.
-There is no shrinking for function values.</p>
+          <p>Generate a rank 2, zero based array.
+The product of the width and the height is between 0 and the test size.</p>
 
 
         </td>
@@ -119,18 +101,19 @@ There is no shrinking for function values.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '158', 158)" onmouseover="showTip(event, '158', 158)">
-            Default.BigInt()
+            Default.Arrow()
           </code>
           <div class="tip" id="158">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;bigint&gt;<br />
-                                  </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;(&#39;a -&gt; &#39;b)&gt;<br />
+                          <strong>Type parameters:</strong> 'a, 'b                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1150-1150" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L715-715" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Arbitray instance for BigInteger.</p>
+          <p>Generates function values. Function values can be generated for types 'a-&gt;'b where 'b has an Arbitrary instance.
+There is no shrinking for function values.</p>
 
 
         </td>
@@ -139,18 +122,18 @@ There is no shrinking for function values.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '159', 159)" onmouseover="showTip(event, '159', 159)">
-            Default.Bool()
+            Default.BigInt()
           </code>
           <div class="tip" id="159">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;bool&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;bigint&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L292-292" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1274-1274" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an arbitrary bool.</p>
+          <p>Generates BigInteger values that are between -size and size.</p>
 
 
         </td>
@@ -159,18 +142,18 @@ There is no shrinking for function values.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '160', 160)" onmouseover="showTip(event, '160', 160)">
-            Default.Byte()
+            Default.Bool()
           </code>
           <div class="tip" id="160">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;byte&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;bool&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L296-296" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L289-289" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an arbitrary byte.</p>
+          <p>Generates bool values.</p>
 
 
         </td>
@@ -179,18 +162,18 @@ There is no shrinking for function values.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '161', 161)" onmouseover="showTip(event, '161', 161)">
-            Default.Char()
+            Default.Byte()
           </code>
           <div class="tip" id="161">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;char&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;byte&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L491-491" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L293-293" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates arbitrary chars, between ASCII codes Char.MinValue and 127.</p>
+          <p>Generates byte values that are unrestricted by size.</p>
 
 
         </td>
@@ -199,14 +182,76 @@ There is no shrinking for function values.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '162', 162)" onmouseover="showTip(event, '162', 162)">
-            Default.Culture()
+            Default.Char()
           </code>
           <div class="tip" id="162">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;char&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L579-579" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates characters that are between ASCII codes Char.MinValue and 127.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '163', 163)" onmouseover="showTip(event, '163', 163)">
+            Default.Complex()
+          </code>
+          <div class="tip" id="163">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Complex&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L560-560" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates complex values of form {float + i*float}.
+Shrinks by removing the imaginary part and shrinking both parts.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '164', 164)" onmouseover="showTip(event, '164', 164)">
+            Default.ConsoleKeyInfo()
+          </code>
+          <div class="tip" id="164">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;ConsoleKeyInfo&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1083-1083" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates System.ConsoleKeyInfo values.
+Shrinks by reducing number of special key modifiers</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '165', 165)" onmouseover="showTip(event, '165', 165)">
+            Default.Culture()
+          </code>
+          <div class="tip" id="165">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;CultureInfo&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L950-950" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1045-1045" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -216,19 +261,19 @@ There is no shrinking for function values.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '163', 163)" onmouseover="showTip(event, '163', 163)">
+          <code onmouseout="hideTip(event, '166', 166)" onmouseover="showTip(event, '166', 166)">
             Default.DateTime()
           </code>
-          <div class="tip" id="163">
+          <div class="tip" id="166">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DateTime&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L741-741" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L835-835" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an arbitrary DateTime between 1900 and 2100.
+          <p>Generates DateTime values that are between 1900 and 2100.
 A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour components.</p>
 
 
@@ -237,19 +282,19 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '164', 164)" onmouseover="showTip(event, '164', 164)">
+          <code onmouseout="hideTip(event, '167', 167)" onmouseover="showTip(event, '167', 167)">
             Default.DateTimeOffset()
           </code>
-          <div class="tip" id="164">
+          <div class="tip" id="167">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DateTimeOffset&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L782-782" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L877-877" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an arbitrary DateTimeOffset between 1900 and 2100.
+          <p>Generates DateTimeOffset values that are between 1900 and 2100.
 A DateTimeOffset is shrunk first by shrinking its offset, then by removing its second, minute and hour components.</p>
 
 
@@ -258,19 +303,19 @@ A DateTimeOffset is shrunk first by shrinking its offset, then by removing its s
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '165', 165)" onmouseover="showTip(event, '165', 165)">
+          <code onmouseout="hideTip(event, '168', 168)" onmouseover="showTip(event, '168', 168)">
             Default.Decimal()
           </code>
-          <div class="tip" id="165">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Decimal&gt;<br />
+          <div class="tip" id="168">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;decimal&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L476-476" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L528-528" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary decimal.</p>
+          <p>Shrinks by yielding zero, abs of the origin and the truncated origin.</p>
 
 
         </td>
@@ -278,15 +323,15 @@ A DateTimeOffset is shrunk first by shrinking its offset, then by removing its s
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '166', 166)" onmouseover="showTip(event, '166', 166)">
+          <code onmouseout="hideTip(event, '169', 169)" onmouseover="showTip(event, '169', 169)">
             Default.Derive()
           </code>
-          <div class="tip" id="166">
+          <div class="tip" id="169">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1168-1168" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1292-1292" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -302,20 +347,19 @@ or DTO classes with a default constructor and public property setters).</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '167', 167)" onmouseover="showTip(event, '167', 167)">
+          <code onmouseout="hideTip(event, '170', 170)" onmouseover="showTip(event, '170', 170)">
             Default.Dictionary()
           </code>
-          <div class="tip" id="167">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Dictionary&lt;&#39;?9605,&#39;?9606&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9605, '?9606                      </div>
+          <div class="tip" id="170">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Dictionary&lt;&#39;?9611,&#39;?9612&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9611, '?9612                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L927-927" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1023-1023" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a System.Collections.Generic.Dictionary of values.
-Shrinks by reducing the number of elements</p>
+          <p>Generates System.Collections.Generic.Dictionary instances.</p>
 
 
         </td>
@@ -323,15 +367,15 @@ Shrinks by reducing the number of elements</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '168', 168)" onmouseover="showTip(event, '168', 168)">
+          <code onmouseout="hideTip(event, '171', 171)" onmouseover="showTip(event, '171', 171)">
             Default.DoNotShrink()
           </code>
-          <div class="tip" id="168">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotShrink&lt;&#39;?9621&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9621                      </div>
+          <div class="tip" id="171">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotShrink&lt;&#39;?9628&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9628                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1160-1160" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1284-1284" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -343,19 +387,19 @@ Shrinks by reducing the number of elements</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '169', 169)" onmouseover="showTip(event, '169', 169)">
+          <code onmouseout="hideTip(event, '172', 172)" onmouseover="showTip(event, '172', 172)">
             Default.DoNotSizeDateTime()
           </code>
-          <div class="tip" id="169">
+          <div class="tip" id="172">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;DateTime&gt;&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L755-755" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L849-849" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary DateTime that is unrestricted by size.
+          <p>Generates DateTime values that are unrestricted by size.
 A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour components.</p>
 
 
@@ -364,79 +408,20 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '170', 170)" onmouseover="showTip(event, '170', 170)">
-            Default.DoNotSizeInt16()
-          </code>
-          <div class="tip" id="170">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;int16&gt;&gt;<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L320-320" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '171', 171)" onmouseover="showTip(event, '171', 171)">
-            Default.DoNotSizeInt32()
-          </code>
-          <div class="tip" id="171">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;int&gt;&gt;<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L360-360" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generate arbitrary int32 that is unrestricted by size.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '172', 172)" onmouseover="showTip(event, '172', 172)">
-            Default.DoNotSizeInt64()
-          </code>
-          <div class="tip" id="172">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;int64&gt;&gt;<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L405-405" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generate arbitrary int64 that is unrestricted by size.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
           <code onmouseout="hideTip(event, '173', 173)" onmouseover="showTip(event, '173', 173)">
-            Default.DoNotSizeUInt16()
+            Default.DoNotSizeDecimal()
           </code>
           <div class="tip" id="173">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;uint16&gt;&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;Decimal&gt;&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L338-338" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L545-545" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.</p>
+          <p>Generates decimal values that are unrestricted by size.
+Shrinks by yielding zero, abs of the origin and the truncated origin.</p>
 
 
         </td>
@@ -445,18 +430,18 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '174', 174)" onmouseover="showTip(event, '174', 174)">
-            Default.DoNotSizeUInt32()
+            Default.DoNotSizeInt16()
           </code>
           <div class="tip" id="174">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;uint32&gt;&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;int16&gt;&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L382-382" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L317-317" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary uint32 that is unrestricted by size.</p>
+          <p>Generates int16 values that are unrestricted by size.</p>
 
 
         </td>
@@ -465,18 +450,18 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '175', 175)" onmouseover="showTip(event, '175', 175)">
-            Default.DoNotSizeUInt64()
+            Default.DoNotSizeInt32()
           </code>
           <div class="tip" id="175">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;uint64&gt;&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;int&gt;&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L427-427" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L357-357" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary uint64 that is unrestricted by size.</p>
+          <p>Generates int32 values that are unrestricted by size.</p>
 
 
         </td>
@@ -485,11 +470,91 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '176', 176)" onmouseover="showTip(event, '176', 176)">
-            Default.DontShrink()
+            Default.DoNotSizeInt64()
           </code>
           <div class="tip" id="176">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotShrink&lt;&#39;?9619&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9619                        <span>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;int64&gt;&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L406-406" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates int64 values that are unrestricted by size.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '177', 177)" onmouseover="showTip(event, '177', 177)">
+            Default.DoNotSizeUInt16()
+          </code>
+          <div class="tip" id="177">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;uint16&gt;&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L335-335" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates uint16 values that are unrestricted by size.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '178', 178)" onmouseover="showTip(event, '178', 178)">
+            Default.DoNotSizeUInt32()
+          </code>
+          <div class="tip" id="178">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;uint32&gt;&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L381-381" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates uint32 values that are unrestricted by size.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '179', 179)" onmouseover="showTip(event, '179', 179)">
+            Default.DoNotSizeUInt64()
+          </code>
+          <div class="tip" id="179">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;uint64&gt;&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L428-428" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates uint64 values that are unrestricted by size.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '180', 180)" onmouseover="showTip(event, '180', 180)">
+            Default.DontShrink()
+          </code>
+          <div class="tip" id="180">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotShrink&lt;&#39;?9626&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9626                        <span>
             <strong>Attributes:</strong><br />
 [&lt;Obsolete(&quot;Renamed to DoNotShrink.&quot;)&gt;]<br />
           </span>
@@ -500,7 +565,7 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
               <strong>WARNING: </strong> This API is obsolete
               <p>Renamed to DoNotShrink.</p>
               </div> 
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1156-1156" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1280-1280" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -512,10 +577,10 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '177', 177)" onmouseover="showTip(event, '177', 177)">
+          <code onmouseout="hideTip(event, '181', 181)" onmouseover="showTip(event, '181', 181)">
             Default.DontSizeInt16()
           </code>
-          <div class="tip" id="177">
+          <div class="tip" id="181">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;int16&gt;&gt;<br />
                                     <span>
             <strong>Attributes:</strong><br />
@@ -528,11 +593,11 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
               <strong>WARNING: </strong> This API is obsolete
               <p>Renamed to DoNotSizeInt16.</p>
               </div> 
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L314-314" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L311-311" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary int16 that is uniformly distributed in the whole range of int16 values.</p>
+          <p>Generates int16 values that are unrestricted by size.</p>
 
 
         </td>
@@ -540,10 +605,10 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '178', 178)" onmouseover="showTip(event, '178', 178)">
+          <code onmouseout="hideTip(event, '182', 182)" onmouseover="showTip(event, '182', 182)">
             Default.DontSizeInt32()
           </code>
-          <div class="tip" id="178">
+          <div class="tip" id="182">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;int&gt;&gt;<br />
                                     <span>
             <strong>Attributes:</strong><br />
@@ -556,11 +621,11 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
               <strong>WARNING: </strong> This API is obsolete
               <p>Renamed to DoNotSizeInt32.</p>
               </div> 
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L350-350" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L347-347" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary int32 that is unrestricted by size.</p>
+          <p>Generates int32 values that are unrestricted by size.</p>
 
 
         </td>
@@ -568,10 +633,10 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '179', 179)" onmouseover="showTip(event, '179', 179)">
+          <code onmouseout="hideTip(event, '183', 183)" onmouseover="showTip(event, '183', 183)">
             Default.DontSizeInt64()
           </code>
-          <div class="tip" id="179">
+          <div class="tip" id="183">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;int64&gt;&gt;<br />
                                     <span>
             <strong>Attributes:</strong><br />
@@ -584,11 +649,11 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
               <strong>WARNING: </strong> This API is obsolete
               <p>Renamed to DoNotSizeInt64.</p>
               </div> 
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L397-397" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L398-398" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary int64 that is unrestricted by size.</p>
+          <p>Generates int64 values that are unrestricted by size.</p>
 
 
         </td>
@@ -596,10 +661,10 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '180', 180)" onmouseover="showTip(event, '180', 180)">
+          <code onmouseout="hideTip(event, '184', 184)" onmouseover="showTip(event, '184', 184)">
             Default.DontSizeUInt16()
           </code>
-          <div class="tip" id="180">
+          <div class="tip" id="184">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;uint16&gt;&gt;<br />
                                     <span>
             <strong>Attributes:</strong><br />
@@ -612,11 +677,11 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
               <strong>WARNING: </strong> This API is obsolete
               <p>Renamed to DoNotSizeUInt16.</p>
               </div> 
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L332-332" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L329-329" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.</p>
+          <p>Generates uint16 values that are unrestricted by size.</p>
 
 
         </td>
@@ -624,10 +689,10 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '181', 181)" onmouseover="showTip(event, '181', 181)">
+          <code onmouseout="hideTip(event, '185', 185)" onmouseover="showTip(event, '185', 185)">
             Default.DontSizeUInt32()
           </code>
-          <div class="tip" id="181">
+          <div class="tip" id="185">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;uint32&gt;&gt;<br />
                                     <span>
             <strong>Attributes:</strong><br />
@@ -640,11 +705,11 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
               <strong>WARNING: </strong> This API is obsolete
               <p>Renamed to DoNotSizeUInt32.</p>
               </div> 
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L376-376" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L373-373" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary uint32 that is unrestricted by size.</p>
+          <p>Generates uint32 values that are unrestricted by size.</p>
 
 
         </td>
@@ -652,10 +717,10 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '182', 182)" onmouseover="showTip(event, '182', 182)">
+          <code onmouseout="hideTip(event, '186', 186)" onmouseover="showTip(event, '186', 186)">
             Default.DontSizeUInt64()
           </code>
-          <div class="tip" id="182">
+          <div class="tip" id="186">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;DoNotSize&lt;uint64&gt;&gt;<br />
                                     <span>
             <strong>Attributes:</strong><br />
@@ -668,11 +733,11 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
               <strong>WARNING: </strong> This API is obsolete
               <p>Renamed to DoNotSizeUInt64.</p>
               </div> 
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L419-419" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L420-420" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary uint64 that is unrestricted by size.</p>
+          <p>Generates uint64 values that are unrestricted by size.</p>
 
 
         </td>
@@ -680,15 +745,15 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '183', 183)" onmouseover="showTip(event, '183', 183)">
+          <code onmouseout="hideTip(event, '187', 187)" onmouseover="showTip(event, '187', 187)">
             Default.FixedLengthArray()
           </code>
-          <div class="tip" id="183">
+          <div class="tip" id="187">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;FixedLengthArray&lt;&#39;a&gt;&gt;<br />
                           <strong>Type parameters:</strong> 'a                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L899-899" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L996-996" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -700,20 +765,21 @@ A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour 
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '184', 184)" onmouseover="showTip(event, '184', 184)">
+          <code onmouseout="hideTip(event, '188', 188)" onmouseover="showTip(event, '188', 188)">
             Default.Float()
           </code>
-          <div class="tip" id="184">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;double&gt;<br />
+          <div class="tip" id="188">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;float&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L436-436" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L469-469" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates arbitrary 64 bit floats, NaN, NegativeInfinity, PositiveInfinity,
-Maxvalue, MinValue, Epsilon included fairly frequently.</p>
+          <p>Generates float values that are between -size and size, NaN, NegativeInfinity, PositiveInfinity,
+MaxValue, MinValue, Epsilon included fairly frequently.
+Shrinks by yielding zero, abs of the origin and the truncated origin.</p>
 
 
         </td>
@@ -721,19 +787,21 @@ Maxvalue, MinValue, Epsilon included fairly frequently.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '185', 185)" onmouseover="showTip(event, '185', 185)">
+          <code onmouseout="hideTip(event, '189', 189)" onmouseover="showTip(event, '189', 189)">
             Default.Float32()
           </code>
-          <div class="tip" id="185">
+          <div class="tip" id="189">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;float32&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L458-458" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L482-482" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates arbitrary 32 bit floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.</p>
+          <p>Generates float32 values that are between -size and size, NaN, NegativeInfinity, PositiveInfinity,
+MaxValue, MinValue, Epsilon included fairly frequently.
+Shrinks by yielding zero, abs of the origin and the truncated origin.</p>
 
 
         </td>
@@ -741,19 +809,21 @@ Maxvalue, MinValue, Epsilon included fairly frequently.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '186', 186)" onmouseover="showTip(event, '186', 186)">
+          <code onmouseout="hideTip(event, '190', 190)" onmouseover="showTip(event, '190', 190)">
             Default.FsList()
           </code>
-          <div class="tip" id="186">
+          <div class="tip" id="190">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;&#39;a list&gt;<br />
                           <strong>Type parameters:</strong> 'a                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L536-536" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L626-626" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a list of values. The size of the list is between 0 and the test size + 1.</p>
+          <p>Generates lists.
+The length of the generated list is between 0 and the test size + 1.
+The sum of the sizes of the elements is equal to the size of the generated list.</p>
 
 
         </td>
@@ -761,23 +831,23 @@ Maxvalue, MinValue, Epsilon included fairly frequently.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '187', 187)" onmouseover="showTip(event, '187', 187)">
+          <code onmouseout="hideTip(event, '191', 191)" onmouseover="showTip(event, '191', 191)">
             Default.Fun()
           </code>
-          <div class="tip" id="187">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;(&#39;?9535 -&gt; &#39;?9536)&gt;<br />
-                          <strong>Type parameters:</strong> '?9535, '?9536                        <span>
+          <div class="tip" id="191">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;(&#39;?9541 -&gt; &#39;?9542)&gt;<br />
+                          <strong>Type parameters:</strong> '?9541, '?9542                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;FSharpFun&quot;)&gt;]<br />
           </span>
           </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L630-630" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L724-724" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a F# function value. Function values can be generated for types 'a-&gt;'b where 'b has an Arbitrary instance.
+          <p>Generates F# function values. Function values can be generated for types 'a-&gt;'b where 'b has an Arbitrary instance.
 There is no shrinking for function values.</p>
 
 
@@ -787,19 +857,19 @@ There is no shrinking for function values.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '188', 188)" onmouseover="showTip(event, '188', 188)">
+          <code onmouseout="hideTip(event, '192', 192)" onmouseover="showTip(event, '192', 192)">
             Default.Function()
           </code>
-          <div class="tip" id="188">
+          <div class="tip" id="192">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Function&lt;&#39;a,&#39;b&gt;&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L689-689" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L783-783" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a Function value that can be printed and shrunk. Function values can be generated for types 'a-&gt;'b
+          <p>Generates Function values that can be printed and shrunk. Function values can be generated for types 'a-&gt;'b
 where 'b has an Arbitrary instance.</p>
 
 
@@ -808,136 +878,55 @@ where 'b has an Arbitrary instance.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '189', 189)" onmouseover="showTip(event, '189', 189)">
+          <code onmouseout="hideTip(event, '193', 193)" onmouseover="showTip(event, '193', 193)">
             Default.Guid()
           </code>
-          <div class="tip" id="189">
+          <div class="tip" id="193">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Guid&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L969-969" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1064-1064" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '190', 190)" onmouseover="showTip(event, '190', 190)">
-            Default.HostName()
-          </code>
-          <div class="tip" id="190">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;HostName&gt;<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1027-1027" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '191', 191)" onmouseover="showTip(event, '191', 191)">
-            Default.ICollection()
-          </code>
-          <div class="tip" id="191">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;ICollection&lt;&#39;?9603&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9603                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L921-921" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generate a System.Collections.Generic.ICollection of values.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '192', 192)" onmouseover="showTip(event, '192', 192)">
-            Default.IDictionary()
-          </code>
-          <div class="tip" id="192">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IDictionary&lt;&#39;?9608,&#39;?9609&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9608, '?9609                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L946-946" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generate a System.Collections.Generic.IDictionary of values.
-Shrinks by reducing the number of elements</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '193', 193)" onmouseover="showTip(event, '193', 193)">
-            Default.IList()
-          </code>
-          <div class="tip" id="193">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IList&lt;&#39;?9601&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9601                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L916-916" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generate a System.Collections.Generic.IList of values.</p>
-
-
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '194', 194)" onmouseover="showTip(event, '194', 194)">
-            Default.Int16()
+            Default.HostName()
           </code>
           <div class="tip" id="194">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;int16&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;HostName&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L308-308" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1151-1151" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary int16 that is between -size and size.</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '195', 195)" onmouseover="showTip(event, '195', 195)">
-            Default.Int32()
+            Default.ICollection()
           </code>
           <div class="tip" id="195">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;int&gt;<br />
-                                  </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;ICollection&lt;&#39;?9609&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9609                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L344-344" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1018-1018" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary int32 that is between -size and size.</p>
+          <p>Generates System.Collections.Generic.ICollection instances.</p>
 
 
         </td>
@@ -946,18 +935,98 @@ Shrinks by reducing the number of elements</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '196', 196)" onmouseover="showTip(event, '196', 196)">
-            Default.Int64()
+            Default.IDictionary()
           </code>
           <div class="tip" id="196">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IDictionary&lt;&#39;?9614,&#39;?9615&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9614, '?9615                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1041-1041" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates System.Collections.Generic.IDictionary instances.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '197', 197)" onmouseover="showTip(event, '197', 197)">
+            Default.IList()
+          </code>
+          <div class="tip" id="197">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IList&lt;&#39;?9607&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9607                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1013-1013" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates System.Collections.Generic.IList instances.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '198', 198)" onmouseover="showTip(event, '198', 198)">
+            Default.Int16()
+          </code>
+          <div class="tip" id="198">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;int16&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L305-305" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates int16 values that are between -size and size.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '199', 199)" onmouseover="showTip(event, '199', 199)">
+            Default.Int32()
+          </code>
+          <div class="tip" id="199">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;int&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L341-341" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates int32 values that are between -size and size.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '200', 200)" onmouseover="showTip(event, '200', 200)">
+            Default.Int64()
+          </code>
+          <div class="tip" id="200">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;int64&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L390-390" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L391-391" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary int64 that is between -size and size.
+          <p>Generates int64 values that are between -size and size.
 Note that since the size is an int32, this does not actually cover the full
 range of int64. See DoNotSize<int64> instead.</p>
 
@@ -967,107 +1036,35 @@ range of int64. See DoNotSize<int64> instead.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '197', 197)" onmouseover="showTip(event, '197', 197)">
+          <code onmouseout="hideTip(event, '201', 201)" onmouseover="showTip(event, '201', 201)">
             Default.Interval()
           </code>
-          <div class="tip" id="197">
+          <div class="tip" id="201">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Interval&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L848-848" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L939-939" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an interval between two non-negative integers.</p>
+          <p>Generates intervals between two non-negative integers.</p>
 
 
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '198', 198)" onmouseover="showTip(event, '198', 198)">
-            Default.IntWithMinMax()
-          </code>
-          <div class="tip" id="198">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IntWithMinMax&gt;<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L840-840" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '199', 199)" onmouseover="showTip(event, '199', 199)">
-            Default.IPAddress()
-          </code>
-          <div class="tip" id="199">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IPAddress&gt;<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1013-1013" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '200', 200)" onmouseover="showTip(event, '200', 200)">
-            Default.IPv4Address()
-          </code>
-          <div class="tip" id="200">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IPv4Address&gt;<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L987-987" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '201', 201)" onmouseover="showTip(event, '201', 201)">
-            Default.IPv6Address()
-          </code>
-          <div class="tip" id="201">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IPv6Address&gt;<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1000-1000" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '202', 202)" onmouseover="showTip(event, '202', 202)">
-            Default.KeyValuePair()
+            Default.IntWithMinMax()
           </code>
           <div class="tip" id="202">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;KeyValuePair&lt;&#39;?9575,&#39;?9576&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9575, '?9576                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IntWithMinMax&gt;<br />
+                                  </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L807-807" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L931-931" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1078,34 +1075,32 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '203', 203)" onmouseover="showTip(event, '203', 203)">
-            Default.List()
+            Default.IPAddress()
           </code>
           <div class="tip" id="203">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;List&lt;&#39;?9599&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9599                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IPAddress&gt;<br />
+                                  </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L911-911" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1137-1137" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a System.Collections.Generic.List of values.</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '204', 204)" onmouseover="showTip(event, '204', 204)">
-            Default.MailAddress()
+            Default.IPv4Address()
           </code>
           <div class="tip" id="204">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;MailAddress&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IPv4Address&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1069-1069" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1111-1111" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1116,14 +1111,14 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '205', 205)" onmouseover="showTip(event, '205', 205)">
-            Default.Map()
+            Default.IPv6Address()
           </code>
           <div class="tip" id="205">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Map&lt;&#39;?9590,&#39;?9591&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9590, '?9591                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;IPv6Address&gt;<br />
+                                  </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L884-884" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1124-1124" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1134,14 +1129,14 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '206', 206)" onmouseover="showTip(event, '206', 206)">
-            Default.NegativeInt()
+            Default.KeyValuePair()
           </code>
           <div class="tip" id="206">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NegativeInt&gt;<br />
-                                  </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;KeyValuePair&lt;&#39;?9581,&#39;?9582&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9581, '?9582                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L820-820" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L902-902" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1152,32 +1147,34 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '207', 207)" onmouseover="showTip(event, '207', 207)">
-            Default.NonEmptyArray()
+            Default.List()
           </code>
           <div class="tip" id="207">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonEmptyArray&lt;&#39;?9593&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9593                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;List&lt;&#39;?9605&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9605                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L888-888" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1008-1008" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Generates System.Collections.Generic.List instances.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '208', 208)" onmouseover="showTip(event, '208', 208)">
-            Default.NonEmptySet()
+            Default.MailAddress()
           </code>
           <div class="tip" id="208">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonEmptySet&lt;&#39;?9595&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9595                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;MailAddress&gt;<br />
+                                  </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L893-893" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L1193-1193" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1188,14 +1185,14 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '209', 209)" onmouseover="showTip(event, '209', 209)">
-            Default.NonEmptyString()
+            Default.Map()
           </code>
           <div class="tip" id="209">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonEmptyString&gt;<br />
-                                  </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Map&lt;&#39;?9596,&#39;?9597&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9596, '?9597                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L859-859" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L981-981" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1206,14 +1203,14 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '210', 210)" onmouseover="showTip(event, '210', 210)">
-            Default.NonNegativeInt()
+            Default.NegativeInt()
           </code>
           <div class="tip" id="210">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonNegativeInt&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NegativeInt&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L825-825" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L911-911" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1224,34 +1221,32 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '211', 211)" onmouseover="showTip(event, '211', 211)">
-            Default.NonNull()
+            Default.NonEmptyArray()
           </code>
           <div class="tip" id="211">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonNull&lt;&#39;a&gt;&gt;<br />
-                          <strong>Type parameters:</strong> 'a                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonEmptyArray&lt;&#39;?9599&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9599                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L516-516" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L985-985" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate underlying values that are not null.</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '212', 212)" onmouseover="showTip(event, '212', 212)">
-            Default.NonWhiteSpaceString()
+            Default.NonEmptySet()
           </code>
           <div class="tip" id="212">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonWhiteSpaceString&gt;<br />
-                                  </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonEmptySet&lt;&#39;?9601&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9601                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L864-864" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L990-990" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1262,14 +1257,14 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '213', 213)" onmouseover="showTip(event, '213', 213)">
-            Default.NonZeroInt()
+            Default.NonEmptyString()
           </code>
           <div class="tip" id="213">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonZeroInt&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonEmptyString&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L835-835" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L956-956" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1280,38 +1275,36 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '214', 214)" onmouseover="showTip(event, '214', 214)">
-            Default.NormalFloat()
+            Default.NonNegativeInt()
           </code>
           <div class="tip" id="214">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NormalFloat&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonNegativeInt&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L453-453" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L916-916" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates a "normal" 64 bit floats (without NaN, Infinity, Epsilon, MinValue, MaxValue)</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '215', 215)" onmouseover="showTip(event, '215', 215)">
-            Default.Nullable()
+            Default.NonNull()
           </code>
           <div class="tip" id="215">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Nullable&lt;&#39;a&gt;&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonNull&lt;&#39;a&gt;&gt;<br />
                           <strong>Type parameters:</strong> 'a                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L526-526" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L604-604" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate a nullable value that is null 1/8 of the time.</p>
+          <p>Generates underlying values that are not null.</p>
 
 
         </td>
@@ -1320,54 +1313,14 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '216', 216)" onmouseover="showTip(event, '216', 216)">
-            Default.Object()
+            Default.NonWhiteSpaceString()
           </code>
           <div class="tip" id="216">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;obj&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonWhiteSpaceString&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L550-550" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generate an object - a boxed char, string or boolean value.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '217', 217)" onmouseover="showTip(event, '217', 217)">
-            Default.Option()
-          </code>
-          <div class="tip" id="217">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;&#39;a option&gt;<br />
-                          <strong>Type parameters:</strong> 'a                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L506-506" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generate an option value that is 'None' 1/8 of the time.</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '218', 218)" onmouseover="showTip(event, '218', 218)">
-            Default.PositiveInt()
-          </code>
-          <div class="tip" id="218">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;PositiveInt&gt;<br />
-                                  </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L830-830" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L961-961" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1377,19 +1330,58 @@ range of int64. See DoNotSize<int64> instead.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '219', 219)" onmouseover="showTip(event, '219', 219)">
-            Default.SByte()
+          <code onmouseout="hideTip(event, '217', 217)" onmouseover="showTip(event, '217', 217)">
+            Default.NonZeroInt()
           </code>
-          <div class="tip" id="219">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;sbyte&gt;<br />
+          <div class="tip" id="217">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NonZeroInt&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L301-301" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L926-926" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an arbitrary signed byte.</p>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '218', 218)" onmouseover="showTip(event, '218', 218)">
+            Default.NormalFloat()
+          </code>
+          <div class="tip" id="218">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;NormalFloat&gt;<br />
+                                  </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L446-446" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates float values that are between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
+Shrinks by yielding zero, abs of the origin and the truncated origin.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '219', 219)" onmouseover="showTip(event, '219', 219)">
+            Default.Nullable()
+          </code>
+          <div class="tip" id="219">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Nullable&lt;&#39;a&gt;&gt;<br />
+                          <strong>Type parameters:</strong> 'a                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L614-614" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates nullable values that are null 1/8 of the time.</p>
 
 
         </td>
@@ -1398,36 +1390,38 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '220', 220)" onmouseover="showTip(event, '220', 220)">
-            Default.Set()
+            Default.Object()
           </code>
           <div class="tip" id="220">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Set&lt;&#39;?9588&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9588                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;obj&gt;<br />
+                                  </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L880-880" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L640-640" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Generates objects which are a boxed char, string or boolean value.</p>
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '221', 221)" onmouseover="showTip(event, '221', 221)">
-            Default.String()
+            Default.Option()
           </code>
           <div class="tip" id="221">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;String&gt;<br />
-                                  </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;&#39;a option&gt;<br />
+                          <strong>Type parameters:</strong> 'a                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L497-497" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L594-594" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates arbitrary strings, which are lists of chars generated by Char.</p>
+          <p>Generates option values that are 'None' 1/8 of the time.</p>
 
 
         </td>
@@ -1436,14 +1430,14 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '222', 222)" onmouseover="showTip(event, '222', 222)">
-            Default.StringWithoutNullChars()
+            Default.PositiveInt()
           </code>
           <div class="tip" id="222">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;StringNoNulls&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;PositiveInt&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L854-854" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L921-921" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1454,18 +1448,18 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '223', 223)" onmouseover="showTip(event, '223', 223)">
-            Default.SystemAction()
+            Default.SByte()
           </code>
           <div class="tip" id="223">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Action&gt;<br />
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;sbyte&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L720-720" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L298-298" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an Action'0</p>
+          <p>Generates sbyte values that are unrestricted by size.</p>
 
 
         </td>
@@ -1474,38 +1468,36 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '224', 224)" onmouseover="showTip(event, '224', 224)">
-            Default.SystemAction1()
+            Default.Set()
           </code>
           <div class="tip" id="224">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Action&lt;&#39;?9562&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9562                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Set&lt;&#39;?9594&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9594                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L725-725" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L977-977" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an Action'1</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '225', 225)" onmouseover="showTip(event, '225', 225)">
-            Default.SystemAction2()
+            Default.String()
           </code>
           <div class="tip" id="225">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Action&lt;&#39;?9564,&#39;?9565&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9564, '?9565                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;String&gt;<br />
+                                  </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L730-730" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L585-585" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an Action'2</p>
+          <p>Generates strings, which are lists of characters or null (1/10 of the time).</p>
 
 
         </td>
@@ -1514,38 +1506,36 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '226', 226)" onmouseover="showTip(event, '226', 226)">
-            Default.SystemAction3()
+            Default.StringWithoutNullChars()
           </code>
           <div class="tip" id="226">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Action&lt;&#39;?9567,&#39;?9568,&#39;?9569&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9567, '?9568, '?9569                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;StringNoNulls&gt;<br />
+                                  </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L735-735" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L951-951" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an Action'3</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '227', 227)" onmouseover="showTip(event, '227', 227)">
-            Default.SystemFunc()
+            Default.SystemAction()
           </code>
           <div class="tip" id="227">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Func&lt;&#39;?9547&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9547                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Action&gt;<br />
+                                  </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L700-700" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L814-814" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates a Func'1.</p>
+          <p>Generates Action'0 values.</p>
 
 
         </td>
@@ -1554,18 +1544,18 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '228', 228)" onmouseover="showTip(event, '228', 228)">
-            Default.SystemFunc1()
+            Default.SystemAction1()
           </code>
           <div class="tip" id="228">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Func&lt;&#39;?9549,&#39;?9550&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9549, '?9550                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Action&lt;&#39;?9568&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9568                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L705-705" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L819-819" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates a Func'2.</p>
+          <p>Generates Action'1 values.</p>
 
 
         </td>
@@ -1574,18 +1564,18 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '229', 229)" onmouseover="showTip(event, '229', 229)">
-            Default.SystemFunc2()
+            Default.SystemAction2()
           </code>
           <div class="tip" id="229">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Func&lt;&#39;?9552,&#39;?9553,&#39;?9554&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9552, '?9553, '?9554                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Action&lt;&#39;?9570,&#39;?9571&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9570, '?9571                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L710-710" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L824-824" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates a Func'3.</p>
+          <p>Generates Action'2 values.</p>
 
 
         </td>
@@ -1594,18 +1584,18 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '230', 230)" onmouseover="showTip(event, '230', 230)">
-            Default.SystemFunc3()
+            Default.SystemAction3()
           </code>
           <div class="tip" id="230">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Func&lt;&#39;?9556,&#39;?9557,&#39;?9558,&#39;?9559&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9556, '?9557, '?9558, '?9559                      </div>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Action&lt;&#39;?9573,&#39;?9574,&#39;?9575&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9573, '?9574, '?9575                      </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L715-715" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L829-829" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates a Func'4.</p>
+          <p>Generates Action'3 values.</p>
 
 
         </td>
@@ -1614,23 +1604,103 @@ range of int64. See DoNotSize<int64> instead.</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '231', 231)" onmouseover="showTip(event, '231', 231)">
-            Default.ThrowingFunction()
+            Default.SystemFunc()
           </code>
           <div class="tip" id="231">
-            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;ThrowingFunction&lt;&#39;?9541,&#39;?9542&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9541, '?9542                        <span>
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Func&lt;&#39;?9553&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9553                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L794-794" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates Func'1 values.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '232', 232)" onmouseover="showTip(event, '232', 232)">
+            Default.SystemFunc1()
+          </code>
+          <div class="tip" id="232">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Func&lt;&#39;?9555,&#39;?9556&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9555, '?9556                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L799-799" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates Func'2 values.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '233', 233)" onmouseover="showTip(event, '233', 233)">
+            Default.SystemFunc2()
+          </code>
+          <div class="tip" id="233">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Func&lt;&#39;?9558,&#39;?9559,&#39;?9560&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9558, '?9559, '?9560                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L804-804" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates Func'3 values.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '234', 234)" onmouseover="showTip(event, '234', 234)">
+            Default.SystemFunc3()
+          </code>
+          <div class="tip" id="234">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;Func&lt;&#39;?9562,&#39;?9563,&#39;?9564,&#39;?9565&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9562, '?9563, '?9564, '?9565                      </div>
+        </td>
+        <td class="xmldoc">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L809-809" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Generates Func'4 values.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '235', 235)" onmouseover="showTip(event, '235', 235)">
+            Default.ThrowingFunction()
+          </code>
+          <div class="tip" id="235">
+            <strong>Signature:</strong> unit -&gt; Arbitrary&lt;ThrowingFunction&lt;&#39;?9547,&#39;?9548&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?9547, '?9548                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;ThrowingFSharpFun&quot;)&gt;]<br />
           </span>
           </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L649-649" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L743-743" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate an F# function value that generates an instance of the function result type about half the time. The other
-times it generates one of a list of common .NET exceptions, including Exception, ArgumentException, ArithmeticException,
+          <p>Generates F# function values that generate an instance of the function result type about half the time. The other
+times it generate one of a list of common .NET exceptions, including Exception, ArgumentException, ArithmeticException,
 IOException, NotImplementedException, OUtOfMemoryException and others.</p>
 
 
@@ -1640,10 +1710,10 @@ IOException, NotImplementedException, OUtOfMemoryException and others.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '232', 232)" onmouseover="showTip(event, '232', 232)">
+          <code onmouseout="hideTip(event, '236', 236)" onmouseover="showTip(event, '236', 236)">
             Default.ThrowingFunction(exceptions)
           </code>
-          <div class="tip" id="232">
+          <div class="tip" id="236">
             <strong>Signature:</strong> exceptions:seq&lt;Exception&gt; -&gt; Arbitrary&lt;ThrowingFunction&lt;&#39;a,&#39;b&gt;&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -1652,12 +1722,12 @@ IOException, NotImplementedException, OUtOfMemoryException and others.</p>
           </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L635-635" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L729-729" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate am F# function value that generates an instance of the function result type about half the time. The other
-times it generates one of the given exceptions.</p>
+          <p>Generates F# function values that generate an instance of the function result type about half the time. The other
+times it generate one of the given exceptions.</p>
 
 
               <p>CompiledName: <code>ThrowingFSharpFun</code></p>
@@ -1666,19 +1736,20 @@ times it generates one of the given exceptions.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '233', 233)" onmouseover="showTip(event, '233', 233)">
+          <code onmouseout="hideTip(event, '237', 237)" onmouseover="showTip(event, '237', 237)">
             Default.TimeSpan()
           </code>
-          <div class="tip" id="233">
+          <div class="tip" id="237">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;TimeSpan&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L763-763" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L858-858" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generates an arbitrary TimeSpan. A TimeSpan is shrunk by removing days, hours, minutes, second and milliseconds.</p>
+          <p>Generates TimeSpan values that are unrestricted by size.
+A TimeSpan is shrunk by removing days, hours, minutes, second and milliseconds.</p>
 
 
         </td>
@@ -1686,19 +1757,19 @@ times it generates one of the given exceptions.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '234', 234)" onmouseover="showTip(event, '234', 234)">
+          <code onmouseout="hideTip(event, '238', 238)" onmouseover="showTip(event, '238', 238)">
             Default.UInt16()
           </code>
-          <div class="tip" id="234">
+          <div class="tip" id="238">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;uint16&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L326-326" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L323-323" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary uint16 that is between 0 and size.</p>
+          <p>Generates uint16 values that are between 0 and size.</p>
 
 
         </td>
@@ -1706,19 +1777,19 @@ times it generates one of the given exceptions.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '235', 235)" onmouseover="showTip(event, '235', 235)">
+          <code onmouseout="hideTip(event, '239', 239)" onmouseover="showTip(event, '239', 239)">
             Default.UInt32()
           </code>
-          <div class="tip" id="235">
+          <div class="tip" id="239">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;uint32&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L370-370" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L367-367" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary uint32 that is between 0 and size.</p>
+          <p>Generates uint32 values that are between 0 and size.</p>
 
 
         </td>
@@ -1726,19 +1797,19 @@ times it generates one of the given exceptions.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '236', 236)" onmouseover="showTip(event, '236', 236)">
+          <code onmouseout="hideTip(event, '240', 240)" onmouseover="showTip(event, '240', 240)">
             Default.UInt64()
           </code>
-          <div class="tip" id="236">
+          <div class="tip" id="240">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;uint64&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L413-413" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L414-414" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Generate arbitrary uint64 that is between 0 and size.</p>
+          <p>Generates uint64 values that are between 0 and size.</p>
 
 
         </td>
@@ -1746,15 +1817,15 @@ times it generates one of the given exceptions.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '237', 237)" onmouseover="showTip(event, '237', 237)">
+          <code onmouseout="hideTip(event, '241', 241)" onmouseover="showTip(event, '241', 241)">
             Default.Unit()
           </code>
-          <div class="tip" id="237">
+          <div class="tip" id="241">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;unit&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L288-288" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L285-285" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -1766,15 +1837,15 @@ times it generates one of the given exceptions.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '238', 238)" onmouseover="showTip(event, '238', 238)">
+          <code onmouseout="hideTip(event, '242', 242)" onmouseover="showTip(event, '242', 242)">
             Default.XmlEncodedString()
           </code>
-          <div class="tip" id="238">
+          <div class="tip" id="242">
             <strong>Signature:</strong> unit -&gt; Arbitrary&lt;XmlEncodedString&gt;<br />
                                   </div>
         </td>
         <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L872-872" class="github-link">
+                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L969-969" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
