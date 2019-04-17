@@ -1,10 +1,16 @@
 ### 2.14.0 - 17 April 2019
 * Add shrinker for data transfer objects. (by Carlo Zancanaro)
+
 * Add shrinker for Interval type. (by Nazar Vinnichuk)
+
 * Add shrinker for flags enums.  (by Nazar Vinnichuk)
+
 * Add new Arbitrary instances for Numerics.Complex and ConsoleKeyInfo. (by Nazar Vinnichuk)
+
 * Fix float, int32 and int64 generators so their distribution is uniform. This also improves downstream generators. (by Nazar Vinnichuk)
+
 * Fix decimal generator so size is respected. (by Nazar Vinnichuk)
+
 * Add Gen.scale and ScaleSize extension method which can remove some boilerplate. (by Nazar Vinnichuk)
 
 ### 2.13.0 - 11 November 2018
