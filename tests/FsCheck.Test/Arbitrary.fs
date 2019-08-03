@@ -635,6 +635,15 @@ module Arbitrary =
     let ``Derive generator for concrete class with one constructor with two parameters``() =
         generate<FakeRecord> |> sample 10 |> ignore
 
+    [<Struct>]
+    type StructRecord(a: int, b: string) =
+        member __.A = a
+        member __.B = b
+
+    [<Fact>]
+    let ``Derive generator for struct with one constructor with two parameters``() =
+        generate<StructRecord> |> sample 10 |> ignore
+
     type FakeDto() =
         member val A = Unchecked.defaultof<string> with get, set
         member val B = Unchecked.defaultof<int> with get, set
