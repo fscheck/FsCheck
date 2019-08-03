@@ -20,7 +20,7 @@ module internal Reflect =
 
     let isCSharpRecordType (ty: Type) = 
         let typeinfo = ty.GetTypeInfo()
-        typeinfo.IsClass && not typeinfo.IsAbstract
+        not typeinfo.IsAbstract
         && not typeinfo.ContainsGenericParameters
         && Seq.length (getPublicCtors ty) = 1
         && not (ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic) |> Seq.exists (fun p -> p.CanWrite))
@@ -71,7 +71,8 @@ module internal Reflect =
                                                           p.ParameterType)
                                                       :> Expression)
         let body  = Expression.New (ctor, pars)
-        let l     = Expression.Lambda<Func<obj[], obj>> (body, par)
+        let bodyAsObject = Expression.Convert (body, typeof<Object>)
+        let l     = Expression.Lambda<Func<obj[], obj>> (bodyAsObject, par)
         let f     = l.Compile ()
         f.Invoke
 
