@@ -1,26 +1,8 @@
 // --------------------------------------------------------------------------------------
 // FAKE build script 
 // --------------------------------------------------------------------------------------
-#r "packages/build/Octokit/lib/netstandard1.1/Octokit.dll"
-#r "packages/build/Fake.Api.GitHub/lib/netstandard2.0/Fake.Api.GitHub.dll"
-#r "packages/build/Fake.BuildServer.AppVeyor/lib/netstandard2.0/Fake.BuildServer.AppVeyor.dll"
-#r "packages/build/Fake.Core.Environment/lib/netstandard2.0/Fake.Core.Environment.dll"
-#r "packages/build/Fake.Core.Process/lib/netstandard2.0/Fake.Core.Process.dll"
-#r "packages/build/Fake.Core.ReleaseNotes/lib/netstandard2.0/Fake.Core.ReleaseNotes.dll"
-#r "packages/build/Fake.Core.SemVer/lib/netstandard2.0/Fake.Core.SemVer.dll"
-#r "packages/build/Fake.Core.String/lib/netstandard2.0/Fake.Core.String.dll"
-#r "packages/build/Fake.Core.Target/lib/netstandard2.0/Fake.Core.Target.dll"
-#r "packages/build/Fake.Core.Trace/lib/netstandard2.0/Fake.Core.Trace.dll"
-#r "packages/build/Fake.Core.UserInput/lib/netstandard2.0/Fake.Core.UserInput.dll"
-#r "packages/build/Fake.DotNet.AssemblyInfoFile/lib/netstandard2.0/Fake.DotNet.AssemblyInfoFile.dll"
-#r "packages/build/Fake.DotNet.Cli/lib/netstandard2.0/Fake.DotNet.Cli.dll"
-#r "packages/build/Fake.DotNet.FSFormatting/lib/netstandard2.0/Fake.DotNet.FSFormatting.dll"
-#r "packages/build/Fake.DotNet.MSBuild/lib/netstandard2.0/Fake.DotNet.MSBuild.dll"
-#r "packages/build/Fake.DotNet.Paket/lib/netstandard2.0/Fake.DotNet.Paket.dll"
-#r "packages/build/Fake.DotNet.Testing.XUnit2/lib/netstandard2.0/Fake.DotNet.Testing.XUnit2.dll"
-#r "packages/build/Fake.IO.FileSystem/lib/netstandard2.0/Fake.IO.FileSystem.dll"
-#r "packages/build/Fake.Tools.Git/lib/netstandard2.0/Fake.Tools.Git.dll"
-
+#r "paket: groupref Build //" 
+#load "./.fake/build.fsx/intellisense.fsx"
 
 open System
 open System.IO
@@ -29,6 +11,7 @@ open Fake.Api
 open Fake.Core
 open Fake.Core.TargetOperators
 open Fake.BuildServer
+open Fake.DotNet
 open Fake.DotNet.Testing
 open Fake.IO
 open Fake.IO.FileSystemOperators
@@ -103,12 +86,12 @@ Target.create "AssemblyInfo" (fun _ ->
     packages |> Seq.iter (fun package ->
     let fileName = "src/" + package.Name + "/AssemblyInfo.fs"
     
-    Fake.DotNet.AssemblyInfoFile.createFSharp fileName
-        ([Fake.DotNet.AssemblyInfo.Title package.Name
-          Fake.DotNet.AssemblyInfo.Product package.Name
-          Fake.DotNet.AssemblyInfo.Description package.Summary
-          Fake.DotNet.AssemblyInfo.Version release.AssemblyVersion
-          Fake.DotNet.AssemblyInfo.FileVersion release.AssemblyVersion
+    AssemblyInfoFile.createFSharp fileName
+        ([AssemblyInfo.Title package.Name
+          AssemblyInfo.Product package.Name
+          AssemblyInfo.Description package.Summary
+          AssemblyInfo.Version release.AssemblyVersion
+          AssemblyInfo.FileVersion release.AssemblyVersion
         ] @ (if package.Name = "FsCheck" || package.Name = "FsCheck.Xunit"
              then [Fake.DotNet.AssemblyInfo.InternalsVisibleTo("FsCheck.Test")] else []))
     )
@@ -130,9 +113,9 @@ Target.create "CleanDocs" (fun _ ->
 // Build library & test project
 
 Target.create "Build" (fun _ ->
-    Fake.DotNet.DotNet.restore id solution
+    DotNet.restore id solution
     !! solution
-    |> Fake.DotNet.MSBuild.runRelease (fun par -> { par with MaxCpuCount = Some (Some Environment.ProcessorCount) }) "" "Rebuild"
+    |> MSBuild.runRelease (fun par -> { par with MaxCpuCount = Some (Some Environment.ProcessorCount) }) "" "Rebuild"
     |> ignore
 )
 
@@ -155,7 +138,7 @@ Target.create "RunTests" (fun _ ->
 // Build a NuGet package
 
 Target.create "PaketPack" (fun _ ->
-    Fake.DotNet.Paket.pack (fun p ->
+    Paket.pack (fun p ->
       { p with
           OutputPath = "bin"
           Version = buildVersion
@@ -164,7 +147,7 @@ Target.create "PaketPack" (fun _ ->
 )
 
 Target.create "PaketPush" (fun _ ->
-    Fake.DotNet.Paket.push (fun p ->
+    Paket.push (fun p ->
         { p with 
             WorkingDir = "bin"
         })
@@ -237,7 +220,7 @@ Target.create "ReferenceDocs" (fun _ ->
         conventionBased @ manuallyAdded
 
     binaries()
-    |> Fake.DotNet.FSFormatting.createDocsForDlls (fun args ->
+    |> FSFormatting.createDocsForDlls (fun args ->
         { args with
             OutputDirectory = output @@ "reference"
             LayoutRoots =  layoutRootsAll.["en"]
