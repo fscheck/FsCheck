@@ -1,3 +1,6 @@
+### 2.14.1 - To be released
+* Add support for struct type generation and shrinking. (by Kody Musick)
+
 ### 2.14.0 - 17 April 2019
 * Add shrinker for data transfer objects. (by Carlo Zancanaro)
 
