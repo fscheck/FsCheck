@@ -1,6 +1,6 @@
 language: csharp
  mono: latest
- dotnet: latest
+ dotnet: 2.2.301
 
 script:
   - ./build.sh RunTests
