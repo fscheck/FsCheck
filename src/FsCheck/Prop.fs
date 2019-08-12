@@ -147,14 +147,9 @@ module Prop =
         property (not << testable.Invoke)
 
     /// Turns a testable into a property that succeeds if the result of the testable is the inverse.
-    [<CompiledName("Inverse")>]
+    [<CompiledName("Inverse"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let inverseBool (testable:bool) =
         property (not testable)
-
-    /// Turns a testable into a property that succeeds if the result of the testable is the inverse.
-    [<CompiledName("Inverse")>]
-    let inverseFun (testable:'a -> bool) =
-        property (not << testable)
 
     /// Turns a testable into a property that succeeds if the result of the testable is the inverse. See also operator: .^. property
     [<CompiledName("Inverse")>]
