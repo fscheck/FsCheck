@@ -158,7 +158,12 @@ module Property =
         let a = Prop.ofTestable <| lazy failwith "crash"
         let b =  Prop.ofTestable true
         a .|. b
-            
-        
-        
+
+    [<Property>]
+    let ``not of execution should be inverse`` () =
+        !! false .&. !! (Prop.inverse true) .&. !! (fun () -> false) .&. !! (lazy false)
+
+    [<Property>]
+    let ``filter execution should reject its output`` (xs : obj array) =
+        Prop.filter (xs.Length > 0) (fun () -> xs.Length > 0)
 
