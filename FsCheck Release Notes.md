@@ -1,3 +1,21 @@
+### 2.14.1 - To be released
+* Add support for struct type generation and shrinking. (by Kody Musick)
+
+### 2.14.0 - 17 April 2019
+* Add shrinker for data transfer objects. (by Carlo Zancanaro)
+
+* Add shrinker for Interval type. (by Nazar Vinnichuk)
+
+* Add shrinker for flags enums.  (by Nazar Vinnichuk)
+
+* Add new Arbitrary instances for Numerics.Complex and ConsoleKeyInfo. (by Nazar Vinnichuk)
+
+* Fix float, int32 and int64 generators so their distribution is uniform. This also improves downstream generators. (by Nazar Vinnichuk)
+
+* Fix decimal generator so size is respected. (by Nazar Vinnichuk)
+
+* Add Gen.scale and ScaleSize extension method which can remove some boilerplate. (by Nazar Vinnichuk)
+
 ### 2.13.0 - 11 November 2018
 * Stop shipping Portable Class Libraries (PCL), which are essentially deprecated by Microsoft in favor of .NET Standard. FsCheck now targets .NET Standard 1.0 (which takes the place of 3 PCLs that were previously included, while it still run on all those platforms and more), .NET Standard 1.6 (which is the lowest version modern FSharp.Core versions support) and .NET Standard 2.0 (which is advised by NuGet so clients don't need to download as much stuff if they can target 2.0 or higher). FsCheck also still targets .NET Framework 4.5.2 and upwards as a convenience.
 

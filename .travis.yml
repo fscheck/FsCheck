@@ -1,12 +1,6 @@
 language: csharp
-
-matrix:
-  include:
-    - os: linux # Ubuntu 14.04
-      dist: trusty
-      sudo: required
-      mono: latest
-      dotnet: 2.0.3
+mono: latest
+dotnet: 2.2.301
 
 script:
   - ./build.sh RunTests

@@ -57,7 +57,7 @@ let release = ReleaseNotes.load releaseNotes
 let isAppVeyorBuild = BuildServer.buildServer = BuildServer.AppVeyor
 let buildDate = DateTime.UtcNow
 let buildVersion = 
-    let isVersionTag tag = Version.TryParse tag |> fst
+    let isVersionTag (tag:string) = Version.TryParse tag |> fst
     let hasRepoVersionTag = isAppVeyorBuild && AppVeyor.Environment.RepoTag && isVersionTag AppVeyor.Environment.RepoTagName
     let assemblyVersion = if hasRepoVersionTag then AppVeyor.Environment.RepoTagName else release.NugetVersion
     if isAppVeyorBuild then sprintf "%s-b%s" assemblyVersion AppVeyor.Environment.BuildNumber
