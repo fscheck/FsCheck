@@ -249,19 +249,3 @@ type PropertyExtensions =
     [<Extension>]
     static member Or(left: Property, right:Property) =
         left .|. right
-
-    ///Construct a property that succeeds if the specified condition is the inverse.
-    [<Extension>]
-    static member Inverse(condition:bool) =
-        Prop.inverseBool condition
-
-    ///Construct a property that succeeds if the specified evaluated condition is the inverse.
-    [<Extension>]
-    static member Inverse(func:Func<bool>) =
-        if func = null then nullArg "func"
-        Prop.inverse func.Invoke
-
-    ///Construct a property that succeeds if the specified evaluated condition is the inverse.
-    [<Extension>]
-    static member Inverse(property:Property) =
-        Prop.inverse property

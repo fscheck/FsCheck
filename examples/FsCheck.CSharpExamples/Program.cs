@@ -103,11 +103,6 @@ namespace FsCheck.CSharpExamples
                     .Collect("length " + xs.Count().ToString()))
                 .QuickCheck("InsertCombined");
 
-            //inversing property outputs
-            Prop.ForAll<PositiveInt>(x => x.Get < 0)
-                .Inverse()
-                .QuickCheck("Inversed");
-
             //---labelling sub properties-----
             Prop.ForAll<int, int>((n, m) => {
                 var res = n * m;

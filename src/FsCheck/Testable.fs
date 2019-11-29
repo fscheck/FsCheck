@@ -42,13 +42,6 @@ type Result =
         | (Outcome.True,_) -> l
         | (_,Outcome.True) -> r
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
-    static member (~~~) (p) =
-        match p.Outcome with
-        | Outcome.Exception _ -> p
-        | Outcome.Timeout _ -> p
-        | Outcome.False -> { p with Outcome = Outcome.True }
-        | Outcome.True -> { p with Outcome = Outcome.False }
-        | Outcome.Rejected -> p
 
 module internal Res =
 
@@ -179,8 +172,6 @@ module private Testable =
     let (.&) l r = combine (&&&) l r
 
     let (.|) l r = combine (|||) l r
-
-    let (~~) p = Gen.map (Rose.map (~~~)) p |> Property
 
     type Testables with
         static member Unit() =

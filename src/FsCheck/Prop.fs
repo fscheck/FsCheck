@@ -140,22 +140,6 @@ module Prop =
     [<CompiledName("Discard")>]
     let discard() = raise DiscardException
 
-    /// Turns a testable into a property that succeeds if the result of the testable is the inverse.
-    [<CompiledName("Inverse"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let inverseDef (testable:Func<bool>) =
-        if testable = null then nullArg "testable"
-        property (not << testable.Invoke)
-
-    /// Turns a testable into a property that succeeds if the result of the testable is the inverse.
-    [<CompiledName("Inverse"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
-    let inverseBool (testable:bool) =
-        property (not testable)
-
-    /// Turns a testable into a property that succeeds if the result of the testable is the inverse. See also operator: .^. property
-    [<CompiledName("Inverse")>]
-    let inverse (testable:'Testable) =
-        ~~ (property testable |> Property.GetGen)
-
 ///Operators for Prop.
 [<AutoOpen>]
 module PropOperators =
@@ -183,7 +167,3 @@ module PropOperators =
     let (.|.) (l:'LeftTestable) (r:'RightTestable) = 
         let orProp = l .| r
         orProp
-
-    /// Turns a testable into a property that succeeds if the result of the testable is the inverse.
-    let (!!) (testable:'TestTable) =
-        Prop.inverse testable
