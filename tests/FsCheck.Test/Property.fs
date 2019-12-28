@@ -158,7 +158,3 @@ module Property =
         let a = Prop.ofTestable <| lazy failwith "crash"
         let b =  Prop.ofTestable true
         a .|. b
-            
-        
-        
-

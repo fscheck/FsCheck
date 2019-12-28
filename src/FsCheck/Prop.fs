@@ -73,6 +73,21 @@ module Prop =
     let given condition (iftrue:'TestableIfTrue, ifFalse:'TestableIfFalse) = 
         if condition then property iftrue else property ifFalse
 
+    ///Conditional property combinator. Resulting property holds if the given property holds whenever the condition does. See also operator:  'assertion ==> property'
+    let filter condition (assertion : 'Testable) = given condition (assertion,property Res.rejected)
+
+    ///Conditional property combinator. Resulting property holds if the given property holds whenever the condition does. See also operator:  'assertion ==> property'
+    [<CompiledName("When"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let filterFunc condition (assertion : Func<'Testable>) =
+        if assertion = null then nullArg "assertion"
+        filter condition (fun () -> assertion.Invoke ())
+
+    ///Conditional property combinator. Resulting property holds if the given property holds whenever the condition does. See also operator:  'assertion ==> property'
+    [<CompiledName("When"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
+    let filterAction condition (assertion : Action) =
+        if assertion = null then nullArg "assertion"
+        filter condition (fun () -> assertion.Invoke ())
+
     ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
     ///and a failure otherwise.
     [<CompiledName("Throws")>]
@@ -132,7 +147,7 @@ module PropOperators =
     open Testable
 
     ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
-    let (==>) condition (assertion:'Testable) = Prop.given condition (assertion,property Res.rejected)
+    let (==>) condition (assertion:'Testable) = Prop.filter condition assertion
 
     ///Add the given label to the property. Property on the left hand side, label on the right.
     let (|@) x y = (Common.flip Prop.label) x y
@@ -152,4 +167,3 @@ module PropOperators =
     let (.|.) (l:'LeftTestable) (r:'RightTestable) = 
         let orProp = l .| r
         orProp
-
