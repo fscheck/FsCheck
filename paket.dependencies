@@ -1,5 +1,7 @@
 source https://www.nuget.org/api/v2
 
+version 5.241.2
+
 framework: auto-detect
 
 nuget FSharp.Core = 4.2.3
@@ -12,21 +14,23 @@ nuget NUnit3TestAdapter version_in_path: true
 nuget MSTest.TestFramework
 nuget MSTest.TestAdapter version_in_path: true
 
+// [ FAKE GROUP ]
 group Build
-	framework: net461
+	framework: auto-detect
 	source https://www.nuget.org/api/v2
 	source https://api.nuget.org/v3/index.json
 
+	nuget Octokit
 	nuget Fake.Api.GitHub
 	nuget Fake.BuildServer.AppVeyor
 	nuget Fake.Core.Environment
 	nuget Fake.Core.Process
 	nuget Fake.Core.ReleaseNotes
+	nuget Fake.Core.SemVer
 	nuget Fake.Core.String
 	nuget Fake.Core.Target
 	nuget Fake.Core.Trace
 	nuget Fake.Core.UserInput
-	
 	nuget Fake.DotNet.AssemblyInfoFile
 	nuget Fake.DotNet.Cli
 	nuget Fake.DotNet.FSFormatting
