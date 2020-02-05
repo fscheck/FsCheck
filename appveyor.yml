@@ -1,9 +1,14 @@
 image: Visual Studio 2019
+
 init:
   - git config --global core.autocrlf input
+  
 build_script:
   - cmd: ./build.cmd CI
+  
 test: off
 version: '{build}'
+
 artifacts:
-  - path: bin\*.nupkg
+  - path: 'bin\*.nupkg'
+    type: NuGetPackage
