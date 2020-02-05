@@ -16,7 +16,6 @@ group Build
     framework: net461
 	source https://www.nuget.org/api/v2
     source https://api.nuget.org/v3/index.json
-	clitool dotnet-fake
 
 	nuget FSharp.Core 4.6.0.0
 	nuget Fake.Api.GitHub

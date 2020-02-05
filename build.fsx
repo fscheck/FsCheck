@@ -1,7 +1,27 @@
 // --------------------------------------------------------------------------------------
 // FAKE build script 
 // --------------------------------------------------------------------------------------
-#r "paket: groupref Build //" 
+
+#r "paket:
+nuget Octokit
+nuget Fake.Api.GitHub
+nuget Fake.BuildServer.AppVeyor
+nuget Fake.Core.Environment
+nuget Fake.Core.Process
+nuget Fake.Core.ReleaseNotes
+nuget Fake.Core.SemVer
+nuget Fake.Core.String
+nuget Fake.Core.Target
+nuget Fake.Core.Trace
+nuget Fake.Core.UserInput
+nuget Fake.DotNet.AssemblyInfoFile
+nuget Fake.DotNet.Cli
+nuget Fake.DotNet.FSFormatting
+nuget Fake.DotNet.MSBuild
+nuget Fake.DotNet.Paket
+nuget Fake.DotNet.Testing.XUnit2
+nuget Fake.IO.FileSystem
+nuget Fake.Tools.Git //"
 #load "./.fake/build.fsx/intellisense.fsx"
 
 open System
