@@ -279,15 +279,14 @@ type LiterateArguments =
       ProjectParameters : (string * string) list
       LayoutRoots : string list }
 
-let defaultLiterateArguments =
-    { ToolPath = toolPath()
-      Source = ""
-      OutputDirectory = ""
-      Template = ""
-      ProjectParameters = []
-      LayoutRoots = [] }
-
 let createDocs p =
+    let defaultLiterateArguments =
+        { ToolPath = toolPath()
+          Source = ""
+          OutputDirectory = ""
+          Template = ""
+          ProjectParameters = []
+          LayoutRoots = [] }
     let arguments = (p:LiterateArguments->LiterateArguments) defaultLiterateArguments
     let layoutroots =
         if arguments.LayoutRoots.IsEmpty then []
