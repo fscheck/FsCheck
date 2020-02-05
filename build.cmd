@@ -3,4 +3,4 @@
 cls
 dotnet --info
 dotnet tool restore
-dotnet fake run %*
+dotnet fake run build.fsx %*
