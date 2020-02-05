@@ -264,11 +264,12 @@ let toolPath =
 
 /// Runs fsformatting.exe with the given command in the given repository directory.
 let private run toolPath command = 
-    let result = CreateProcess.fromRawCommand toolPath [command]
+    let result = CreateProcess.fromRawCommandLine toolPath command
                  |> CreateProcess.withFramework
+                 |> CreateProcess.redirectOutput
                  |> Proc.run
     if result.ExitCode <> 0 then 
-        failwithf "FSharp.Formatting %s failed." command
+        failwithf "%s %s failed with exit code %i. StdOut: %s ErrOut: %s" toolPath command result.ExitCode result.Result.Output result.Result.Error
 
 type LiterateArguments =
     { ToolPath : string
