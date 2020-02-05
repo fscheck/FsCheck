@@ -13,11 +13,10 @@ nuget MSTest.TestFramework
 nuget MSTest.TestAdapter version_in_path: true
 
 group Build
-  framework: net461
+	framework: net461
 	source https://www.nuget.org/api/v2
-  source https://api.nuget.org/v3/index.json
+	source https://api.nuget.org/v3/index.json
 
-	nuget FSharp.Core 4.6.0.0
 	nuget Fake.Api.GitHub
 	nuget Fake.BuildServer.AppVeyor
 	nuget Fake.Core.Environment
@@ -37,9 +36,9 @@ group Build
 	nuget Fake.IO.FileSystem
 	nuget Fake.Tools.Git
 	
-  nuget FSharp.Formatting
+	nuget FSharp.Formatting
 	nuget FSharp.Formatting.CommandTool
-  nuget xunit.runner.console
+	nuget xunit.runner.console
 
 group portable
 	source https://www.nuget.org/api/v2

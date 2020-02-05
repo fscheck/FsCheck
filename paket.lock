@@ -624,7 +624,7 @@ NUGET
       System.Collections.Immutable (>= 1.5)
       System.Reflection.Metadata (>= 1.6)
       System.ValueTuple (>= 4.4)
-    FSharp.Core (4.6)
+    FSharp.Core (4.7)
     FSharp.Formatting (3.1)
       FSharp.Compiler.Service (>= 27.0.1 < 28.0)
       Microsoft.AspNet.Razor (>= 3.2.7 < 4.0)
