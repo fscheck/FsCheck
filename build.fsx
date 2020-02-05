@@ -258,15 +258,17 @@ let copyFiles () =
 
 /// Specifies the fsformatting executable
 let toolPath =
-    Fake.IO.Globbing.Tools.findToolInSubPath "fsformatting.exe" (Directory.GetCurrentDirectory() @@ "tools" @@ "FSharp.Formatting.CommandTool" @@ "tools")
+    Fake.Core.ProcessUtils.tryFindLocalTool "FSFORMATTING" "fsformatting.exe" 
+        [(Directory.GetCurrentDirectory() @@ "packages" @@ "build" @@ "FSharp.Formatting.CommandTool" @@ "tools")]
+    |> Option.get
 
 /// Runs fsformatting.exe with the given command in the given repository directory.
 let private run toolPath command = 
-    if 0 <> Process.execSimple ((fun info ->
-            { info with
-                FileName = toolPath
-                Arguments = command }) >> Process.withFramework) System.TimeSpan.MaxValue
-    then failwithf "FSharp.Formatting %s failed." command
+    let result = CreateProcess.fromRawCommand toolPath [command]
+                 |> CreateProcess.withFramework
+                 |> Proc.run
+    if result.ExitCode <> 0 then 
+        failwithf "FSharp.Formatting %s failed." command
 
 type LiterateArguments =
     { ToolPath : string
