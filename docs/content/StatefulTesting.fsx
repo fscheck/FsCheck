@@ -1,5 +1,5 @@
 (*** hide ***)
-#r @"../../src/FsCheck/bin/Release/net452/FsCheck.dll"
+#r @"../../src/FsCheck/bin/Release/netstandard2.0/FsCheck.dll"
 open FsCheck
 open System
 open FsCheck

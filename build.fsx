@@ -177,7 +177,7 @@ Target.create "PaketPush" (fun _ ->
 // Generate the documentation
 
 // Paths with template/source/output locations
-let bin        = __SOURCE_DIRECTORY__ @@ "src/FsCheck.Xunit/bin/Release/net452" //might not work in the future
+let bin        = __SOURCE_DIRECTORY__ @@ "src/FsCheck.Xunit/bin/Release/netstandard2.0" //might not work in the future
 let content    = __SOURCE_DIRECTORY__ @@ "docs/content"
 let output     = __SOURCE_DIRECTORY__ @@ "docs/output"
 let files      = __SOURCE_DIRECTORY__ @@ "docs/files"
@@ -300,7 +300,7 @@ let createDocs p =
         |> Seq.map (fun (k, v) -> [ k; v ])
         |> Seq.concat
         |> Seq.append 
-               (["literate"; "--processdirectory" ] @ layoutroots @ [ "--inputdirectory"; source; "--templatefile"; template; 
+               (["literate"; "--processDirectory" ] @ layoutroots @ [ "--inputDirectory"; source; "--templateFile"; template; 
                   "--fsieval"; "--outputDirectory"; outputDir; "--replacements" ])
         |> Seq.map (fun s -> 
                if s.StartsWith "\"" then s
