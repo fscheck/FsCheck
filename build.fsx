@@ -100,7 +100,6 @@ Target.create "AssemblyInfo" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Clean build results
 
-
 Target.create "Clean" (fun _ ->
     Shell.cleanDirs ["bin"; "temp"]
 )
@@ -114,9 +113,7 @@ Target.create "CleanDocs" (fun _ ->
 
 Target.create "Build" (fun _ ->
     DotNet.restore id solution
-    !! solution
-    |> MSBuild.runRelease (fun par -> { par with MaxCpuCount = Some (Some Environment.ProcessorCount) }) "" "Rebuild"
-    |> ignore
+    DotNet.build (fun opt -> { opt with Configuration = DotNet.BuildConfiguration.Release }) solution
 )
 
 // --------------------------------------------------------------------------------------
