@@ -1,7 +1,7 @@
 language: csharp
 sudo: required
 dist: xenial # Ubuntu 16.04
-mono: none
+mono: latest
 dotnet: 3.1.101
 
 script:
