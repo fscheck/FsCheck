@@ -14,6 +14,11 @@ nuget NUnit3TestAdapter version_in_path: true
 nuget MSTest.TestFramework
 nuget MSTest.TestAdapter version_in_path: true
 
+// This is to allow building net452 target on *nix
+// Ideally we would have this a a dev dependency only (privateasset)
+// but it looks like paket can not yet do this.
+nuget Microsoft.NETFramework.ReferenceAssemblies
+
 // [ FAKE GROUP ]
 group Build
 	framework: auto-detect
