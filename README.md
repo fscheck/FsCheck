@@ -63,8 +63,8 @@ For all other editors, FsCheck uses FAKE, targets for building are `Build` and f
 Documentation uses FSharp.Formatting, so literate fsx files. To generate the html files, run `build.[cmd|sh] generatedocs`. 
 Then run `build.[cmd|sh] keeprunning` and just edit any documentation fsx file, on save it should be picked up and re-generated.
 
-- Windows on .NET:[![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036/branch/master)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
-- Linux on Mono: [![Build Status](https://travis-ci.org/fscheck/FsCheck.svg?branch=master)](https://travis-ci.org/fscheck/FsCheck)
+- Windows on AppVeyor:[![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036/branch/master)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
+- Linux on Travis CI: [![Build Status](https://travis-ci.org/fscheck/FsCheck.svg?branch=master)](https://travis-ci.org/fscheck/FsCheck)
 
 
 
