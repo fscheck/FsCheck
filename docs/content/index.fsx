@@ -26,7 +26,7 @@ The documentation is also available in [Japanese](ja/index.html).
 
  * [QuickStart](QuickStart.html) to get started.
 
- * [Properties](Properties.html) descibes FsCheck's language to express tests - 
+ * [Properties](Properties.html) describes FsCheck's language to express tests - 
    in other frameworks these are often called parametrized tests or
    generative tests. FsCheck calls them properties.
 
