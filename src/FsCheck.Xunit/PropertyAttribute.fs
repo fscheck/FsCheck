@@ -122,7 +122,7 @@ type public PropertyAttribute() =
 
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
-    member __.Replay with get() = replay and set(v) = replay <- v; config <- {config with Replay = Some v}
+    member __.Replay with get() = replay and set(v) = replay <- v; config <- {config with Replay = if String.IsNullOrEmpty v then None else Some v}
     ///The maximum number of tests that are run.
     member __.MaxTest with get() = maxTest and set(v) = maxTest <- v; config <- {config with MaxTest = Some v}
     ///The maximum number of tests where values are rejected, e.g. as the result of ==>
