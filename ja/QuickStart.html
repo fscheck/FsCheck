@@ -78,11 +78,9 @@
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (3 shrinks) (StdGen (1177294758,296584891)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (148887734,296713330)):
 Original:
-[1; 0; 1; 3]
-Shrunk:
-[1; 0]</code></pre></td></tr></table>
+[0; 1]</code></pre></td></tr></table>
 <p>FsCheck は反例の <em>シュリンク</em> (訳註: 推定による絞り込みのこと)も行うので、テストケースを失敗させる最小の反例を見つけようとします。
 反例は確かに最小、つまりリストは少なくともテストを失敗するための２つの異なる要素を持っています。FsCheck はより小さな反例を
 (何らかの方法で)何回見つけてシュリンクを進めたかを表示します。</p>
@@ -111,9 +109,9 @@ Shrunk:
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (1178726457,296584891)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 8 tests (5 shrinks) (StdGen (150293902,296713330)):
 Original:
-[nan; 0.0]
+[0.0; nan; 5.465327696; 0.0; -1.797693135e+308; nan]
 Shrunk:
 [nan]</code></pre></td></tr></table>
 <h2><a name="FsCheck-を他のテスティングフレームワークで使う" class="anchor" href="#FsCheck-を他のテスティングフレームワークで使う">FsCheck を他のテスティングフレームワークで使う</a></h2>
@@ -168,7 +166,7 @@ Shrunk:
 <div class="tip" id="fs2">val xs : int list</div>
 <div class="tip" id="fs3">type &#39;T list = List&lt;&#39;T&gt;</div>
 <div class="tip" id="fs4">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int</div>
-<div class="tip" id="fs5">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;member Length : int<br />&#160;&#160;&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;...</div>
+<div class="tip" id="fs5">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyList&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;member Length : int<br />&#160;&#160;&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;&#160;&#160;...</div>
 <div class="tip" id="fs6">val rev : list:&#39;T list -&gt; &#39;T list</div>
 <div class="tip" id="fs7">val revIsOrig : xs:int list -&gt; bool</div>
 <div class="tip" id="fs8">val revRevIsOrigFloat : xs:float list -&gt; bool</div>

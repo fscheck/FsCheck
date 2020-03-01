@@ -144,30 +144,23 @@ so when we run this specification we can check that FsCheck does the right thing
 <p>A specification can be checked as follows:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs39', 99)" onmouseover="showTip(event, 'fs39', 99)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 100)" onmouseover="showTip(event, 'fs40', 100)" class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs41', 101)" onmouseover="showTip(event, 'fs41', 101)" class="m">StateMachine</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs42', 102)" onmouseover="showTip(event, 'fs42', 102)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs12', 103)" onmouseover="showTip(event, 'fs12', 103)" class="id">spec</span><span class="pn">)</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs39', 99)" onmouseover="showTip(event, 'fs39', 99)" class="id">Check</span><span class="pn">.</span><span class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs40', 100)" onmouseover="showTip(event, 'fs40', 100)" class="id">StateMachine</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs41', 101)" onmouseover="showTip(event, 'fs41', 101)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs12', 102)" onmouseover="showTip(event, 'fs12', 102)" class="id">spec</span><span class="pn">)</span>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 10 tests (6 shrinks) (StdGen (850688727,296584891)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (4 shrinks) (StdGen (2128981816,296713329)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
-(1, Setup Counter)
-inc -&gt; 2
-inc -&gt; 3
-dec -&gt; 2
-dec -&gt; 1
-inc -&gt; 2
-inc -&gt; 3
+(3, Setup Counter)
 inc -&gt; 4
 dec -&gt; 3
 inc -&gt; 4
 inc -&gt; 5
 inc -&gt; 6
+dec -&gt; 5
 
 Shrunk:
-(1, Setup Counter)
-inc -&gt; 2
-inc -&gt; 3
+(3, Setup Counter)
 inc -&gt; 4
 inc -&gt; 5</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence of operations that leads to it.</p>
@@ -231,10 +224,9 @@ although the original sequence contains a few superfluous operations, FsCheck no
 <div class="tip" id="fs36">val __ : Machine&lt;Counter,int&gt;</div>
 <div class="tip" id="fs37">abstract member Machine.Next : &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;</div>
 <div class="tip" id="fs38">val elements : xs:seq&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;</div>
-<div class="tip" id="fs39">type Check =<br />&#160;&#160;static member All : config:Config -&gt; unit<br />&#160;&#160;static member All : config:Config * test:Type -&gt; unit<br />&#160;&#160;static member Method : config:Config * methodInfo:MethodInfo * ?target:obj -&gt; unit<br />&#160;&#160;static member One : config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member One : name:string * config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : name:string * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member QuickAll : unit -&gt; unit<br />&#160;&#160;static member QuickAll : test:Type -&gt; unit<br />&#160;&#160;static member QuickThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;...</div>
-<div class="tip" id="fs40">static member Check.Quick : property:&#39;Testable -&gt; unit<br />static member Check.Quick : name:string * property:&#39;Testable -&gt; unit</div>
-<div class="tip" id="fs41">module StateMachine<br /><br />from FsCheck.Experimental</div>
-<div class="tip" id="fs42">val toProperty : spec:Machine&lt;&#39;Actual,&#39;Model&gt; -&gt; Property</div>
+<div class="tip" id="fs39"></div>
+<div class="tip" id="fs40">module StateMachine<br /><br />from FsCheck.Experimental</div>
+<div class="tip" id="fs41">val toProperty : spec:Machine&lt;&#39;Actual,&#39;Model&gt; -&gt; Property</div>
 
         </div>
         <div class="span3">

@@ -82,9 +82,9 @@
 <p>FsCheck はそれぞれのテストの名前も印字します:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 3 tests (1 shrink) (StdGen (1246223563,296584891)):
+ListProperties.reverse is original-Falsifiable, after 2 tests (2 shrinks) (StdGen (175595453,296713330)):
 Original:
-[1; 3]
+[2; 1]
 Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>モジュールの全てのトップレベル関数がモジュール名とともにクラスの静的メンバーとしてコンパイルされるので、あるモジュールの全てのトップレベル関数を
@@ -225,7 +225,7 @@ FSI_0484.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
 <div class="tip" id="fs2">val xs : int list</div>
 <div class="tip" id="fs3">type &#39;T list = List&lt;&#39;T&gt;</div>
 <div class="tip" id="fs4">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int</div>
-<div class="tip" id="fs5">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;member Length : int<br />&#160;&#160;&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;...</div>
+<div class="tip" id="fs5">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyList&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;member Length : int<br />&#160;&#160;&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;&#160;&#160;...</div>
 <div class="tip" id="fs6">val rev : list:&#39;T list -&gt; &#39;T list</div>
 <div class="tip" id="fs7">type ListProperties =<br />&#160;&#160;static member ( reverse is original ) : xs:int list -&gt; bool<br />&#160;&#160;static member ( reverse of reverse is original ) : xs:int list -&gt; bool</div>
 <div class="tip" id="fs8">val typeof&lt;&#39;T&gt; : Type</div>

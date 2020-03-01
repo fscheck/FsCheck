@@ -60,12 +60,12 @@
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1404378501,296584891)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (244070664,296713330)):
 Original:
-{ 0-&gt;2; 1-&gt;2 }
-[1]
+{ 0-&gt;1; 1-&gt;2 }
+[0; 1]
 Shrunk:
-{ 0-&gt;2; 1-&gt;0 }
+{ 0-&gt;1; 1-&gt;0 }
 [0]</code></pre></td></tr></table>
 <p><code>Function&lt;'a,'b&gt;</code> 型は呼ばれていたすべての引数、および生成した結果の写像を記録します。
 性質では、例のようにパターンマッチによって実際の関数を抽出することが出来ます。
@@ -124,11 +124,11 @@ Function は関数を出力し、また関数をシュリンクするために�
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1406916852,296584891)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (1 shrink) (StdGen (246570707,296713330)):
 Label of failing property: 1 = -1
 Original:
-2
-2
+0
+3
 Shrunk:
 0
 0</code></pre></td></tr></table>
@@ -166,7 +166,7 @@ Shrunk:
 <div class="tip" id="fs12">type &#39;T list = List&lt;&#39;T&gt;</div>
 <div class="tip" id="fs13">val not : value:bool -&gt; bool</div>
 <div class="tip" id="fs14">property List.IsEmpty: bool</div>
-<div class="tip" id="fs15">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;member Length : int<br />&#160;&#160;&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;...</div>
+<div class="tip" id="fs15">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyList&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;member Length : int<br />&#160;&#160;&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;&#160;&#160;...</div>
 <div class="tip" id="fs16">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; list:&#39;T list -&gt; &#39;U list</div>
 <div class="tip" id="fs17">val head : list:&#39;T list -&gt; &#39;T</div>
 <div class="tip" id="fs18">val tail : list:&#39;T list -&gt; &#39;T list</div>

@@ -46,8 +46,7 @@
   <h2>Table of contents</h2>
   <ul>
       <li><a href="#section0">Create generators from generators</a></li>            
-      <li><a href="#section1">Creating generators from generators</a></li>            
-      <li><a href="#section2">Other module members</a></li>            
+      <li><a href="#section1">Other module members</a></li>            
   </ul>
 
 <!-- Render nested types and modules, if there are any -->
@@ -62,10 +61,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
+          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
             collect f l
           </code>
-          <div class="tip" id="24">
+          <div class="tip" id="16">
             <strong>Signature:</strong> f:(&#39;a -&gt; Gen&lt;&#39;b&gt;) -&gt; l:seq&lt;&#39;a&gt; -&gt; Gen&lt;&#39;b list&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -87,12 +86,12 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
+          <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
             collectToSeq f l
           </code>
-          <div class="tip" id="25">
-            <strong>Signature:</strong> f:(&#39;?9898 -&gt; Gen&lt;&#39;?9899&gt;) -&gt; l:seq&lt;&#39;?9898&gt; -&gt; Gen&lt;seq&lt;&#39;?9899&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9898, '?9899                        <span>
+          <div class="tip" id="17">
+            <strong>Signature:</strong> f:(&#39;?10153 -&gt; Gen&lt;&#39;?10154&gt;) -&gt; l:seq&lt;&#39;?10153&gt; -&gt; Gen&lt;seq&lt;&#39;?10154&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?10153, '?10154                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;Collect&quot;)&gt;]<br />
           </span>
@@ -111,7 +110,7 @@
       </tr>
     </tbody>
   </table>
-    <h2>Creating generators from generators<a name="section1">&#160;</a></h2>    
+    <h2>Other module members<a name="section1">&#160;</a></h2>    
   <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
     <thead>
@@ -121,44 +120,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
-            collectToArr f xs
-          </code>
-          <div class="tip" id="26">
-            <strong>Signature:</strong> f:(&#39;?9903 -&gt; Gen&lt;&#39;?9904&gt;) -&gt; xs:&#39;?9903 array -&gt; Gen&lt;&#39;?9904 []&gt;<br />
-                          <strong>Type parameters:</strong> '?9903, '?9904                        <span>
-            <strong>Attributes:</strong><br />
-[&lt;CompiledName(&quot;CollectToArray&quot;)&gt;]<br />
-          </span>
-          </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L386-386" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Traverse the given array into a generator of an array using the specified binder function to create generators.</p>
-
-
-              <p>CompiledName: <code>CollectToArray</code></p>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-    <h2>Other module members<a name="section2">&#160;</a></h2>    
-  <h3>Functions and values</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
+          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
             apply f gn
           </code>
-          <div class="tip" id="27">
+          <div class="tip" id="18">
             <strong>Signature:</strong> f:Gen&lt;(&#39;a -&gt; &#39;b)&gt; -&gt; gn:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'a, 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -180,10 +145,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
             array2DOf(g)
           </code>
-          <div class="tip" id="28">
+          <div class="tip" id="19">
             <strong>Signature:</strong> g:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a [,]&gt;<br />
                           <strong>Type parameters:</strong> 'a                        <span>
             <strong>Attributes:</strong><br />
@@ -205,10 +170,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '29', 29)" onmouseover="showTip(event, '29', 29)">
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
             array2DOfDim(rows, cols) g
           </code>
-          <div class="tip" id="29">
+          <div class="tip" id="20">
             <strong>Signature:</strong> (rows:int * cols:int) -&gt; g:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a [,]&gt;<br />
                           <strong>Type parameters:</strong> 'a                        <span>
             <strong>Attributes:</strong><br />
@@ -230,10 +195,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
+          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
             arrayOf(g)
           </code>
-          <div class="tip" id="30">
+          <div class="tip" id="21">
             <strong>Signature:</strong> g:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a []&gt;<br />
                           <strong>Type parameters:</strong> 'a                        <span>
             <strong>Attributes:</strong><br />
@@ -255,10 +220,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '31', 31)" onmouseover="showTip(event, '31', 31)">
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
             arrayOfLength n g
           </code>
-          <div class="tip" id="31">
+          <div class="tip" id="22">
             <strong>Signature:</strong> n:int -&gt; g:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a []&gt;<br />
                           <strong>Type parameters:</strong> 'a                        <span>
             <strong>Attributes:</strong><br />
@@ -280,10 +245,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
+          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
             choose(l, h)
           </code>
-          <div class="tip" id="32">
+          <div class="tip" id="23">
             <strong>Signature:</strong> (l:int * h:int) -&gt; Gen&lt;int&gt;<br />
                                     <span>
             <strong>Attributes:</strong><br />
@@ -305,10 +270,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
+          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
             constant(v)
           </code>
-          <div class="tip" id="33">
+          <div class="tip" id="24">
             <strong>Signature:</strong> v:&#39;b -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -330,10 +295,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
+          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
             elements(xs)
           </code>
-          <div class="tip" id="34">
+          <div class="tip" id="25">
             <strong>Signature:</strong> xs:seq&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -355,36 +320,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
-            elementsArr(values)
-          </code>
-          <div class="tip" id="35">
-            <strong>Signature:</strong> values:&#39;?9823 array -&gt; Gen&lt;&#39;?9823&gt;<br />
-                          <strong>Type parameters:</strong> '?9823                        <span>
-            <strong>Attributes:</strong><br />
-[&lt;CompiledName(&quot;Elements&quot;)&gt;]<br />
-[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
-          </span>
-          </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L183-183" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Build a generator that randomly generates one of the values in the given non-empty seq.</p>
-
-
-              <p>CompiledName: <code>Elements</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
+          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
             eval size seed arg3
           </code>
-          <div class="tip" id="36">
+          <div class="tip" id="26">
             <strong>Signature:</strong> size:int -&gt; seed:StdGen -&gt; Gen&lt;&#39;b&gt; -&gt; &#39;b<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -406,10 +345,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
+          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
             filter predicate generator
           </code>
-          <div class="tip" id="37">
+          <div class="tip" id="27">
             <strong>Signature:</strong> predicate:(&#39;a18 -&gt; bool) -&gt; generator:Gen&lt;&#39;a18&gt; -&gt; Gen&lt;&#39;a18&gt;<br />
                           <strong>Type parameters:</strong> 'a18                        <span>
             <strong>Attributes:</strong><br />
@@ -435,10 +374,10 @@ so that you can choose the word that makes your code most readable in your given
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
+          <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
             four(g)
           </code>
-          <div class="tip" id="38">
+          <div class="tip" id="28">
             <strong>Signature:</strong> g:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b * &#39;b * &#39;b * &#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -460,10 +399,10 @@ so that you can choose the word that makes your code most readable in your given
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
+          <code onmouseout="hideTip(event, '29', 29)" onmouseover="showTip(event, '29', 29)">
             frequency(xs)
           </code>
-          <div class="tip" id="39">
+          <div class="tip" id="29">
             <strong>Signature:</strong> xs:seq&lt;int * Gen&lt;&#39;a18&gt;&gt; -&gt; Gen&lt;&#39;a18&gt;<br />
                           <strong>Type parameters:</strong> 'a18                        <span>
             <strong>Attributes:</strong><br />
@@ -486,10 +425,10 @@ given probabilities. The sum of the probabilities must be larger than zero.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
+          <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
             frequencySeqWeightAndValue(...)
           </code>
-          <div class="tip" id="40">
+          <div class="tip" id="30">
             <strong>Signature:</strong> weightedValues:seq&lt;WeightAndValue&lt;Gen&lt;&#39;a&gt;&gt;&gt; -&gt; Gen&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a                        <span>
             <strong>Attributes:</strong><br />
@@ -513,64 +452,10 @@ given probabilities. The sum of the probabilities must be larger than zero.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
-            frequencyTupleArr(weightedValues)
-          </code>
-          <div class="tip" id="41">
-            <strong>Signature:</strong> weightedValues:(int * Gen&lt;&#39;a&gt;) [] -&gt; Gen&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a                        <span>
-            <strong>Attributes:</strong><br />
-[&lt;CompiledName(&quot;Frequency&quot;)&gt;]<br />
-[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
-          </span>
-          </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L279-279" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Build a generator that generates a value from one of the generators in the given non-empty seq, with
-given probabilities. The sum of the probabilities must be larger than zero.</p>
-
-
-              <p>CompiledName: <code>Frequency</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
-            frequencyWeightAndValueArr(...)
-          </code>
-          <div class="tip" id="42">
-            <strong>Signature:</strong> weightedValues:WeightAndValue&lt;Gen&lt;&#39;a&gt;&gt; [] -&gt; Gen&lt;&#39;a&gt;<br />
-                          <strong>Type parameters:</strong> 'a                        <span>
-            <strong>Attributes:</strong><br />
-[&lt;CompiledName(&quot;Frequency&quot;)&gt;]<br />
-[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
-          </span>
-          </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L268-268" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Build a generator that generates a value from one of the generators in the given non-empty seq, with
-given probabilities. The sum of the probabilities must be larger than zero.</p>
-
-
-              <p>CompiledName: <code>Frequency</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
+          <code onmouseout="hideTip(event, '31', 31)" onmouseover="showTip(event, '31', 31)">
             fresh(fv)
           </code>
-          <div class="tip" id="43">
+          <div class="tip" id="31">
             <strong>Signature:</strong> fv:(unit -&gt; &#39;b) -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -593,12 +478,12 @@ See also constant.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
+          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
             freshFunc(fv)
           </code>
-          <div class="tip" id="44">
-            <strong>Signature:</strong> fv:Func&lt;&#39;?9807&gt; -&gt; Gen&lt;&#39;?9807&gt;<br />
-                          <strong>Type parameters:</strong> '?9807                        <span>
+          <div class="tip" id="32">
+            <strong>Signature:</strong> fv:(type) -&gt; Gen&lt;&#39;?10062&gt;<br />
+                          <strong>Type parameters:</strong> '?10062                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;Fresh&quot;)&gt;]<br />
 [&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
@@ -620,12 +505,12 @@ See also constant.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
+          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
             growingElements(xs)
           </code>
-          <div class="tip" id="45">
-            <strong>Signature:</strong> xs:seq&lt;&#39;?9827&gt; -&gt; Gen&lt;&#39;?9827&gt;<br />
-                          <strong>Type parameters:</strong> '?9827                        <span>
+          <div class="tip" id="33">
+            <strong>Signature:</strong> xs:seq&lt;&#39;?10082&gt; -&gt; Gen&lt;&#39;?10082&gt;<br />
+                          <strong>Type parameters:</strong> '?10082                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;GrowingElements&quot;)&gt;]<br />
           </span>
@@ -648,10 +533,10 @@ generator is Gen.elements but taking also the runtime size into account.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
+          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
             listOf(gn)
           </code>
-          <div class="tip" id="46">
+          <div class="tip" id="34">
             <strong>Signature:</strong> gn:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b list&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -674,10 +559,10 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
+          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
             listOfLength n arb
           </code>
-          <div class="tip" id="47">
+          <div class="tip" id="35">
             <strong>Signature:</strong> n:int -&gt; arb:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b list&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -699,10 +584,10 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
+          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
             map f gen
           </code>
-          <div class="tip" id="48">
+          <div class="tip" id="36">
             <strong>Signature:</strong> f:(&#39;b -&gt; &#39;c) -&gt; gen:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;c&gt;<br />
                           <strong>Type parameters:</strong> 'b, 'c                        <span>
             <strong>Attributes:</strong><br />
@@ -724,10 +609,10 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
+          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
             map2 f a b
           </code>
-          <div class="tip" id="49">
+          <div class="tip" id="37">
             <strong>Signature:</strong> f:(&#39;a18 -&gt; &#39;a19 -&gt; &#39;a20) -&gt; a:Gen&lt;&#39;a18&gt; -&gt; b:Gen&lt;&#39;a19&gt; -&gt; Gen&lt;&#39;a20&gt;<br />
                           <strong>Type parameters:</strong> 'a18, 'a19, 'a20                        <span>
             <strong>Attributes:</strong><br />
@@ -749,12 +634,12 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
+          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
             map3 f a b c
           </code>
-          <div class="tip" id="50">
-            <strong>Signature:</strong> f:(&#39;?9849 -&gt; &#39;?9850 -&gt; &#39;?9851 -&gt; &#39;?9852) -&gt; a:Gen&lt;&#39;?9849&gt; -&gt; b:Gen&lt;&#39;?9850&gt; -&gt; c:Gen&lt;&#39;?9851&gt; -&gt; Gen&lt;&#39;?9852&gt;<br />
-                          <strong>Type parameters:</strong> '?9849, '?9850, '?9851, '?9852                        <span>
+          <div class="tip" id="38">
+            <strong>Signature:</strong> f:(&#39;?10104 -&gt; &#39;?10105 -&gt; &#39;?10106 -&gt; &#39;?10107) -&gt; a:Gen&lt;&#39;?10104&gt; -&gt; b:Gen&lt;&#39;?10105&gt; -&gt; c:Gen&lt;&#39;?10106&gt; -&gt; Gen&lt;&#39;?10107&gt;<br />
+                          <strong>Type parameters:</strong> '?10104, '?10105, '?10106, '?10107                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;Map3&quot;)&gt;]<br />
           </span>
@@ -774,10 +659,10 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
+          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
             map4 f a b c d
           </code>
-          <div class="tip" id="51">
+          <div class="tip" id="39">
             <strong>Signature:</strong> f:(&#39;a18 -&gt; &#39;a19 -&gt; &#39;a20 -&gt; &#39;a21 -&gt; &#39;a22) -&gt; a:Gen&lt;&#39;a18&gt; -&gt; b:Gen&lt;&#39;a19&gt; -&gt; c:Gen&lt;&#39;a20&gt; -&gt; d:Gen&lt;&#39;a21&gt; -&gt; Gen&lt;&#39;a22&gt;<br />
                           <strong>Type parameters:</strong> 'a18, 'a19, 'a20, 'a21, 'a22                        <span>
             <strong>Attributes:</strong><br />
@@ -799,10 +684,10 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
+          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
             map5 f a b c d e
           </code>
-          <div class="tip" id="52">
+          <div class="tip" id="40">
             <strong>Signature:</strong> f:(&#39;a18 -&gt; &#39;a19 -&gt; &#39;a20 -&gt; &#39;a21 -&gt; &#39;a22 -&gt; &#39;a23) -&gt; a:Gen&lt;&#39;a18&gt; -&gt; b:Gen&lt;&#39;a19&gt; -&gt; c:Gen&lt;&#39;a20&gt; -&gt; d:Gen&lt;&#39;a21&gt; -&gt; e:Gen&lt;&#39;a22&gt; -&gt; Gen&lt;&#39;a23&gt;<br />
                           <strong>Type parameters:</strong> 'a18, 'a19, 'a20, 'a21, 'a22, 'a23                        <span>
             <strong>Attributes:</strong><br />
@@ -824,12 +709,12 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
+          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
             map6 f a b c d e g
           </code>
-          <div class="tip" id="53">
-            <strong>Signature:</strong> f:(&#39;?9871 -&gt; &#39;?9872 -&gt; &#39;?9873 -&gt; &#39;?9874 -&gt; &#39;?9875 -&gt; &#39;?9876 -&gt; &#39;?9877) -&gt; a:Gen&lt;&#39;?9871&gt; -&gt; b:Gen&lt;&#39;?9872&gt; -&gt; c:Gen&lt;&#39;?9873&gt; -&gt; d:Gen&lt;&#39;?9874&gt; -&gt; e:Gen&lt;&#39;?9875&gt; -&gt; g:Gen&lt;&#39;?9876&gt; -&gt; Gen&lt;&#39;?9877&gt;<br />
-                          <strong>Type parameters:</strong> '?9871, '?9872, '?9873, '?9874, '?9875, '?9876, '?9877                        <span>
+          <div class="tip" id="41">
+            <strong>Signature:</strong> f:(&#39;?10126 -&gt; &#39;?10127 -&gt; &#39;?10128 -&gt; &#39;?10129 -&gt; &#39;?10130 -&gt; &#39;?10131 -&gt; &#39;?10132) -&gt; a:Gen&lt;&#39;?10126&gt; -&gt; b:Gen&lt;&#39;?10127&gt; -&gt; c:Gen&lt;&#39;?10128&gt; -&gt; d:Gen&lt;&#39;?10129&gt; -&gt; e:Gen&lt;&#39;?10130&gt; -&gt; g:Gen&lt;&#39;?10131&gt; -&gt; Gen&lt;&#39;?10132&gt;<br />
+                          <strong>Type parameters:</strong> '?10126, '?10127, '?10128, '?10129, '?10130, '?10131, '?10132                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;Map6&quot;)&gt;]<br />
           </span>
@@ -849,10 +734,10 @@ size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
+          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
             nonEmptyListOf(gn)
           </code>
-          <div class="tip" id="54">
+          <div class="tip" id="42">
             <strong>Signature:</strong> gn:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b list&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -875,10 +760,10 @@ depends on the size parameter.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
+          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
             oneof(gens)
           </code>
-          <div class="tip" id="55">
+          <div class="tip" id="43">
             <strong>Signature:</strong> gens:seq&lt;Gen&lt;&#39;a&gt;&gt; -&gt; Gen&lt;&#39;a&gt;<br />
                           <strong>Type parameters:</strong> 'a                        <span>
             <strong>Attributes:</strong><br />
@@ -901,37 +786,10 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
-            oneOfArr(generators)
-          </code>
-          <div class="tip" id="56">
-            <strong>Signature:</strong> generators:Gen&lt;&#39;?9831&gt; array -&gt; Gen&lt;&#39;?9831&gt;<br />
-                          <strong>Type parameters:</strong> '?9831                        <span>
-            <strong>Attributes:</strong><br />
-[&lt;CompiledName(&quot;OneOf&quot;)&gt;]<br />
-[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
-          </span>
-          </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L221-221" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Build a generator that generates a value from one of the given generators, with
-equal probability.</p>
-
-
-              <p>CompiledName: <code>OneOf</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
+          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
             optionOf(g)
           </code>
-          <div class="tip" id="57">
+          <div class="tip" id="44">
             <strong>Signature:</strong> g:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b option&gt;<br />
                           <strong>Type parameters:</strong> 'b                      </div>
         </td>
@@ -948,10 +806,10 @@ equal probability.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
+          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
             piles k sum
           </code>
-          <div class="tip" id="58">
+          <div class="tip" id="45">
             <strong>Signature:</strong> k:int -&gt; sum:int -&gt; Gen&lt;int []&gt;<br />
                                     <span>
             <strong>Attributes:</strong><br />
@@ -974,10 +832,10 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
+          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
             resize newSize arg2
           </code>
-          <div class="tip" id="59">
+          <div class="tip" id="46">
             <strong>Signature:</strong> newSize:int -&gt; Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -999,10 +857,10 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
+          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
             sample size n generator
           </code>
-          <div class="tip" id="60">
+          <div class="tip" id="47">
             <strong>Signature:</strong> size:int -&gt; n:int -&gt; generator:Gen&lt;&#39;b&gt; -&gt; &#39;b list<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -1024,10 +882,10 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
+          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
             scaleSize f g
           </code>
-          <div class="tip" id="61">
+          <div class="tip" id="48">
             <strong>Signature:</strong> f:(int -&gt; int) -&gt; g:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -1049,12 +907,12 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
+          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
             sequence(l)
           </code>
-          <div class="tip" id="62">
-            <strong>Signature:</strong> l:seq&lt;Gen&lt;&#39;?9896&gt;&gt; -&gt; Gen&lt;&#39;?9896 list&gt;<br />
-                          <strong>Type parameters:</strong> '?9896                        <span>
+          <div class="tip" id="49">
+            <strong>Signature:</strong> l:seq&lt;Gen&lt;&#39;?10151&gt;&gt; -&gt; Gen&lt;&#39;?10151 list&gt;<br />
+                          <strong>Type parameters:</strong> '?10151                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;SequenceToList&quot;)&gt;]<br />
           </span>
@@ -1074,37 +932,12 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
-            sequenceToArr(generators)
-          </code>
-          <div class="tip" id="63">
-            <strong>Signature:</strong> generators:Gen&lt;&#39;b&gt; array -&gt; Gen&lt;&#39;b []&gt;<br />
-                          <strong>Type parameters:</strong> 'b                        <span>
-            <strong>Attributes:</strong><br />
-[&lt;CompiledName(&quot;Sequence&quot;)&gt;]<br />
-          </span>
-          </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L407-407" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Sequence the given array of generators into a generator of an array.</p>
-
-
-              <p>CompiledName: <code>Sequence</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
+          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
             sequenceToSeq(generators)
           </code>
-          <div class="tip" id="64">
-            <strong>Signature:</strong> generators:seq&lt;Gen&lt;&#39;?9901&gt;&gt; -&gt; Gen&lt;seq&lt;&#39;?9901&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9901                        <span>
+          <div class="tip" id="50">
+            <strong>Signature:</strong> generators:seq&lt;Gen&lt;&#39;?10156&gt;&gt; -&gt; Gen&lt;seq&lt;&#39;?10156&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?10156                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;Sequence&quot;)&gt;]<br />
           </span>
@@ -1124,12 +957,12 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
             shuffle(xs)
           </code>
-          <div class="tip" id="65">
-            <strong>Signature:</strong> xs:seq&lt;&#39;?9912&gt; -&gt; Gen&lt;&#39;?9912 array&gt;<br />
-                          <strong>Type parameters:</strong> '?9912                        <span>
+          <div class="tip" id="51">
+            <strong>Signature:</strong> xs:seq&lt;&#39;?10167&gt; -&gt; Gen&lt;&#39;?10167 array&gt;<br />
+                          <strong>Type parameters:</strong> '?10167                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;Shuffle&quot;)&gt;]<br />
           </span>
@@ -1149,10 +982,10 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+          <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
             sized(fgen)
           </code>
-          <div class="tip" id="66">
+          <div class="tip" id="52">
             <strong>Signature:</strong> fgen:(int -&gt; Gen&lt;&#39;b&gt;) -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -1174,12 +1007,12 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
+          <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
             sizedFunc(sizedGen)
           </code>
-          <div class="tip" id="67">
-            <strong>Signature:</strong> sizedGen:Func&lt;int,Gen&lt;&#39;?9814&gt;&gt; -&gt; Gen&lt;&#39;?9814&gt;<br />
-                          <strong>Type parameters:</strong> '?9814                        <span>
+          <div class="tip" id="53">
+            <strong>Signature:</strong> sizedGen:(type) -&gt; Gen&lt;&#39;?10069&gt;<br />
+                          <strong>Type parameters:</strong> '?10069                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;Sized&quot;)&gt;]<br />
 [&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
@@ -1200,12 +1033,12 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
+          <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
             subListOf(l)
           </code>
-          <div class="tip" id="68">
-            <strong>Signature:</strong> l:seq&lt;&#39;?9931&gt; -&gt; Gen&lt;&#39;?9931 list&gt;<br />
-                          <strong>Type parameters:</strong> '?9931                        <span>
+          <div class="tip" id="54">
+            <strong>Signature:</strong> l:seq&lt;&#39;?10186&gt; -&gt; Gen&lt;&#39;?10186 list&gt;<br />
+                          <strong>Type parameters:</strong> '?10186                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;SubListOfToList&quot;)&gt;]<br />
           </span>
@@ -1225,38 +1058,12 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
-            subListOfArr(s)
-          </code>
-          <div class="tip" id="69">
-            <strong>Signature:</strong> s:&#39;?9935 array -&gt; Gen&lt;IList&lt;&#39;?9935&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9935                        <span>
-            <strong>Attributes:</strong><br />
-[&lt;CompiledName(&quot;SubListOf&quot;)&gt;]<br />
-[&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
-          </span>
-          </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L571-571" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generates sublists of the given arguments.</p>
-
-
-              <p>CompiledName: <code>SubListOf</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
+          <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
             subListOfToIList(s)
           </code>
-          <div class="tip" id="70">
-            <strong>Signature:</strong> s:seq&lt;&#39;?9933&gt; -&gt; Gen&lt;IList&lt;&#39;?9933&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?9933                        <span>
+          <div class="tip" id="55">
+            <strong>Signature:</strong> s:seq&lt;&#39;?10188&gt; -&gt; Gen&lt;(type)&gt;<br />
+                          <strong>Type parameters:</strong> '?10188                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;SubListOf&quot;)&gt;]<br />
 [&lt;CompilerMessage(&quot;This method is not intended for use from F#.&quot;, 10001, IsHidden = true, IsError = false)&gt;]<br />
@@ -1277,75 +1084,10 @@ all elements equals the given sum.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
-            suchThat
-          </code>
-          <div class="tip" id="71">
-            <strong>Signature:</strong> (&#39;?9924 -&gt; bool) -&gt; Gen&lt;&#39;?9924&gt; -&gt; Gen&lt;&#39;?9924&gt;<br />
-                          <strong>Type parameters:</strong> '?9924                        <span>
-            <strong>Attributes:</strong><br />
-[&lt;Obsolete(&quot;This function will be removed in a future version of FsCheck. Please use the synonyms where or filter instead.&quot;)&gt;]<br />
-[&lt;CompiledName(&quot;SuchThat&quot;)&gt;]<br />
-          </span>
-          </div>
-        </td>
-        <td class="xmldoc">
-              <div class="alert alert-warning">
-              <strong>WARNING: </strong> This API is obsolete
-              <p>This function will be removed in a future version of FsCheck. Please use the synonyms where or filter instead.</p>
-              </div> 
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L502-502" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Generates a value that satisfies a predicate. Contrary to suchThatOption, this function keeps re-trying
-by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that
-the predicate is satisfied.</p>
-
-
-              <p>CompiledName: <code>SuchThat</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
-            suchThatOption
-          </code>
-          <div class="tip" id="72">
-            <strong>Signature:</strong> (&#39;?9918 -&gt; bool) -&gt; Gen&lt;&#39;?9918&gt; -&gt; Gen&lt;&#39;?9918 option&gt;<br />
-                          <strong>Type parameters:</strong> '?9918                        <span>
-            <strong>Attributes:</strong><br />
-[&lt;Obsolete(&quot;This function will be removed in a future version of FsCheck. Please use the synonyms tryWhere or tryFilter instead.&quot;)&gt;]<br />
-[&lt;CompiledName(&quot;SuchThatOption&quot;)&gt;]<br />
-[&lt;EditorBrowsable(1)&gt;]<br />
-          </span>
-          </div>
-        </td>
-        <td class="xmldoc">
-              <div class="alert alert-warning">
-              <strong>WARNING: </strong> This API is obsolete
-              <p>This function will be removed in a future version of FsCheck. Please use the synonyms tryWhere or tryFilter instead.</p>
-              </div> 
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Gen.fs#L471-471" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
-if the given original generator did not generate any values that satisfied the predicate, after trying to
-get values by increasing its size.</p>
-
-
-              <p>CompiledName: <code>SuchThatOption</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '73', 73)" onmouseover="showTip(event, '73', 73)">
+          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
             three(g)
           </code>
-          <div class="tip" id="73">
+          <div class="tip" id="56">
             <strong>Signature:</strong> g:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b * &#39;b * &#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -1367,12 +1109,12 @@ get values by increasing its size.</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '74', 74)" onmouseover="showTip(event, '74', 74)">
+          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
             tryFilter predicate generator
           </code>
-          <div class="tip" id="74">
-            <strong>Signature:</strong> predicate:(&#39;?9916 -&gt; bool) -&gt; generator:Gen&lt;&#39;?9916&gt; -&gt; Gen&lt;&#39;?9916 option&gt;<br />
-                          <strong>Type parameters:</strong> '?9916                        <span>
+          <div class="tip" id="57">
+            <strong>Signature:</strong> predicate:(&#39;?10171 -&gt; bool) -&gt; generator:Gen&lt;&#39;?10171&gt; -&gt; Gen&lt;&#39;?10171 option&gt;<br />
+                          <strong>Type parameters:</strong> '?10171                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;TryFilter&quot;)&gt;]<br />
           </span>
@@ -1396,10 +1138,10 @@ so that you can choose the word that makes your code most readable in your given
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
+          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
             tryWhere predicate generator
           </code>
-          <div class="tip" id="75">
+          <div class="tip" id="58">
             <strong>Signature:</strong> predicate:(&#39;a -&gt; bool) -&gt; generator:Gen&lt;&#39;a&gt; -&gt; Gen&lt;&#39;a option&gt;<br />
                           <strong>Type parameters:</strong> 'a                        <span>
             <strong>Attributes:</strong><br />
@@ -1425,10 +1167,10 @@ so that you can choose the word that makes your code most readable in your given
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
+          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
             two(g)
           </code>
-          <div class="tip" id="76">
+          <div class="tip" id="59">
             <strong>Signature:</strong> g:Gen&lt;&#39;a18&gt; -&gt; Gen&lt;&#39;a18 * &#39;a18&gt;<br />
                           <strong>Type parameters:</strong> 'a18                        <span>
             <strong>Attributes:</strong><br />
@@ -1450,12 +1192,12 @@ so that you can choose the word that makes your code most readable in your given
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
+          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
             unzip(g)
           </code>
-          <div class="tip" id="77">
-            <strong>Signature:</strong> g:Gen&lt;&#39;?9886 * &#39;?9887&gt; -&gt; Gen&lt;&#39;?9886&gt; * Gen&lt;&#39;?9887&gt;<br />
-                          <strong>Type parameters:</strong> '?9886, '?9887                        <span>
+          <div class="tip" id="60">
+            <strong>Signature:</strong> g:Gen&lt;&#39;?10141 * &#39;?10142&gt; -&gt; Gen&lt;&#39;?10141&gt; * Gen&lt;&#39;?10142&gt;<br />
+                          <strong>Type parameters:</strong> '?10141, '?10142                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;Unzip&quot;)&gt;]<br />
           </span>
@@ -1475,12 +1217,12 @@ so that you can choose the word that makes your code most readable in your given
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '78', 78)" onmouseover="showTip(event, '78', 78)">
+          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
             unzip3(g)
           </code>
-          <div class="tip" id="78">
-            <strong>Signature:</strong> g:Gen&lt;&#39;?9889 * &#39;?9890 * &#39;?9891&gt; -&gt; Gen&lt;&#39;?9889&gt; * Gen&lt;&#39;?9890&gt; * Gen&lt;&#39;?9891&gt;<br />
-                          <strong>Type parameters:</strong> '?9889, '?9890, '?9891                        <span>
+          <div class="tip" id="61">
+            <strong>Signature:</strong> g:Gen&lt;&#39;?10144 * &#39;?10145 * &#39;?10146&gt; -&gt; Gen&lt;&#39;?10144&gt; * Gen&lt;&#39;?10145&gt; * Gen&lt;&#39;?10146&gt;<br />
+                          <strong>Type parameters:</strong> '?10144, '?10145, '?10146                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;Unzip&quot;)&gt;]<br />
           </span>
@@ -1500,10 +1242,10 @@ so that you can choose the word that makes your code most readable in your given
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '79', 79)" onmouseover="showTip(event, '79', 79)">
+          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
             where predicate generator
           </code>
-          <div class="tip" id="79">
+          <div class="tip" id="62">
             <strong>Signature:</strong> predicate:(&#39;b -&gt; bool) -&gt; generator:Gen&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;<br />
                           <strong>Type parameters:</strong> 'b                        <span>
             <strong>Attributes:</strong><br />
@@ -1529,10 +1271,10 @@ so that you can choose the word that makes your code most readable in your given
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '80', 80)" onmouseover="showTip(event, '80', 80)">
+          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
             zip f g
           </code>
-          <div class="tip" id="80">
+          <div class="tip" id="63">
             <strong>Signature:</strong> f:Gen&lt;&#39;c&gt; -&gt; g:Gen&lt;&#39;d&gt; -&gt; Gen&lt;&#39;c * &#39;d&gt;<br />
                           <strong>Type parameters:</strong> 'c, 'd                        <span>
             <strong>Attributes:</strong><br />
@@ -1554,10 +1296,10 @@ so that you can choose the word that makes your code most readable in your given
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '81', 81)" onmouseover="showTip(event, '81', 81)">
+          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
             zip3 f g h
           </code>
-          <div class="tip" id="81">
+          <div class="tip" id="64">
             <strong>Signature:</strong> f:Gen&lt;&#39;d&gt; -&gt; g:Gen&lt;&#39;e&gt; -&gt; h:Gen&lt;&#39;f&gt; -&gt; Gen&lt;&#39;d * &#39;e * &#39;f&gt;<br />
                           <strong>Type parameters:</strong> 'd, 'e, 'f                        <span>
             <strong>Attributes:</strong><br />

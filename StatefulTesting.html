@@ -110,14 +110,14 @@ fails the test if a postcondition does not hold.</p>
 <p>A specification can be checked as follows:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs28', 83)" onmouseover="showTip(event, 'fs28', 83)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs29', 84)" onmouseover="showTip(event, 'fs29', 84)" class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs9', 85)" onmouseover="showTip(event, 'fs9', 85)" class="m">Command</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs30', 86)" onmouseover="showTip(event, 'fs30', 86)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs7', 87)" onmouseover="showTip(event, 'fs7', 87)" class="id">spec</span><span class="pn">)</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs28', 83)" onmouseover="showTip(event, 'fs28', 83)" class="id">Check</span><span class="pn">.</span><span class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs9', 84)" onmouseover="showTip(event, 'fs9', 84)" class="id">Command</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs29', 85)" onmouseover="showTip(event, 'fs29', 85)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs7', 86)" onmouseover="showTip(event, 'fs7', 86)" class="id">spec</span><span class="pn">)</span>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (1 shrink) (StdGen (806468692,296584891)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 7 tests (4 shrinks) (StdGen (2109449554,296713329)):
 Label of failing property: model: 2 &lt;&gt; Counter=1
 Original:
-[inc; inc; inc; dec; dec]
+[inc; dec; dec; inc; inc; inc; inc; dec]
 Shrunk:
 [inc; inc; inc; dec]</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.</p>
@@ -255,9 +255,8 @@ Shrunk:
 <div class="tip" id="fs25">val model : int</div>
 <div class="tip" id="fs26">Multiple items<br />module Gen<br /><br />from FsCheck<br /><br />--------------------<br />type Gen&lt;&#39;a&gt; =<br />&#160;&#160;private | Gen of (int -&gt; StdGen -&gt; &#39;a)<br />&#160;&#160;&#160;&#160;interface IGen<br />&#160;&#160;&#160;&#160;member private Map : f:(&#39;a -&gt; &#39;b) -&gt; Gen&lt;&#39;b&gt;<br />&#160;&#160;&#160;&#160;static member ( &gt;&gt;= ) : m:Gen&lt;&#39;a1&gt; * k:(&#39;a1 -&gt; Gen&lt;&#39;a2&gt;) -&gt; Gen&lt;&#39;a2&gt;<br />&#160;&#160;&#160;&#160;static member ( &lt;!&gt; ) : f:(&#39;a1 -&gt; &#39;a2) * a:Gen&lt;&#39;a1&gt; -&gt; Gen&lt;&#39;a2&gt;<br />&#160;&#160;&#160;&#160;static member ( &lt;*&gt; ) : f:Gen&lt;(&#39;a1 -&gt; &#39;a2)&gt; * a:Gen&lt;&#39;a1&gt; -&gt; Gen&lt;&#39;a2&gt;</div>
 <div class="tip" id="fs27">val elements : xs:seq&lt;&#39;b&gt; -&gt; Gen&lt;&#39;b&gt;</div>
-<div class="tip" id="fs28">type Check =<br />&#160;&#160;static member All : config:Config -&gt; unit<br />&#160;&#160;static member All : config:Config * test:Type -&gt; unit<br />&#160;&#160;static member Method : config:Config * methodInfo:MethodInfo * ?target:obj -&gt; unit<br />&#160;&#160;static member One : config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member One : name:string * config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : name:string * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member QuickAll : unit -&gt; unit<br />&#160;&#160;static member QuickAll : test:Type -&gt; unit<br />&#160;&#160;static member QuickThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;...</div>
-<div class="tip" id="fs29">static member Check.Quick : property:&#39;Testable -&gt; unit<br />static member Check.Quick : name:string * property:&#39;Testable -&gt; unit</div>
-<div class="tip" id="fs30">val toProperty : spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; Property</div>
+<div class="tip" id="fs28"></div>
+<div class="tip" id="fs29">val toProperty : spec:ICommandGenerator&lt;&#39;Actual,&#39;Model&gt; -&gt; Property</div>
 
         </div>
         <div class="span3">

@@ -42,25 +42,6 @@
 </div>
 
 <!-- Render nested types and modules, if there are any -->
-  <h2>Nested types and modules</h2>
-  <div>
-      <table class="table table-bordered type-list">
-    <thead>
-      <tr><td>Type</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-arb-default.html">Default</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
 
   <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
@@ -203,7 +184,7 @@ Shrink is not supported for this type.</p>
             fromGenShrinkFunc(gen, shrinker)
           </code>
           <div class="tip" id="6">
-            <strong>Signature:</strong> (gen:Gen&lt;&#39;Value&gt; * shrinker:Func&lt;&#39;Value,seq&lt;&#39;Value&gt;&gt;) -&gt; Arbitrary&lt;&#39;Value&gt;<br />
+            <strong>Signature:</strong> (gen:Gen&lt;&#39;Value&gt; * shrinker:(type)) -&gt; Arbitrary&lt;&#39;Value&gt;<br />
                           <strong>Type parameters:</strong> 'Value                        <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;From&quot;)&gt;]<br />
@@ -307,7 +288,7 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
             registerByType(t)
           </code>
           <div class="tip" id="10">
-            <strong>Signature:</strong> t:Type -&gt; TypeClassComparison<br />
+            <strong>Signature:</strong> t:(type) -&gt; TypeClassComparison<br />
                                     <span>
             <strong>Attributes:</strong><br />
 [&lt;CompiledName(&quot;Register&quot;)&gt;]<br />
@@ -357,8 +338,8 @@ from the generator - and you can map the value instead. E.g. PositiveInt.</p>
             shrinkNumber(n)
           </code>
           <div class="tip" id="12">
-            <strong>Signature:</strong> n:^?9467 -&gt; seq&lt;^?9467&gt;<br />
-                          <strong>Type parameters:</strong> ^?9467, ^?9468, ^?9469, ^?9470                      </div>
+            <strong>Signature:</strong> n:^?9722 -&gt; seq&lt;^?9722&gt;<br />
+                          <strong>Type parameters:</strong> ^?9722, ^?9723, ^?9724, ^?9725                      </div>
         </td>
         <td class="xmldoc">
                       <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Arbitrary.fs#L200-200" class="github-link">
