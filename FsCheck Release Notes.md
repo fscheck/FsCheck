@@ -1,3 +1,5 @@
+### 2.14.2 - To be released
+
 ### 2.14.1 - 1 March 2020
 * Add support for struct type generation and shrinking. (by Kody Musick)
 * Support setting PropertyAttribute.Replay  to null. (by Eirik Tsarpalis)
