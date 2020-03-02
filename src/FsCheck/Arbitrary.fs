@@ -119,7 +119,7 @@ type DoNotShrink<'a> = DoNotShrink of 'a
 ///as the test gets further, by applying this type the underlying
 ///type will ignore this size and always generate from the full range.
 ///Note that this only makes a difference for types that have a range -
-///currently Int16, Int32, Int64 have DoNotSize Arbitrary instances.
+///currently integer types, TimeSpan and Decimal have DoNotSize Arbitrary instances.
 ///This is typically (and at least currently) only applicable for value types
 ///that are comparable, hence the type constraints.
 type DoNotSize<'a when 'a : struct and 'a : comparison> = 
@@ -264,32 +264,29 @@ module Arb =
            override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred
        }
   
-    ///A collection of default generators.
+    ///A collection of default Arbitrary instances for some types.
     type Default with
-        static member private fraction (a:int) (b:int) (c:int) = 
-            double a + double b / (abs (double c) + 1.0) 
-        
         ///Generates (), of the unit type.
         static member Unit() = 
             fromGen <| Gen.constant ()
 
-        ///Generates an arbitrary bool.
+        ///Generates bool values.
         static member Bool() = 
             fromGen <| Gen.elements [true; false]
 
-        ///Generates an arbitrary byte.
+        ///Generates byte values that are unrestricted by size.
         static member Byte() =
             fromGenShrink ( Gen.choose (0,255) |> Gen.map byte, //this is now size independent - 255 is not enough to not cover them all anyway 
                             int >> shrink >> Seq.map byte)
 
-        ///Generates an arbitrary signed byte.
+        ///Generates sbyte values that are unrestricted by size.
         static member SByte() =
             fromGenShrink ( Gen.choose (-128,127) |> Gen.map sbyte,
                             int >> shrink 
                             >> Seq.filter (fun e -> -128 <= e && e <= 127) //the int shrinker shrinks -128 to 128 which overflows
                             >> Seq.map sbyte)
 
-        ///Generate arbitrary int16 that is between -size and size.
+        ///Generates int16 values that are between -size and size.
         static member Int16() =
             Default.Int32()
             |> convert int16 int
@@ -300,7 +297,7 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert (int16 >> DoNotSize) (DoNotSize.Unwrap >> int)
 
-        ///Generate arbitrary uint16 that is between 0 and size.
+        ///Generates uint16 values that are between 0 and size.
         static member UInt16() =
             Default.Int32()
             |> convert (abs >> uint16) int
@@ -311,7 +308,7 @@ module Arb =
             fromGenShrink(gen, shrink)
             |> convert (uint16 >> DoNotSize) (DoNotSize.Unwrap >> int)
             
-        ///Generate arbitrary int32 that is between -size and size.
+        ///Generates int32 values that are between -size and size.
         static member Int32() = 
             fromGenShrink ( Gen.sized (fun n -> Gen.choose (-n,n)),
                             shrinkNumber)
@@ -321,23 +318,25 @@ module Arb =
             //let gen = Gen.choose(Int32.MinValue, Int32.MaxValue) doesn't work with random.fs, 
             //so using this trick instead
             let gen =
-                Gen.two generate<DoNotSize<int16>>
+                Gen.two generate<DoNotSize<uint16>>
                 |> Gen.map (fun (DoNotSize h,DoNotSize l) -> int ((uint32 h <<< 16) ||| uint32 l))
             fromGenShrink(gen, shrink)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generate arbitrary uint32 that is between 0 and size.
+        ///Generates uint32 values that are between 0 and size.
         static member UInt32() =
             Default.Int32()
             |> convert (abs >> uint32) int
 
         ///Generate arbitrary uint32 that is unrestricted by size.
         static member DoNotSizeUInt32() =
-            let gen = Gen.choose(0, int UInt32.MaxValue)
+            let gen =
+                Gen.two generate<DoNotSize<uint16>>
+                |> Gen.map (fun (DoNotSize h, DoNotSize l) -> (uint32 h <<< 16) ||| uint32 l)
             fromGenShrink(gen, shrink)
-            |> convert (uint32 >> DoNotSize) (DoNotSize.Unwrap >> int)
+            |> convert (uint32 >> DoNotSize) DoNotSize.Unwrap
 
-        ///Generate arbitrary int64 that is between -size and size.
+        ///Generates int64 values that are between -size and size.
         ///Note that since the size is an int32, this does not actually cover the full
         ///range of int64. See DoNotSize<int64> instead.
         static member Int64() =
@@ -348,17 +347,17 @@ module Arb =
         ///Generate arbitrary int64 that is unrestricted by size.
         static member DoNotSizeInt64() =
             let gen =
-                Gen.two generate<DoNotSize<int32>>
-                |> Gen.map (fun (DoNotSize h, DoNotSize l) -> (int64 h <<< 32) ||| int64 l)
+                Gen.two generate<DoNotSize<uint32>>
+                |> Gen.map (fun (DoNotSize h, DoNotSize l) -> int64 ((uint64 h <<< 32) ||| uint64 l))
             fromGenShrink (gen,shrinkNumber)
             |> convert DoNotSize DoNotSize.Unwrap
         
-        ///Generate arbitrary uint64 that is between 0 and size.
+        ///Generates uint64 values that are between 0 and size.
         static member UInt64() =
             from<int>
             |> convert (abs >> uint64) int
         
-        ///Generate arbitrary uint64 that is unrestricted by size.
+        ///Generates uint64 values that are unrestricted by size.
         static member DoNotSizeUInt64() =
             let gen =
                 Gen.two generate<DoNotSize<uint32>>
@@ -366,69 +365,156 @@ module Arb =
             fromGenShrink (gen,shrink)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generates arbitrary 64 bit floats, NaN, NegativeInfinity, PositiveInfinity, 
+        ///Generates uniformly distributed floats in range [0; 1).
+        ///NOTE: Uniform distribution means that generated value is equally likely to be in each subrange of same length 
+        ///It DOES NOT means that all representable float values in range [0; 1) are equally likely to appear.
+        ///Actually, most of the values in range [0; 1) are NEVER generated.
+        ///See "Generating uniform doubles in the unit interval" at http://xoshiro.di.unimi.it/ 
+        static member private stdFloatGen =
+            generate<DoNotSize<uint64>>
+            |> Gen.map (fun (DoNotSize n) -> (float (n >>> 11)) * (1.0 / float (1UL <<< 53)))     
+        
+        ///Generates float values that are between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
+        ///Shrinks by yielding zero, abs of the origin and the truncated origin.
+        static member NormalFloat() =
+            let generator = Gen.sized (fun size ->
+                Gen.map2
+                    (fun f isNegative -> 
+                        let value = f * float size
+                        if isNegative then -value else value)
+                    Default.stdFloatGen
+                    generate
+                )
+            let shrinker fl =
+                let (|<|) x y = abs x < abs y
+                seq { 
+                        if fl <> 0.0 then yield 0.0
+                        if fl < 0.0 then yield -fl
+                        let truncated = truncate fl
+                        if truncated |<| fl then yield truncated }
+                |> Seq.distinct               
+            fromGenShrink(generator, shrinker)
+            |> convert NormalFloat float
+
+        ///Generates float values that are between -size and size, NaN, NegativeInfinity, PositiveInfinity, 
         ///MaxValue, MinValue, Epsilon included fairly frequently.
+        ///Shrinks by yielding zero, abs of the origin and the truncated origin.
         static member Float() = 
             let generator =
-                Gen.frequency [(6, Gen.map3 Default.fraction generate generate generate)
+                Gen.frequency [(6, Default.NormalFloat().Generator |> Gen.map (fun (NormalFloat f) -> f))
                               ;(1, Gen.elements [ Double.NaN; Double.NegativeInfinity; Double.PositiveInfinity])
                               ;(1, Gen.elements [ Double.MaxValue; Double.MinValue; Double.Epsilon])]
             let shrinker fl =
-                let (|<|) x y = abs x < abs y
-                seq {   if Double.IsInfinity fl || Double.IsNaN fl then 
-                            yield 0.0
-                        else
-                            if fl < 0.0 then yield -fl
-                            let truncated = truncate fl
-                            if truncated |<| fl then yield truncated }
-                |> Seq.distinct
+                if Double.IsInfinity fl || Double.IsNaN fl then seq {yield 0.0}
+                else Default.NormalFloat().Shrinker (NormalFloat fl) |> Seq.map (fun (NormalFloat f) -> f)
             fromGenShrink(generator, shrinker)
 
-        /// Generates a "normal" 64 bit floats (without NaN, Infinity, Epsilon, MinValue, MaxValue)
-        static member NormalFloat() =
-            fromGenShrink(Gen.map3 Default.fraction generate generate generate, Default.Float().Shrinker)
-            |> convert NormalFloat float
-
-        ///Generates arbitrary 32 bit floats, NaN, NegativeInfinity, PositiveInfinity, Maxvalue, MinValue, Epsilon included fairly frequently.
+        ///Generates float32 values that are between -size and size, NaN, NegativeInfinity, PositiveInfinity, 
+        ///MaxValue, MinValue, Epsilon included fairly frequently.
+        ///Shrinks by yielding zero, abs of the origin and the truncated origin.
         static member Float32() = 
             let generator =
-                let fraction a b c = float32 (Default.fraction a b c)
-                Gen.frequency   [(6, Gen.map3 fraction generate generate generate)
-                                ;(1, Gen.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity])
-                                ;(1, Gen.elements [ Single.MaxValue; Single.MinValue; Single.Epsilon])]
+                Gen.frequency [(6, Default.NormalFloat().Generator |> Gen.map (fun (NormalFloat f) -> float32 f))
+                              ;(1, Gen.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity])
+                              ;(1, Gen.elements [ Single.MaxValue; Single.MinValue; Single.Epsilon])]
             let shrinker fl =
-                let (|<|) x y = abs x < abs y
-                seq {   if Single.IsInfinity fl || Single.IsNaN fl then 
-                            yield 0.0f
-                        else
-                            if fl < 0.0f then yield -fl
-                            let truncated = truncate fl
-                            if truncated |<| fl then yield truncated }
-                |> Seq.distinct
+                if Single.IsInfinity fl || Single.IsNaN fl then seq {yield 0.0f}
+                else Default.NormalFloat().Shrinker (fl |> float |> NormalFloat) |> Seq.map (fun (NormalFloat f) -> f |> float32)
             fromGenShrink (generator,shrinker)
 
-        ///Generate arbitrary decimal.
+        ///Generates uniformly distributed Decimal values in range [0; 1).
+        static member private stdDecimalGen =
+#if !NETSTANDARD1_0
+            let tenPow7 = 1_000_000_0
+            let p = 
+                Gen.choose(0, tenPow7 - 1) 
+                |> Gen.map bigint  
+            Gen.map4
+                (fun p1 p2 p3 p4 ->
+                let tenPow7 = bigint tenPow7
+                p1 * tenPow7 * tenPow7 * tenPow7 +
+                p2 * tenPow7 * tenPow7 +
+                p3 * tenPow7 +
+                p4)
+                p p p p
+            |> Gen.map
+                (fun mant ->
+                    let tenPow7 = decimal tenPow7
+                    let mant = decimal mant
+                    mant / tenPow7 / tenPow7 / tenPow7 / tenPow7)
+//.NET Standard 1.0 doesn't have explicit conversion from bigint to decimal.
+//Thus, in this case we use only 9 significant bits.
+//It isn't that trivial to implement own conversion and corefx one use
+//private fields of BigInteger.
+#else 
+            let tenPow9 = 1_000_000_000
+            Gen.choose(0, tenPow9 - 1)
+            |> Gen.map Decimal
+            |> Gen.map (fun d -> d / (Decimal tenPow9)) 
+#endif
+
+        ///Generates decimal values that are between -size and size.
+#if NETSTANDARD1_0
+        ///NOTE: .NET Standard 1.0 version use only 9 significant digits.
+#endif
+        ///Shrinks by yielding zero, abs of the origin and the truncated origin.
         static member Decimal() =
-            let genDecimal = 
-                    Gen.map5 (fun lo mid hi isNegative scale -> Decimal(lo, mid, hi, isNegative, scale))
-                             generate generate generate generate (Gen.choose(0, 28) |> Gen.map byte)
-                    
-            let shrinkDecimal d =
+            let generator = Gen.sized (fun size ->
+                Default.stdDecimalGen
+                |> Gen.map (fun d -> d * Decimal size)
+                )
+            let shrinker d =
                 let (|<|) x y = abs x < abs y
                 seq {
+                    if d <> 0m then yield 0m
                     if d < 0m then yield -d
                     let truncated = truncate d
                     if truncated |<| d then yield truncated
                 }
-            fromGenShrink (genDecimal, shrinkDecimal)
-            
-        ///Generates arbitrary chars, between ASCII codes Char.MinValue and 127.
+            fromGenShrink(generator, shrinker)
+
+        ///Generates decimal values that are unrestricted by size.
+        ///Shrinks by yielding zero, abs of the origin and the truncated origin.
+        static member DoNotSizeDecimal() =
+            let generator = 
+                Gen.map5 
+                    (fun lo mid hi isNegative scale -> Decimal(lo, mid, hi, isNegative, scale))
+                    (generate |> Gen.map DoNotSize.Unwrap)
+                    (generate |> Gen.map DoNotSize.Unwrap)
+                    (generate |> Gen.map DoNotSize.Unwrap)
+                    (generate |> Gen.map DoNotSize.Unwrap)
+                    (Gen.choose(0, 28) |> Gen.map byte)                               
+            fromGenShrink (generator, Default.Decimal().Shrinker)
+            |> convert DoNotSize DoNotSize.Unwrap
+
+#if !NETSTANDARD1_0
+        ///Generates complex values of form {float + i*float}. 
+        ///Shrinks by removing the imaginary part and shrinking both parts.
+        static member Complex() =
+            let gen = 
+                Gen.two generate<float>
+                |> Gen.map Numerics.Complex
+            let shrinker (c : Numerics.Complex) =
+                match (c.Real, c.Imaginary) with
+                | (r, 0.0) -> 
+                    shrink r
+                    |> Seq.map (fun r -> Numerics.Complex(r, 0.0))
+                | (r, i) ->
+                    let realOnly = seq { yield Numerics.Complex(r, 0.0)}
+                    let shrunk =
+                        shrink (r, i)
+                        |> Seq.filter (fun (sr, si) -> not (si = 0.0 && sr.Equals r)) //We use Equals to properly compare NaNs
+                        |> Seq.map Numerics.Complex
+                    Seq.append realOnly shrunk
+            fromGenShrink (gen, shrinker)
+#endif  
+        ///Generates characters that are between ASCII codes Char.MinValue and 127.
         static member Char() = 
             let generator = Gen.choose (int Char.MinValue, 127) |> Gen.map char
             let shrinker c = seq { for c' in ['a';'b';'c'] do if c' < c || not (Char.IsLower c) then yield c' }
             fromGenShrink (generator, shrinker)
 
-        ///Generates arbitrary strings, which are lists of chars generated by Char.
+        ///Generates strings, which are lists of characters or null (1/10 of the time).
         static member String() = 
             let generator = Gen.frequency [(9, Gen.map (fun (chars:char[]) -> new String(chars)) generate);(1, Gen.constant null)]
             let shrinker (s:string) = 
@@ -437,7 +523,7 @@ module Arb =
                     | _ -> s.ToCharArray() |> shrink |> Seq.map (fun chars -> new String(chars))
             fromGenShrink (generator,shrinker)
 
-        ///Generate an option value that is 'None' 1/8 of the time.
+        ///Generates option values that are 'None' 1/8 of the time.
         static member Option() = 
             { new Arbitrary<option<'a>>() with
                 override __.Generator = Gen.optionOf generate
@@ -447,7 +533,7 @@ module Arb =
                     | None  -> Seq.empty
             }
 
-        ///Generate underlying values that are not null.
+        ///Generates underlying values that are not null.
         static member NonNull() =
             let inline notNull x = not (LanguagePrimitives.PhysicalEquality null x)
             { new Arbitrary<NonNull<'a>>() with
@@ -457,17 +543,19 @@ module Arb =
                     shrink o |> Seq.where notNull |> Seq.map NonNull
             }
 
-        ///Generate a nullable value that is null 1/8 of the time.
+        ///Generates nullable values that are null 1/8 of the time.
         static member Nullable() = 
             { new Arbitrary<Nullable<'a>>() with
-                override __.Generator = Gen.frequency [(1, gen { return Nullable() }); (7, Gen.map Nullable generate)]
+                override __.Generator = Gen.frequency [(1, Gen.fresh Nullable); (7, Gen.map Nullable generate)]
                 override __.Shrinker o =
                     if o.HasValue
                         then seq { yield Nullable(); for x' in shrink o.Value -> Nullable x' }
                         else Seq.empty
             }
 
-        ///Generate a list of values. The size of the list is between 0 and the test size + 1.
+        ///Generates lists. 
+        ///The length of the generated list is between 0 and the test size + 1. 
+        ///The sum of the sizes of the elements is equal to the size of the generated list.
         static member FsList() = 
             { new Arbitrary<list<'a>>() with
                 override __.Generator = Gen.listOf generate
@@ -481,7 +569,7 @@ module Arb =
                     shrinkList l
             }
 
-        ///Generate an object - a boxed char, string or boolean value.
+        ///Generates objects which are a boxed char, string or boolean value.
         static member Object() =
             { new Arbitrary<obj>() with
                 override __.Generator = 
@@ -498,7 +586,9 @@ module Arb =
                         }
             }
 
-        ///Generate a rank 1 array.
+        ///Generates a rank 1 arrays. 
+        ///The length of the generated array is between 0 and the test size + 1. 
+        ///The sum of the sizes of the elements is equal to the size of the generated array.
         static member Array() =
             { new Arbitrary<'a[]>() with
                 override __.Generator = Gen.arrayOf generate
@@ -532,7 +622,9 @@ module Arb =
                     shrinkArray arr
             }
 
-        ///Generate a rank 2, zero based array.
+        ///Generate a rank 2, zero based array. 
+        ///The product of the width and the height is between 0 and the test size.
+        // {NOT YET} The sum of the sizes of the elements is equal to the size of the generated array.
         static member Array2D() = 
             let shrinkArray2D (arr:_[,]) =
                 let removeRow r (arr:_[,]) =
@@ -551,21 +643,21 @@ module Arb =
                             
             fromGenShrink (Gen.array2DOf generate,shrinkArray2D)
 
-         ///Generate a function value. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
-         ///There is no shrinking for function values.
+        ///Generates function values. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
+        ///There is no shrinking for function values.
         static member Arrow() = 
             let gen = let vfun = Gen.variant in Gen.promote (fun a -> vfun a generate)
             { new Arbitrary<'a->'b>() with
                 override __.Generator = gen
             }
 
-        ///Generate a F# function value. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
+        ///Generates F# function values. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
          ///There is no shrinking for function values.
         [<CompiledName("FSharpFun")>]
         static member Fun() = Default.Arrow()
 
-        ///Generate am F# function value that generates an instance of the function result type about half the time. The other 
-        ///times it generates one of the given exceptions.
+        ///Generates F# function values that generate an instance of the function result type about half the time. The other 
+        ///times it generate one of the given exceptions.
         [<CompiledName("ThrowingFSharpFun")>]
         static member ThrowingFunction(exceptions:Exception seq) = 
             let exc = exceptions |> Seq.toArray
@@ -577,8 +669,8 @@ module Arb =
                 override __.Generator = gen
             }
 
-        ///Generate an F# function value that generates an instance of the function result type about half the time. The other 
-        ///times it generates one of a list of common .NET exceptions, including Exception, ArgumentException, ArithmeticException,
+        ///Generates F# function values that generate an instance of the function result type about half the time. The other 
+        ///times it generate one of a list of common .NET exceptions, including Exception, ArgumentException, ArithmeticException,
         ///IOException, NotImplementedException, OUtOfMemoryException and others.
         [<CompiledName("ThrowingFSharpFun")>]
         static member ThrowingFunction() = 
@@ -619,7 +711,7 @@ module Arb =
 #endif                                
                                      |]
 
-        ///Generate a Function value that can be printed and shrunk. Function values can be generated for types 'a->'b 
+        ///Generates Function values that can be printed and shrunk. Function values can be generated for types 'a->'b 
         ///where 'b has an Arbitrary instance.
         static member Function() =
             { new Arbitrary<Function<'a,'b>>() with
@@ -631,47 +723,47 @@ module Arb =
                                 yield Function<'a,'b>.From (update x y' f.Value) }
             }
 
-        ///Generates a Func'1.
+        ///Generates Func'1 values.
         static member SystemFunc() =
             Default.Fun()
             |> convert (fun f -> Func<_>(f)) (fun f -> f.Invoke)
 
-        ///Generates a Func'2.
+        ///Generates Func'2 values.
         static member SystemFunc1() =
             Default.Fun()
             |> convert (fun f -> Func<_,_>(f)) (fun f -> f.Invoke)
 
-        ///Generates a Func'3.
+        ///Generates Func'3 values.
         static member SystemFunc2() =
             Default.Fun()
             |> convert (fun f -> Func<_,_,_>(f)) (fun f a b -> f.Invoke(a,b))
 
-        ///Generates a Func'4.
+        ///Generates Func'4 values.
         static member SystemFunc3() =
             Default.Fun()
             |> convert (fun f -> Func<_,_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
 
-        ///Generates an Action'0
+        ///Generates Action'0 values.
         static member SystemAction() =
             Default.Fun()
             |> convert (fun f -> Action(f)) (fun f -> f.Invoke)
 
-        ///Generates an Action'1
+        ///Generates Action'1 values.
         static member SystemAction1() =
             Default.Fun()
             |> convert (fun f -> Action<_>(f)) (fun f -> f.Invoke)
 
-        ///Generates an Action'2
+        ///Generates Action'2 values.
         static member SystemAction2() =
             Default.Fun()
             |> convert (fun f -> Action<_,_>(f)) (fun f a b -> f.Invoke(a,b))
 
-        ///Generates an Action'3
+        ///Generates Action'3 values.
         static member SystemAction3() =
             Default.Fun()
             |> convert (fun f -> Action<_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
 
-        ///Generates an arbitrary DateTime between 1900 and 2100. 
+        ///Generates DateTime values that are between 1900 and 2100. 
         ///A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour components.
         static member DateTime() = 
             let genDate = gen {  let! y = Gen.choose(1900,2100)
@@ -685,7 +777,7 @@ module Arb =
                                  return DateTime(y, m, d, h, min, sec, ms, kind) }
             fromGenShrink (genDate,shrinkDate)
 
-        ///Generate arbitrary DateTime that is unrestricted by size.
+        ///Generates DateTime values that are unrestricted by size.
         ///A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour components.
         static member DoNotSizeDateTime() =
             let genDate = gen {  let! (DoNotSize ticks) = generate<DoNotSize<int64>>
@@ -694,7 +786,8 @@ module Arb =
             fromGenShrink (genDate,shrinkDate)
             |> convert DoNotSize DoNotSize.Unwrap
 
-        ///Generates an arbitrary TimeSpan. A TimeSpan is shrunk by removing days, hours, minutes, second and milliseconds.
+        ///Generates TimeSpan values that are unrestricted by size. 
+        ///A TimeSpan is shrunk by removing days, hours, minutes, second and milliseconds.
         static member TimeSpan() =
             let genTimeSpan = generate |> Gen.map (fun (DoNotSize ticks) -> TimeSpan ticks)
             let shrink (t: TimeSpan) = 
@@ -712,7 +805,7 @@ module Arb =
                     Seq.empty
             fromGenShrink (genTimeSpan, shrink)
 
-        ///Generates an arbitrary DateTimeOffset between 1900 and 2100. 
+        ///Generates DateTimeOffset values that are between 1900 and 2100. 
         /// A DateTimeOffset is shrunk first by shrinking its offset, then by removing its second, minute and hour components.
         static member DateTimeOffset() =
             let genTimeZone = gen {
@@ -741,11 +834,7 @@ module Arb =
 
         static member KeyValuePair() =
             let genKeyValuePair =
-                gen {
-                    let! key = generate
-                    let! value = generate
-                    return KeyValuePair(key, value)
-                }
+                Gen.map2 (fun k v -> KeyValuePair(k, v)) generate generate
             let shrinkKeyValuePair (kvp:KeyValuePair<_,_>) = 
                 seq { for key in shrink kvp.Key do
                         for value in shrink kvp.Value do
@@ -779,11 +868,17 @@ module Arb =
                                        |> Gen.map IntWithMinMax
                 override __.Shrinker (IntWithMinMax i) = shrink i |> Seq.map IntWithMinMax }
 
-        ///Generates an interval between two non-negative integers.
+        ///Generates intervals between two non-negative integers.
         static member Interval() =
-            gen { let! start,offset = Gen.two generate
-                  return Interval (abs start,abs start+abs offset) }//TODO: shrinker
-            |> fromGen
+            let generator = 
+                generate
+                |> Gen.two
+                |> Gen.map (fun (start, offset) -> Interval (abs start, abs start + abs offset))
+            let shrinker (i : Interval) =
+                (i.Left, i.Right - i.Left)
+                |> shrink
+                |> Seq.map (fun (start, offset) -> Interval(start, start + offset))
+            fromGenShrink(generator, shrinker)
 
 
         static member StringWithoutNullChars() =
@@ -842,23 +937,22 @@ module Arb =
             }
             |> convert FixedLengthArray (fun (FixedLengthArray a) -> a)
 
-        /// Generate a System.Collections.Generic.List of values.
+        /// Generates System.Collections.Generic.List instances.
         static member List() =
             Default.FsList() 
             |> convert Enumerable.ToList Seq.toList
 
-        /// Generate a System.Collections.Generic.IList of values.
+        /// Generates System.Collections.Generic.IList instances.
         static member IList() =
             Default.List()
             |> convert (fun x -> x :> _ IList) (fun x -> x :?> _ List)
 
-        /// Generate a System.Collections.Generic.ICollection of values.
+        /// Generates System.Collections.Generic.ICollection instances.
         static member ICollection() =
             Default.List()
             |> convert (fun x -> x :> _ ICollection) (fun x -> x :?> _ List)
 
-        /// Generate a System.Collections.Generic.Dictionary of values.
-        /// Shrinks by reducing the number of elements
+        /// Generates System.Collections.Generic.Dictionary instances.
         static member Dictionary() =
             let genDictionary = 
                 gen {
@@ -876,8 +970,7 @@ module Arb =
                 }
             fromGenShrink (genDictionary, shrinkDictionary)
 
-        /// Generate a System.Collections.Generic.IDictionary of values.
-        /// Shrinks by reducing the number of elements
+        /// Generates System.Collections.Generic.IDictionary instances.
         static member IDictionary() =
             Default.Dictionary()
             |> convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
@@ -903,9 +996,9 @@ module Arb =
 
         static member Guid() =
             gen {
-                let! a = generate
-                let! b = generate
-                let! c = generate
+                let! (DoNotSize a) = generate
+                let! (DoNotSize b) = generate
+                let! (DoNotSize c) = generate
                 let! d = generate
                 let! e = generate
                 let! f = generate
@@ -916,6 +1009,35 @@ module Arb =
                 let! k = generate
                 return Guid((a: int),b,c,d,e,f,g,h,i,j,k)
             } |> fromGen
+
+#if !NETSTANDARD1_0
+        ///Generates System.ConsoleKeyInfo values.
+        ///Shrinks by reducing number of special key modifiers
+        static member ConsoleKeyInfo() =
+            let generator = 
+                gen {
+                    let! char = generate
+                    let! key = generate
+                    let! shift = generate
+                    let! alt = generate
+                    let! ctrl = generate
+                    return ConsoleKeyInfo(char, key, shift, alt, ctrl)
+                }
+            let shrinker (cki : ConsoleKeyInfo) =
+                let toBools (m : ConsoleModifiers) = (
+                    (m &&& ConsoleModifiers.Shift) <> enum<ConsoleModifiers>(0),
+                    (m &&& ConsoleModifiers.Alt) <> enum<ConsoleModifiers>(0),
+                    (m &&& ConsoleModifiers.Control) <> enum<ConsoleModifiers>(0))
+                let (shift, alt, ctrl) = toBools cki.Modifiers
+                seq {
+                    if shift then yield (false, alt, ctrl)
+                    if alt then yield (shift, false, ctrl)
+                    if ctrl then yield (shift, alt, false)
+                }
+                |> Seq.map (fun (shift, alt, ctrl) -> 
+                    ConsoleKeyInfo(cki.KeyChar, cki.Key, shift, alt, ctrl))
+            fromGenShrink(generator, shrinker)
+#endif
 
 #if NETSTANDARD1_0 || NETSTANDARD1_6
 #else
@@ -1081,7 +1203,7 @@ module Arb =
             fromGenShrink (generator, shrinker)
 #endif
 
-        ///Arbitrary instance for BigInteger.
+        ///Generates BigInteger values that are between -size and size.
         static member BigInt() =
             Default.Int32()
             |> convert bigint int

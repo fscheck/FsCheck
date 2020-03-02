@@ -1,5 +1,5 @@
 (*** hide ***)
-#I @"../../src/FsCheck/bin/Release/net452"
+#I @"../../src/FsCheck/bin/Release/netstandard2.0"
 #r @"FsCheck"
 open FsCheck
 open System
@@ -127,7 +127,7 @@ the code F# generates for the type definition above. Assuming that, `unsafeTree`
 
 However, a recursive generator like this may fail to terminate with a 
 StackOverflowException, or produce very large results. To avoid this, 
-recursive generators should always use the size control mechanis:*)
+recursive generators should always use the size control mechanism:*)
 
 let tree =
     let rec tree' s = 
@@ -618,6 +618,15 @@ the generator by the return type of each static member.
 
 Also note that in this case we actually didn't need to write a generator or shrinker: FsCheck can 
 derive suitable instances using reflection for discriminated unions, record types and enums.
+
+### Notes about the default Generators and Shrinkers
+
+Most of the default Arbitrary instances are documented with xml comments that can be discovered via IntelliSense.
+However, there are some important things to notice that are listed here to avoid much duplicating comments.
+
+- Most of the default sized generators of the number-like types produce the uniformly distributed values in the ranges specified in the comments.
+- The same thing with the default DoNotSize generators of the number-like types except Decimal.
+- Most of the default generators of the collection types are just "wrappers" around the F# list. Thus, you can assume that they are generated and shrinked the same way.
     
 ## Useful methods on the Arb module
 

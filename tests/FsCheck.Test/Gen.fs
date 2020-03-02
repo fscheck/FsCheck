@@ -308,6 +308,11 @@ module Gen =
         assertTrue (Array2D.length1 arr <= rows)
         assertTrue (Array2D.length2 arr <= cols) 
         assertTrue (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
+    
+    [<Property>]
+    let ``ScaleSize works`` (PositiveInt size) =
+        let g = Gen.scaleSize (fun n -> n / 10) Arb.generate<int>
+        g |> Gen.sample size 100 |> List.forall (fun i -> i <= size / 10) 
 
     type MaybeNull = { SomeField : int }
 

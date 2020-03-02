@@ -1,5 +1,5 @@
 ﻿(*** hide ***)
-#I "../../src/FsCheck/bin/Release/net452"
+#I "../../src/FsCheck/bin/Release/netstandard2.0"
 #r "FsCheck"
 
 open FsCheck

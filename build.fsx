@@ -1,12 +1,13 @@
 // --------------------------------------------------------------------------------------
 // FAKE build script 
 // --------------------------------------------------------------------------------------
-#I "packages/build/FAKE/tools"
-#r "FakeLib.dll"
+#r "paket: groupref Build //"
+#load "./.fake/build.fsx/intellisense.fsx"
 
 open System
 open System.IO
 
+open Fake.Api
 open Fake.Core
 open Fake.Core.TargetOperators
 open Fake.BuildServer
@@ -57,7 +58,7 @@ let release = ReleaseNotes.load releaseNotes
 let isAppVeyorBuild = BuildServer.buildServer = BuildServer.AppVeyor
 let buildDate = DateTime.UtcNow
 let buildVersion = 
-    let isVersionTag tag = Version.TryParse tag |> fst
+    let isVersionTag (tag:string) = Version.TryParse tag |> fst
     let hasRepoVersionTag = isAppVeyorBuild && AppVeyor.Environment.RepoTag && isVersionTag AppVeyor.Environment.RepoTagName
     let assemblyVersion = if hasRepoVersionTag then AppVeyor.Environment.RepoTagName else release.NugetVersion
     if isAppVeyorBuild then sprintf "%s-b%s" assemblyVersion AppVeyor.Environment.BuildNumber
@@ -76,7 +77,7 @@ let packages =
     }
   ]
 
-Target.create "BuildVersion" (fun _ ->
+Target.create "BuildVersion" (fun _ -> 
     Shell.Exec("appveyor", sprintf "UpdateBuild -Version \"%s\"" buildVersion) |> ignore
 )
 
@@ -92,13 +93,12 @@ Target.create "AssemblyInfo" (fun _ ->
           AssemblyInfo.Version release.AssemblyVersion
           AssemblyInfo.FileVersion release.AssemblyVersion
         ] @ (if package.Name = "FsCheck" || package.Name = "FsCheck.Xunit"
-             then [AssemblyInfo.InternalsVisibleTo("FsCheck.Test")] else []))
+             then [Fake.DotNet.AssemblyInfo.InternalsVisibleTo("FsCheck.Test")] else []))
     )
 )
 
 // --------------------------------------------------------------------------------------
 // Clean build results
-
 
 Target.create "Clean" (fun _ ->
     Shell.cleanDirs ["bin"; "temp"]
@@ -113,9 +113,7 @@ Target.create "CleanDocs" (fun _ ->
 
 Target.create "Build" (fun _ ->
     DotNet.restore id solution
-    !! solution
-    |> MSBuild.runRelease (fun par -> { par with MaxCpuCount = Some (Some Environment.ProcessorCount) }) "" "Rebuild"
-    |> ignore
+    DotNet.build (fun opt -> { opt with Configuration = DotNet.BuildConfiguration.Release }) solution
 )
 
 // --------------------------------------------------------------------------------------
@@ -156,7 +154,7 @@ Target.create "PaketPush" (fun _ ->
 // Generate the documentation
 
 // Paths with template/source/output locations
-let bin        = __SOURCE_DIRECTORY__ @@ "src/FsCheck.Xunit/bin/Release/net452" //might not work in the future
+let bin        = __SOURCE_DIRECTORY__ @@ "src/FsCheck.Xunit/bin/Release/netstandard2.0" //might not work in the future
 let content    = __SOURCE_DIRECTORY__ @@ "docs/content"
 let output     = __SOURCE_DIRECTORY__ @@ "docs/output"
 let files      = __SOURCE_DIRECTORY__ @@ "docs/files"
@@ -236,16 +234,19 @@ let copyFiles () =
     |> Trace.logItems "Copying styles and scripts: "
 
 /// Specifies the fsformatting executable
-let toolPath =
-    Fake.IO.Globbing.Tools.findToolInSubPath "fsformatting.exe" (Directory.GetCurrentDirectory() @@ "tools" @@ "FSharp.Formatting.CommandTool" @@ "tools")
+let toolPath() =
+    Fake.Core.ProcessUtils.tryFindLocalTool "FSFORMATTING" "fsformatting.exe" 
+        [(Directory.GetCurrentDirectory() @@ "packages" @@ "build" @@ "FSharp.Formatting.CommandTool" @@ "tools")]
+    |> Option.get
 
 /// Runs fsformatting.exe with the given command in the given repository directory.
 let private run toolPath command = 
-    if 0 <> Process.execSimple ((fun info ->
-            { info with
-                FileName = toolPath
-                Arguments = command }) >> Process.withFramework) System.TimeSpan.MaxValue
-    then failwithf "FSharp.Formatting %s failed." command
+    let result = CreateProcess.fromRawCommandLine toolPath command
+                 |> CreateProcess.withFramework
+                 |> CreateProcess.redirectOutput
+                 |> Proc.run
+    if result.ExitCode <> 0 then 
+        failwithf "%s %s failed with exit code %i. StdOut: %s ErrOut: %s" toolPath command result.ExitCode result.Result.Output result.Result.Error
 
 type LiterateArguments =
     { ToolPath : string
@@ -255,15 +256,14 @@ type LiterateArguments =
       ProjectParameters : (string * string) list
       LayoutRoots : string list }
 
-let defaultLiterateArguments =
-    { ToolPath = toolPath
-      Source = ""
-      OutputDirectory = ""
-      Template = ""
-      ProjectParameters = []
-      LayoutRoots = [] }
-
 let createDocs p =
+    let defaultLiterateArguments =
+        { ToolPath = toolPath()
+          Source = ""
+          OutputDirectory = ""
+          Template = ""
+          ProjectParameters = []
+          LayoutRoots = [] }
     let arguments = (p:LiterateArguments->LiterateArguments) defaultLiterateArguments
     let layoutroots =
         if arguments.LayoutRoots.IsEmpty then []
@@ -277,7 +277,7 @@ let createDocs p =
         |> Seq.map (fun (k, v) -> [ k; v ])
         |> Seq.concat
         |> Seq.append 
-               (["literate"; "--processdirectory" ] @ layoutroots @ [ "--inputdirectory"; source; "--templatefile"; template; 
+               (["literate"; "--processDirectory" ] @ layoutroots @ [ "--inputDirectory"; source; "--templateFile"; template; 
                   "--fsieval"; "--outputDirectory"; outputDir; "--replacements" ])
         |> Seq.map (fun s -> 
                if s.StartsWith "\"" then s
@@ -382,9 +382,6 @@ Target.create "ReleaseDocs" (fun _ ->
     Branches.push tempDocsDir
 )
 
-#load "paket-files/build/fsharp/FAKE/modules/Octokit/Octokit.fsx"
-open Octokit 
-
 Target.create "Release" (fun _ ->
     let user = Environment.environVarOrDefault "github-user" (UserInput.getUserInput "Username: ")
     let pw = Environment.environVarOrDefault "github-pw" (UserInput.getUserPassword "Password: ")
@@ -402,10 +399,10 @@ Target.create "Release" (fun _ ->
     Branches.pushTag "" remote release.NugetVersion
 
     // release on github
-    createClient user pw
-    |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
-    // to upload a file: |> uploadFile "PATH_TO_FILE"
-    |> releaseDraft
+    GitHub.createClient user pw
+    |> GitHub.draftNewRelease gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
+    // to upload a file: |> GitHub.uploadFiles "PATH_TO_FILE"
+    |> GitHub.publishDraft
     |> Async.RunSynchronously
 )
 

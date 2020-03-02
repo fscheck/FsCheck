@@ -2,13 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>CSharp.DocSnippets</AssemblyName>
-    <TargetFrameworks>net452</TargetFrameworks>
-    <ApplicationIcon />
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Exe</OutputType>
-    <StartupObject />
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <WarningLevel>3</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <None Include="paket.references" />

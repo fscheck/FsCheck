@@ -97,7 +97,7 @@ module Arbitrary =
     let Double (NonNegativeInt size) (value:float) =
         assertTrue ( generate<float> |> Gen.resize size |> sample 10
                 |> Seq.forall (fun v -> 
-                    (-2.0 * float size <= v && v <= 2.0 * float size )
+                    (float -size <= v && v <= float size )
                     || Double.IsNaN(v) || Double.IsInfinity(v)
                     || v = Double.Epsilon || v = Double.MaxValue || v = Double.MinValue) )
         assertTrue ( shrink<float> value 
@@ -107,7 +107,7 @@ module Arbitrary =
     let Single (NonNegativeInt size) (value:float32) =
         assertTrue ( generate<float32> |> Gen.resize size |> sample 10
                 |> Seq.forall (fun v -> 
-                    (-2.0f * float32 size <= v && v <= 2.0f * float32 size )
+                    (float32 -size <= v && v <= float32 size )
                     || Single.IsNaN(v) || Single.IsInfinity(v)
                     || v = Single.Epsilon || v = Single.MaxValue || v = Single.MinValue) )
         assertTrue ( shrink<float32> value 
@@ -374,6 +374,16 @@ module Arbitrary =
     let ``NegativeInt shrinks negative ints`` (value:NegativeInt ) =
         shrink value |> Seq.forall (fun (NegativeInt v) -> v < 0)
         |> assertTrue
+    
+    [<Property>]
+    let ``Interval after shrinking is smaller than origin`` (i : Interval) =
+        let shrunk = shrink i
+        let isWithoutDuplicates = (shrunk |> Seq.distinct |> Seq.length) = (Seq.length shrunk)
+        let isSmaller = 
+            shrunk
+            |> Seq.map (fun i -> match i with Interval (start, end') -> (start, end'))
+            |> Seq.forall (fun (start, end') -> (start <= i.Left) && (end' - start <= i.Right - i.Left))
+        (isSmaller && isWithoutDuplicates)
 
     type TestEnum =
         | A = 0
@@ -454,6 +464,21 @@ module Arbitrary =
     let ``Can create 64-bit integer flags enumeration`` (value : LongFlags) =
         List.exists (fun e -> e = int64 value) [0L..7L]
         |> assertTrue
+    
+    type SimpleEnum = A = 0 | B = 1 | C = 2
+    type [<Flags>] FlagsEnum = None = 0 | A = 1 | B = 2 | C = 4 | All = 7
+    type FlagsShrunkResult = {Original: FlagsEnum; Shrunk: seq<FlagsEnum>}
+    [<Property>]
+    let ``Only enums marked as flags are shrunk`` (flags : FlagsEnum) (simple : SimpleEnum) =
+        let shrunkFlags = shrink flags
+        let shrunkSimple = shrink simple
+        if flags = FlagsEnum.None then
+            (shrunkFlags |> Seq.isEmpty) &&
+            (shrunkSimple |> Seq.isEmpty)
+        else
+            not (shrunkFlags |> Seq.isEmpty) &&
+            (shrunkSimple |> Seq.isEmpty)
+        |> Prop.collect {Original = flags; Shrunk = shrunkFlags}
 
     [<Fact>]
     let ``FsList shrunk is at minimum n-1``() =
@@ -510,15 +535,34 @@ module Arbitrary =
         generate<Map<string, char>> |> sample 10 |> Seq.exists (fun x -> not x.IsEmpty)
         |> assertTrue
 
-    [<Fact>]
-    let Decimal() =
-        generate<decimal> |> sample 10 |> ignore
+    [<Property>]
+    let Decimal (size : PositiveInt) =
+        generate<decimal> 
+        |> Gen.sample size.Get 10 
+        |> List.forall (fun d -> abs d < decimal size.Get)
 
     [<Property>]
     let ``Decimal shrinks`` (value: decimal) =
         shrink<decimal> value 
         |> Seq.forall (fun shrunkv -> shrunkv = 0m || shrunkv <= abs value)
         |> assertTrue
+
+    [<Fact>]
+    let DoNotSizeDecimal() =
+        generate<DoNotSize<decimal>> |> sample 10 |> ignore
+    
+    [<Fact>]
+    let Complex() =
+        generate<Numerics.Complex> |> sample 10
+
+    [<Property>]
+    let ``Complex shrinking produce values without duplicates and at least one without imaginary part`` (c : Numerics.Complex) =
+        let shrunk = shrink c
+        let isDistinct = (shrunk |> Seq.distinct |> Seq.length) = (Seq.length shrunk)
+        if c.Imaginary <> 0.0 then
+            isDistinct && Seq.exists (fun (sh : Numerics.Complex) -> sh.Imaginary = 0.0) shrunk
+        else
+            isDistinct
 
     [<Fact>]
     let Culture() =
@@ -533,6 +577,19 @@ module Arbitrary =
     [<Fact>]
     let Guid () =
         generate<Guid> |> sample 10 |> ignore
+
+    [<Fact>]
+    let ConsoleKeyInfo () =
+        generate<ConsoleKeyInfo> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``ConsoleKeyInfo shrinker produce distinct sequence without origin`` (cki : ConsoleKeyInfo) =
+        let shrunk = shrink cki
+        let isDistinct = (shrunk |> Seq.distinct |> Seq.length) = (Seq.length shrunk)
+        let hasOrigin = shrunk |> Seq.contains cki
+        (isDistinct && not hasOrigin)
+
+    
 #if !NETSTANDARD1_6
     [<Fact>]
     let IPAddress () =
@@ -601,6 +658,15 @@ module Arbitrary =
     let ``Derive generator for concrete class with one constructor with two parameters``() =
         generate<FakeRecord> |> sample 10 |> ignore
 
+    [<Struct>]
+    type StructRecord(a: int, b: string) =
+        member __.A = a
+        member __.B = b
+
+    [<Fact>]
+    let ``Derive generator for struct with one constructor with two parameters``() =
+        generate<StructRecord> |> sample 10 |> ignore
+
     type FakeDto() =
         member val A = Unchecked.defaultof<string> with get, set
         member val B = Unchecked.defaultof<int> with get, set
@@ -611,6 +677,30 @@ module Arbitrary =
     let ``Derive generator for concrete DTO class with writable properties``() =
         generate<FakeDto> |> sample 10 |> ignore
 
+    [<Property>]
+    let ``Derive generator for concrete DTO class shrinks`` (value: FakeDto) =
+        let shrunk = shrink value
+        // check that A gets smaller (length-wise)
+        shrunk
+        |> Seq.forall (fun shrunkv -> shrunkv.A = null || shrunkv.A.Length = 0 || shrunkv.A.Length <= value.A.Length)
+        &&
+        // check that B gets smaller (in absolute value)
+        shrunk
+        |> Seq.forall (fun shrunkv -> shrunkv.B = 0 || shrunkv.B <= abs value.B)
+        &&
+        // check that C gets smaller (in absolute value, or to null)
+        shrunk
+        |> Seq.forall (fun shrunkv ->
+                        if value.C.HasValue then
+                            (not shrunkv.C.HasValue)
+                            || shrunkv.C.Value = 0
+                            || shrunkv.C.Value <= abs value.C.Value
+                        else
+                            not shrunkv.C.HasValue)
+        &&
+        // check that D gets smaller (length-wise)
+        shrunk
+        |> Seq.forall (fun shrunkv -> shrunkv.D.Count = 0 || shrunkv.D.Count <= value.D.Count)
 
     type PrivateRecord = private { a: int; b: string }
 

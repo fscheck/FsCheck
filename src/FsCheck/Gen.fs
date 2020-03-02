@@ -347,18 +347,22 @@ module Gen =
 
     ///Combine two generators into a generator of pairs.
     //[category: Creating generators from generators]
+    [<CompiledName("Zip")>]
     let zip f g = map2 (fun x y -> x, y) f g
 
     ///Combine three generators into a generator of 3-tuples.
     //[category: Creating generators from generators]
+    [<CompiledName("Zip")>]
     let zip3 f g h = map3 (fun x y z -> x, y, z) f g h
 
     ///Split a generator of pairs into a pair of generators.
     //[category: Creating generators from generators]
+    [<CompiledName("Unzip")>]
     let unzip g = map fst g, map snd g
 
     ///Split a generator of 3-tuples into a 3-tuple of generators.
     //[category: Creating generators from generators]
+    [<CompiledName("Unzip")>]
     let unzip3 g =
         map (fun (x, _, _) -> x) g,
         map (fun (_, y, _) -> y) g,
@@ -630,6 +634,11 @@ module Gen =
     [<CompiledName("Apply")>]
     let apply (f:Gen<'a -> 'b>) (gn:Gen<'a>) : Gen<'b> = apply f gn
 
+    ///Modify a size using the given function before passing it to the given Gen.
+    //[category: Creating generators from generators]
+    [<CompiledName("ScaleSize")>]
+    let scaleSize f g = sized (fun size -> resize (f size) g)
+    
     ///Promote the given function f to a function generator. Only used for generating arbitrary functions.
     let internal promote f = Gen (fun n r -> let r1,r2 = Random.split r 
                                              GeneratedValue ((fun a -> let (Gen m) = f a in (m n r1).Value),r2))

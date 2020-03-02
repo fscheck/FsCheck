@@ -71,8 +71,11 @@ namespace FsCheck.CSharpExamples
             Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
                 .QuickCheck("Insert");
 
-            Prop.ForAll<int>(a => new Func<bool>(() => 1 / a == 1 / a).When(a != 0))
+            Prop.ForAll<int>(a => Prop.When(a != 0, () => 1 / a == 1 / a))
                 .QuickCheck("DivByZero");
+
+            Prop.ForAll<short[]>(xs => Prop.When(condition: xs.Length > 0, assertion: () => xs.Length > 0))
+                .QuickCheck("When non-empty array ==> Assert non-empty array");
 
             //counting trivial cases
             Prop.ForAll<int, int[]>((x, xs) => 

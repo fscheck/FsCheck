@@ -8,36 +8,49 @@ module internal ReflectArbitrary =
     open Microsoft.FSharp.Reflection
     open Reflect
     open Gen
-    open Gen
 
-    let inline private orElems<'a when 'a : (static member (|||) : 'a * 'a -> 'a) and 'a : (static member Zero : 'a)>
-        t
-        (els : Enum list) =
-
-        let v : 'a =
-            els
-            |> List.map (box >> unbox)
-            |> List.fold (|||) LanguagePrimitives.GenericZero
-        Enum.ToObject (t, v) :?> Enum    
+    let inline isPowerOf2 n =
+        (n <> LanguagePrimitives.GenericZero) && 
+        ((n &&& (n - LanguagePrimitives.GenericOne)) = LanguagePrimitives.GenericZero) 
 
     /// Generate a random enum of the type specified by the System.Type
     let enumOfType (t: System.Type) : Gen<Enum> =
        let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
        let vals: Array = System.Enum.GetValues(t)
-       let elems = elements [ for i in 0..vals.Length-1 -> vals.GetValue(i) :?> System.Enum] 
+       let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i)] |> List.distinct  
        if isFlags then
            let elementType = System.Enum.GetUnderlyingType t
-           if   elementType = typeof<byte>   then listOf elems |> map (orElems<byte>   t)
-           elif elementType = typeof<sbyte>  then listOf elems |> map (orElems<sbyte>  t)
-           elif elementType = typeof<uint16> then listOf elems |> map (orElems<uint16> t)
-           elif elementType = typeof<int16>  then listOf elems |> map (orElems<int16>  t)
-           elif elementType = typeof<uint32> then listOf elems |> map (orElems<uint32> t)
-           elif elementType = typeof<int>    then listOf elems |> map (orElems<int>    t)
-           elif elementType = typeof<uint64> then listOf elems |> map (orElems<uint64> t)
-           elif elementType = typeof<int64>  then listOf elems |> map (orElems<int64>  t)
+           let inline helper (elements : 'a list) =
+               let primaries = elements |> List.filter isPowerOf2
+               Gen.elements [true; false]
+               |> Gen.listOfLength primaries.Length
+               |> Gen.map (
+                   fun bools ->
+                       bools
+                       |> List.map2 
+                           (fun flag isChecked -> if isChecked then flag else LanguagePrimitives.GenericZero )
+                           primaries    
+                       |> List.fold (|||) LanguagePrimitives.GenericZero )
+               |> Gen.map (fun e -> Enum.ToObject (t, e) :?> Enum)
+           if   elementType = typeof<byte>   then
+               elems |> List.map unbox<byte>   |> helper
+           elif elementType = typeof<sbyte>  then 
+               elems |> List.map unbox<sbyte>  |> helper
+           elif elementType = typeof<uint16> then
+               elems |> List.map unbox<uint16> |> helper
+           elif elementType = typeof<int16>  then
+               elems |> List.map unbox<int16>  |> helper
+           elif elementType = typeof<uint32> then
+               elems |> List.map unbox<uint32> |> helper
+           elif elementType = typeof<int>    then
+               elems |> List.map unbox<int>    |> helper
+           elif elementType = typeof<uint64> then 
+               elems |> List.map unbox<uint64> |> helper
+           elif elementType = typeof<int64>  then
+               elems |> List.map unbox<int64>  |> helper
            else invalidArg "t" (sprintf "Unexpected underlying enum type: %O" elementType)
        else 
-           elems
+           Gen.elements (List.map (fun (o : obj) -> o :?> Enum) elems)
 
     let private reflectObj getGenerator t =
 
@@ -211,6 +224,40 @@ module internal ReflectArbitrary =
             let make = fun tuple -> FSharpValue.MakeTuple(tuple,t)
             let read = FSharpValue.GetTupleFields
             shrinkChildren read make o childrenTypes
+
+        elif isCSharpDtoType t then
+            let make = getCSharpDtoConstructor t
+            let read = getCSharpDtoReader t
+            let childrenTypes = getCSharpDtoFields t
+            shrinkChildren read make o childrenTypes
+
+        elif t.GetTypeInfo().IsEnum then
+            let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
+            if isFlags then
+                let vals: Array = System.Enum.GetValues(t)
+                let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i) ]
+                let elementType = System.Enum.GetUnderlyingType t
+                let n = Convert.ChangeType(o, elementType)
+                let inline helper (e : 'a) =
+                    seq {
+                        for i in elems do
+                            let _i = unbox<'a> i
+                            if isPowerOf2 _i then
+                                let withoutFlag = e &&& (~~~ _i)
+                                if (withoutFlag <> e) then yield withoutFlag :> obj
+                    }
+                    |> Seq.distinct
+                if   elementType = typeof<byte>   then helper (unbox<byte> n)
+                elif elementType = typeof<sbyte>  then helper (unbox<sbyte> n)
+                elif elementType = typeof<uint16> then helper (unbox<uint16> n)
+                elif elementType = typeof<int16>  then helper (unbox<int16> n)
+                elif elementType = typeof<uint32> then helper (unbox<uint32> n)
+                elif elementType = typeof<int>    then helper (unbox<int> n)
+                elif elementType = typeof<uint64> then helper (unbox<uint64> n)
+                elif elementType = typeof<int64>  then helper (unbox<int64> n)
+                else invalidArg "t" (sprintf "Unexpected underlying enum type: %O" elementType)                    
+            else
+                Seq.empty
 
         else
             Seq.empty

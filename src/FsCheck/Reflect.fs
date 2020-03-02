@@ -20,7 +20,7 @@ module internal Reflect =
 
     let isCSharpRecordType (ty: Type) = 
         let typeinfo = ty.GetTypeInfo()
-        typeinfo.IsClass && not typeinfo.IsAbstract
+        not typeinfo.IsAbstract
         && not typeinfo.ContainsGenericParameters
         && Seq.length (getPublicCtors ty) = 1
         && not (ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic) |> Seq.exists (fun p -> p.CanWrite))
@@ -71,7 +71,8 @@ module internal Reflect =
                                                           p.ParameterType)
                                                       :> Expression)
         let body  = Expression.New (ctor, pars)
-        let l     = Expression.Lambda<Func<obj[], obj>> (body, par)
+        let bodyAsObject = Expression.Convert (body, typeof<Object>)
+        let l     = Expression.Lambda<Func<obj[], obj>> (bodyAsObject, par)
         let f     = l.Compile ()
         f.Invoke
 
@@ -101,6 +102,16 @@ module internal Reflect =
         let f     = l.Compile ()
         f.Invoke
 
+    let getCSharpDtoReader (recordType: Type) =
+        if isCSharpDtoType recordType then
+            let properties = getProperties recordType
+                             |> Seq.filter (fun p -> p.CanWrite)
+                             |> Seq.map (fun p -> p.GetValue)
+                             |> Seq.toArray
+            let lookup o = Array.map (fun f -> f o) properties
+            lookup
+        else
+            failwithf "The input type must be a DTO class. Got %A" recordType
 
     /// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
     let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list = 
