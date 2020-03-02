@@ -311,8 +311,10 @@ module Gen =
     
     [<Property>]
     let ``ScaleSize works`` (PositiveInt size) =
-        let g = Gen.scaleSize (fun n -> n / 10) Arb.generate<int>
-        g |> Gen.sample size 100 |> List.forall (fun i -> i <= size / 10) 
+        Gen.scaleSize (fun n -> n / 10) Arb.generate<int>
+        |> Gen.sampleWithSize size 100 
+        |> Array.forall (fun i -> i <= size / 10)
+        |> assertTrue
 
     type MaybeNull = { SomeField : int }
 

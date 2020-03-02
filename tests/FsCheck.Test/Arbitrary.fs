@@ -538,8 +538,9 @@ module Arbitrary =
     [<Property>]
     let Decimal (size : PositiveInt) =
         generate<decimal> 
-        |> Gen.sample size.Get 10 
-        |> List.forall (fun d -> abs d < decimal size.Get)
+        |> Gen.sampleWithSize size.Get 10 
+        |> Array.forall (fun d -> abs d < decimal size.Get)
+        |> assertTrue
 
     [<Property>]
     let ``Decimal shrinks`` (value: decimal) =
