@@ -2,14 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FsCheck.NUnit.Examples</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <Name>FsCheck.NUnit.Examples</Name>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
-    <TargetFSharpCoreVersion>4.4.1.0</TargetFSharpCoreVersion>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
     <TargetFrameworks>net452</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
