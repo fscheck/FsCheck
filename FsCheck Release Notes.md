@@ -1,4 +1,5 @@
-### 2.14.2 - To be released
+### 2.14.2 -11 March 2020
+* Assembly metadata fix. This caused version 2.14.1 to be unusable in some cases; it was unlisted.
 
 ### 2.14.1 - 1 March 2020
 * Add support for struct type generation and shrinking. (by Kody Musick)
