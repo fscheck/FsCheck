@@ -148,7 +148,7 @@ so when we run this specification we can check that FsCheck does the right thing
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (4 shrinks) (StdGen (2128981816,296713329)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (2 shrinks) (StdGen (701820942,296717333)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
 (3, Setup Counter)
@@ -156,8 +156,6 @@ inc -&gt; 4
 dec -&gt; 3
 inc -&gt; 4
 inc -&gt; 5
-inc -&gt; 6
-dec -&gt; 5
 
 Shrunk:
 (3, Setup Counter)

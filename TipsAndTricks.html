@@ -63,9 +63,12 @@ FsCheck can even shrink <code>Function</code>s. For example:</p>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (0 shrinks) (StdGen (65260751,296713330)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (792300561,296717333)):
 Original:
-{ 0-&gt;1 }
+{ 0-&gt;4; 1-&gt;2 }
+[1; 1]
+Shrunk:
+{ 0-&gt;4; 1-&gt;0 }
 [0]</code></pre></td></tr></table>
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
 records a map of all the arguments it was called with, and the result it produced.
@@ -127,13 +130,13 @@ define your own labelling equality combinator:</p>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (68697998,296713330)):
-Label of failing property: 3 = -1
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (795157177,296717333)):
+Label of failing property: 1 = -1
 Original:
 2
-1
+2
 Shrunk:
-1
+0
 0</code></pre></td></tr></table>
 <p>Of course, you can do this for any operator or function that you often use.</p>
 <h2><a name="Some-ways-to-run-FsCheck-tests" class="anchor" href="#Some-ways-to-run-FsCheck-tests">Some ways to run FsCheck tests</a></h2>
