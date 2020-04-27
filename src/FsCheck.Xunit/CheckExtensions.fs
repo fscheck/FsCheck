@@ -32,11 +32,11 @@ module private Helper =
                 | _ -> failwithf "%s" (Runner.onFinishedToString name testResult)
         }
 
-    let writeToXunit config (testOutputHelper: ITestOutputHelper) =
-        { config with Runner = runner testOutputHelper }
+    let writeToXunit (config:Config) (testOutputHelper: ITestOutputHelper) =
+        config.WithRunner(runner testOutputHelper)
 
-    let writeToXunitThrow config (testOutputHelper: ITestOutputHelper) =
-        { config with Runner = throwingRunner testOutputHelper }
+    let writeToXunitThrow (config:Config) (testOutputHelper: ITestOutputHelper) =
+        config.WithRunner(throwingRunner testOutputHelper)
 
 [<AbstractClass;Sealed;Extension>]
 type CheckExtensions =

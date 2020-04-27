@@ -34,15 +34,15 @@ type private NunitRunner() =
 type PropertyAttribute() =
     inherit TestAttribute()
 
-    let mutable maxTest = Config.Default.MaxTest
-    let mutable maxFail = Config.Default.MaxRejected
-    let mutable startSize = Config.Default.StartSize
-    let mutable endSize = Config.Default.EndSize
+    let mutable maxTest = Config.Default.Values.MaxTest
+    let mutable maxFail = Config.Default.Values.MaxRejected
+    let mutable startSize = Config.Default.Values.StartSize
+    let mutable endSize = Config.Default.Values.EndSize
     let mutable verbose = false
     let mutable quietOnSuccess = false
     let mutable replay = null
     let mutable parallelism = -1
-    let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
+    let mutable arbitrary = Config.Default.Values.Arbitrary |> List.toArray
 
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
@@ -159,20 +159,23 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
             { Rnd = Rnd (seed,gamma); Size = size }
         let attr = x.GetFsCheckPropertyAttribute()
         let testRunner = NunitRunner()
-        let config = { Config.Default with
-                        MaxTest = attr.MaxTest
-                        MaxRejected = attr.MaxFail
-                        StartSize = attr.StartSize
-                        EndSize = attr.EndSize
-                        Every = if attr.Verbose then Config.Verbose.Every else Config.Quick.Every
-                        EveryShrink = if attr.Verbose then Config.Verbose.EveryShrink else Config.Quick.EveryShrink
-                        Arbitrary = attr.Arbitrary |> Array.toList
-                        Replay = match attr.Replay with
-                                    | null -> Config.Default.Replay
-                                    | s -> parseReplay s |> Some
-                        ParallelRunConfig = if attr.Parallelism <= 0 
-                                            then None else Some { MaxDegreeOfParallelism = attr.Parallelism }
-                        Runner = testRunner }
+        let config = Config.Default
+                           .WithMaxTest(attr.MaxTest)
+                           .WithMaxRejected(attr.MaxFail)
+                           .WithStartSize(attr.StartSize)
+                           .WithEndSize(attr.EndSize)
+                           .WithEvery(if attr.Verbose then Config.Verbose.Values.Every else Config.Quick.Values.Every)
+                           .WithEveryShrink(if attr.Verbose then Config.Verbose.Values.EveryShrink else Config.Quick.Values.EveryShrink)
+                           .WithArbitrary(attr.Arbitrary |> Array.toList)
+                           .WithReplay(
+                               match attr.Replay with 
+                               | null -> Config.Default.Values.Replay 
+                               | s -> parseReplay s |> Some)
+                           .WithParallelRunConfig(
+                               if attr.Parallelism <= 0 
+                               then None 
+                               else Some { MaxDegreeOfParallelism = attr.Parallelism })
+                           .WithRunner(testRunner)
 
         let target = if x.Fixture <> null then Some x.Fixture
                      elif x.Method.MethodInfo.IsStatic then None

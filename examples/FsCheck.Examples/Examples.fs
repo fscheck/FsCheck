@@ -208,13 +208,13 @@ let asyncWork (i :int) =
         let! x = Async.AwaitTask t
         return true
     }
-let config = { Config.QuickThrowOnFailure with ParallelRunConfig = Some { MaxDegreeOfParallelism = 1 } }
+let config = Config.QuickThrowOnFailure.WithParallelRunConfig({ MaxDegreeOfParallelism = 1 })
 Check.One (config, asyncWork)  
 
 //-----------------test reflective shrinking--------
 type RecordStuff<'a> = { Yes:bool; Name:'a; NogIets:list<int*char> }
 
-let bigSize = { Config.Quick with StartSize = 100; EndSize = 100 }
+let bigSize = Config.Quick.WithStartSize(100).WithEndSize(100)
 
 Check.One(bigSize,fun (s:RecordStuff<string>) -> s.Yes)
 

@@ -7,9 +7,9 @@ namespace CSharp.DocSnippets
         public static void Samples()
         {
             //[configuration]
-            var configuration = Configuration.Quick;
-            configuration.MaxNbOfTest = 1000;
-            configuration.QuietOnSuccess = true;
+            var configuration = Config.Quick
+                                      .WithMaxTest(1000)
+                                      .WithQuietOnSuccess(true);
             true.ToProperty().Check(configuration);
             //[/configuration]
         }

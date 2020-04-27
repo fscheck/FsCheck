@@ -30,7 +30,7 @@ type XunitRunner() =
 
 type internal PropertyConfig =
     { MaxTest        : Option<int>
-      MaxFail        : Option<int>
+      MaxRejected    : Option<int>
       Replay         : Option<string>
       Parallelism    : Option<int>
       StartSize      : Option<int>
@@ -49,7 +49,7 @@ module internal PropertyConfig =
 
     let zero =
         { MaxTest        = None
-          MaxFail        = None
+          MaxRejected    = None
           Replay         = None
           Parallelism    = None
           StartSize      = None
@@ -60,7 +60,7 @@ module internal PropertyConfig =
 
     let combine extra original =
         { MaxTest        = extra.MaxTest        |> orElse original.MaxTest
-          MaxFail        = extra.MaxFail        |> orElse original.MaxFail
+          MaxRejected    = extra.MaxRejected    |> orElse original.MaxRejected
           Replay         = extra.Replay         |> orElse original.Replay
           Parallelism    = extra.Parallelism    |> orElse original.Parallelism
           StartSize      = extra.StartSize      |> orElse original.StartSize
@@ -78,30 +78,36 @@ module internal PropertyConfig =
         { Rnd = Rnd (seed,gamma); Size = size }
 
     let toConfig (output : TestOutputHelper) propertyConfig =
-        { Config.Default with
-              Replay         = propertyConfig.Replay 
-                               |> Option.map parseReplay 
-                               |> orElse Config.Default.Replay
-              ParallelRunConfig    = propertyConfig.Parallelism 
-                                    |> Option.map (fun i -> { MaxDegreeOfParallelism = i })
-                                    |> orElse Config.Default.ParallelRunConfig
-              MaxTest        = propertyConfig.MaxTest        |> orDefault Config.Default.MaxTest
-              MaxRejected    = propertyConfig.MaxFail        |> orDefault Config.Default.MaxRejected
-              StartSize      = propertyConfig.StartSize      |> orDefault Config.Default.StartSize
-              EndSize        = propertyConfig.EndSize        |> orDefault Config.Default.EndSize
-              QuietOnSuccess = propertyConfig.QuietOnSuccess |> orDefault Config.Default.QuietOnSuccess
-              Arbitrary      = Seq.toList propertyConfig.Arbitrary
-              Runner         = new XunitRunner()
-              Every          = 
+        Config.Default
+              .WithReplay(
+                  propertyConfig.Replay
+                  |> Option.map parseReplay
+                  |> orElse Config.Default.Values.Replay
+              )
+              .WithParallelRunConfig(
+                  propertyConfig.Parallelism
+                  |> Option.map (fun i -> { MaxDegreeOfParallelism = i })
+                  |> orElse Config.Default.Values.ParallelRunConfig
+              )
+              .WithMaxTest(propertyConfig.MaxTest |> orDefault Config.Default.Values.MaxTest)
+              .WithMaxRejected(propertyConfig.MaxRejected |> orDefault Config.Default.Values.MaxRejected)
+              .WithStartSize(propertyConfig.StartSize |> orDefault Config.Default.Values.StartSize)
+              .WithEndSize(propertyConfig.EndSize |> orDefault Config.Default.Values.EndSize)
+              .WithQuietOnSuccess(propertyConfig.QuietOnSuccess |> orDefault Config.Default.Values.QuietOnSuccess)
+              .WithArbitrary(Seq.toList propertyConfig.Arbitrary)
+              .WithRunner(XunitRunner())
+              .WithEvery(
                   if propertyConfig.Verbose |> Option.exists id then 
-                      fun n args -> output.WriteLine (Config.Verbose.Every n args); ""
+                      fun n args -> output.WriteLine (Config.Verbose.Values.Every n args); ""
                   else 
-                      Config.Quick.Every
-              EveryShrink    = 
+                      Config.Quick.Values.Every
+              )
+              .WithEveryShrink(
                   if propertyConfig.Verbose |> Option.exists id then 
-                      fun args -> output.WriteLine (Config.Verbose.EveryShrink args); ""
+                      fun args -> output.WriteLine (Config.Verbose.Values.EveryShrink args); ""
                   else 
-                      Config.Quick.EveryShrink }
+                      Config.Quick.Values.EveryShrink
+              )
 
 ///Run this method as an FsCheck test.
 [<AttributeUsage(AttributeTargets.Method ||| AttributeTargets.Property, AllowMultiple = false)>]
@@ -112,7 +118,7 @@ type public PropertyAttribute() =
     let mutable replay = null
     let mutable parallelism = -1
     let mutable maxTest = -1
-    let mutable maxFail = -1
+    let mutable maxRejected = -1
     let mutable startSize = -1
     let mutable endSize = -1
     let mutable verbose = false
@@ -128,7 +134,7 @@ type public PropertyAttribute() =
     ///The maximum number of tests that are run.
     member __.MaxTest with get() = maxTest and set(v) = maxTest <- v; config <- {config with MaxTest = Some v}
     ///The maximum number of tests where values are rejected, e.g. as the result of ==>
-    member __.MaxFail with get() = maxFail and set(v) = maxFail <- v; config <- {config with MaxFail = Some v}
+    member __.MaxRejected with get() = maxRejected and set(v) = maxRejected <- v; config <- {config with MaxRejected = Some v}
     ///The size to use for the first test.
     member __.StartSize with get() = startSize and set(v) = startSize <- v; config <- {config with StartSize = Some v}
     ///The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.
@@ -188,7 +194,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             let timer = ExecutionTimer()
             let result =
                 try
-                    let xunitRunner = if config.Runner :? XunitRunner then (config.Runner :?> XunitRunner) else new XunitRunner()
+                    let xunitRunner = if config.Values.Runner :? XunitRunner then (config.Values.Runner :?> XunitRunner) else XunitRunner()
                     let runMethod = this.TestMethod.Method.ToRuntimeMethod()
                     let target =
                         constructorArguments
