@@ -145,7 +145,7 @@ module Property =
         Prop.forAll (Arb.fromGen symPropGen) (fun symprop ->
             let expected = determineResult symprop
             let resultRunner = GetResultRunner()
-            let config = { Config.Quick with Runner = resultRunner; MaxTest = 2; }
+            let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(2)
             Check.One(config,toProperty symprop)
             let actual = resultRunner.Result
             areSame expected actual
@@ -162,7 +162,7 @@ module Property =
     [<Fact>]
     let ``Task-asynchronous tests should be passable``() =
         let resultRunner = GetResultRunner()
-        let config = { Config.Quick with Runner = resultRunner; MaxTest = 1; }
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
         let tcs = TaskCompletionSource()
         tcs.SetResult(())
         Check.One (config, Prop.ofTestable (tcs.Task :> Task))
@@ -174,7 +174,7 @@ module Property =
     [<Fact>]
     let ``Task-asynchronous tests should be failable by raising an exception``() =
         let resultRunner = GetResultRunner()
-        let config = { Config.Quick with Runner = resultRunner; MaxTest = 1; }
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
         let tcs = TaskCompletionSource()
         tcs.SetException(exn "fail")
         Check.One (config, Prop.ofTestable (tcs.Task :> Task))
@@ -186,7 +186,7 @@ module Property =
     [<Fact>]
     let ``Task-asynchronous tests should be failable by cancellation``() =
         let resultRunner = GetResultRunner()
-        let config = { Config.Quick with Runner = resultRunner; MaxTest = 1; }
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
         let tcs = TaskCompletionSource()
         tcs.SetCanceled()
         Check.One (config, Prop.ofTestable (tcs.Task :> Task))

@@ -167,7 +167,7 @@ namespace FsCheck.CSharpExamples
                 .QuickCheck();
 
             Prop.ForAll<string>(s => true)
-                .Check(new Configuration { Name = "Configuration Demo", MaxNbOfTest = 500 });
+                .Check(Config.Default.WithName("Configuration Demo").WithMaxTest(500));
 
             // discard
 
@@ -178,7 +178,7 @@ namespace FsCheck.CSharpExamples
             // replay
             Prop.ForAll<string>(s => s == null)
                 .Label("Replay")
-                .Check(new Configuration { MaxNbOfTest = 1, Replay = Tuple.Create(1UL, 1UL, -1) });
+                .Check(Config.Default.WithMaxTest(1).WithReplay(1UL, 1UL));
 
             Console.WriteLine();
 

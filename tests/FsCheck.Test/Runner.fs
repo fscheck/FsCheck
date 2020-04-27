@@ -59,36 +59,36 @@ module RunnerInternals =
                 result <- Some testResult
 
 
-    let check arb body config =
+    let check arb body (config:Config) =
         let p = Prop.forAll arb body
         let seed = Random.create ()
         let replay = { Rnd = seed; Size = None } |> Some
         printfn "seed %A" seed
         let runner1 = ProbeRunner () 
-        FsCheck.Runner.check { config with Replay = replay; Runner = runner1; ParallelRunConfig = Some { MaxDegreeOfParallelism = Environment.ProcessorCount } } p
+        FsCheck.Runner.check (config.WithReplay(replay).WithRunner(runner1).WithParallelRunConfig(Some { MaxDegreeOfParallelism = Environment.ProcessorCount })) p
         let runner2 = ProbeRunner () 
-        FsCheck.Runner.check { config with Replay = replay; Runner = runner2; ParallelRunConfig = None } p
+        FsCheck.Runner.check (config.WithReplay(replay).WithRunner(runner2).WithParallelRunConfig(None)) p
         runner1.IsSame runner2
             
     [<Fact>]
     let ``parallelTest produces same sequence as test on success`` () =
         let body i = true
         let arb = Arb.from<int>
-        let config = { Config.Quick with MaxTest = 30000; EndSize = 30000 }
+        let config = Config.Quick.WithMaxTest(30000).WithEndSize(30000)
         if not <| check arb body config then failwith "assertion failure!"
 
     [<Fact>]
     let ``parallelTest produces same sequence as test on failure`` () =
         let body i = i < 999
         let arb = Arb.from<int>
-        let config = { Config.Quick with MaxTest = 30000; EndSize = 30000 }
+        let config = Config.Quick.WithMaxTest(30000).WithEndSize(30000)
         if not <| check arb body config then failwith "assertion failure!"
             
     [<Fact>]
     let ``parallelTest produces same sequence as test on discard`` () =
         let body _ = true
         let arb = Arb.fromGen (Gen.constant 1 |> Gen.map (fun _ -> Prop.discard ()))
-        let config = { Config.Quick with MaxTest = 30000; MaxRejected = 100000; EndSize = 30000 }
+        let config = Config.Quick.WithMaxTest(30000).WithMaxRejected(100000).WithEndSize(30000)
         if not <| check arb body config then failwith "assertion failure!"
     
     type Tree = Leaf of int | Branch of Tree * Tree
@@ -115,7 +115,7 @@ module RunnerInternals =
         Arb.register<TreeGen> ()
         let arb = Arb.from<list<Tree>>
         let body (xs:list<Tree>) = List.rev(List.rev xs) = xs
-        let config = { Config.Quick with MaxTest = 3000; EndSize = 3000 }
+        let config = Config.Quick.WithMaxTest(3000).WithEndSize(3000)
         if not <| check arb body config then failwith "not threadsafe"
     
     type Integer = Integer of int
@@ -138,7 +138,7 @@ module RunnerInternals =
         Arb.register<IntegerGen> ()
         let body i = true
         let arb = Arb.from<Integer>
-        let config = { Config.Quick with MaxTest = 300000; EndSize = 300000 }
+        let config = Config.Quick.WithMaxTest(300000).WithEndSize(300000)
         if check arb body config then failwith "assertion failure!"
     
     type Input =
@@ -157,9 +157,9 @@ module RunnerInternals =
             | String s -> not (isNull s)
             | Int _ -> true
 
-        let config = { Config.QuickThrowOnFailure with 
-                        MaxTest = 100; 
-                        ParallelRunConfig = Some { MaxDegreeOfParallelism = System.Environment.ProcessorCount } }
+        let config = Config.QuickThrowOnFailure
+                           .WithMaxTest(100)
+                           .WithParallelRunConfig(Some { MaxDegreeOfParallelism = Environment.ProcessorCount })
 
         Check.One(config, prop)
 
@@ -237,7 +237,7 @@ module Runner =
         let doOne(s1,s2) =
             try
                 Check.One(
-                    {Config.QuickThrowOnFailure with Replay = Some <| {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = None}},
+                    Config.QuickThrowOnFailure.WithReplay(Some <| {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = None}),
                     fun a -> a < 5
                 )
                 "should have failed"
@@ -256,7 +256,7 @@ module Runner =
         let doOne(s1,s2) =
             try
                 Check.One( 
-                    {Config.QuickThrowOnFailure with Replay = Some {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = None}},
+                    Config.QuickThrowOnFailure.WithReplay(Some {Rnd = Random.createWithSeedAndGamma (s1,s2); Size = None}),
                     fun a (_:list<char>, _:array<int*double>) (_:DateTime) -> a < 10
                 )
                 "should have failed"
@@ -307,25 +307,25 @@ module Runner =
         { NumberOfShrinks = ns2; Stamps = sx2; Labels = lx2 } -> 
            ns1 = ns2 && Enumerable.SequenceEqual (sx1, sx2) && Enumerable.SequenceEqual (lx1, lx2)
 
-    [<Property(StartSize = 10, EndSize = 100000, MaxTest = 200, MaxFail = 0)>]
+    [<Property(StartSize = 10, EndSize = 100000, MaxTest = 200, MaxRejected = 0)>]
     let ``should fast-forward properly on failing funcs``(f :(int -> bool), (UInteger a)) =
         let runs = Convert.ToInt32(Math.Min(a,100000u)) + 1
         let rnd = Random.create ()
         let runner = ProbeRunner ()
         let cfg = 
-            { Config.Quick with 
-                Replay = Some {Rnd = rnd; Size = None}
-                MaxTest = runs
-                StartSize = 0
-                EndSize = runs
-                MaxRejected = 1000
-                Runner = runner
-            }   
+            Config.Quick
+                    .WithReplay(Some {Rnd = rnd; Size = None})
+                    .WithMaxTest(runs)
+                    .WithStartSize(0)
+                    .WithEndSize(runs)
+                    .WithMaxRejected(1000)
+                    .WithRunner(runner)
+
         Check.One (cfg, f)
         match runner.TestData () with
         | None -> true
         | Some (td1, oa1, sa1, o1, r1, rr1, s1) ->
-            Check.One ({cfg with Replay = Some {Rnd = rr1; Size = Some s1}}, f)
+            Check.One (cfg.WithReplay(Some {Rnd = rr1; Size = Some s1}), f)
             match runner.TestData () with
             | None -> false
             | Some (td2, oa2, sa2, o2, r2, rr2, s2) ->
@@ -371,7 +371,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.MaxTest =! maxTest
+        config.Values.MaxTest =! maxTest
 
     [<Fact>]
     let ``PropertyConfig toConfig should use defaults as a fallback``() =
@@ -379,7 +379,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.MaxTest =! Config.Default.MaxTest
+        config.Values.MaxTest =! Config.Default.Values.MaxTest
 
     [<Property>]
     let ``Replay should pick fast-forward``(size :int) =
@@ -388,7 +388,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = Some size})
+        config.Values.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = Some size})
 
     [<Fact>]
     let ``Replay with no fast-forward``() =
@@ -396,7 +396,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = None})
+        config.Values.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = None})
 
     type TypeToInstantiate() =
         [<Property>]
@@ -484,7 +484,7 @@ module BugReproIssue344 =
             
         // run this on another thread, and abort it manually
         let thread2 = Thread(fun () ->
-            let config = { Config.Quick with Arbitrary = [ typeof<MyGenerators> ]; ParallelRunConfig = None }
+            let config = Config.Quick.WithArbitrary([typeof<MyGenerators>]).WithParallelRunConfig(None)
             Check.One(config, fun (x:IntWrapper) -> 
                 // fail the first iteration
                 if x.I = 1 then
@@ -514,5 +514,5 @@ module Override =
     [<Fact>]
     let ``should use override in same Arbitrary class``() =
         Check.One(Config.QuickThrowOnFailure, fun (calc:Calc) -> true)
-        Check.One( { Config.QuickThrowOnFailure with Arbitrary=[ typeof<Arbitraries> ] },
+        Check.One( Config.QuickThrowOnFailure.WithArbitrary([ typeof<Arbitraries> ]),
              fun (calc:Calc) -> not (Double.IsNaN calc.Float || Double.IsInfinity calc.Float || calc.Float = Double.Epsilon || calc.Float = Double.MinValue || calc.Float = Double.MaxValue))
