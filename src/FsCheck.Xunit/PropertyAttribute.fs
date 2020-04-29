@@ -82,31 +82,31 @@ module internal PropertyConfig =
               .WithReplay(
                   propertyConfig.Replay
                   |> Option.map parseReplay
-                  |> orElse Config.Default.Values.Replay
+                  |> orElse Config.Default.Replay
               )
               .WithParallelRunConfig(
                   propertyConfig.Parallelism
                   |> Option.map (fun i -> { MaxDegreeOfParallelism = i })
-                  |> orElse Config.Default.Values.ParallelRunConfig
+                  |> orElse Config.Default.ParallelRunConfig
               )
-              .WithMaxTest(propertyConfig.MaxTest |> orDefault Config.Default.Values.MaxTest)
-              .WithMaxRejected(propertyConfig.MaxRejected |> orDefault Config.Default.Values.MaxRejected)
-              .WithStartSize(propertyConfig.StartSize |> orDefault Config.Default.Values.StartSize)
-              .WithEndSize(propertyConfig.EndSize |> orDefault Config.Default.Values.EndSize)
-              .WithQuietOnSuccess(propertyConfig.QuietOnSuccess |> orDefault Config.Default.Values.QuietOnSuccess)
+              .WithMaxTest(propertyConfig.MaxTest |> orDefault Config.Default.MaxTest)
+              .WithMaxRejected(propertyConfig.MaxRejected |> orDefault Config.Default.MaxRejected)
+              .WithStartSize(propertyConfig.StartSize |> orDefault Config.Default.StartSize)
+              .WithEndSize(propertyConfig.EndSize |> orDefault Config.Default.EndSize)
+              .WithQuietOnSuccess(propertyConfig.QuietOnSuccess |> orDefault Config.Default.QuietOnSuccess)
               .WithArbitrary(Seq.toList propertyConfig.Arbitrary)
               .WithRunner(XunitRunner())
               .WithEvery(
                   if propertyConfig.Verbose |> Option.exists id then 
-                      fun n args -> output.WriteLine (Config.Verbose.Values.Every n args); ""
+                      fun n args -> output.WriteLine (Config.Verbose.Every n args); ""
                   else 
-                      Config.Quick.Values.Every
+                      Config.Quick.Every
               )
               .WithEveryShrink(
                   if propertyConfig.Verbose |> Option.exists id then 
-                      fun args -> output.WriteLine (Config.Verbose.Values.EveryShrink args); ""
+                      fun args -> output.WriteLine (Config.Verbose.EveryShrink args); ""
                   else 
-                      Config.Quick.Values.EveryShrink
+                      Config.Quick.EveryShrink
               )
 
 ///Run this method as an FsCheck test.
@@ -194,7 +194,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
             let timer = ExecutionTimer()
             let result =
                 try
-                    let xunitRunner = if config.Values.Runner :? XunitRunner then (config.Values.Runner :?> XunitRunner) else XunitRunner()
+                    let xunitRunner = if config.Runner :? XunitRunner then (config.Runner :?> XunitRunner) else XunitRunner()
                     let runMethod = this.TestMethod.Method.ToRuntimeMethod()
                     let target =
                         constructorArguments

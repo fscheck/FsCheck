@@ -49,71 +49,83 @@ type ParallelRunConfig =
 ///For configuring a run.
 [<NoEquality;NoComparison>]
 type Config = private Config of
-                {| ///The maximum number of tests that are run.
-                MaxTest       : int
+                {|
+                MaxTest           : int
+                MaxRejected       : int
+                Replay            : Replay option
+                Name              : string
+                StartSize         : int
+                EndSize           : int
+                QuietOnSuccess    : bool
+                Every             : int -> list<obj> -> string
+                EveryShrink       : list<obj> -> string 
+                Arbitrary         : list<Type>
+                Runner            : IRunner 
+                ParallelRunConfig : ParallelRunConfig option
+                |} with
+                member private this.Values =
+                    let values (Config config) = config
+                    this |> values
+                ///The maximum number of tests that are run.
+                member this.MaxTest = this.Values.MaxTest
                 ///The maximum number of tests where values are rejected, e.g. as the result of ==>
-                MaxRejected   : int
+                member this.MaxRejected = this.Values.MaxRejected
                 ///If set, the seed to use to start testing. Allows reproduction of previous runs.
-                Replay        : Replay option
+                member this.Replay = this.Values.Replay
                 ///Name of the test.
-                Name          : string
+                member this.Name = this.Values.Name
                 ///The size to use for the first test.
-                StartSize     : int
+                member this.StartSize = this.Values.StartSize
                 ///The size to use for the last test, when all the tests are passing. The size increases linearly between Start- and EndSize.
-                EndSize       : int
+                member this.EndSize = this.Values.EndSize
                 ///If set, suppresses the output from the test if the test is successful.
-                QuietOnSuccess: bool
+                member this.QuietOnSuccess = this.Values.QuietOnSuccess
                 ///What to print when new arguments args are generated in test n
-                Every         : int -> list<obj> -> string
+                member this.Every = this.Values.Every
                 ///What to print every time a counter-example is successfully shrunk
-                EveryShrink   : list<obj> -> string 
+                member this.EveryShrink = this.Values.EveryShrink
                 ///The Arbitrary instances on this class will be merged in back to front order, i.e. instances for the same generated type at the front
                 ///of the list will override those at the back. The instances on Arb.Default are always known, and are at the back (so they can always be
                 ///overridden)
-                Arbitrary     : list<Type>
+                member this.Arbitrary = this.Values.Arbitrary
                 ///A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit. 
-                Runner        : IRunner
+                member this.Runner = this.Values.Runner
                 ///If set, inputs for property generation and property evaluation will be run in parallel. 
-                ParallelRunConfig : ParallelRunConfig option
-                |} with
-                ///Returns the values for the current Config
-                member this.Values =
-                    let values (Config config) = config
-                    this |> values
-
+                member this.ParallelRunConfig = this.Values.ParallelRunConfig
+                ///Returns a new Config with specified MaxTest
                 member this.WithMaxTest maxTest =
                     {|this.Values with MaxTest = maxTest|} |> Config
-
+                ///Returns a new Config with specified MaxRejected
                 member this.WithMaxRejected maxRejected =
                     {|this.Values with MaxRejected = maxRejected|} |> Config
-
+                ///Returns a new Config with specified Replay option
                 member this.WithReplay replay =
                     {|this.Values with Replay = replay|} |> Config  
-
+                ///Returns a new Config with specified Name
                 member this.WithName name =
                     {|this.Values with Name = name|} |> Config                
-
+                ///Returns a new Config with specified StartSize
                 member this.WithStartSize startSize =
                     {|this.Values with StartSize = startSize|} |> Config
-
+                ///Returns a new Config with specified EndSize
                 member this.WithEndSize endSize =
                     {|this.Values with EndSize = endSize|} |> Config
-
+                ///Returns a new Config with specified QuietOnSuccess
                 member this.WithQuietOnSuccess quietOnSuccess =
                     {|this.Values with QuietOnSuccess = quietOnSuccess|} |> Config
-
+                ///Returns a new Config with specified Every function
                 member this.WithEvery every =
                     {|this.Values with Every = every|} |> Config
-
+                ///Returns a new Config with specified EveryShrink function
                 member this.WithEveryShrink everyShrink =
                     {|this.Values with EveryShrink = everyShrink|} |> Config
-
+                ///Returns a new Config with specified Arbitrary
                 member this.WithArbitrary arbitrary =
                     {|this.Values with Arbitrary = arbitrary|} |> Config
-
+                ///Returns a new Config with specified Runner
                 member this.WithRunner runner =
                     {|this.Values with Runner = runner|} |> Config
-
+                ///Returns a new Config with specified ParallelRunConfig
                 member this.WithParallelRunConfig config =
                     {|this.Values with ParallelRunConfig = config|} |> Config
 
@@ -393,8 +405,8 @@ module Runner =
 
     let private parallelTest (config:Config) initSize resize rnd0 gen =
         let steps = stepsSeq resize (initSize, rnd0)
-        let pd = Option.fold (fun _ pc -> if pc.MaxDegreeOfParallelism <> -1 then pc.MaxDegreeOfParallelism else Environment.ProcessorCount) 1 config.Values.ParallelRunConfig
-        let parSeq = ParTestSeq (steps, config.Values.MaxTest, config.Values.MaxRejected, pd, gen)
+        let pd = Option.fold (fun _ pc -> if pc.MaxDegreeOfParallelism <> -1 then pc.MaxDegreeOfParallelism else Environment.ProcessorCount) 1 config.ParallelRunConfig
+        let parSeq = ParTestSeq (steps, config.MaxTest, config.MaxRejected, pd, gen)
         parSeq :> seq<_>
 
 
@@ -411,12 +423,12 @@ module Runner =
         let testResult =
             let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
             match testStep with
-                | Passed _ -> TestResult.Passed (testData, config.Values.QuietOnSuccess)
+                | Passed _ -> TestResult.Passed (testData, config.QuietOnSuccess)
                 | Failed result -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
                 | Rejected _ -> TestResult.Exhausted testData
                 | EndShrink result -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
                 | _ -> failwith "Test ended prematurely"
-        config.Values.Runner.OnFinished(config.Values.Name,testResult)
+        config.Runner.OnFinished(config.Name,testResult)
 
 
     let private runner (config:Config) prop = 
@@ -426,27 +438,27 @@ module Runner =
         let tryShrinkNb = ref 0
         let origArgs = ref []
         let lastStep = ref (Rejected Res.rejectedV)
-        let seed, size = match config.Values.Replay with None -> Random.create(), None | Some s -> s.Rnd, s.Size
-        let increaseSizeStep = float (config.Values.EndSize - config.Values.StartSize) / float config.Values.MaxTest
+        let seed, size = match config.Replay with None -> Random.create(), None | Some s -> s.Rnd, s.Size
+        let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
         let lastSeed = ref seed
-        let lastSize = ref (defaultArg size config.Values.StartSize)
+        let lastSize = ref (defaultArg size config.StartSize)
         let testSeq = 
-            if config.Values.ParallelRunConfig.IsSome && size.IsNone then //no point to run single test in parallel
+            if config.ParallelRunConfig.IsSome && size.IsNone then //no point to run single test in parallel
                 parallelTest config 
             else 
                 test size.IsSome
-        testSeq (float <| defaultArg size config.Values.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
+        testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
         |> Common.takeWhilePlusLast (fun step ->
             lastStep := step
             match step with
                 | Generated (args, seed, size) ->
                     lastSeed := seed; lastSize := size
-                    config.Values.Runner.OnArguments(!testNb, args, config.Values.Every)
+                    config.Runner.OnArguments(!testNb, args, config.Every)
                     true
-                | Passed _ -> testNb := !testNb + 1; !testNb <> config.Values.MaxTest && size.IsNone //stop if we have enough tests or this was fast-forward single test run
+                | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest && size.IsNone //stop if we have enough tests or this was fast-forward single test run
                 | Failed result -> origArgs := result.Arguments; testNb := !testNb + 1; true //failed, true to continue with shrinking
-                | Rejected _ -> failedNb := !failedNb + 1; !failedNb <> config.Values.MaxRejected //rejected, stop if we have too much failed tests
-                | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Values.Runner.OnShrink(result.Arguments, config.Values.EveryShrink); true
+                | Rejected _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxRejected //rejected, stop if we have too much failed tests
+                | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Runner.OnShrink(result.Arguments, config.EveryShrink); true
                 | NoShrink _ -> tryShrinkNb := !tryShrinkNb + 1; true
                 | EndShrink _ -> false )
         |> Seq.fold (fun acc elem ->
@@ -555,7 +567,7 @@ module Runner =
         //save so we can restore after the run
         let defaultArbitrary = Arb.arbitrary.Value
         let merge newT (existingTC:TypeClass<_>) = existingTC.DiscoverAndMerge(onlyPublic=true,instancesType=newT)
-        Arb.arbitrary.Value <- List.foldBack merge config.Values.Arbitrary defaultArbitrary
+        Arb.arbitrary.Value <- List.foldBack merge config.Arbitrary defaultArbitrary
         try
             runner config (property p)
         finally
@@ -600,7 +612,7 @@ module Runner =
         
 
     let internal checkAll (config:Config) (t:Type) = 
-        config.Values.Runner.OnStartFixture t
+        config.Runner.OnStartFixture t
         t.GetRuntimeMethods() 
         |> Seq.filter (fun meth -> meth.IsStatic && meth.IsPublic)
         |> Seq.filter hasTestableReturnType 
