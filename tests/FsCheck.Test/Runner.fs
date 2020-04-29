@@ -371,7 +371,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.Values.MaxTest =! maxTest
+        config.MaxTest =! maxTest
 
     [<Fact>]
     let ``PropertyConfig toConfig should use defaults as a fallback``() =
@@ -379,7 +379,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.Values.MaxTest =! Config.Default.Values.MaxTest
+        config.MaxTest =! Config.Default.MaxTest
 
     [<Property>]
     let ``Replay should pick fast-forward``(size :int) =
@@ -388,7 +388,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.Values.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = Some size})
+        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = Some size})
 
     [<Fact>]
     let ``Replay with no fast-forward``() =
@@ -396,7 +396,7 @@ module Runner =
         let testOutputHelper = new Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
-        config.Values.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = None})
+        config.Replay =! (Some {Rnd = Random.createWithSeedAndGamma (01234UL,56789UL); Size = None})
 
     type TypeToInstantiate() =
         [<Property>]
