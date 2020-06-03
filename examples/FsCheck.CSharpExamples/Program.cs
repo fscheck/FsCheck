@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FsCheck;
+using org.structs.linq.CSharpExpressions;
 
 namespace FsCheck.CSharpExamples
 {
@@ -34,7 +35,6 @@ namespace FsCheck.CSharpExamples
 
     class Program
     {
-
         class Eq : IEqualityComparer<double> {
             public bool Equals(double x, double y) {
                 return x == y;
@@ -59,7 +59,8 @@ namespace FsCheck.CSharpExamples
 
 
             //--------Properties--------------
-            Prop.ForAll<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
+            //Default Comparison compares NaN properly
+			Prop.ForAll<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
                 .QuickCheck("RevRevFloat");
 
             //conditional properties
@@ -76,7 +77,7 @@ namespace FsCheck.CSharpExamples
             Prop.ForAll<int, int[]>((x, xs) => 
                     xs.Insert(x).IsOrdered()
                     .When(xs.IsOrdered())
-                    .Classify(xs.Count() == 0, "trivial"))
+                    .Classify(xs.Length == 0, "trivial"))
                 .QuickCheck("InsertTrivial");
 
             //classifying test values
@@ -181,6 +182,7 @@ namespace FsCheck.CSharpExamples
                             a.Except(b).Count() <= a.Count())
                 .QuickCheck();
 
+			Console.WriteLine("Press any key...");
             Console.ReadKey();
         }
 

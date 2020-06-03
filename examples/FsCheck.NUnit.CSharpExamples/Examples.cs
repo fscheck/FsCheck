@@ -8,14 +8,16 @@ namespace FsCheck.NUnit.CSharpExamples
     [TestFixture]
     public class Examples
     {
-        //Simple boolean property
+        /// <summary> Simple boolean property can be tested as a Delegate </summary>
+        /// <param name="xs"></param>
+        /// <returns></returns>
         [Property]
         public bool RevRev(int[] xs)
         {
             return xs.Reverse().Reverse().SequenceEqual(xs);
         }
 
-        // Note: should fail
+        /// <summary> Example for using Property.ForAll; Note: should fail </summary>
         [Property(Verbose = true)]
         public Property RevId_shouldFail()
         {

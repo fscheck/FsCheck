@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FsCheck.MsTest.Examples.ClassesToTest
+﻿namespace FsCheck.MsTest.Examples.ClassesToTest
 {
+    /// <summary> Generator which creates a random Sequence of <see cref="Inc"/> and <see cref="Dec"/> and applies them to <see cref="Counter"/> and <see cref="int"/> respectively. </summary>
+    /// <remarks>
+    /// Similar but different Strategy as in NUnit Sample where Commands derive from <see cref="Command{Actual,Model}"/>
+    /// </remarks>
     public class CounterSpec : ICommandGenerator<Counter, int>
     {
         private readonly Command<Counter, int> Inc =

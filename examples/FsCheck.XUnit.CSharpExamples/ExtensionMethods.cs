@@ -6,22 +6,25 @@ namespace FsCheck.XUnit.CSharpExamples
 {
     public static class ExtensionMethods
     {
-        public static IEnumerable<TSource> BadReverse1<TSource>(this IEnumerable<TSource> source)
+        /// <summary> Never reverts the <paramref name="list"/> </summary>
+        public static IEnumerable<TSource> BadReverse1<TSource>(this IEnumerable<TSource> list)
         {
-            return source;
+            return list;
         }
 
-        public static IEnumerable<TSource> BadReverse2<TSource>(this IEnumerable<TSource> source)
+        /// <summary> When the <paramref name="list"/> is longer than 10, doesn't revert it </summary>
+        public static IEnumerable<TSource> BadReverse2<TSource>(this IEnumerable<TSource> list)
         {
-            var badReverse2 = source as IList<TSource> ?? source.ToList();
-            return badReverse2.Count() > 10 ? badReverse2 : badReverse2.Reverse();
+            var badReverse2 = list as IList<TSource> ?? list.ToList();
+            return badReverse2.Count > 10 ? badReverse2 : badReverse2.Reverse();
         }
 
-        public static IEnumerable<TSource> BadReverse3<TSource>(this IEnumerable<TSource> source) where TSource : IEquatable<TSource>
+        /// <summary> When the <paramref name="list"/> is accidently sorted, doesn't revert it! </summary>
+        public static IEnumerable<TSource> BadReverse3<TSource>(this IEnumerable<TSource> list) where TSource : IEquatable<TSource>
         {
-            var list = source.ToList();
-            var isOrdered = list.SequenceEqual(list.AsEnumerable().OrderBy(_ => _));
-            return list.Count >= 3 && isOrdered ? list : list.AsEnumerable().Reverse();
+            var copy = list.ToList();
+            var isOrdered = copy.SequenceEqual(copy.AsEnumerable().OrderBy(_ => _)); //O(nLog(n)) instead of O(n)
+            return copy.Count >= 3 && isOrdered ? copy : copy.AsEnumerable().Reverse();
         }
     }
 }
