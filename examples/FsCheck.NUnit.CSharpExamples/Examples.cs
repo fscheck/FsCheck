@@ -8,10 +8,9 @@ namespace FsCheck.NUnit.CSharpExamples
     [TestFixture]
     public class Examples
     {
-        /// <summary> Simple boolean property can be tested as a Delegate </summary>
-        /// <param name="xs"></param>
-        /// <returns></returns>
+        /// <summary> Simple boolean Function can be tested as a Delegate </summary>
         [Property]
+        //[TestCase(new[] {1,2,3,4,5,6,7}, ExpectedResult = true)] unfortunately does NOT run both!
         public bool RevRev(int[] xs)
         {
             return xs.Reverse().Reverse().SequenceEqual(xs);
