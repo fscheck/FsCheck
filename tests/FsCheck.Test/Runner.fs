@@ -286,3 +286,42 @@ module Deprecated =
         [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
         let ``should use Arb instance on method preferentially``(underTest:float) =
             underTest >= 0.0
+
+// see https://github.com/fscheck/FsCheck/issues/514
+// Dispose not called
+module BugReproIssue514 =
+    open System
+    open System.Threading
+    open FsCheck
+    open FsCheck.Xunit
+    open global.Xunit
+    open Xunit.Sdk
+
+    type TestMessageBus() =
+        interface IMessageBus with
+            member _.QueueMessage _ = true
+            member _.Dispose() = ()
+
+    let mutable disposed = false
+
+    type DisposableTestClass() =
+
+        [<Property>]
+        member _.FakeTest (x:int) =
+            Check.One(Config.QuickThrowOnFailure, true)       
+
+        interface IDisposable with
+            member _.Dispose() = 
+                disposed <- true
+
+    [<Property>]
+    let ``should call Dispose on classes inheriting from IDisposable`` () =
+            let methodInfo = typeof<DisposableTestClass>.GetMethod("FakeTest") |> ReflectionMethodInfo
+            let typeInfo = typeof<DisposableTestClass> |> ReflectionTypeInfo
+            let assemblyInfo = typeof<DisposableTestClass>.Assembly |> ReflectionAssemblyInfo |> TestAssembly
+            let testCollection = TestCollection(assemblyInfo, typeInfo, typeof<DisposableTestClass>.Name)
+            let testClass = TestClass(testCollection, typeInfo)
+            let testMethod = TestMethod(testClass, methodInfo)
+            let testCase = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, testMethod)
+            testCase.RunAsync(null, new TestMessageBus(), [||], new ExceptionAggregator(), new CancellationTokenSource()) |> Async.AwaitTask |> ignore
+            Check.One(Config.Quick, disposed)
