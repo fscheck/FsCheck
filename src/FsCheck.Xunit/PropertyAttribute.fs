@@ -211,9 +211,10 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
                     timer.Aggregate(fun () -> Check.Method(config, runMethod, ?target=target))
 
+                    dispose target
+
                     match xunitRunner.Result with
                           | TestResult.True _ ->
-                            dispose target
                             let output = Runner.onFinishedToString "" xunitRunner.Result
                             outputHelper.WriteLine(output)
                             new TestPassed(test, timer.Total, outputHelper.Output) :> TestResultMessage

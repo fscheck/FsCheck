@@ -308,7 +308,7 @@ module BugReproIssue514 =
 
         [<Property>]
         member _.FakeTest (x:int) =
-            Check.One(Config.QuickThrowOnFailure, true)       
+            Check.One(Config.Quick, true)       
 
         interface IDisposable with
             member _.Dispose() = 
