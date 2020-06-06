@@ -26,5 +26,11 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
         {
             return n;
         }
-    }
+
+		public override string ToString() 
+		{
+			return n.ToString();
+		}
+
+	}
 }
