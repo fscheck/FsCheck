@@ -184,8 +184,16 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
         let summary = new RunSummary(Total = 1);
         let outputHelper = new TestOutputHelper()
         outputHelper.Initialize(messageBus, test)
-        let testExec() =
-            
+
+        let dispose testClass =
+            match testClass with
+            | None -> ()
+            | Some obj ->
+                match box obj with
+                | :? IDisposable as d -> d.Dispose()
+                | _ -> ()
+
+        let testExec() =            
             let config = this.Init(outputHelper)
             let timer = ExecutionTimer()
             let result =
@@ -202,6 +210,8 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                         else None
 
                     timer.Aggregate(fun () -> Check.Method(config, runMethod, ?target=target))
+
+                    dispose target
 
                     match xunitRunner.Result with
                           | TestResult.True _ ->
