@@ -1,4 +1,7 @@
-### 2.14.2 -11 March 2020
+### 2.14.3 - 9 June 2020
+* Fix FsCheck.Xunit so it properly calls Dispose if the test class implements IDisposable. (by Laurence King)
+
+### 2.14.2 - 11 March 2020
 * Assembly metadata fix. This caused version 2.14.1 to be unusable in some cases; it was unlisted.
 
 ### 2.14.1 - 1 March 2020
