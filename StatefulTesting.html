@@ -114,10 +114,10 @@ fails the test if a postcondition does not hold.</p>
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (6 shrinks) (StdGen (679042236,296717333)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 10 tests (7 shrinks) (StdGen (628476519,296753515)):
 Label of failing property: model: 2 &lt;&gt; Counter=1
 Original:
-[inc; inc; inc; dec; dec; dec; dec; dec; inc; inc]
+[inc; inc; dec; dec; inc; inc; inc; inc; dec; dec; inc]
 Shrunk:
 [inc; inc; inc; dec]</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.</p>

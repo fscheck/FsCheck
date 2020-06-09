@@ -148,17 +148,25 @@ so when we run this specification we can check that FsCheck does the right thing
 </code></pre></td>
 </tr>
 </table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (2 shrinks) (StdGen (701820942,296717333)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 8 tests (4 shrinks) (StdGen (647213746,296753515)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
-(3, Setup Counter)
+(0, Setup Counter)
+inc -&gt; 1
+inc -&gt; 2
+inc -&gt; 3
+dec -&gt; 2
+inc -&gt; 3
 inc -&gt; 4
 dec -&gt; 3
 inc -&gt; 4
 inc -&gt; 5
 
 Shrunk:
-(3, Setup Counter)
+(0, Setup Counter)
+inc -&gt; 1
+inc -&gt; 2
+inc -&gt; 3
 inc -&gt; 4
 inc -&gt; 5</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence of operations that leads to it.</p>

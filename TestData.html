@@ -308,7 +308,7 @@ values between a minimum and maximum value, both inclusive:</p>
 but any value would do; it wouldn't change the result.</p>
 <p>While <code>Gen.choose (0, 9)</code> generates a single integer value, <code>Gen.sample 0 10</code>
 generates 10 sample values:</p>
-<table class="pre"><tr><td><pre><code>[8; 1; 2; 6; 2; 2; 2; 2; 6; 7]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[6; 7; 9; 7; 6; 8; 2; 7; 2; 9]</code></pre></td></tr></table>
 <p>If you supply values in the 'wrong order', <code>Gen.choose</code> will follow
 <a href="https://en.wikipedia.org/wiki/Robustness_principle">Postel's law</a> and 'know
 what you meant':</p>
@@ -321,7 +321,7 @@ what you meant':</p>
 <p>In this example, the first value is greater than the second value, but
 <code>Gen.choose</code> will happily interpret this as a range, and produce values between
 42 and 99, both included:</p>
-<table class="pre"><tr><td><pre><code>[87; 66; 43; 80; 57; 94; 71; 50; 50; 67]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[54; 77; 58; 54; 75; 63; 42; 76; 65; 51]</code></pre></td></tr></table>
 <p>Since both values are included, if you set both to the same value, you'll
 effectively constrain the generator to that single value, and it'll behave like
 <code>Gen.constant</code>.</p>
@@ -343,7 +343,7 @@ the result.</p>
 </table>
 <p>The result of this expression is a list of ten sample values. Each value is
 a single integer drawn from the collection of numbers:</p>
-<table class="pre"><tr><td><pre><code>[42; 1337; 1453; -273; 7; -100; 42; 1337; 1453; 1453]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[-273; 1453; -100; 1337; 7; 7; -273; 1453; 1453; 1337]</code></pre></td></tr></table>
 <p>All elements are equally likely to be drawn from the collection; we say that
 the random function has a uniform distribution. One easy way to affect the
 distribution is to put more than one identical element into the collection:</p>
@@ -355,7 +355,7 @@ distribution is to put more than one identical element into the collection:</p>
 </table>
 <p>In the above example, the value <code>"foo"</code> appears twice, so is twice as likely
 to be drawn from the collection:</p>
-<table class="pre"><tr><td><pre><code>["bar"; "foo"; "foo"; "bar"; "foo"; "foo"; "foo"; "bar"; "foo"; "foo"]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>["foo"; "bar"; "bar"; "foo"; "foo"; "foo"; "foo"; "bar"; "bar"; "foo"]</code></pre></td></tr></table>
 <p>The above examples all use <code>list</code> values as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -377,7 +377,7 @@ argument, it's <code>3</code> in this example, which means only values from the 
 </table>
 <p>The result of this expression is a list of ten sample values. Each value is
 a single character drawn from the segment <code>['a'; 'b'; 'c']</code>:</p>
-<table class="pre"><tr><td><pre><code>['c'; 'c'; 'c'; 'b'; 'b'; 'c'; 'a'; 'c'; 'a'; 'a']</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>['c'; 'c'; 'a'; 'a'; 'b'; 'b'; 'b'; 'a'; 'a'; 'b']</code></pre></td></tr></table>
 <p>Let's run <code>Gen.growingElements</code> again, with the same input but with size <code>7</code>:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
@@ -387,7 +387,7 @@ a single character drawn from the segment <code>['a'; 'b'; 'c']</code>:</p>
 </table>
 <p>The result of this expression is a list of ten sample values. Each value is
 now a single character drawn from the segment <code>['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g']</code>:</p>
-<table class="pre"><tr><td><pre><code>['a'; 'c'; 'a'; 'c'; 'g'; 'd'; 'd'; 'd'; 'a'; 'a']</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>['b'; 'g'; 'b'; 'g'; 'b'; 'g'; 'b'; 'g'; 'b'; 'g']</code></pre></td></tr></table>
 <p>The above examples all use <code>list</code> values as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -405,7 +405,7 @@ produce a <code>Gen&lt;byte&gt;</code> from a <code>Gen&lt;int&gt;</code> is to 
 </table>
 <p>This example uses the <code>byte</code> <em>function</em> to cast any <code>int</code> created by
 <code>Gen.choose (0, 127)</code> to a <code>byte</code> value:</p>
-<table class="pre"><tr><td><pre><code>[91uy; 80uy; 25uy; 14uy; 87uy; 76uy; 21uy; 10uy; 83uy; 73uy]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[8uy; 33uy; 19uy; 93uy; 37uy; 106uy; 77uy; 16uy; 46uy; 72uy]</code></pre></td></tr></table>
 <p>This is only a basic example of the concept of <code>Gen.map</code>. In this particular
 example, you could also have used <code>Gen.elements [0uy..127uy]</code> to achieve the
 same result without using <code>Gen.map</code>, so let's consider a second
@@ -425,10 +425,10 @@ combine <code>Gen.map</code> with an anymous function to get the desired date:</
 </table>
 <p>In this example, the generated <code>DateTime</code> value is immediately formatted as
 a <code>string</code>, so that the output is more readable:</p>
-<table class="pre"><tr><td><pre><code>["2019-11-03 00:00:00Z"; "2019-11-11 00:00:00Z"; "2019-11-21 00:00:00Z";
- "2019-11-28 00:00:00Z"; "2019-11-30 00:00:00Z"; "2019-11-10 00:00:00Z";
- "2019-11-02 00:00:00Z"; "2019-11-05 00:00:00Z"; "2019-11-03 00:00:00Z";
- "2019-11-15 00:00:00Z"]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>["2019-11-03 00:00:00Z"; "2019-11-07 00:00:00Z"; "2019-11-22 00:00:00Z";
+ "2019-11-27 00:00:00Z"; "2019-11-16 00:00:00Z"; "2019-11-07 00:00:00Z";
+ "2019-11-24 00:00:00Z"; "2019-11-07 00:00:00Z"; "2019-11-28 00:00:00Z";
+ "2019-11-19 00:00:00Z"]</code></pre></td></tr></table>
 <p>This causes the resulting generator to have the type <code>Gen&lt;string&gt;</code>, but if
 you omit calling <code>ToString "u"</code>, its type would have been <code>Gen&lt;DateTime&gt;</code>.</p>
 <h4><a name="Lists" class="anchor" href="#Lists">Lists</a></h4>
@@ -446,7 +446,7 @@ you can use <code>Gen.constant</code> to generate lists that all contain the sam
 <p>This combination uses <code>Gen.constant 42</code> as an individual generator, and then
 generates lists containing the the number 42. While the value(s) in the list is
 always 42, the length of the generated lists varies.</p>
-<table class="pre"><tr><td><pre><code>[[42]; [42]; []; []; [42]; []; []; [42]; [42]; []]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[]; []; []; []; [42]; [42]; [42]; [42]; [42]; [42]]</code></pre></td></tr></table>
 <p>The length of the generated list is determined by the <code>size</code> argument. In
 this example, the <code>size</code> argument is <code>1</code>, so the generated lists are short.
 Note that while there's a correlation beteen <code>size</code> and the length of the
@@ -461,10 +461,10 @@ lists, you can't rely on a deterministic length. For that, there's
 <p>This example uses <code>Gen.choose (24, 42)</code> in order to generate individual
 integer values between 24 and 42. It then pipes this generator into
 <code>Gen.listOfLength 5</code> in order to generate lists with exactly five elements:</p>
-<table class="pre"><tr><td><pre><code>[[41; 24; 27; 29; 31]; [32; 41; 24; 27; 29]; [37; 32; 41; 24; 27];
- [34; 37; 32; 41; 24]; [32; 34; 37; 32; 41]; [42; 32; 34; 37; 32];
- [29; 42; 32; 34; 37]; [31; 29; 42; 32; 34]; [36; 31; 29; 42; 32];
- [25; 36; 31; 29; 42]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[30; 25; 28; 30; 39]; [40; 30; 25; 28; 30]; [38; 40; 30; 25; 28];
+ [35; 38; 40; 30; 25]; [40; 35; 38; 40; 30]; [39; 40; 35; 38; 40];
+ [25; 39; 40; 35; 38]; [42; 25; 39; 40; 35]; [27; 42; 25; 39; 40];
+ [30; 27; 42; 25; 39]]</code></pre></td></tr></table>
 <p>Notice that all sample lists have exactly five elements.</p>
 <p>You can also use <code>Gen.nonEmptyListOf</code> to create lists that are guaranteed to
 have at least one element. Like the other list generators, it uses a
@@ -478,9 +478,9 @@ single-value generator to generate its elements:</p>
 <p>Like <code>Gen.listOf</code>, <code>Gen.nonEmptyListOf</code> uses <code>size</code> to control the length
 of the generated lists. They may still be small, but the larger the <code>size</code>
 argument, the larger the lists may become.</p>
-<table class="pre"><tr><td><pre><code>[["baz"; "bar"; "baz"; "foo"; "bar"; "foo"; "foo"; "foo"; "bar"; "bar"; "foo";
-  "bar"; "bar"]; ["foo"; "baz"; "bar"; "baz"; "foo"; "bar"; "foo"; "foo"; "foo"];
- ["bar"]; ["bar"; "bar"; "foo"; "baz"; "bar"; "baz"; "foo"]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[["foo"; "foo"; "bar"; "foo"]; ["bar"; "foo"; "foo"];
+ ["baz"; "bar"; "foo"; "foo"; "bar"; "foo"; "bar"; "foo"; "bar"; "foo"; "bar";
+  "baz"; "baz"]; ["bar"; "baz"; "bar"; "foo"; "foo"; "bar"; "foo"]]</code></pre></td></tr></table>
 <p>In this example, each element is drawn from the small set "foo", "bar", and
 "baz". The lists are guaranteed to have at least a single element, but may be
 longer.</p>
@@ -500,9 +500,9 @@ random permutation of a given finite sequence.</p>
 example, but any value would do; it wouldn't change the result.</p>
 <p>The result of this expression is a list of lists, where each list contains
 the original input list, but shuffled:</p>
-<table class="pre"><tr><td><pre><code>[[|"foo"; "baz"; "bar"; "qux"|]; [|"bar"; "foo"; "qux"; "baz"|];
- [|"foo"; "baz"; "qux"; "bar"|]; [|"foo"; "qux"; "bar"; "baz"|];
- [|"baz"; "bar"; "qux"; "foo"|]; [|"foo"; "baz"; "qux"; "bar"|]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[|"bar"; "foo"; "baz"; "qux"|]; [|"bar"; "qux"; "foo"; "baz"|];
+ [|"bar"; "baz"; "foo"; "qux"|]; [|"foo"; "bar"; "baz"; "qux"|];
+ [|"qux"; "foo"; "bar"; "baz"|]; [|"qux"; "foo"; "baz"; "bar"|]]</code></pre></td></tr></table>
 <p>The above example uses a <code>list</code> value as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -527,8 +527,8 @@ can use integers:</p>
 <p><code>Gen.two</code> uses a single-value generator to create a generator of two-element
 tuples. This example generates 10 sample points, where each coordinate is
 between -100 and 100:</p>
-<table class="pre"><tr><td><pre><code>[(-73, -43); (-14, 48); (-89, -33); (-1, 58); (22, -23); (81, 68); (-8, -13);
- (-37, 78); (30, 81); (-72, -21)]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[(-49, -79); (39, 12); (98, -69); (-15, 22); (-90, -59); (-67, 32); (-8, -49);
+ (80, 42); (5, -39); (14, 52)]</code></pre></td></tr></table>
 <p>If you want to model a coordinate system in three-dimensional space, you may
 decide to use floating points instead:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
@@ -541,10 +541,10 @@ decide to use floating points instead:</p>
 from between -10 and 10, with two decimals; that defines a <code>Gen&lt;float&gt;</code>.
 Second, <code>Gen.three</code> takes that <code>Gen&lt;float&gt;</code> and turns it into a
 <code>Gen&lt;float * float * float&gt;</code>:</p>
-<table class="pre"><tr><td><pre><code>[(5.37, 2.6, -0.42); (-5.73, -7.47, 4.59); (1.46, 0.84, -8.69);
- (-9.64, -7.51, -3.68); (-2.45, 7.72, 3.05); (6.46, -2.35, 8.06);
- (-6.36, 5.96, -5.22); (2.55, -2.39, -0.21); (9.88, 1.22, 6.52);
- (-1.57, 2.43, -8.48)]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[(9.34, -9.44, -5.09); (-2.02, -7.42, 8.44); (-9.32, 3.99, -1.53);
+ (3.96, 2.37, 9.0); (3.25, -6.17, -3.48); (-6.37, -4.13, -6.37);
+ (-0.26, -7.43, 1.84); (-0.14, 1.42, 5.77); (5.95, 2.67, 3.71);
+ (-5.95, 7.55, -8.82)]</code></pre></td></tr></table>
 <p>Finally, <code>Gen.four</code> transforms a single-value generator into a generator of
 four-element tuples. As all the other <em>combinators</em> in the <code>Gen</code> module, you
 can combine it with other functions to define more specific values. Imagine,
@@ -573,8 +573,8 @@ Third, you can pipe that generator into <code>Gen.map</code>, using the construc
 overload of <code>Version</code> that takes four integers; in F# 4, constructors can be
 treated as functions, and a constructor with four arguments can be treated as a
 function that takes a four-element tuple.</p>
-<table class="pre"><tr><td><pre><code>["4.5.5.7"; "8.0.1.0"; "4.3.2.1"; "6.8.0.4"; "0.1.4.5"; "2.6.0.8"; "6.9.1.9";
- "8.4.9.2"; "7.7.3.3"; "2.4.6.6"]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>["3.0.4.8"; "5.4.6.6"; "9.7.4.9"; "5.2.8.0"; "7.5.9.3"; "6.0.5.4"; "0.3.9.7";
+ "2.8.7.8"; "6.1.8.1"; "8.6.4.2"]</code></pre></td></tr></table>
 <p>This example composes the <code>Version</code> constructor with the <code>string</code> function,
 in order to produce a more readable output. The resulting generator has the
 type <code>Gen&lt;string&gt;</code>, but if you remove the <code>string</code> composition, the type would
@@ -605,8 +605,8 @@ remove all pairs where the elements are equal. Subsequently, you can use
 </table>
 <p>This expression generates 10 sample lists, each containing two different
 numbers:</p>
-<table class="pre"><tr><td><pre><code>[[34; 75]; [88; 40]; [4; 33]; [47; 25]; [54; 27]; [23; 44]; [81; 25]; [57; 94];
- [9; 81]; [62; 44]]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[[96; 74]; [12; 67]; [66; 32]; [48; 59]; [2; 52]; [21; 17]; [3; 10]; [18; 90];
+ [52; 42]; [74; 25]]</code></pre></td></tr></table>
 <p>When using <code>Gen.filter</code>, be sure to provide a predicate with a high chance
 of returning <code>true</code>. If the predicate discards 'too many' candidates, it may
 cause tests to run slower, or to not terminate at all. If your filter is
