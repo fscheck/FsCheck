@@ -17,7 +17,7 @@ called `gen` is provided by FsCheck, and all the functions in the `Gen` module a
 For C#, there are some LINQ methods you can use (select, where) and a number of methods on the `Gen` class.
 The name for the methods in F# and C# are largely the same except for casing.
 
-Shrinkers have types of the for `'a -> seq<'a>` aka `Func<T,IEnumerable<T>`; given a value, a shrinker 
+Shrinkers have types of the form `'a -> seq<'a>` aka `Func<T,IEnumerable<T>`; given a value, a shrinker 
 produces a sequence of values that are (in some way) smaller than the given value. 
 If FsCheck finds a set of values that falsify a given property, it will try 
 to make that value smaller than the original (random) value by getting the 
