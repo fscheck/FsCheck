@@ -365,7 +365,7 @@ you can use `Gen.constant` to generate lists that all contain the same value:*)
 Gen.constant 42 |> Gen.listOf |> Gen.sample 1 10
 
 (**This combination uses `Gen.constant 42` as an individual generator, and then
-generates lists containing the the number 42. While the value(s) in the list is
+generates lists containing the number 42. While the value(s) in the list is
 always 42, the length of the generated lists varies.*)
 
 (***include-it:ConstantListOfExample***)
