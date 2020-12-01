@@ -10,7 +10,7 @@
 
 ## Videos
 
-* "The lazy programmer's guide to writing 1000's of tests: An introduction to property based testing" by Scott Wlaschin [video](https://skillsmatter.com/skillscasts/6432-the-lazy-programmers-guide-to-writing-1000s-of-tests-an-introduction-to-property-based-testing)
+* "The lazy programmer's guide to writing 1000's of tests: An introduction to property based testing" by Scott Wlaschin [video](https://www.youtube.com/watch?v=IYzDFHx6QPY)
 * "Race Conditions, Distribution, Interactions - Testing the Hard Stuff and Staying Sane" by John Hughes [video](https://vimeo.com/68383317)
 * "Property-Based Testing for Better Code" by Jessica Kerr [video]https://www.youtube.com/watch?v=shngiiBfD80)
 
