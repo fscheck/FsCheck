@@ -45,8 +45,8 @@ group Build
 	nuget Fake.IO.FileSystem
 	nuget Fake.Tools.Git
 	
-	nuget FSharp.Formatting
-	nuget FSharp.Formatting.CommandTool
+	nuget FSharp.Formatting 3.1
+	nuget FSharp.Formatting.CommandTool 3.1
 	nuget xunit.runner.console
 
 group portable
