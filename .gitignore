@@ -168,4 +168,5 @@ project.lock.json
 .ionide/symbolCache.db
 
 .ionide
-.fsdocs/cache
+.fsdocs/
+output/
