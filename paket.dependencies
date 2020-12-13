@@ -1,6 +1,6 @@
 source https://www.nuget.org/api/v2
 
-version 5.241.2
+version 5.249.0
 
 framework: auto-detect
 
