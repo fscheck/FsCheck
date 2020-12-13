@@ -58,7 +58,7 @@ Checkout the project and run build.cmd on Windows or build.sh on Linux/OSX. That
 
 For Visual Studio/MonoDevelop/Xamarin Studio/VsCode: open (the folder that contains) FsCheck.sln and start coding. 
 
-FsCheck uses FAKE, targets for building are `Build` and for testing `RunTests`. Documentation uses FSharp.Formatting, so literate fsx files. To generate the html files, run `build.[cmd|sh] -t GenerateDocs`.
+FsCheck uses FAKE, targets for building are `Build` and for testing `RunTests`. Documentation uses FSharp.Formatting, so literate fsx files. To generate the html files, run `build.[cmd|sh] -t Docs`.
 
 - Windows on AppVeyor:[![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036/branch/master)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
 - Linux on Travis CI: [![Build Status](https://travis-ci.org/fscheck/FsCheck.svg?branch=master)](https://travis-ci.org/fscheck/FsCheck)
