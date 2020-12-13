@@ -3,6 +3,7 @@
   <PropertyGroup>
     <AssemblyName>FsCheck</AssemblyName>
     <TargetFrameworks>net452;netstandard2.0;netstandard1.6;netstandard1.0</TargetFrameworks>
+    <!-- <TargetFramework>netstandard2.0</TargetFramework> -->
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+netcore45+wpa81+wp8</AssetTargetFallback>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

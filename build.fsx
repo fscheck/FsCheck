@@ -235,7 +235,7 @@ let copyFiles () =
 
 /// Specifies the fsformatting executable
 let toolPath() =
-    Fake.Core.ProcessUtils.tryFindLocalTool "FSFORMATTING" "fsformatting.exe" 
+    ProcessUtils.tryFindLocalTool "FSFORMATTING" "fsformatting.exe" 
         [(Directory.GetCurrentDirectory() @@ "packages" @@ "build" @@ "FSharp.Formatting.CommandTool" @@ "tools")]
     |> Option.get
 

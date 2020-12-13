@@ -25,6 +25,7 @@ group Build
 	source https://www.nuget.org/api/v2
 	source https://api.nuget.org/v3/index.json
 
+	nuget FSharp.Core 4.7.0.0
 	nuget Octokit
 	nuget Fake.Api.GitHub
 	nuget Fake.BuildServer.AppVeyor

@@ -15,4 +15,5 @@
 * "Property-Based Testing for Better Code" by Jessica Kerr [video]https://www.youtube.com/watch?v=shngiiBfD80)
 
 ## Blogs
+
 * Kurt's [Blog](http://fortysix-and-two.blogspot.com) for announcements, change logs and other posts more or less related to FsCheck. Now largely dormant.

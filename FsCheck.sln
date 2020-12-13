@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		build.fsx = build.fsx
 		Contributors.txt = Contributors.txt
 		FsCheck Release Notes.md = FsCheck Release Notes.md
-		docs\tools\generate.fsx = docs\tools\generate.fsx
-		docs\tools\generate.ja.fsx = docs\tools\generate.ja.fsx
 		License.txt = License.txt
 		paket.dependencies = paket.dependencies
 		README.md = README.md
@@ -62,7 +60,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ja", "ja", "{34021B41-3EED-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.XUnit.CSharpExamples", "examples\FsCheck.XUnit.CSharpExamples\FsCheck.XUnit.CSharpExamples.csproj", "{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharp.DocSnippets", "docs\csharp\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharp.DocSnippets", "examples\CSharp.DocSnippets\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

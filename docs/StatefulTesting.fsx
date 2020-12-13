@@ -1,8 +1,7 @@
 (*** hide ***)
-#r @"../../src/FsCheck/bin/Release/netstandard2.0/FsCheck.dll"
+#r @"../src/FsCheck/bin/Release/netstandard2.0/FsCheck.dll"
 open FsCheck
 open System
-open FsCheck
 
 (**
 # Model-based Testing
@@ -72,10 +71,10 @@ Notice that not only has FsCheck found our 'bug', it has also produced the minim
 
 Finally, in C#, all this looks as follows:
 
-    [lang=csharp,file=../csharp/StatefulTesting.cs,key=counterspec]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/StatefulTesting.cs,key=counterspec]
 
 And to run:
 
-    [lang=csharp,file=../csharp/StatefulTesting.cs,key=check]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/StatefulTesting.cs,key=check]
 
 *)

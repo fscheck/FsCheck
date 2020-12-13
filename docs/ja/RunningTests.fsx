@@ -1,6 +1,7 @@
 ﻿(*** hide ***)
-#I "../../../src/FsCheck/bin/Release"
-#r @"../../../packages/xunit.1.9.2/lib/net20/xunit.dll"
+#I @"../../src/FsCheck/bin/Release/netstandard2.0"
+#r @"../../packages/xunit.abstractions/lib/netstandard1.0/xunit.abstractions.dll"
+#r @"../../packages/xunit.extensibility.core/lib/netstandard1.1/xunit.core.dll"
 #r "FsCheck"
 
 open FsCheck

@@ -1,6 +1,5 @@
 (*** hide ***)
-#I @"../../../src/FsCheck/bin/Release"
-#r @"FsCheck"
+#r @"../../src/FsCheck/bin/Release/netstandard2.0/FsCheck.dll"
 open FsCheck
 open System
 
@@ -25,24 +24,23 @@ type Counter() =
 それを踏まえると、以下のような仕様が作成できます:
  *)
 
-open FsCheck.Commands
-
 let spec =
-  let inc = 
-      { new ICommand<Counter,int>() with
-          member x.RunActual c = c.Inc(); c
-          member x.RunModel m = m + 1
-          member x.Post (c,m) = m = c.Get |> Prop.ofTestable
-          override x.ToString() = "inc"}
-  let dec = 
-      { new ICommand<Counter,int>() with
-          member x.RunActual c = c.Dec(); c
-          member x.RunModel m = m - 1
-          member x.Post (c,m) = m = c.Get |> Prop.ofTestable
-          override x.ToString() = "dec"}
-  { new ISpecification<Counter,int> with
-      member x.Initial() = (new Counter(),0)
-      member x.GenCommand _ = Gen.elements [inc;dec] }
+  let inc = { new Command<Counter, int>() with
+                    override __.RunActual counter = counter.Inc(); counter
+                    override __.RunModel m = m + 1
+                    override __.Post(counter, m) = counter.Get = m |@ sprintf "model: %i <> %A" m counter
+                    override __.ToString() = "inc" }
+                           
+  let dec = { new Command<Counter, int>() with
+                    override __.RunActual counter = counter.Dec(); counter
+                    override __.RunModel m = m - 1
+                    override __.Post(counter, m) = counter.Get = m |@ sprintf "model: %i <> %A" m counter
+                    override __.ToString() = "dec" }
+  
+  { new ICommandGenerator<Counter,int> with
+      member __.InitialActual = Counter()
+      member __.InitialModel = 0
+      member __.Next model = Gen.elements [inc;dec] }
 
 (**
 仕様は `ISpecification<'typeUnderTest,'modelType>` を実装したオブジェクトです。仕様は、初期状態のオブジェクトと、
@@ -58,7 +56,7 @@ let spec =
 仕様を以下のようにチェックできます: *)
 
 (***define-output:spec***)
-Check.Quick (asProperty spec)
+Check.Quick (Command.toProperty spec)
 
 (***include-output:spec***)
 

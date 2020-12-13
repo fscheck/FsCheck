@@ -1,5 +1,5 @@
 (*** hide ***)
-#I @"../../../src/FsCheck/bin/Release"
+#I @"../../src/FsCheck/bin/Release/netstandard2.0"
 #r @"FsCheck"
 open FsCheck
 open System
@@ -38,7 +38,7 @@ FsCheck では Arbitrary インスタンスを、 `Type` から `Arbitrary` へ�
 
 let chooseFromList xs = 
   gen { let! i = Gen.choose (0, List.length xs-1) 
-        return (List.nth xs i) }
+        return (List.item i xs) }
   
 (**
 を使用します。
@@ -197,7 +197,7 @@ let boxGen<'a> : Gen<Box<'a>> =
     gen { let! a = Arb.generate<'a>
           return! Gen.elements [ Whitebox a; Blackbox a] }
 
-type MyGenerators =
+type MoreGenerators =
     static member Tree() =
         {new Arbitrary<Tree>() with
             override x.Generator = tree
