@@ -169,6 +169,15 @@ Target.create "Docs" (fun _ ->
       + " --parameters " + String.Join(" ", fsdocParameters)) |> ignore
 )
 
+Target.create "WatchDocs" (fun _ ->
+    Shell.cleanDir ".fsdocs"
+    DotNet.exec id "tool" ("install FSharp.Formatting.CommandTool")  |> ignore
+    DotNet.exec id "fsdocs" ("watch --eval"
+      + " --projects src/FsCheck/FsCheck.fsproj" 
+      + " --property " + String.Join(" ",fsdocProperties) 
+      + " --parameters " + String.Join(" ", fsdocParameters)) |> ignore
+)
+
 // --------------------------------------------------------------------------------------
 // Release Scripts
 
