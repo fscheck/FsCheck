@@ -170,3 +170,4 @@ project.lock.json
 .ionide
 .fsdocs/
 output/
+tmp/
