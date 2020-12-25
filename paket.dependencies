@@ -39,15 +39,12 @@ group Build
 	nuget Fake.Core.UserInput
 	nuget Fake.DotNet.AssemblyInfoFile
 	nuget Fake.DotNet.Cli
-	nuget Fake.DotNet.FSFormatting
 	nuget Fake.DotNet.MSBuild
 	nuget Fake.DotNet.Paket
 	nuget Fake.DotNet.Testing.XUnit2
 	nuget Fake.IO.FileSystem
 	nuget Fake.Tools.Git
 	
-	nuget FSharp.Formatting 3.1
-	nuget FSharp.Formatting.CommandTool 3.1
 	nuget xunit.runner.console
 
 group portable
