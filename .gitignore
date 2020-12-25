@@ -168,3 +168,6 @@ project.lock.json
 .ionide/symbolCache.db
 
 .ionide
+.fsdocs/
+output/
+tmp/

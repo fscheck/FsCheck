@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		build.fsx = build.fsx
 		Contributors.txt = Contributors.txt
 		FsCheck Release Notes.md = FsCheck Release Notes.md
-		docs\tools\generate.fsx = docs\tools\generate.fsx
-		docs\tools\generate.ja.fsx = docs\tools\generate.ja.fsx
 		License.txt = License.txt
 		paket.dependencies = paket.dependencies
 		README.md = README.md
@@ -36,33 +34,21 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsCheck.NUnit", "src\FsChec
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D4E0-4CF4-840D-3F3016653F85}"
 	ProjectSection(SolutionItems) = preProject
-		Docs\content\index.fsx = Docs\content\index.fsx
-		docs\content\LearningResources.md = docs\content\LearningResources.md
-		Docs\content\Properties.fsx = Docs\content\Properties.fsx
-		Docs\content\QuickStart.fsx = Docs\content\QuickStart.fsx
-		Docs\content\RunningTests.fsx = Docs\content\RunningTests.fsx
-		Docs\content\StatefulTesting.fsx = Docs\content\StatefulTesting.fsx
-		docs\content\StatefulTestingNew.fsx = docs\content\StatefulTestingNew.fsx
-		docs\tools\templates\template.cshtml = docs\tools\templates\template.cshtml
-		Docs\content\TestData.fsx = Docs\content\TestData.fsx
-		Docs\content\TipsAndTricks.fsx = Docs\content\TipsAndTricks.fsx
-		docs\content\users.md = docs\content\users.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ja", "ja", "{34021B41-3EED-409A-AF7C-6EC2BD4371B2}"
-	ProjectSection(SolutionItems) = preProject
-		docs\content\ja\index.fsx = docs\content\ja\index.fsx
-		docs\content\ja\Properties.fsx = docs\content\ja\Properties.fsx
-		docs\content\ja\QuickStart.fsx = docs\content\ja\QuickStart.fsx
-		docs\content\ja\RunningTests.fsx = docs\content\ja\RunningTests.fsx
-		docs\content\ja\StatefulTesting.fsx = docs\content\ja\StatefulTesting.fsx
-		docs\content\ja\TestData.fsx = docs\content\ja\TestData.fsx
-		docs\content\ja\TipsAndTricks.fsx = docs\content\ja\TipsAndTricks.fsx
+		Docs\index.fsx = Docs\index.fsx
+		Docs\LearningResources.md = Docs\LearningResources.md
+		Docs\Properties.fsx = Docs\Properties.fsx
+		Docs\QuickStart.fsx = Docs\QuickStart.fsx
+		Docs\RunningTests.fsx = Docs\RunningTests.fsx
+		Docs\StatefulTesting.fsx = Docs\StatefulTesting.fsx
+		Docs\StatefulTestingNew.fsx = Docs\StatefulTestingNew.fsx
+		Docs\TestData.fsx = Docs\TestData.fsx
+		Docs\TipsAndTricks.fsx = Docs\TipsAndTricks.fsx
+		Docs\users.md = Docs\users.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.XUnit.CSharpExamples", "examples\FsCheck.XUnit.CSharpExamples\FsCheck.XUnit.CSharpExamples.csproj", "{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharp.DocSnippets", "docs\csharp\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharp.DocSnippets", "examples\CSharp.DocSnippets\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,7 +110,6 @@ Global
 		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 		{CB41BAC5-272F-4562-9494-E3DC1D0B4139} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
-		{34021B41-3EED-409A-AF7C-6EC2BD4371B2} = {6B36173B-D4E0-4CF4-840D-3F3016653F85}
 		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
 		{6AB84678-E55F-4387-A040-67312735D089} = {6B36173B-D4E0-4CF4-840D-3F3016653F85}
 	EndGlobalSection

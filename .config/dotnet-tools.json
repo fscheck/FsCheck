@@ -7,6 +7,12 @@
       "commands": [
         "fake"
       ]
+    },
+    "fsharp.formatting.commandtool": {
+      "version": "7.2.9",
+      "commands": [
+        "fsdocs"
+      ]
     }
   }
 }
