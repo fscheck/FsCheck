@@ -1,18 +1,10 @@
 (**
-FsCheck
-=======
+FsCheck: Random Testing for .NET
+================================
 
 FsCheck is a tool for testing .NET programs automatically. The programmer provides a specification of the program, in the form of properties which functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. While writing the properties, you are actually writing a testable specification of your program. Specifications are expressed in F#, C# or VB, using combinators defined in the FsCheck library. FsCheck provides combinators to define properties, observe the distribution of test data, and define test data generators. When a property fails, FsCheck automatically displays a minimal counter example.
 
-<div class="row">
-  <div class="span1"></div>
-  <div class="span6">
-    <div class="well well-small" id="nuget">
-      FsCheck, NUnit and xUnit.NET plugin can be <a href="https://www.nuget.org/packages?q=fscheck">installed from NuGet</a> using your favorite package manager.
-    </div>
-  </div> 
-  <div class="span1"></div>
-</div>
+FsCheck, NUnit and xUnit.NET plugin can be <a href="https://www.nuget.org/packages?q=fscheck">installed from NuGet</a> using your favorite package manager.
 
 Users have also created integrations with [Expecto](https://github.com/haf/Expecto), 
 [Fuchu](https://github.com/mausch/Fuchu) and 
@@ -21,8 +13,6 @@ you can [find on NuGet](https://www.nuget.org/packages?q=fscheck).
 
 Documentation
 -------------
-
-The documentation is also available in [Japanese](ja/index.html).
 
  * [QuickStart](QuickStart.html) to get started.
 
@@ -64,7 +54,7 @@ The library is available under the BSD license, which allows modification and
 redistribution for both commercial and non-commercial purposes. For more information see the 
 [License file][license] in the GitHub repository. 
 
-  [content]: https://github.com/fscheck/FsCheck/tree/master/docs/content
+  [content]: https://github.com/fscheck/FsCheck/tree/master/docs
   [gh]: https://github.com/fscheck/FsCheck
   [issues]: https://github.com/fscheck/FsCheck/issues
   [readme]: https://github.com/fscheck/FsCheck/blob/master/README.md
