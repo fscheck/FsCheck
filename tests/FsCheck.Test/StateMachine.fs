@@ -18,7 +18,7 @@ module StateMachine =
     let checkSimpleModelSpec size =
         let inc = StateMachine.operation "inc" ((+) 1) (fun (actual:SimpleModel,model) -> actual.Get = model)
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
-        { new Machine<_,_>(size) with
+        { new Machine<_,_,_>(size) with
             member __.Setup = Gen.constant create |> Arb.fromGen
             member __.Next _ = Gen.constant inc }
 
@@ -36,26 +36,26 @@ module StateMachine =
 
 
     type FaultyInc(n:int) =
-        inherit Operation<SimpleModel,int>()
+        inherit Operation<SimpleModel,int, bool>()
         member __.N = n
         override __.Check (a, m) = 
             a.Add n
-            if m > 2 then false.ToProperty() else true.ToProperty()
+            m <= 2
         override __.Run m = m + n
         override __.ToString() = "faultyInc"
 
     type FaultyCmd = 
         static member Arb = 
             // make sure that minimum counterexample cannot be found with generator .. therefore 5
-            let generator = Gen.constant (new FaultyInc(5) :> Operation<SimpleModel,int>)
+            let generator = Gen.constant (FaultyInc(5) :> Operation<SimpleModel,int, _>)
             // should be able to find minimum counterexample
-            let shrinker (op:Operation<SimpleModel,int>) = 
-                seq { for i in 1 .. (op :?> FaultyInc).N - 1 do yield FaultyInc i :> Operation<SimpleModel,int>} 
+            let shrinker (op:Operation<SimpleModel,int, _>) = 
+                seq { for i in 1 .. (op :?> FaultyInc).N - 1 do yield FaultyInc i :> Operation<SimpleModel,int, _>} 
             Arb.fromGenShrink(generator,shrinker)
 
 
     let checkFaultyCommandModalSpecWithSetupShrink create =
-        { new Machine<_,_>() with
+        { new Machine<_,_,_>() with
             member __.Setup =
                 Arb.fromGenShrink(
                     Gen.choose (50,100) |> Gen.map create,
@@ -69,7 +69,7 @@ module StateMachine =
         let spec = checkFaultyCommandModalSpecWithSetupShrink create
         let run = { Setup = (53,create 53)
                     TearDown = spec.TearDown
-                    Operations = [(new FaultyInc(1) :> Operation<SimpleModel,int>,54)]
+                    Operations = [(new FaultyInc(1) :> Operation<SimpleModel,int,_>,54)]
                     UsedSize = 1 }
         let shrunk = StateMachine.shrink spec run |> Seq.toArray
         test <@ 1 = shrunk.Length @>
@@ -80,7 +80,7 @@ module StateMachine =
         
     let checkFaultyCommandModelSpec size =
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
-        { new Machine<_,_>(size) with
+        { new Machine<_,_,_>(size) with
             member __.Setup = Gen.constant create |> Arb.fromGen
             member __.Next _ = FaultyCmd.Arb.Generator }
 
@@ -91,7 +91,7 @@ module StateMachine =
         let spec = checkFaultyCommandModelSpec -1
         let run = { Setup = (0,create)
                     TearDown = spec.TearDown
-                    Operations = [(new FaultyInc(5) :> Operation<SimpleModel,int>,5)]
+                    Operations = [(new FaultyInc(5) :> Operation<SimpleModel,int,_>,5)]
                     UsedSize = 1 }
         //should contain an element smaller than 5 since they can't be generated but only shrunk
         let shrunk = StateMachine.shrink spec run
@@ -110,9 +110,9 @@ module StateMachine =
     //used to see if it can terminate before reaching the MaxNumberOfCommands 
     let checkStoppingSpec size =
         let inc = StateMachine.operation "inc" ((+) 1) (fun (actual:SimpleModel,model) -> actual.Get = model)
-        let stop = new StopOperation<SimpleModel,int>() :> Operation<SimpleModel,int>
+        let stop = new StopOperation<SimpleModel,int>() :> Operation<SimpleModel,int,_>
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
-        { new Machine<_,_>(size) with
+        { new Machine<_,_,_>(size) with
             member __.Setup = Gen.constant create |> Arb.fromGen
             member __.Next _ = Gen.frequency [(9, inc |> Gen.constant);(1, stop |> Gen.constant)] }
 
@@ -133,12 +133,12 @@ module StateMachine =
             StateMachine.operationWithPrecondition "setFalse" id (fun _ -> false) (fun (_, _) -> true)
         let create =
             StateMachine.setup id (fun () -> true)
-        { new Machine<_,_>() with
+        { new Machine<_,_,_>() with
             member __.Setup = Gen.constant create |> Arb.fromGen
             member __.Next _ = Gen.elements [setTrue; setFalse] }
 
 
-    let inline checkPreconditions initial (cmds:seq<Operation<_,_> * _>) =
+    let inline checkPreconditions initial (cmds:seq<Operation<_,_,_> * _>) =
         cmds
         |> Seq.fold (fun (model,pres) (cmd,_) -> cmd.Run model,pres && cmd.Pre model) (initial, true)
         |> snd
@@ -160,7 +160,7 @@ module StateMachine =
 
     let checkFaultyCommandModelSpecNoShrink =
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
-        { new Machine<SimpleModel,int>() with
+        { new Machine<SimpleModel,int,_>() with
             member __.Setup = Gen.constant create |> Arb.fromGen
             member __.Next _ = FaultyCmd.Arb.Generator 
             override __.ShrinkOperations _ = Seq.empty }
@@ -170,8 +170,8 @@ module StateMachine =
          let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
          let run = { Setup = (0,create)
                      TearDown = checkFaultyCommandModelSpecNoShrink.TearDown
-                     Operations = [(FaultyInc(1) :> Operation<SimpleModel,int>,1)
-                                   (FaultyInc(2) :> Operation<SimpleModel,int>,2)]
+                     Operations = [(FaultyInc(1) :> Operation<SimpleModel,int,_>,1)
+                                   (FaultyInc(2) :> Operation<SimpleModel,int,_>,2)]
                      UsedSize = 2 }
  
          //since shrinker is disabled should not generate values through shrinking
@@ -192,7 +192,7 @@ module StateMachine =
 
     let spec =
         let inc = 
-            { new Operation<Counter,int>() with
+            { new Operation<Counter,int,_>() with
                 member __.Run m = m + 1
                 member __.Check (c,m) = 
                     let res = c.Inc() 
@@ -200,7 +200,7 @@ module StateMachine =
                     |@ sprintf "Inc: model = %i, actual = %i" m res
                 override __.ToString() = "inc"}
         let dec = 
-            { new Operation<Counter,int>() with
+            { new Operation<Counter,int,_>() with
                 member __.Run m = m - 1
                 override __.Pre m = 
                     m > 0
@@ -213,7 +213,7 @@ module StateMachine =
             { new Setup<Counter,int>() with
                 member __.Actual() = new Counter(init)
                 member __.Model() = init }
-        { new Machine<Counter,int>() with
+        { new Machine<Counter,int,_>() with
             member __.Setup = 
                 Arb.fromGenShrink(
                     Gen.choose (0,100) |> Gen.map create ,
@@ -241,7 +241,7 @@ module StateMachine =
     
     let makeOperations failureState =
          let makeOperation failureState actualNextState startState endState =
-            { new Operation<ActualState,ModelState>() with 
+            { new Operation<ActualState,ModelState,_>() with 
                 override t.Run m = 
                     if not (t.Pre m) then failwithf "Run should never be called if precondition not satisfied. m = %A" m
                     endState
@@ -270,7 +270,7 @@ module StateMachine =
         let (|GenConst|) x = Gen.constant x
         let (GenConst ``a->b``, GenConst ``b->a``, GenConst ``b->c``, GenConst ``a->c``) = makeOperations failureState
         
-        { new Machine<ActualState,ModelState>() with
+        { new Machine<ActualState,ModelState,_>() with
             member __.Setup = Gen.constant setup |> Arb.fromGen
             member __.Next _ = Gen.frequency [ (10,``a->b``); (1,``b->c``);  (10, ``b->a``); (1,``a->c``) ] }
 
