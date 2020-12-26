@@ -1,595 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8"/>
-    <title>Namespaces - FsCheck</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content=""/>
-    <meta name="author" content="Kurt Schelfthout and contributors"/>
 
-    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
-    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
-    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
-    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+<head>
+    <meta charset="utf-8">
+    <title>FsCheck (API Reference)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Kurt Schelfthout and contributors">
 
-    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
-    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+    <link rel="stylesheet" id="theme_link" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/materia/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script> -->
+
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/navbar-fixed-left.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-default.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-custom.css" />
+    <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-tips.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-  </head>
-  <body>
-    <div class="container">
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right">
-          <li><a href="https://github.com/fscheck/FsCheck/fork">Fork me on GitHub</a></li>
-        </ul>
-        <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
-      </div>
-      <hr />
-      <div class="row">
-        <div class="span9" id="main">
-          
-
-<h1>FsCheck</h1>
-
-
-  <h2>FsCheck Namespace</h2>
-    <div>
-      <table class="table table-bordered type-list">
-    <thead>
-      <tr><td>Type</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-arbitrary-1.html">Arbitrary<'a></a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-command-2.html">Command<'Actual, 'Model></a>
-          </td>
-          <td class="xmldoc">
-          <p>A single command describes pre and post conditions and the model for a single method under test.
-The post-conditions are the invariants that will be checked; when these do not hold the test fails.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-config.html">Config</a>
-          </td>
-          <td class="xmldoc">
-          <p>For configuring a run.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-donotshrink-1.html">DoNotShrink<'a></a>
-          </td>
-          <td class="xmldoc">
-          <p>Use the generator for 'a, but don't shrink.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-donotsize-1.html">DoNotSize<'a></a>
-          </td>
-          <td class="xmldoc">
-          <p>Whereas most types are restricted by a size that grows
-as the test gets further, by applying this type the underlying
-type will ignore this size and always generate from the full range.
-Note that this only makes a difference for types that have a range -
-currently integer types, TimeSpan and Decimal have DoNotSize Arbitrary instances.
-This is typically (and at least currently) only applicable for value types
-that are comparable, hence the type constraints.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-fixedlengtharray-1.html">FixedLengthArray<'a></a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents an array whose length does not change when shrinking.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-function-2.html">Function<'a, 'b></a>
-          </td>
-          <td class="xmldoc">
-          <p>A function (F# function) that can be displayed and shrunk.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-gen-1.html">Gen<'a></a>
-          </td>
-          <td class="xmldoc">
-          <p>Generator of a random value, based on a size parameter and a randomly generated int.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-hostname.html">HostName</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-icommandgenerator-2.html">ICommandGenerator<'Actual, 'Model></a>
-          </td>
-          <td class="xmldoc">
-          <p>Defines the initial state for actual and model object, and allows to define the generator to use
-for the next state, based on the model.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-ipv4address.html">IPv4Address</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-ipv6address.html">IPv6Address</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-intwithminmax.html">IntWithMinMax</a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents an int that can include int.MinValue and int.MaxValue.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-interval.html">Interval</a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents an integer interval.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-negativeint.html">NegativeInt</a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents an int &lt; 0</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-nonemptyarray-1.html">NonEmptyArray<'a></a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents a non-empty array.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-nonemptyset-1.html">NonEmptySet<'a></a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents a non-empty Set.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-nonemptystring.html">NonEmptyString</a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents a string that is not null or empty, and does not contain any null characters ('\000')</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-nonnegativeint.html">NonNegativeInt</a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents an int &gt;= 0</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-nonnull-1.html">NonNull<'a></a>
-          </td>
-          <td class="xmldoc">
-          <p>Wrap a type in NonNull to prevent null being generated for the wrapped type.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-nonwhitespacestring.html">NonWhiteSpaceString</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-nonzeroint.html">NonZeroInt</a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents an int <> 0</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-normalfloat.html">NormalFloat</a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents a float that is not NaN or Infinity.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-outcome.html">Outcome</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-positiveint.html">PositiveInt</a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents an int &gt; 0</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-property.html">Property</a>
-          </td>
-          <td class="xmldoc">
-          <p>A Property can be checked by FsCheck.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-result.html">Result</a>
-          </td>
-          <td class="xmldoc">
-          <p>The result of one execution of a property.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-rose-1.html">Rose<'a></a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-stringnonulls.html">StringNoNulls</a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents a string that does not contain null characters ('\000')</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-testdata.html">TestData</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-testresult.html">TestResult</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-throwingfunction-2.html">ThrowingFunction<'a, 'b></a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-weightandvalue-1.html">WeightAndValue<'a></a>
-          </td>
-          <td class="xmldoc">
-          <p>2-tuple containing a weight and a value, used in some Gen methods to indicate
-the probability of a value.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-xmlencodedstring.html">XmlEncodedString</a>
-          </td>
-          <td class="xmldoc">
-          <p>Represents a string that can be serializable as a XML value.</p>
-
-
-          </td>
-        </tr>
-    </tbody>
-  </table>
-  <table class="table table-bordered module-list">
-    <thead>
-      <tr><td>Module</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td class="module-name">
-            <a href="fscheck-arb.html">Arb</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="module-name">
-            <a href="fscheck-arbpatterns.html">ArbPatterns</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="module-name">
-            <a href="fscheck-gen.html">Gen</a>
-          </td>
-          <td class="xmldoc">
-          <p>Combinators to build custom random generators for any type.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="module-name">
-            <a href="fscheck-genbuilder.html">GenBuilder</a>
-          </td>
-          <td class="xmldoc">
-          <p>Computation expression builder for Gen.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="module-name">
-            <a href="fscheck-propoperators.html">PropOperators</a>
-          </td>
-          <td class="xmldoc">
-          <p>Operators for Prop.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="module-name">
-            <a href="fscheck-random.html">Random</a>
-          </td>
-          <td class="xmldoc">
-          <p>Generate random numbers based on splitting seeds. Based Hugs' Random implementation.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="module-name">
-            <a href="fscheck-typeclass.html">TypeClass</a>
-          </td>
-          <td class="xmldoc">
-          <p>Haskell typeclass concept simulation. For internal use.</p>
-
-
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-    </div>
-  <h2>FsCheck.Experimental Namespace</h2>
-    <div>
-      <table class="table table-bordered type-list">
-    <thead>
-      <tr><td>Type</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-experimental-disposecall-1.html">DisposeCall<'Actual></a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-experimental-ioperationresult.html">IOperationResult</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-experimental-machine-2.html">Machine<'Actual, 'Model></a>
-          </td>
-          <td class="xmldoc">
-          <p>Defines the initial state for actual and model object, and allows to define the generator to use
-for the next state, based on the model.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-experimental-machinerun-2.html">MachineRun<'Actual, 'Model></a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-experimental-objectmachinemodel.html">ObjectMachineModel</a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-experimental-operation-2.html">Operation<'Actual, 'Model></a>
-          </td>
-          <td class="xmldoc">
-          <p>An operation describes pre and post conditions and the model for a single operation under test.
-The post-conditions are the invariants that will be checked; when these do not hold the test fails.</p>
-
-
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-experimental-operationresult-1.html">OperationResult<'a></a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-experimental-setup-2.html">Setup<'Actual, 'Model></a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-experimental-stopoperation-2.html">StopOperation<'Actual, 'Model></a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="fscheck-experimental-teardown-1.html">TearDown<'Actual></a>
-          </td>
-          <td class="xmldoc">
-          
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-    </div>
-
-        </div>
-        <div class="span3">
-          <img src="/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" />  
-          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
-            <li class="nav-header">FsCheck</li>
-            <li><a href="/FsCheck/index.html">Home page</a></li>
-            <li class="divider"></li>
-            <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
-            <li><a href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
-            <li><a href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License</a></li>
-            <li><a href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
-            <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
+    <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+    <!-- END SEARCH BOX: this adds support for the search box -->
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-secondary fixed-left" id="fsdocs-menu">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+            <div id="header">
+                <div class="searchbox" id="fsdocs-searchbox">
+                    <label for="search-by">
+                        <i class="fas fa-search"></i>
+                    </label>
+                    <input data-search-input="" id="search-by" type="search" placeholder="Search..." />
+                    <span data-search-clear="">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- END SEARCH BOX: this adds support for the search box -->
+            <ul class="navbar-nav">
+                <li class="nav-header">FsCheck</li>
+                <li class="nav-item"><a class="nav-link" href="http://nuget.org/packages/FsCheck">Get via NuGet</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License (BSD-3-Clause)</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//users.html">Who is using FsCheck?</a></li>
             
-            <li class="nav-header">Getting started</li>
-            <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
-            <li><a href="/FsCheck/LearningResources.html">Learning Resources</a></li>
+                <li class="nav-header">Getting started</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//QuickStart.html">Quick Start</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//LearningResources.html">Learning Resources</a></li>
 
-            <li class="nav-header">Documentation</li>
-            <li>
-              <a href="/FsCheck/Properties.html">Properties</a>
-            </li>
-            <li>
-              <a href="/FsCheck/TestData.html">Generating test data</a>
-            </li>
-            <li>
-              <a href="/FsCheck/StatefulTesting.html">Model-based testing</a>
-            </li>
-            <li>
-              <a href="/FsCheck/RunningTests.html">Running tests</a>
-            </li>
-            <li>
-              <a href="/FsCheck/TipsAndTricks.html">Tips and Tricks</a>
-            </li>
-              <li>
-                  <a href="/FsCheck/StatefulTestingNew.html">Model-based testing vNext (Experimental)</a>
-              </li>
-
-            <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <a href="https://github.com/fscheck/FsCheck">
-      <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
+                <li class="nav-header">Documentation</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//Properties.html">Properties</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TestData.html">Generating test data</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTesting.html">Model-based testing</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//RunningTests.html">Running tests</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TipsAndTricks.html">Tips and Tricks</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTestingNew.html">Model-based testing vNext (Experimental)</a></li>
+                <li class="nav-header">
+  Namespaces
+</li>             
+<li class="nav-item">
+  <span>
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
+      FsCheck
     </a>
-  </body>
-  </html>
+  </span>
+</li>             
+<li class="nav-item">
+  <span>
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental.html">
+      FsCheck.Experimental
+    </a>
+  </span>
+</li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="masthead">
+            <h3 class="muted"><a href="https://fscheck.github.io/FsCheck/">FsCheck</a></h3>
+        </div>
+        <hr />
+        <div class="container" id="fsdocs-content">
+            <div>
+  <h1>
+    API Reference
+  </h1>
+  <h2>
+    Available Namespaces:
+  </h2>
+  <ul>
+    <li>
+      <span>
+        <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
+          FsCheck
+        </a>
+         - 
+      </span>
+    </li>
+    <li>
+      <span>
+        <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental.html">
+          FsCheck.Experimental
+        </a>
+         - 
+      </span>
+    </li>
+  </ul>
+</div>
+            
+        </div>
+
+        <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+        <script type="text/javascript">var fsdocs_search_baseurl = 'https://fscheck.github.io/FsCheck/';</script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-search.js"></script>
+        <!-- END SEARCH BOX: this adds support for the search box -->
+    </div>
+</body>
+
+</html>
+

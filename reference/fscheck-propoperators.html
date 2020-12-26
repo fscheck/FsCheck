@@ -1,234 +1,859 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8"/>
-    <title>PropOperators - FsCheck</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content=""/>
-    <meta name="author" content="Kurt Schelfthout and contributors"/>
 
-    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
-    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
-    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
-    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+<head>
+    <meta charset="utf-8">
+    <title>PropOperators (FsCheck)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Kurt Schelfthout and contributors">
 
-    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
-    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+    <link rel="stylesheet" id="theme_link" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/materia/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script> -->
+
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/navbar-fixed-left.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-default.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-custom.css" />
+    <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-tips.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-  </head>
-  <body>
-    <div class="container">
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right">
-          <li><a href="https://github.com/fscheck/FsCheck/fork">Fork me on GitHub</a></li>
-        </ul>
-        <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
-      </div>
-      <hr />
-      <div class="row">
-        <div class="span9" id="main">
-          
+    <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+    <!-- END SEARCH BOX: this adds support for the search box -->
 
+</head>
 
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-secondary fixed-left" id="fsdocs-menu">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+            <div id="header">
+                <div class="searchbox" id="fsdocs-searchbox">
+                    <label for="search-by">
+                        <i class="fas fa-search"></i>
+                    </label>
+                    <input data-search-input="" id="search-by" type="search" placeholder="Search..." />
+                    <span data-search-clear="">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </div>
+            </div>
 
-<h1>PropOperators</h1>
-<p>
-  <span>Namespace: FsCheck</span><br />
-        <span>
-          Attributes:<br />
-[&lt;AutoOpen&gt;]<br />
-          
-      </span>
-</p>
-<div class="xmldoc">
-<p>Operators for Prop.</p>
-
-</div>
-
-<!-- Render nested types and modules, if there are any -->
-
-  <h3>Functions and values</h3>
-  <table class="table table-bordered member-list">
-    <thead>
-      <tr><td>Function or value</td><td>Description</td></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
-            ( %&gt; )
-          </code>
-          <div class="tip" id="66">
-            <strong>Signature:</strong> &#39;?9393 -&gt; string -&gt; Property<br />
-                          <strong>Type parameters:</strong> '?9393                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L159-159" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Add the given label to the property. Property on the left hand side, label on the right.</p>
-
-
-              <p>CompiledName: <code>op_PercentGreater</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
-            ( .&amp;. ) l r
-          </code>
-          <div class="tip" id="67">
-            <strong>Signature:</strong> l:&#39;LeftTestable -&gt; r:&#39;RightTestable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'LeftTestable, 'RightTestable                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L162-162" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Construct a property that succeeds if both succeed. (cfr 'and')</p>
-
-
-              <p>CompiledName: <code>op_DotAmpDot</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
-            ( .|. ) l r
-          </code>
-          <div class="tip" id="68">
-            <strong>Signature:</strong> l:&#39;LeftTestable -&gt; r:&#39;RightTestable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'LeftTestable, 'RightTestable                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L167-167" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Construct a property that fails if both fail. (cfr 'or')</p>
-
-
-              <p>CompiledName: <code>op_DotBarDot</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
-            ( @| )
-          </code>
-          <div class="tip" id="69">
-            <strong>Signature:</strong> string -&gt; &#39;?9391 -&gt; Property<br />
-                          <strong>Type parameters:</strong> '?9391                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L156-156" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Add the given label to the property. label on the left hand side, property on the right.</p>
-
-
-              <p>CompiledName: <code>op_AtBar</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
-            ( |@ ) x y
-          </code>
-          <div class="tip" id="70">
-            <strong>Signature:</strong> x:&#39;?9389 -&gt; y:string -&gt; Property<br />
-                          <strong>Type parameters:</strong> '?9389                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L153-153" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Add the given label to the property. Property on the left hand side, label on the right.</p>
-
-
-              <p>CompiledName: <code>op_BarAt</code></p>
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
-            ( ==&gt; ) condition assertion
-          </code>
-          <div class="tip" id="71">
-            <strong>Signature:</strong> condition:bool -&gt; assertion:&#39;Testable -&gt; Property<br />
-                          <strong>Type parameters:</strong> 'Testable                      </div>
-        </td>
-        <td class="xmldoc">
-                      <a href="https://github.com/fscheck/FsCheck/tree/master/src/FsCheck/Prop.fs#L150-150" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Conditional property combinator. Resulting property holds if the property after ==&gt; holds whenever the condition does.</p>
-
-
-              <p>CompiledName: <code>op_EqualsEqualsGreater</code></p>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-        </div>
-        <div class="span3">
-          <img src="/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" />  
-          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
-            <li class="nav-header">FsCheck</li>
-            <li><a href="/FsCheck/index.html">Home page</a></li>
-            <li class="divider"></li>
-            <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
-            <li><a href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
-            <li><a href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License</a></li>
-            <li><a href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
-            <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
+            <!-- END SEARCH BOX: this adds support for the search box -->
+            <ul class="navbar-nav">
+                <li class="nav-header">FsCheck</li>
+                <li class="nav-item"><a class="nav-link" href="http://nuget.org/packages/FsCheck">Get via NuGet</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License (BSD-3-Clause)</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//users.html">Who is using FsCheck?</a></li>
             
-            <li class="nav-header">Getting started</li>
-            <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
-            <li><a href="/FsCheck/LearningResources.html">Learning Resources</a></li>
+                <li class="nav-header">Getting started</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//QuickStart.html">Quick Start</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//LearningResources.html">Learning Resources</a></li>
 
-            <li class="nav-header">Documentation</li>
-            <li>
-              <a href="/FsCheck/Properties.html">Properties</a>
-            </li>
-            <li>
-              <a href="/FsCheck/TestData.html">Generating test data</a>
-            </li>
-            <li>
-              <a href="/FsCheck/StatefulTesting.html">Model-based testing</a>
-            </li>
-            <li>
-              <a href="/FsCheck/RunningTests.html">Running tests</a>
-            </li>
-            <li>
-              <a href="/FsCheck/TipsAndTricks.html">Tips and Tricks</a>
-            </li>
-              <li>
-                  <a href="/FsCheck/StatefulTestingNew.html">Model-based testing vNext (Experimental)</a>
-              </li>
-
-            <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <a href="https://github.com/fscheck/FsCheck">
-      <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
+                <li class="nav-header">Documentation</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//Properties.html">Properties</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TestData.html">Generating test data</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTesting.html">Model-based testing</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//RunningTests.html">Running tests</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TipsAndTricks.html">Tips and Tricks</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTestingNew.html">Model-based testing vNext (Experimental)</a></li>
+                <li class="nav-header">
+  Namespaces
+</li>             
+<li class="nav-item active">
+  <span>
+    <a class="nav-link active" href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
+      FsCheck
     </a>
-  </body>
-  </html>
+  </span>
+</li>             
+<ul list-style-type="none">
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-arb.html">
+      Arb
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">
+      Arbitrary<'a>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitraryextensions.html">
+      ArbitraryExtensions
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-arbpatterns.html">
+      ArbPatterns
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-check.html">
+      Check
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-checkextensions.html">
+      CheckExtensions
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-command.html">
+      Command
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">
+      Command<'Actual, 'Model>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-commandextensions.html">
+      CommandExtensions
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">
+      Config
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-configuration.html">
+      Configuration
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-donotshrink-1.html">
+      DoNotShrink<'a>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-donotsize-1.html">
+      DoNotSize<'a>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-fixedlengtharray-1.html">
+      FixedLengthArray<'a>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-function-2.html">
+      Function<'a, 'b>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-gen.html">
+      Gen
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">
+      Gen<'a>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-genbuilder.html">
+      GenBuilder
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-genextensions.html">
+      GenExtensions
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-hostname.html">
+      HostName
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">
+      ICommandGenerator<'Actual, 'Model>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-interval.html">
+      Interval
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-intwithminmax.html">
+      IntWithMinMax
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-ipv4address.html">
+      IPv4Address
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-ipv6address.html">
+      IPv6Address
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-irunner.html">
+      IRunner
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-negativeint.html">
+      NegativeInt
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-nonemptyarray-1.html">
+      NonEmptyArray<'a>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-nonemptyset-1.html">
+      NonEmptySet<'a>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-nonemptystring.html">
+      NonEmptyString
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-nonnegativeint.html">
+      NonNegativeInt
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-nonnull-1.html">
+      NonNull<'a>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-nonwhitespacestring.html">
+      NonWhiteSpaceString
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-nonzeroint.html">
+      NonZeroInt
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-normalfloat.html">
+      NormalFloat
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-outcome.html">
+      Outcome
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-positiveint.html">
+      PositiveInt
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-prop.html">
+      Prop
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">
+      Property
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-propertyextensions.html">
+      PropertyExtensions
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-propoperators.html">
+      PropOperators
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-random.html">
+      Random
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-result.html">
+      Result
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-rose-1.html">
+      Rose<'a>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-runner.html">
+      Runner
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-stringnonulls.html">
+      StringNoNulls
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-testdata.html">
+      TestData
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-testresult.html">
+      TestResult
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-throwingfunction-2.html">
+      ThrowingFunction<'a, 'b>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass.html">
+      TypeClass
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-weightandvalue-1.html">
+      WeightAndValue<'a>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-xmlencodedstring.html">
+      XmlEncodedString
+    </a>
+  </li>
+</ul>             
+<li class="nav-item">
+  <span>
+    <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental.html">
+      FsCheck.Experimental
+    </a>
+  </span>
+</li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="masthead">
+            <h3 class="muted"><a href="https://fscheck.github.io/FsCheck/">FsCheck</a></h3>
+        </div>
+        <hr />
+        <div class="container" id="fsdocs-content">
+            <div>
+  <h1>
+    PropOperators Module
+  </h1>
+  <p>
+    Namespace: 
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
+      FsCheck
+    </a>
+  </p>
+  <p>
+    Assembly: FsCheck.dll
+  </p>
+  <div class="fsdocs-xmldoc">
+    
+Operators for Prop.
+
+  </div>
+  <div>
+    <h3>
+      Functions and values
+    </h3>
+    <table class="table outer-list fsdocs-member-list">
+      <thead>
+        <tr>
+          <td class="fsdocs-member-list-header">
+            Function or value
+          </td>
+          <td class="fsdocs-member-list-header">
+            Description
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
+                <p>
+                  <a id="( %> )">
+                    <a href="#( %> )">
+                      <code><span>(%>)&#32;<span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="111">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>(%>)&#32;<span></span></span></code>
+                  <br/>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span>'a&#32;->&#32;string&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L159-159" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Add the given label to the property. Property on the left hand side, label on the right.
+
+            </p>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span>'a&#32;->&#32;string&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '112', 112)" onmouseover="showTip(event, '112', 112)">
+                <p>
+                  <a id="( .&. )">
+                    <a href="#( .&. )">
+                      <code><span><span>l</span>&#32;.&.&#32;<span>r</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="112">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span><span>l</span>&#32;.&.&#32;<span>r</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        l
+                      </b>
+                      :
+                      <code>'LeftTestable</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        r
+                      </b>
+                      :
+                      <code>'RightTestable</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L162-162" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Construct a property that succeeds if both succeed. (cfr 'and')
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  l
+                </span>
+                :
+                <code>'LeftTestable</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  r
+                </span>
+                :
+                <code>'RightTestable</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '113', 113)" onmouseover="showTip(event, '113', 113)">
+                <p>
+                  <a id="( .|. )">
+                    <a href="#( .|. )">
+                      <code><span><span>l</span>&#32;.|.&#32;<span>r</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="113">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span><span>l</span>&#32;.|.&#32;<span>r</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        l
+                      </b>
+                      :
+                      <code>'LeftTestable</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        r
+                      </b>
+                      :
+                      <code>'RightTestable</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L167-167" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Construct a property that fails if both fail. (cfr 'or')
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  l
+                </span>
+                :
+                <code>'LeftTestable</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  r
+                </span>
+                :
+                <code>'RightTestable</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '114', 114)" onmouseover="showTip(event, '114', 114)">
+                <p>
+                  <a id="( ==> )">
+                    <a href="#( ==> )">
+                      <code><span><span>condition</span>&#32;==>&#32;<span>assertion</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="114">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span><span>condition</span>&#32;==>&#32;<span>assertion</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        condition
+                      </b>
+                      :
+                      <code>bool</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        assertion
+                      </b>
+                      :
+                      <code>'Testable</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L150-150" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  condition
+                </span>
+                :
+                <code>bool</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  assertion
+                </span>
+                :
+                <code>'Testable</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '115', 115)" onmouseover="showTip(event, '115', 115)">
+                <p>
+                  <a id="( @| )">
+                    <a href="#( @| )">
+                      <code><span>(@|)&#32;<span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="115">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>(@|)&#32;<span></span></span></code>
+                  <br/>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span>string&#32;->&#32;'a&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L156-156" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Add the given label to the property. label on the left hand side, property on the right.
+
+            </p>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span>string&#32;->&#32;'a&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '116', 116)" onmouseover="showTip(event, '116', 116)">
+                <p>
+                  <a id="( |@ )">
+                    <a href="#( |@ )">
+                      <code><span><span>x</span>&#32;|@&#32;<span>y</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="116">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span><span>x</span>&#32;|@&#32;<span>y</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        x
+                      </b>
+                      :
+                      <code>'a</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        y
+                      </b>
+                      :
+                      <code>string</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L153-153" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Add the given label to the property. Property on the left hand side, label on the right.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  x
+                </span>
+                :
+                <code>'a</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  y
+                </span>
+                :
+                <code>string</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+            
+        </div>
+
+        <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+        <script type="text/javascript">var fsdocs_search_baseurl = 'https://fscheck.github.io/FsCheck/';</script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-search.js"></script>
+        <!-- END SEARCH BOX: this adds support for the search box -->
+    </div>
+</body>
+
+</html>
+

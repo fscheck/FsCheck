@@ -1,49 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8"/>
+
+<head>
+    <meta charset="utf-8">
     <title>Tips and Tricks
 </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."/>
-    <meta name="author" content="Kurt Schelfthout and contributors"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Kurt Schelfthout and contributors">
 
-    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
-    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
-    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
-    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" id="theme_link" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/materia/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-    <link type="text/css" rel="stylesheet" href="/FsCheck/content/style.css" />
-    <script type="text/javascript" src="/FsCheck/content/tips.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script> -->
+
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/navbar-fixed-left.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-default.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-custom.css" />
+    <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-tips.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-  </head>
-  <body>
+    <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+    <!-- END SEARCH BOX: this adds support for the search box -->
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-secondary fixed-left" id="fsdocs-menu">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+            <div id="header">
+                <div class="searchbox" id="fsdocs-searchbox">
+                    <label for="search-by">
+                        <i class="fas fa-search"></i>
+                    </label>
+                    <input data-search-input="" id="search-by" type="search" placeholder="Search..." />
+                    <span data-search-clear="">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- END SEARCH BOX: this adds support for the search box -->
+            <ul class="navbar-nav">
+                <li class="nav-header">FsCheck</li>
+                <li class="nav-item"><a class="nav-link" href="http://nuget.org/packages/FsCheck">Get via NuGet</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License (BSD-3-Clause)</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//users.html">Who is using FsCheck?</a></li>
+            
+                <li class="nav-header">Getting started</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//QuickStart.html">Quick Start</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//LearningResources.html">Learning Resources</a></li>
+
+                <li class="nav-header">Documentation</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//Properties.html">Properties</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TestData.html">Generating test data</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTesting.html">Model-based testing</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//RunningTests.html">Running tests</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TipsAndTricks.html">Tips and Tricks</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTestingNew.html">Model-based testing vNext (Experimental)</a></li>
+                <li class="nav-header">
+  API Reference
+</li>             
+<li class="nav-item">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/index.html">
+    All Namespaces
+  </a>
+</li>
+            </ul>
+        </div>
+    </nav>
     <div class="container">
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right">
-          <li><a href="https://github.com/fscheck/FsCheck/fork">Fork me on GitHub</a></li>
-        </ul>
-        <h3 class="muted"><a href="/FsCheck/index.html">FsCheck</a></h3>
-      </div>
-      <hr />
-      <div class="row">
-        <div class="span9" id="main">
-          
-<h1><a name="Tips-and-Tricks" class="anchor" href="#Tips-and-Tricks">Tips and Tricks</a></h1>
+        <div class="masthead">
+            <h3 class="muted"><a href="https://fscheck.github.io/FsCheck/">FsCheck</a></h3>
+        </div>
+        <hr />
+        <div class="container" id="fsdocs-content">
+            <h1><a name="Tips-and-Tricks" class="anchor" href="#Tips-and-Tricks">Tips and Tricks</a></h1>
 <h2><a name="Properties-of-functions" class="anchor" href="#Properties-of-functions">Properties of functions</a></h2>
 <p>Perhaps surprisingly, FsCheck can generate random functions, <code>Func</code> and <code>Action</code>s. As a result, it can check properties of
 functions. For example, we can check associativity of function composition as follows:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="fn">associativity</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="id">x</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="vt">int</span><span class="pn">)</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="fn">f</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs5', 7)" onmouseover="showTip(event, 'fs5', 7)" class="vt">int</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs7', 8)" onmouseover="showTip(event, 'fs7', 8)" class="vt">float</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="fn">g</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="vt">float</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs9', 11)" onmouseover="showTip(event, 'fs9', 11)" class="vt">char</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs10', 12)" onmouseover="showTip(event, 'fs10', 12)" class="fn">h</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="vt">char</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs5', 14)" onmouseover="showTip(event, 'fs5', 14)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span> <span class="pn">(</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 15)" onmouseover="showTip(event, 'fs6', 15)" class="fn">f</span> <span class="o">&gt;</span><span class="pn">&gt;</span> <span onmouseout="hideTip(event, 'fs8', 16)" onmouseover="showTip(event, 'fs8', 16)" class="fn">g</span><span class="pn">)</span> <span class="o">&gt;</span><span class="pn">&gt;</span> <span onmouseout="hideTip(event, 'fs10', 17)" onmouseover="showTip(event, 'fs10', 17)" class="fn">h</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs4', 18)" onmouseover="showTip(event, 'fs4', 18)" class="id">x</span> <span class="o">=</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="fn">f</span> <span class="o">&gt;</span><span class="pn">&gt;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs8', 20)" onmouseover="showTip(event, 'fs8', 20)" class="fn">g</span> <span class="o">&gt;</span><span class="pn">&gt;</span> <span onmouseout="hideTip(event, 'fs10', 21)" onmouseover="showTip(event, 'fs10', 21)" class="fn">h</span><span class="pn">)</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs4', 22)" onmouseover="showTip(event, 'fs4', 22)" class="id">x</span>
-<span onmouseout="hideTip(event, 'fs11', 23)" onmouseover="showTip(event, 'fs11', 23)" class="id">Check</span><span class="pn">.</span><span class="id">Quick</span> <span onmouseout="hideTip(event, 'fs3', 24)" onmouseover="showTip(event, 'fs3', 24)" class="id">associativity</span>
-</code></pre></td>
-</tr>
-</table>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="fn">associativity</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="id">x</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="vt">int</span><span class="pn">)</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="fn">f</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs5', 7)" onmouseover="showTip(event, 'fs5', 7)" class="vt">int</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs7', 8)" onmouseover="showTip(event, 'fs7', 8)" class="vt">float</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="fn">g</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="vt">float</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs9', 11)" onmouseover="showTip(event, 'fs9', 11)" class="vt">char</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs10', 12)" onmouseover="showTip(event, 'fs10', 12)" class="fn">h</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="vt">char</span><span class="k">-&gt;</span><span onmouseout="hideTip(event, 'fs5', 14)" onmouseover="showTip(event, 'fs5', 14)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span> <span class="pn">(</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 15)" onmouseover="showTip(event, 'fs6', 15)" class="fn">f</span> <span class="o">&gt;</span><span class="pn">&gt;</span> <span onmouseout="hideTip(event, 'fs8', 16)" onmouseover="showTip(event, 'fs8', 16)" class="fn">g</span><span class="pn">)</span> <span class="o">&gt;</span><span class="pn">&gt;</span> <span onmouseout="hideTip(event, 'fs10', 17)" onmouseover="showTip(event, 'fs10', 17)" class="fn">h</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs4', 18)" onmouseover="showTip(event, 'fs4', 18)" class="id">x</span> <span class="o">=</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="fn">f</span> <span class="o">&gt;</span><span class="pn">&gt;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs8', 20)" onmouseover="showTip(event, 'fs8', 20)" class="fn">g</span> <span class="o">&gt;</span><span class="pn">&gt;</span> <span onmouseout="hideTip(event, 'fs10', 21)" onmouseover="showTip(event, 'fs10', 21)" class="fn">h</span><span class="pn">)</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs4', 22)" onmouseover="showTip(event, 'fs4', 22)" class="id">x</span>
+<span onmouseout="hideTip(event, 'fs11', 23)" onmouseover="showTip(event, 'fs11', 23)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs12', 24)" onmouseover="showTip(event, 'fs12', 24)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs3', 25)" onmouseover="showTip(event, 'fs3', 25)" class="fn">associativity</span>
+</code></pre>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 <p>FsCheck can generate all functions with a target type that it can generate. In addition, the functions are pure and total -
 the former means that if you give a generated function the same value as input, it will keep returning that same value as output,
@@ -51,24 +100,17 @@ no matter how many times you call it. The latter means that the function does no
 <p>If a counter-example is found, function values will be displayed as <code>&lt;func&gt;</code>. However, FsCheck can show
 you the generated function in more detail, if you ask it to generate a <code>Function</code> type, which has an embedded "real" function.
 FsCheck can even shrink <code>Function</code>s. For example:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="fn">mapRec</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="uc">Fun</span> <span onmouseout="hideTip(event, 'fs14', 27)" onmouseover="showTip(event, 'fs14', 27)" class="fn">f</span><span class="pn">)</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs15', 28)" onmouseover="showTip(event, 'fs15', 28)" class="id">l</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs16', 29)" onmouseover="showTip(event, 'fs16', 29)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 30)" onmouseover="showTip(event, 'fs5', 30)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span>
-  <span onmouseout="hideTip(event, 'fs17', 31)" onmouseover="showTip(event, 'fs17', 31)" class="fn">not</span> <span onmouseout="hideTip(event, 'fs15', 32)" onmouseover="showTip(event, 'fs15', 32)" class="id">l</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="id">IsEmpty</span> <span class="o">==&gt;</span>
-      <span class="k">lazy</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs19', 34)" onmouseover="showTip(event, 'fs19', 34)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs20', 35)" onmouseover="showTip(event, 'fs20', 35)" class="id">map</span> <span onmouseout="hideTip(event, 'fs14', 36)" onmouseover="showTip(event, 'fs14', 36)" class="fn">f</span> <span onmouseout="hideTip(event, 'fs15', 37)" onmouseover="showTip(event, 'fs15', 37)" class="id">l</span> <span class="o">=</span> <span class="pn">(</span><span class="c">(*f &lt;|*)</span> <span onmouseout="hideTip(event, 'fs19', 38)" onmouseover="showTip(event, 'fs19', 38)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 39)" onmouseover="showTip(event, 'fs21', 39)" class="id">head</span> <span onmouseout="hideTip(event, 'fs15', 40)" onmouseover="showTip(event, 'fs15', 40)" class="id">l</span><span class="pn">)</span> <span class="uc">::</span> <span onmouseout="hideTip(event, 'fs19', 41)" onmouseover="showTip(event, 'fs19', 41)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs20', 42)" onmouseover="showTip(event, 'fs20', 42)" class="id">map</span> <span onmouseout="hideTip(event, 'fs14', 43)" onmouseover="showTip(event, 'fs14', 43)" class="fn">f</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs19', 44)" onmouseover="showTip(event, 'fs19', 44)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs22', 45)" onmouseover="showTip(event, 'fs22', 45)" class="id">tail</span> <span onmouseout="hideTip(event, 'fs15', 46)" onmouseover="showTip(event, 'fs15', 46)" class="id">l</span><span class="pn">)</span><span class="pn">)</span>
-<span onmouseout="hideTip(event, 'fs11', 47)" onmouseover="showTip(event, 'fs11', 47)" class="id">Check</span><span class="pn">.</span><span class="id">Quick</span> <span onmouseout="hideTip(event, 'fs12', 48)" onmouseover="showTip(event, 'fs12', 48)" class="id">mapRec</span>
-</code></pre></td>
-</tr>
-</table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (727742321,296753515)):
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="fn">mapRec</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs14', 27)" onmouseover="showTip(event, 'fs14', 27)" class="uc">Fun</span> <span onmouseout="hideTip(event, 'fs15', 28)" onmouseover="showTip(event, 'fs15', 28)" class="fn">f</span><span class="pn">)</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs16', 29)" onmouseover="showTip(event, 'fs16', 29)" class="id">l</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs17', 30)" onmouseover="showTip(event, 'fs17', 30)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 31)" onmouseover="showTip(event, 'fs5', 31)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs18', 32)" onmouseover="showTip(event, 'fs18', 32)" class="fn">not</span> <span onmouseout="hideTip(event, 'fs16', 33)" onmouseover="showTip(event, 'fs16', 33)" class="id">l</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs19', 34)" onmouseover="showTip(event, 'fs19', 34)" class="id">IsEmpty</span> <span class="o">==&gt;</span>
+      <span class="k">lazy</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs20', 35)" onmouseover="showTip(event, 'fs20', 35)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 36)" onmouseover="showTip(event, 'fs21', 36)" class="id">map</span> <span onmouseout="hideTip(event, 'fs15', 37)" onmouseover="showTip(event, 'fs15', 37)" class="fn">f</span> <span onmouseout="hideTip(event, 'fs16', 38)" onmouseover="showTip(event, 'fs16', 38)" class="id">l</span> <span class="o">=</span> <span class="pn">(</span><span class="c">(*f &lt;|*)</span> <span onmouseout="hideTip(event, 'fs20', 39)" onmouseover="showTip(event, 'fs20', 39)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs22', 40)" onmouseover="showTip(event, 'fs22', 40)" class="id">head</span> <span onmouseout="hideTip(event, 'fs16', 41)" onmouseover="showTip(event, 'fs16', 41)" class="id">l</span><span class="pn">)</span> <span class="uc">::</span> <span onmouseout="hideTip(event, 'fs20', 42)" onmouseover="showTip(event, 'fs20', 42)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 43)" onmouseover="showTip(event, 'fs21', 43)" class="id">map</span> <span onmouseout="hideTip(event, 'fs15', 44)" onmouseover="showTip(event, 'fs15', 44)" class="fn">f</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs20', 45)" onmouseover="showTip(event, 'fs20', 45)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs23', 46)" onmouseover="showTip(event, 'fs23', 46)" class="id">tail</span> <span onmouseout="hideTip(event, 'fs16', 47)" onmouseover="showTip(event, 'fs16', 47)" class="id">l</span><span class="pn">)</span><span class="pn">)</span>
+<span onmouseout="hideTip(event, 'fs11', 48)" onmouseover="showTip(event, 'fs11', 48)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs12', 49)" onmouseover="showTip(event, 'fs12', 49)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs13', 50)" onmouseover="showTip(event, 'fs13', 50)" class="fn">mapRec</span>
+</code></pre>
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (5 shrinks) (StdGen (460325818,296833866)):
 Original:
-{ 0-&gt;2 }
-[0]
+{ 0-&gt;1; 1-&gt;2; 4-&gt;0 }
+[0; 4; 1; 1]
 Shrunk:
-{ 0-&gt;1 }
+{ 0-&gt;1; 1-&gt;0; 4-&gt;0 }
 [0]</code></pre></td></tr></table>
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
 records a map of all the arguments it was called with, and the result it produced.
@@ -78,36 +120,20 @@ In your properties, you can extract the actual function by pattern matching as i
 <p>To define a generator that generates a subset of the normal range of values for an existing type,
 say all the even ints, it makes properties more readable if you define a single-case union
 case, and register a generator for the new type:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
-<span class="l"> 2: </span>
-<span class="l"> 3: </span>
-<span class="l"> 4: </span>
-<span class="l"> 5: </span>
-<span class="l"> 6: </span>
-<span class="l"> 7: </span>
-<span class="l"> 8: </span>
-<span class="l"> 9: </span>
-<span class="l">10: </span>
-<span class="l">11: </span>
-<span class="l">12: </span>
-<span class="l">13: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="rt">EvenInt</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs23', 49)" onmouseover="showTip(event, 'fs23', 49)" class="uc">EvenInt</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs5', 50)" onmouseover="showTip(event, 'fs5', 50)" class="vt">int</span> <span class="k">with</span>
-  <span class="k">static</span> <span class="k">member</span> <span class="fn">op_Explicit</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs23', 51)" onmouseover="showTip(event, 'fs23', 51)" class="uc">EvenInt</span> <span onmouseout="hideTip(event, 'fs24', 52)" onmouseover="showTip(event, 'fs24', 52)" class="id">i</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 53)" onmouseover="showTip(event, 'fs24', 53)" class="id">i</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="rt">EvenInt</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 51)" onmouseover="showTip(event, 'fs24', 51)" class="uc">EvenInt</span> <span class="k">of</span> <span onmouseout="hideTip(event, 'fs5', 52)" onmouseover="showTip(event, 'fs5', 52)" class="vt">int</span> <span class="k">with</span>
+  <span class="k">static</span> <span class="k">member</span> <span class="fn">op_Explicit</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs24', 53)" onmouseover="showTip(event, 'fs24', 53)" class="uc">EvenInt</span> <span onmouseout="hideTip(event, 'fs25', 54)" onmouseover="showTip(event, 'fs25', 54)" class="id">i</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs25', 55)" onmouseover="showTip(event, 'fs25', 55)" class="id">i</span>
 
 <span class="k">type</span> <span class="rt">ArbitraryModifiers</span> <span class="o">=</span>
-    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs25', 54)" onmouseover="showTip(event, 'fs25', 54)" class="fn">EvenInt</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> 
-        <span onmouseout="hideTip(event, 'fs26', 55)" onmouseover="showTip(event, 'fs26', 55)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs27', 56)" onmouseover="showTip(event, 'fs27', 56)" class="id">from</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 57)" onmouseover="showTip(event, 'fs5', 57)" class="vt">int</span><span class="pn">&gt;</span> 
-        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs26', 58)" onmouseover="showTip(event, 'fs26', 58)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs28', 59)" onmouseover="showTip(event, 'fs28', 59)" class="id">filter</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs24', 60)" onmouseover="showTip(event, 'fs24', 60)" class="id">i</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs24', 61)" onmouseover="showTip(event, 'fs24', 61)" class="id">i</span> <span class="o">%</span> <span class="n">2</span> <span class="o">=</span> <span class="n">0</span><span class="pn">)</span> 
-        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs26', 62)" onmouseover="showTip(event, 'fs26', 62)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs29', 63)" onmouseover="showTip(event, 'fs29', 63)" class="id">convert</span> <span onmouseout="hideTip(event, 'fs23', 64)" onmouseover="showTip(event, 'fs23', 64)" class="uc">EvenInt</span> <span onmouseout="hideTip(event, 'fs5', 65)" onmouseover="showTip(event, 'fs5', 65)" class="fn">int</span>
+    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs26', 56)" onmouseover="showTip(event, 'fs26', 56)" class="fn">EvenInt</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> 
+        <span onmouseout="hideTip(event, 'fs27', 57)" onmouseover="showTip(event, 'fs27', 57)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs28', 58)" onmouseover="showTip(event, 'fs28', 58)" class="id">from</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 59)" onmouseover="showTip(event, 'fs5', 59)" class="vt">int</span><span class="pn">&gt;</span> 
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs27', 60)" onmouseover="showTip(event, 'fs27', 60)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs29', 61)" onmouseover="showTip(event, 'fs29', 61)" class="id">filter</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs25', 62)" onmouseover="showTip(event, 'fs25', 62)" class="id">i</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs25', 63)" onmouseover="showTip(event, 'fs25', 63)" class="id">i</span> <span class="o">%</span> <span class="n">2</span> <span class="o">=</span> <span class="n">0</span><span class="pn">)</span> 
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs27', 64)" onmouseover="showTip(event, 'fs27', 64)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs30', 65)" onmouseover="showTip(event, 'fs30', 65)" class="id">convert</span> <span onmouseout="hideTip(event, 'fs24', 66)" onmouseover="showTip(event, 'fs24', 66)" class="uc">EvenInt</span> <span onmouseout="hideTip(event, 'fs5', 67)" onmouseover="showTip(event, 'fs5', 67)" class="fn">int</span>
         
-<span onmouseout="hideTip(event, 'fs26', 66)" onmouseover="showTip(event, 'fs26', 66)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs30', 67)" onmouseover="showTip(event, 'fs30', 67)" class="id">register</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs31', 68)" onmouseover="showTip(event, 'fs31', 68)" class="rt">ArbitraryModifiers</span><span class="pn">&gt;</span><span class="pn">(</span><span class="pn">)</span>
+<span onmouseout="hideTip(event, 'fs27', 68)" onmouseover="showTip(event, 'fs27', 68)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs31', 69)" onmouseover="showTip(event, 'fs31', 69)" class="id">register</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs32', 70)" onmouseover="showTip(event, 'fs32', 70)" class="rt">ArbitraryModifiers</span><span class="pn">&gt;</span><span class="pn">(</span><span class="pn">)</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs32', 69)" onmouseover="showTip(event, 'fs32', 69)" class="fn">``generated even ints should be even``</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs23', 70)" onmouseover="showTip(event, 'fs23', 70)" class="uc">EvenInt</span> <span onmouseout="hideTip(event, 'fs24', 71)" onmouseover="showTip(event, 'fs24', 71)" class="id">i</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs24', 72)" onmouseover="showTip(event, 'fs24', 72)" class="id">i</span> <span class="o">%</span> <span class="n">2</span> <span class="o">=</span> <span class="n">0</span>
-<span onmouseout="hideTip(event, 'fs11', 73)" onmouseover="showTip(event, 'fs11', 73)" class="id">Check</span><span class="pn">.</span><span class="id">Quick</span> <span onmouseout="hideTip(event, 'fs32', 74)" onmouseover="showTip(event, 'fs32', 74)" class="id">``generated even ints should be even``</span>
-</code></pre></td>
-</tr>
-</table>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs33', 71)" onmouseover="showTip(event, 'fs33', 71)" class="fn">``generated even ints should be even``</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs24', 72)" onmouseover="showTip(event, 'fs24', 72)" class="uc">EvenInt</span> <span onmouseout="hideTip(event, 'fs25', 73)" onmouseover="showTip(event, 'fs25', 73)" class="id">i</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs25', 74)" onmouseover="showTip(event, 'fs25', 74)" class="id">i</span> <span class="o">%</span> <span class="n">2</span> <span class="o">=</span> <span class="n">0</span>
+<span onmouseout="hideTip(event, 'fs11', 75)" onmouseover="showTip(event, 'fs11', 75)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs12', 76)" onmouseover="showTip(event, 'fs12', 76)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs33', 77)" onmouseover="showTip(event, 'fs33', 77)" class="fn">``generated even ints should be even``</span>
+</code></pre>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 <p>It's now easy to define custom shrink functions as well.</p>
 <p>FsCheck uses this pattern frequently, e.g. <code>NonNegativeInt</code>, <code>PositiveInt</code>, <code>StringWithoutNullChars</code> etc. See the
@@ -118,25 +144,18 @@ default Arbitrary instances on the <code>Arb.Default</code> type.</p>
 sometimes it is useful to print the left and right side of the comparison, especially if you
 do some complicated calculations with the generated arguments first. To make this easier, you can
 define your own labelling equality combinator:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="pn">(</span><span class="o">.</span><span class="o">=.</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs33', 75)" onmouseover="showTip(event, 'fs33', 75)" class="id">left</span> <span onmouseout="hideTip(event, 'fs34', 76)" onmouseover="showTip(event, 'fs34', 76)" class="id">right</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs33', 77)" onmouseover="showTip(event, 'fs33', 77)" class="id">left</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs34', 78)" onmouseover="showTip(event, 'fs34', 78)" class="id">right</span> <span class="o">|@</span> <span onmouseout="hideTip(event, 'fs35', 79)" onmouseover="showTip(event, 'fs35', 79)" class="fn">sprintf</span> <span class="s">&quot;</span><span class="pf">%A</span><span class="s"> = </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs33', 80)" onmouseover="showTip(event, 'fs33', 80)" class="id">left</span> <span onmouseout="hideTip(event, 'fs34', 81)" onmouseover="showTip(event, 'fs34', 81)" class="id">right</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span class="pn">(</span><span class="o">.</span><span class="o">=.</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs34', 78)" onmouseover="showTip(event, 'fs34', 78)" class="id">left</span> <span onmouseout="hideTip(event, 'fs35', 79)" onmouseover="showTip(event, 'fs35', 79)" class="id">right</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs34', 80)" onmouseover="showTip(event, 'fs34', 80)" class="id">left</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs35', 81)" onmouseover="showTip(event, 'fs35', 81)" class="id">right</span> <span class="o">|@</span> <span onmouseout="hideTip(event, 'fs36', 82)" onmouseover="showTip(event, 'fs36', 82)" class="fn">sprintf</span> <span class="s">&quot;</span><span class="pf">%A</span><span class="s"> = </span><span class="pf">%A</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs34', 83)" onmouseover="showTip(event, 'fs34', 83)" class="id">left</span> <span onmouseout="hideTip(event, 'fs35', 84)" onmouseover="showTip(event, 'fs35', 84)" class="id">right</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 82)" onmouseover="showTip(event, 'fs36', 82)" class="fn">testCompare</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs24', 83)" onmouseover="showTip(event, 'fs24', 83)" class="id">i</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs5', 84)" onmouseover="showTip(event, 'fs5', 84)" class="vt">int</span><span class="pn">)</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs37', 85)" onmouseover="showTip(event, 'fs37', 85)" class="id">j</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs5', 86)" onmouseover="showTip(event, 'fs5', 86)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs24', 87)" onmouseover="showTip(event, 'fs24', 87)" class="id">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs37', 88)" onmouseover="showTip(event, 'fs37', 88)" class="id">j</span><span class="o">-</span><span class="n">1</span>
-<span onmouseout="hideTip(event, 'fs11', 89)" onmouseover="showTip(event, 'fs11', 89)" class="id">Check</span><span class="pn">.</span><span class="id">Quick</span> <span onmouseout="hideTip(event, 'fs36', 90)" onmouseover="showTip(event, 'fs36', 90)" class="id">testCompare</span>
-</code></pre></td>
-</tr>
-</table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (729904200,296753515)):
-Label of failing property: 1 = -1
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs37', 85)" onmouseover="showTip(event, 'fs37', 85)" class="fn">testCompare</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs25', 86)" onmouseover="showTip(event, 'fs25', 86)" class="id">i</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs5', 87)" onmouseover="showTip(event, 'fs5', 87)" class="vt">int</span><span class="pn">)</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs38', 88)" onmouseover="showTip(event, 'fs38', 88)" class="id">j</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs5', 89)" onmouseover="showTip(event, 'fs5', 89)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs25', 90)" onmouseover="showTip(event, 'fs25', 90)" class="id">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs38', 91)" onmouseover="showTip(event, 'fs38', 91)" class="id">j</span><span class="o">-</span><span class="n">1</span>
+<span onmouseout="hideTip(event, 'fs11', 92)" onmouseover="showTip(event, 'fs11', 92)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs12', 93)" onmouseover="showTip(event, 'fs12', 93)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs37', 94)" onmouseover="showTip(event, 'fs37', 94)" class="fn">testCompare</span>
+</code></pre>
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (461543208,296833866)):
+Label of failing property: 3 = -1
 Original:
 2
-0
+1
 Shrunk:
-0
+1
 0</code></pre></td></tr></table>
 <p>Of course, you can do this for any operator or function that you often use.</p>
 <h2><a name="Some-ways-to-run-FsCheck-tests" class="anchor" href="#Some-ways-to-run-FsCheck-tests">Some ways to run FsCheck tests</a></h2>
@@ -167,30 +186,14 @@ that affect its state, this assumption does not hold and you'll see some weird r
 <p>The simplest way to work around this is not to write a generator for your mutable object at all, but instead write an FsCheck property
 that takes all the values necessary to construct the object, and then simply construct the object in the beginning of your test. For example, suppose we want to test
 a mutable list:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-<span class="l">5: </span>
-<span class="l">6: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs38', 91)" onmouseover="showTip(event, 'fs38', 91)" class="id">testMutableList</span> <span class="o">=</span>
-    <span onmouseout="hideTip(event, 'fs39', 92)" onmouseover="showTip(event, 'fs39', 92)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 93)" onmouseover="showTip(event, 'fs40', 93)" class="id">forAll</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs26', 94)" onmouseover="showTip(event, 'fs26', 94)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs41', 95)" onmouseover="showTip(event, 'fs41', 95)" class="id">fromGen</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs42', 96)" onmouseover="showTip(event, 'fs42', 96)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs43', 97)" onmouseover="showTip(event, 'fs43', 97)" class="id">choose</span> <span class="pn">(</span><span class="n">1</span><span class="pn">,</span><span class="n">10</span><span class="pn">)</span><span class="pn">)</span><span class="pn">)</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs44', 98)" onmouseover="showTip(event, 'fs44', 98)" class="id">capacity</span> <span class="k">-&gt;</span> 
-        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs45', 99)" onmouseover="showTip(event, 'fs45', 99)" class="id">underTest</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs2', 100)" onmouseover="showTip(event, 'fs2', 100)" class="rt">System</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs46', 101)" onmouseover="showTip(event, 'fs46', 101)" class="id">Collections</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs47', 102)" onmouseover="showTip(event, 'fs47', 102)" class="id">Generic</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs48', 103)" onmouseover="showTip(event, 'fs48', 103)" class="id">List</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 104)" onmouseover="showTip(event, 'fs5', 104)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs44', 105)" onmouseover="showTip(event, 'fs44', 105)" class="id">capacity</span><span class="pn">)</span>
-        <span onmouseout="hideTip(event, 'fs39', 106)" onmouseover="showTip(event, 'fs39', 106)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 107)" onmouseover="showTip(event, 'fs40', 107)" class="id">forAll</span> <span onmouseout="hideTip(event, 'fs26', 108)" onmouseover="showTip(event, 'fs26', 108)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs27', 109)" onmouseover="showTip(event, 'fs27', 109)" class="id">from</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 110)" onmouseover="showTip(event, 'fs5', 110)" class="vt">int</span><span class="pn">[</span><span class="pn">]</span><span class="pn">&gt;</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs49', 111)" onmouseover="showTip(event, 'fs49', 111)" class="id">itemsToAdd</span> <span class="k">-&gt;</span>
-            <span onmouseout="hideTip(event, 'fs45', 112)" onmouseover="showTip(event, 'fs45', 112)" class="fn">underTest</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs50', 113)" onmouseover="showTip(event, 'fs50', 113)" class="id">AddRange</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs49', 114)" onmouseover="showTip(event, 'fs49', 114)" class="id">itemsToAdd</span><span class="pn">)</span>
-            <span onmouseout="hideTip(event, 'fs45', 115)" onmouseover="showTip(event, 'fs45', 115)" class="id">underTest</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs51', 116)" onmouseover="showTip(event, 'fs51', 116)" class="id">Count</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs49', 117)" onmouseover="showTip(event, 'fs49', 117)" class="id">itemsToAdd</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs52', 118)" onmouseover="showTip(event, 'fs52', 118)" class="id">Length</span><span class="pn">)</span><span class="pn">)</span>
-</code></pre></td>
-</tr>
-</table>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-<span class="l">5: </span>
-<span class="l">6: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll(Arb.From(Gen.Choose(<span class="n">1</span>, <span class="n">10</span>)), Arb.From&lt;<span class="k">int</span>[]<span class="o">&gt;</span>(),(capacity, itemsToAdd) <span class="o">=</span><span class="o">&gt;</span> {
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs39', 95)" onmouseover="showTip(event, 'fs39', 95)" class="id">testMutableList</span> <span class="o">=</span>
+    <span onmouseout="hideTip(event, 'fs40', 96)" onmouseover="showTip(event, 'fs40', 96)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs41', 97)" onmouseover="showTip(event, 'fs41', 97)" class="id">forAll</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs27', 98)" onmouseover="showTip(event, 'fs27', 98)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs42', 99)" onmouseover="showTip(event, 'fs42', 99)" class="id">fromGen</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs43', 100)" onmouseover="showTip(event, 'fs43', 100)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs44', 101)" onmouseover="showTip(event, 'fs44', 101)" class="id">choose</span> <span class="pn">(</span><span class="n">1</span><span class="pn">,</span><span class="n">10</span><span class="pn">)</span><span class="pn">)</span><span class="pn">)</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs45', 102)" onmouseover="showTip(event, 'fs45', 102)" class="id">capacity</span> <span class="k">-&gt;</span> 
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs46', 103)" onmouseover="showTip(event, 'fs46', 103)" class="id">underTest</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs2', 104)" onmouseover="showTip(event, 'fs2', 104)" class="rt">System</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs47', 105)" onmouseover="showTip(event, 'fs47', 105)" class="id">Collections</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs48', 106)" onmouseover="showTip(event, 'fs48', 106)" class="id">Generic</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs49', 107)" onmouseover="showTip(event, 'fs49', 107)" class="id">List</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 108)" onmouseover="showTip(event, 'fs5', 108)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs45', 109)" onmouseover="showTip(event, 'fs45', 109)" class="id">capacity</span><span class="pn">)</span>
+        <span onmouseout="hideTip(event, 'fs40', 110)" onmouseover="showTip(event, 'fs40', 110)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs41', 111)" onmouseover="showTip(event, 'fs41', 111)" class="id">forAll</span> <span onmouseout="hideTip(event, 'fs27', 112)" onmouseover="showTip(event, 'fs27', 112)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs28', 113)" onmouseover="showTip(event, 'fs28', 113)" class="id">from</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 114)" onmouseover="showTip(event, 'fs5', 114)" class="vt">int</span><span class="pn">[</span><span class="pn">]</span><span class="pn">&gt;</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs50', 115)" onmouseover="showTip(event, 'fs50', 115)" class="id">itemsToAdd</span> <span class="k">-&gt;</span>
+            <span onmouseout="hideTip(event, 'fs46', 116)" onmouseover="showTip(event, 'fs46', 116)" class="fn">underTest</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs19', 117)" onmouseover="showTip(event, 'fs19', 117)" class="id">AddRange</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 118)" onmouseover="showTip(event, 'fs50', 118)" class="id">itemsToAdd</span><span class="pn">)</span>
+            <span onmouseout="hideTip(event, 'fs46', 119)" onmouseover="showTip(event, 'fs46', 119)" class="id">underTest</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs19', 120)" onmouseover="showTip(event, 'fs19', 120)" class="id">Count</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs50', 121)" onmouseover="showTip(event, 'fs50', 121)" class="id">itemsToAdd</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs19', 122)" onmouseover="showTip(event, 'fs19', 122)" class="id">Length</span><span class="pn">)</span><span class="pn">)</span>
+</code></pre>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll(Arb.From(Gen.Choose(<span class="n">1</span>, <span class="n">10</span>)), Arb.From&lt;<span class="k">int</span>[]<span class="o">&gt;</span>(),(capacity, itemsToAdd) <span class="o">=</span><span class="o">&gt;</span> {
     <span class="k">var</span> underTest <span class="o">=</span> <span class="k">new</span> List&lt;<span class="k">int</span>&gt;(capacity);
     underTest.AddRange(itemsToAdd);
     <span class="k">return</span> underTest.Count <span class="o">=</span><span class="o">=</span> itemsToAdd.Length;
@@ -207,121 +210,81 @@ you mutate a generated object during a test, either:</p>
 <p>When you have a failed test, it's often useful for debugging to be able to replay exactly those inputs. For this reason, FsCheck displays the
 seed of its pseudo-random number generator when a test fails. Look for the bit of text that looks like: <code>(StdGen (1145655947,296144285))</code>.</p>
 <p>To replay this test, which should have the exact same output, use the <code>Replay</code> field on <code>Config</code>:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs11', 119)" onmouseover="showTip(event, 'fs11', 119)" class="id">Check</span><span class="pn">.</span><span class="id">One</span><span class="pn">(</span><span class="pn">{</span> <span onmouseout="hideTip(event, 'fs11', 120)" onmouseover="showTip(event, 'fs11', 120)" class="id">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs53', 121)" onmouseover="showTip(event, 'fs53', 121)" class="id">Quick</span> <span class="k">with</span> <span class="id">Replay</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs54', 122)" onmouseover="showTip(event, 'fs54', 122)" class="id">Some</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs55', 123)" onmouseover="showTip(event, 'fs55', 123)" class="id">Random</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs56', 124)" onmouseover="showTip(event, 'fs56', 124)" class="id">StdGen</span> <span class="pn">(</span><span class="n">1145655947</span><span class="pn">,</span><span class="n">296144285</span><span class="pn">)</span> <span class="pn">}</span><span class="pn">,</span> <span class="k">fun</span> <span class="id">x</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs57', 125)" onmouseover="showTip(event, 'fs57', 125)" class="id">abs</span> <span class="id">x</span> <span class="pn">&gt;</span><span class="o">=</span> <span class="n">0</span><span class="pn">)</span>
-</code></pre></td>
-</tr>
-</table>
+<pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs11', 123)" onmouseover="showTip(event, 'fs11', 123)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs51', 124)" onmouseover="showTip(event, 'fs51', 124)" class="id">One</span><span class="pn">(</span><span class="pn">{</span> <span onmouseout="hideTip(event, 'fs52', 125)" onmouseover="showTip(event, 'fs52', 125)" class="rt">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs53', 126)" onmouseover="showTip(event, 'fs53', 126)" class="id">Quick</span> <span class="k">with</span> <span class="id">Replay</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs54', 127)" onmouseover="showTip(event, 'fs54', 127)" class="uc">Some</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs55', 128)" onmouseover="showTip(event, 'fs55', 128)" class="m">Random</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs56', 129)" onmouseover="showTip(event, 'fs56', 129)" class="id">StdGen</span> <span class="pn">(</span><span class="n">1145655947</span><span class="pn">,</span><span class="n">296144285</span><span class="pn">)</span> <span class="pn">}</span><span class="pn">,</span> <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs4', 130)" onmouseover="showTip(event, 'fs4', 130)" class="id">x</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs57', 131)" onmouseover="showTip(event, 'fs57', 131)" class="fn">abs</span> <span onmouseout="hideTip(event, 'fs4', 132)" onmouseover="showTip(event, 'fs4', 132)" class="id">x</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span><span class="pn">)</span>
+</code></pre>
 <p>In C#:</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll((<span class="k">int</span> x) <span class="o">=</span><span class="o">&gt;</span> Math.Abs(x) <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span>)
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll((<span class="k">int</span> x) <span class="o">=</span><span class="o">&gt;</span> Math.Abs(x) <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span>)
     .Check(<span class="k">new</span> Configuration { Replay <span class="o">=</span> FsCheck.Random.StdGen.NewStdGen(<span class="n">1145655947</span>, <span class="n">296144285</span>)});</code></pre></td></tr></table>
 
-<div class="tip" id="fs1">namespace FsCheck</div>
-<div class="tip" id="fs2">namespace System</div>
-<div class="tip" id="fs3">val associativity : x:int -&gt; f:(int -&gt; float) * g:(float -&gt; char) * h:(char -&gt; int) -&gt; bool</div>
-<div class="tip" id="fs4">val x : int</div>
-<div class="tip" id="fs5">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int</div>
-<div class="tip" id="fs6">val f : (int -&gt; float)</div>
-<div class="tip" id="fs7">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />--------------------<br />type float = Double<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; = float</div>
-<div class="tip" id="fs8">val g : (float -&gt; char)</div>
-<div class="tip" id="fs9">Multiple items<br />val char : value:&#39;T -&gt; char (requires member op_Explicit)<br /><br />--------------------<br />type char = Char</div>
-<div class="tip" id="fs10">val h : (char -&gt; int)</div>
-<div class="tip" id="fs11"></div>
-<div class="tip" id="fs12">val mapRec : Function&lt;int,int&gt; -&gt; l:int list -&gt; Property</div>
-<div class="tip" id="fs13">active recognizer Fun: Function&lt;&#39;a,&#39;b&gt; -&gt; &#39;a -&gt; &#39;b</div>
-<div class="tip" id="fs14">val f : (int -&gt; int)</div>
-<div class="tip" id="fs15">val l : int list</div>
-<div class="tip" id="fs16">type &#39;T list = List&lt;&#39;T&gt;</div>
-<div class="tip" id="fs17">val not : value:bool -&gt; bool</div>
-<div class="tip" id="fs18">property List.IsEmpty: bool</div>
-<div class="tip" id="fs19">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyList&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;member Length : int<br />&#160;&#160;&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;&#160;&#160;...</div>
-<div class="tip" id="fs20">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; list:&#39;T list -&gt; &#39;U list</div>
-<div class="tip" id="fs21">val head : list:&#39;T list -&gt; &#39;T</div>
-<div class="tip" id="fs22">val tail : list:&#39;T list -&gt; &#39;T list</div>
-<div class="tip" id="fs23">Multiple items<br />union case EvenInt.EvenInt: int -&gt; EvenInt<br /><br />--------------------<br />type EvenInt =<br />&#160;&#160;| EvenInt of int<br />&#160;&#160;&#160;&#160;static member op_Explicit : EvenInt -&gt; int</div>
-<div class="tip" id="fs24">val i : int</div>
-<div class="tip" id="fs25">type EvenInt =<br />&#160;&#160;| EvenInt of int<br />&#160;&#160;&#160;&#160;static member op_Explicit : EvenInt -&gt; int</div>
-<div class="tip" id="fs26">module Arb<br /><br />from FsCheck</div>
-<div class="tip" id="fs27">val from&lt;&#39;Value&gt; : Arbitrary&lt;&#39;Value&gt;</div>
-<div class="tip" id="fs28">val filter : pred:(&#39;a -&gt; bool) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;a&gt;</div>
-<div class="tip" id="fs29">val convert : convertTo:(&#39;a -&gt; &#39;b) -&gt; convertFrom:(&#39;b -&gt; &#39;a) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;b&gt;</div>
-<div class="tip" id="fs30">val register&lt;&#39;t&gt; : unit -&gt; TypeClass.TypeClassComparison</div>
-<div class="tip" id="fs31">type ArbitraryModifiers =<br />&#160;&#160;static member EvenInt : unit -&gt; Arbitrary&lt;EvenInt&gt;</div>
-<div class="tip" id="fs32">val ( generated even ints should be even ) : EvenInt -&gt; bool</div>
-<div class="tip" id="fs33">val left : &#39;a (requires equality)</div>
-<div class="tip" id="fs34">val right : &#39;a (requires equality)</div>
-<div class="tip" id="fs35">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T</div>
-<div class="tip" id="fs36">val testCompare : i:int -&gt; j:int -&gt; Property</div>
-<div class="tip" id="fs37">val j : int</div>
-<div class="tip" id="fs38">val testMutableList : Property</div>
-<div class="tip" id="fs39">module Prop<br /><br />from FsCheck</div>
-<div class="tip" id="fs40">val forAll : arb:Arbitrary&lt;&#39;Value&gt; -&gt; body:(&#39;Value -&gt; &#39;Testable) -&gt; Property</div>
-<div class="tip" id="fs41">val fromGen : gen:Gen&lt;&#39;Value&gt; -&gt; Arbitrary&lt;&#39;Value&gt;</div>
-<div class="tip" id="fs42">Multiple items<br />module Gen<br /><br />from FsCheck<br /><br />--------------------<br />type Gen&lt;&#39;a&gt; =<br />&#160;&#160;private | Gen of (int -&gt; StdGen -&gt; &#39;a)<br />&#160;&#160;&#160;&#160;interface IGen<br />&#160;&#160;&#160;&#160;member private Map : f:(&#39;a -&gt; &#39;b) -&gt; Gen&lt;&#39;b&gt;<br />&#160;&#160;&#160;&#160;static member ( &gt;&gt;= ) : m:Gen&lt;&#39;a1&gt; * k:(&#39;a1 -&gt; Gen&lt;&#39;a2&gt;) -&gt; Gen&lt;&#39;a2&gt;<br />&#160;&#160;&#160;&#160;static member ( &lt;!&gt; ) : f:(&#39;a1 -&gt; &#39;a2) * a:Gen&lt;&#39;a1&gt; -&gt; Gen&lt;&#39;a2&gt;<br />&#160;&#160;&#160;&#160;static member ( &lt;*&gt; ) : f:Gen&lt;(&#39;a1 -&gt; &#39;a2)&gt; * a:Gen&lt;&#39;a1&gt; -&gt; Gen&lt;&#39;a2&gt;</div>
-<div class="tip" id="fs43">val choose : l:int * h:int -&gt; Gen&lt;int&gt;</div>
-<div class="tip" id="fs44">val capacity : int</div>
-<div class="tip" id="fs45">val underTest : Collections.Generic.List&lt;int&gt;</div>
-<div class="tip" id="fs46">namespace System.Collections</div>
-<div class="tip" id="fs47">namespace System.Collections.Generic</div>
-<div class="tip" id="fs48">Multiple items<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; List&lt;&#39;T&gt; + 2 overloads<br />&#160;&#160;member Add : item:&#39;T -&gt; unit<br />&#160;&#160;member AddRange : collection:IEnumerable&lt;&#39;T&gt; -&gt; unit<br />&#160;&#160;member AsReadOnly : unit -&gt; ReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;member BinarySearch : item:&#39;T -&gt; int + 2 overloads<br />&#160;&#160;member Capacity : int with get, set<br />&#160;&#160;member Clear : unit -&gt; unit<br />&#160;&#160;member Contains : item:&#39;T -&gt; bool<br />&#160;&#160;member ConvertAll&lt;&#39;TOutput&gt; : converter:Converter&lt;&#39;T, &#39;TOutput&gt; -&gt; List&lt;&#39;TOutput&gt;<br />&#160;&#160;member CopyTo : array:&#39;T[] -&gt; unit + 2 overloads<br />&#160;&#160;...<br />&#160;&#160;nested type Enumerator<br /><br />--------------------<br />Collections.Generic.List() : Collections.Generic.List&lt;&#39;T&gt;<br />Collections.Generic.List(capacity: int) : Collections.Generic.List&lt;&#39;T&gt;<br />Collections.Generic.List(collection: Collections.Generic.IEnumerable&lt;&#39;T&gt;) : Collections.Generic.List&lt;&#39;T&gt;</div>
-<div class="tip" id="fs49">val itemsToAdd : int []</div>
-<div class="tip" id="fs50">Collections.Generic.List.AddRange(collection: Collections.Generic.IEnumerable&lt;int&gt;) : unit</div>
-<div class="tip" id="fs51">property Collections.Generic.List.Count: int</div>
-<div class="tip" id="fs52">property Array.Length: int</div>
-<div class="tip" id="fs53">property Config.Quick: Config</div>
-<div class="tip" id="fs54">union case Option.Some: Value: &#39;T -&gt; Option&lt;&#39;T&gt;</div>
-<div class="tip" id="fs55">Multiple items<br />type Random =<br />&#160;&#160;new : unit -&gt; Random + 1 overload<br />&#160;&#160;member Next : unit -&gt; int + 2 overloads<br />&#160;&#160;member NextBytes : buffer:byte[] -&gt; unit<br />&#160;&#160;member NextDouble : unit -&gt; float<br /><br />--------------------<br />Random() : Random<br />Random(Seed: int) : Random</div>
-<div class="tip" id="fs56">Multiple items<br />union case Random.StdGen.StdGen: int * int -&gt; Random.StdGen<br /><br />--------------------<br />type StdGen = | StdGen of int * int</div>
-<div class="tip" id="fs57">val abs : value:&#39;T -&gt; &#39;T (requires member Abs)</div>
+            <div class="fsdocs-tip" id="fs1">namespace FsCheck</div>
+<div class="fsdocs-tip" id="fs2">namespace System</div>
+<div class="fsdocs-tip" id="fs3">val associativity : x:int -&gt; f:(int -&gt; float) * g:(float -&gt; char) * h:(char -&gt; int) -&gt; bool</div>
+<div class="fsdocs-tip" id="fs4">val x : int</div>
+<div class="fsdocs-tip" id="fs5">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; = int</div>
+<div class="fsdocs-tip" id="fs6">val f : (int -&gt; float)</div>
+<div class="fsdocs-tip" id="fs7">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />--------------------<br />type float = Double<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; = float</div>
+<div class="fsdocs-tip" id="fs8">val g : (float -&gt; char)</div>
+<div class="fsdocs-tip" id="fs9">Multiple items<br />val char : value:&#39;T -&gt; char (requires member op_Explicit)<br /><br />--------------------<br />type char = Char</div>
+<div class="fsdocs-tip" id="fs10">val h : (char -&gt; int)</div>
+<div class="fsdocs-tip" id="fs11">type Check =<br />&#160;&#160;static member All : config:Config -&gt; unit<br />&#160;&#160;static member All : config:Config * test:Type -&gt; unit<br />&#160;&#160;static member Method : config:Config * methodInfo:MethodInfo * ?target:obj -&gt; unit<br />&#160;&#160;static member One : config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member One : name:string * config:Config * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : property:&#39;Testable -&gt; unit<br />&#160;&#160;static member Quick : name:string * property:&#39;Testable -&gt; unit<br />&#160;&#160;static member QuickAll : unit -&gt; unit<br />&#160;&#160;static member QuickAll : test:Type -&gt; unit<br />&#160;&#160;static member QuickThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;...</div>
+<div class="fsdocs-tip" id="fs12">static member Check.Quick : property:&#39;Testable -&gt; unit<br />static member Check.Quick : name:string * property:&#39;Testable -&gt; unit</div>
+<div class="fsdocs-tip" id="fs13">val mapRec : Function&lt;int,int&gt; -&gt; l:int list -&gt; Property</div>
+<div class="fsdocs-tip" id="fs14">active recognizer Fun: Function&lt;&#39;a,&#39;b&gt; -&gt; &#39;a -&gt; &#39;b</div>
+<div class="fsdocs-tip" id="fs15">val f : (int -&gt; int)</div>
+<div class="fsdocs-tip" id="fs16">val l : int list</div>
+<div class="fsdocs-tip" id="fs17">type &#39;T list = List&lt;&#39;T&gt;</div>
+<div class="fsdocs-tip" id="fs18">val not : value:bool -&gt; bool</div>
+<div class="fsdocs-tip" id="fs19"></div>
+<div class="fsdocs-tip" id="fs20">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyList&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;member Length : int<br />&#160;&#160;&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;&#160;&#160;...</div>
+<div class="fsdocs-tip" id="fs21">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; list:&#39;T list -&gt; &#39;U list</div>
+<div class="fsdocs-tip" id="fs22">val head : list:&#39;T list -&gt; &#39;T</div>
+<div class="fsdocs-tip" id="fs23">val tail : list:&#39;T list -&gt; &#39;T list</div>
+<div class="fsdocs-tip" id="fs24">Multiple items<br />union case EvenInt.EvenInt: int -&gt; EvenInt<br /><br />--------------------<br />type EvenInt =<br />&#160;&#160;| EvenInt of int<br />&#160;&#160;&#160;&#160;static member op_Explicit : EvenInt -&gt; int</div>
+<div class="fsdocs-tip" id="fs25">val i : int</div>
+<div class="fsdocs-tip" id="fs26">type EvenInt =<br />&#160;&#160;| EvenInt of int<br />&#160;&#160;&#160;&#160;static member op_Explicit : EvenInt -&gt; int</div>
+<div class="fsdocs-tip" id="fs27">module Arb<br /><br />from FsCheck</div>
+<div class="fsdocs-tip" id="fs28">val from&lt;&#39;Value&gt; : Arbitrary&lt;&#39;Value&gt;</div>
+<div class="fsdocs-tip" id="fs29">val filter : pred:(&#39;a -&gt; bool) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;a&gt;</div>
+<div class="fsdocs-tip" id="fs30">val convert : convertTo:(&#39;a -&gt; &#39;b) -&gt; convertFrom:(&#39;b -&gt; &#39;a) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;b&gt;</div>
+<div class="fsdocs-tip" id="fs31">val register&lt;&#39;t&gt; : unit -&gt; TypeClass.TypeClassComparison</div>
+<div class="fsdocs-tip" id="fs32">type ArbitraryModifiers =<br />&#160;&#160;static member EvenInt : unit -&gt; Arbitrary&lt;EvenInt&gt;</div>
+<div class="fsdocs-tip" id="fs33">val ( generated even ints should be even ) : EvenInt -&gt; bool</div>
+<div class="fsdocs-tip" id="fs34">val left : &#39;a (requires equality)</div>
+<div class="fsdocs-tip" id="fs35">val right : &#39;a (requires equality)</div>
+<div class="fsdocs-tip" id="fs36">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T</div>
+<div class="fsdocs-tip" id="fs37">val testCompare : i:int -&gt; j:int -&gt; Property</div>
+<div class="fsdocs-tip" id="fs38">val j : int</div>
+<div class="fsdocs-tip" id="fs39">val testMutableList : Property</div>
+<div class="fsdocs-tip" id="fs40">module Prop<br /><br />from FsCheck</div>
+<div class="fsdocs-tip" id="fs41">val forAll : arb:Arbitrary&lt;&#39;Value&gt; -&gt; body:(&#39;Value -&gt; &#39;Testable) -&gt; Property</div>
+<div class="fsdocs-tip" id="fs42">val fromGen : gen:Gen&lt;&#39;Value&gt; -&gt; Arbitrary&lt;&#39;Value&gt;</div>
+<div class="fsdocs-tip" id="fs43">Multiple items<br />module Gen<br /><br />from FsCheck<br /><br />--------------------<br />type Gen&lt;&#39;a&gt; =<br />&#160;&#160;private | Gen of (int -&gt; StdGen -&gt; &#39;a)<br />&#160;&#160;&#160;&#160;interface IGen<br />&#160;&#160;&#160;&#160;member private Map : f:(&#39;a -&gt; &#39;b) -&gt; Gen&lt;&#39;b&gt;<br />&#160;&#160;&#160;&#160;static member ( &gt;&gt;= ) : m:Gen&lt;&#39;a1&gt; * k:(&#39;a1 -&gt; Gen&lt;&#39;a2&gt;) -&gt; Gen&lt;&#39;a2&gt;<br />&#160;&#160;&#160;&#160;static member ( &lt;!&gt; ) : f:(&#39;a1 -&gt; &#39;a2) * a:Gen&lt;&#39;a1&gt; -&gt; Gen&lt;&#39;a2&gt;<br />&#160;&#160;&#160;&#160;static member ( &lt;*&gt; ) : f:Gen&lt;(&#39;a1 -&gt; &#39;a2)&gt; * a:Gen&lt;&#39;a1&gt; -&gt; Gen&lt;&#39;a2&gt;</div>
+<div class="fsdocs-tip" id="fs44">val choose : l:int * h:int -&gt; Gen&lt;int&gt;</div>
+<div class="fsdocs-tip" id="fs45">val capacity : int</div>
+<div class="fsdocs-tip" id="fs46">val underTest : Collections.Generic.List&lt;int&gt;</div>
+<div class="fsdocs-tip" id="fs47">namespace System.Collections</div>
+<div class="fsdocs-tip" id="fs48">namespace System.Collections.Generic</div>
+<div class="fsdocs-tip" id="fs49">Multiple items<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; List&lt;&#39;T&gt; + 2 overloads<br />&#160;&#160;member Add : item:&#39;T -&gt; unit<br />&#160;&#160;member AddRange : collection:IEnumerable&lt;&#39;T&gt; -&gt; unit<br />&#160;&#160;member AsReadOnly : unit -&gt; ReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;member BinarySearch : item:&#39;T -&gt; int + 2 overloads<br />&#160;&#160;member Capacity : int with get, set<br />&#160;&#160;member Clear : unit -&gt; unit<br />&#160;&#160;member Contains : item:&#39;T -&gt; bool<br />&#160;&#160;member ConvertAll&lt;&#39;TOutput&gt; : converter:Converter&lt;&#39;T, &#39;TOutput&gt; -&gt; List&lt;&#39;TOutput&gt;<br />&#160;&#160;member CopyTo : array:&#39;T[] -&gt; unit + 2 overloads<br />&#160;&#160;...<br />&#160;&#160;nested type Enumerator<br /><br />--------------------<br />Collections.Generic.List() : Collections.Generic.List&lt;&#39;T&gt;<br />Collections.Generic.List(capacity: int) : Collections.Generic.List&lt;&#39;T&gt;<br />Collections.Generic.List(collection: Collections.Generic.IEnumerable&lt;&#39;T&gt;) : Collections.Generic.List&lt;&#39;T&gt;</div>
+<div class="fsdocs-tip" id="fs50">val itemsToAdd : int []</div>
+<div class="fsdocs-tip" id="fs51">static member Check.One : config:Config * property:&#39;Testable -&gt; unit<br />static member Check.One : name:string * config:Config * property:&#39;Testable -&gt; unit</div>
+<div class="fsdocs-tip" id="fs52">type Config =<br />&#160;&#160;{ MaxTest: int<br />&#160;&#160;&#160;&#160;MaxFail: int<br />&#160;&#160;&#160;&#160;Replay: StdGen option<br />&#160;&#160;&#160;&#160;Name: string<br />&#160;&#160;&#160;&#160;StartSize: int<br />&#160;&#160;&#160;&#160;EndSize: int<br />&#160;&#160;&#160;&#160;QuietOnSuccess: bool<br />&#160;&#160;&#160;&#160;Every: int -&gt; obj list -&gt; string<br />&#160;&#160;&#160;&#160;EveryShrink: obj list -&gt; string<br />&#160;&#160;&#160;&#160;Arbitrary: Type list<br />&#160;&#160;&#160;&#160;... }<br />&#160;&#160;&#160;&#160;static member Default : Config<br />&#160;&#160;&#160;&#160;static member Quick : Config<br />&#160;&#160;&#160;&#160;static member QuickThrowOnFailure : Config<br />&#160;&#160;&#160;&#160;static member Verbose : Config<br />&#160;&#160;&#160;&#160;static member VerboseThrowOnFailure : Config<br />&#160;&#160;&#160;&#160;static member private throwingRunner : IRunner</div>
+<div class="fsdocs-tip" id="fs53">property Config.Quick: Config with get</div>
+<div class="fsdocs-tip" id="fs54">union case Option.Some: Value: &#39;T -&gt; Option&lt;&#39;T&gt;</div>
+<div class="fsdocs-tip" id="fs55">Multiple items<br />type Random =<br />&#160;&#160;new : unit -&gt; Random + 1 overload<br />&#160;&#160;member Next : unit -&gt; int + 2 overloads<br />&#160;&#160;member NextBytes : buffer:byte[] -&gt; unit + 1 overload<br />&#160;&#160;member NextDouble : unit -&gt; float<br /><br />--------------------<br />Random() : Random<br />Random(Seed: int) : Random</div>
+<div class="fsdocs-tip" id="fs56">Multiple items<br />union case Random.StdGen.StdGen: int * int -&gt; Random.StdGen<br /><br />--------------------<br />type StdGen = | StdGen of int * int</div>
+<div class="fsdocs-tip" id="fs57">val abs : value:&#39;T -&gt; &#39;T (requires member Abs)</div>
 
         </div>
-        <div class="span3">
-          <img src="/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" />  
-          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
-            <li class="nav-header">FsCheck</li>
-            <li><a href="/FsCheck/index.html">Home page</a></li>
-            <li class="divider"></li>
-            <li><a href="http://nuget.org/packages/FsCheck">Get Library via NuGet</a></li>
-            <li><a href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
-            <li><a href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License</a></li>
-            <li><a href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
-            <li><a href="/FsCheck/users.html">Who is using FsCheck?</a></li>
-            
-            <li class="nav-header">Getting started</li>
-            <li><a href="/FsCheck/QuickStart.html">Quick Start</a></li>
-            <li><a href="/FsCheck/LearningResources.html">Learning Resources</a></li>
 
-            <li class="nav-header">Documentation</li>
-            <li>
-              <a href="/FsCheck/Properties.html">Properties</a>
-            </li>
-            <li>
-              <a href="/FsCheck/TestData.html">Generating test data</a>
-            </li>
-            <li>
-              <a href="/FsCheck/StatefulTesting.html">Model-based testing</a>
-            </li>
-            <li>
-              <a href="/FsCheck/RunningTests.html">Running tests</a>
-            </li>
-            <li>
-              <a href="/FsCheck/TipsAndTricks.html">Tips and Tricks</a>
-            </li>
-              <li>
-                  <a href="/FsCheck/StatefulTestingNew.html">Model-based testing vNext (Experimental)</a>
-              </li>
-
-            <li><a href="/FsCheck/reference/index.html">API Reference</a></li>
-          </ul>
-        </div>
-      </div>
+        <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+        <script type="text/javascript">var fsdocs_search_baseurl = 'https://fscheck.github.io/FsCheck/';</script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-search.js"></script>
+        <!-- END SEARCH BOX: this adds support for the search box -->
     </div>
-    <a href="https://github.com/fscheck/FsCheck">
-      <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/>
-    </a>
-  </body>
-  </html>
+</body>
+
+</html>
+
