@@ -4,20 +4,20 @@ version 5.249.0
 
 framework: auto-detect
 
-nuget FSharp.Core = 4.2.3
+nuget FSharp.Core
 
 nuget Unquote
-nuget xunit = 2.2
+
+nuget Microsoft.NET.Test.Sdk
+
+nuget xunit
 nuget xunit.runner.visualstudio version_in_path: true
-nuget NUnit = 3.10.1
+
+nuget NUnit
 nuget NUnit3TestAdapter version_in_path: true
+
 nuget MSTest.TestFramework
 nuget MSTest.TestAdapter version_in_path: true
-
-// This is to allow building net452 target on *nix
-// Ideally we would have this a a dev dependency only (privateasset)
-// but it looks like paket can not yet do this.
-nuget Microsoft.NETFramework.ReferenceAssemblies
 
 // [ FAKE GROUP ]
 group Build
@@ -25,7 +25,7 @@ group Build
 	source https://www.nuget.org/api/v2
 	source https://api.nuget.org/v3/index.json
 
-	nuget FSharp.Core 4.7.0.0
+	nuget FSharp.Core
 	nuget Octokit
 	nuget Fake.Api.GitHub
 	nuget Fake.BuildServer.AppVeyor
@@ -44,5 +44,3 @@ group Build
 	nuget Fake.DotNet.Testing.XUnit2
 	nuget Fake.IO.FileSystem
 	nuget Fake.Tools.Git
-	
-	nuget xunit.runner.console

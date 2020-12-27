@@ -40,7 +40,7 @@ let releaseNotes = "FsCheck Release Notes.md"
 let solution = "FsCheck.sln"
 
 /// Pattern specifying assemblies to be tested
-let testAssemblies = "tests/**/bin/Release/net452/*.Test.dll"
+let testAssemblies = "tests/**/bin/Release/netcoreapp3.1/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
@@ -113,18 +113,17 @@ Target.create "Build" (fun _ ->
 )
 
 // --------------------------------------------------------------------------------------
-// Run the unit tests using test runner
+// Run the unit tests
+
+let runAndCheck (f: unit -> ProcessResult) =
+  let result = f()
+  if not result.OK then
+    failwithf "%A" result
 
 Target.create "RunTests" (fun _ ->
-    !! testAssemblies
-    |> XUnit2.run (fun p ->
-            { p with
-                //ToolPath = "packages/build/xunit.runner.console/tools/xunit.console.exe"
-                //The NoAppDomain setting requires care.
-                //On mono, it needs to be true otherwise xunit won't work due to a Mono bug.
-                //On .NET, it needs to be false otherwise Unquote won't work because it won't be able to load the FsCheck assembly.
-                NoAppDomain = Environment.isMono
-                ShadowCopy = false })
+    for testAssembly in  !! testAssemblies do
+       runAndCheck (fun () -> DotNet.exec id "test" testAssembly)
+
 )
 
 // --------------------------------------------------------------------------------------
