@@ -104,10 +104,6 @@ Target.create "Clean" (fun _ ->
     Shell.cleanDirs ["bin"; "temp"]
 )
 
-Target.create "CleanDocs" (fun _ ->
-    Shell.cleanDirs ["docs/output"]
-)
-
 // --------------------------------------------------------------------------------------
 // Build library & test project
 
@@ -153,219 +149,34 @@ Target.create "PaketPush" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Generate the documentation
 
-// Paths with template/source/output locations
-let bin        = __SOURCE_DIRECTORY__ @@ "src/FsCheck.Xunit/bin/Release/netstandard2.0" //might not work in the future
-let content    = __SOURCE_DIRECTORY__ @@ "docs/content"
-let output     = __SOURCE_DIRECTORY__ @@ "docs/output"
-let files      = __SOURCE_DIRECTORY__ @@ "docs/files"
-let templates  = __SOURCE_DIRECTORY__ @@ "docs/tools/templates"
-let formatting = __SOURCE_DIRECTORY__ @@ "packages/build/FSharp.Formatting/"
-let docTemplate = formatting @@ "templates/docpage.cshtml"
+let fsdocParameters = [
+  "fsdocs-release-notes-link https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md"
+  "fsdocs-license-link https://github.com/fscheck/FsCheck/blob/master/License.txt"
+  "fsdocs-navbar-position fixed-left"
+]
 
-let github_release_user = Environment.environVarOrDefault "github_release_user" gitOwner
-let githubLink = sprintf "https://github.com/%s/%s" github_release_user gitName
-
-// Specify more information about your project
-let info =
-  [ "project-name", "FsCheck"
-    "project-author", "Kurt Schelfthout and contributors"
-    "project-summary", "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
-    "project-github", githubLink
-    "project-nuget", "http://nuget.org/packages/FsCheck" ]
-
-// Web site location for the generated documentation
-let website = "/FsCheck"
-
-let root = website
-
-// Binaries that have XML documentation (in a corresponding generated XML file)
-let referenceBinaries = [ "FsCheck.dll" ]
-
-let layoutRootsAll = new System.Collections.Generic.Dictionary<string, string list>()
-layoutRootsAll.Add("en",[   templates;
-                            formatting @@ "templates"
-                            formatting @@ "templates/reference" ])
-
-Target.create "ReferenceDocs" (fun _ ->
-    Directory.ensure (output @@ "reference")
-
-    let binaries () =
-        let manuallyAdded =
-            referenceBinaries
-            |> List.map (fun b -> bin @@ b)
-
-        let conventionBased = []
-            //DirectoryInfo.getSubDirectories <| DirectoryInfo bin
-            //|> Array.collect (fun d ->
-            //    let name, dInfo =
-            //        let net45Bin =
-            //            DirectoryInfo.getSubDirectories d |> Array.filter(fun x -> x.FullName.ToLower().Contains("net45"))
-            //        let net47Bin =
-            //            DirectoryInfo.getSubDirectories d |> Array.filter(fun x -> x.FullName.ToLower().Contains("net47"))
-            //        if net45Bin.Length > 0 then
-            //            d.Name, net45Bin.[0]
-            //        else
-            //            d.Name, net47Bin.[0]
-
-            //    dInfo.GetFiles()
-            //    |> Array.filter (fun x ->
-            //        x.Name.ToLower() = (sprintf "%s.dll" name).ToLower())
-            //    |> Array.map (fun x -> x.FullName)
-            //    )
-            //|> List.ofArray
-
-        conventionBased @ manuallyAdded
-
-    binaries()
-    |> FSFormatting.createDocsForDlls (fun args ->
-        { args with
-            OutputDirectory = output @@ "reference"
-            LayoutRoots =  layoutRootsAll.["en"]
-            ProjectParameters =  ("root", root)::info
-            SourceRepository = githubLink @@ "tree/master" }
-           )
-)
-
-let copyFiles () =
-    Shell.copyRecursive files output true
-    |> Trace.logItems "Copying file: "
-    Directory.ensure (output @@ "content")
-    Shell.copyRecursive (formatting @@ "styles") (output @@ "content") true
-    |> Trace.logItems "Copying styles and scripts: "
-
-/// Specifies the fsformatting executable
-let toolPath() =
-    Fake.Core.ProcessUtils.tryFindLocalTool "FSFORMATTING" "fsformatting.exe" 
-        [(Directory.GetCurrentDirectory() @@ "packages" @@ "build" @@ "FSharp.Formatting.CommandTool" @@ "tools")]
-    |> Option.get
-
-/// Runs fsformatting.exe with the given command in the given repository directory.
-let private run toolPath command = 
-    let result = CreateProcess.fromRawCommandLine toolPath command
-                 |> CreateProcess.withFramework
-                 |> CreateProcess.redirectOutput
-                 |> Proc.run
-    if result.ExitCode <> 0 then 
-        failwithf "%s %s failed with exit code %i. StdOut: %s ErrOut: %s" toolPath command result.ExitCode result.Result.Output result.Result.Error
-
-type LiterateArguments =
-    { ToolPath : string
-      Source : string
-      OutputDirectory : string 
-      Template : string
-      ProjectParameters : (string * string) list
-      LayoutRoots : string list }
-
-let createDocs p =
-    let defaultLiterateArguments =
-        { ToolPath = toolPath()
-          Source = ""
-          OutputDirectory = ""
-          Template = ""
-          ProjectParameters = []
-          LayoutRoots = [] }
-    let arguments = (p:LiterateArguments->LiterateArguments) defaultLiterateArguments
-    let layoutroots =
-        if arguments.LayoutRoots.IsEmpty then []
-        else [ "--layoutRoots" ] @ arguments.LayoutRoots
-    let source = arguments.Source
-    let template = arguments.Template
-    let outputDir = arguments.OutputDirectory
-
-    let command = 
-        arguments.ProjectParameters
-        |> Seq.map (fun (k, v) -> [ k; v ])
-        |> Seq.concat
-        |> Seq.append 
-               (["literate"; "--processDirectory" ] @ layoutroots @ [ "--inputDirectory"; source; "--templateFile"; template; 
-                  "--fsieval"; "--outputDirectory"; outputDir; "--replacements" ])
-        |> Seq.map (fun s -> 
-               if s.StartsWith "\"" then s
-               else sprintf "\"%s\"" s)
-        |> String.separated " "
-    run arguments.ToolPath command
-    printfn "Successfully generated docs for %s" source
+let fsdocProperties = [
+  "Configuration=Release"
+  "TargetFramework=netstandard2.0"
+]
 
 Target.create "Docs" (fun _ ->
-    //File.delete "docs/content/release-notes.md"
-    //Shell.copyFile "docs/content/" "RELEASE_NOTES.md"
-    //Shell.rename "docs/content/release-notes.md" "docsrc/content/RELEASE_NOTES.md"
-
-    //File.delete "docsrc/content/license.md"
-    //Shell.copyFile "docsrc/content/" "LICENSE.txt"
-    //Shell.rename "docsrc/content/license.md" "docsrc/content/LICENSE.txt"
-
-
-    DirectoryInfo.getSubDirectories (DirectoryInfo.ofPath templates)
-    |> Seq.iter (fun d ->
-                    let name = d.Name
-                    if name.Length = 2 || name.Length = 3 then
-                        layoutRootsAll.Add(
-                                name, [templates @@ name
-                                       formatting @@ "templates"
-                                       formatting @@ "templates/reference" ]))
-    copyFiles ()
-
-    for dir in  [ content; ] do
-        let langSpecificPath(lang, path:string) =
-            path.Split([|'/'; '\\'|], System.StringSplitOptions.RemoveEmptyEntries)
-            |> Array.exists(fun i -> i = lang)
-        let layoutRoots =
-            let key = layoutRootsAll.Keys |> Seq.tryFind (fun i -> langSpecificPath(i, dir))
-            match key with
-            | Some lang -> layoutRootsAll.[lang]
-            | None -> layoutRootsAll.["en"] // "en" is the default language
-
-        createDocs (fun args ->
-            { args with 
-                Source = content
-                OutputDirectory = output
-                LayoutRoots = layoutRoots
-                ProjectParameters  = ("root", root)::info
-                Template = docTemplate } )
+    Shell.cleanDir ".fsdocs"
+    DotNet.exec id "tool" ("install FSharp.Formatting.CommandTool")  |> ignore
+    DotNet.exec id "fsdocs" ("build --strict --eval --clean"
+      + " --projects src/FsCheck/FsCheck.fsproj" 
+      + " --property " + String.Join(" ",fsdocProperties) 
+      + " --parameters " + String.Join(" ", fsdocParameters)) |> ignore
 )
 
-//// --------------------------------------------------------------------------------------
-//// Generate the documentation
-
-//let generateHelp' fail debug =
-//    let args =
-//        if debug then ["--define:HELP"]
-//        else ["--define:RELEASE"; "--define:HELP"]
-//    if Fake.FSIHelper.executeFSIWithArgs "docs/tools" "generate.fsx" args [] then
-//        Trace.traceImportant "Help generated"
-//    else
-//        if fail then
-//            failwith "generating help documentation failed"
-//        else
-//            Trace.traceImportant "generating help documentation failed"
-
-//let generateHelp fail =
-//    generateHelp' fail true
-
-
-//Target.create "KeepRunning" (fun _ ->
-//    use watcher = new FileSystemWatcher(DirectoryInfo("docs/content").FullName,"*.fsx")
-//    watcher.EnableRaisingEvents <- true
-//    watcher.Changed.Add(fun e -> Trace.trace (sprintf "%A %A" e.Name e.ChangeType); generateHelp false)
-//    watcher.Created.Add(fun e -> Trace.trace (sprintf "%A %A" e.Name e.ChangeType); generateHelp false)
-//    watcher.Renamed.Add(fun e -> Trace.trace (sprintf "%A %A" e.Name e.ChangeType); generateHelp false)
-//    //watcher.Deleted.Add(fun e -> trace (sprintf "%A %A" e.Name e.ChangeType); generateHelp false)
-
-//    Trace.traceImportant "Waiting for help edits. Press any key to stop."
-
-//    System.Console.ReadKey() |> ignore
-
-//    watcher.EnableRaisingEvents <- false
-//    watcher.Dispose()
-//)
-
-//Target.create "GenerateDocs" (fun _ ->
-//    Fake.FSIHelper.executeFSIWithArgs "docs/tools" "generate.fsx" ["--define:RELEASE"; "--define:HELP"; "--define:REFERENCE"] [] |> ignore
-//)
-//Target.create "GenerateDocsJa" (fun _ ->
-//    Fake.FSIHelper.executeFSIWithArgs "docs/tools" "generate.ja.fsx" ["--define:RELEASE"] [] |> ignore
-//)
+Target.create "WatchDocs" (fun _ ->
+    Shell.cleanDir ".fsdocs"
+    DotNet.exec id "tool" ("install FSharp.Formatting.CommandTool")  |> ignore
+    DotNet.exec id "fsdocs" ("watch --eval"
+      + " --projects src/FsCheck/FsCheck.fsproj" 
+      + " --property " + String.Join(" ",fsdocProperties) 
+      + " --parameters " + String.Join(" ", fsdocParameters)) |> ignore
+)
 
 // --------------------------------------------------------------------------------------
 // Release Scripts
@@ -376,7 +187,7 @@ Target.create "ReleaseDocs" (fun _ ->
     Repository.cloneSingleBranch "" ("git@github.com:fscheck/FsCheck.git") "gh-pages" tempDocsDir
 
     Repository.fullclean tempDocsDir
-    Shell.copyRecursive "docs/output" tempDocsDir true |> Trace.tracefn "%A"
+    Shell.copyRecursive "output" tempDocsDir true |> Trace.tracefn "%A"
     Staging.stageAll tempDocsDir
     Commit.exec tempDocsDir (sprintf "Update generated documentation for version %s" buildVersion)
     Branches.push tempDocsDir
@@ -420,11 +231,9 @@ Target.create "Tests" ignore
   ==> "Tests"
 
 "Build"
-  ==> "ReferenceDocs"
-
-"CleanDocs"
-  ==> "ReferenceDocs"
   ==> "Docs"
+
+"Docs"
   =?> ("ReleaseDocs", BuildServer.isLocalBuild)
   ==> "Release"
 

@@ -7,14 +7,15 @@ namespace FsCheck.NUnit.CSharpExamples
     [TestFixture]
     public class Examples
     {
-        //Simple boolean property
+        /// <summary> Simple boolean Function can be tested as a Delegate </summary>
         [Property]
+        //[TestCase(new[] {1,2,3,4,5,6,7}, ExpectedResult = true)] unfortunately does NOT run both!
         public bool RevRev(int[] xs)
         {
             return xs.Reverse().Reverse().SequenceEqual(xs);
         }
 
-        // Note: should fail
+        /// <summary> Example for using Property.ForAll; Note: should fail </summary>
         [Property(Verbose = true)]
         public Property RevId_shouldFail()
         {

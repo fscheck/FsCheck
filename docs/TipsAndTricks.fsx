@@ -1,5 +1,5 @@
 (*** hide ***)
-#I @"../../src/FsCheck/bin/Release/netstandard2.0"
+#I @"../src/FsCheck/bin/Release/netstandard2.0"
 #r @"FsCheck"
 open FsCheck
 open System
@@ -124,7 +124,7 @@ let testMutableList =
             underTest.Count = itemsToAdd.Length))
 
 (**
-    [lang=csharp,file=../csharp/TipsAndTricks.cs,key=testMutableList]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TipsAndTricks.cs,key=testMutableList]
 
 This works, as a bonus you get shrinking for free.
 
@@ -145,7 +145,8 @@ Check.One({ Config.Quick with Replay = Some <| Rnd (1145655947UL,296144285UL) },
 
 (**
 In C#:
-    [lang=csharp,file=../csharp/TipsAndTricks.cs,key=replay]
+
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TipsAndTricks.cs,key=replay]
 *)
 
 (**

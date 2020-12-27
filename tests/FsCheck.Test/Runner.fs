@@ -516,3 +516,42 @@ module Override =
         Check.One(Config.QuickThrowOnFailure, fun (calc:Calc) -> true)
         Check.One( Config.QuickThrowOnFailure.WithArbitrary([ typeof<Arbitraries> ]),
              fun (calc:Calc) -> not (Double.IsNaN calc.Float || Double.IsInfinity calc.Float || calc.Float = Double.Epsilon || calc.Float = Double.MinValue || calc.Float = Double.MaxValue))
+
+// see https://github.com/fscheck/FsCheck/issues/514
+// Dispose not called
+module BugReproIssue514 =
+    open System
+    open System.Threading
+    open FsCheck
+    open FsCheck.Xunit
+    open global.Xunit
+    open Xunit.Sdk
+
+    type TestMessageBus() =
+        interface IMessageBus with
+            member _.QueueMessage _ = true
+            member _.Dispose() = ()
+
+    let mutable disposed = false
+
+    type DisposableTestClass() =
+
+        [<Property>]
+        member _.FakeTest (x:int) =
+            Check.One(Config.Quick, true)       
+
+        interface IDisposable with
+            member _.Dispose() = 
+                disposed <- true
+
+    [<Property>]
+    let ``should call Dispose on classes inheriting from IDisposable`` () =
+            let methodInfo = typeof<DisposableTestClass>.GetMethod("FakeTest") |> ReflectionMethodInfo
+            let typeInfo = typeof<DisposableTestClass> |> ReflectionTypeInfo
+            let assemblyInfo = typeof<DisposableTestClass>.Assembly |> ReflectionAssemblyInfo |> TestAssembly
+            let testCollection = TestCollection(assemblyInfo, typeInfo, typeof<DisposableTestClass>.Name)
+            let testClass = TestClass(testCollection, typeInfo)
+            let testMethod = TestMethod(testClass, methodInfo)
+            let testCase = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, testMethod)
+            testCase.RunAsync(null, new TestMessageBus(), [||], new ExceptionAggregator(), new CancellationTokenSource()) |> Async.AwaitTask |> ignore
+            Check.One(Config.Quick, disposed)

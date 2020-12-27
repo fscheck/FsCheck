@@ -1,5 +1,5 @@
 (*** hide ***)
-#I @"../../src/FsCheck/bin/Release/netstandard2.0"
+#I @"../src/FsCheck/bin/Release/netstandard2.0"
 #r @"FsCheck"
 open FsCheck
 open System
@@ -17,7 +17,7 @@ called `gen` is provided by FsCheck, and all the functions in the `Gen` module a
 For C#, there are some LINQ methods you can use (select, where) and a number of methods on the `Gen` class.
 The name for the methods in F# and C# are largely the same except for casing.
 
-Shrinkers have types of the for `'a -> seq<'a>` aka `Func<T,IEnumerable<T>`; given a value, a shrinker 
+Shrinkers have types of the form `'a -> seq<'a>` aka `Func<T,IEnumerable<T>`; given a value, a shrinker 
 produces a sequence of values that are (in some way) smaller than the given value. 
 If FsCheck finds a set of values that falsify a given property, it will try 
 to make that value smaller than the original (random) value by getting the 
@@ -46,7 +46,7 @@ let chooseFromList xs =
         return List.item i xs }
 
 (**
-    [lang=csharp,file=../csharp/TestData.cs,key=chooseFrom]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=chooseFrom]
 
 ### Choosing between alternatives
 
@@ -57,7 +57,7 @@ this generates a random boolean which is true with probability one half:*)
 Gen.oneof [ gen { return true }; gen { return false } ]
 
 (**
-    [lang=csharp,file=../csharp/TestData.cs,key=chooseBool]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=chooseBool]
 
 We can control the distribution of results using `frequency`
 instead. `frequency` chooses a generator from the list randomly, but weighs the probability of 
@@ -66,7 +66,7 @@ choosing each alternative by the factor given. For example, this generates true 
 Gen.frequency [ (2, gen { return true }); (1, gen { return false })]
 
 (**
-    [lang=csharp,file=../csharp/TestData.cs,key=chooseBool2]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=chooseBool2]
     
 ### The size of test data
 
@@ -84,7 +84,7 @@ the current size as a parameter. For example, to generate natural
 Gen.sized <| fun s -> Gen.choose (0,s)
 
 (**
-    [lang=csharp,file=../csharp/TestData.cs,key=sizedInt]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=sizedInt]
 
 The purpose of size control is to ensure that test cases are large enough to reveal errors, 
 while remaining small enough to test fast. Sometimes the default size control does not achieve 
@@ -100,7 +100,7 @@ root of the original size:*)
 let matrix gen = Gen.sized <| fun s -> Gen.resize (s|>float|>sqrt|>int) gen
 
 (**
-    [lang=csharp,file=../csharp/TestData.cs,key=matrixGen]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=matrixGen]
 
 ### Generating recursive data types
 
@@ -123,7 +123,7 @@ In C#, we elide the type because it is quite a bit more verbose than in F# - ass
 of having an abstract superclass Tree with two subclasses, one for Leaf and one for Branch. Basically this is
 the code F# generates for the type definition above. Assuming that, `unsafeTree` in C# looks like:
 
-    [lang=csharp,file=../csharp/TestData.cs,key=unsafeTree]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=unsafeTree]
 
 However, a recursive generator like this may fail to terminate with a 
 StackOverflowException, or produce very large results. To avoid this, 
@@ -141,7 +141,7 @@ let tree =
     Gen.sized tree'
 
 (**
-    [lang=csharp,file=../csharp/TestData.cs,key=safeTree]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=safeTree]
 
 Note that
 
@@ -552,7 +552,7 @@ type MyGenerators =
           override x.Shrinker t = Seq.empty }
 
 (**
-    [lang=csharp,file=../csharp/TestData.cs,key=MyGenerators]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=MyGenerators]
 
 Replace the `'a` by the particular type you are defining an Arbitary instance for. 
 Only the `Generator` method needs to be defined; `Shrinker` by default returns the empty 
@@ -566,7 +566,7 @@ Now, to register all Arbitrary instances in this class:*)
 Arb.register<MyGenerators>()
 
 (**
-    [lang=csharp,file=../csharp/TestData.cs,key=register]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=register]
 
 FsCheck now knows about `Tree` types, and can not only generate Tree values, but also e.g. lists, tuples and 
 option values containing Trees:*)

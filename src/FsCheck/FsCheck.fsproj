@@ -4,6 +4,7 @@
     <AssemblyName>FsCheck</AssemblyName>
     <TargetFrameworks>net452;netstandard2.0;netstandard1.6</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
