@@ -5,23 +5,13 @@ open System.Reflection
 [<assembly: AssemblyTitleAttribute("FsCheck.NUnit")>]
 [<assembly: AssemblyProductAttribute("FsCheck.NUnit")>]
 [<assembly: AssemblyDescriptionAttribute("Integrates FsCheck with NUnit")>]
-<<<<<<< HEAD
 [<assembly: AssemblyVersionAttribute("3.0.0")>]
 [<assembly: AssemblyFileVersionAttribute("3.0.0")>]
-=======
-[<assembly: AssemblyVersionAttribute("2.14.4")>]
-[<assembly: AssemblyFileVersionAttribute("2.14.4")>]
->>>>>>> master
 do ()
 
 module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "FsCheck.NUnit"
     let [<Literal>] AssemblyProduct = "FsCheck.NUnit"
     let [<Literal>] AssemblyDescription = "Integrates FsCheck with NUnit"
-<<<<<<< HEAD
     let [<Literal>] AssemblyVersion = "3.0.0"
     let [<Literal>] AssemblyFileVersion = "3.0.0"
-=======
-    let [<Literal>] AssemblyVersion = "2.14.4"
-    let [<Literal>] AssemblyFileVersion = "2.14.4"
->>>>>>> master
