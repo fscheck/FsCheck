@@ -8,6 +8,7 @@ open System.Runtime.CompilerServices
 [<assembly: AssemblyDescriptionAttribute("Integrates FsCheck with xUnit.NET")>]
 [<assembly: AssemblyVersionAttribute("3.0.0")>]
 [<assembly: AssemblyFileVersionAttribute("3.0.0")>]
+[<assembly: AssemblyKeyFileAttribute("../../FsCheckKey.snk")>]
 [<assembly: InternalsVisibleToAttribute("FsCheck.Test")>]
 do ()
 
@@ -17,4 +18,5 @@ module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyDescription = "Integrates FsCheck with xUnit.NET"
     let [<Literal>] AssemblyVersion = "3.0.0"
     let [<Literal>] AssemblyFileVersion = "3.0.0"
+    let [<Literal>] AssemblyKeyFile = "../../FsCheckKey.snk"
     let [<Literal>] InternalsVisibleTo = "FsCheck.Test"

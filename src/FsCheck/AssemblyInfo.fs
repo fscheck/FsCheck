@@ -8,6 +8,7 @@ open System.Runtime.CompilerServices
 [<assembly: AssemblyDescriptionAttribute("FsCheck is a tool for testing .NET programs automatically using randomly generated test cases.")>]
 [<assembly: AssemblyVersionAttribute("3.0.0")>]
 [<assembly: AssemblyFileVersionAttribute("3.0.0")>]
+[<assembly: AssemblyKeyFileAttribute("../../FsCheckKey.snk")>]
 [<assembly: InternalsVisibleToAttribute("FsCheck.Test")>]
 do ()
 
@@ -17,4 +18,5 @@ module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyDescription = "FsCheck is a tool for testing .NET programs automatically using randomly generated test cases."
     let [<Literal>] AssemblyVersion = "3.0.0"
     let [<Literal>] AssemblyFileVersion = "3.0.0"
+    let [<Literal>] AssemblyKeyFile = "../../FsCheckKey.snk"
     let [<Literal>] InternalsVisibleTo = "FsCheck.Test"

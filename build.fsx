@@ -92,8 +92,9 @@ Target.create "AssemblyInfo" (fun _ ->
           AssemblyInfo.Description package.Summary
           AssemblyInfo.Version release.AssemblyVersion
           AssemblyInfo.FileVersion release.AssemblyVersion
+          AssemblyInfo.KeyFile "../../FsCheckKey.snk"
         ] @ (if package.Name = "FsCheck" || package.Name = "FsCheck.Xunit"
-             then [Fake.DotNet.AssemblyInfo.InternalsVisibleTo("FsCheck.Test")] else []))
+             then [AssemblyInfo.InternalsVisibleTo("FsCheck.Test")] else []))
     )
 )
 
