@@ -160,10 +160,10 @@ type public PropertyAttribute() =
 type public PropertiesAttribute() = inherit PropertyAttribute()
 
 /// The xUnit2 test runner for the PropertyAttribute that executes the test via FsCheck
-type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
-    inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
+type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, defaultMethodDisplayOptions:TestMethodDisplayOptions, testMethod:ITestMethod, ?testMethodArguments:obj []) =
+    inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
 
-    new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, null)
+    new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, null)
 
     member this.Init(output:TestOutputHelper) =
         let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
@@ -274,5 +274,5 @@ type PropertyDiscoverer(messageSink:IMessageSink) =
 
     interface IXunitTestCaseDiscoverer with
         override this.Discover(discoveryOptions:ITestFrameworkDiscoveryOptions, testMethod:ITestMethod, _:IAttributeInfo)=
-            let ptc = new PropertyTestCase(this.MessageSink, discoveryOptions.MethodDisplayOrDefault(), testMethod)
+            let ptc = new PropertyTestCase(this.MessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)
             Seq.singleton (ptc :> IXunitTestCase)

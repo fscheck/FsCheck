@@ -552,6 +552,6 @@ module BugReproIssue514 =
             let testCollection = TestCollection(assemblyInfo, typeInfo, typeof<DisposableTestClass>.Name)
             let testClass = TestClass(testCollection, typeInfo)
             let testMethod = TestMethod(testClass, methodInfo)
-            let testCase = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, testMethod)
+            let testCase = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, testMethod)
             testCase.RunAsync(null, new TestMessageBus(), [||], new ExceptionAggregator(), new CancellationTokenSource()) |> Async.AwaitTask |> ignore
             Check.One(Config.Quick, disposed)
