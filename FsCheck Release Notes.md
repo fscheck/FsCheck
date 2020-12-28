@@ -1,5 +1,14 @@
+### 3.0.0-alpha5 - 28 December 2020
 
-### 3.0.0-alpha5 - To be released
+* Target netstandard 2.0 only.
+
+* Dependency upgrades: FSharp.Core to 4.5.0, xUnit to 2.4.1 and NUnit to 3.10.1.
+
+* FsCheck, FsCheck.Xunit and FsCheck.NUnit are now signed, aka strongly named assemblies.
+
+* Harmonize Config types (by Laurence King)
+
+* Accumulate all changes in versions 2.12 to 2.14.3.
 
 ### 3.0.0-alpha4 - 6 October 2018
 
