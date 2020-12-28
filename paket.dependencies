@@ -4,20 +4,20 @@ version 5.249.0
 
 framework: auto-detect
 
-nuget FSharp.Core
+nuget FSharp.Core = 4.5.0
 
 nuget Unquote
 
 nuget Microsoft.NET.Test.Sdk
 
 nuget xunit
-nuget xunit.runner.visualstudio version_in_path: true
+nuget xunit.runner.visualstudio
 
 nuget NUnit
-nuget NUnit3TestAdapter version_in_path: true
+nuget NUnit3TestAdapter
 
 nuget MSTest.TestFramework
-nuget MSTest.TestAdapter version_in_path: true
+nuget MSTest.TestAdapter
 
 // [ FAKE GROUP ]
 group Build
@@ -25,7 +25,7 @@ group Build
 	source https://www.nuget.org/api/v2
 	source https://api.nuget.org/v3/index.json
 
-	nuget FSharp.Core
+	nuget FSharp.Core = 4.7.0
 	nuget Octokit
 	nuget Fake.Api.GitHub
 	nuget Fake.BuildServer.AppVeyor
