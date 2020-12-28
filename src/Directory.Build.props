@@ -9,5 +9,6 @@
     <PackageProjectUrl>https://fscheck.github.io/FsCheck/</PackageProjectUrl>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 </Project>

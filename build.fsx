@@ -102,7 +102,7 @@ Target.create "AssemblyInfo" (fun _ ->
 // Clean build results
 
 Target.create "Clean" (fun _ ->
-    Shell.cleanDirs ["bin"; "temp"]
+    Shell.cleanDirs ["bin"; "temp"; "output"]
 )
 
 // --------------------------------------------------------------------------------------
