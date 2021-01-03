@@ -5,12 +5,9 @@
 #nowarn "10001"
 
 open System
-
-#if NETSTANDARD1_0 || NETSTANDARD1_6
-#else
 open System.Net
 open System.Net.Mail
-#endif
+
 
 ///Represents an int < 0
 type NegativeInt = NegativeInt of int with
@@ -126,11 +123,8 @@ type DoNotSize<'a when 'a : struct and 'a : comparison> =
     DoNotSize of 'a with
     static member Unwrap(DoNotSize a) : 'a = a
 
-#if NETSTANDARD1_0 || NETSTANDARD1_6
-#else
 type IPv4Address = IPv4Address of IPAddress
 type IPv6Address = IPv6Address of IPAddress
-#endif
 
 type HostName = HostName of string with
     override x.ToString () = match x with HostName s -> s
@@ -424,39 +418,13 @@ module Arb =
 
         ///Generates uniformly distributed Decimal values in range [0; 1).
         static member private stdDecimalGen =
-#if !NETSTANDARD1_0
-            let tenPow7 = 1_000_000_0
-            let p = 
-                Gen.choose(0, tenPow7 - 1) 
-                |> Gen.map bigint  
-            Gen.map4
-                (fun p1 p2 p3 p4 ->
-                let tenPow7 = bigint tenPow7
-                p1 * tenPow7 * tenPow7 * tenPow7 +
-                p2 * tenPow7 * tenPow7 +
-                p3 * tenPow7 +
-                p4)
-                p p p p
-            |> Gen.map
-                (fun mant ->
-                    let tenPow7 = decimal tenPow7
-                    let mant = decimal mant
-                    mant / tenPow7 / tenPow7 / tenPow7 / tenPow7)
-//.NET Standard 1.0 doesn't have explicit conversion from bigint to decimal.
-//Thus, in this case we use only 9 significant bits.
-//It isn't that trivial to implement own conversion and corefx one use
-//private fields of BigInteger.
-#else 
             let tenPow9 = 1_000_000_000
             Gen.choose(0, tenPow9 - 1)
             |> Gen.map Decimal
             |> Gen.map (fun d -> d / (Decimal tenPow9)) 
-#endif
+
 
         ///Generates decimal values that are between -size and size.
-#if NETSTANDARD1_0
-        ///NOTE: .NET Standard 1.0 version use only 9 significant digits.
-#endif
         ///Shrinks by yielding zero, abs of the origin and the truncated origin.
         static member Decimal() =
             let generator = Gen.sized (fun size ->
@@ -487,7 +455,6 @@ module Arb =
             fromGenShrink (generator, Default.Decimal().Shrinker)
             |> convert DoNotSize DoNotSize.Unwrap
 
-#if !NETSTANDARD1_0
         ///Generates complex values of form {float + i*float}. 
         ///Shrinks by removing the imaginary part and shrinking both parts.
         static member Complex() =
@@ -507,7 +474,7 @@ module Arb =
                         |> Seq.map Numerics.Complex
                     Seq.append realOnly shrunk
             fromGenShrink (gen, shrinker)
-#endif  
+
         ///Generates characters that are between ASCII codes Char.MinValue and 127.
         static member Char() = 
             let generator = Gen.choose (int Char.MinValue, 127) |> Gen.map char
@@ -697,18 +664,15 @@ module Arb =
 
                                         NullReferenceException()
                                         OutOfMemoryException()
-#if NETSTANDARD1_0
-#else
-#if NETSTANDARD1_6
-#else
+
                                         NotFiniteNumberException()
                                         StackOverflowException()
-#endif
+
                                         IO.DirectoryNotFoundException()
                                         IO.FileLoadException()
                                         KeyNotFoundException()
                                         IO.PathTooLongException()
-#endif                                
+
                                      |]
 
         ///Generates Function values that can be printed and shrunk. Function values can be generated for types 'a->'b 
@@ -896,16 +860,12 @@ module Arb =
             |> filter (fun s -> not (String.IsNullOrWhiteSpace s) && not (String.exists ((=) '\000') s))
             |> convert NonWhiteSpaceString string
 
-
-#if NETSTANDARD1_0 || NETSTANDARD1_6
-#else
         static member XmlEncodedString() =
             Default.String()
             |> mapFilter 
                 (System.Net.WebUtility.HtmlEncode)
                 (String.forall System.Xml.XmlConvert.IsXmlChar)
             |> convert XmlEncodedString string
-#endif
 
         static member Set() = 
             Default.FsList()
@@ -976,18 +936,7 @@ module Arb =
             |> convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
 
         static member Culture() =
-#if NETSTANDARD1_0 || NETSTANDARD1_6
-            let cultures = 
-                cultureNames |> Seq.choose (fun name -> try Some (CultureInfo name) with _ -> None)
-                      |> Seq.append [ CultureInfo.InvariantCulture; 
-                                      CultureInfo.CurrentCulture; 
-                                      CultureInfo.CurrentUICulture; 
-                                      CultureInfo.DefaultThreadCurrentCulture;
-                                      CultureInfo.DefaultThreadCurrentUICulture; ]
-            let genCulture = Gen.elements cultures
-#else
             let genCulture = Gen.elements (CultureInfo.GetCultures (CultureTypes.NeutralCultures ||| CultureTypes.SpecificCultures))
-#endif
             let shrinkCulture =
                 Seq.unfold <| fun c -> if c = null || c = CultureInfo.InvariantCulture || c.Parent = null
                                             then None
@@ -1010,7 +959,6 @@ module Arb =
                 return Guid((a: int),b,c,d,e,f,g,h,i,j,k)
             } |> fromGen
 
-#if !NETSTANDARD1_0
         ///Generates System.ConsoleKeyInfo values.
         ///Shrinks by reducing number of special key modifiers
         static member ConsoleKeyInfo() =
@@ -1037,10 +985,7 @@ module Arb =
                 |> Seq.map (fun (shift, alt, ctrl) -> 
                     ConsoleKeyInfo(cki.KeyChar, cki.Key, shift, alt, ctrl))
             fromGenShrink(generator, shrinker)
-#endif
 
-#if NETSTANDARD1_0 || NETSTANDARD1_6
-#else
         static member IPv4Address() =
             let generator =
                 generate
@@ -1079,7 +1024,6 @@ module Arb =
                 |> Seq.map IPAddress
         
             fromGenShrink (generator, shrinker)
-#endif
 
         static member HostName() =
             let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
@@ -1121,8 +1065,6 @@ module Arb =
 
             fromGenShrink (host, shrinkHost)
 
-#if NETSTANDARD1_0 || NETSTANDARD1_6
-#else
         static member MailAddress() =
             let isValidUser (user: string) = 
                 String.IsNullOrWhiteSpace user |> not &&
@@ -1201,7 +1143,6 @@ module Arb =
                 } |> Seq.distinct
         
             fromGenShrink (generator, shrinker)
-#endif
 
         ///Generates BigInteger values that are between -size and size.
         static member BigInt() =

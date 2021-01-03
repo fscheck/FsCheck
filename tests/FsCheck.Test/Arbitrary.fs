@@ -9,10 +9,8 @@ module Arbitrary =
     open System
     open System.Globalization
     open System.Collections.Generic
-#if !NETSTANDARD1_6
     open System.Net
     open System.Net.Mail
-#endif
     open Helpers
     open Arb
     open Swensen.Unquote
@@ -142,12 +140,10 @@ module Arbitrary =
     [<Property>]
     let ``Non-whitespace string`` (NonWhiteSpaceString s) = not (System.String.IsNullOrWhiteSpace s)
 
-#if !NETSTANDARD1_6
     [<Property>]
     let ``XML encoded string is serializable`` (XmlEncodedString value) =
         let doc = System.Xml.XmlDocument()
         doc.LoadXml (sprintf "<Root>%s</Root>" value)
-#endif
 
     [<Property>]
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
@@ -590,8 +586,6 @@ module Arbitrary =
         let hasOrigin = shrunk |> Seq.contains cki
         (isDistinct && not hasOrigin)
 
-    
-#if !NETSTANDARD1_6
     [<Fact>]
     let IPAddress () =
         generate<IPAddress> |> sample 10 |> ignore
@@ -612,7 +606,6 @@ module Arbitrary =
     [<Property>]
     let ``IPv6Address is only IPv6`` (IPv6Address address) =
         address.AddressFamily = System.Net.Sockets.AddressFamily.InterNetworkV6
-#endif
 
     [<Property>]
     let ``HostName is useful in an Uri`` (HostName host) =
@@ -623,7 +616,6 @@ module Arbitrary =
     let ``HostName correctly turns to string`` (HostName expected as value) =
         expected = string value
 
-#if !NETSTANDARD1_6
     [<Fact>]
     let MailAddress () =
         generate<MailAddress> |> sample 10 |> ignore
@@ -632,7 +624,6 @@ module Arbitrary =
     let ``MailAddress shrinks`` (value: MailAddress) =
         shrink value
         |> Seq.forall (fun shrunkv -> shrunkv.ToString().Length < value.ToString().Length || shrunkv.Host <> value.Host)
-#endif
 
     [<Property>]
     let Bigint (value:bigint) =

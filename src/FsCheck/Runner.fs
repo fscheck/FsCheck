@@ -353,11 +353,7 @@ module Runner =
                 run unluckySeq indexF
                 firstRun <- false
             while isNull results.[i] do
-#if NETSTANDARD1_6
-                Threading.Thread.Sleep (1) |> ignore
-#else
                 Threading.Thread.Yield () |> ignore
-#endif
             subE <- results.[i].GetEnumerator ()
             i <- i + 1
         interface IEnumerator<TestStep> with
@@ -537,11 +533,6 @@ module Runner =
     
     let onShrinkToString args =
         sprintf "shrink:%s%s%s" newline (argumentsToString args) newline
-
-#if NETSTANDARD1_0
-    let internal printf fmt = 
-        Printf.kprintf Diagnostics.Debug.WriteLine fmt
-#endif
     
     ///A runner that prints results to the standard output.
     let consoleRunner =

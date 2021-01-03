@@ -10,14 +10,11 @@ open System.Runtime.CompilerServices
 [<AbstractClass; Sealed; Extension>]
 type GenExtensions = 
 
-#if !NETSTANDARD1_0 // netstandard 1.0 does not have DefaultParameterValue or Option attributes.
-
      ///Generates numberOfSample values with the given (optional) seed and of the given (optional) size, which defaults to 50.
     //[category: Generating test values]
     [<Extension>]
     static member Sample(generator, numberOfSamples, [<DefaultParameterValue(Nullable<Rnd>());Optional>] seed:Nullable<Rnd>, [<DefaultParameterValue(50);Optional>] size) =
         sampleWithSeed (if seed.HasValue then seed.Value else Random.create()) size numberOfSamples generator
-#endif
 
     /// Allows type annotations in LINQ expressions
     [<Extension>]
