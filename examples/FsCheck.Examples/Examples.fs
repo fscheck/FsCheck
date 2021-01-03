@@ -1,5 +1,6 @@
 
 open FsCheck
+open FsCheck.FSharp
 open System
 open System.Threading
 open System.Reflection
@@ -139,7 +140,7 @@ type Properties =
     static member Test5 (l:list<float>) = List.rev l = l
     //this property is falsifiable: sometimes the generator for float generates nan; and nan <> nan
     //so when checking the reverse of the reverse list's equality with the original list, the check fails. 
-    static member Test6 (l:list<list<int*int> * float>) = ((l |> List.rev |> List.rev) = l) |> trivial (List.length l = 0)
+    static member Test6 (l:list<list<int*int> * float>) = ((l |> List.rev |> List.rev) = l) |> trivial (List.isEmpty l)
     static member Test7 (a:int*bool,b:float*int) = (fst a = snd b)
     static member Test8 (l:list<obj>) = ( List.rev l = l)
     static member Test9 (s:string) = ( new String(s.ToCharArray()) = s )

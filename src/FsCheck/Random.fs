@@ -8,7 +8,7 @@ Fast Splittable Pseudorandom Number Generators, Guy L. Steele Jr., Doug Lea and 
 It is also incorporated as such in JDK 8 in the class SplittableRandom.java.
 
 This algorithm has been tested by the authors and found to have reasonable statistical properties
-(as opposed to the algorithm used by FsCheck before, which was taken from Haskell and by its own admission
+(as opposed to the algorithm used by FsCheck 2.x, which was taken from Haskell and by its own admission
 has "no statistical basis") and is also pretty fast.
 
 The main difference with the paper is that I've chosen here to make a functional API, i.e. where

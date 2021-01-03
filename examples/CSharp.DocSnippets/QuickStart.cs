@@ -11,8 +11,8 @@ namespace CSharp
         internal static void Samples([CallerFilePath] string file = "")
         {
             //[revRevIsOrig]
-            Func<int[],bool> revRevIsOrig = xs => xs.Reverse().Reverse().SequenceEqual( xs );
-            Prop.ForAll(revRevIsOrig).QuickCheck();
+            static bool revRevIsOrig(int[] xs) => xs.Reverse().Reverse().SequenceEqual(xs);
+            Prop.ForAll((Func<int[], bool>)revRevIsOrig).QuickCheck();
             //[/revRevIsOrig]
 
             //[revIsOrig]

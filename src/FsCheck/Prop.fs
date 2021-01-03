@@ -5,7 +5,6 @@
 module Prop =
     open Testable
     open System
-    open System.ComponentModel
 
     ///Quantified property combinator. Provide a custom test data generator to a property.
     [<CompiledName("ForAll")>]
@@ -153,7 +152,7 @@ module PropOperators =
     let (==>) condition (assertion:'Testable) = Prop.filter condition assertion
 
     ///Add the given label to the property. Property on the left hand side, label on the right.
-    let (|@) x y = (Common.flip Prop.label) x y
+    let (|@) x y = Prop.label y x
 
     ///Add the given label to the property. label on the left hand side, property on the right.
     let (@|) = Prop.label

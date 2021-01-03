@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FsCheck;
+using FsCheck.Fluent;
 
 namespace FsCheck.CSharpExamples
 {
@@ -132,16 +133,16 @@ namespace FsCheck.CSharpExamples
 
 
             //-------Test data generators-----------
-            //can't be made generic, only in separate method?
-            Func<int[],Gen<int>> chooseFromList = xs =>
-                from i in Gen.Choose(0,xs.Length-1)
+
+            Gen<T> chooseFromList<T>(T[] xs) =>
+                from i in Gen.Choose(0, xs.Length - 1)
                 select xs[i];
-            
-            var chooseBool = Gen.OneOf( Gen.Constant( true), Gen.Constant(false));
+
+            var chooseBool = Gen.OneOf(Gen.Constant(true), Gen.Constant(false));
 
             var chooseBool2 = Gen.Frequency(
-                new WeightAndValue<Gen<bool>>(2, Gen.Constant(true)),
-                new WeightAndValue<Gen<bool>>(1, Gen.Constant(false)));
+                (2, Gen.Constant(true)),
+                (1, Gen.Constant(false)));
 
             //the size of test data : see matrix method
 

@@ -2,6 +2,8 @@ namespace FsCheck
 
 open System
 
+open FsCheck.FSharp
+
 [<NoComparison; RequireQualifiedAccess>]
 type Outcome = 
     | Failed of exn
@@ -114,8 +116,7 @@ module private Testable =
 
     exception DiscardException
 
-    open System
-    open TypeClass
+    open FsCheck.Internals.TypeClass
                    
     type ITestable<'a> =
         abstract Property : 'a -> Property
@@ -165,7 +166,7 @@ module private Testable =
 
     let private shrinking shrink x pf =
         let promoteRose (m:Rose<Gen<_>>) : Gen<Rose<_>> = 
-            Gen (fun s r -> let mr = Rose.map (fun (Gen m') -> (m' s r).Value) m in GeneratedValue (mr,r))
+            Gen.promote (fun runner -> Rose.map runner m)
         //cache is important here to avoid re-evaluation of property
         let rec props x = MkRose (lazy (pf x), shrink x |> Seq.map props |> Seq.cache)
         promoteRose (props x)
@@ -228,7 +229,7 @@ module private Testable =
             { new ITestable<Lazy<'a>> with
                 member __.Property b =
                     let promoteLazy (m:Lazy<_>) = 
-                        Gen (fun s r -> GeneratedValue ((Rose.join <| Rose.ofLazy (lazy (match m.Value with (Gen g) -> (g s r).Value))), r))
+                        Gen.promote (fun runner -> lazy (runner m.Value) |> Rose.ofLazy |> Rose.join)
                     promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
         static member Result() =
             { new ITestable<Result> with

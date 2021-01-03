@@ -2,14 +2,14 @@
 open System.Reflection
 open Microsoft.FSharp.Reflection
 
-#r "bin\Debug\FsCheck.dll"
+#r @"bin\Debug\netstandard2.0\FsCheck.dll"
 open FsCheck
 open FsCheck.Experimental
 open System.Collections.Generic
 
 let l = Gen.listOf (Gen.constant 1)
 l 
-|> Gen.sample 10 1000
+|> Gen.sampleWithSize 10 1000
 |> Seq.map Seq.length 
 |> Seq.groupBy id 
 |> Seq.map (fun (l,gr) -> (l, Seq.length gr))
@@ -52,7 +52,7 @@ type ProcRegModel =
 let procRegSpec =
     let setup = 
         { new Setup<ProcessRegistry, ProcRegModel>() with 
-            override __.Actual() = new ProcessRegistry() 
+            override __.Actual() = ProcessRegistry() 
             override __.Model() = { Pids = []; Regs = []; Killed = []}
         }
     let spawn pid = 
@@ -122,18 +122,6 @@ let procRegSpec =
     
 let p = StateMachine.toProperty procRegSpec
 Check.Quick p
-//Check.One( { Config.Quick with Replay=Some <| Random.StdGen (295795725,296144228)}, )
-Check.One( { Config.Quick with Replay=Some <| Random.StdGen (1145655947,296144285); EveryShrink = fun args -> sprintf "%A" args}, p )
-
-//let rec subsequences l = //all subsequences is like binary counting...
-//    match l with
-//    | [] -> []
-//    | [x] -> [[]]
-//    | x::xs -> 
-//        let r = subsequences xs
-//        printf "."
-//        (List.map (fun ys -> x :: ys) r) @ xs :: r
-
 
 type Counter(initial:int) =
     let mutable c = initial
@@ -149,6 +137,6 @@ type Counter(initial:int) =
 let spec = ObjectMachine<Counter>()
 let generator = StateMachine.generate spec
 
-let sample = generator |> Gen.sample 10 1 |> Seq.head
+let sample = generator |> Gen.sampleWithSize 10 1 |> Seq.head
 
 StateMachine.toProperty spec |> Check.Verbose

@@ -2,6 +2,8 @@
 
 open System
 
+open FsCheck.FSharp
+
 [<NoEquality;NoComparison>]
 type TestData = 
     { NumberOfTests: int
@@ -135,7 +137,7 @@ module Runner =
 
     open Microsoft.FSharp.Reflection
     open Testable
-    open TypeClass
+    open FsCheck.Internals.TypeClass
    
     [<NoEquality;NoComparison>]
     type private TestStep = 
@@ -216,11 +218,11 @@ module Runner =
             let newSize = resize initSize
             Some ((rnd2, newSize), (newSize, rnd1)))
 
-    let private testSingle ((Gen eval) as gen) (rnd2, newSize) =
+    let private testSingle generator (rnd2, newSize) =
         let usedSize = newSize |> round |> int
         let result, shrinks =
             try
-                let (MkRose (Lazy result, shrinks)) = (eval usedSize rnd2).Value
+                let (MkRose (Lazy result, shrinks)) = Gen.run usedSize rnd2 generator
                 result, shrinks
                 //printfn "After generate"
                 //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
@@ -266,11 +268,11 @@ module Runner =
         | _ ->
             seq {yield g; yield Failed result; yield EndShrink result} |> OutcomeSeqOrFuture.Value
 
-    let private testStep rnd (size :float) ((Gen eval) as gen) =
+    let private testStep rnd (size :float) gen =
             let usedSize = size |> round |> int
             let result, shrinks =
                 try
-                    let (MkRose (Lazy result, shrinks)) = (eval usedSize rnd).Value
+                    let (MkRose (Lazy result, shrinks)) = Gen.run usedSize rnd gen
                     result, shrinks
                 with :? DiscardException ->
                     Res.rejected, Seq.empty
@@ -444,7 +446,7 @@ module Runner =
             else 
                 test size.IsSome
         testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
-        |> Common.takeWhilePlusLast (fun step ->
+        |> Internals.Common.takeWhilePlusLast (fun step ->
             lastStep := step
             match step with
                 | Generated (args, seed, size) ->
@@ -592,7 +594,7 @@ module Runner =
         let funType = FSharpType.MakeFunctionType(fromP, toP)
         let invokeAndThrowInner (m:MethodInfo) o = 
             try
-                Reflect.invokeMethod m target o
+                Internals.Reflect.invokeMethod m target o
              with :? TargetInvocationException as e -> //this is just to avoid huge non-interesting stacktraces in the output
                 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(e.InnerException).Throw()
                 failwithf "Should not get here - please report a bug"

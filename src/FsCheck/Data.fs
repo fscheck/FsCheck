@@ -1,4 +1,4 @@
-﻿namespace FsCheck
+﻿namespace FsCheck.Internals
 
 module internal Data =
 

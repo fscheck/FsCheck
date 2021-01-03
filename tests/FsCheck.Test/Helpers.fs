@@ -7,6 +7,7 @@ module Helpers =
 
     open System
     open FsCheck
+    open FsCheck.FSharp
 
     let sample n = Gen.sampleWithSize 1000 n
 
@@ -23,6 +24,6 @@ module Helpers =
     [<Fact>]
     let ``memoize is thread-safe``() =
         let f (a: int) = Thread.Sleep 100; a
-        let memoized = Common.memoize f
+        let memoized = Internals.Common.memoize f
         Array.init 100 (fun _ -> Action(fun _ -> memoized 1 |> ignore))
         |> Parallel.Invoke

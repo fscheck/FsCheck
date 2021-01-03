@@ -1,4 +1,5 @@
 ﻿using FsCheck;
+using FsCheck.Fluent;
 using System;
 
 namespace CSharp.DocSnippets {
@@ -43,7 +44,7 @@ namespace CSharp.DocSnippets {
         //[unsafeTree]
         public static Gen<Tree> UnsafeTree() {
             return Gen.OneOf(Arb.Generate<int>().Select(i => (Tree) new Leaf(i)),
-                             Gen.Two(UnsafeTree()).Select(t => (Tree) new Branch(t.Item1,t.Item2)));
+                             UnsafeTree().Two().Select(t => (Tree) new Branch(t.Item1,t.Item2)));
         }
         //[/unsafeTree]
 
@@ -55,7 +56,7 @@ namespace CSharp.DocSnippets {
             else {
                 var subtree = SafeTreeHelper(size / 2);
                 return Gen.OneOf(Arb.Generate<int>().Select(i => (Tree) new Leaf(i)),
-                                 Gen.Two(subtree).Select(t => (Tree) new Branch(t.Item1,t.Item2)));
+                                 subtree.Two().Select(t => (Tree) new Branch(t.Item1,t.Item2)));
             }
         }
 
@@ -79,8 +80,8 @@ namespace CSharp.DocSnippets {
 
             //[chooseBool2]
             var chooseBool2 = Gen.Frequency(
-                Tuple.Create(2, Gen.Constant(true)),
-                Tuple.Create(1, Gen.Constant(false)));
+                (2, Gen.Constant(true)),
+                (1, Gen.Constant(false)));
             //[/chooseBool2]
 
             //[sizedInt]
