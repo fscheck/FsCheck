@@ -184,9 +184,9 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
         |> PropertyConfig.toConfig output 
 
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
-        let test = new XunitTest(this, this.DisplayName)
-        let summary = new RunSummary(Total = 1);
-        let outputHelper = new TestOutputHelper()
+        let test = XunitTest(this, this.DisplayName)
+        let summary = RunSummary(Total = 1);
+        let outputHelper = TestOutputHelper()
         outputHelper.Initialize(messageBus, test)
 
         let dispose testClass =
@@ -209,7 +209,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                             |> Array.tryFind (fun x -> x :? TestOutputHelper)
                             |> Option.iter (fun x -> (x :?> TestOutputHelper).Initialize(messageBus, test))
                         let testClass = this.TestMethod.TestClass.Class.ToRuntimeType()
-                        if this.TestMethod.TestClass <> null && not this.TestMethod.Method.IsStatic then
+                        if (not (isNull this.TestMethod.TestClass)) && not this.TestMethod.Method.IsStatic then
                             Some (test.CreateTestClass(testClass, constructorArguments, messageBus, timer, cancellationTokenSource))
                         else None
 
@@ -221,44 +221,44 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                           | TestResult.Passed _ ->
                             let output = Runner.onFinishedToString "" xunitRunner.Result
                             outputHelper.WriteLine(output)
-                            new TestPassed(test, timer.Total, outputHelper.Output) :> TestResultMessage
+                            TestPassed(test, timer.Total, outputHelper.Output) :> TestResultMessage
                           | TestResult.Exhausted _ ->
                             summary.Failed <- summary.Failed + 1
-                            upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
+                            upcast TestFailed(test, timer.Total, outputHelper.Output, PropertyFailedException(xunitRunner.Result))
                           | TestResult.Failed (testdata, originalArgs, shrunkArgs, Outcome.Failed e, originalSeed, lastSeed, lastSize)  ->
                             summary.Failed <- summary.Failed + 1
                             let message = sprintf "%s%s" Environment.NewLine (Runner.onFailureToString "" testdata originalArgs shrunkArgs originalSeed lastSeed lastSize)
-                            upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(message, e))
+                            upcast TestFailed(test, timer.Total, outputHelper.Output, PropertyFailedException(message, e))
                           | TestResult.Failed _ ->
                             summary.Failed <- summary.Failed + 1
-                            upcast new TestFailed(test, timer.Total, outputHelper.Output, new PropertyFailedException(xunitRunner.Result))
+                            upcast TestFailed(test, timer.Total, outputHelper.Output, PropertyFailedException(xunitRunner.Result))
                 with
                     | ex ->
                       summary.Failed <- summary.Failed + 1
                       outputHelper.WriteLine("Exception during test")
-                      upcast new TestFailed(test, timer.Total, outputHelper.Output, ex)
+                      upcast TestFailed(test, timer.Total, outputHelper.Output, ex)
 
            
             messageBus.QueueMessage(result) |> ignore
             summary.Time <- summary.Time + result.ExecutionTime
-            if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, result.Output))) then
+            if not (messageBus.QueueMessage(TestFinished(test, summary.Time, result.Output))) then
                 cancellationTokenSource.Cancel() |> ignore
-            if not (messageBus.QueueMessage(new TestCaseFinished(this, summary.Time, summary.Total, summary.Failed, summary.Skipped))) then
+            if not (messageBus.QueueMessage(TestCaseFinished(this, summary.Time, summary.Total, summary.Failed, summary.Skipped))) then
                 cancellationTokenSource.Cancel() |> ignore
 
             summary
 
-        if not (messageBus.QueueMessage(new TestCaseStarting(this))) then
+        if not (messageBus.QueueMessage(TestCaseStarting(this))) then
             cancellationTokenSource.Cancel() |> ignore
 
-        if not (messageBus.QueueMessage(new TestStarting(test))) then
+        if not (messageBus.QueueMessage(TestStarting(test))) then
             cancellationTokenSource.Cancel() |> ignore
 
         if not(String.IsNullOrEmpty(this.SkipReason)) then
             summary.Skipped <- summary.Skipped + 1
-            if not(messageBus.QueueMessage(new TestSkipped(test, this.SkipReason))) then
+            if not(messageBus.QueueMessage(TestSkipped(test, this.SkipReason))) then
                 cancellationTokenSource.Cancel() |> ignore
-            if not(messageBus.QueueMessage(new TestCaseFinished(this, decimal 1, 0, 0, 1))) then
+            if not(messageBus.QueueMessage(TestCaseFinished(this, decimal 1, 0, 0, 1))) then
                 cancellationTokenSource.Cancel() |> ignore
             Task.FromResult(summary)
         else

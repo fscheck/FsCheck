@@ -483,11 +483,11 @@ module Arb =
 
         ///Generates strings, which are lists of characters or null (1/10 of the time).
         static member String() = 
-            let generator = Gen.frequency [(9, Gen.map (fun (chars:char[]) -> new String(chars)) generate);(1, Gen.constant null)]
+            let generator = Gen.frequency [(9, Gen.map (fun (chars:char[]) -> String(chars)) generate);(1, Gen.constant null)]
             let shrinker (s:string) = 
                     match s with
                     | null -> Seq.empty
-                    | _ -> s.ToCharArray() |> shrink |> Seq.map (fun chars -> new String(chars))
+                    | _ -> s.ToCharArray() |> shrink |> Seq.map (fun chars -> String(chars))
             fromGenShrink (generator,shrinker)
 
         ///Generates option values that are 'None' 1/8 of the time.
@@ -542,7 +542,7 @@ module Arb =
                 override __.Generator = 
                     Gen.oneof [ Gen.map box <| generate<char> ; Gen.map box <| generate<string>; Gen.map box <| generate<bool> ]
                 override __.Shrinker o =
-                    if o = null then Seq.empty
+                    if isNull o then Seq.empty
                     else
                         seq {
                             match o with
@@ -938,7 +938,7 @@ module Arb =
         static member Culture() =
             let genCulture = Gen.elements (CultureInfo.GetCultures (CultureTypes.NeutralCultures ||| CultureTypes.SpecificCultures))
             let shrinkCulture =
-                Seq.unfold <| fun c -> if c = null || c = CultureInfo.InvariantCulture || c.Parent = null
+                Seq.unfold <| fun c -> if (isNull c) || c = CultureInfo.InvariantCulture || (isNull c.Parent)
                                             then None
                                             else Some (c.Parent, c.Parent)
             fromGenShrink (genCulture, shrinkCulture)

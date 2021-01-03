@@ -80,9 +80,9 @@ module GenBuilder =
 
     let inline internal bind ((Gen m) : Gen<_>) (k : _ -> Gen<_>) : Gen<_> = 
         Gen (fun n r0 ->
-            let v_r1 = m n r0
-            let (Gen m') = k v_r1.Value
-            m' n v_r1.UpdatedState)
+            let r1 = m n r0
+            let (Gen m') = k r1.Value
+            m' n r1.UpdatedState)
 
 
     let inline private delay (f : unit -> Gen<_>) : Gen<_> = 
@@ -189,7 +189,7 @@ module Gen =
     ///Generates a given number of values with a new seed and a given size.
     //[category: Generating test values]
     [<CompiledName("Sample")>]
-    let sampleWithSize size nbSamples gen : 'T[]= sampleWithSeed (Random.create()) size nbSamples gen
+    let sampleWithSize size nbSamples gen : 'T[]= sampleWithSeed (Random.Create()) size nbSamples gen
 
     ///Generates a given number of values with a new seed and a size of 50.
     //[category: Generating test values]
@@ -200,7 +200,7 @@ module Gen =
     //[category: Creating generators]
     [<CompiledName("Choose")>]
     let choose (l,h) = Gen (fun _ r ->
-        let x, r = Random.rangeInt (l,h,r)
+        let x, r = Random.RangeInt (l,h,r)
         GeneratedValue (x, r))
 
     ///Build a generator that randomly generates one of the values in the given non-empty seq.
@@ -377,8 +377,8 @@ module Gen =
             | [] ->
                 GeneratedValue (List.rev acc, r0)
             | (Gen g)::gs' ->
-                let y_r1 = g size r0
-                go gs' (y_r1.Value::acc) size y_r1.UpdatedState
+                let r1 = g size r0
+                go gs' (r1.Value::acc) size r1.UpdatedState
         Gen(fun n r -> go (Seq.map f l |> Seq.toList) [] n r)
 
     /// Sequence the given enumerable of generators into a generator of a list.
@@ -422,7 +422,7 @@ module Gen =
         Gen <| fun size rnd ->
             let mutable r1 = Rnd()
             let mutable r2 = Rnd()            
-            Random.split(rnd, &r1, &r2) |> ignore
+            Random.Split(rnd, &r1, &r2) |> ignore
             let result =
                 seq { let mutable r' = r1
                       for x in l do
@@ -640,7 +640,7 @@ module Gen =
     let scaleSize f g = sized (fun size -> resize (f size) g)
     
     ///Promote the given function f to a function generator. Only used for generating arbitrary functions.
-    let internal promote f = Gen (fun n r -> let r1,r2 = Random.split r 
+    let internal promote f = Gen (fun n r -> let r1,r2 = Random.Split r 
                                              GeneratedValue ((fun a -> let (Gen m) = f a in (m n r1).Value),r2))
 
     ///Basic co-arbitrary generator transformer, which is dependent on an int.
@@ -659,7 +659,7 @@ module Gen =
                         toCounter.Add(value,!counter)
                         counter := !counter + 1
                         !counter - 1)
-        let rec rands r0 = seq { let r1,r2 = Random.split r0 in yield r1; yield! (rands r2) }
+        let rec rands r0 = seq { let r1,r2 = Random.Split r0 in yield r1; yield! (rands r2) }
         fun (v:'a) (Gen m:Gen<'b>) -> Gen (fun n r -> m n (Seq.item ((mapToInt v)+1) (rands r)))
 
 ///Operators for Gen.
