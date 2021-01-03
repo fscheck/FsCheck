@@ -1,4 +1,4 @@
-﻿namespace FsCheck
+﻿namespace FsCheck.Internals
 
 module internal Common =
 
@@ -20,8 +20,6 @@ module internal Common =
     let memoize f =
         let t = new Dictionary<_,_>()
         memoizeWith t f
-
-    let flip f x y = f y x
 
     //the following three are from Don Syme's blog:
     //http://blogs.msdn.com/b/dsyme/archive/2009/11/08/equality-and-comparison-constraints-in-f-1-9-7.aspx
@@ -60,6 +58,9 @@ module internal Common =
         // (making sure that the enumerator gets disposed)
         seq { use en = s.GetEnumerator()
             yield! loop en }
+
+    /// Convert a ValueTuple to a Tuple.
+    let ofValue (struct(x,y)) = x,y
 
 
     //  !!! NOTE !!!

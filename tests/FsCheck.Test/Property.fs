@@ -5,6 +5,7 @@ module Property =
 
     open Xunit
     open FsCheck
+    open FsCheck.FSharp
     open FsCheck.Xunit
     open System
     open Arb

@@ -1,11 +1,14 @@
 ﻿namespace FsCheck.Experimental
 
+open System
 open System.Runtime.CompilerServices
 open System.Reflection
 open System.Threading
-open System
-open FsCheck
 open System.Collections.Generic
+
+open FsCheck
+open FsCheck.FSharp
+
 
 [<AbstractClass>]
 type Setup<'Actual,'Model>() =
@@ -164,13 +167,13 @@ type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) =
     static let skipMethods = [ "GetType"; "Finalize"; "MemberwiseClone"; "Dispose"; "System-IDisposable-Dispose"] |> Set.ofList
     let methodFilter = defaultArg methodFilter (fun mi -> not <| Set.contains mi.Name skipMethods)
     let parameterGenerator (parameters:seq<ParameterInfo>) =
-        parameters |> Gen.collect (fun p -> Arb.getGenerator p.ParameterType)
+        parameters |> Gen.collectToArray (fun p -> Arb.getGenerator p.ParameterType)
 
     let ctors = 
         typeof<'Actual>.GetTypeInfo().DeclaredConstructors
         |> Seq.map (fun ctor -> 
                         gen { let! parameters = parameterGenerator (ctor.GetParameters())
-                              return New<'Actual>(ctor, List.toArray parameters) :> Setup<'Actual,ObjectMachineModel> })
+                              return New<'Actual>(ctor, parameters) :> Setup<'Actual,ObjectMachineModel> })
         |> Gen.oneof
 
     let instanceMethods =
@@ -178,7 +181,7 @@ type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) =
         |> Seq.filter methodFilter
         |> Seq.map (fun meth -> 
                         gen { let! parameters = parameterGenerator (meth.GetParameters())
-                              return MethodCall<'Actual>(meth, List.toArray parameters) :> Operation<'Actual,ObjectMachineModel> })
+                              return MethodCall<'Actual>(meth, parameters) :> Operation<'Actual,ObjectMachineModel> })
         |> Gen.oneof
 
     override __.Setup = ctors |> Arb.fromGen

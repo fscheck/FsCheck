@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using FsCheck;
+using FsCheck.Fluent;
 using FsCheck.MsTest.Examples.ClassesToTest;
 
 namespace FsCheck.MsTest.Examples

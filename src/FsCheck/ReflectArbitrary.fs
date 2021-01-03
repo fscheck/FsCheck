@@ -6,8 +6,8 @@ module internal ReflectArbitrary =
     open System.Linq
     open System.Reflection
     open Microsoft.FSharp.Reflection
-    open Reflect
-    open Gen
+    open FsCheck.Internals.Reflect
+    open FsCheck.FSharp
 
     let inline isPowerOf2 n =
         (n <> LanguagePrimitives.GenericZero) && 
@@ -79,8 +79,8 @@ module internal ReflectArbitrary =
             if n <= 0 then
                 Gen.constant (create [||])
             else
-                sized (fun s -> resize (max 0 ((s / n) - 1)) (sequenceToArr gs))
-                |> map create
+                Gen.sized (fun s -> Gen.resize (max 0 ((s / n) - 1)) (Gen.sequenceToArray gs))
+                |> Gen.map create
 
         if isRecordType t then
             let fields = getRecordFieldTypes t
@@ -110,9 +110,9 @@ module internal ReflectArbitrary =
             let large() = [ for _,g in gs -> g.Force() ]
             let getgs size = 
                 if size <= 0 then small() else large() 
-                |> oneof 
-                |> resize (size - 1) 
-            sized getgs |> box
+                |> Gen.oneof 
+                |> Gen.resize (size - 1) 
+            Gen.sized getgs |> box
                 
         elif t.GetTypeInfo().IsEnum then
             enumOfType t |> box
@@ -139,7 +139,7 @@ module internal ReflectArbitrary =
     ///Build a reflection-based generator for the given Type. Since we memoize based on type, can't use a
     ///typed variant reflectGen<'a> much here, as we need to be able to partially apply on the getGenerator.
     ///See also Default.Derive.
-    let reflectGenObj getGenerator = Common.memoize (fun (t:Type) ->(reflectObj getGenerator t |> unbox<IGen>).AsGenObject)
+    let reflectGenObj getGenerator = Internals.Common.memoize (fun (t:Type) ->(reflectObj getGenerator t |> unbox<IGen>).AsGenObject)
 
     let rec private children0 (seen:Set<string>) (tFind:Type) (t:Type) : (obj -> list<obj>) =
         if tFind = t then fun o -> [o]

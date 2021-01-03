@@ -4,6 +4,7 @@ module GenExtensions =
 
     open Xunit
     open FsCheck
+    open FsCheck.Fluent
     open Swensen.Unquote
     open System
 
@@ -20,15 +21,15 @@ module GenExtensions =
     [<Fact>]
     let SelectMany () =
         raises<ArgumentNullException> 
-            <@ GenExtensions.SelectMany (Arb.generate<string>, f=null) @>
+            <@ GenExtensions.SelectMany (Arb.generate<string>, selector=null) @>
     
     [<Fact>]
     let ``SelectMany binder``() =
         let act =
             lazy GenExtensions.SelectMany (
                 Arb.generate<string>, 
-                f=null, 
-                select=new Func<string, string, string>(fun x y -> x + y))
+                selector=null, 
+                resultSelector=new Func<string, string, string>((+)))
 
         Prop.throws<ArgumentNullException, _> act
         |> Check.QuickThrowOnFailure
@@ -37,9 +38,9 @@ module GenExtensions =
     let ``SelectMany mapper``() =
         let act = 
             lazy GenExtensions.SelectMany (
-                Arb.generate<string>, 
-                new Func<string, Gen<string>> (Gen.constant),
-                select=null)
+                Arb.generate<string>,
+                new Func<string, Gen<string>> (fun s -> Gen.Constant(s)),
+                resultSelector=null)
 
         Prop.throws<ArgumentNullException, _> act
         |> Check.QuickThrowOnFailure
@@ -54,12 +55,3 @@ module GenExtensions =
 
         Prop.throws<ArgumentNullException, _> act
         |> Check.QuickThrowOnFailure
-
-    [<Fact>]
-    let Zip3 () =
-        raises<ArgumentNullException> 
-            <@ GenExtensions.Zip (
-                Arb.generate<char>,
-                Arb.generate<string>,
-                Arb.generate<byte>,
-                resultSelector=null) @>

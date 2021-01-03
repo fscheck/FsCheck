@@ -29,7 +29,7 @@ namespace FsCheck.MsTest.Examples.ClassesToTest
             //solution might exist in C# than the one I had in mind.
             //Here's your answer...
             var comparer = Comparer<T>.Default;
-            T previous = default(T);
+            T previous = default;
             bool first = true;
 
             foreach (T element in source)

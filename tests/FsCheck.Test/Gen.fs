@@ -4,6 +4,7 @@ module Gen =
 
     open Xunit
     open FsCheck
+    open FsCheck.FSharp
     open FsCheck.Xunit
     open Helpers
     open Swensen.Unquote
@@ -27,7 +28,7 @@ module Gen =
         let sizes = [ 1..100 ]
         let run g =
             [ for s in sizes -> Gen.resize s g ]
-            |> Gen.sequence
+            |> Gen.sequenceToList
             |> sample1
 
         let actual = Gen.growingElements sizes |> run
@@ -119,16 +120,6 @@ module Gen =
                 |> ((=) (a, b, c)) )
 
     [<Property>]
-    let Unzip (a : char) (b : int) =
-        let f, g = Gen.constant (a, b) |> Gen.unzip
-        assertTrue ( (sample1 f, sample1 g) = (a, b) )
-
-    [<Property>]
-    let Unzip3 (a : char) (b : int) (c : bool) =
-        let f, g, h = Gen.constant (a, b, c) |> Gen.unzip3
-        assertTrue ( (sample1 f, sample1 g, sample1 h) = (a, b, c) )
-
-    [<Property>]
     let Two (v:int) =
         assertTrue ( Gen.two (Gen.constant v)
                 |> sample1
@@ -148,7 +139,7 @@ module Gen =
     
     [<Property>]
     let Collect (l:list<int>) =
-        Gen.collect Gen.constant l
+        Gen.collectToList Gen.constant l
         |> sample1
         |> ((=) l)
 
@@ -162,14 +153,14 @@ module Gen =
 
     [<Property>]
     let CollectToArr (a:array<char>) =
-        Gen.collectToArr Gen.constant a
+        Gen.collectToArray Gen.constant a
         |> sample1
         |> ((=) a)
 
     [<Property>]
     let Sequence (l:list<int>) =
         l |> List.map Gen.constant
-        |> Gen.sequence
+        |> Gen.sequenceToList
         |> sample1
         |> ((=) l)
 
@@ -185,7 +176,7 @@ module Gen =
     [<Property>]
     let SequenceToArr (a:array<char>) =
         Array.map Gen.constant a
-        |> Gen.sequenceToArr
+        |> Gen.sequenceToArray
         |> sample1
         |> ((=) a)
 
@@ -304,7 +295,7 @@ module Gen =
   
     [<Property>]
     let Array2DOfDim (NonNegativeInt rows,NonNegativeInt cols) (v:int) =
-        let arr = (Gen.array2DOfDim (rows,cols) (Gen.constant v)) |> sample1
+        let arr = (Gen.array2DOfDim rows cols (Gen.constant v)) |> sample1
         assertTrue (Array2D.length1 arr <= rows)
         assertTrue (Array2D.length2 arr <= cols) 
         assertTrue (seq { for elem in arr do yield elem :?> int} |> Seq.forall ((=) v))
@@ -333,7 +324,7 @@ module Gen =
         |> ignore
 
     [<Fact>]
-    let ``should generate functions from nullable values``() =
+    let ``should generate functions from null``() =
         let generated =
             Arb.generate<unit->int>
             |> sample1
@@ -343,6 +334,18 @@ module Gen =
         |> Seq.pairwise
         |> Seq.map (fun (a,b) -> a = b)
         |> fun l -> assertTrue ( Seq.forall id l )
+
+    [<Fact>]
+    let ``should generate pure functions``() =
+         let generated =
+             Arb.generate<int->int>
+             |> sample1
+             |> List.replicate 10
+             |> List.map ((|>) 2)
+         generated
+         |> Seq.pairwise
+         |> Seq.map (fun (a,b) -> a = b)
+         |> fun l -> assertTrue ( Seq.forall id l )
 
     type FunctorLaws<'a,'b,'c when 'a:equality and 'b :equality and 'c:equality> =
         static member Identity (x :'a) =
@@ -413,7 +416,7 @@ module Gen =
         Check.QuickThrowOnFailureAll<MonadLaws<_,_,_>>()
 
     [<Fact>]
-    let ``GenBuilder.While``() =
+    let ``GenBuilder While``() =
         // same as Gen.constant n, just to test while
         let convolutedGenNumber n =
             gen { let s = ref 0
@@ -426,7 +429,7 @@ module Gen =
                 |> Seq.forall ((=) 100) )
 
     [<Fact>]
-    let ``GenBuilder.For``() =
+    let ``GenBuilder For``() =
         // same as Gen.constant n, just to test while
         let convolutedGenNumber n =
             gen { let s = ref 0

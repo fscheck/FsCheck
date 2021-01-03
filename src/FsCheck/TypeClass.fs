@@ -1,4 +1,4 @@
-﻿namespace FsCheck
+﻿namespace FsCheck.Internals
 
 ///Haskell typeclass concept simulation. For internal use.
 module internal TypeClass =
@@ -7,7 +7,7 @@ module internal TypeClass =
     open System.Collections.Generic
     open System.Reflection
 
-    open Common
+    open FsCheck.Internals.Common
     
     //parametrized active pattern that recognizes generic types with generic type definitions equal to the first paramater, 
     //and that returns the generic type parameters of the generic type.

@@ -4,8 +4,7 @@ module TypeClass =
 
     open System
     open Xunit
-    open FsCheck
-    open FsCheck.TypeClass
+    open FsCheck.Internals.TypeClass
     open Swensen.Unquote
 
     type ITypeClassUnderTest<'a> =

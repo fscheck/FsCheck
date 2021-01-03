@@ -1,8 +1,10 @@
 ﻿namespace FsCheck.Test
 
+open FsCheck
+open FsCheck.FSharp
+
 module RunnerHelper =
-    open FsCheck
-    open FsCheck.Runner
+
     open System.Linq
 
     let cmpTestData = function 
@@ -17,11 +19,8 @@ module RunnerHelper =
 
 module RunnerInternals =
     open System
-    open Xunit
-    open FsCheck
-    open FsCheck.Runner
+    open global.Xunit
     open System.Linq
-    open FsCheck.Xunit
     open RunnerHelper
 
     type ProbeRunner () =
@@ -166,8 +165,7 @@ module RunnerInternals =
 module Runner =
     open RunnerHelper
     open System
-    open Xunit
-    open FsCheck
+    open global.Xunit
     open FsCheck.Xunit
     open System.Linq
     open Swensen.Unquote
@@ -368,7 +366,7 @@ module Runner =
     [<Property>]
     let ``PropertyConfig toConfig should favor specified setting``(maxTest) =
         let propertyConfig = { PropertyConfig.zero with MaxTest = Some maxTest }
-        let testOutputHelper = new Sdk.TestOutputHelper()
+        let testOutputHelper = Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
         config.MaxTest =! maxTest
@@ -376,7 +374,7 @@ module Runner =
     [<Fact>]
     let ``PropertyConfig toConfig should use defaults as a fallback``() =
         let propertyConfig = PropertyConfig.zero
-        let testOutputHelper = new Sdk.TestOutputHelper()
+        let testOutputHelper = Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
         config.MaxTest =! Config.Default.MaxTest
@@ -385,7 +383,7 @@ module Runner =
     let ``Replay should pick fast-forward``(size :int) =
         let size = Math.Abs size
         let propertyConfig = { PropertyConfig.zero with Replay = Some <| sprintf "(01234,56789,%i)" size }
-        let testOutputHelper = new Sdk.TestOutputHelper()
+        let testOutputHelper = Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
         config.Replay =! (Some {Rnd = Random.CreateWithSeedAndGamma (01234UL,56789UL); Size = Some size})
@@ -393,7 +391,7 @@ module Runner =
     [<Fact>]
     let ``Replay with no fast-forward``() =
         let propertyConfig = { PropertyConfig.zero with Replay = Some <| sprintf "(01234,56789)" }
-        let testOutputHelper = new Sdk.TestOutputHelper()
+        let testOutputHelper = Sdk.TestOutputHelper()
         let config = PropertyConfig.toConfig testOutputHelper propertyConfig
 
         config.Replay =! (Some {Rnd = Random.CreateWithSeedAndGamma (01234UL,56789UL); Size = None})
@@ -491,7 +489,7 @@ module BugReproIssue344 =
                 else
                     if x.I >= 200 then
                         // after 200 iterations, check the frame count
-                        let st = new StackTrace()
+                        let st = StackTrace()
                         tooManyFrames <- st.FrameCount > 200
                     true))
         thread2.Start()
@@ -551,5 +549,5 @@ module BugReproIssue514 =
             let testClass = TestClass(testCollection, typeInfo)
             let testMethod = TestMethod(testClass, methodInfo)
             let testCase = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, testMethod)
-            testCase.RunAsync(null, new TestMessageBus(), [||], new ExceptionAggregator(), new CancellationTokenSource()) |> Async.AwaitTask |> ignore
+            testCase.RunAsync(null, new TestMessageBus(), [||], ExceptionAggregator(), new CancellationTokenSource()) |> Async.AwaitTask |> ignore
             Check.One(Config.Quick, disposed)

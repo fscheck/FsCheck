@@ -4,6 +4,7 @@ module StateMachine =
 
     open Xunit
     open FsCheck
+    open FsCheck.FSharp
     open FsCheck.Experimental
     open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
     open Swensen.Unquote
@@ -101,7 +102,7 @@ module StateMachine =
     //only for specs with no preconditions
     //if a precondition is not found in time None is returned and the length would be 0
     [<Fact>] 
-    let ``without stop command length of commands should be Machine.MaxNumberOfCommands``() =
+    let ``without stop command length of commands should be Machine MaxNumberOfCommands``() =
         let specWithLength = checkSimpleModelSpec 3
         let runs = StateMachine.generate specWithLength |> Gen.sampleWithSize 100 10
         test <@ runs |> Seq.forall (fun { Operations = cmds } -> cmds.Length = 3) @>

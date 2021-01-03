@@ -8,6 +8,7 @@ open System
 open System.Net
 open System.Net.Mail
 
+open FsCheck.FSharp
 
 ///Represents an int < 0
 type NegativeInt = NegativeInt of int with
@@ -133,15 +134,44 @@ type HostName = HostName of string with
 module ArbPatterns =
     let (|Fun|) (f:Function<'a,'b>) = f.Value
 
+//private interface for reflection
+type internal IArbitrary =
+    abstract GeneratorObj : Gen<obj>
+    abstract ShrinkerObj : obj -> seq<obj>
+
+[<AbstractClass>]
+type Arbitrary<'a>() =
+    ///Returns a generator for 'a.
+    abstract Generator      : Gen<'a>
+    ///Returns a sequence of the immediate shrinks of the given value. The immediate shrinks should not include
+    ///doubles or the given value itself. The default implementation returns the empty sequence (i.e. no shrinking).
+    abstract Shrinker       : 'a -> seq<'a>
+    default __.Shrinker _ = 
+        Seq.empty
+    interface IArbitrary with
+        member x.GeneratorObj = (x.Generator :> IGen).AsGenObject
+        member x.ShrinkerObj (o:obj) : seq<obj> =
+            let tryUnbox v =
+                try
+                    Some (unbox v)
+                with
+                    | _ -> None
+
+            match tryUnbox o with
+                | Some v -> x.Shrinker v |> Seq.map box
+                | None -> Seq.empty
+
 module Arb =
 
+    open FsCheck.Internals.Data
+    open FsCheck.Internals.TypeClass
     open System.Globalization
     open System.Collections.Generic
     open System.Linq
-    open TypeClass    
+    
     open System.ComponentModel
     open System.Threading
-    open Data
+
 
     [<AbstractClass;Sealed>]
     type Default = class end
@@ -613,7 +643,7 @@ module Arb =
         ///Generates function values. Function values can be generated for types 'a->'b where 'b has an Arbitrary instance.
         ///There is no shrinking for function values.
         static member Arrow() = 
-            let gen = let vfun = Gen.variant in Gen.promote (fun a -> vfun a generate)
+            let gen = Gen.pureFunction generate
             { new Arbitrary<'a->'b>() with
                 override __.Generator = gen
             }
@@ -629,8 +659,8 @@ module Arb =
         static member ThrowingFunction(exceptions:Exception seq) = 
             let exc = exceptions |> Seq.toArray
             let throwExc = Gen.elements exc |> Gen.map raise
-            let gen = let vfun = Gen.variant
-                      Gen.promote (fun a -> vfun a (Gen.frequency [(exc.Length, generate);(exc.Length, throwExc)]))
+            let gen = Gen.frequency [(exc.Length, generate);(exc.Length, throwExc)]
+                      |> Gen.pureFunction 
                       |> Gen.map ThrowingFunction
             { new Arbitrary<ThrowingFunction<'a,'b>>() with
                 override __.Generator = gen
