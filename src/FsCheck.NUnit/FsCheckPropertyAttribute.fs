@@ -109,12 +109,12 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         testResult
 
     member private x.RunSetUp() =
-        if x.SetUpMethods <> null then
+        if not (isNull x.SetUpMethods) then
             x.SetUpMethods |> Array.iter x.InvokeMethodIgnore
 
     member private x.RunTearDown testResult =
         try
-            if x.TearDownMethods <> null then
+            if not (isNull x.TearDownMethods) then
                 x.TearDownMethods
                 |> Array.rev
                 |> Array.iter x.InvokeMethodIgnore
@@ -127,7 +127,7 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
 
     member private __.FilterException ex =
         match ex with
-        | :? NUnitException as nue when nue.InnerException <> null -> nue.InnerException
+        | :? NUnitException as nue when not (isNull nue.InnerException) -> nue.InnerException
         | _ -> ex
 
     member private x.RunTestCase context testResult =
@@ -174,7 +174,7 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
                                else Some { MaxDegreeOfParallelism = attr.Parallelism })
                            .WithRunner(testRunner)
 
-        let target = if x.Fixture <> null then Some x.Fixture
+        let target = if not (isNull x.Fixture) then Some x.Fixture
                      elif x.Method.MethodInfo.IsStatic then None
                      else Some context.TestObject
         Check.Method(config, x.Method.MethodInfo, ?target = target)
@@ -185,7 +185,7 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
             testResult.SetResult(ResultState(TestStatus.Passed))
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
-            testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
+            testResult.SetResult(ResultState(TestStatus.Failed, msg), msg)
         | TestResult.Failed _ ->
             let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
-            testResult.SetResult(new ResultState(TestStatus.Failed, msg), msg)
+            testResult.SetResult(ResultState(TestStatus.Failed, msg), msg)

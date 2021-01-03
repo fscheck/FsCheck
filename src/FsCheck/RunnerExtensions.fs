@@ -18,7 +18,7 @@ type ConfigExtensions =
     [<Extension>]
     ///Returns a new Config with specified Replay
     static member WithReplay(config: Config, seed:uint64, gamma:uint64, size:int) =
-        config.WithReplay(Some { Rnd = Random.createWithSeedAndGamma (seed,gamma); Size = if size <= 0 then None else Some size })
+        config.WithReplay(Some { Rnd = Random.CreateWithSeedAndGamma (seed,gamma); Size = if size <= 0 then None else Some size })
 
     [<Extension>]
     ///Returns a new Config with specified Replay

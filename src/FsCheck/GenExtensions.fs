@@ -14,7 +14,7 @@ type GenExtensions =
     //[category: Generating test values]
     [<Extension>]
     static member Sample(generator, numberOfSamples, [<DefaultParameterValue(Nullable<Rnd>());Optional>] seed:Nullable<Rnd>, [<DefaultParameterValue(50);Optional>] size) =
-        sampleWithSeed (if seed.HasValue then seed.Value else Random.create()) size numberOfSamples generator
+        sampleWithSeed (if seed.HasValue then seed.Value else Random.Create()) size numberOfSamples generator
 
     /// Allows type annotations in LINQ expressions
     [<Extension>]
@@ -23,7 +23,7 @@ type GenExtensions =
     ///Map the given function to the value in the generator, yielding a new generator of the result type.
     [<Extension>]
     static member Select(g:Gen<_>, selector : Func<_,_>) = 
-        if selector = null then nullArg "selector"
+        if isNull selector then nullArg "selector"
         g.Map(fun a -> selector.Invoke(a))
 
     ///Generates a value that satisfies a predicate. This function keeps re-trying
@@ -31,19 +31,19 @@ type GenExtensions =
     ///the predicate is satisfied.
     [<Extension>]
     static member Where(g:Gen<_>, predicate : Func<_,_>) = 
-        if predicate = null then nullArg "predicate"
+        if isNull predicate then nullArg "predicate"
         where (fun a -> predicate.Invoke(a)) g
     
     [<Extension>]
     static member SelectMany(source:Gen<_>, f:Func<_, Gen<_>>) =
-        if f = null then nullArg "f" 
+        if isNull f then nullArg "f" 
         gen { let! a = source
               return! f.Invoke(a) }
     
     [<Extension>]
     static member SelectMany(source:Gen<_>, f:Func<_, Gen<_>>, select:Func<_,_,_>) =
-        if f = null then nullArg "f"
-        if select = null then nullArg "select"
+        if isNull f then nullArg "f"
+        if isNull select then nullArg "select"
         gen { let! a = source
               let! b = f.Invoke(a)
               return select.Invoke(a,b) }
@@ -147,7 +147,7 @@ type GenExtensions =
     //[category: Creating generators from generators]
     [<Extension>]
     static member Zip (generator, other, resultSelector : Func<_, _, _>) =
-        if resultSelector = null then nullArg "resultSelector"
+        if isNull resultSelector then nullArg "resultSelector"
         zip generator other |> map resultSelector.Invoke
 
     ///Combine three generators into a generator of 3-tuples.
@@ -160,7 +160,7 @@ type GenExtensions =
     //[category: Creating generators from generators]
     [<Extension>]
     static member Zip (generator, second, third, resultSelector : Func<_, _, _, _>) =
-        if resultSelector = null then nullArg "resultSelector"
+        if isNull resultSelector then nullArg "resultSelector"
         zip3 generator second third |> map resultSelector.Invoke
 
     ///Build a generator that generates a value from two generators with equal probability.

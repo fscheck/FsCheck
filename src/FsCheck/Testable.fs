@@ -19,7 +19,7 @@ type Result =
         Arguments   : list<obj> } 
     ///Returns a new result that is Succeeded if and only if both this
     ///and the given Result are Succeeded.
-    static member resAnd l r = 
+    static member ResAnd l r = 
         //printfn "And of l %A and r %A" l.Outcome r.Outcome
         match (l.Outcome,r.Outcome) with
         | (Outcome.Failed _,_) -> l //here a potential Failed in r is thrown away...
@@ -27,7 +27,7 @@ type Result =
         | (_,Outcome.Passed) -> l
         | (Outcome.Passed,_) -> r
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
-    static member resOr l r =
+    static member ResOr l r =
         match (l.Outcome, r.Outcome) with
         | (Outcome.Failed _,_) -> r
         | (_,Outcome.Failed _) -> l
@@ -40,18 +40,18 @@ type ResultContainer =
     | Future of Threading.Tasks.Task<Result>
     static member (&&&) (l,r) = 
         match (l,r) with
-        | (Value vl,Value vr) -> Result.resAnd vl vr |> Value
-        | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.resAnd x.Result vr) |> Future
-        | (Value vl,Future tr) -> tr.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.resAnd x.Result vl) |> Future
+        | (Value vl,Value vr) -> Result.ResAnd vl vr |> Value
+        | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.ResAnd x.Result vr) |> Future
+        | (Value vl,Future tr) -> tr.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.ResAnd x.Result vl) |> Future
         | (Future tl,Future tr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
-            tr.ContinueWith (fun (y :Threading.Tasks.Task<Result>) -> Result.resAnd x.Result y.Result)) |> Threading.Tasks.TaskExtensions.Unwrap |> Future
+            tr.ContinueWith (fun (y :Threading.Tasks.Task<Result>) -> Result.ResAnd x.Result y.Result)) |> Threading.Tasks.TaskExtensions.Unwrap |> Future
     static member (|||) (l,r) =
         match (l,r) with
-        | (Value vl,Value vr) -> Result.resOr vl vr |> Value
-        | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.resOr x.Result vr) |> Future
-        | (Value vl,Future tr) -> tr.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.resOr x.Result vl) |> Future
+        | (Value vl,Value vr) -> Result.ResOr vl vr |> Value
+        | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.ResOr x.Result vr) |> Future
+        | (Value vl,Future tr) -> tr.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.ResOr x.Result vl) |> Future
         | (Future tl,Future tr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
-            tr.ContinueWith (fun (y :Threading.Tasks.Task<Result>) -> Result.resOr x.Result y.Result)) |> Threading.Tasks.TaskExtensions.Unwrap |> Future
+            tr.ContinueWith (fun (y :Threading.Tasks.Task<Result>) -> Result.ResOr x.Result y.Result)) |> Threading.Tasks.TaskExtensions.Unwrap |> Future
 
 module internal Res =
 
@@ -117,17 +117,17 @@ module private Testable =
     open System
     open TypeClass
                    
-    type Testable<'a> =
+    type ITestable<'a> =
         abstract Property : 'a -> Property
     
     type Testables = class end
      
     let internal testableTC = 
         (lazy
-            let empty = TypeClass<Testable<obj>>.New()
+            let empty = TypeClass<ITestable<obj>>.New()
             empty.DiscoverAndMerge(onlyPublic=false,instancesType=typeof<Testables>)).Force()
         
-    let property<'a> p = testableTC.InstanceFor<'a,Testable<'a>>().Property p
+    let property<'a> p = testableTC.InstanceFor<'a,ITestable<'a>>().Property p
 
     module internal Prop = 
     
@@ -207,44 +207,44 @@ module private Testable =
 
     type Testables with
         static member Unit() =
-            { new Testable<unit> with
+            { new ITestable<unit> with
                 member __.Property _ = Prop.ofResult Res.succeeded }
         static member Bool() =
-            { new Testable<bool> with
+            { new ITestable<bool> with
                 member __.Property b = Prop.ofBool b }
         static member TaskBool() =
-            { new Testable<Threading.Tasks.Task<bool>> with
+            { new ITestable<Threading.Tasks.Task<bool>> with
                 member __.Property b = Prop.ofTaskBool b }
         static member Task() =
-            { new Testable<Threading.Tasks.Task> with
+            { new ITestable<Threading.Tasks.Task> with
                 member __.Property b = Prop.ofTask b }
         static member AsyncBool() =
-            { new Testable<Async<bool>> with
+            { new ITestable<Async<bool>> with
                 member __.Property b = Prop.ofTaskBool <| Async.StartAsTask b }
         static member Async() =
-            { new Testable<Async<unit>> with
+            { new ITestable<Async<unit>> with
                 member __.Property b = Prop.ofTask <| Async.StartAsTask b }
         static member Lazy() =
-            { new Testable<Lazy<'a>> with
+            { new ITestable<Lazy<'a>> with
                 member __.Property b =
                     let promoteLazy (m:Lazy<_>) = 
                         Gen (fun s r -> GeneratedValue ((Rose.join <| Rose.ofLazy (lazy (match m.Value with (Gen g) -> (g s r).Value))), r))
                     promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
         static member Result() =
-            { new Testable<Result> with
+            { new ITestable<Result> with
                 member __.Property res = Prop.ofResult <| Value res }
         static member ResultContainer() =
-            { new Testable<ResultContainer> with
+            { new ITestable<ResultContainer> with
                 member __.Property resC = Prop.ofResult resC }
         static member Property() =
-            { new Testable<Property> with
+            { new ITestable<Property> with
                 member __.Property prop = prop }
         static member Gen() =
-            { new Testable<Gen<'a>> with
+            { new ITestable<Gen<'a>> with
                 member __.Property gena = gen { let! a = gena in return! property a |> Property.GetGen } |> Property }
         static member RoseResult() =
-            { new Testable<Rose<ResultContainer>> with
+            { new ITestable<Rose<ResultContainer>> with
                 member __.Property rosea = gen { return rosea } |> Property }
         static member Arrow() =
-            { new Testable<('a->'b)> with
+            { new ITestable<('a->'b)> with
                 member __.Property f = forAll Arb.from f }

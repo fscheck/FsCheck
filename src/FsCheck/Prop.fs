@@ -85,13 +85,13 @@ module Prop =
     ///Conditional property combinator. Resulting property holds if the given property holds whenever the condition does. See also operator:  'assertion ==> property'
     [<CompiledName("When"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let filterFunc condition (assertion : Func<'Testable>) =
-        if assertion = null then nullArg "assertion"
+        if isNull assertion then nullArg "assertion"
         filter condition (fun () -> assertion.Invoke ())
 
     ///Conditional property combinator. Resulting property holds if the given property holds whenever the condition does. See also operator:  'assertion ==> property'
     [<CompiledName("When"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
     let filterAction condition (assertion : Action) =
-        if assertion = null then nullArg "assertion"
+        if isNull assertion then nullArg "assertion"
         filter condition (fun () -> assertion.Invoke ())
 
     ///Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 

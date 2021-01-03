@@ -212,7 +212,7 @@ module Runner =
 
     let stepsSeq resize =
         Seq.unfold (fun (initSize, rnd) ->
-            let rnd1, rnd2 = Random.split rnd
+            let rnd1, rnd2 = Random.Split rnd
             let newSize = resize initSize
             Some ((rnd2, newSize), (newSize, rnd1)))
 
@@ -434,7 +434,7 @@ module Runner =
         let tryShrinkNb = ref 0
         let origArgs = ref []
         let lastStep = ref (Rejected Res.rejectedV)
-        let seed, size = match config.Replay with None -> Random.create(), None | Some s -> s.Rnd, s.Size
+        let seed, size = match config.Replay with None -> Random.Create(), None | Some s -> s.Rnd, s.Size
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
         let lastSeed = ref seed
         let lastSize = ref (defaultArg size config.StartSize)
