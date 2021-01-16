@@ -1,9 +1,5 @@
 ﻿namespace FsCheck
 
-// Disable warnings about calling certain FsCheck functions from F#.
-// Using them internally within FsCheck is important for performance reasons.
-#nowarn "10001"
-
 open System
 open System.Net
 open System.Net.Mail
@@ -140,36 +136,33 @@ type internal IArbitrary =
     abstract ShrinkerObj : obj -> seq<obj>
 
 [<AbstractClass>]
-type Arbitrary<'a>() =
+type Arbitrary<'T>() =
     ///Returns a generator for 'a.
-    abstract Generator      : Gen<'a>
+    abstract Generator      : Gen<'T>
     ///Returns a sequence of the immediate shrinks of the given value. The immediate shrinks should not include
     ///doubles or the given value itself. The default implementation returns the empty sequence (i.e. no shrinking).
-    abstract Shrinker       : 'a -> seq<'a>
-    default __.Shrinker _ = 
+    abstract Shrinker       : 'T -> seq<'T>
+    default _.Shrinker _ = 
         Seq.empty
     interface IArbitrary with
         member x.GeneratorObj = (x.Generator :> IGen).AsGenObject
         member x.ShrinkerObj (o:obj) : seq<obj> =
-            let tryUnbox v =
-                try
-                    Some (unbox v)
-                with
-                    | _ -> None
+            try
+                unbox o
+                |> x.Shrinker
+                |> Seq.map box
+            with | _ ->
+                Seq.empty
 
-            match tryUnbox o with
-                | Some v -> x.Shrinker v |> Seq.map box
-                | None -> Seq.empty
 
 module Arb =
 
     open FsCheck.Internals.Data
     open FsCheck.Internals.TypeClass
+
     open System.Globalization
     open System.Collections.Generic
     open System.Linq
-    
-    open System.ComponentModel
     open System.Threading
 
 

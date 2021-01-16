@@ -134,10 +134,6 @@ namespace FsCheck.CSharpExamples
 
             //-------Test data generators-----------
 
-            Gen<T> chooseFromList<T>(T[] xs) =>
-                from i in Gen.Choose(0, xs.Length - 1)
-                select xs[i];
-
             var chooseBool = Gen.OneOf(Gen.Constant(true), Gen.Constant(false));
 
             var chooseBool2 = Gen.Frequency(

@@ -15,11 +15,11 @@ module internal ReflectArbitrary =
 
     /// Generate a random enum of the type specified by the System.Type
     let enumOfType (t: System.Type) : Gen<Enum> =
-       let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
-       let vals: Array = System.Enum.GetValues(t)
+       let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<FlagsAttribute>,false).Any() 
+       let vals: Array = Enum.GetValues(t)
        let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i)] |> List.distinct  
        if isFlags then
-           let elementType = System.Enum.GetUnderlyingType t
+           let elementType = Enum.GetUnderlyingType t
            let inline helper (elements : 'a list) =
                let primaries = elements |> List.filter isPowerOf2
                Gen.elements [true; false]
@@ -232,11 +232,11 @@ module internal ReflectArbitrary =
             shrinkChildren read make o childrenTypes
 
         elif t.GetTypeInfo().IsEnum then
-            let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 
+            let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<FlagsAttribute>,false).Any() 
             if isFlags then
-                let vals: Array = System.Enum.GetValues(t)
+                let vals: Array = Enum.GetValues(t)
                 let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i) ]
-                let elementType = System.Enum.GetUnderlyingType t
+                let elementType = Enum.GetUnderlyingType t
                 let n = Convert.ChangeType(o, elementType)
                 let inline helper (e : 'a) =
                     seq {
