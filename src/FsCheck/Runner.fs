@@ -3,6 +3,7 @@
 open System
 
 open FsCheck.FSharp
+open FsCheck.Internals
 
 [<NoEquality;NoComparison>]
 type TestData = 
@@ -154,18 +155,23 @@ module Runner =
         | Value of seq<TestStep>
         | Future of Threading.Tasks.Task<seq<TestStep>>
  
-    let rec private shrinkResultValue (result :Result) (shrinks :IEnumerator<Rose<Result>>) =
+    let rec private shrinkResultValue (result :Result) (shrinks :IEnumerator<Shrink<Result>>) =
         seq { 
             if (shrinks.MoveNext ()) then
                 //result forced here
-                let (MkRose ((Lazy result'),shrinks')) = shrinks.Current
-                if result'.Outcome.Shrink then yield Shrink result'; yield! shrinkResultValue result' (shrinks'.GetEnumerator())
-                else yield NoShrink result'; yield! shrinkResultValue result shrinks
-            else yield EndShrink result
+                let (result',shrinks') = shrinks.Current |> Shrink.run
+                if result'.Outcome.Shrink then
+                    yield Shrink result'
+                    yield! shrinkResultValue result' (shrinks'.GetEnumerator())
+                else
+                    yield NoShrink result'
+                    yield! shrinkResultValue result shrinks
+            else 
+                yield EndShrink result
         }
  
-    let rec private shrinkResultTask (result :Result) (shrinks :IEnumerator<Rose<ResultContainer>>) =
-        let goNext (s :seq<Rose<ResultContainer>>) r = 
+    let rec private shrinkResultTask (result :Result) (shrinks :IEnumerator<Shrink<ResultContainer>>) =
+        let goNext (s :seq<Shrink<ResultContainer>>) r = 
             async {
                 if r.Outcome.Shrink then 
                     let! xs = shrinkResultTask r (s.GetEnumerator ()) |> Async.AwaitTask
@@ -176,7 +182,7 @@ module Runner =
             }
         if (shrinks.MoveNext ()) then
             //result forced here
-            let (MkRose ((Lazy result'),shrinks')) = shrinks.Current
+            let (result',shrinks') = shrinks.Current |> Shrink.run
             match result' with
             | ResultContainer.Value r -> 
                 goNext shrinks' r |> Async.StartAsTask
@@ -185,12 +191,12 @@ module Runner =
                 async.Bind (rt, goNext shrinks') |> Async.StartAsTask
         else EndShrink result |> Seq.singleton |> Threading.Tasks.Task.FromResult
 
-    let private shrinkResultTaskIter (result: Result) (shrinks :IEnumerator<Rose<ResultContainer>>) =
-        let xs :Collections.Generic.List<TestStep> = ResizeArray () 
-        let rec iter (result: Result) (shrinks :IEnumerator<Rose<ResultContainer>>) =
+    let private shrinkResultTaskIter (result: Result) (shrinks :IEnumerator<Shrink<ResultContainer>>) =
+        let xs :List<TestStep> = ResizeArray () 
+        let rec iter (result: Result) (shrinks :IEnumerator<Shrink<ResultContainer>>) =
             if (shrinks.MoveNext ()) then
                 //result forced here
-                let (MkRose ((Lazy result'), shrinks')) = shrinks.Current
+                let (result', shrinks') = shrinks.Current |> Shrink.run
                 match result' with
                 | ResultContainer.Value r -> 
                     if r.Outcome.Shrink then 
@@ -222,8 +228,9 @@ module Runner =
         let usedSize = newSize |> round |> int
         let result, shrinks =
             try
-                let (MkRose (Lazy result, shrinks)) = Gen.run usedSize rnd2 generator
-                result, shrinks
+                generator
+                |> Gen.run usedSize rnd2  
+                |> Shrink.run
                 //printfn "After generate"
                 //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
             with :? DiscardException -> 
@@ -243,7 +250,7 @@ module Runner =
 
     let private test isReplay initSize resize rnd0 gen =    
         //Since we're not running test for parallel scenarios it's impossible to discover `ResultContainer.Future` inside `result`
-        let gen' = gen |> Gen.map (Rose.map (fun rc -> 
+        let gen' = gen |> Gen.map (Shrink.map (fun rc -> 
                 match rc with 
                 | ResultContainer.Value r -> r 
                 | ResultContainer.Future t -> t.Result))
@@ -272,8 +279,9 @@ module Runner =
             let usedSize = size |> round |> int
             let result, shrinks =
                 try
-                    let (MkRose (Lazy result, shrinks)) = Gen.run usedSize rnd gen
-                    result, shrinks
+                    gen
+                    |> Gen.run usedSize rnd
+                    |> Shrink.run
                 with :? DiscardException ->
                     Res.rejected, Seq.empty
 
@@ -290,11 +298,11 @@ module Runner =
             let (j, ct, results, iters) = state
             if (not ct.IsCancellationRequested) && j < iters then
                 results.[j] <- xs.Result
-        | _ -> raise (System.ArgumentException ("state"))
+        | _ -> raise (ArgumentException ("state"))
 
     let private tpWorkerFun (state :obj) =
         match state with 
-        | :? ((Rnd * float) array * (int ref) * int * Gen<Rose<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken * TypeClass<Arbitrary<obj>>) as state ->
+        | :? ((Rnd * float) array * (int ref) * int * Gen<Shrink<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken * TypeClass<Arbitrary<obj>>) as state ->
             let (steps, i, iters, gen, results, ct, defaultArb) = state
             let oldValue = Arb.arbitrary.Value
             try
@@ -446,7 +454,7 @@ module Runner =
             else 
                 test size.IsSome
         testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
-        |> Internals.Common.takeWhilePlusLast (fun step ->
+        |> Common.takeWhilePlusLast (fun step ->
             lastStep := step
             match step with
                 | Generated (args, seed, size) ->
@@ -613,7 +621,6 @@ module Runner =
         printf "%s" newline
 
 open Runner
-open System
 
 type Config with
     ///The quick configuration only prints a summary result at the end of the test.
