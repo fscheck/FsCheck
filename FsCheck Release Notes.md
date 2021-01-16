@@ -10,6 +10,10 @@
 
 * First pass at improving xml docs for Gen API.
 
+* Fixed bug in `try..with` computation expression builder.
+
+* Added support for `let!...and!...` syntax in computation expression builder.
+
 ### 3.0.0-alpha5 - 28 December 2020
 
 * Target netstandard 2.0 only.
