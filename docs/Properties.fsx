@@ -135,29 +135,7 @@ Check.Quick expectDivideByZero
 (**
 This functionality is not available in the C# API.
 
-## Timed Properties
-
-Properties may take the form `within <timeout in ms> <Lazy<property>>`
-
-For example,*)
-
-let timesOut (a:int) = 
-    lazy
-        if a>10 then
-            do Threading.Thread.Sleep(3000)
-            true
-        else 
-            true
-    |> Prop.within 1000
-
-(**
-The first argument is the time the lazy property may run. If it runs longer, 
-FsCheck considers the test as failed. Otherwise, the outcome of the lazy property is 
-the outcome of within. Note that, although within attempts to cancel the thread in which 
-the property is executed, that may not succeed, and so the thread may actually continue to run until the process ends.
-
-This functionality is not available in the C# API.
-    
+   
 ## Observing Test Case Distribution
 
 It is important to be aware of the distribution of test cases: if test data is not well 

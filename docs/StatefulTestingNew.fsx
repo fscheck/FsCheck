@@ -1,6 +1,7 @@
 (*** hide ***)
 #r @"../src/FsCheck/bin/Release/netstandard2.0/FsCheck.dll"
 open FsCheck
+open FsCheck.FSharp
 open FsCheck.Experimental
 open System
 

@@ -2,6 +2,7 @@
 #I @"../src/FsCheck/bin/Release/netstandard2.0"
 #r @"FsCheck"
 open FsCheck
+open FsCheck.FSharp
 open System
 
 (**
@@ -178,7 +179,7 @@ helpful when developing or troubleshooting a useful custom generator.
 Please be aware that due to the non-deterministic nature of FsCheck, the output
 of calling `Gen.sample` will, in most cases, differ between calls.
 
-The `Gen.sample` function takes two arguments, in addition to the generator
+The `Gen.sampleWithSize` function takes two arguments, in addition to the generator
 from which it samples. The first argument is the [size](#The-size-of-test-data)
 of the generated data. Some generators (like `Gen.constant` and `Gen.elements`)
 don't use the `size` argument. For these generators, any integer value will do.
@@ -194,7 +195,7 @@ understand. Even though it's part of a system that generates random values,
 this particular generator always returns the same value:*)
 
 (***define-output:ConstantExample***)
-Gen.constant (1, "Foo") |> Gen.sample 0 10
+Gen.constant (1, "Foo") |> Gen.sampleWithSize 0 10
 
 (**In this example, the constant is a complex value (a tuple); it can also be a
 simple value, as for example a string or an integer. Since `Gen.constant`
@@ -214,7 +215,7 @@ You can use the `Gen.choose` function to create a generator of singular integer
 values between a minimum and maximum value, both inclusive:*)
 
 (***define-output:ChooseBetweenZeroAndNineExample***)
-Gen.choose (0, 9) |> Gen.sample 0 10
+Gen.choose (0, 9) |> Gen.sampleWithSize 0 10
 
 (**This example generates a single integer value between 0 and 9. Since
 `Gen.choose` doesn't rely on the `size` argument, it's `0` in this example,
@@ -230,7 +231,7 @@ generates 10 sample values:*)
 what you meant':*)
 
 (***define-output:ChooseWhenLowIsHigherThanHigh***)
-Gen.choose (99, 42) |> Gen.sample 0 10
+Gen.choose (99, 42) |> Gen.sampleWithSize 0 10
 
 (**In this example, the first value is greater than the second value, but
 `Gen.choose` will happily interpret this as a range, and produce values between
@@ -256,7 +257,7 @@ argument, it's `0` in this example, but any value would do; it wouldn't change
 the result.*)
 
 (***define-output:ElementsExample***)
-Gen.elements [42; 1337; 7; -100; 1453; -273] |> Gen.sample 0 10
+Gen.elements [42; 1337; 7; -100; 1453; -273] |> Gen.sampleWithSize 0 10
 
 (**The result of this expression is a list of ten sample values. Each value is
 a single integer drawn from the collection of numbers:*)
@@ -268,7 +269,7 @@ the random function has a uniform distribution. One easy way to affect the
 distribution is to put more than one identical element into the collection:*)
 
 (***define-output:SkewedElementsExample***)
-Gen.elements ["foo"; "foo"; "bar"] |> Gen.sample 0 10
+Gen.elements ["foo"; "foo"; "bar"] |> Gen.sampleWithSize 0 10
 
 (**In the above example, the value `"foo"` appears twice, so is twice as likely
 to be drawn from the collection:*)
@@ -294,7 +295,7 @@ argument, it's `3` in this example, which means only values from the segment
 `['a'; 'b'; 'c']` will be returned.*)
 
 (***define-output:GrowingElementsExample***)
-Gen.growingElements ['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'] |> Gen.sample 3 10
+Gen.growingElements ['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'] |> Gen.sampleWithSize 3 10
 
 (**The result of this expression is a list of ten sample values. Each value is
 a single character drawn from the segment `['a'; 'b'; 'c']`:*)
@@ -304,7 +305,7 @@ a single character drawn from the segment `['a'; 'b'; 'c']`:*)
 (**Let's run `Gen.growingElements` again, with the same input but with size `7`:*)
 
 (***define-output:GrowingElementsAnotherExample***)
-Gen.growingElements ['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'] |> Gen.sample 7 10
+Gen.growingElements ['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'] |> Gen.sampleWithSize 7 10
 
 (**The result of this expression is a list of ten sample values. Each value is
 now a single character drawn from the segment `['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g']`:*)
@@ -324,7 +325,7 @@ and 127. That sounds just like a job for `Gen.choose`, but unfortunately,
 produce a `Gen<byte>` from a `Gen<int>` is to use `Gen.map`:*)
 
 (***define-output:IntToByteMapExample***)
-Gen.choose (0, 127) |> Gen.map byte |> Gen.sample 0 10
+Gen.choose (0, 127) |> Gen.map byte |> Gen.sampleWithSize 0 10
 
 (**This example uses the `byte` _function_ to cast any `int` created by
 `Gen.choose (0, 127)` to a `byte` value:*)
@@ -343,7 +344,7 @@ combine `Gen.map` with an anymous function to get the desired date:*)
 (***define-output:MapIntToDateExample***)
 Gen.choose (1, 30)
 |> Gen.map (fun i -> DateTime(2019, 11, i).ToString "u")
-|> Gen.sample 0 10
+|> Gen.sampleWithSize 0 10
 
 (**In this example, the generated `DateTime` value is immediately formatted as
 a `string`, so that the output is more readable:*)
@@ -362,7 +363,7 @@ themselves, but rather use another generator to build values. For instance,
 you can use `Gen.constant` to generate lists that all contain the same value:*)
 
 (***define-output:ConstantListOfExample***)
-Gen.constant 42 |> Gen.listOf |> Gen.sample 1 10
+Gen.constant 42 |> Gen.listOf |> Gen.sampleWithSize 1 10
 
 (**This combination uses `Gen.constant 42` as an individual generator, and then
 generates lists containing the the number 42. While the value(s) in the list is
@@ -377,7 +378,7 @@ lists, you can't rely on a deterministic length. For that, there's
 `Gen.listOfLength`:*)
 
 (***define-output:ListOfLengthExample***)
-Gen.choose (24, 42) |> Gen.listOfLength 5 |> Gen.sample 0 10
+Gen.choose (24, 42) |> Gen.listOfLength 5 |> Gen.sampleWithSize 0 10
 
 (**This example uses `Gen.choose (24, 42)` in order to generate individual
 integer values between 24 and 42. It then pipes this generator into
@@ -392,7 +393,7 @@ have at least one element. Like the other list generators, it uses a
 single-value generator to generate its elements:*)
 
 (***define-output:NonEmptyListExample***)
-Gen.elements ["foo"; "bar"; "baz"] |> Gen.nonEmptyListOf |> Gen.sample 20 4
+Gen.elements ["foo"; "bar"; "baz"] |> Gen.nonEmptyListOf |> Gen.sampleWithSize 20 4
 
 (**Like `Gen.listOf`, `Gen.nonEmptyListOf` uses `size` to control the length
 of the generated lists. They may still be small, but the larger the `size`
@@ -414,7 +415,7 @@ In the following example, the
 "foo", "bar", "baz", and "qux" define the input sequence:*)
 
 (***define-output:ShuffleExample***)
-Gen.shuffle ["foo"; "bar"; "baz"; "qux"] |> Gen.sample 0 6
+Gen.shuffle ["foo"; "bar"; "baz"; "qux"] |> Gen.sampleWithSize 0 6
 
 (**Since `Gen.shuffle` doesn't rely on the `size` argument, it's `0` in this
 example, but any value would do; it wouldn't change the result.
@@ -445,7 +446,7 @@ Points can be modelled as tuples of numbers. If you're modelling a grid, you
 can use integers:*)
 
 (***define-output:GenTwoIntegerExample***)
-Gen.choose (-100, 100) |> Gen.two |> Gen.sample 0 10
+Gen.choose (-100, 100) |> Gen.two |> Gen.sampleWithSize 0 10
 
 (**`Gen.two` uses a single-value generator to create a generator of two-element
 tuples. This example generates 10 sample points, where each coordinate is
@@ -457,7 +458,7 @@ between -100 and 100:*)
 decide to use floating points instead:*)
 
 (***define-output:GenThreeFloatExample***)
-Gen.elements [-10.0..0.01..10.0] |> Gen.three |> Gen.sample 0 10
+Gen.elements [-10.0..0.01..10.0] |> Gen.three |> Gen.sampleWithSize 0 10
 
 (**In this example, you first use `Gen.elements` to draw a floating point value
 from between -10 and 10, with two decimals; that defines a `Gen<float>`.
@@ -480,7 +481,7 @@ to create Version values:*)
 Gen.choose (0, 9)
 |> Gen.four
 |> Gen.map (System.Version >> string)
-|> Gen.sample 0 10
+|> Gen.sampleWithSize 0 10
 
 (**This example starts with `Gen.choose (0, 9)` to define a `Gen<int>` that
 creates integer values betwen 0 and 9 (both included). Second, you pipe the
@@ -515,7 +516,7 @@ Gen.choose (1, 100)
 |> Gen.two
 |> Gen.filter (fun (x, y) -> x <> y)
 |> Gen.map (fun (x, y) -> [x; y])
-|> Gen.sample 0 10
+|> Gen.sampleWithSize 0 10
 
 (**This expression generates 10 sample lists, each containing two different
 numbers:*)

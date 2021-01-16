@@ -2,6 +2,7 @@
 #I @"../src/FsCheck/bin/Release/netstandard2.0"
 #r @"FsCheck"
 open FsCheck
+open FsCheck.FSharp
 open System
 
 (**
@@ -141,7 +142,7 @@ seed of its pseudo-random number generator when a test fails. Look for the bit o
 
 To replay this test, which should have the exact same output, use the `Replay` field on `Config`:*)
 
-Check.One({ Config.Quick with Replay = Some <| Rnd (1145655947UL,296144285UL) }, fun x -> abs x >= 0)
+Check.One(Config.Quick.WithReplay(1145655947UL,296144285UL), fun x -> abs x >= 0)
 
 (**
 In C#:
@@ -153,24 +154,25 @@ In C#:
 ## Checking properties in parallel
 
 FsCheck can evaluate properties in parallel.
-This feature may be useful to speed-up your cpu-heavy props and custom arbs.
-Also this is invaluable for running asynchronous props, i.e. when you doing IO inside prop (don't forget to wrap your prop in Task/async in such case)
+This feature may be useful to speed-up your cpu-heavy properties and custom arbitraries.
+Also this is invaluable for running asynchronous propertiess, i.e. when you are doing asynchronous IO inside prop.
+Don't forget to wrap your property in `Task` or `Async` in that case.
 
-To run prop in parallel, use the `ParallelRunConfig` field on `Config`:*)
+To run a property in parallel, use the `ParallelRunConfig` field on `Config`:*)
 
 Check.One(
-    { Config.Quick with ParallelRunConfig = Some <| { MaxDegreeOfParallelism = System.Environment.ProcessorCount } },
+    Config.Quick.WithParallelRunConfig({ MaxDegreeOfParallelism = System.Environment.ProcessorCount }),
      fun x -> abs x >= 0
 )
 
 (**
-`System.Environment.ProcessorCount` is good default for cpu-bound work
-For io-bound work it's usually enough to set `ParallelRunConfig` to 1
+`System.Environment.ProcessorCount` is a good default for cpu-bound work.
+For io-bound work it's usually enough to set `ParallelRunConfig` to 1.
 *)
 
 Check.One(
-    { Config.Quick with ParallelRunConfig = Some <| { MaxDegreeOfParallelism = 1 } },
-     fun x -> 
+    Config.Quick.WithParallelRunConfig({ MaxDegreeOfParallelism = 1 } ),
+    fun (x:int) -> 
         async { 
             do! Async.Sleep x
             return true

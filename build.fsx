@@ -160,22 +160,26 @@ let fsdocProperties = [
   "TargetFramework=netstandard2.0"
 ]
 
+let checkResult (r:ProcessResult) =
+  if not r.OK then
+    failwithf "%A" r
+
 Target.create "Docs" (fun _ ->
     Shell.cleanDir ".fsdocs"
-    DotNet.exec id "tool" ("install FSharp.Formatting.CommandTool")  |> ignore
+    DotNet.exec id "tool" ("install FSharp.Formatting.CommandTool") |> checkResult
     DotNet.exec id "fsdocs" ("build --strict --eval --clean"
       + " --projects src/FsCheck/FsCheck.fsproj" 
-      + " --property " + String.Join(" ",fsdocProperties) 
-      + " --parameters " + String.Join(" ", fsdocParameters)) |> ignore
+      + " --property " + String.Join(" ", fsdocProperties) 
+      + " --parameters " + String.Join(" ", fsdocParameters)) |> checkResult
 )
 
 Target.create "WatchDocs" (fun _ ->
     Shell.cleanDir ".fsdocs"
-    DotNet.exec id "tool" ("install FSharp.Formatting.CommandTool")  |> ignore
+    DotNet.exec id "tool" ("install FSharp.Formatting.CommandTool")  |> checkResult
     DotNet.exec id "fsdocs" ("watch --eval"
       + " --projects src/FsCheck/FsCheck.fsproj" 
       + " --property " + String.Join(" ",fsdocProperties) 
-      + " --parameters " + String.Join(" ", fsdocParameters)) |> ignore
+      + " --parameters " + String.Join(" ", fsdocParameters)) |> checkResult
 )
 
 // --------------------------------------------------------------------------------------
