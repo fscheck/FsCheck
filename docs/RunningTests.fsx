@@ -57,7 +57,7 @@ and so is an easy way to integrate FsCheck tests with unit tests you may already
 Here is an example of how to run a test with a similar configuration to Quick, but that runs 1000 tests and does not print to
 the output on success:*)
 
-Check.One({ Config.Quick with MaxTest = 1000; QuietOnSuccess=true }, fun _ -> true)
+Check.One(Config.Quick.WithMaxTest(1000).WithQuietOnSuccess(true), fun _ -> true)
 
 (**
     [lang=csharp, file=../examples/CSharp.DocSnippets/RunningTests.cs,key=configuration]
@@ -297,11 +297,11 @@ let testRunner =
       member __.OnShrink(args, everyShrink) = ()
       member __.OnFinished(name,testResult) = 
           match testResult with 
-          | TestResult.True _ -> () //let the test runner know that the test passed
+          | TestResult.Passed _ -> () //let the test runner know that the test passed
           | _ -> () // test failed, or other problem. Notify test runner. Runner.onFinishedToString name testResult
   }
    
-let withxUnitConfig = { Config.Default with Runner = testRunner }
+let withxUnitConfig = Config.Default.WithRunner(testRunner)
 
 (**
 ### Example 2: to customize printing of generated arguments
@@ -322,8 +322,8 @@ let formatterRunner formatter =
           printf "%s" (everyShrink (args |> List.map formatter))
       member x.OnFinished(name,testResult) = 
           let testResult' = match testResult with 
-                              | TestResult.False (testData,origArgs,shrunkArgs,outCome,seed) -> 
-                                  TestResult.False (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed)
+                              | TestResult.Failed (testData,origArgs,shrunkArgs,outCome,seed, seed2, size) -> 
+                                  TestResult.Failed (testData,origArgs |> List.map formatter, shrunkArgs |> List.map formatter,outCome,seed, seed2, size)
                               | t -> t
           printf "%s" (Runner.onFinishedToString name testResult') 
   }

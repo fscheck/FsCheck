@@ -39,7 +39,7 @@ type Rnd =
     /// started with the default create function.
     new(seed, gamma) =
         if (gamma % 2UL = 0UL) then
-            invalidArg "gamma" "Gamma must be odd."
+            invalidArg "gamma" (sprintf "Gamma must be odd, given: %i" gamma)
 
         { Seed = seed; Gamma = gamma }
 
