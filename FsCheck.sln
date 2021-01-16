@@ -1,12 +1,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
-VisualStudioVersion = 15.0.28010.2046
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3162219D-7729-49C4-849A-9CCD889798DB}"
 	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
 		build.fsx = build.fsx
 		Contributors.txt = Contributors.txt
 		FsCheck Release Notes.md = FsCheck Release Notes.md
@@ -116,7 +115,6 @@ Global
 		{6AB84678-E55F-4387-A040-67312735D089} = {6B36173B-D4E0-4CF4-840D-3F3016653F85}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {6D6278A4-5CF7-4677-99D1-7BF43899AEC4}
 		SolutionGuid = {9FFC733A-4B2D-4F47-B5F4-A7E6707CCC67}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
