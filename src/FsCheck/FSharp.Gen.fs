@@ -404,48 +404,25 @@ module Gen =
         fresh (fun () -> Array.copy xs)
          |> bind shuffleInPlace
 
-    let inline internal whileDo p (Gen m) =
-        let go pred size rInit =
-            let mutable r = rInit
-            while pred() do 
-                let struct (_,r1) = m size r
-                r <- r1
-            r            
-        Gen (fun n r -> struct ((), go p n r))
-
-    let inline internal delay createGen : Gen<'T> = 
-        Gen (fun n r -> let (Gen g) = createGen() in g n r)
-
     /// Generates random arrays of given length where the sum of
     /// all elements equals the given sum.
     //[category: Creating generators]
     [<CompiledName("Piles")>]
     let piles length sum = 
-        let genSorted p n m =
+        let genSorted p n m = Gen (fun s r0 ->
             let result = Array.zeroCreate<int> p
             let mutable n = n
             let mutable m = m
-            
-            let loop i =
+            let mutable r = r0
+            for i in p..(-1)..1 do
                 if i = 1 then 
                     result.[i-1] <- n
-                    constant ()
                 else
-                    choose (int (ceil(float n / float i)), min m n)
-                    |> map (fun r -> 
-                        result.[i-1] <- r
-                        n <- n-r
-                        m <- min m r)
-
-            let mutable i = p    
-            delay (fun () ->
-                        let res = loop i
-                        i <- i-1
-                        res
-                    )
-            |> whileDo (fun () -> i >= 1) 
-            |> map (fun () -> result |> Array.copy)
-               
+                    let next = Random.RangeInt(int (ceil(float n / float i)), min m n, r, &r)
+                    result.[i-1] <- next
+                    n <- n-next
+                    m <- min m next
+            struct (result,r))
         if length <= 0 then
             constant [||]
         else
@@ -558,46 +535,6 @@ module Gen =
             let mutable r = r1
             struct ((fun a -> getOrUpdate a (fun () -> let struct (v,r') = g s r in r <- r';v) cache), r2))
 
-[<AutoOpen>]
-module GenBuilder =
-
-    let private zero = Gen.constant ()
-
-    let inline private tryFinally (Gen m) handler = 
-        Gen (fun n r -> try m n r finally handler ())
-
-    let inline private tryWith (Gen m) handler =
-        Gen (fun n r -> try m n r with e -> struct(handler e,r))
-
-    let inline private dispose (x: #System.IDisposable) = x.Dispose()
-
-    let inline private using r f = tryFinally (f r) (fun () -> dispose r)
-
-    let inline private forDo (s:#seq<_>) f =
-        using (s.GetEnumerator()) (fun ie ->
-            Gen.whileDo (fun () -> ie.MoveNext()) (Gen.delay (fun () -> f ie.Current))
-          )
-
-    /// The computation expression type for generators.
-    type GenBuilder internal() =
-        member _.Zero() = zero
-        member _.Return(a) : Gen<_> = Gen.constant a
-        member _.ReturnFrom (g:Gen<_>) = g
-        member _.Delay(f) : Gen<_> = Gen.delay f
-
-        //TODO: support new let!...and!.. syntax
-        member _.Bind(m, k) : Gen<_> = Gen.bind k m
-        member _.Combine(m1, m2) = Gen.bind (fun () -> m2) m1
-
-        member _.TryFinally(m, handler) = tryFinally m handler
-        member _.TryWith(m, handler) = tryWith m handler
-        member _.Using (a, k) =  using a k
-        
-        member _.While(p, m:Gen<_>) = Gen.whileDo p m
-        member _.For(s:#seq<_>, f:('a -> Gen<'b>)) = forDo s f
-
-    /// The computation expressions for generators: gen { ... }
-    let gen = GenBuilder()
 
 [<AutoOpen>]
 module GenOperators =

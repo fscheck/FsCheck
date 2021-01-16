@@ -14,6 +14,7 @@
     <Compile Include="Reflect.fs" />
     <Compile Include="TypeClass.fs" />
     <Compile Include="FSharp.Gen.fs" />
+    <Compile Include="FSharp.GenBuilder.fs" />
     <Compile Include="ReflectArbitrary.fs" />
     <Compile Include="Arbitrary.fs" />
     <Compile Include="ArbitraryExtensions.fs" />
