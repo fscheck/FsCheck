@@ -4,8 +4,9 @@ module GenExtensions =
 
     open Xunit
     open FsCheck
+    open FsCheck.FSharp
     open FsCheck.Fluent
-    open Swensen.Unquote
+     open Swensen.Unquote
     open System
 
     [<Fact>]

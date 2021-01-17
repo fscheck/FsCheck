@@ -2,7 +2,6 @@ namespace FsCheck.Fluent
 
 open System
 open System.Collections.Generic
-open System.Runtime.InteropServices
 open System.Runtime.CompilerServices
 
 open FsCheck
@@ -332,16 +331,7 @@ type GenExtensions =
     static member OrNull (generator:Gen<'T>) =
         Gen.frequency [ (7, generator); (1, Gen.constant null) ]
 
-    /// Construct an Arbitrary instance from a generator.
-    /// Shrink is not supported for this type.
-    [<Extension>]
-    static member ToArbitrary generator =
-        Arb.fromGen generator
 
-    /// Construct an Arbitrary instance from a generator and a shrinker.
-    [<Extension>]
-    static member ToArbitrary (generator,shrinker) =
-        Arb.fromGenShrink (generator,shrinker)
 
 
 

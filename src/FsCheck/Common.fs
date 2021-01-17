@@ -62,6 +62,9 @@ module internal Common =
     /// Convert a ValueTuple to a Tuple.
     let ofValue (struct(x,y)) = x,y
 
+    let inline isPowerOf2 n =
+        (n <> LanguagePrimitives.GenericZero) && 
+        ((n &&& (n - LanguagePrimitives.GenericOne)) = LanguagePrimitives.GenericZero) 
 
     //  !!! NOTE !!!
     //  ----------------

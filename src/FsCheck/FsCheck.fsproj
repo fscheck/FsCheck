@@ -15,11 +15,13 @@
     <Compile Include="TypeClass.fs" />
     <Compile Include="FSharp.Gen.fs" />
     <Compile Include="FSharp.GenBuilder.fs" />
-    <Compile Include="FSharp.Shrink.fs" />
-    <Compile Include="ReflectArbitrary.fs" />
-    <Compile Include="Arbitrary.fs" />
-    <Compile Include="ArbitraryExtensions.fs" />
     <Compile Include="Fluent.Gen.fs" />
+    <Compile Include="FSharp.Shrink.fs" />
+    <Compile Include="ReflectiveGenerator.fs" />
+    <Compile Include="ReflectiveShrinker.fs" />
+    <Compile Include="FSharp.Arbitrary.fs" />
+    <Compile Include="Fluent.Arbitrary.fs" />
+    <Compile Include="Arb.Default.fs" />
     <Compile Include="Testable.fs" />
     <Compile Include="Prop.fs" />
     <Compile Include="PropExtensions.fs" />

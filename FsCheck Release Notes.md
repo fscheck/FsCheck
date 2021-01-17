@@ -2,17 +2,25 @@
 
 * Backwards incompatible: Refactor and split of the `Gen` API into `FsCheck.FSharp` and `FsCheck.Fluent`. This is a first step in splitting the entire API into a functional (for F# consumers) and fluent (for C# and VB.NET consumer) interface. This should be clearer for both kinds of consumers.
 
+* Backwards incompatible: Refactor and plit of the `Arbitrary` API into `FsCheck.FSharp` and `FsCheck.Fluent`.
+
 * By and large, if you are an F# user, now `open FsCheck.FSharp` in addition to `open FsCheck`. If you are a C# or VB.NET user, add `using FsCheck.Fluent`.
 
 * Detailed changes to `FsCheck.FSharp.Gen`: Added `RequireQualifiedAccess`. Added `apply` and `bind`. Renamed `collect` and `sequence` to `collectToList/Array/Seq` for clarity. Removed `unzip` and `unzip3` - their implementation is problematic, and it's hard to see a use case for them. Removed `subListOfToIlist`, `subListOfArr` - these returned `IList<'T>` types. Untupled rows,cols in `array2DOfDim`.
 
-* Detailed changes to `FsCheck.FSharp.Fluent`: Split into non-extension methods on `Gen` and extension methods on `Gen<T>` type in `GenExtensions`. Removed `Gen.Apply` - not useful without partial application. `Two`, `Three`, `Four` and `Zip` now output ValueTuples, which is idiomatic in modern C#, and are only visible as extension methods on `Gen<T>`. Removed the overloads of `Zip` with arity 3. Changed the return type of methods that returned `IList<T>` previously to `List<T>`. Split the `Sample` method with optional arguments in three overloads, this is better for backwards compatibilty going forward.
+* Detailed changes to `FsCheck.Fluent.Gen`: Split into non-extension methods on `Gen` and extension methods on `Gen<T>` type in `GenExtensions`. Removed `Gen.Apply` - not useful without partial application. `Two`, `Three`, `Four` and `Zip` now output ValueTuples, which is idiomatic in modern C#, and are only visible as extension methods on `Gen<T>`. Removed the overloads of `Zip` with arity 3. Changed the return type of methods that returned `IList<T>` previously to `List<T>`. Split the `Sample` method with optional arguments in three overloads, this is better for backwards compatibilty going forward.
+
+* Detaied changes to `FsCheck.FSharp.Arb`: Removed `fromGenShrinkFunc`.
+
+* Detailed changes to `FsCheck.Fluent.Arb`: Removed extension method `ToArbitrary` that took an F# function as argument for the shrinker. Renamad `Arb.From` methods to `Arbitrary.From` - C# does not tolerate ambiguity between using two types of the same name in the same namespace.
 
 * First pass at improving xml docs for Gen API.
 
 * Fixed bug in `try..with` computation expression builder.
 
 * Added support for `let!...and!...` syntax in computation expression builder.
+
+
 
 ### 3.0.0-alpha5 - 28 December 2020
 

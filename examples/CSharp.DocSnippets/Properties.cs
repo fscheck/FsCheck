@@ -1,4 +1,5 @@
 ﻿using FsCheck;
+using FsCheck.Fluent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
