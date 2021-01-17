@@ -10,7 +10,7 @@ namespace CSharp.DocSnippets
         public static void Samples() {
 
             //[testMutableList]
-            Prop.ForAll(Arb.From(Gen.Choose(1, 10)), Arb.From<int[]>(),(capacity, itemsToAdd) => {
+            Prop.ForAll(Gen.Choose(1, 10).ToArbitrary(), Arb.From<int[]>(),(capacity, itemsToAdd) => {
                 var underTest = new List<int>(capacity);
                 underTest.AddRange(itemsToAdd);
                 return underTest.Count == itemsToAdd.Length;

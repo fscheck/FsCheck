@@ -1,5 +1,6 @@
 ﻿namespace FsCheck.Internals
 
+open System
 
 /// Shrink<T> keeps a value and the possible shrinks for that value in an n-ary tree.
 /// This tree is explored by the test runner to find a smaller value of a counter-example.
@@ -52,3 +53,27 @@ module internal Shrink =
     /// Evaluate the top value in the shrink tree, and return it, as well
     /// as the rest of the Shrinks
     let run (ShrinkTree (Lazy v,t)) = (v, t)
+
+    ///A generic shrinker that should work for most number-like types.
+    let inline number n =
+        let (|>|) x y = abs x > abs y 
+        let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
+        seq {   if n < LanguagePrimitives.GenericZero then yield -n
+                if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
+                yield! Seq.unfold (fun st -> let st = st / two in Some (n-st, st)) n 
+                        |> Seq.takeWhile ((|>|) n) }
+        |> Seq.distinct
+
+    let internal date (d:DateTime) =
+        if d.Kind <> DateTimeKind.Unspecified then
+            seq { yield DateTime.SpecifyKind(d, DateTimeKind.Unspecified) }
+        elif d.Millisecond <> 0 then
+            seq { yield DateTime(d.Year,d.Month,d.Day,d.Hour,d.Minute,d.Second) }
+        elif d.Second <> 0 then
+            seq { yield DateTime(d.Year,d.Month,d.Day,d.Hour,d.Minute,0) }
+        elif d.Minute <> 0 then
+            seq { yield DateTime(d.Year,d.Month,d.Day,d.Hour,0,0) }
+        elif d.Hour <> 0 then
+            seq { yield DateTime(d.Year,d.Month,d.Day) }
+        else
+            Seq.empty
