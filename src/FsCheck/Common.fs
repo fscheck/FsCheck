@@ -57,7 +57,7 @@ module internal Common =
         // Get enumerator of the sequence and yield all results
         // (making sure that the enumerator gets disposed)
         seq { use en = s.GetEnumerator()
-            yield! loop en }
+              yield! loop en }
 
     /// Convert a ValueTuple to a Tuple.
     let ofValue (struct(x,y)) = x,y

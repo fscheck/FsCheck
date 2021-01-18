@@ -10,6 +10,24 @@ open System.Collections.Generic
 
 open Prop
 
+
+//let runs = Convert.ToInt32(Math.Min(a,100000u)) + 1
+//let rnd = Random.Create ()
+//let runner = ProbeRunner ()
+let cfg = 
+    Config.Quick
+            .WithReplay(Some {Rnd = Rnd(1234UL,5643UL); Size = None})
+            .WithMaxTest(100)
+            .WithStartSize(0)
+            .WithEndSize(10)
+            .WithMaxRejected(1000)
+            //.WithRunner(runner)
+
+Check.One (cfg, fun () -> false)
+
+Console.WriteLine("Done")
+Console.ReadKey()
+
 //init bug
 let sizedString =  Arb.generate<char> |> Gen.sample 10
     

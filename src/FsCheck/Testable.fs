@@ -2,6 +2,8 @@ namespace FsCheck
 
 open System
 
+open System.Threading.Tasks
+
 open FsCheck.FSharp
 open FsCheck.Internals
 
@@ -11,7 +13,7 @@ type Outcome =
     | Passed
     | Rejected 
     /// determines for which Outcome the result should be shrunk, or shrinking should continue.
-    member internal x.Shrink = match x with Failed _ -> true | _ -> false 
+    member internal outcome.Shrink = match outcome with Failed _ -> true | _ -> false 
 
 ///The result of one execution of a property.
 [<NoComparison>]
@@ -20,17 +22,16 @@ type Result =
         Stamp       : list<string>
         Labels      : Set<string>
         Arguments   : list<obj> } 
-    ///Returns a new result that is Succeeded if and only if both this
-    ///and the given Result are Succeeded.
-    static member ResAnd l r = 
-        //printfn "And of l %A and r %A" l.Outcome r.Outcome
+    ///Returns a new result that is Passed if and only if both this
+    ///and the given Result are Passed.
+    static member internal ResAnd(l, r) = 
         match (l.Outcome,r.Outcome) with
         | (Outcome.Failed _,_) -> l //here a potential Failed in r is thrown away...
         | (_,Outcome.Failed _) -> r
         | (_,Outcome.Passed) -> l
         | (Outcome.Passed,_) -> r
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
-    static member ResOr l r =
+    static member internal ResOr(l, r) =
         match (l.Outcome, r.Outcome) with
         | (Outcome.Failed _,_) -> r
         | (_,Outcome.Failed _) -> l
@@ -40,21 +41,17 @@ type Result =
 
 type ResultContainer = 
     | Value of Result
-    | Future of Threading.Tasks.Task<Result>
-    static member (&&&) (l,r) = 
+    | Future of Task<Result>
+    static member private MapResult2(f, l, r) =
         match (l,r) with
-        | (Value vl,Value vr) -> Result.ResAnd vl vr |> Value
-        | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.ResAnd x.Result vr) |> Future
-        | (Value vl,Future tr) -> tr.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.ResAnd x.Result vl) |> Future
-        | (Future tl,Future tr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
-            tr.ContinueWith (fun (y :Threading.Tasks.Task<Result>) -> Result.ResAnd x.Result y.Result)) |> Threading.Tasks.TaskExtensions.Unwrap |> Future
-    static member (|||) (l,r) =
-        match (l,r) with
-        | (Value vl,Value vr) -> Result.ResOr vl vr |> Value
-        | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.ResOr x.Result vr) |> Future
-        | (Value vl,Future tr) -> tr.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> Result.ResOr x.Result vl) |> Future
-        | (Future tl,Future tr) -> tl.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
-            tr.ContinueWith (fun (y :Threading.Tasks.Task<Result>) -> Result.ResOr x.Result y.Result)) |> Threading.Tasks.TaskExtensions.Unwrap |> Future
+        | (Value vl,Value vr) -> f (vl, vr) |> Value
+        | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Task<Result>) -> f (x.Result, vr)) |> Future
+        | (Value vl,Future tr) -> tr.ContinueWith (fun (x :Task<Result>) -> f (x.Result, vl)) |> Future
+        | (Future tl,Future tr) -> tl.ContinueWith (fun (x :Task<Result>) -> 
+            tr.ContinueWith (fun (y :Task<Result>) -> f (x.Result, y.Result))) |> TaskExtensions.Unwrap |> Future
+    static member (&&&) (l,r) = ResultContainer.MapResult2(Result.ResAnd, l, r)
+    static member (|||) (l,r) = ResultContainer.MapResult2(Result.ResOr, l, r)
+
 
 module internal Res =
 
@@ -65,17 +62,17 @@ module internal Res =
         Arguments   = []
       }
 
-    let failed = { result with Outcome = Outcome.Failed (exn "Expected true, got false.") } |> Value
+    let failedBool = { result with Outcome = Outcome.Failed (exn "Expected true, got false.") } |> Value
 
-    let exc e = { result with Outcome = Outcome.Failed e } |> Value
+    let failedException e = { result with Outcome = Outcome.Failed e } |> Value
 
-    let succeeded = { result with Outcome = Outcome.Passed } |> Value
+    let passed = { result with Outcome = Outcome.Passed } |> Value
 
     let rejected = { result with Outcome = Outcome.Rejected } |> Value
 
     let rejectedV = { result with Outcome = Outcome.Rejected }
 
-    let future (t :Threading.Tasks.Task<Outcome>) = t.ContinueWith (fun (x :Threading.Tasks.Task<Outcome>) -> { result with Outcome = x.Result }) |> Future
+    let future (t :Task<Outcome>) = t.ContinueWith (fun (x :Task<Outcome>) -> { result with Outcome = x.Result }) |> Future
 
 ///A Property can be checked by FsCheck.
 type Property = private Property of Gen<Shrink<ResultContainer>> with
@@ -87,8 +84,8 @@ module private Testable =
 
     open FsCheck.Internals.TypeClass
                    
-    type ITestable<'a> =
-        abstract Property : 'a -> Property
+    type ITestable<'T> =
+        abstract Property : 'T -> Property
     
     type Testables = class end
      
@@ -106,17 +103,17 @@ module private Testable =
         let ofResult (r:ResultContainer) : Property = 
             ofRoseResult <| Shrink.ofValue r
          
-        let ofBool b = ofResult <| if b then Res.succeeded else Res.failed
+        let ofBool b = ofResult <| if b then Res.passed else Res.failedBool
         
-        let ofTaskBool (b:Threading.Tasks.Task<bool>) = 
-            ofResult <| Res.future (b.ContinueWith (fun (x:Threading.Tasks.Task<bool>) -> 
+        let ofTaskBool (b:Task<bool>) = 
+            ofResult <| Res.future (b.ContinueWith (fun (x:Task<bool>) -> 
                 match (x.IsCanceled, x.IsFaulted) with
                     | (false,false) -> if x.Result then Outcome.Passed else Outcome.Failed <| exn "Expected true, got false."
                     | (_,true) -> Outcome.Failed x.Exception
                     | (true,_) -> Outcome.Failed <| exn "The Task was canceled."))
         
-        let ofTask (b:Threading.Tasks.Task) = 
-            ofResult <| Res.future (b.ContinueWith (fun (x:Threading.Tasks.Task) -> 
+        let ofTask (b:Task) = 
+            ofResult <| Res.future (b.ContinueWith (fun (x:Task) -> 
                 match (x.IsCanceled, x.IsFaulted) with
                     | (false,false) -> Outcome.Passed
                     | (_,true) -> Outcome.Failed x.Exception
@@ -131,7 +128,7 @@ module private Testable =
                 property body.Value
             with
             | :? DiscardException -> ofResult Res.rejected
-            | e -> ofResult (Res.exc e)
+            | e -> ofResult (Res.failedException e)
 
     let private shrinking shrink generatedValue propertyFun =
         let promoteRose (m:Shrink<Gen<'T>>) : Gen<Shrink<'T>> = 
@@ -146,7 +143,7 @@ module private Testable =
         let argument a res = 
             match res with
             | ResultContainer.Value r -> { r with Arguments = (box a) :: r.Arguments } |> Value
-            | ResultContainer.Future t -> t.ContinueWith (fun (rt :Threading.Tasks.Task<Result>) -> 
+            | ResultContainer.Future t -> t.ContinueWith (fun (rt :Task<Result>) -> 
                 let r = rt.Result
                 { r with Arguments = (box a) :: r.Arguments }) |> Future
         //safeForce (lazy ( body a )) //this doesn't work - exception escapes??
@@ -154,7 +151,7 @@ module private Testable =
             body a |> property
         with
             | :? DiscardException -> Prop.ofResult Res.rejected
-            | e -> Prop.ofResult (Res.exc e)
+            | e -> Prop.ofResult (Res.failedException e)
         |> Property.GetGen 
         |> Gen.map (Shrink.map (argument a))
 
@@ -179,15 +176,15 @@ module private Testable =
     type Testables with
         static member Unit() =
             { new ITestable<unit> with
-                member __.Property _ = Prop.ofResult Res.succeeded }
+                member __.Property _ = Prop.ofResult Res.passed }
         static member Bool() =
             { new ITestable<bool> with
                 member __.Property b = Prop.ofBool b }
         static member TaskBool() =
-            { new ITestable<Threading.Tasks.Task<bool>> with
+            { new ITestable<Task<bool>> with
                 member __.Property b = Prop.ofTaskBool b }
         static member Task() =
-            { new ITestable<Threading.Tasks.Task> with
+            { new ITestable<Task> with
                 member __.Property b = Prop.ofTask b }
         static member AsyncBool() =
             { new ITestable<Async<bool>> with
@@ -196,7 +193,7 @@ module private Testable =
             { new ITestable<Async<unit>> with
                 member __.Property b = Prop.ofTask <| Async.StartAsTask b }
         static member Lazy() =
-            { new ITestable<Lazy<'a>> with
+            { new ITestable<Lazy<'T>> with
                 member __.Property b =
                     let promoteLazy (m:Lazy<_>) = 
                         Gen.promote (fun runner -> lazy (runner m.Value) |> Shrink.ofLazy |> Shrink.join)
