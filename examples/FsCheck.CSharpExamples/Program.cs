@@ -48,7 +48,6 @@ namespace FsCheck.CSharpExamples
         
         static void Main(string[] args)
         {
-
             Prop.ForAll<int>((i => Task.FromResult(i < 1000)))
                 .QuickCheck("Task");
 

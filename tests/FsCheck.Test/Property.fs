@@ -61,7 +61,7 @@ module Property =
         let addStamp stamp res = { res with Stamp = stamp :: res.Stamp }
         let addArgument arg res = { res with Arguments = arg :: res.Arguments }
         let addLabel label (res:Result) = { res with Labels = Set.add label res.Labels }
-        let andCombine prop1 prop2 :Result = let (r1:Result,r2) = determineResult prop1, determineResult prop2 in Result.ResAnd r1 r2
+        let andCombine prop1 prop2 :Result = let (r1:Result,r2) = determineResult prop1, determineResult prop2 in Result.ResAnd(r1, r2)
         match prop with
         | Unit ->   { result with Outcome= Outcome.Passed }
         | Bool true -> { result with Outcome= Outcome.Passed }
@@ -75,11 +75,11 @@ module Property =
         | Collect (i,prop) -> determineResult prop |> addStamp (sprintf "%A" i)
         | Label (l,prop) -> determineResult prop |> addLabel l
         | And (prop1, prop2) -> andCombine prop1 prop2
-        | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in Result.ResOr r1 r2
+        | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in Result.ResOr(r1, r2)
         | LazyProp prop -> determineResult prop
         | Tuple2 (prop1,prop2) -> andCombine prop1 prop2
-        | Tuple3 (prop1,prop2,prop3) -> Result.ResAnd (andCombine prop1 prop2) (determineResult prop3)
-        | List props -> List.fold (fun st p -> Result.ResAnd st (determineResult p)) (List.head props |> determineResult) (List.tail props)
+        | Tuple3 (prop1,prop2,prop3) -> Result.ResAnd (andCombine prop1 prop2, determineResult prop3)
+        | List props -> List.fold (fun st p -> Result.ResAnd (st, determineResult p)) (List.head props |> determineResult) (List.tail props)
         
     let rec private toProperty prop =
         match prop with

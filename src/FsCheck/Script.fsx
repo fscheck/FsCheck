@@ -4,8 +4,42 @@ open Microsoft.FSharp.Reflection
 
 #r @"bin\Debug\netstandard2.0\FsCheck.dll"
 open FsCheck
+open FsCheck.FSharp
 open FsCheck.Experimental
 open System.Collections.Generic
+
+//type Built<'T> = 
+//    | Success of (unit->'T)
+//    | Failure of (unit->'T)
+//    | Reject of (unit->'T)
+
+//type BuilderOverload() =
+//    member _.Return (x:unit) = 
+//        printfn "Return unit"
+//        Success
+//    member _.Return (x:bool) = 
+//        printfn "Return bool"
+//        if x then Success else Failure
+//    member _.Combine(B l, B r) =
+//        if l
+//    member _.Bind((B m:Built), f) :Built =
+//        printfn "Bind"
+//        f m
+//    member _.Delay(f: unit -> 'a) =
+//        printfn "Delay"
+//        B f
+//    //member _.Run(B f:Built<unit->'a>) =
+//    //    f()
+
+//let b = new BuilderOverload()
+
+//let res = b {
+//    return ()
+//    return bool
+//}
+
+
+
 
 let l = Gen.listOf (Gen.constant 1)
 l 
@@ -20,8 +54,8 @@ l
 type Pid = int
 type Name = string
 type ProcessRegistry() =
-    let pids = new System.Collections.Generic.List<Pid>()
-    let registry = new System.Collections.Generic.Dictionary<Name,Pid>()
+    let pids = new List<Pid>()
+    let registry = new Dictionary<Name,Pid>()
     let mutable pidCounter = 0
     member __.Spawn() : Pid = 
         let pid = pidCounter

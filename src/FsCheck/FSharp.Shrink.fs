@@ -52,7 +52,7 @@ module internal Shrink =
 
     /// Evaluate the top value in the shrink tree, and return it, as well
     /// as the rest of the Shrinks
-    let run (ShrinkTree (Lazy v,t)) = (v, t)
+    let getValue (ShrinkTree (Lazy v,t)) = (v, t)
 
     ///A generic shrinker that should work for most number-like types.
     let inline number n =

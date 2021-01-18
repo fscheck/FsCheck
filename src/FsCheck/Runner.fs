@@ -35,7 +35,7 @@ type IRunner =
     abstract member OnArguments: int * list<obj> * (int -> list<obj> -> string) -> unit
     ///Called on a successful shrink.
     abstract member OnShrink: list<obj> * (list<obj> -> string) -> unit
-    ///Called whenever all tests are done, either True, False or Exhausted.
+    ///Called whenever all tests are done, either Passed, Failed or Exhausted.
     abstract member OnFinished: string * TestResult -> unit
 
 type Replay =
@@ -142,13 +142,10 @@ module Runner =
    
     [<NoEquality;NoComparison>]
     type private TestStep = 
-        | Generated of (list<obj> * Rnd * int)   //generated arguments, Rnd and size used (test not yet executed)
-        | Passed of Result                       //one test passed
-        | Failed of Result                       //falsified the property
-        | Rejected of Result                     //generated arguments did not pass precondition
-        | Shrink of Result                       //shrunk falsified result successfully
-        | NoShrink of Result                     //could not falsify given result; so unsuccessful shrink.
-        | EndShrink of Result                    //gave up shrinking; (possibly) shrunk result is given
+        | Run of Result * size: int * seed: Rnd
+        | Shrink of Result
+        | Stop
+
         
     [<NoEquality;NoComparison>]
     type private OutcomeSeqOrFuture =
@@ -159,15 +156,14 @@ module Runner =
         seq { 
             if (shrinks.MoveNext ()) then
                 //result forced here
-                let (result',shrinks') = shrinks.Current |> Shrink.run
+                let (result',shrinks') = shrinks.Current |> Shrink.getValue
+                yield Shrink result'
                 if result'.Outcome.Shrink then
-                    yield Shrink result'
                     yield! shrinkResultValue result' (shrinks'.GetEnumerator())
                 else
-                    yield NoShrink result'
                     yield! shrinkResultValue result shrinks
-            else 
-                yield EndShrink result
+            else
+                yield Stop
         }
  
     let rec private shrinkResultTask (result :Result) (shrinks :IEnumerator<Shrink<ResultContainer>>) =
@@ -178,32 +174,32 @@ module Runner =
                     return seq { yield Shrink r; yield! xs }
                 else 
                     let! xs = shrinkResultTask result shrinks |> Async.AwaitTask
-                    return seq { yield NoShrink r; yield! xs }
+                    return seq { yield Shrink r; yield! xs }
             }
         if (shrinks.MoveNext ()) then
             //result forced here
-            let (result',shrinks') = shrinks.Current |> Shrink.run
+            let (result',shrinks') = shrinks.Current |> Shrink.getValue
             match result' with
             | ResultContainer.Value r -> 
                 goNext shrinks' r |> Async.StartAsTask
             | ResultContainer.Future t ->
                 let rt = t |> Async.AwaitTask
                 async.Bind (rt, goNext shrinks') |> Async.StartAsTask
-        else EndShrink result |> Seq.singleton |> Threading.Tasks.Task.FromResult
+        else Stop |> Seq.singleton |> Threading.Tasks.Task.FromResult
 
     let private shrinkResultTaskIter (result: Result) (shrinks :IEnumerator<Shrink<ResultContainer>>) =
         let xs :List<TestStep> = ResizeArray () 
         let rec iter (result: Result) (shrinks :IEnumerator<Shrink<ResultContainer>>) =
             if (shrinks.MoveNext ()) then
                 //result forced here
-                let (result', shrinks') = shrinks.Current |> Shrink.run
+                let (result', shrinks') = shrinks.Current |> Shrink.getValue
                 match result' with
                 | ResultContainer.Value r -> 
                     if r.Outcome.Shrink then 
                         xs.Add <| Shrink r
                         iter r (shrinks'.GetEnumerator ())
                     else
-                        xs.Add <| NoShrink r
+                        xs.Add <| Shrink r
                         iter result shrinks
                 | ResultContainer.Future t ->
                     async {
@@ -213,67 +209,58 @@ module Runner =
                             return seq { yield! xs; yield Shrink rt; yield! ys }
                         else 
                             let! ys = shrinkResultTask result shrinks |> Async.AwaitTask
-                            return seq { yield! xs; yield NoShrink rt; yield! ys }
+                            return seq { yield! xs; yield Shrink rt; yield! ys }
                     } |> Async.StartAsTask |> OutcomeSeqOrFuture.Future
-            else xs.Add <| EndShrink result; xs :> seq<_> |> OutcomeSeqOrFuture.Value
+            else
+                xs.Add <| Stop
+                xs :> seq<_> |> OutcomeSeqOrFuture.Value
         iter result shrinks
 
     let stepsSeq resize =
         Seq.unfold (fun (initSize, rnd) ->
             let rnd1, rnd2 = Random.Split rnd
             let newSize = resize initSize
-            Some ((rnd2, newSize), (newSize, rnd1)))
+            Some ((newSize, rnd2), (newSize, rnd1)))
 
-    let private testSingle generator (rnd2, newSize) =
-        let usedSize = newSize |> round |> int
+    let private testSingle generator (newSize, seed) =
+        let size = newSize |> round |> int
         let result, shrinks =
             try
                 generator
-                |> Gen.run usedSize rnd2  
-                |> Shrink.run
-                //printfn "After generate"
-                //problem: since result.Ok is no longer lazy, we only get the generated args _after_ the test is run
+                |> Gen.run size seed  
+                |> Shrink.getValue
             with :? DiscardException -> 
                 Res.rejectedV, Seq.empty
-                    
-        let g = Generated (result.Arguments, rnd2, usedSize)
+        
+        seq {
+            yield Run (result, size, seed)
+            if result.Outcome.Shrink then
+                yield! shrinkResultValue result (shrinks.GetEnumerator ())
+        }
 
-        match result.Outcome with
-            | Outcome.Rejected -> 
-                seq {yield g; yield Rejected result}
-            | Outcome.Passed -> 
-                seq {yield g; yield Passed result}
-            | o when o.Shrink -> 
-                seq {yield g; yield Failed result; yield! shrinkResultValue result (shrinks.GetEnumerator ())}
-            | _ ->
-                seq {yield g; yield Failed result; yield EndShrink result}
-
-    let private test isReplay initSize resize rnd0 gen =    
+    let private test isReplay (initSize:float) resize rnd0 gen =    
         //Since we're not running test for parallel scenarios it's impossible to discover `ResultContainer.Future` inside `result`
         let gen' = gen |> Gen.map (Shrink.map (fun rc -> 
                 match rc with 
                 | ResultContainer.Value r -> r 
                 | ResultContainer.Future t -> t.Result))
         if isReplay then
-            testSingle gen' (rnd0, initSize)
+            testSingle gen' (initSize, rnd0)
         else
             let source = stepsSeq resize (initSize, rnd0)
             Seq.collect (testSingle gen') source
 
     let private outcomeSeq result (shrinks :seq<_>) rnd usedSize = 
-        let g = Generated (result.Arguments, rnd, usedSize)
+        //let data = {| Args = result.Arguments, rnd, usedSize)
+        let runResult = Run (result, usedSize, rnd)
         match result.Outcome with
-        | Outcome.Rejected -> 
-            seq {yield g; yield Rejected result} |> OutcomeSeqOrFuture.Value
-        | Outcome.Passed -> 
-            seq {yield g; yield Passed result} |> OutcomeSeqOrFuture.Value
         | o when o.Shrink -> 
             match shrinkResultTaskIter result (shrinks.GetEnumerator ()) with
-            | OutcomeSeqOrFuture.Value v -> seq {yield g; yield Failed result; yield! v} |> OutcomeSeqOrFuture.Value
+            | OutcomeSeqOrFuture.Value v -> seq { yield runResult; yield! v} |> OutcomeSeqOrFuture.Value
             | OutcomeSeqOrFuture.Future t -> t.ContinueWith (fun (xs :Threading.Tasks.Task<seq<TestStep>>) -> 
-                seq {yield g; yield Failed result; yield! xs.Result}) |> OutcomeSeqOrFuture.Future         
+                seq {yield runResult; yield! xs.Result}) |> OutcomeSeqOrFuture.Future         
         | _ ->
-            seq {yield g; yield Failed result; yield EndShrink result} |> OutcomeSeqOrFuture.Value
+            seq {yield runResult} |> OutcomeSeqOrFuture.Value
 
     let private testStep rnd (size :float) gen =
             let usedSize = size |> round |> int
@@ -281,7 +268,7 @@ module Runner =
                 try
                     gen
                     |> Gen.run usedSize rnd
-                    |> Shrink.run
+                    |> Shrink.getValue
                 with :? DiscardException ->
                     Res.rejected, Seq.empty
 
@@ -302,7 +289,7 @@ module Runner =
 
     let private tpWorkerFun (state :obj) =
         match state with 
-        | :? ((Rnd * float) array * (int ref) * int * Gen<Shrink<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken * TypeClass<Arbitrary<obj>>) as state ->
+        | :? ((float * Rnd) array * (int ref) * int * Gen<Shrink<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken * TypeClass<Arbitrary<obj>>) as state ->
             let (steps, i, iters, gen, results, ct, defaultArb) = state
             let oldValue = Arb.arbitrary.Value
             try
@@ -312,7 +299,7 @@ module Runner =
                     j <- Threading.Interlocked.Increment (i) - 1
                     if j < iters then
                         let rnd, size = steps.[j]
-                        let res = testStep rnd size gen
+                        let res = testStep size rnd gen
                         match res with
                         | OutcomeSeqOrFuture.Value xs -> results.[j] <- xs
                         | OutcomeSeqOrFuture.Future ts -> 
@@ -320,7 +307,7 @@ module Runner =
             finally
                 Arb.arbitrary.Value <- oldValue
             
-        | _ -> raise (System.ArgumentException ("state"))
+        | _ -> invalidArg "state" (sprintf "This is a bug in FsCheck, please report it. Unexpected argument: %O" state)
 
     ///Enumerates over `steps` seq publishing every item to `tpWorkerFun` via `ThreadPool.QueueUserWorkItem`
     ///Waits for `tpWorkerFun` to populate `results` array
@@ -332,7 +319,7 @@ module Runner =
     ///    - publish to `tpWorkerFun` more than one entry at a time
     ///    - allocate `results` in lesser chunks in iterative manner
     ///    - change busy loop with yielding to waiting on conditional variables (tested, leads to slower running time)
-    type private ParSeqEnumerator (steps :IEnumerable<(Rnd * float)>, maxTest, maxFail, maxDegreeOfParallelism, gen) =   
+    type private ParSeqEnumerator (steps :IEnumerable<(float * Rnd)>, maxTest, maxFail, maxDegreeOfParallelism, gen) =   
         let size = maxTest + maxFail
         let luckySeq = steps |> Seq.take maxTest
         let unluckySeq = steps |> Seq.skip maxTest |> Seq.take maxFail
@@ -429,21 +416,21 @@ module Runner =
         let testResult =
             let testData = { NumberOfTests = ntest; NumberOfShrinks = nshrinks; Stamps = table; Labels = Set.empty }
             match testStep with
-                | Passed _ -> TestResult.Passed (testData, config.QuietOnSuccess)
-                | Failed result -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
-                | Rejected _ -> TestResult.Exhausted testData
-                | EndShrink result -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
-                | _ -> failwith "Test ended prematurely"
+                | Run ({ Outcome = Outcome.Passed },_,_) -> TestResult.Passed (testData, config.QuietOnSuccess)
+                | Run ({ Outcome = Outcome.Failed _ } as result,_,_) -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
+                | Run ({ Outcome = Outcome.Rejected },_,_) -> TestResult.Exhausted testData
+                | Shrink result -> TestResult.Failed ({ testData with Labels=result.Labels }, origArgs, result.Arguments, result.Outcome, originalSeed, lastSeed, lastSize)
+                | Stop -> invalidArg "testStep" "Cannot be Stop."
         config.Runner.OnFinished(config.Name,testResult)
 
 
     let private runner (config:Config) prop = 
         let testNb = ref 0
-        let failedNb = ref 0
+        let rejectedNb = ref 0
         let shrinkNb = ref 0
         let tryShrinkNb = ref 0
         let origArgs = ref []
-        let lastStep = ref (Rejected Res.rejectedV)
+        let lastStep = ref (Run (Res.rejectedV,-1,Rnd()))
         let seed, size = match config.Replay with None -> Random.Create(), None | Some s -> s.Rnd, s.Size
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
         let lastSeed = ref seed
@@ -454,22 +441,39 @@ module Runner =
             else 
                 test size.IsSome
         testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
-        |> Common.takeWhilePlusLast (fun step ->
-            lastStep := step
+        |> Seq.takeWhile (fun step ->
             match step with
-                | Generated (args, seed, size) ->
-                    lastSeed := seed; lastSize := size
-                    config.Runner.OnArguments(!testNb, args, config.Every)
+                | Run (result,s,seed) ->
+                    lastStep := step
+                    lastSeed := seed
+                    lastSize := s
+                    config.Runner.OnArguments(!testNb, result.Arguments, config.Every)
+                    match result with
+                    | { Outcome = Outcome.Passed } -> 
+                        testNb := !testNb + 1
+                        !testNb <> config.MaxTest && size.IsNone //stop if we have enough tests or this was fast-forward single test run
+                    | { Outcome = Outcome.Failed _ } -> 
+                        origArgs := result.Arguments
+                        testNb := !testNb + 1
+                        true //failed, true to continue with shrinking
+                    | { Outcome = Outcome.Rejected } -> 
+                        rejectedNb := !rejectedNb + 1
+                        !rejectedNb <> config.MaxRejected //rejected, stop if we have too much failed tests
+                | Shrink ({ Outcome = Outcome.Failed _ } as result) -> 
+                    lastStep := step
+                    tryShrinkNb := 0
+                    shrinkNb := !shrinkNb + 1
+                    config.Runner.OnShrink(result.Arguments, config.EveryShrink)
                     true
-                | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest && size.IsNone //stop if we have enough tests or this was fast-forward single test run
-                | Failed result -> origArgs := result.Arguments; testNb := !testNb + 1; true //failed, true to continue with shrinking
-                | Rejected _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxRejected //rejected, stop if we have too much failed tests
-                | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Runner.OnShrink(result.Arguments, config.EveryShrink); true
-                | NoShrink _ -> tryShrinkNb := !tryShrinkNb + 1; true
-                | EndShrink _ -> false )
+                | Shrink _ ->
+                    lastStep := step
+                    tryShrinkNb := !tryShrinkNb + 1
+                    true
+                | Stop -> 
+                    false)
         |> Seq.fold (fun acc elem ->
             match elem with
-                | Passed result -> (result.Stamp :: acc)
+                | Run ({ Outcome = Outcome.Passed } as result,_,_) -> (result.Stamp :: acc)
                 | _ -> acc
             ) [] 
         |> testsDone config !lastStep !origArgs !testNb !shrinkNb seed !lastSeed !lastSize
@@ -602,7 +606,7 @@ module Runner =
         let funType = FSharpType.MakeFunctionType(fromP, toP)
         let invokeAndThrowInner (m:MethodInfo) o = 
             try
-                Internals.Reflect.invokeMethod m target o
+                Reflect.invokeMethod m target o
              with :? TargetInvocationException as e -> //this is just to avoid huge non-interesting stacktraces in the output
                 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(e.InnerException).Throw()
                 failwithf "Should not get here - please report a bug"
