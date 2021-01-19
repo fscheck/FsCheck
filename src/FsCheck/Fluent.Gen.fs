@@ -8,9 +8,6 @@ open FsCheck
 open FsCheck.FSharp
 open FsCheck.Internals
 
-// OfType<TResult>(IEnumerable)
-
-
 [<AbstractClass; Sealed; Extension>]
 type Gen = 
     /// Always generate the same given value. See also Fresh.
@@ -169,9 +166,6 @@ type Gen =
     //[category: Creating generators]
     static member SubListOf([<ParamArray>]source:array<'T>) :Gen<List<'T>> =
         Gen.SubListOf(source :> seq<_>)
-
-[<AbstractClass; Sealed; Extension>]
-type GenExtensions = 
 
     /// No-op, added to allow type annotations in LINQ expressions, e.g. from T x in e
     [<Extension>]
