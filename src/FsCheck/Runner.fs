@@ -5,13 +5,12 @@ open System
 open FsCheck.FSharp
 open FsCheck.Internals
 
-[<NoEquality;NoComparison>]
-type TestData = 
+[<NoEquality; NoComparison>]
+type TestData =
     { NumberOfTests: int
       NumberOfShrinks: int
       Stamps: seq<int * list<string>>
-      Labels: Set<string>
-    }
+      Labels: Set<string> }
 
 [<NoEquality;NoComparison;RequireQualifiedAccess>]
 type TestResult = 
@@ -26,28 +25,22 @@ type TestResult =
                 * int (*the size used for generation of arguments that falsified test*)
     | Exhausted of TestData
 
-
 ///For implementing your own test runner.
 type IRunner =
     ///Called before a group of properties on a type are checked.
-    abstract member OnStartFixture: System.Type -> unit
+    abstract OnStartFixture: System.Type -> unit
     ///Called whenever arguments are generated and after the test is run.
-    abstract member OnArguments: int * list<obj> * (int -> list<obj> -> string) -> unit
+    abstract OnArguments: int * list<obj> * (int -> list<obj> -> string) -> unit
     ///Called on a successful shrink.
-    abstract member OnShrink: list<obj> * (list<obj> -> string) -> unit
+    abstract OnShrink: list<obj> * (list<obj> -> string) -> unit
     ///Called whenever all tests are done, either Passed, Failed or Exhausted.
-    abstract member OnFinished: string * TestResult -> unit
+    abstract OnFinished: string * TestResult -> unit
 
-type Replay =
-    {
-      Rnd: Rnd
-      Size: int option
-    }
+type Replay = { Rnd: Rnd; Size: int option }
 
 type ParallelRunConfig =
-    { // For I/O bound work 1 would be fine, for cpu intensive tasks Environment.ProcessorCount appears to be fastest option
-      MaxDegreeOfParallelism : int 
-    }
+    { /// For I/O bound work 1 would be fine, for cpu intensive tasks Environment.ProcessorCount appears to be fastest option
+      MaxDegreeOfParallelism: int }
 
 ///For configuring a run.
 [<NoEquality;NoComparison>]
@@ -142,7 +135,7 @@ module Runner =
    
     [<NoEquality;NoComparison>]
     type private TestStep = 
-        | Run of Result * size: int * seed: Rnd
+        | Run of Result * int * Rnd
         | Shrink of Result
         | Stop
 
@@ -319,16 +312,16 @@ module Runner =
     ///    - publish to `tpWorkerFun` more than one entry at a time
     ///    - allocate `results` in lesser chunks in iterative manner
     ///    - change busy loop with yielding to waiting on conditional variables (tested, leads to slower running time)
-    type private ParSeqEnumerator (steps :IEnumerable<(float * Rnd)>, maxTest, maxFail, maxDegreeOfParallelism, gen) =   
-        let size = maxTest + maxFail
+    type private ParSeqEnumerator (steps :IEnumerable<(float * Rnd)>, maxTest, maxReject, maxDegreeOfParallelism, gen) =   
+        let size = maxTest + maxReject
         let luckySeq = steps |> Seq.take maxTest
-        let unluckySeq = steps |> Seq.skip maxTest |> Seq.take maxFail
+        let unluckySeq = steps |> Seq.skip maxTest |> Seq.take maxReject
         let mutable results = Array.zeroCreate<seq<TestStep>> maxTest
         let mutable i = 0
         let indexT = ref 0
         let indexF = ref 0
         let mutable current = Unchecked.defaultof<TestStep>
-        let mutable subE = Linq.Enumerable.Empty<TestStep>().GetEnumerator ()
+        let mutable subE = Seq.empty<TestStep>.GetEnumerator ()
         let mutable cts = new Threading.CancellationTokenSource ()
         let mutable started = false
         let mutable firstRun = true
@@ -338,56 +331,50 @@ module Runner =
                 Threading.ThreadPool.QueueUserWorkItem (
                     new Threading.WaitCallback (tpWorkerFun),
                     (xs, index, Array.length xs, gen, results, cts.Token, Arb.arbitrary.Value)) |> ignore
-        let moveNextInner () = 
-            if subE.MoveNext () then
-                current <- subE.Current; true  
+        let moveNextInner() = 
+            if subE.MoveNext() then
+                current <- subE.Current
+                true  
             else
-                subE.Dispose (); false    
-        let moveNextOuter () =
+                subE.Dispose()
+                false    
+        let moveNextOuter() =
             if i = maxTest && firstRun then
-                results <- Array.zeroCreate<seq<TestStep>> maxFail
+                results <- Array.zeroCreate<seq<TestStep>> maxReject
                 i <- 0
                 run unluckySeq indexF
                 firstRun <- false
             while isNull results.[i] do
                 Threading.Thread.Yield () |> ignore
-            subE <- results.[i].GetEnumerator ()
+            subE <- results.[i].GetEnumerator()
             i <- i + 1
         interface IEnumerator<TestStep> with
             member __.MoveNext () = 
                 if not started then
-                    run luckySeq indexT; started <- true
+                    run luckySeq indexT
+                    started <- true
                 let mutable running = true
                 let mutable moved = false
                 while running do
                     if i >= size then
                         running <- false
                     else
-                        if moveNextInner () then
+                        if moveNextInner() then
                             running <- false
                             moved <- true
                         else
-                            moveNextOuter ()
+                            moveNextOuter()
                 moved
             member __.Current :TestStep = current
             member __.Current :obj = box current
             member __.Reset () = 
-                cts.Cancel ()
-                cts.Dispose ()
-                cts <- new Threading.CancellationTokenSource ()
-                started <- false
-                firstRun <- true
-                results <- Array.zeroCreate<seq<TestStep>> maxTest
-                current <- Unchecked.defaultof<TestStep>
-                i <- 0
-                indexT := 0
-                indexF := 0
-                subE.Dispose ()
+               raise <| NotSupportedException("Reset on ParSeqEnumerator is not supported")
+
         interface IDisposable with
-            member __.Dispose () = 
-                cts.Cancel ()
-                subE.Dispose ()
-                cts.Dispose ()
+            member __.Dispose() = 
+                cts.Cancel()
+                subE.Dispose()
+                cts.Dispose()
 
 
     type private ParTestSeq (steps, maxTest, maxFail, maxDegreeOfParallelism, gen) =   
