@@ -15,18 +15,18 @@
     <Compile Include="TypeClass.fs" />
     <Compile Include="FSharp.Gen.fs" />
     <Compile Include="FSharp.GenBuilder.fs" />
-    <Compile Include="Fluent.Gen.fs" />
     <Compile Include="FSharp.Shrink.fs" />
     <Compile Include="ReflectiveGenerator.fs" />
     <Compile Include="ReflectiveShrinker.fs" />
     <Compile Include="FSharp.Arbitrary.fs" />
-    <Compile Include="Fluent.Arbitrary.fs" />
     <Compile Include="Arb.Default.fs" />
     <Compile Include="Testable.fs" />
     <Compile Include="Prop.fs" />
-    <Compile Include="PropExtensions.fs" />
     <Compile Include="StateMachine.fs" />
     <Compile Include="Runner.fs" />
+    <Compile Include="Fluent.Gen.fs" />
+    <Compile Include="Fluent.Arbitrary.fs" />
+    <Compile Include="PropExtensions.fs" />
     <Compile Include="RunnerExtensions.fs" />
   </ItemGroup>
   <ItemGroup>

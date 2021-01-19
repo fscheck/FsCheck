@@ -84,7 +84,7 @@ type Operation<'Actual,'Model>() =
 
 type StopOperation<'Actual,'Model>() =
     inherit Operation<'Actual,'Model>()
-    override __.Check (_, _) = true.ToProperty()
+    override __.Check (_, _) = Prop.ofTestable true
     override __.Run m = m
     override __.ToString() = "Stop"
 
