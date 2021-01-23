@@ -119,10 +119,16 @@ type internal Random () =
         s <- s.Next()
         Rnd.Mix32Variant04 s.Seed
 
-    ///Generate the next pseudo-random float in the sequence in the interval [0, 1] and return the new Rnd.
-    static member NextFloat ([<Out>] s : byref<Rnd>) =
+    /// Generate the next pseudo-random double in the sequence in the interval [0, 1) and update the given Rnd.
+    /// NOTE: This generates uniformly distributed doubles in the unit interval. However, uniform distribution 
+    /// means that generated values are equally likely to be in each subrange of same length. 
+    /// It DOES NOT mean that all representable float values in range [0; 1) are equally likely to appear.
+    /// Actually, most of the values in range [0; 1) are NEVER generated.
+    /// See "Generating uniform doubles in the unit interval" at http://xoshiro.di.unimi.it/ 
+    static member NextDouble ([<Out>] s : byref<Rnd>) =
         let l = Random.NextUInt64 (&s)
         double (l >>> 11) * RandomConstants.DOUBLE_MULTIPLIER
+ 
 
     ///Split this PRNG in two PRNGs that overlap with very small probability.
     static member Split (state : Rnd, [<Out>] left : byref<Rnd>, [<Out>] right : byref<Rnd>) : unit =

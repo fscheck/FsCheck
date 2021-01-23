@@ -54,15 +54,36 @@ module internal Shrink =
     /// as the rest of the Shrinks
     let getValue (ShrinkTree (Lazy v,t)) = (v, t)
 
-    ///A generic shrinker that should work for most number-like types.
-    let inline number n =
-        let (|>|) x y = abs x > abs y 
+    // The sequence n-n/2^i for i starting at 1.
+    // e.g. for 128: 64, 96, 112,...
+    // In other words bisects the range 0..n successively, and 
+    // always chooses higher number.
+    let inline private bisecIncreasing n =
         let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
-        seq {   if n < LanguagePrimitives.GenericZero then yield -n
-                if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
-                yield! Seq.unfold (fun st -> let st = st / two in Some (n-st, st)) n 
-                        |> Seq.takeWhile ((|>|) n) }
-        |> Seq.distinct
+        seq { let mutable st = n / two
+              while st <> LanguagePrimitives.GenericZero do
+                yield n-st
+                st <- st / two
+                
+        }
+        //Seq.unfold (fun st -> let st = st / two in Some (n-st, st)) n 
+
+    /// A generic shrinker for signed numbers.
+    let inline signedNumber n =
+        let inline invert n = 
+            if n = Numeric.MinValue.Get() then
+                Numeric.MaxValue.Get()
+            else
+                -n
+        let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
+        seq { if n < LanguagePrimitives.GenericZero then yield invert n
+              if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
+              yield! bisecIncreasing n }
+
+    /// A generic shrinker for unsigned numbers.
+    let inline unsignedNumber n =
+        seq { if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
+              yield! bisecIncreasing n }
 
     let internal date (d:DateTime) =
         if d.Kind <> DateTimeKind.Unspecified then

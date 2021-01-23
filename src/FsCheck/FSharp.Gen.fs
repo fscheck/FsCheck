@@ -164,12 +164,27 @@ module Gen =
     [<CompiledName("Sample")>]
     let sample nbSamples gen : 'T[] = sampleWithSize 50 nbSamples gen
 
-    /// Generates integers between l and h, inclusive.
+    /// Generates ints between l and h, inclusive.
     //[category: Creating generators]
     [<CompiledName("Choose")>]
     let choose (l,h) = Gen (fun _ r ->
         let x, r = Random.RangeInt (l,h,r)
         struct (x, r))
+
+    /// Generates int64 between l and h, inclusive.
+    //[category: Creating generators]
+    [<CompiledName("Choose")>]
+    let internal choose64 (l,h) = Gen (fun _ r ->
+        let x, r = Random.RangeInt64 (l,h,r)
+        struct (x, r))
+
+    /// Generates double values between l and h.
+    let internal double =
+        Gen (fun _ r ->
+            let mutable r1 = r
+            let x = FsCheck.Random.NextDouble(&r1)
+            struct (x, r1)
+        )
 
     [<Struct>]
     type internal ListAccessWrapper<'T> =
