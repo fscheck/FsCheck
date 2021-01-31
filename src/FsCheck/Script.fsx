@@ -168,7 +168,7 @@ type Counter(initial:int) =
             ()
         
 
-let spec = ObjectMachine<Counter>()
+let spec = ObjectMachine<Counter>(ArbMap.defaults)
 let generator = StateMachine.generate spec
 
 let sample = generator |> Gen.sampleWithSize 10 1 |> Seq.head

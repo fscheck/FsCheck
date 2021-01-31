@@ -8,6 +8,7 @@ open System.Collections.Generic
 
 open FsCheck
 open FsCheck.FSharp
+open FsCheck.Internals
 
 
 [<AbstractClass>]
@@ -110,7 +111,7 @@ type Machine<'Actual,'Model>(maxNumberOfCommands:int) =
     ///if its precondition does not hold.
     abstract Next : 'Model -> Gen<Operation<'Actual,'Model>>
     abstract ShrinkOperations : list<Operation<'Actual,'Model>> -> seq<list<Operation<'Actual,'Model>>>
-    default __.ShrinkOperations s = Arb.Default.FsList().Shrinker s
+    default __.ShrinkOperations s = Shrink.listShorten s
 
 [<StructuredFormatDisplayAttribute("{StructuredToString}")>]
 type MachineRun<'Actual, 'Model> =
@@ -162,12 +163,12 @@ type DisposeCall<'Actual>() =
     override __.Actual actual = match box actual with :? IDisposable as d -> d.Dispose() | _ -> ()
     override __.ToString() = if typeof<IDisposable>.GetTypeInfo().IsAssignableFrom (typeof<'Actual>.GetTypeInfo()) then sprintf "Dispose" else "Nothing"
 
-type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) = 
+type ObjectMachine<'Actual>(arbMap: IArbMap, ?methodFilter: MethodInfo -> bool) = 
     inherit Machine<'Actual,ObjectMachineModel>()
     static let skipMethods = [ "GetType"; "Finalize"; "MemberwiseClone"; "Dispose"; "System-IDisposable-Dispose"] |> Set.ofList
     let methodFilter = defaultArg methodFilter (fun mi -> not <| Set.contains mi.Name skipMethods)
     let parameterGenerator (parameters:seq<ParameterInfo>) =
-        parameters |> Gen.collectToArray (fun p -> Arb.getGenerator p.ParameterType)
+        parameters |> Gen.collectToArray (fun p -> (arbMap.ArbFor p.ParameterType).Generator)
 
     let ctors = 
         typeof<'Actual>.GetTypeInfo().DeclaredConstructors

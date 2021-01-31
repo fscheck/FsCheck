@@ -7,7 +7,8 @@ open FsCheck
 open FsCheck.FSharp
 
 
-type Arbitrary =
+[<Extension;Sealed;AbstractClass>]
+type Arb private() =
 
     /// Construct an Arbitrary instance from a generator.
     /// Shrink is not supported for this type.
@@ -17,10 +18,6 @@ type Arbitrary =
     /// Construct an Arbitrary instance from a generator and shrinker.
     static member From(gen: Gen<'Value>, shrinker: Func<'Value, seq<'Value>>): Arbitrary<'Value> =
        Arb.fromGenShrink(gen, shrinker.Invoke)
-
-///Extensions to transform Arbitrary instances into other Arbitrary instances.
-[<Extension>]
-type ArbitraryExtensions =
 
     /// Construct an Arbitrary instance from a generator.
     /// Shrink is not supported for this type.

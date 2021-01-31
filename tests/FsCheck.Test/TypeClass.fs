@@ -97,10 +97,44 @@ module TypeClass =
                 .InstanceFor<string,ITypeClassUnderTest<string>>() //string not defined explicitly
         3 =! instance.GetSomething
 
+    type InjectedInstance() =
+        static member Int32() = PrimitiveInstance.Int()
+        static member ListOf(element:ITypeClassUnderTest<'T>) =
+            { new ITypeClassUnderTest<list<'T>> with
+                member _.GetSomething = element.GetSomething + 1
+            }
 
+    [<Fact>]
+    let ``should inject typeclass parameters``() =
+        let discovered = 
+            TypeClass<ITypeClassUnderTest<_>>
+                .New(injectParameters=true)
+                .Discover(true, typeof<InjectedInstance>)
 
+        2 =! discovered.Instances.Count
 
+        let instance = discovered.InstanceFor<list<int>,ITypeClassUnderTest<list<int>>>()
+        2 =! instance.GetSomething
 
+        let deepInstance = discovered.InstanceFor<list<list<list<int>>>,ITypeClassUnderTest<list<list<list<int>>>>>()
+        4 =! deepInstance.GetSomething
 
-    
-        
+    type ConfigInt = Config of int
+
+    type InjectedConfigInstance() =
+        static member String(Config c) =
+            { new ITypeClassUnderTest<string> with
+                member _.GetSomething = c+ 1
+            }
+
+    [<Fact>]
+    let ``should inject config parameters``() =
+        let discovered = 
+            TypeClass<ITypeClassUnderTest<_>>
+                .New(injectParameters=true)
+                .Discover(true, typeof<InjectedConfigInstance>, newInjectedConfigs=[|Config 42|])
+
+        1 =! discovered.Instances.Count
+
+        let instance = discovered.InstanceFor<string,ITypeClassUnderTest<string>>()
+        43 =! instance.GetSomething

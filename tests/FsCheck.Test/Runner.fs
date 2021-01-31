@@ -64,22 +64,22 @@ module RunnerInternals =
         let replay = { Rnd = seed; Size = None } |> Some
         printfn "seed %A" seed
         let runner1 = ProbeRunner () 
-        FsCheck.Runner.check (config.WithReplay(replay).WithRunner(runner1).WithParallelRunConfig(Some { MaxDegreeOfParallelism = Environment.ProcessorCount })) p
+        Runner.check (config.WithReplay(replay).WithRunner(runner1).WithParallelRunConfig(Some { MaxDegreeOfParallelism = Environment.ProcessorCount })) p
         let runner2 = ProbeRunner () 
-        FsCheck.Runner.check (config.WithReplay(replay).WithRunner(runner2).WithParallelRunConfig(None)) p
+        Runner.check (config.WithReplay(replay).WithRunner(runner2).WithParallelRunConfig(None)) p
         runner1.IsSame runner2
             
     [<Fact>]
     let ``parallelTest produces same sequence as test on success`` () =
         let body i = true
-        let arb = Arb.from<int>
+        let arb = ArbMap.defaults |> ArbMap.arbitrary<int>
         let config = Config.Quick.WithMaxTest(30000).WithEndSize(30000)
         if not <| check arb body config then failwith "assertion failure!"
 
     [<Fact>]
     let ``parallelTest produces same sequence as test on failure`` () =
         let body i = i < 999
-        let arb = Arb.from<int>
+        let arb = ArbMap.defaults |> ArbMap.arbitrary<int>
         let config = Config.Quick.WithMaxTest(30000).WithEndSize(30000)
         if not <| check arb body config then failwith "assertion failure!"
             
@@ -95,10 +95,10 @@ module RunnerInternals =
     let tree =
         let rec tree' s = 
             match s with
-            | 0 -> Gen.map Leaf Arb.generate<int>
+            | 0 -> ArbMap.defaults |> ArbMap.generate<int> |> Gen.map Leaf
             | n when n>0 -> 
                 let subtree = tree' (n/2)
-                Gen.oneof [ Gen.map Leaf Arb.generate<int> 
+                Gen.oneof [ ArbMap.defaults |> ArbMap.generate<int> |> Gen.map Leaf
                             Gen.map2 (fun x y -> Branch (x,y)) subtree subtree]
             | _ -> invalidArg "s" "Only positive arguments are allowed"
         Gen.sized tree'
@@ -111,10 +111,9 @@ module RunnerInternals =
 
     [<Fact>]
     let ``parallelTest works with custom arb`` () =
-        Arb.register<TreeGen> ()
-        let arb = Arb.from<list<Tree>>
-        let body (xs:list<Tree>) = List.rev(List.rev xs) = xs
-        let config = Config.Quick.WithMaxTest(3000).WithEndSize(3000)
+        let arb = Arb.list <| Arb.fromGen(tree)
+        let body (xs:list<Tree>) = List.rev(List.rev xs) = xs // fsharplint:disable-line Hints
+        let config = Config.Quick.WithMaxTest(3000).WithEndSize(3000).WithArbitrary([typeof<TreeGen>])
         if not <| check arb body config then failwith "not threadsafe"
     
     type Integer = Integer of int
@@ -134,10 +133,10 @@ module RunnerInternals =
 
     [<Fact>]
     let ``parallelTest does not work with custom non threadsafe arb`` () =
-        Arb.register<IntegerGen> ()
+        let arbs = ArbMap.defaults |> ArbMap.mergeWith<IntegerGen>
         let body i = true
-        let arb = Arb.from<Integer>
-        let config = Config.Quick.WithMaxTest(300000).WithEndSize(300000)
+        let arb = arbs.ArbFor<Integer>()
+        let config = Config.Quick.WithMaxTest(300000).WithEndSize(300000).WithArbitrary([typeof<IntegerGen>])
         if check arb body config then failwith "assertion failure!"
     
     type Input =
@@ -146,12 +145,11 @@ module RunnerInternals =
 
     type NonNullStringArb =
         static member NonNullString () =
-            Arb.Default.String ()
+            ArbMap.defaults.ArbFor<String>()
             |> Arb.filter(isNull>>not)
 
     [<Fact>]
     let ``parallelTest propagates Arb register to threads``() =
-        Arb.register<NonNullStringArb>() |> ignore
         let prop = function
             | String s -> not (isNull s)
             | Int _ -> true
@@ -159,6 +157,7 @@ module RunnerInternals =
         let config = Config.QuickThrowOnFailure
                            .WithMaxTest(100)
                            .WithParallelRunConfig(Some { MaxDegreeOfParallelism = Environment.ProcessorCount })
+                           .WithArbitrary([typeof<NonNullStringArb>])
 
         Check.One(config, prop)
 
@@ -172,12 +171,12 @@ module Runner =
 
     type TestArbitrary1 =
         static member PositiveDouble() =
-            Arb.Default.Float()
+            ArbMap.defaults.ArbFor<float>()
             |> Arb.mapFilter abs (fun t -> t >= 0.0)
 
     type TestArbitrary2 =
         static member NegativeDouble() =
-            Arb.Default.Float()
+            ArbMap.defaults.ArbFor<float>()
             |> Arb.mapFilter (abs >> ((-) 0.0)) (fun t -> t <= 0.0)
 
     [<Property( Arbitrary=[| typeof<TestArbitrary2>; typeof<TestArbitrary1> |] )>]
@@ -269,23 +268,23 @@ module Runner =
         test <@ (Seq.head same).Contains "(123,654321)" @>
 
     
-    type Integer = Integer of int
+    //type Integer = Integer of int
     type UInteger = UInteger of uint32
         
-    type IntegerGen =
-        static member Integer() =
-            {new Arbitrary<Integer>() with
-                override x.Generator = Arb.generate<int> |> Gen.map Integer
-                override x.Shrinker t = Seq.empty }
+    //type IntegerGen =
+    //    static member Integer() =
+    //        {new Arbitrary<Integer>() with
+    //            override x.Generator = Arb.generate<int> Arb.defaults |> Gen.map Integer
+    //            override x.Shrinker t = Seq.empty }
 
     type UIntegerGen =
             static member UInteger() =
                 {new Arbitrary<UInteger>() with
-                    override x.Generator = Arb.generate<uint32> |> Gen.map UInteger
+                    override x.Generator = ArbMap.defaults.ArbFor<uint32>().Generator |> Gen.map UInteger
                     override x.Shrinker t = Seq.empty }
     
-    Arb.register<UIntegerGen> ()
-    Arb.register<IntegerGen> ()
+    //Arb.register<UIntegerGen> ()
+    //Arb.register<IntegerGen> ()
 
     type ProbeRunner () =
         let mutable result = None
@@ -305,7 +304,7 @@ module Runner =
         { NumberOfShrinks = ns2; Stamps = sx2; Labels = lx2 } -> 
            ns1 = ns2 && Enumerable.SequenceEqual (sx1, sx2) && Enumerable.SequenceEqual (lx1, lx2)
 
-    [<Property(StartSize = 10, EndSize = 100000, MaxTest = 200, MaxRejected = 0)>]
+    [<Property(StartSize = 10, EndSize = 100000, MaxTest = 200, MaxRejected = 0, Arbitrary=[|typeof<UIntegerGen>|])>]
     let ``should fast-forward properly on failing funcs``(f :(int -> bool), (UInteger a)) =
         let runs = Convert.ToInt32(Math.Min(a,100000u)) + 1
         let rnd = Random.Create ()
@@ -430,13 +429,13 @@ module BugReproIssue195 =
     open FsCheck.Xunit
     open System
 
-    let intStr = Arb.Default.Int32() |> Arb.toGen |> Gen.map string
+    let intStr = ArbMap.defaults |> ArbMap.generate<int> |> Gen.map string
 
     // since this used to go via from<string>, it memoized the string generator, meaning at
     // registration time for the string generator below, a duplicate key exception was thrown.
     // this was fixed by using Default.String() in StringWithoutNullChars instead, and a bunch
     // of other similar cases in the default generator was fixed as well.
-    let breaksIt = Arb.Default.StringWithoutNullChars() |> ignore
+    let breaksIt = ArbMap.defaults.ArbFor<StringNoNulls>() |> ignore
 
     type BrokenGen = 
         static member String() = intStr |> Arb.fromGen
@@ -504,13 +503,14 @@ module Override =
     type Calc = { Float: float }
 
     type Arbitraries =
-        static member Float() = Arb.Default.NormalFloat() |> Arb.convert float NormalFloat
+        static member Float() = 
+            ArbMap.defaults.ArbFor<NormalFloat>() |> Arb.convert float NormalFloat
         //static member Calc() = Arb.Default.Derive<Calc>()
 
     [<Fact>]
     let ``should use override in same Arbitrary class``() =
-        Check.One(Config.QuickThrowOnFailure, fun (calc:Calc) -> true)
-        Check.One( Config.QuickThrowOnFailure.WithArbitrary([ typeof<Arbitraries> ]),
+//        Check.One(Config.QuickThrowOnFailure, fun (_:Calc) -> true)
+        Check.One(Config.QuickThrowOnFailure.WithArbitrary([ typeof<Arbitraries> ]),
              fun (calc:Calc) -> not (Double.IsNaN calc.Float || Double.IsInfinity calc.Float || calc.Float = Double.Epsilon || calc.Float = Double.MinValue || calc.Float = Double.MaxValue))
 
 // see https://github.com/fscheck/FsCheck/issues/514

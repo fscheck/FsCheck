@@ -48,7 +48,7 @@ namespace CSharp.DocSnippets
         }
         //[/revRevIsOrig]
 
-        public static void Samples([CallerFilePath] string file = "") {
+        public static void Samples() {
 
             //[insertKeepsOrder]
             Prop.ForAll<int, int[]>((x, xs) => xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
@@ -61,7 +61,7 @@ namespace CSharp.DocSnippets
             //[/lazy]
 
             //[insertWithArb]
-            var orderedList = Arb.From<int[]>()
+            var orderedList = ArbMap.Default.ArbFor<int[]>()
                                  .MapFilter(xs => xs.OrderBy(i => i).ToArray(), xs => xs.IsOrdered());
 
             Prop.ForAll<int>(x => Prop.ForAll(orderedList, xs => xs.Insert(x).IsOrdered()))

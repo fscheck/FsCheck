@@ -98,3 +98,66 @@ module internal Shrink =
             seq { yield DateTime(d.Year,d.Month,d.Day) }
         else
             Seq.empty
+
+    /// Shrink a list by taking a single element away in each shrink attempt.
+    let internal listShorten l =
+        let rec shrinkList l =
+            match l with
+            | [] ->      Seq.empty
+            | (x::xs) -> seq { yield xs
+                               for xs' in shrinkList xs -> x::xs' }
+        shrinkList l
+
+    /// Shrink a list by shrinking each element using the given elementShrink.
+    /// The shrunk lists all have the same length as the original list.
+    let internal listElements (elementShrink: 'T -> #seq<'T>) l = 
+        let rec shrinkList l =
+            match l with
+            | [] ->      Seq.empty
+            | (x::xs) -> seq { for x' in elementShrink x -> x'::xs
+                               for xs' in shrinkList xs -> x::xs'
+                            }
+        shrinkList l
+
+    /// Shrink a list by combining listLength and listElements.
+    let internal list (elementShrink: 'T -> #seq<'T>) l =
+        let length = listShorten l
+        let elements = listElements elementShrink l
+        Seq.append length elements
+
+    let arrayShorten (a: 'T[]) =
+        let prepend x (arr : _[]) =
+            let len = arr.Length
+            if len = 0 then [| x |]
+            else
+                let result = Array.zeroCreate (len + 1)
+                result.[0] <- x
+                Array.blit arr 0 result 1 len
+                result
+
+        let rec shrinkArray (arr : 'T[]) =
+            if Array.isEmpty arr then Seq.empty else
+            seq {
+                let x = arr.[0]
+                let xs = arr.[1..]
+                yield xs
+                for xs' in shrinkArray xs -> prepend x xs'
+            }
+        shrinkArray a
+
+    let arrayElements elementShrink arr =
+        let rec shrinkArray (arr : 'T[]) =
+            if Array.isEmpty arr then Seq.empty else
+            seq {
+                for i in 0..arr.Length-1 do
+                    for x' in elementShrink arr.[i] do
+                        let copy = Array.copy arr
+                        copy.[i] <- x'
+                        yield copy
+            }
+        shrinkArray arr
+
+    let array elementShrink arr =
+        let length = arrayShorten arr
+        let elements = arrayElements elementShrink arr
+        Seq.append length elements

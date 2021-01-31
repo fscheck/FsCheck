@@ -29,7 +29,8 @@ type Gen =
     static member Sized(createWithSize:Func<int,Gen<'T>>) : Gen<'T> =
         Gen.sized createWithSize.Invoke
 
-        /// Generates integers between l and h, inclusive.
+    /// Generates integers between l and h, inclusive.
+    //[category: Creating generators]
     static member Choose(l:int, h:int) =
         Gen.choose(l,h)
 

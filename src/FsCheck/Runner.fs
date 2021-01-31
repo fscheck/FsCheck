@@ -55,7 +55,7 @@ type Config = private Config of
                 QuietOnSuccess    : bool
                 Every             : int -> list<obj> -> string
                 EveryShrink       : list<obj> -> string 
-                Arbitrary         : list<Type>
+                ArbMap            : IArbMap
                 Runner            : IRunner 
                 ParallelRunConfig : ParallelRunConfig option
                 |} with
@@ -80,10 +80,11 @@ type Config = private Config of
                 member this.Every = this.Values.Every
                 ///What to print every time a counter-example is successfully shrunk
                 member this.EveryShrink = this.Values.EveryShrink
-                ///The Arbitrary instances on this class will be merged in back to front order, i.e. instances for the same generated type at the front
-                ///of the list will override those at the back. The instances on Arb.Default are always known, and are at the back (so they can always be
-                ///overridden)
-                member this.Arbitrary = this.Values.Arbitrary
+                /////The Arbitrary instances on this class will be merged in back to front order, i.e. instances for the same generated type at the front
+                /////of the list will override those at the back. The instances on Arb.Default are always known, and are at the back (so they can always be
+                /////overridden)
+                //member this.Arbitrary = this.Values.Arbitrary
+                member this.ArbMap = this.Values.ArbMap
                 ///A custom test runner, e.g. to integrate with a test framework like xUnit or NUnit. 
                 member this.Runner = this.Values.Runner
                 ///If set, inputs for property generation and property evaluation will be run in parallel. 
@@ -117,13 +118,18 @@ type Config = private Config of
                     {|this.Values with EveryShrink = everyShrink|} |> Config
                 ///Returns a new Config with specified Arbitrary
                 member this.WithArbitrary arbitrary =
-                    {|this.Values with Arbitrary = arbitrary|} |> Config
+                    let result = this.ArbMap |> Seq.foldBack ArbMap.mergeWithType arbitrary
+                    {|this.Values with ArbMap = result|} |> Config
                 ///Returns a new Config with specified Runner
                 member this.WithRunner runner =
                     {|this.Values with Runner = runner|} |> Config
                 ///Returns a new Config with specified ParallelRunConfig
                 member this.WithParallelRunConfig config =
                     {|this.Values with ParallelRunConfig = config|} |> Config
+                
+                    
+
+                    
 
 module Runner =
     open System.Collections.Generic
@@ -282,23 +288,23 @@ module Runner =
 
     let private tpWorkerFun (state :obj) =
         match state with 
-        | :? ((float * Rnd) array * (int ref) * int * Gen<Shrink<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken * TypeClass<Arbitrary<obj>>) as state ->
-            let (steps, i, iters, gen, results, ct, defaultArb) = state
-            let oldValue = Arb.arbitrary.Value
-            try
-                Arb.arbitrary.Value <- defaultArb
-                let mutable j = 0
-                while (not ct.IsCancellationRequested) && j < iters do
-                    j <- Threading.Interlocked.Increment (i) - 1
-                    if j < iters then
-                        let rnd, size = steps.[j]
-                        let res = testStep size rnd gen
-                        match res with
-                        | OutcomeSeqOrFuture.Value xs -> results.[j] <- xs
-                        | OutcomeSeqOrFuture.Future ts -> 
-                            ts.ContinueWith (outcomeSeqFutureCont, (j, ct, results, iters)) |> ignore
-            finally
-                Arb.arbitrary.Value <- oldValue
+        | :? ((float * Rnd) array * (int ref) * int * Gen<Shrink<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken) as state ->
+            let (steps, i, iters, gen, results, ct) = state
+            //let oldValue = Arb.arbitrary.Value
+            //try
+                //Arb.arbitrary.Value <- defaultArb
+            let mutable j = 0
+            while (not ct.IsCancellationRequested) && j < iters do
+                j <- Threading.Interlocked.Increment (i) - 1
+                if j < iters then
+                    let rnd, size = steps.[j]
+                    let res = testStep size rnd gen
+                    match res with
+                    | OutcomeSeqOrFuture.Value xs -> results.[j] <- xs
+                    | OutcomeSeqOrFuture.Future ts -> 
+                        ts.ContinueWith (outcomeSeqFutureCont, (j, ct, results, iters)) |> ignore
+            //finally
+                //Arb.arbitrary.Value <- oldValue
             
         | _ -> invalidArg "state" (sprintf "This is a bug in FsCheck, please report it. Unexpected argument: %O" state)
 
@@ -330,7 +336,7 @@ module Runner =
             for i in 0..(Math.Min (Array.length xs, maxDegreeOfParallelism)) do
                 Threading.ThreadPool.QueueUserWorkItem (
                     new Threading.WaitCallback (tpWorkerFun),
-                    (xs, index, Array.length xs, gen, results, cts.Token, Arb.arbitrary.Value)) |> ignore
+                    (xs, index, Array.length xs, gen, results, cts.Token)) |> ignore
         let moveNextInner() = 
             if subE.MoveNext() then
                 current <- subE.Current
@@ -427,7 +433,7 @@ module Runner =
                 parallelTest config 
             else 
                 test size.IsSome
-        testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen)
+        testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen config.ArbMap)
         |> Seq.takeWhile (fun step ->
             match step with
                 | Run (result,s,seed) ->
@@ -557,13 +563,13 @@ module Runner =
 
     let internal check (config:Config) p = 
         //save so we can restore after the run
-        let defaultArbitrary = Arb.arbitrary.Value
-        let merge newT (existingTC:TypeClass<_>) = existingTC.DiscoverAndMerge(onlyPublic=true,instancesType=newT)
-        Arb.arbitrary.Value <- List.foldBack merge config.Arbitrary defaultArbitrary
-        try
+        //let defaultArbitrary = Arb.arbitrary.Value
+        //let merge newT (existingTC:TypeClass<_>) = existingTC.DiscoverAndMerge(onlyPublic=true,instancesType=newT)
+        //Arb.arbitrary.Value <- List.foldBack merge config.Arbitrary defaultArbitrary
+        //try
             runner config (property p)
-        finally
-            Arb.arbitrary.Value <- defaultArbitrary
+        //finally
+            //Arb.arbitrary.Value <- defaultArbitrary
 
     let private checkMethodInfo = 
         typeof<TestStep>.DeclaringType.GetTypeInfo().DeclaredMethods 
@@ -625,7 +631,7 @@ type Config with
                QuietOnSuccess = false
                Every         = fun _ _ -> String.Empty
                EveryShrink   = fun _ -> String.Empty
-               Arbitrary     = []
+               ArbMap        = ArbMap.defaults
                Runner        = consoleRunner
                ParallelRunConfig = None |} |> Config 
 

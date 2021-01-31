@@ -45,8 +45,8 @@ namespace FsCheck.CSharpExamples
                 throw new NotImplementedException();
             }
         }
-        
-        static void Main(string[] args)
+
+        static void Main()
         {
             Prop.ForAll<int>((i => Task.FromResult(i < 1000)))
                 .QuickCheck("Task");
@@ -64,7 +64,7 @@ namespace FsCheck.CSharpExamples
 
             //--------Properties--------------
             //Default Comparison compares NaN properly
-			Prop.ForAll<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
+            Prop.ForAll<double[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
                 .QuickCheck("RevRevFloat");
 
             //conditional properties
@@ -78,17 +78,17 @@ namespace FsCheck.CSharpExamples
                 .QuickCheck("When non-empty array ==> Assert non-empty array");
 
             //counting trivial cases
-            Prop.ForAll<int, int[]>((x, xs) => 
+            Prop.ForAll<int, int[]>((x, xs) =>
                     xs.Insert(x).IsOrdered()
                     .When(xs.IsOrdered())
                     .Classify(xs.Length == 0, "trivial"))
                 .QuickCheck("InsertTrivial");
 
             //classifying test values
-            Prop.ForAll<int, int[]>((x, xs) => 
+            Prop.ForAll<int, int[]>((x, xs) =>
                     xs.Insert(x).IsOrdered()
                     .When(xs.IsOrdered())
-                    .Classify(new [] { x }.Concat(xs).IsOrdered(), "at-head")
+                    .Classify(new[] { x }.Concat(xs).IsOrdered(), "at-head")
                     .Classify(xs.Concat(new int[] { x }).IsOrdered(), "at-tail"))
                 .QuickCheck("InsertClassify");
 
@@ -103,15 +103,15 @@ namespace FsCheck.CSharpExamples
             Prop.ForAll<int, int[]>((x, xs) =>
                     xs.Insert(x).IsOrdered()
                     .When(xs.IsOrdered())
-                    .Classify(new [] { x }.Concat(xs).IsOrdered(), "at-head")
-                    .Classify(xs.Concat(new [] { x }).IsOrdered(), "at-tail")
+                    .Classify(new[] { x }.Concat(xs).IsOrdered(), "at-head")
+                    .Classify(xs.Concat(new[] { x }).IsOrdered(), "at-tail")
                     .Collect("length " + xs.Count().ToString()))
                 .QuickCheck("InsertCombined");
 
             //---labelling sub properties-----
             Prop.ForAll<int, int>((n, m) => {
                 var res = n * m;
-                return  (new Func<bool>(() => res / m == n)).When(m != 0.0).Label("div1")
+                return (new Func<bool>(() => res / m == n)).When(m != 0.0).Label("div1")
                    .And((new Func<bool>(() => res / n == m)).When(n != 0.0).Label("div2"))
                    .And((res > m).Label("lt1"))
                    .And((res > n).Label("lt2"))
@@ -120,10 +120,10 @@ namespace FsCheck.CSharpExamples
 
 
             Prop.ForAll<int, int>((m, n) => {
-                    var result = m + n;
-                    return ( result >= m).Label("result > #1")
-                       .And( result >= n).Label("result > #2")
-                       .And( result < m + n).Label("result not sum");
+                var result = m + n;
+                return (result >= m).Label("result > #1")
+                   .And(result >= n).Label("result > #2")
+                   .And(result < m + n).Label("result not sum");
             }).QuickCheck("ComplexProp");
 
             Prop.ForAll<int>(x => false.Label("Always false")
@@ -145,22 +145,21 @@ namespace FsCheck.CSharpExamples
 
             // generating functions:
             Prop.ForAll((Func<int, int> f, Func<int, int> g, ICollection<int> a) => {
-                            var l1 = a.Select(x => f(g(x)));
-                            var l2 = a.Select(g).Select(f);
-                            return l1.SequenceEqual(l2);
-                        }).QuickCheck();
+                var l1 = a.Select(x => f(g(x)));
+                var l2 = a.Select(g).Select(f);
+                return l1.SequenceEqual(l2);
+            }).QuickCheck();
 
             //generators support select, selectmany and where
-            var gen = from x in Arb.Generate<int>()
+            var gen = from x in ArbMap.Default.GeneratorFor<int>()
                       from int y in Gen.Choose(5, 10)
                       where x > 5
                       select new { Fst = x, Snd = y };
 
-            //registering default arbitrary instances
-            Arb.Register<MyArbitraries>();
+            //overriding arbitrary instances
 
             Prop.ForAll<long>(l => l + 1 > l)
-                .QuickCheck();
+                .Check(Config.Default.WithArbitrary(new[] { typeof(MyArbitraries) }));
 
             Prop.ForAll<string>(s => true)
                 .Check(Config.Default.WithName("Configuration Demo").WithMaxTest(500));
@@ -180,10 +179,10 @@ namespace FsCheck.CSharpExamples
 
             Prop.ForAll((IEnumerable<int> a, IEnumerable<int> b) => 
                             a.Except(b).Count() <= a.Count())
-                .QuickCheck();
+                .Check(Config.Default.WithArbitrary(new[] { typeof(MyArbitraries) }));
 
-            Arb.Generate<int>().Sample(10);
-            Arb.Generate<int>().Sample(10, size:25);
+            ArbMap.Default.GeneratorFor<int>().Sample(10);
+            ArbMap.Default.GeneratorFor<int>().Sample(10, size:25);
 
 			Console.WriteLine("Press any key...");
             Console.ReadKey();
@@ -208,14 +207,14 @@ namespace FsCheck.CSharpExamples
 
         public class MyArbitraries
         {
-            public static Arbitrary<long> Long() { return new ArbitraryLong(); }
+            public static Arbitrary<long> Long { get; } = new ArbitraryLong();
 
             public static Arbitrary<IEnumerable<T>> Enumerable<T>() {
-                return Arb.Default.Array<T>().Convert(x => (IEnumerable<T>)x, x => (T[])x);
+                return ArbMap.Default.ArbFor<T[]>().Convert(x => (IEnumerable<T>)x, x => (T[])x);
             }
 
             public static Arbitrary<StringBuilder> StringBuilder() {
-                return Arb.Generate<string>().Select(x => new StringBuilder(x)).ToArbitrary();
+                return ArbMap.Default.GeneratorFor<string>().Select(x => new StringBuilder(x)).ToArbitrary();
             }
         }
         
