@@ -1,4 +1,4 @@
-### 2.14.4 - To be released
+### 2.14.4 - 31 January 2021
 
 * Fix NullRef in `isCSharpDtoType` when a property with only a setter was encountered.
 
