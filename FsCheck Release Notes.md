@@ -1,5 +1,7 @@
 ### 2.14.4 - To be released
 
+* Fix NullRef in `isCSharpDtoType` when a property with only a setter was encountered.
+
 ### 2.14.3 - 9 June 2020
 
 * Fix FsCheck.Xunit so it properly calls Dispose if the test class implements IDisposable. (by Laurence King)
