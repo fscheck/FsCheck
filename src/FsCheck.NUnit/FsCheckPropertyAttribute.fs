@@ -42,7 +42,7 @@ type PropertyAttribute() =
     let mutable quietOnSuccess = false
     let mutable replay = null
     let mutable parallelism = -1
-    let mutable arbitrary = Config.Default.Arbitrary |> List.toArray
+    let mutable arbitrary = Array.empty
 
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).

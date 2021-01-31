@@ -75,8 +75,8 @@ module internal Res =
     let future (t :Task<Outcome>) = t.ContinueWith (fun (x :Task<Outcome>) -> { result with Outcome = x.Result }) |> Future
 
 ///A Property can be checked by FsCheck.
-type Property = private Property of Gen<Shrink<ResultContainer>> with
-    static member internal GetGen (Property g) = g
+type Property = private Property of (IArbMap -> Gen<Shrink<ResultContainer>>) with
+    static member internal GetGen arbMap (Property g) = g arbMap
 
 module private Testable =
 
@@ -98,7 +98,7 @@ module private Testable =
 
     module internal Prop = 
     
-        let ofRoseResult t : Property = Property <| gen { return t }
+        let ofRoseResult t : Property = Property <| fun map  -> gen { return t }
 
         let ofResult (r:ResultContainer) : Property = 
             ofRoseResult <| Shrink.ofValue r
@@ -119,7 +119,12 @@ module private Testable =
                     | (_,true) -> Outcome.Failed x.Exception
                     | (true,_) -> Outcome.Failed <| exn "The Task was canceled."))
 
-        let mapRoseResult f a = property a |> Property.GetGen |> Gen.map f |> Property
+        let mapRoseResult (f:Shrink<ResultContainer> -> _) a = 
+            fun arbMap -> 
+                property a 
+                |> Property.GetGen arbMap
+                |> Gen.map f
+            |> Property
 
         let mapResult f = mapRoseResult (Shrink.map f)
 
@@ -139,7 +144,7 @@ module private Testable =
         |> promoteRose
         |> Gen.map Shrink.join
     
-    let private evaluate body a =
+    let private evaluate body a arbMap =
         let argument a res = 
             match res with
             | ResultContainer.Value r -> { r with Arguments = (box a) :: r.Arguments } |> Value
@@ -152,21 +157,23 @@ module private Testable =
         with
             | :? DiscardException -> Prop.ofResult Res.rejected
             | e -> Prop.ofResult (Res.failedException e)
-        |> Property.GetGen 
+        |> Property.GetGen arbMap
         |> Gen.map (Shrink.map (argument a))
 
 
     let forAll (arb:Arbitrary<_>) body : Property =
-        let generator = arb.Generator
-        let shrinker = arb.Shrinker
-        gen { let! a = generator
-              return! shrinking shrinker a (fun a' -> evaluate body a')}
+        fun arbMap ->
+            let generator = arb.Generator
+            let shrinker = arb.Shrinker
+            gen { let! a = generator
+                  return! shrinking shrinker a (fun a' -> evaluate body a' arbMap)}
         |> Property
 
     let private combine f a b:Property = 
-        let pa = property a |> Property.GetGen
-        let pb = property b |> Property.GetGen
-        Gen.map2 (Shrink.map2 f) pa pb
+        fun arbMap ->
+            let pa = property a |> Property.GetGen arbMap
+            let pb = property b |> Property.GetGen arbMap
+            Gen.map2 (Shrink.map2 f) pa pb
         |> Property
 
     let (.&) l r = combine (&&&) l r
@@ -197,7 +204,8 @@ module private Testable =
                 member __.Property b =
                     let promoteLazy (m:Lazy<_>) = 
                         Gen.promote (fun runner -> lazy (runner m.Value) |> Shrink.ofLazy |> Shrink.join)
-                    promoteLazy (lazy (Prop.safeForce b |> Property.GetGen)) |> Property } 
+                    fun arbMap -> promoteLazy (lazy (Prop.safeForce b |> Property.GetGen arbMap))
+                    |> Property } 
         static member Result() =
             { new ITestable<Result> with
                 member __.Property res = Prop.ofResult <| Value res }
@@ -209,10 +217,19 @@ module private Testable =
                 member __.Property prop = prop }
         static member Gen() =
             { new ITestable<Gen<'a>> with
-                member __.Property gena = gen { let! a = gena in return! property a |> Property.GetGen } |> Property }
+                member __.Property gena = 
+                    fun arbMap -> gen { let! a = gena in return! property a |> Property.GetGen arbMap }
+                    |> Property }
         static member RoseResult() =
             { new ITestable<Shrink<ResultContainer>> with
-                member __.Property rosea = gen { return rosea } |> Property }
+                member __.Property rosea =
+                    fun arbMap -> gen { return rosea }
+                    |> Property }
         static member Arrow() =
-            { new ITestable<('a->'b)> with
-                member __.Property f = forAll Arb.from f }
+            { new ITestable<('T->'U)> with
+                member __.Property f =
+                    fun (arbMap:IArbMap) ->
+                        let arb = arbMap.ArbFor<'T>()
+                        forAll arb f
+                        |> Property.GetGen arbMap
+                    |> Property }

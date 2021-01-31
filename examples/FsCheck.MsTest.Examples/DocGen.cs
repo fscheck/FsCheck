@@ -23,8 +23,8 @@ namespace FsCheck.MsTest.Examples
             {
                 Constant<Doc.Empty>(),
                 Constant<Doc.Line>(),
-                from x in Arb.Generate<char>() select new Doc.Char(x) as Doc,
-                from s in Arb.Generate<string>() select new Doc.Text(s) as Doc,
+                from x in ArbMap.Default.GeneratorFor<char>() select new Doc.Char(x) as Doc,
+                from s in ArbMap.Default.GeneratorFor<string>() select new Doc.Text(s) as Doc,
             };
         }
 

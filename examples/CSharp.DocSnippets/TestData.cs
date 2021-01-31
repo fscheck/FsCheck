@@ -43,7 +43,7 @@ namespace CSharp.DocSnippets {
 
         //[unsafeTree]
         public static Gen<Tree> UnsafeTree() {
-            return Gen.OneOf(Arb.Generate<int>().Select(i => (Tree) new Leaf(i)),
+            return Gen.OneOf(ArbMap.Default.GeneratorFor<int>().Select(i => (Tree) new Leaf(i)),
                              UnsafeTree().Two().Select(t => (Tree) new Branch(t.Item1,t.Item2)));
         }
         //[/unsafeTree]
@@ -51,11 +51,11 @@ namespace CSharp.DocSnippets {
         //[safeTree]
         public static Gen<Tree> SafeTreeHelper(int size) {
             if (size == 0) {
-                return Arb.Generate<int>().Select(i => (Tree)new Leaf(i));
+                return ArbMap.Default.GeneratorFor<int>().Select(i => (Tree)new Leaf(i));
             }
             else {
                 var subtree = SafeTreeHelper(size / 2);
-                return Gen.OneOf(Arb.Generate<int>().Select(i => (Tree) new Leaf(i)),
+                return Gen.OneOf(ArbMap.Default.GeneratorFor<int>().Select(i => (Tree) new Leaf(i)),
                                  subtree.Two().Select(t => (Tree) new Branch(t.Item1,t.Item2)));
             }
         }
@@ -89,7 +89,7 @@ namespace CSharp.DocSnippets {
             //[/sizedInt]
 
             //[register]
-            Arb.Register<MyGenerators>();
+            Check.One(Config.Default.WithArbitrary(new[] { typeof(MyGenerators) }), true);
             //[/register]
         }
 

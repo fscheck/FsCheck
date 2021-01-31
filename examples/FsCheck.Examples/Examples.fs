@@ -7,32 +7,12 @@ open System.Reflection
 open Microsoft.FSharp.Reflection
 open Microsoft.FSharp.Collections
 open System.Collections.Generic
+  
 
-open Prop
-
-//init bug
-let sizedString =  Arb.generate<char> |> Gen.sample 10
-    
-
-//---too early initialization bug (put this first): fixed---
-type Generators =
-  static member Int64() =
-    { new Arbitrary<int64>() with
-        override x.Generator = Arb.generate<int> |> Gen.map int64 }
-Arb.register<Generators>() |> ignore
-
-//check that registering typeclass instances with a class that does not define any no longer fails silently
-//type internal NoInstancesFails() =
-//    static member Int64() =
-//        { new Arbitrary<int64>() with
-//            override x.Arbitrary = arbitrary |> fmapGen int64 }
-//overwriteGenerators<NoInstancesFails>()
-
-
-let prop_lameTask (x:int) =
+let lameTask (x:int) =
     if x=0 then false else true
-    |> Threading.Tasks.Task.FromResult
-Check.Quick prop_lameTask
+    |> Tasks.Task.FromResult
+Check.Quick lameTask
 
 
 type TestEnum =
@@ -43,27 +23,15 @@ type TestEnum =
 let testEnum (e:TestEnum) = e = TestEnum.First
 Check.Quick testEnum
 
-//bug: exception escapes: fixed
-let prop_EscapingException (x:int) =
-    if x=0 then lazy (failwith "nul") else lazy true
-    |> label "bla"
-Check.Verbose prop_EscapingException
-
-//more escaping exceptions?
-let somefailingFunction() = failwith "escaped"
-
-let prop_EscapingException2 (x:int) =
-    x <> 0 ==> lazy (if x=0 then false else (somefailingFunction()))
-Check.Quick prop_EscapingException2
 
 //bug: label not printed because of exception. Workaround: use lazy.
 //actually I don't hink this is fixable, as the exception rolls up the stack, so the labelling
 //that happens when a property "returns" gets bypassed.
 //this is irritating when using Assert statements from unit testing frameworks though.
-let prop_LabelBug (x:int) =
+let labelBug (x:int) =
     if x=0 then lazy (failwith "nul") else lazy true
-    |> label "bla"
-Check.Quick prop_LabelBug
+    |> Prop.label "bla"
+Check.Quick labelBug
 
 //smart shrinking
 [<StructuredFormatDisplay("{Display}")>]
@@ -74,32 +42,29 @@ type Smart<'a> =
     
 
 type SmartShrinker =
-    static member Smart() =
-        { new Arbitrary<Smart<'a>>() with
-            override x.Generator = Arb.generate |> Gen.map (fun arb -> Smart (0,arb))
-            override x.Shrinker (Smart (i,x)) = 
-                let ys = Seq.zip {0..Int32.MaxValue} (Arb.shrink x) |> Seq.map Smart 
-                let i' = Math.Max(0,i-2)
-                let rec interleave left right =
-                    match (left,right) with
-                    | ([],rs) -> rs
-                    | (ls,[]) -> ls
-                    | (l::ls,r::rs) -> l::r::(interleave ls rs)
-                interleave (Seq.take i' ys |> Seq.toList) (Seq.skip i' ys |> Seq.toList) |> List.toSeq
-        }
-
-Arb.register<SmartShrinker>() |> ignore
+    static member Smart(value:Arbitrary<'a>) =
+        let generator = value.Generator |> Gen.map (fun arb -> Smart (0,arb))
+        let shrinker (Smart (i,x)) = 
+            let ys = Seq.zip {0..Int32.MaxValue} (value.Shrinker x) |> Seq.map Smart 
+            let i' = Math.Max(0,i-2)
+            let rec interleave left right =
+                match (left,right) with
+                | ([],rs) -> rs
+                | (ls,[]) -> ls
+                | (l::ls,r::rs) -> l::r::(interleave ls rs)
+            interleave (Seq.take i' ys |> Seq.toList) (Seq.skip i' ys |> Seq.toList) |> List.toSeq
+        Arb.fromGenShrink(generator, shrinker)
 
 let smartShrink (Smart (_,i)) = i < 20
-Check.Quick smartShrink
+Check.One(Config.Default.WithArbitrary([typeof<SmartShrinker>]), smartShrink)
 
 //-------------examples from QuickCheck paper-------------
-let prop_RevUnit (x:char) = List.rev [x] = [x]
+let revUnit (x:char) = List.rev [x] = [x]
 
-let prop_RevApp (x:string) xs = 
+let revApp (x:string) xs = 
     List.rev (x::xs) = List.rev xs @ [x] 
-        |> trivial (xs = [])
-        |> trivial (xs.Length = 1)
+    |> Prop.trivial (xs = [])
+    |> Prop.trivial (xs.Length = 1)
 
 let prop_MaxLe (x:float) y = (x <= y) ==> (lazy (max  x y = y))
 
@@ -136,11 +101,10 @@ type Properties =
     static member Test1 (b,(b2:bool)) = (b = b2)
     static member Test2 i = (i < 100)
     static member Test3 (i,j) = (i < 10 && j < 5.1)
-    //static member Test4 l =  List.rev l = l //generic args no longer work in Check.QuickAll
     static member Test5 (l:list<float>) = List.rev l = l
     //this property is falsifiable: sometimes the generator for float generates nan; and nan <> nan
     //so when checking the reverse of the reverse list's equality with the original list, the check fails. 
-    static member Test6 (l:list<list<int*int> * float>) = ((l |> List.rev |> List.rev) = l) |> trivial (List.isEmpty l)
+    static member Test6 (l:list<list<int*int> * float>) = ((l |> List.rev |> List.rev) = l) |> Prop.trivial (List.isEmpty l)
     static member Test7 (a:int*bool,b:float*int) = (fst a = snd b)
     static member Test8 (l:list<obj>) = ( List.rev l = l)
     static member Test9 (s:string) = ( new String(s.ToCharArray()) = s )
@@ -182,7 +146,7 @@ Check.Quick("bigTuple",bigTuple)
 //-----property combinators------------------
 let private withPositiveInteger (p : int -> 'a) = fun n -> n <> 0 ==> lazy (p (abs n))
 
-let testProp = withPositiveInteger ( fun x -> x > 0 |> classify true "bla"  )
+let testProp = withPositiveInteger ( fun x -> x > 0 |> Prop.classify true "bla"  )
 Check.Quick testProp
 
 let testProp2 = withPositiveInteger ( fun x -> withPositiveInteger (fun y -> x + y > 0  ))
@@ -190,12 +154,9 @@ Check.Quick testProp2
 
 let blah (s:string) = if s = "" then raise (new System.Exception("foo")) else s.Length > 3
 
-let private withNonEmptyString (p : string -> 'a) = forAll (Gen.elements [ "A"; "AA"; "AAA" ] |> Arb.fromGen) p
+let private withNonEmptyString (p : string -> 'a) = Prop.forAll (Gen.elements [ "A"; "AA"; "AAA" ] |> Arb.fromGen) p
 
 Check.Quick (withNonEmptyString blah)
-
-let prop_Exc = forAll (Arb.fromGenShrink(Gen.resize 100 Arb.generate,Arb.shrink)) (fun (s:string) -> failwith "error")
-Check.Quick("prop_Exc",prop_Exc)
 
 //-----------------async--------
 let asyncWork (i :int) =

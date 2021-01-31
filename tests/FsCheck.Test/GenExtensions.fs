@@ -4,7 +4,6 @@ module GenExtensions =
 
     open Xunit
     open FsCheck
-    open FsCheck.FSharp
     open FsCheck.Fluent
     open Swensen.Unquote
     open System
@@ -12,22 +11,22 @@ module GenExtensions =
     [<Fact>]
     let Select () =
         raises<ArgumentNullException> 
-            <@ Arb.generate<int>.Select(selector=null) @>
+            <@ Fluent.Gen.Choose(0,5).Select(selector=null) @>
 
     [<Fact>]
     let Where () =
         raises<ArgumentNullException> 
-            <@ Arb.generate<float>.Where(predicate=null) @>
+            <@ Fluent.Gen.Choose(0,5).Where(predicate=null) @>
 
     [<Fact>]
     let SelectMany () =
         raises<ArgumentNullException> 
-            <@ Arb.generate<string>.SelectMany(selector=null) @>
+            <@ ArbMap.Default.GeneratorFor<string>().SelectMany(selector=null) @>
     
     [<Fact>]
     let ``SelectMany binder``() =
         let act =
-            lazy Arb.generate<string>.SelectMany(
+            lazy ArbMap.Default.GeneratorFor<string>().SelectMany(
                 selector=null, 
                 resultSelector=new Func<string, string, string>((+)))
 
@@ -37,7 +36,7 @@ module GenExtensions =
     [<Fact>]
     let ``SelectMany mapper``() =
         let act = 
-            lazy Arb.generate<string>.SelectMany (
+            lazy ArbMap.Default.GeneratorFor<string>().SelectMany (
                 new Func<string, Gen<string>> (fun s -> Gen.Constant(s)),
                 resultSelector=null)
 
@@ -47,8 +46,8 @@ module GenExtensions =
     [<Fact>]
     let Zip () =
         let act =
-            lazy Arb.generate<TimeSpan>.Zip(
-                    Arb.generate<DateTimeOffset>, 
+            lazy ArbMap.Default.GeneratorFor<TimeSpan>().Zip(
+                    ArbMap.Default.GeneratorFor<TimeSpan>(), 
                     resultSelector=null)
 
         Prop.throws<ArgumentNullException, _> act

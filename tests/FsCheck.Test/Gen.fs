@@ -302,7 +302,9 @@ module Gen =
     
     [<Property>]
     let ``ScaleSize works`` (PositiveInt size) =
-        Gen.scaleSize (fun n -> n / 10) Arb.generate<int>
+        ArbMap.defaults
+        |> ArbMap.generate<int>
+        |> Gen.scaleSize (fun n -> n / 10) 
         |> Gen.sampleWithSize size 100 
         |> Array.forall (fun i -> i <= size / 10)
         |> assertTrue
@@ -314,7 +316,7 @@ module Gen =
 
     [<Fact>]
     let ``should support null as a shrunk value even without AllowNullLiteral (for C# compatibility)``() =
-        let der = Arb.Default.Derive()
+        let der = ArbMap.defaults |> ArbMap.arbitrary
         let mhn = { MightBeNull = { SomeField = 5 } }
         let prop = mhn.GetType().GetProperty("MightBeNull", BindingFlags.Public ||| BindingFlags.Instance)
         prop.SetValue(mhn, null)
@@ -326,7 +328,9 @@ module Gen =
     [<Fact>]
     let ``should generate functions from null``() =
         let generated =
-            Arb.generate<unit->int>
+            // fsharplint:disable-next-line Hints
+            ArbMap.defaults
+            |> ArbMap.generate<unit->int>
             |> sample1
             |> List.replicate 10
             |> List.map ((|>) ())
@@ -338,7 +342,9 @@ module Gen =
     [<Fact>]
     let ``should generate pure functions``() =
          let generated =
-             Arb.generate<int->int>
+             // fsharplint:disable-next-line Hints
+             ArbMap.defaults
+             |> ArbMap.generate<int->int>
              |> sample1
              |> List.replicate 10
              |> List.map ((|>) 2)
@@ -350,8 +356,8 @@ module Gen =
     type FunctorLaws<'a,'b,'c when 'a:equality and 'b :equality and 'c:equality> =
         static member Identity (x :'a) =
             let x' =  Gen.constant x
-            let a = sample 10 (id x')
-            let b = Array.replicate 10 (id x)
+            let a = sample 10 (id x') // fsharplint:disable-line Hints
+            let b = Array.replicate 10 (id x) // fsharplint:disable-line Hints
             a = b
 
         static member Distribution (x:'a) (f:'b ->'c) (g:'a->'b) =
@@ -464,9 +470,9 @@ module Gen =
         // type Tree = T of Tree * Tree |  Branch of int
         // whereas as the example demonstrates recursion can be
         // more involved.
-        let r1 = Gen.sampleWithSize 100 100 (Arb.Default.Derive<MyRecord>().Generator)
-        let r2 = Gen.sampleWithSize 100 100 (Arb.Default.Derive<MyUnion>().Generator)
-        let r3 = Gen.sampleWithSize 100 100 (Arb.Default.Derive<MyOtherUnion>().Generator)
+        let r1 = Gen.sampleWithSize 100 100 (ArbMap.defaults.ArbFor<MyRecord>().Generator)
+        let r2 = Gen.sampleWithSize 100 100 (ArbMap.defaults.ArbFor<MyUnion>().Generator)
+        let r3 = Gen.sampleWithSize 100 100 (ArbMap.defaults.ArbFor<MyOtherUnion>().Generator)
         assertTrue ( r1.Length + r2.Length + r3.Length = 300 )
 
 
@@ -487,8 +493,8 @@ module Gen =
     type 'a NestedOptions = 'a option option option option
 
     type 'a Wrapper = { WrappedField : 'a }
-    type NestedStructure = { subField : int }
-    type NestedOptionStructure = { field : NestedStructure option }
+    type NestedStructure = { SubField : int }
+    type NestedOptionStructure = { Field : NestedStructure option }
 
     module SomeAmbiguity =
         type 'a RecordWithFieldNamedSome = { Some : 'a }
@@ -502,30 +508,30 @@ module Gen =
     [<Fact>]
     let ``generate FSharpLu test types``() =
         let times = 10000
-        let r = Gen.sample times Arb.generate<ComplexDu>
-        let r = Gen.sample times Arb.generate<ComplexDu RecursiveList>
-        let r = Gen.sample times Arb.generate<WithFields>
-        let r = Gen.sample times Arb.generate<SimpleDu>
-        let r = Gen.sample times Arb.generate<ComplexDu>
-        let r = Gen.sample times Arb.generate<OptionOfBase>
-        let r = Gen.sample times Arb.generate<OptionOfDu>
-        let r = Gen.sample times Arb.generate<Color>
-        let r = Gen.sample times Arb.generate<Shape>
-        let r = Gen.sample times Arb.generate<int Tree>
-        let r = Gen.sample times Arb.generate<int Tree Test>
-        let r = Gen.sample times Arb.generate<int Test>
-        let r = Gen.sample times Arb.generate<int list Tree>
-        let r = Gen.sample times Arb.generate<string NestedOptions>
-        let r = Gen.sample times Arb.generate<string>
-        let r = Gen.sample times Arb.generate<string option>
-        let r = Gen.sample times Arb.generate<string option option>
-        let r = Gen.sample times Arb.generate<string option option option option>
-        let r = Gen.sample times Arb.generate<int NestedOptions>
-        let r = Gen.sample times Arb.generate<SomeAmbiguity.Ambiguous1<string>>
-        let r = Gen.sample times Arb.generate<SomeAmbiguity.Ambiguous1<SimpleDu>>
-        let r = Gen.sample times Arb.generate<NestedOptionStructure>
-        let r = Gen.sample times Arb.generate<SomeAmbiguity.Ambiguous2>
-        let r = Gen.sample times Arb.generate<SomeAmbiguity.Ambiguous3>
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<ComplexDu>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<ComplexDu RecursiveList>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<WithFields>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<SimpleDu>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<ComplexDu>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<OptionOfBase>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<OptionOfDu>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<Color>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<Shape>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<int Tree>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<int Tree Test>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<int Test>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<int list Tree>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<string NestedOptions>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<string>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<string option>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<string option option>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<string option option option option>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<int NestedOptions>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<SomeAmbiguity.Ambiguous1<string>>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<SomeAmbiguity.Ambiguous1<SimpleDu>>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<NestedOptionStructure>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<SomeAmbiguity.Ambiguous2>)
+        let r = Gen.sample times (ArbMap.defaults |> ArbMap.generate<SomeAmbiguity.Ambiguous3>)
         ()
 
     [<Fact>]

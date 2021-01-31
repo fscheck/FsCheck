@@ -136,7 +136,7 @@ module internal ReflectiveGenerator =
             box g
 
         else
-            failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing and registering a generator for it." t.FullName
+            failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing a generator for it." t.FullName
                 
     ///Build a reflection-based generator for the given Type. Since we memoize based on type, can't use a
     ///typed variant reflectGen<'a> much here, as we need to be able to partially apply on the getGenerator.

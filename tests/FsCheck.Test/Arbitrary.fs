@@ -13,8 +13,13 @@ module Arbitrary =
     open System.Net
     open System.Net.Mail
     open Helpers
-    open Arb
+
     open Swensen.Unquote
+
+    let arbitrary<'T> = ArbMap.defaults |> ArbMap.arbitrary<'T>
+    let generate<'T> = arbitrary<'T>.Generator
+    let shrink<'T> = arbitrary<'T>.Shrinker
+    
     
     [<Property>]
     let Unit() = 
@@ -170,8 +175,8 @@ module Arbitrary =
 
     [<Property>]
     let NonNull (value:NonNull<string>) = 
-        assertTrue ( generate<NonNull<string>> |> sample 10 |> Seq.forall (fun (NonNull x) -> x <> null) )
-        assertTrue ( Seq.forall (fun (NonNull x) -> x <> null) (shrink value) )
+        assertTrue ( generate<NonNull<string>> |> sample 10 |> Seq.forall (fun (NonNull x) -> not (isNull x)) )
+        assertTrue ( Seq.forall (fun (NonNull x) -> not (isNull x)) (shrink value) )
 
     [<Property>]
     let Nullable (value:Nullable<int>) =
@@ -200,8 +205,8 @@ module Arbitrary =
 
     [<Property>]
     let ``Fun pattern works``(Fun (f:bool->bool)) =
-        let _ = f true
-        let _ = f false
+        f true |> ignore
+        f false |> ignore
         ()
 
     [<Property>]
@@ -209,20 +214,20 @@ module Arbitrary =
         let exceptions : Exception list = 
             [ NullReferenceException("exc1")
               ArgumentNullException("exc2") ]
-        let catch (ThrowingFunction f) v = 
+        let catch f v = 
             try
                 f v |> ignore
             with 
             | :? NullReferenceException as e -> assertTrue (e.Message = "exc1")
             | :? ArgumentNullException as e -> assertTrue (e.ParamName = "exc2")
 
-        Prop.forAll (Arb.Default.ThrowingFunction<int,int>(exceptions)) (fun f -> vs |> Seq.iter (catch f))
+        Prop.forAll (arbitrary |> Arb.throwingFunction<int,int> exceptions) (fun f -> vs |> Seq.iter (catch f))
 
     [<Property>]
     let ``ThrowingFunction throws exceptions`` (vs:list<int>) (ThrowingFunction f) =
         let catch f v = 
             try
-                let _ : int = f v
+                f v |> ignore<int>
                 ()
             with 
             | _ -> ()
@@ -480,7 +485,7 @@ module Arbitrary =
     [<Fact>]
     let ``FsList shrunk is at minimum n-1``() =
         let prop (l:int list) = 
-            let shrunk = Arb.Default.FsList().Shrinker l |> List.ofSeq
+            let shrunk = shrink<list<int>> l |> List.ofSeq
             let result = l.Length = 0 || (shrunk |> Seq.forall (fun s -> s.Length = l.Length || s.Length = l.Length - 1))
             assertTrue result
         Check.QuickThrowOnFailure prop
@@ -675,7 +680,7 @@ module Arbitrary =
         let shrunk = shrink value
         // check that A gets smaller (length-wise)
         shrunk
-        |> Seq.forall (fun shrunkv -> shrunkv.A = null || shrunkv.A.Length = 0 || shrunkv.A.Length <= value.A.Length)
+        |> Seq.forall (fun shrunkv -> (isNull shrunkv.A) || shrunkv.A.Length = 0 || shrunkv.A.Length <= value.A.Length)
         &&
         // check that B gets smaller (in absolute value)
         shrunk
@@ -695,7 +700,7 @@ module Arbitrary =
         shrunk
         |> Seq.forall (fun shrunkv -> shrunkv.D.Count = 0 || shrunkv.D.Count <= value.D.Count)
 
-    type PrivateRecord = private { a: int; b: string }
+    type PrivateRecord = private { A: int; B: string }
 
     [<Fact>]
     let ``Derive generator for private two value record``() =

@@ -83,11 +83,11 @@ module StateMachine =
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
         { new Machine<_,_>(size) with
             member __.Setup = Gen.constant create |> Arb.fromGen
-            member __.Next _ = FaultyCmd.Arb.Generator }
+            member __.Next _ = FaultyCmd.Arb.Generator 
+            member __.ShrinkOperations s = (FaultyCmd.Arb |> Arb.list |> Arb.toShrink) s  }
 
     [<Fact>]
     let ``should check faulty command spec and find minimum counterexample``() =
-        Arb.register<FaultyCmd>() |> ignore
         let create = StateMachine.setup (fun () -> SimpleModel()) (fun () -> 0)
         let spec = checkFaultyCommandModelSpec -1
         let run = { Setup = (0,create)

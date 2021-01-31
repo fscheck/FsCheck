@@ -8,13 +8,14 @@ module Property =
     open FsCheck.FSharp
     open FsCheck.Xunit
     open System
-    open Arb
     open System.Threading.Tasks
     open Swensen.Unquote
     
     let internal curry f = fun a b -> f (a,b)
 
     let internal curry2 f = fun a b c -> f (a,b,c)
+
+    let internal generate<'T> = ArbMap.defaults |> ArbMap.generate<'T>
 
     type SymProp =  | Unit | Bool of bool | Exception
                     | ForAll of int * SymProp
