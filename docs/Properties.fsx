@@ -3,6 +3,7 @@
 #r "FsCheck"
 
 open FsCheck
+open FsCheck.FSharp
 open System
 
 (**
@@ -102,7 +103,7 @@ Properties may take the form `forAll <arbitrary>  (fun <args> -> <property>)`.
 For example, *)
 
 (***define-output:insertWithArb***)
-let orderedList = Arb.from<list<int>> |> Arb.mapFilter List.sort ordered
+let orderedList = ArbMap.defaults |> ArbMap.arbitrary<list<int>> |> Arb.mapFilter List.sort ordered
 let insertWithArb x = Prop.forAll orderedList (fun xs -> ordered(insert x xs))
 Check.Quick insertWithArb
 

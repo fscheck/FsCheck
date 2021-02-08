@@ -116,7 +116,7 @@ type Tree = Leaf of int | Branch of Tree * Tree
 then a generator for trees might be defined by*)
 
 let rec unsafeTree() = 
-  Gen.oneof [ Gen.map Leaf Arb.generate<int> 
+  Gen.oneof [ ArbMap.defaults |> ArbMap.generate<int> |> Gen.map Leaf
               Gen.map2 (fun x y -> Branch (x,y)) (unsafeTree()) (unsafeTree())]
 
 (**
@@ -133,10 +133,10 @@ recursive generators should always use the size control mechanism:*)
 let tree =
     let rec tree' s = 
         match s with
-        | 0 -> Gen.map Leaf Arb.generate<int>
+        | 0 -> ArbMap.defaults |> ArbMap.generate<int> |> Gen.map Leaf
         | n when n>0 -> 
             let subtree = tree' (n/2)
-            Gen.oneof [ Gen.map Leaf Arb.generate<int> 
+            Gen.oneof [ ArbMap.defaults |> ArbMap.generate<int> |> Gen.map Leaf
                         Gen.map2 (fun x y -> Branch (x,y)) subtree subtree]
         | _ -> invalidArg "s" "Only positive arguments are allowed"
     Gen.sized tree'
@@ -549,8 +549,8 @@ return an instance of a subclass of `Arbitrary<'a>`:*)
 type MyGenerators =
   static member Tree() =
       {new Arbitrary<Tree>() with
-          override x.Generator = tree
-          override x.Shrinker t = Seq.empty }
+          override _.Generator = tree
+          override _.Shrinker _ = Seq.empty }
 
 (**
     [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=MyGenerators]
@@ -562,20 +562,20 @@ sequence which means no shrinking will be done for this type).
 As the F# code shows, you can create your own subclass of Arbitrary and return that, or you can use one of the `Arb.from`
 methods or functions.
 
-Now, to register all Arbitrary instances in this class:*)
+Now, to make FsCheck aware of all Arbitrary instances in this class, you can add it to the Config:*)
 
-Arb.register<MyGenerators>()
+let myConfig = Config.Quick.WithArbitrary([ typeof<MyGenerators> ])
 
 (**
     [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=register]
 
-FsCheck now knows about `Tree` types, and can not only generate Tree values, but also e.g. lists, tuples and 
+If you use this config, FsCheck now knows about `Tree` types, and can not only generate Tree values, but also e.g. lists, tuples and 
 option values containing Trees:*)
 
 (***define-output:RevRevTree***)
 let revRevTree (xs:list<Tree>) = 
   List.rev(List.rev xs) = xs
-Check.Quick revRevTree
+Check.One(myConfig, revRevTree)
 
 (***include-output:RevRevTree***)
 
@@ -585,10 +585,11 @@ To generate types with a generic type argument, e.g.*)
 type Box<'a> = Whitebox of 'a | Blackbox of 'a
 
 (**
-you can use the same principle. So the class `MyGenerators` can be writtten as follows:*)
+you can use the same principle - except to write the generator and shrinker you now need an instance for whatever the generic parameter(s) will be
+when build the generator. To this end, the methods can take argument of type `Arbitrary<'T>. For example, the class `MyGenerators` can be extended as follows:*)
 
-let boxGen<'a> : Gen<Box<'a>> = 
-    gen { let! a = Arb.generate<'a>
+let boxGen<'a> (contents:Arbitrary<'a>) : Gen<Box<'a>> = 
+    gen { let! a = contents.Generator
           return! Gen.elements [ Whitebox a; Blackbox a] }
 
 type MyTreeGenerator =
@@ -596,20 +597,22 @@ type MyTreeGenerator =
         {new Arbitrary<Tree>() with
             override x.Generator = tree
             override x.Shrinker t = Seq.empty }
-    static member Box() = Arb.fromGen boxGen
+    static member Box(contents:Arbitrary<'a>) = contents |> boxGen |> Arb.fromGen
 
 (**
-Notice that we use the function `generate<'a>` from the Arb module to get the generator 
-for the type argument of `Box`. This allows you to define generators recursively. Similarly, there is 
-a function `shrink<'a>`. Look at the FsCheck source for examples of default Arbitrary implementations 
-to get a feeling of how to write such Arbitrary instances. The Arb module should help you with this task as well.
+Now, when FsCheck examines the static methods on `MyTreeGenerator`, it will "inject" the necessary `Arbitrary` instance. For example,
+if we request to generate a `Box<int>`, FsCheck first finds the `Arbitrary` instance for `int`, and then calls `MyTreeGenerator.Box` with
+that instance to get an `Arbitrary` instance for `Box<int>`. You can think of this as a parameter-driven dependency injection.
+
+This allows you to define generic generators recursively. Have a look at the FsCheck source for examples of default Arbitrary implementations 
+to get a feeling of how to write such Arbitrary instances. The Arb module or class should help you with this task as well.
 
 Now, the following property can be checked:*)
 
 (***define-output:RevRevBox***)
 let revRevBox (xs:list<Box<int>>) = 
   List.rev(List.rev xs) = xs
-Check.Quick revRevBox
+Check.One(Config.Quick.WithArbitrary([typeof<MyTreeGenerator>]), revRevBox)
 
 (***include-output:RevRevBox***)
 
