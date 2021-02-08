@@ -55,14 +55,13 @@ type EvenInt = EvenInt of int with
 
 type ArbitraryModifiers =
     static member EvenInt() = 
-        Arb.from<int> 
+        ArbMap.defaults
+        |> ArbMap.arbitrary<int> 
         |> Arb.filter (fun i -> i % 2 = 0) 
         |> Arb.convert EvenInt int
         
-Arb.register<ArbitraryModifiers>()
-
 let ``generated even ints should be even`` (EvenInt i) = i % 2 = 0
-Check.Quick ``generated even ints should be even``
+Check.One(Config.Quick.WithArbitrary([typeof<ArbitraryModifiers>]), ``generated even ints should be even``)
 
 (***include-output:EvenInt***)
 
@@ -120,7 +119,7 @@ a mutable list:*)
 let testMutableList =
     Prop.forAll (Arb.fromGen(Gen.choose (1,10))) (fun capacity -> 
         let underTest = new System.Collections.Generic.List<int>(capacity)
-        Prop.forAll Arb.from<int[]> (fun itemsToAdd ->
+        Prop.forAll (ArbMap.defaults |> ArbMap.arbitrary<int[]>) (fun itemsToAdd ->
             underTest.AddRange(itemsToAdd)
             underTest.Count = itemsToAdd.Length))
 
@@ -171,10 +170,10 @@ For io-bound work it's usually enough to set `ParallelRunConfig` to 1.
 *)
 
 Check.One(
-    Config.Quick.WithParallelRunConfig({ MaxDegreeOfParallelism = 1 } ),
+    Config.Verbose.WithParallelRunConfig({ MaxDegreeOfParallelism = 1 } ),
     fun (x:int) -> 
         async { 
-            do! Async.Sleep x
+            do! Async.Sleep (abs x)
             return true
         }
 )
