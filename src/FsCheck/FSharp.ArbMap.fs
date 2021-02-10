@@ -1,15 +1,17 @@
 ﻿namespace FsCheck.FSharp
 
 
-[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix);RequireQualifiedAccess>]
+[<RequireQualifiedAccess>]
 module ArbMap =
 
     open System
     open FsCheck
 
-    /// The immutable built-in mapping type to Arbitrary for that type.
+    /// The immutable default mapping from a type to Arbitrary for that type.
     let defaults = ArbMap(typeof<Internals.Default>) :> IArbMap // need value here, otherwise it gets rebuilt on every call to ArbMap.Default.
 
+    /// Return a new Type to Arbitrary map that merges the existing map with new Arbitrary<'T> instances
+    /// discovered on the given Type. See mergeWith<'TArb> for more info on what the shape of instancesType can be.
     let mergeWithType (instancesType: Type) (existingMap: IArbMap) =
         ArbMap(instancesType, existingMap :?> ArbMap) :> IArbMap
 
@@ -30,14 +32,3 @@ module ArbMap =
 
     let arbitrary<'T> (arbMap:IArbMap) = arbMap.ArbFor<'T>()
     let generate<'T> arbMap = (arbitrary<'T> arbMap).Generator
-
-    
-//namespace FsCheck
-
-//module ArbMapExtensions =
-
-//    type ArbMap with
-//        static member Default = FSharp.ArbMap.defaults
-//        member m.GeneratorFor<'T>() = m.ArbFor<'T>().Generator 
-    
-

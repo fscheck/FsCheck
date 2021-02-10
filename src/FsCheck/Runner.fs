@@ -290,9 +290,6 @@ module Runner =
         match state with 
         | :? ((float * Rnd) array * (int ref) * int * Gen<Shrink<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken) as state ->
             let (steps, i, iters, gen, results, ct) = state
-            //let oldValue = Arb.arbitrary.Value
-            //try
-                //Arb.arbitrary.Value <- defaultArb
             let mutable j = 0
             while (not ct.IsCancellationRequested) && j < iters do
                 j <- Threading.Interlocked.Increment (i) - 1
@@ -303,9 +300,6 @@ module Runner =
                     | OutcomeSeqOrFuture.Value xs -> results.[j] <- xs
                     | OutcomeSeqOrFuture.Future ts -> 
                         ts.ContinueWith (outcomeSeqFutureCont, (j, ct, results, iters)) |> ignore
-            //finally
-                //Arb.arbitrary.Value <- oldValue
-            
         | _ -> invalidArg "state" (sprintf "This is a bug in FsCheck, please report it. Unexpected argument: %O" state)
 
     ///Enumerates over `steps` seq publishing every item to `tpWorkerFun` via `ThreadPool.QueueUserWorkItem`
@@ -562,14 +556,8 @@ module Runner =
             _ -> false
 
     let internal check (config:Config) p = 
-        //save so we can restore after the run
-        //let defaultArbitrary = Arb.arbitrary.Value
-        //let merge newT (existingTC:TypeClass<_>) = existingTC.DiscoverAndMerge(onlyPublic=true,instancesType=newT)
-        //Arb.arbitrary.Value <- List.foldBack merge config.Arbitrary defaultArbitrary
-        //try
-            runner config (property p)
-        //finally
-            //Arb.arbitrary.Value <- defaultArbitrary
+        runner config (property p)
+
 
     let private checkMethodInfo = 
         typeof<TestStep>.DeclaringType.GetTypeInfo().DeclaredMethods 
