@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FsCheck.Fluent;
 using NUnit.Framework;
 
 namespace FsCheck.NUnit.CSharpExamples

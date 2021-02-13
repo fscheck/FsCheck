@@ -41,7 +41,8 @@ module StateMachine =
         member __.N = n
         override __.Check (a, m) = 
             a.Add n
-            if m > 2 then false.ToProperty() else true.ToProperty()
+            m <= 2
+            |> Prop.ofTestable
         override __.Run m = m + n
         override __.ToString() = "faultyInc"
 

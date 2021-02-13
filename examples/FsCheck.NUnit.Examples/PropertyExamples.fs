@@ -2,6 +2,7 @@
 
 open NUnit.Framework
 open FsCheck
+open FsCheck.FSharp
 open FsCheck.NUnit
 
 [<TestFixture>]

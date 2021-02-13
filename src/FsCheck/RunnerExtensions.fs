@@ -13,7 +13,7 @@ type ConfigExtensions =
     [<Extension>]
     ///Returns a new Config with specified EveryShrink function
     static member WithEveryShrink(config:Config, everyShrink:Func<obj array,string>) =
-        config.WithEveryShrink(fun os -> everyShrink.Invoke(List.toArray os))
+        config.WithEveryShrink (List.toArray >> everyShrink.Invoke)
 
     [<Extension>]
     ///Returns a new Config with specified Replay

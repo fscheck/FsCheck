@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FsCheck.Fluent;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FsCheck.MsTest.Examples.ClassesToTest;
 

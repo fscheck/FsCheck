@@ -25,30 +25,17 @@ module GenExtensions =
     
     [<Fact>]
     let ``SelectMany binder``() =
-        let act =
-            lazy ArbMap.Default.GeneratorFor<string>().SelectMany(
-                selector=null, 
-                resultSelector=new Func<string, string, string>((+)))
-
-        Prop.throws<ArgumentNullException, _> act
-        |> Check.QuickThrowOnFailure
+        let func = new Func<string, string, string>((+))
+        raises<ArgumentNullException>
+            <@ ArbMap.Default.GeneratorFor<string>().SelectMany(selector=null, resultSelector=func) @>
 
     [<Fact>]
     let ``SelectMany mapper``() =
-        let act = 
-            lazy ArbMap.Default.GeneratorFor<string>().SelectMany (
-                new Func<string, Gen<string>> (fun s -> Gen.Constant(s)),
-                resultSelector=null)
-
-        Prop.throws<ArgumentNullException, _> act
-        |> Check.QuickThrowOnFailure
+        let func = new Func<string, Gen<string>> (fun s -> Gen.Constant(s))
+        raises<ArgumentNullException>
+            <@ ArbMap.Default.GeneratorFor<string>().SelectMany(func, resultSelector=null) @>
 
     [<Fact>]
     let Zip () =
-        let act =
-            lazy ArbMap.Default.GeneratorFor<TimeSpan>().Zip(
-                    ArbMap.Default.GeneratorFor<TimeSpan>(), 
-                    resultSelector=null)
-
-        Prop.throws<ArgumentNullException, _> act
-        |> Check.QuickThrowOnFailure
+        raises<ArgumentNullException>
+            <@ ArbMap.Default.GeneratorFor<TimeSpan>().Zip(ArbMap.Default.GeneratorFor<TimeSpan>(), resultSelector=null) @>
