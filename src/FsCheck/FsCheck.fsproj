@@ -7,32 +7,31 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="ArbDesign.fsx" />
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Common.fs" />
+    <Compile Include="Internals.Common.fs" />
     <Compile Include="Internals.Numeric.fs" />
-    <Compile Include="Data.fs" />
+    <Compile Include="Internals.Data.fs" />
     <Compile Include="Random.fs" />
-    <Compile Include="Reflect.fs" />
-    <Compile Include="TypeClass.fs" />
+    <Compile Include="Internals.Reflect.fs" />
+    <Compile Include="Internals.TypeClass.fs" />
     <Compile Include="FSharp.Gen.fs" />
     <Compile Include="FSharp.GenBuilder.fs" />
     <Compile Include="Internals.Shrink.fs" />
-    <Compile Include="ReflectiveGenerator.fs" />
-    <Compile Include="ReflectiveShrinker.fs" />
+    <Compile Include="Internals.ReflectiveGenerator.fs" />
+    <Compile Include="Internals.ReflectiveShrinker.fs" />
     <Compile Include="FSharp.Arbitrary.fs" />
     <Compile Include="ArbMap.fs" />
     <Compile Include="DefaultArbTypes.fs" />
     <Compile Include="DefaultArbs.fs" />
     <Compile Include="FSharp.ArbMap.fs" />
     <Compile Include="Testable.fs" />
-    <Compile Include="Prop.fs" />
+    <Compile Include="FSharp.Prop.fs" />
     <Compile Include="StateMachine.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="Fluent.Gen.fs" />
     <Compile Include="Fluent.Arbitrary.fs" />
     <Compile Include="Fluent.ArbMap.fs" />
-    <Compile Include="PropExtensions.fs" />
+    <Compile Include="Fluent.Prop.fs" />
     <Compile Include="RunnerExtensions.fs" />
   </ItemGroup>
   <ItemGroup>
