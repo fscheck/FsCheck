@@ -22,7 +22,7 @@
     <Compile Include="FSharp.Arbitrary.fs" />
     <Compile Include="ArbMap.fs" />
     <Compile Include="DefaultArbTypes.fs" />
-    <Compile Include="DefaultArbs.fs" />
+    <Compile Include="Internals.DefaultArbs.fs" />
     <Compile Include="FSharp.ArbMap.fs" />
     <Compile Include="Testable.fs" />
     <Compile Include="FSharp.Prop.fs" />
