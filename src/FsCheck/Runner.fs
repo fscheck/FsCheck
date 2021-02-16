@@ -137,7 +137,6 @@ module Runner =
 
     open Microsoft.FSharp.Reflection
     open Testable
-    open FsCheck.Internals.TypeClass
    
     [<NoEquality;NoComparison>]
     type private TestStep = 
@@ -229,7 +228,7 @@ module Runner =
                 |> Gen.run size seed  
                 |> Shrink.getValue
             with :? DiscardException -> 
-                Res.rejectedV, Seq.empty
+                Res.rejected, Seq.empty
         
         seq {
             yield Run (result, size, seed)
@@ -261,7 +260,7 @@ module Runner =
         | _ ->
             seq {yield runResult} |> OutcomeSeqOrFuture.Value
 
-    let private testStep rnd (size :float) gen =
+    let private testStep rnd (size :float) (gen:Gen<Shrink<ResultContainer>>) =
             let usedSize = size |> round |> int
             let result, shrinks =
                 try
@@ -269,7 +268,7 @@ module Runner =
                     |> Gen.run usedSize rnd
                     |> Shrink.getValue
                 with :? DiscardException ->
-                    Res.rejected, Seq.empty
+                    ResultContainer.Value Res.rejected, Seq.empty
 
             match result with
             | ResultContainer.Value r -> outcomeSeq r shrinks rnd usedSize
@@ -417,7 +416,7 @@ module Runner =
         let shrinkNb = ref 0
         let tryShrinkNb = ref 0
         let origArgs = ref []
-        let lastStep = ref (Run (Res.rejectedV,-1,Rnd()))
+        let lastStep = ref (Run (Res.rejected,-1,Rnd()))
         let seed, size = match config.Replay with None -> Random.Create(), None | Some s -> s.Rnd, s.Size
         let increaseSizeStep = float (config.EndSize - config.StartSize) / float config.MaxTest
         let lastSeed = ref seed

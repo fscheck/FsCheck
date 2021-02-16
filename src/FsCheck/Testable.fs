@@ -62,17 +62,18 @@ module internal Res =
         Arguments   = []
       }
 
-    let failedBool = { result with Outcome = Outcome.Failed (exn "Expected true, got false.") } |> Value
+    let failedException e = { result with Outcome = Outcome.Failed e }
 
-    let failedException e = { result with Outcome = Outcome.Failed e } |> Value
+    let failedFalse = failedException (exn "Expected true, got false.")
 
-    let passed = { result with Outcome = Outcome.Passed } |> Value
+    let failedCancelled = failedException (exn "The Task was canceled.")
 
-    let rejected = { result with Outcome = Outcome.Rejected } |> Value
+    let passed = { result with Outcome = Outcome.Passed }
 
-    let rejectedV = { result with Outcome = Outcome.Rejected }
+    let rejected = { result with Outcome = Outcome.Rejected }
 
-    let future (t :Task<Outcome>) = t.ContinueWith (fun (x :Task<Outcome>) -> { result with Outcome = x.Result }) |> Future
+    let ofBool b = if b then passed else failedFalse
+
 
 ///A Property can be checked by FsCheck.
 type Property = private Property of (IArbMap -> Gen<Shrink<ResultContainer>>) with
@@ -98,42 +99,53 @@ module private Testable =
 
     module internal Prop = 
     
-        let ofRoseResult t : Property = Property <| fun map  -> gen { return t }
+        let ofShrinkResult t : Property = 
+            fun _  -> Gen.constant t
+            |> Property
 
         let ofResult (r:ResultContainer) : Property = 
-            ofRoseResult <| Shrink.ofValue r
+            r
+            |> Shrink.ofValue
+            |> ofShrinkResult
          
-        let ofBool b = ofResult <| if b then Res.passed else Res.failedBool
+        let ofBool b =
+            Res.ofBool b
+            |> Value
+            |> ofResult
         
-        let ofTaskBool (b:Task<bool>) = 
-            ofResult <| Res.future (b.ContinueWith (fun (x:Task<bool>) -> 
+        let ofTaskBool (b:Task<bool>) :Property = 
+            b.ContinueWith (fun (x:Task<bool>) -> 
                 match (x.IsCanceled, x.IsFaulted) with
-                    | (false,false) -> if x.Result then Outcome.Passed else Outcome.Failed <| exn "Expected true, got false."
-                    | (_,true) -> Outcome.Failed x.Exception
-                    | (true,_) -> Outcome.Failed <| exn "The Task was canceled."))
+                    | (false,false) -> Res.ofBool x.Result
+                    | (_,true) -> Res.failedException x.Exception
+                    | (true,_) -> Res.failedCancelled)
+            |> Future
+            |> ofResult
         
-        let ofTask (b:Task) = 
-            ofResult <| Res.future (b.ContinueWith (fun (x:Task) -> 
+        let ofTask (b:Task) :Property = 
+            b.ContinueWith (fun (x:Task) -> 
                 match (x.IsCanceled, x.IsFaulted) with
-                    | (false,false) -> Outcome.Passed
-                    | (_,true) -> Outcome.Failed x.Exception
-                    | (true,_) -> Outcome.Failed <| exn "The Task was canceled."))
+                    | (false,false) -> Res.passed
+                    | (_,true) -> Res.failedException x.Exception
+                    | (true,_) -> Res.failedCancelled)
+            |> Future
+            |> ofResult
 
-        let mapRoseResult (f:Shrink<ResultContainer> -> _) a = 
+        let mapShrinkResult (f:Shrink<ResultContainer> -> _) a = 
             fun arbMap -> 
                 property a 
                 |> Property.GetGen arbMap
                 |> Gen.map f
             |> Property
 
-        let mapResult f = mapRoseResult (Shrink.map f)
+        let mapResult f = mapShrinkResult (Shrink.map f)
 
         let safeForce (body:Lazy<_>) =
             try
                 property body.Value
             with
-            | :? DiscardException -> ofResult Res.rejected
-            | e -> ofResult (Res.failedException e)
+            | :? DiscardException -> Res.rejected |> Value |> ofResult
+            | e -> Res.failedException e |> Value |> ofResult
 
     let private shrinking shrink generatedValue propertyFun =
         let promoteRose (m:Shrink<Gen<'T>>) : Gen<Shrink<'T>> = 
@@ -151,12 +163,7 @@ module private Testable =
             | ResultContainer.Future t -> t.ContinueWith (fun (rt :Task<Result>) -> 
                 let r = rt.Result
                 { r with Arguments = (box a) :: r.Arguments }) |> Future
-        //safeForce (lazy ( body a )) //this doesn't work - exception escapes??
-        try 
-            body a |> property
-        with
-            | :? DiscardException -> Prop.ofResult Res.rejected
-            | e -> Prop.ofResult (Res.failedException e)
+        Prop.safeForce (lazy ( body a ))
         |> Property.GetGen arbMap
         |> Gen.map (Shrink.map (argument a))
 
@@ -183,7 +190,7 @@ module private Testable =
     type Testables with
         static member Unit() =
             { new ITestable<unit> with
-                member __.Property _ = Prop.ofResult Res.passed }
+                member __.Property _ = Prop.ofResult (Value Res.passed) }
         static member Bool() =
             { new ITestable<bool> with
                 member __.Property b = Prop.ofBool b }
