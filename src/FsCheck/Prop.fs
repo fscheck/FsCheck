@@ -6,6 +6,7 @@ module Prop =
     open Testable
     open System
     open System.ComponentModel
+    open System.Runtime.CompilerServices
 
     ///Quantified property combinator. Provide a custom test data generator to a property.
     [<CompiledName("ForAll")>]
@@ -138,6 +139,7 @@ module Prop =
         property testable
 
     [<CompiledName("Discard")>]
+    [<MethodImpl(MethodImplOptions.NoInlining)>]
     let discard() = raise DiscardException
 
 ///Operators for Prop.
