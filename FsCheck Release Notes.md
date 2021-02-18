@@ -1,3 +1,7 @@
+### 2.14.5 - 18 February 2021
+
+* Workaround for suspected F# compiler bug: prevented compiler from inlining `Prop.discard`. (by Okke Hendriks)
+
 ### 2.14.4 - 31 January 2021
 
 * Fix NullRef in `isCSharpDtoType` when a property with only a setter was encountered.
