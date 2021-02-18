@@ -139,6 +139,8 @@ module Prop =
         property testable
 
     [<CompiledName("Discard")>]
+    // Workaround to ensure function is not inlined in optimized builds causing a MethodAccessException due to the
+    // DiscardException being internal. For more details see https://github.com/fscheck/FsCheck/issues/549.
     [<MethodImpl(MethodImplOptions.NoInlining)>]
     let discard() = raise DiscardException
 
