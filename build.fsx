@@ -233,14 +233,14 @@ Target.create "Tests" ignore
 "Build"
   ==> "Docs"
 
-"Docs"
-  =?> ("ReleaseDocs", BuildServer.isLocalBuild)
-  ==> "Release"
+//"Docs"
+//  =?> ("ReleaseDocs", BuildServer.isLocalBuild)
+//  ==> "Release"
 
-"Tests"
-  ==> "PaketPack"
-  ==> "PaketPush"
-  ==> "Release"
+//"Tests"
+//  ==> "PaketPack"
+//  ==> "PaketPush"
+//  ==> "Release"
 
 "Docs"
   ==> "CI"
