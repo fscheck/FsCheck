@@ -1,4 +1,4 @@
-### 2.14.6 - To be released
+### 2.14.6 - 21 February 2021
 
 * Restrict NUnit version range to versions < 3.13.1, as that introduced an incompatibility with FsCheck.NUnit.
 
