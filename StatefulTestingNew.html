@@ -157,11 +157,16 @@ so when we run this specification we can check that FsCheck does the right thing
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs33', 99)" onmouseover="showTip(event, 'fs33', 99)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs34', 100)" onmouseover="showTip(event, 'fs34', 100)" class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs35', 101)" onmouseover="showTip(event, 'fs35', 101)" class="m">StateMachine</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs36', 102)" onmouseover="showTip(event, 'fs36', 102)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs12', 103)" onmouseover="showTip(event, 'fs12', 103)" class="id">spec</span><span class="pn">)</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (0 shrinks) (StdGen (422585270,296833866)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (1 shrink) (StdGen (2105563938,296856953)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
-(2, Setup Counter)
-inc -&gt; 3
+(3, Setup Counter)
+inc -&gt; 4
+inc -&gt; 5
+dec -&gt; 4
+
+Shrunk:
+(3, Setup Counter)
 inc -&gt; 4
 inc -&gt; 5</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence of operations that leads to it.</p>

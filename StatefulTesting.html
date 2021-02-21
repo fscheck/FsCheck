@@ -134,10 +134,10 @@ fails the test if a postcondition does not hold.</p>
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs21', 82)" onmouseover="showTip(event, 'fs21', 82)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs22', 83)" onmouseover="showTip(event, 'fs22', 83)" class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs9', 84)" onmouseover="showTip(event, 'fs9', 84)" class="m">Command</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs23', 85)" onmouseover="showTip(event, 'fs23', 85)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs7', 86)" onmouseover="showTip(event, 'fs7', 86)" class="id">spec</span><span class="pn">)</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (2 shrinks) (StdGen (410857080,296833866)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 9 tests (6 shrinks) (StdGen (2092697233,296856953)):
 Label of failing property: model: 2 &lt;&gt; Counter=1
 Original:
-[inc; inc; inc; dec; inc; dec]
+[inc; inc; inc; dec; inc; inc; dec; dec; inc; inc]
 Shrunk:
 [inc; inc; inc; dec]</code></pre></td></tr></table>
 <p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence that leads to it.</p>
