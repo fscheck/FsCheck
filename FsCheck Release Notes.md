@@ -1,3 +1,7 @@
+### 2.14.6 - To be released
+
+* Restrict NUnit version range to versions < 3.13.1, as that introduced an incompatibility with FsCheck.NUnit.
+
 ### 2.14.5 - 18 February 2021
 
 * Workaround for suspected F# compiler bug: prevented compiler from inlining `Prop.discard`. (by Okke Hendriks)
