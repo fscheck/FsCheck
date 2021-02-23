@@ -9,7 +9,7 @@ nuget FSharp.Core = 4.2.3
 nuget Unquote
 nuget xunit = 2.2
 nuget xunit.runner.visualstudio version_in_path: true
-nuget NUnit = 3.10.1
+nuget NUnit = 3.13.1
 nuget NUnit3TestAdapter version_in_path: true
 nuget MSTest.TestFramework
 nuget MSTest.TestAdapter version_in_path: true
