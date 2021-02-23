@@ -1,8 +1,8 @@
-### 2.15.0 - To be released
+### 2.15.0 - 23 February 2021
 
-* Update NUnit to 3.13.1, and set that as the lowest allowable version in FsCheck.NUnit package. Fix the ensuing
+* Updated NUnit to 3.13.1, and set that as the lowest allowable version in FsCheck.NUnit package. Fixed resulting incompatibility.
 
-* Since NUnit 3.13 no longer support netstandard 1.6, had to remove netstandard 1.6 support from FsCheck.NUnit as well.
+* Since NUnit 3.13 no longer supports netstandard 1.6, removed netstandard 1.6 support from FsCheck.NUnit as well.
 
 ### 2.14.6 - 21 February 2021
 
