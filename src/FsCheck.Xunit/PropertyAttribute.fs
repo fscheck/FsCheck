@@ -182,7 +182,11 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
         let test = new XunitTest(this, this.DisplayName)
         let summary = new RunSummary(Total = 1);
-        let outputHelper = new TestOutputHelper()
+        let outputHelper =
+            constructorArguments
+            |> Array.tryFind (fun x -> x :? TestOutputHelper)
+            |> Option.map (fun x -> x :?> TestOutputHelper)
+            |> Option.defaultValue (new TestOutputHelper())
         outputHelper.Initialize(messageBus, test)
 
         let dispose testClass =
@@ -201,11 +205,8 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                     let xunitRunner = if config.Runner :? XunitRunner then (config.Runner :?> XunitRunner) else new XunitRunner()
                     let runMethod = this.TestMethod.Method.ToRuntimeMethod()
                     let target =
-                        constructorArguments
-                            |> Array.tryFind (fun x -> x :? TestOutputHelper)
-                            |> Option.iter (fun x -> (x :?> TestOutputHelper).Initialize(messageBus, test))
                         let testClass = this.TestMethod.TestClass.Class.ToRuntimeType()
-                        if this.TestMethod.TestClass <> null && not this.TestMethod.Method.IsStatic then
+                        if (not (isNull this.TestMethod.TestClass)) && not this.TestMethod.Method.IsStatic then
                             Some (test.CreateTestClass(testClass, constructorArguments, messageBus, timer, cancellationTokenSource))
                         else None
 
@@ -234,7 +235,9 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                       outputHelper.WriteLine("Exception during test")
                       upcast new TestFailed(test, timer.Total, outputHelper.Output, ex)
 
-           
+
+            outputHelper.Uninitialize()
+
             messageBus.QueueMessage(result) |> ignore
             summary.Time <- summary.Time + result.ExecutionTime
             if not (messageBus.QueueMessage(new TestFinished(test, summary.Time, result.Output))) then
