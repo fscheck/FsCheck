@@ -1,3 +1,7 @@
+### 2.15.1 - 27 February 2021
+
+* Fixed a bug in FsCheck.Xunit: using ITestOutputHelper did not show output in `Property`-attributed tests.
+
 ### 2.15.0 - 23 February 2021
 
 * Updated NUnit to 3.13.1, and set that as the lowest allowable version in FsCheck.NUnit package. Fixed resulting incompatibility.
