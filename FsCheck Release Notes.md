@@ -61,6 +61,28 @@
 
 * Simplify sampling data: Gen.sample et al.
 
+### 2.15.1 - 27 February 2021
+
+* Fixed a bug in FsCheck.Xunit: using ITestOutputHelper did not show output in `Property`-attributed tests.
+
+### 2.15.0 - 23 February 2021
+
+* Updated NUnit to 3.13.1, and set that as the lowest allowable version in FsCheck.NUnit package. Fixed resulting incompatibility.
+
+* Since NUnit 3.13 no longer supports netstandard 1.6, removed netstandard 1.6 support from FsCheck.NUnit as well.
+
+### 2.14.6 - 21 February 2021
+
+* Restrict NUnit version range to versions < 3.13.1, as that introduced an incompatibility with FsCheck.NUnit.
+
+### 2.14.5 - 18 February 2021
+
+* Workaround for suspected F# compiler bug: prevented compiler from inlining `Prop.discard`. (by Okke Hendriks)
+
+### 2.14.4 - 31 January 2021
+
+* Fix NullRef in `isCSharpDtoType` when a property with only a setter was encountered.
+
 ### 2.14.3 - 9 June 2020
 
 * Fix FsCheck.Xunit so it properly calls Dispose if the test class implements IDisposable. (by Laurence King)

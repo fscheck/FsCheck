@@ -123,7 +123,7 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
                 testResult.RecordTearDownException(x.FilterException ex)
 
     member private x.InvokeMethodIgnore mi =
-        Reflect.InvokeMethod(mi, if mi.IsStatic then null else x.Fixture) |> ignore
+        mi.Invoke(if mi.IsStatic then null else x.Fixture) |> ignore
 
     member private __.FilterException ex =
         match ex with

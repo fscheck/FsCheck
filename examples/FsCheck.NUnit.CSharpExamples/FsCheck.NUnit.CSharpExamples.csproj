@@ -8,6 +8,12 @@
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\FsCheck.NUnit\FsCheck.NUnit.fsproj" />
     <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj" />
   </ItemGroup>

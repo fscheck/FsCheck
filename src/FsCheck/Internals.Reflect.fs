@@ -16,7 +16,11 @@ module internal Reflect =
 
     let getPublicCtors (ty: Type) = ty.GetTypeInfo().DeclaredConstructors |> Seq.filter (fun c -> c.IsPublic)
 
-    let getProperties (ty: Type) = ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic)
+    let getPropertyMethod (prop:PropertyInfo) =
+        // prop.GetMethod can be null if property only has a setter
+        if isNull prop.GetMethod then prop.SetMethod else prop.GetMethod
+        
+    let getProperties (ty: Type) = ty.GetRuntimeProperties() |> Seq.filter (fun p -> let m = getPropertyMethod p in  not m.IsStatic && m.IsPublic)
 
     let isCSharpRecordType (ty: Type) = 
         let typeinfo = ty.GetTypeInfo()

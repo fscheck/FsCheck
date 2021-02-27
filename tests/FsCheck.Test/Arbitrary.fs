@@ -711,3 +711,11 @@ module Arbitrary =
     [<Fact>]
     let ``Derive generator for private two case union``() =
         generate<PrivateUnion> |> sample 10 |> ignore
+
+    [<Fact>]
+    let ``should not crash on isCSharpDto issue #545``() =
+        try
+            Check.QuickThrowOnFailure <| fun (u: UriBuilder) -> ()
+            failwith "Test should have failed because UriBuilder can not be generated"
+        with exn as e ->
+            test <@ e.InnerException.Message.Contains("is not handled automatically by FsCheck") @>
