@@ -112,7 +112,7 @@ a test passes if it does not throw. The entry point to create properties is the 
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span> xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
     .QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 16 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 23 tests.</code></pre></td></tr></table>
 <p>Such a property holds if the property after <code>==&gt;</code> holds whenever the condition does.</p>
 <p>Testing discards test cases which do not satisfy the condition. Test case generation
 continues until 100 cases which do satisfy the condition have been found, or until
@@ -130,7 +130,13 @@ example, this may limit the expressiveness of properties - consider:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 53)" onmouseover="showTip(event, 'fs21', 53)" class="fn">tooEager</span> <span onmouseout="hideTip(event, 'fs22', 54)" onmouseover="showTip(event, 'fs22', 54)" class="fn">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 55)" onmouseover="showTip(event, 'fs22', 55)" class="fn">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="pn">(</span><span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs22', 56)" onmouseover="showTip(event, 'fs22', 56)" class="fn">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs22', 57)" onmouseover="showTip(event, 'fs22', 57)" class="fn">a</span><span class="pn">)</span>
 <span onmouseout="hideTip(event, 'fs19', 58)" onmouseover="showTip(event, 'fs19', 58)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs20', 59)" onmouseover="showTip(event, 'fs20', 59)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs21', 60)" onmouseover="showTip(event, 'fs21', 60)" class="fn">tooEager</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (307299476, 296859166)):
+Original:
+0
+with exception:
+System.DivideByZeroException: Attempted to divide by zero.
+   at FSI_0019.tooEager(Int32 a)
+   at FsCheck.Testable.evaluate[a,b](FSharpFunc`2 body, a a) in C:\Users\kurts\Projects\FsCheck\src\FsCheck\Testable.fs:line 151</code></pre></td></tr></table>
 <p>Non-strict evaluation is needed here to make sure the propery is checked correctly:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs23', 61)" onmouseover="showTip(event, 'fs23', 61)" class="fn">moreLazy</span> <span onmouseout="hideTip(event, 'fs22', 62)" onmouseover="showTip(event, 'fs22', 62)" class="fn">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 63)" onmouseover="showTip(event, 'fs22', 63)" class="fn">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="pn">(</span><span class="k">lazy</span> <span class="pn">(</span><span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs22', 64)" onmouseover="showTip(event, 'fs22', 64)" class="fn">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs22', 65)" onmouseover="showTip(event, 'fs22', 65)" class="fn">a</span><span class="pn">)</span><span class="pn">)</span>
 <span onmouseout="hideTip(event, 'fs19', 66)" onmouseover="showTip(event, 'fs19', 66)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs20', 67)" onmouseover="showTip(event, 'fs20', 67)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs23', 68)" onmouseover="showTip(event, 'fs23', 68)" class="fn">moreLazy</span>
@@ -211,7 +217,7 @@ are then summarized when testing is complete.</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>Test cases for which the condition is true are classified as trivial, and the proportion of
 trivial test cases in the total is reported:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 22 tests (18% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 23 tests (34% trivial).</code></pre></td></tr></table>
 <h3><a name="Classifying-Test-Cases" class="anchor" href="#Classifying-Test-Cases">Classifying Test Cases</a></h3>
 <p>A property may take the form <code>classify &lt;condition&gt; &lt;string&gt; &lt;property&gt;</code></p>
 <p>For example,</p>
@@ -229,10 +235,10 @@ trivial test cases in the total is reported:</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>Test cases satisfying the condition are assigned the classification given, and the distribution of
 classifications is reported after testing:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 23 tests.
-39% at-tail.
-34% at-tail, at-head.
-21% at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 18 tests.
+38% at-head.
+33% at-tail, at-head.
+27% at-tail.</code></pre></td></tr></table>
 <p>Note that a test case may fall into more than one classification.</p>
 <h3><a name="Collecting-Data-Values" class="anchor" href="#Collecting-Data-Values">Collecting Data Values</a></h3>
 <p>A property may take the form <code>collect &lt;expression&gt; &lt;property&gt;</code></p>
@@ -249,12 +255,12 @@ classifications is reported after testing:</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>The argument of collect is evaluated in each test case, and the distribution of
 values is reported. The type of this argument is printed using <code>sprintf "%A"</code>:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 19 tests.
-36% 0.
-31% 1.
-15% 2.
-10% 3.
-5% 8.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 15 tests.
+46% 1.
+26% 2.
+13% 4.
+6% 5.
+6% 0.</code></pre></td></tr></table>
 <h3><a name="Combining-Observations" class="anchor" href="#Combining-Observations">Combining Observations</a></h3>
 <p>The observations described here may be combined in any way. All the observations
 of each test case are combined, and the distribution of these combinations is
@@ -273,14 +279,13 @@ reported. For example:</p>
         .Classify(xs.Concat(<span class="k">new</span> <span class="k">int</span>[] { x }).IsOrdered(), <span class="s">"at-tail"</span>)
         .Collect(<span class="s">"length "</span> <span class="o">+</span> xs.Count().ToString()))
     .QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 23 tests.
-39% 0, at-tail, at-head.
-17% 1, at-tail.
-13% 2, at-head.
-13% 1, at-head.
-8% 2, at-tail.
-4% 2.
-4% 13, at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 14 tests.
+28% 0, at-tail, at-head.
+21% 2, at-head.
+21% 1, at-tail.
+14% 5, at-head.
+7% 3, at-tail.
+7% 1, at-head.</code></pre></td></tr></table>
 <h2><a name="And-Or-and-Labels" class="anchor" href="#And-Or-and-Labels">And, Or and Labels</a></h2>
 <p>Properties may take the form</p>
 <ul>
@@ -305,11 +310,11 @@ it finds a counter-example. This takes the form: <code>&lt;string&gt; @| &lt;pro
        .And(result <span class="o">&gt;</span><span class="o">=</span> n).Label(<span class="s">"result &gt; #2"</span>)
        .And(result <span class="o">&lt;</span> m <span class="o">+</span> n).Label(<span class="s">"result not sum"</span>);
 }).QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (4 shrinks) (StdGen (1308613628, 296857775)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (StdGen (321570529, 296859166)):
 Label of failing property: result not sum
 Original:
--1
--1
+1
+0
 Shrunk:
 0
 0</code></pre></td></tr></table>
@@ -332,7 +337,7 @@ This is useful for displaying intermediate results, for example:</p>
       .And((res <span class="o">&gt;</span> n).Label(<span class="s">"lt2"</span>))
       .Label(<span class="k">string</span>.Format(<span class="s">"evidence = {0}"</span>, res));
 }).QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (1309273970, 296857775)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (StdGen (322001344, 296859166)):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1

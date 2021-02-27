@@ -105,12 +105,12 @@ FsCheck can even shrink <code>Function</code>s. For example:</p>
       <span class="k">lazy</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs20', 35)" onmouseover="showTip(event, 'fs20', 35)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 36)" onmouseover="showTip(event, 'fs21', 36)" class="id">map</span> <span onmouseout="hideTip(event, 'fs15', 37)" onmouseover="showTip(event, 'fs15', 37)" class="fn">f</span> <span onmouseout="hideTip(event, 'fs16', 38)" onmouseover="showTip(event, 'fs16', 38)" class="fn">l</span> <span class="o">=</span> <span class="pn">(</span><span class="c">(*f &lt;|*)</span> <span onmouseout="hideTip(event, 'fs20', 39)" onmouseover="showTip(event, 'fs20', 39)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs22', 40)" onmouseover="showTip(event, 'fs22', 40)" class="id">head</span> <span onmouseout="hideTip(event, 'fs16', 41)" onmouseover="showTip(event, 'fs16', 41)" class="fn">l</span><span class="pn">)</span> <span class="uc">::</span> <span onmouseout="hideTip(event, 'fs20', 42)" onmouseover="showTip(event, 'fs20', 42)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 43)" onmouseover="showTip(event, 'fs21', 43)" class="id">map</span> <span onmouseout="hideTip(event, 'fs15', 44)" onmouseover="showTip(event, 'fs15', 44)" class="fn">f</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs20', 45)" onmouseover="showTip(event, 'fs20', 45)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs23', 46)" onmouseover="showTip(event, 'fs23', 46)" class="id">tail</span> <span onmouseout="hideTip(event, 'fs16', 47)" onmouseover="showTip(event, 'fs16', 47)" class="fn">l</span><span class="pn">)</span><span class="pn">)</span>
 <span onmouseout="hideTip(event, 'fs11', 48)" onmouseover="showTip(event, 'fs11', 48)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs12', 49)" onmouseover="showTip(event, 'fs12', 49)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs13', 50)" onmouseover="showTip(event, 'fs13', 50)" class="fn">mapRec</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (1387126108, 296857775)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (StdGen (401259927, 296859166)):
 Original:
-{ 0-&gt;3; 1-&gt;2 }
-[1]
+{ 0-&gt;2; 1-&gt;3 }
+[1; 1]
 Shrunk:
-{ 0-&gt;3; 1-&gt;0 }
+{ 0-&gt;2; 1-&gt;0 }
 [0]</code></pre></td></tr></table>
 <p>The type <code>Function&lt;'a,'b&gt;</code> - here deconstructed using the single case active pattern <code>Fun</code> -
 records a map of all the arguments it was called with, and the result it produced.
@@ -149,13 +149,13 @@ define your own labelling equality combinator:</p>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs37', 85)" onmouseover="showTip(event, 'fs37', 85)" class="fn">testCompare</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs25', 86)" onmouseover="showTip(event, 'fs25', 86)" class="fn">i</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs5', 87)" onmouseover="showTip(event, 'fs5', 87)" class="vt">int</span><span class="pn">)</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs38', 88)" onmouseover="showTip(event, 'fs38', 88)" class="fn">j</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs5', 89)" onmouseover="showTip(event, 'fs5', 89)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs25', 90)" onmouseover="showTip(event, 'fs25', 90)" class="fn">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs38', 91)" onmouseover="showTip(event, 'fs38', 91)" class="fn">j</span><span class="o">-</span><span class="n">1</span>
 <span onmouseout="hideTip(event, 'fs11', 92)" onmouseover="showTip(event, 'fs11', 92)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs12', 93)" onmouseover="showTip(event, 'fs12', 93)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs37', 94)" onmouseover="showTip(event, 'fs37', 94)" class="fn">testCompare</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (StdGen (1387986049, 296857775)):
-Label of failing property: 3 = -1
+<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (2 shrinks) (StdGen (402101426, 296859166)):
+Label of failing property: 1 = -1
 Original:
-2
 1
+3
 Shrunk:
-1
+0
 0</code></pre></td></tr></table>
 <p>Of course, you can do this for any operator or function that you often use.</p>
 <h2><a name="Some-ways-to-run-FsCheck-tests" class="anchor" href="#Some-ways-to-run-FsCheck-tests">Some ways to run FsCheck tests</a></h2>

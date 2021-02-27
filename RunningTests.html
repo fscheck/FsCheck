@@ -144,9 +144,9 @@ configuration.QuietOnSuccess <span class="o">=</span> <span class="k">true</span
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 5 tests (3 shrinks) (StdGen (1335675694, 296857775)):
+ListProperties.reverse is original-Falsifiable, after 3 tests (3 shrinks) (StdGen (349369725, 296859166)):
 Original:
-[-2; -1; 0; -1]
+[0; -1; 0; 2]
 Shrunk:
 [0; 1]</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
