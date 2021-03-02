@@ -20,6 +20,7 @@
     <Compile Include="Property.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="StateMachine.fs" />
+    <Compile Include="VerifyGen.fs" />
     <None Include="paket.references" />
     <Content Include="App.config" />
   </ItemGroup>

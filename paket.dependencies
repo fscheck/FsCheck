@@ -13,6 +13,8 @@ nuget Microsoft.NET.Test.Sdk
 nuget xunit
 nuget xunit.runner.visualstudio
 
+nuget Verify.Xunit
+
 nuget NUnit
 nuget NUnit3TestAdapter
 

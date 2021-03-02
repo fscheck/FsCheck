@@ -171,3 +171,6 @@ project.lock.json
 .fsdocs/
 output/
 tmp/
+
+
+*.received.txt
