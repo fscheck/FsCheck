@@ -19,6 +19,8 @@ module VerifyGen =
     
     let sample g = g |> Gen.sampleWithSeed seed size nbSamples
 
+    let sampleSmall g = g |> Gen.sampleWithSeed seed (size/2) (nbSamples/2)
+
     let verify (anything:'T) =
         // Verify doesn't return a Task, exactly, it returns an awaitable.
         // But xunit requires a Task back. In C# you can just await it.
@@ -61,29 +63,69 @@ module VerifyGen =
         |> Gen.listOf
         |> verifyGen
 
+    type ShrinkVerify<'T> =
+        { Original: 'T // original value that is being shrunk
+          Success: array<'T> // array of shrinks, assuming all shrinks succeed
+          Fail: array<'T> // array of shrinks, assuming all shrinks fail
+        }
+
+    let verifyArb (arb:Arbitrary<'T>) =
+        let samples = arb.Generator |> sampleSmall
+        samples
+        |> Array.map(fun sample ->
+            let success = ResizeArray<'T>()
+            let mutable next = arb.Shrinker sample |> Seq.tryHead
+            while next.IsSome do
+                success.Add(next.Value)
+                next <- arb.Shrinker next.Value |> Seq.tryHead
+
+            let fail = arb.Shrinker sample |> Seq.toArray
+            { Original = sample
+              Success = success.ToArray()
+              Fail = fail
+            }
+        )
+        |> verify
+
+    [<Fact>]
+    let ``Int32``() =
+        ArbMap.defaults
+        |> ArbMap.arbitrary<Int32>
+        |> verifyArb
+
     [<Fact>]
     let ``Double``() =
         ArbMap.defaults
-        |> ArbMap.generate<Double>
-        |> verifyGen
+        |> ArbMap.arbitrary<Double>
+        |> verifyArb
+
+    [<Fact>]
+    let ``Array of Int32``() =
+        ArbMap.defaults
+        |> ArbMap.arbitrary<array<int>>
+        |> verifyArb
 
     [<Fact>]
     let ``String``() =
         ArbMap.defaults
-        |> ArbMap.generate<String>
-        |> verifyGen
+        |> ArbMap.arbitrary<String>
+        |> verifyArb
 
     [<Fact>]
     let ``DateTimeOffset``() =
         ArbMap.defaults
-        |> ArbMap.generate<DateTimeOffset>
-        |> verifyGen
+        |> ArbMap.arbitrary<DateTimeOffset>
+        |> verifyArb
 
     [<Fact>]
     let ``Map int,char``() =
         ArbMap.defaults
-        |> ArbMap.generate<Map<int,char>>
-        |> verifyGen
+        |> ArbMap.arbitrary<Map<int,char>>
+        |> verifyArb
+
+
+
+
 
         
 // without this, attribute Verify refuses to work.

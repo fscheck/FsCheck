@@ -1,0 +1,131 @@
+[
+  {
+    Original: -9,
+    Success: [
+      9,
+      0
+    ],
+    Fail: [
+      9,
+      0,
+      -5,
+      -7,
+      -8
+    ]
+  },
+  {
+    Original: -22,
+    Success: [
+      22,
+      0
+    ],
+    Fail: [
+      22,
+      0,
+      -11,
+      -17,
+      -20,
+      -21
+    ]
+  },
+  {
+    Original: 6,
+    Success: [
+      0
+    ],
+    Fail: [
+      0,
+      3,
+      5
+    ]
+  },
+  {
+    Original: -3,
+    Success: [
+      3,
+      0
+    ],
+    Fail: [
+      3,
+      0,
+      -2
+    ]
+  },
+  {
+    Original: 12,
+    Success: [
+      0
+    ],
+    Fail: [
+      0,
+      6,
+      9,
+      11
+    ]
+  },
+  {
+    Original: -21,
+    Success: [
+      21,
+      0
+    ],
+    Fail: [
+      21,
+      0,
+      -11,
+      -16,
+      -19,
+      -20
+    ]
+  },
+  {
+    Original: 13,
+    Success: [
+      0
+    ],
+    Fail: [
+      0,
+      7,
+      10,
+      12
+    ]
+  },
+  {
+    Original: -4,
+    Success: [
+      4,
+      0
+    ],
+    Fail: [
+      4,
+      0,
+      -2,
+      -3
+    ]
+  },
+  {
+    Original: 9,
+    Success: [
+      0
+    ],
+    Fail: [
+      0,
+      5,
+      7,
+      8
+    ]
+  },
+  {
+    Original: 22,
+    Success: [
+      0
+    ],
+    Fail: [
+      0,
+      11,
+      17,
+      20,
+      21
+    ]
+  }
+]
