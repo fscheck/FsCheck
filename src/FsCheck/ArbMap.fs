@@ -35,7 +35,7 @@ type internal ArbMap internal (typ: Type, ?existingMap: ArbMap) as this =
         member _.ArbFor t =
             result.GetInstance t
             |> unbox<IArbitrary>
-            |> (fun arb -> Arb.fromGenShrink (arb.GeneratorObj, arb.ShrinkerObj))
+            |> (fun arb -> arb.ArbitraryObj)
 
         member _.ArbFor<'TArb>() =
             result.InstanceFor<'TArb, Arbitrary<'TArb>>()

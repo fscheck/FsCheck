@@ -31,4 +31,3 @@ module ArbMap =
  
 
     let arbitrary<'T> (arbMap:IArbMap) = arbMap.ArbFor<'T>()
-    let generate<'T> arbMap = (arbitrary<'T> arbMap).Generator

@@ -9,6 +9,11 @@ type Shrink<'T> = private ShrinkTree of Lazy<'T> * seq<Shrink<'T>>
 
 module internal Shrink =
 
+
+    /// Evaluate the top value in the shrink tree, and return it, as well
+    /// as the rest of the Shrinks
+    let getValue (ShrinkTree (Lazy v,t)) = (v, t)
+
     /// Creates a Shrink<'T> for the given value with no shrinks.
     let ofValue x = ShrinkTree(lazy (x), Seq.empty)
 
@@ -18,7 +23,7 @@ module internal Shrink =
     /// Creates a Shrink<T> from the given shrink function. Also
     /// applies the given function f to each shrink (in one function for
     /// performance reasons, otherwise equivalent to ofShrinker shrink x |> map f).
-    let ofShrinker shrink x (f:'T -> 'U) =
+    let ofShrinker shrink (f:'T -> 'U) x =
         //cache is important here to avoid re-evaluation of property
         let rec buildTree x = ShrinkTree (lazy (f x), shrink x |> Seq.map buildTree |> Seq.cache)
         buildTree x
@@ -29,7 +34,22 @@ module internal Shrink =
     let rec map2 (f: 'T1 -> 'T2 -> 'U) r1 r2 =
         let (ShrinkTree (v1, s1)) = r1
         let (ShrinkTree (v2, s2)) = r2
-        ShrinkTree(lazy (f v1.Value v2.Value), Seq.map2 (map2 f) s1 s2)
+        ShrinkTree(
+            lazy (f v1.Value v2.Value),
+            seq {
+                for left in s1 do
+                    yield! s2 |> Seq.map (map2 f left)
+                for right in s2 do
+                    yield! s1 |> Seq.map (fun l -> map2 f l right) })
+        //Seq.map2 (map2 f) s1 s2)
+
+    let rec filter (f: 'T -> bool) (ShrinkTree (x,rs)) =
+        ShrinkTree (x, 
+            seq {
+                for (ShrinkTree (y,ts)) in rs do
+                    if f y.Value then
+                        for t in ts do
+                            yield filter f t })
 
     let rec join (ShrinkTree (r, tts)): Shrink<'T> =
         // Note 1: we can't pattern match as follows, as this will result in evaluation:
@@ -39,26 +59,50 @@ module internal Shrink =
         //         shrink inner quantification can done like: ShrinkTree (x,(Seq.append ts (Seq.map join tts)))
         let x =
             lazy (let (ShrinkTree (x, _)) = r.Value in x.Value)
-
         let ts =
             Seq.append
                 (Seq.map join tts)
-                (match r with
-                 | (Lazy (ShrinkTree (_, ts))) -> ts)
-
+                (match r with (Lazy (ShrinkTree (_, ts))) -> ts)
         ShrinkTree(x, ts)
 
-    let bind m (k: 'T -> Shrink<'U>) = map k m |> join
+    let bind (k: 'T -> Shrink<'U>) m = map k m |> join
 
-    /// Evaluate the top value in the shrink tree, and return it, as well
-    /// as the rest of the Shrinks
-    let getValue (ShrinkTree (Lazy v,t)) = (v, t)
+    /// Same as bind, but shrinks inner bind first.
+    let internal bindInner (k: 'T -> Shrink<'U>) m =
+        let rec joinInner (ShrinkTree (r,tts)) =
+            let x =
+                lazy (let (ShrinkTree (x, _)) = r.Value in x.Value)
+            let ts =
+                Seq.append
+                    (match r with (Lazy (ShrinkTree (_, ts))) -> ts)
+                    (Seq.map join tts)
+            ShrinkTree(x, ts)
+
+        map k m |> joinInner
+
+    let rec collectToList (f:'T->Shrink<'U>) (source: seq<'T>) :Shrink<list<'U>> =
+        let s = source |> Seq.map f |> Seq.toList
+        let rec shrinkTreeList (l:list<Shrink<'U>>) =
+            match l with
+            | [] -> Seq.empty
+            | (x::xs) -> 
+                seq {
+                    let rest = xs |> List.map (getValue >> fst)
+                    let (v,vs) = x |> getValue
+                    for t in vs do
+                        yield t |> map (fun t -> t::rest)
+                    for xs' in shrinkTreeList xs do
+                        yield xs' |> map (fun xs' -> v::xs') }
+        ShrinkTree(lazy (s |> List.map (getValue >> fst)), shrinkTreeList s)
+
+    let sequenceToList (source:seq<Shrink<'T>>) =
+        collectToList id source
 
     // The sequence n-n/2^i for i starting at 1.
     // e.g. for 128: 64, 96, 112,...
     // In other words bisects the range 0..n successively, and 
     // always chooses higher number.
-    let inline private bisecIncreasing n =
+    let inline private bisectIncreasing n =
         let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
         seq { let mutable st = n / two
               while st <> LanguagePrimitives.GenericZero do
@@ -78,12 +122,12 @@ module internal Shrink =
         let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
         seq { if n < LanguagePrimitives.GenericZero then yield invert n
               if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
-              yield! bisecIncreasing n }
+              yield! bisectIncreasing n }
 
     /// A generic shrinker for unsigned numbers.
     let inline unsignedNumber n =
         seq { if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
-              yield! bisecIncreasing n }
+              yield! bisectIncreasing n }
 
     let internal date (d:DateTime) =
         if d.Kind <> DateTimeKind.Unspecified then
@@ -161,3 +205,5 @@ module internal Shrink =
         let length = arrayShorten arr
         let elements = arrayElements elementShrink arr
         Seq.append length elements
+
+

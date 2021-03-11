@@ -426,7 +426,7 @@ module Runner =
                 parallelTest config 
             else 
                 test size.IsSome
-        testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen config.ArbMap)
+        testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen config.ArbMap |> Arb.unArb)
         |> Seq.takeWhile (fun step ->
             match step with
                 | Run (result,s,seed) ->

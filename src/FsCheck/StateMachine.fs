@@ -127,67 +127,67 @@ type MachineRun<'Actual, 'Model> =
 // ------------- create Machine from class definition ----------
 
 
-type ObjectMachineModel = OperationResult<obj> * OperationResult<obj> * string //objectUndertest * operationResult * methodname
+//type ObjectMachineModel = OperationResult<obj> * OperationResult<obj> * string //objectUndertest * operationResult * methodname
 
-type New<'Actual>(ctor:ConstructorInfo, parameters:array<obj>) =
-    inherit Setup<'Actual,ObjectMachineModel>()
-    let paramstring = 
-        parameters
-        |> Seq.map (sprintf "%O") 
-        |> String.concat ", "
-    override __.Actual() = ctor.Invoke parameters :?> 'Actual
-    override __.Model() = 
-        let result = OperationResult()
-        let str = sprintf "let %O = new %s(%s)" result typeof<'Actual>.Name paramstring
-        (result, result, str)
+//type New<'Actual>(ctor:ConstructorInfo, parameters:array<obj>) =
+//    inherit Setup<'Actual,ObjectMachineModel>()
+//    let paramstring = 
+//        parameters
+//        |> Seq.map (sprintf "%O") 
+//        |> String.concat ", "
+//    override __.Actual() = ctor.Invoke parameters :?> 'Actual
+//    override __.Model() = 
+//        let result = OperationResult()
+//        let str = sprintf "let %O = new %s(%s)" result typeof<'Actual>.Name paramstring
+//        (result, result, str)
 
-type MethodCall<'Actual>(meth:MethodInfo, parameters:array<obj>) =
-    inherit Operation<'Actual,ObjectMachineModel>()
-    let paramstring = 
-                  parameters
-                  |> Seq.map (sprintf "%O") 
-                  |> String.concat ", " 
-    override __.Run ((objectUnderTest, _, _)) =
-        let result = OperationResult()
-        let str = sprintf "let %O = %O.%s(%s)" result objectUnderTest meth.Name paramstring
-        objectUnderTest, result, str
-    override op.Check(actual, (_, operationResult, _)) =
-        let result = lazy let result = meth.Invoke(actual, parameters)
-                          operationResult.V op = result 
-        Prop.ofTestable result //basically just check it doesn't throw
-    override __.ToString() =
-        sprintf "%s(%s)" meth.Name paramstring
+//type MethodCall<'Actual>(meth:MethodInfo, parameters:array<obj>) =
+//    inherit Operation<'Actual,ObjectMachineModel>()
+//    let paramstring = 
+//                  parameters
+//                  |> Seq.map (sprintf "%O") 
+//                  |> String.concat ", " 
+//    override __.Run ((objectUnderTest, _, _)) =
+//        let result = OperationResult()
+//        let str = sprintf "let %O = %O.%s(%s)" result objectUnderTest meth.Name paramstring
+//        objectUnderTest, result, str
+//    override op.Check(actual, (_, operationResult, _)) =
+//        let result = lazy let result = meth.Invoke(actual, parameters)
+//                          operationResult.V op = result 
+//        Prop.ofTestable result //basically just check it doesn't throw
+//    override __.ToString() =
+//        sprintf "%s(%s)" meth.Name paramstring
 
-type DisposeCall<'Actual>() =
-    inherit TearDown<'Actual>()
-    override __.Actual actual = match box actual with :? IDisposable as d -> d.Dispose() | _ -> ()
-    override __.ToString() = if typeof<IDisposable>.GetTypeInfo().IsAssignableFrom (typeof<'Actual>.GetTypeInfo()) then sprintf "Dispose" else "Nothing"
+//type DisposeCall<'Actual>() =
+//    inherit TearDown<'Actual>()
+//    override __.Actual actual = match box actual with :? IDisposable as d -> d.Dispose() | _ -> ()
+//    override __.ToString() = if typeof<IDisposable>.GetTypeInfo().IsAssignableFrom (typeof<'Actual>.GetTypeInfo()) then sprintf "Dispose" else "Nothing"
 
-type ObjectMachine<'Actual>(arbMap: IArbMap, ?methodFilter: MethodInfo -> bool) = 
-    inherit Machine<'Actual,ObjectMachineModel>()
-    static let skipMethods = [ "GetType"; "Finalize"; "MemberwiseClone"; "Dispose"; "System-IDisposable-Dispose"] |> Set.ofList
-    let methodFilter = defaultArg methodFilter (fun mi -> not <| Set.contains mi.Name skipMethods)
-    let parameterGenerator (parameters:seq<ParameterInfo>) =
-        parameters |> Gen.collectToArray (fun p -> (arbMap.ArbFor p.ParameterType).Generator)
+//type ObjectMachine<'Actual>(arbMap: IArbMap, ?methodFilter: MethodInfo -> bool) = 
+//    inherit Machine<'Actual,ObjectMachineModel>()
+//    static let skipMethods = [ "GetType"; "Finalize"; "MemberwiseClone"; "Dispose"; "System-IDisposable-Dispose"] |> Set.ofList
+//    let methodFilter = defaultArg methodFilter (fun mi -> not <| Set.contains mi.Name skipMethods)
+//    let parameterGenerator (parameters:seq<ParameterInfo>) =
+//        parameters |> Gen.collectToArray (fun p -> (arbMap.ArbFor p.ParameterType).Generator)
 
-    let ctors = 
-        typeof<'Actual>.GetTypeInfo().DeclaredConstructors
-        |> Seq.map (fun ctor -> 
-                        gen { let! parameters = parameterGenerator (ctor.GetParameters())
-                              return New<'Actual>(ctor, parameters) :> Setup<'Actual,ObjectMachineModel> })
-        |> Gen.oneof
+//    let ctors = 
+//        typeof<'Actual>.GetTypeInfo().DeclaredConstructors
+//        |> Seq.map (fun ctor -> 
+//                        gen { let! parameters = parameterGenerator (ctor.GetParameters())
+//                              return New<'Actual>(ctor, parameters) :> Setup<'Actual,ObjectMachineModel> })
+//        |> Gen.oneof
 
-    let instanceMethods =
-        typeof<'Actual>.GetRuntimeMethods()
-        |> Seq.filter methodFilter
-        |> Seq.map (fun meth -> 
-                        gen { let! parameters = parameterGenerator (meth.GetParameters())
-                              return MethodCall<'Actual>(meth, parameters) :> Operation<'Actual,ObjectMachineModel> })
-        |> Gen.oneof
+//    let instanceMethods =
+//        typeof<'Actual>.GetRuntimeMethods()
+//        |> Seq.filter methodFilter
+//        |> Seq.map (fun meth -> 
+//                        gen { let! parameters = parameterGenerator (meth.GetParameters())
+//                              return MethodCall<'Actual>(meth, parameters) :> Operation<'Actual,ObjectMachineModel> })
+//        |> Gen.oneof
 
-    override __.Setup = ctors |> Arb.fromGen
-    override __.TearDown = upcast DisposeCall<'Actual>()
-    override __.Next _ = instanceMethods
+//    override __.Setup = ctors |> Arb.fromGen
+//    override __.TearDown = upcast DisposeCall<'Actual>()
+//    override __.Next _ = instanceMethods
 
 module StateMachine =
     open System
@@ -242,114 +242,114 @@ module StateMachine =
     let operationAction<'Actual,'Model> name (runModel:Func<'Model,_>) (check:Action<'Actual,_>) =
         operation name runModel.Invoke (fun (a,b) -> Prop.ofTestable <| check.Invoke(a,b))
 
-    [<CompiledName("Generate")>]
-    let generate (spec:Machine<'Actual,'Model>) = 
-        let rec genCommandsS state size =
-            gen {
-                if size > 0 then
-                    let nextOperation = spec.Next state
-                    let! command = nextOperation |> Gen.tryWhere (fun operation -> operation.Pre state)
-                    if Option.isNone command || command.Value.GetType() = typeof<StopOperation<'Actual,'Model>> then 
-                        return [state],[]
-                    else
-                        let! states, commands = genCommandsS (command.Value.Run state) (size-1)
-                        return state :: states, command.Value :: commands
-                else
-                    return [state],[]
-            }
-        Gen.sized (fun size ->
-            gen { let! setup = spec.Setup |> Arb.toGen
-                  let initialModel = setup.Model()
-                  let maxNum = spec.MaxNumberOfCommands
-                  let usedSize = if maxNum < 0 then size else maxNum 
-                  let! models,operations = genCommandsS initialModel usedSize
-                  return { Setup = initialModel, setup
-                           Operations = List.zip operations (List.tail models) //first state is actually the initial state; so drop it.
-                           TearDown = spec.TearDown
-                           UsedSize = usedSize }
-            })
+    //[<CompiledName("Generate")>]
+    //let generate (spec:Machine<'Actual,'Model>) = 
+    //    let rec genCommandsS state size =
+    //        gen {
+    //            if size > 0 then
+    //                let nextOperation = spec.Next state
+    //                let! command = nextOperation |> Gen.tryWhere (fun operation -> operation.Pre state)
+    //                if Option.isNone command || command.Value.GetType() = typeof<StopOperation<'Actual,'Model>> then 
+    //                    return [state],[]
+    //                else
+    //                    let! states, commands = genCommandsS (command.Value.Run state) (size-1)
+    //                    return state :: states, command.Value :: commands
+    //            else
+    //                return [state],[]
+    //        }
+    //    Gen.sized (fun size ->
+    //        gen { let! setup = spec.Setup |> Arb.toGen
+    //              let initialModel = setup.Model()
+    //              let maxNum = spec.MaxNumberOfCommands
+    //              let usedSize = if maxNum < 0 then size else maxNum 
+    //              let! models,operations = genCommandsS initialModel usedSize
+    //              return { Setup = initialModel, setup
+    //                       Operations = List.zip operations (List.tail models) //first state is actually the initial state; so drop it.
+    //                       TearDown = spec.TearDown
+    //                       UsedSize = usedSize }
+    //        })
 
-    [<CompiledName("Shrink")>]
-    let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
-        let runModels initial (operations:seq<Operation<'Actual,'Model>>) =
-            let addProvided (set:HashSet<_>) (op:IOperation) =
-                set.UnionWith op.Provides
-                set
-            let hasNeeds (op:IOperation) (provided:HashSet<_>) =
-                let r = provided.IsSupersetOf op.Needs
-                r
+    //[<CompiledName("Shrink")>]
+    //let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
+    //    let runModels initial (operations:seq<Operation<'Actual,'Model>>) =
+    //        let addProvided (set:HashSet<_>) (op:IOperation) =
+    //            set.UnionWith op.Provides
+    //            set
+    //        let hasNeeds (op:IOperation) (provided:HashSet<_>) =
+    //            let r = provided.IsSupersetOf op.Needs
+    //            r
 
-            operations
-            |> Seq.scan (fun (provided, _, Lazy model) operation -> 
-                 if hasNeeds operation provided && operation.Pre model then
-                    addProvided provided operation, Some operation, lazy operation.Run model
-                 else 
-                    provided, None, lazy model)
-                (HashSet<IOperationResult>(), 
-                 None,
-                 lazy initial)
-            |> Seq.choose (fun (_, op, Lazy model) -> op |> Option.map (fun op -> (op,model)))
-            //|> Seq.distinct
+    //        operations
+    //        |> Seq.scan (fun (provided, _, Lazy model) operation -> 
+    //             if hasNeeds operation provided && operation.Pre model then
+    //                addProvided provided operation, Some operation, lazy operation.Run model
+    //             else 
+    //                provided, None, lazy model)
+    //            (HashSet<IOperationResult>(), 
+    //             None,
+    //             lazy initial)
+    //        |> Seq.choose (fun (_, op, Lazy model) -> op |> Option.map (fun op -> (op,model)))
+    //        //|> Seq.distinct
 
-        let chooseModels setup operations =
-            let initialModel = fst setup
-            let transitions = runModels initialModel operations |> Seq.toList
-            //printf "transitions %A" transitions
-            let ok = not <| List.isEmpty transitions
-            if ok then 
-                Some { run with Operations = transitions; Setup = setup } 
-            else 
-                None 
+    //    let chooseModels setup operations =
+    //        let initialModel = fst setup
+    //        let transitions = runModels initialModel operations |> Seq.toList
+    //        //printf "transitions %A" transitions
+    //        let ok = not <| List.isEmpty transitions
+    //        if ok then 
+    //            Some { run with Operations = transitions; Setup = setup } 
+    //        else 
+    //            None 
 
-        //try to shrink the list of operations
-        let shrinkOps =
-            run.Operations 
-            |> List.map fst
-            |> spec.ShrinkOperations
-            |> Seq.choose (chooseModels run.Setup)
+    //    //try to shrink the list of operations
+    //    let shrinkOps =
+    //        run.Operations 
+    //        |> List.map fst
+    //        |> spec.ShrinkOperations
+    //        |> Seq.choose (chooseModels run.Setup)
 
-        //try to shrink the initial setup state
-        let shrinkSetup =
-            Arb.toShrink spec.Setup (snd run.Setup) 
-            |> Seq.choose (fun setup -> chooseModels (setup.Model(),setup) (List.map fst run.Operations))
+    //    //try to shrink the initial setup state
+    //    let shrinkSetup =
+    //        Arb.toShrink spec.Setup (snd run.Setup) 
+    //        |> Seq.choose (fun setup -> chooseModels (setup.Model(),setup) (List.map fst run.Operations))
 
-        Seq.append shrinkOps shrinkSetup
+    //    Seq.append shrinkOps shrinkSetup
         
-    /// Check one run, i.e. create a property from a single run.
-    [<CompiledName("ForOne")>]
-    let forOne { Setup = _:'Model,setup; Operations = operations; TearDown = teardown; UsedSize = usedSize } =
-            let rec run actual (operations:list<Operation<'Actual,'Model> * _>) property =
-                match operations with
-                | [] -> teardown.Actual actual; property
-                | ((op,model)::ops) -> 
-                    (op :> IOperation).ClearDependencies() //side-effect :(
-                    let prop = op.Check(actual, model)
-                    run actual ops (property .&. prop) //not great: should stop generating once error is found
-            let prop = run (setup.Actual()) operations (Prop.ofTestable true)
-            let l = operations.Length
-            prop |> Prop.trivial (l = 0)
-                 |> Prop.classify (l > 1 && l <= 6) "short sequences (between 1-6 commands)"
-                 |> Prop.classify (l > 6) "long sequences (>6 commands)"
-                 |> Prop.classify (-1 <> usedSize && l < usedSize) "aborted sequences"
-                 |> Prop.classify (-1 <> usedSize && l > usedSize) "longer than used size sequences (should not occur)"
-                 |> Prop.classify (-1 = usedSize) "artificial sequences"
+    ///// Check one run, i.e. create a property from a single run.
+    //[<CompiledName("ForOne")>]
+    //let forOne { Setup = _:'Model,setup; Operations = operations; TearDown = teardown; UsedSize = usedSize } =
+    //        let rec run actual (operations:list<Operation<'Actual,'Model> * _>) property =
+    //            match operations with
+    //            | [] -> teardown.Actual actual; property
+    //            | ((op,model)::ops) -> 
+    //                (op :> IOperation).ClearDependencies() //side-effect :(
+    //                let prop = op.Check(actual, model)
+    //                run actual ops (property .&. prop) //not great: should stop generating once error is found
+    //        let prop = run (setup.Actual()) operations (Prop.ofTestable true)
+    //        let l = operations.Length
+    //        prop |> Prop.trivial (l = 0)
+    //             |> Prop.classify (l > 1 && l <= 6) "short sequences (between 1-6 commands)"
+    //             |> Prop.classify (l > 6) "long sequences (>6 commands)"
+    //             |> Prop.classify (-1 <> usedSize && l < usedSize) "aborted sequences"
+    //             |> Prop.classify (-1 <> usedSize && l > usedSize) "longer than used size sequences (should not occur)"
+    //             |> Prop.classify (-1 = usedSize) "artificial sequences"
 
-    ///Check all generated runs, i.e. create a property from an arbitrarily generated run.
-    [<CompiledName("ForAll")>]
-    let forAll (arb:Arbitrary<MachineRun<'Actual,'Model>>) = 
-        Prop.forAll arb forOne
+    /////Check all generated runs, i.e. create a property from an arbitrarily generated run.
+    //[<CompiledName("ForAll")>]
+    //let forAll (arb:Arbitrary<MachineRun<'Actual,'Model>>) = 
+    //    Prop.forAll arb forOne
 
-    ///Turn a machine specification into a property.
-    [<CompiledName("ToProperty")>]
-    let toProperty (spec:Machine<'Actual,'Model>) = 
-        forAll (Arb.fromGenShrink(generate spec, shrink spec))
+    /////Turn a machine specification into a property.
+    //[<CompiledName("ToProperty")>]
+    //let toProperty (spec:Machine<'Actual,'Model>) = 
+    //    forAll (Arb.fromGenShrink(generate spec, shrink spec))
 
-[<AbstractClass;Sealed;Extension>]
-type StateMachineExtensions =
-    [<Extension>]
-    static member ToProperty(specification: Machine<'Actual,'Model>) = StateMachine.toProperty specification
-    [<Extension>]
-    static member ToProperty(arbitraryRun:Arbitrary<MachineRun<'Actual,'Model>>) = StateMachine.forAll arbitraryRun
-    [<Extension>]
-    static member ToProperty(run: MachineRun<'Actual,'Model>) = StateMachine.forOne run
+//[<AbstractClass;Sealed;Extension>]
+//type StateMachineExtensions =
+//    [<Extension>]
+//    static member ToProperty(specification: Machine<'Actual,'Model>) = StateMachine.toProperty specification
+//    [<Extension>]
+//    static member ToProperty(arbitraryRun:Arbitrary<MachineRun<'Actual,'Model>>) = StateMachine.forAll arbitraryRun
+//    [<Extension>]
+//    static member ToProperty(run: MachineRun<'Actual,'Model>) = StateMachine.forOne run
 

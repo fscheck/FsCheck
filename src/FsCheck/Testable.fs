@@ -76,7 +76,7 @@ module internal Res =
 
 
 ///A Property can be checked by FsCheck.
-type Property = private Property of (IArbMap -> Gen<Shrink<ResultContainer>>) with
+type Property = private Property of (IArbMap -> Arbitrary<ResultContainer>) with
     static member internal GetGen arbMap (Property g) = g arbMap
 
 module private Testable =
@@ -99,14 +99,14 @@ module private Testable =
 
     module internal Prop = 
     
-        let ofShrinkResult t : Property = 
-            fun _  -> Gen.constant t
-            |> Property
+        //let ofShrinkResult t : Property = 
+        //    fun _  -> Gen.constant t
+        //    |> Property
 
         let ofResult (r:ResultContainer) : Property = 
-            r
-            |> Shrink.ofValue
-            |> ofShrinkResult
+            fun _ -> Arb.constant r
+            |> Property
+            
          
         let ofBool b =
             Res.ofBool b
@@ -131,14 +131,20 @@ module private Testable =
             |> Future
             |> ofResult
 
-        let mapShrinkResult (f:Shrink<ResultContainer> -> _) a = 
+        //let mapShrinkResult (f:Shrink<ResultContainer> -> _) a = 
+        //    fun arbMap -> 
+        //        property a 
+        //        |> Property.GetGen arbMap
+        //        |> Arb.map f
+        //    |> Property
+
+        let mapResult f a = //mapShrinkResult (Shrink.map f)
             fun arbMap -> 
                 property a 
                 |> Property.GetGen arbMap
-                |> Gen.map f
+                |> Arb.map f
             |> Property
 
-        let mapResult f = mapShrinkResult (Shrink.map f)
 
         let safeForce (body:Lazy<_>) =
             try
@@ -147,14 +153,14 @@ module private Testable =
             | :? DiscardException -> Res.rejected |> Value |> ofResult
             | e -> Res.failedException e |> Value |> ofResult
 
-    let private shrinking shrink generatedValue propertyFun =
-        let promoteRose (m:Shrink<Gen<'T>>) : Gen<Shrink<'T>> = 
-            Gen.promote (fun runner -> Shrink.map runner m)
+    //let private shrinking shrink generatedValue propertyFun =
+    //    let promoteRose (m:Shrink<Gen<'T>>) : Gen<Shrink<'T>> = 
+    //        Gen.promote (fun runner -> Shrink.map runner m)
 
-        propertyFun
-        |> Shrink.ofShrinker shrink generatedValue
-        |> promoteRose
-        |> Gen.map Shrink.join
+    //    propertyFun
+    //    |> Shrink.ofShrinker shrink generatedValue
+    //    |> promoteRose
+    //    |> Gen.map Shrink.join
     
     let private evaluate body a arbMap =
         let argument a res = 
@@ -165,22 +171,24 @@ module private Testable =
                 { r with Arguments = (box a) :: r.Arguments }) |> Future
         Prop.safeForce (lazy ( body a ))
         |> Property.GetGen arbMap
-        |> Gen.map (Shrink.map (argument a))
+        |> Arb.map (argument a)
 
 
     let forAll (arb:Arbitrary<_>) body : Property =
         fun arbMap ->
-            let generator = arb.Generator
-            let shrinker = arb.Shrinker
-            gen { let! a = generator
-                  return! shrinking shrinker a (fun a' -> evaluate body a' arbMap)}
+            arb
+            |> Arb.bind (fun a -> evaluate body a arbMap)
+            //let generator = arb.Generator
+            //let shrinker = arb.Shrinker
+            //gen { let! a = generator
+            //      return! shrinking shrinker a (fun a' -> evaluate body a' arbMap)}
         |> Property
 
     let private combine f a b:Property = 
         fun arbMap ->
             let pa = property a |> Property.GetGen arbMap
             let pb = property b |> Property.GetGen arbMap
-            Gen.map2 (Shrink.map2 f) pa pb
+            Arb.map2 f pa pb
         |> Property
 
     let (.&) l r = combine (&&&) l r
@@ -206,13 +214,13 @@ module private Testable =
         static member Async() =
             { new ITestable<Async<unit>> with
                 member __.Property b = Prop.ofTask <| Async.StartAsTask b }
-        static member Lazy() =
-            { new ITestable<Lazy<'T>> with
-                member __.Property b =
-                    let promoteLazy (m:Lazy<_>) = 
-                        Gen.promote (fun runner -> lazy (runner m.Value) |> Shrink.ofLazy |> Shrink.join)
-                    fun arbMap -> promoteLazy (lazy (Prop.safeForce b |> Property.GetGen arbMap))
-                    |> Property } 
+        //static member Lazy() =
+        //    { new ITestable<Lazy<'T>> with
+        //        member __.Property b =
+        //            let promoteLazy (m:Lazy<_>) = 
+        //                Gen.promote (fun runner -> lazy (runner m.Value) |> Shrink.ofLazy |> Shrink.join)
+        //            fun arbMap -> promoteLazy (lazy (Prop.safeForce b |> Property.GetGen arbMap))
+        //            |> Property } 
         static member Result() =
             { new ITestable<Result> with
                 member __.Property res = Prop.ofResult <| Value res }
@@ -222,16 +230,16 @@ module private Testable =
         static member Property() =
             { new ITestable<Property> with
                 member __.Property prop = prop }
-        static member Gen() =
-            { new ITestable<Gen<'a>> with
-                member __.Property gena = 
-                    fun arbMap -> gen { let! a = gena in return! property a |> Property.GetGen arbMap }
-                    |> Property }
-        static member RoseResult() =
-            { new ITestable<Shrink<ResultContainer>> with
-                member __.Property rosea =
-                    fun arbMap -> gen { return rosea }
-                    |> Property }
+        //static member Gen() =
+        //    { new ITestable<Gen<'a>> with
+        //        member __.Property gena = 
+        //            fun arbMap -> gen { let! a = gena in return! property a |> Property.GetGen arbMap }
+        //            |> Property }
+        //static member RoseResult() =
+        //    { new ITestable<Shrink<ResultContainer>> with
+        //        member __.Property rosea =
+        //            fun arbMap -> gen { return rosea }
+        //            |> Property }
         static member Arrow() =
             { new ITestable<('T->'U)> with
                 member __.Property f =

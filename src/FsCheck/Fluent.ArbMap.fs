@@ -16,6 +16,3 @@ type ArbMap private () =
 
     [<Extension>]
     static member Merge(map: IArbMap, instancesType: Type) = ArbMap.mergeWithType instancesType map
-
-    [<Extension>]
-    static member GeneratorFor<'T>(map: IArbMap) = ArbMap.generate<'T> map 
