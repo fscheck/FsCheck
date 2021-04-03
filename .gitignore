@@ -166,3 +166,8 @@ project.lock.json
 # Paket
 .paket/Paket.Restore.targets
 .ionide/symbolCache.db
+
+.ionide
+.fsdocs/
+output/
+tmp/

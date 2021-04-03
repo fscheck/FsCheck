@@ -1,6 +1,6 @@
 source https://www.nuget.org/api/v2
 
-version 5.241.2
+version 5.249.0
 
 framework: auto-detect
 
@@ -9,7 +9,7 @@ nuget FSharp.Core = 4.2.3
 nuget Unquote
 nuget xunit = 2.2
 nuget xunit.runner.visualstudio version_in_path: true
-nuget NUnit = 3.10.1
+nuget NUnit = 3.13.1
 nuget NUnit3TestAdapter version_in_path: true
 nuget MSTest.TestFramework
 nuget MSTest.TestAdapter version_in_path: true
@@ -25,6 +25,7 @@ group Build
 	source https://www.nuget.org/api/v2
 	source https://api.nuget.org/v3/index.json
 
+	nuget FSharp.Core 4.7.0.0
 	nuget Octokit
 	nuget Fake.Api.GitHub
 	nuget Fake.BuildServer.AppVeyor
@@ -38,15 +39,12 @@ group Build
 	nuget Fake.Core.UserInput
 	nuget Fake.DotNet.AssemblyInfoFile
 	nuget Fake.DotNet.Cli
-	nuget Fake.DotNet.FSFormatting
 	nuget Fake.DotNet.MSBuild
 	nuget Fake.DotNet.Paket
 	nuget Fake.DotNet.Testing.XUnit2
 	nuget Fake.IO.FileSystem
 	nuget Fake.Tools.Git
 	
-	nuget FSharp.Formatting
-	nuget FSharp.Formatting.CommandTool
 	nuget xunit.runner.console
 
 group portable

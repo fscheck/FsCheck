@@ -1,8 +1,8 @@
 ﻿(*** hide ***)
-#I "../../src/FsCheck/bin/Release/netstandard2.0"
-#r "../../src/FsCheck.Xunit/bin/Release/netstandard2.0/FsCheck.Xunit.dll"
-#r @"../../packages/xunit.abstractions/lib/netstandard1.0/xunit.abstractions.dll"
-#r @"../../packages/xunit.extensibility.core/lib/netstandard1.1/xunit.core.dll"
+#I @"../src/FsCheck/bin/Release/netstandard2.0"
+#r @"../src/FsCheck.Xunit/bin/Release/netstandard2.0/FsCheck.Xunit.dll"
+#r @"../packages/xunit.abstractions/lib/netstandard1.0/xunit.abstractions.dll"
+#r @"../packages/xunit.extensibility.core/lib/netstandard1.1/xunit.core.dll"
 #r "FsCheck"
 
 (**
@@ -37,7 +37,7 @@ Check.Quick revRevIsOrig
 
 (** In C#:
 
-    [lang=csharp,file=../csharp/QuickStart.cs,key=revRevIsOrig]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/QuickStart.cs,key=revRevIsOrig]
 
 When a property fails, FsCheck displays a counter-example. For example, if we define *)
 
@@ -49,7 +49,7 @@ Check.Quick revIsOrig
 
 (** In C#: 
 
-    [lang=csharp,file=../csharp/QuickStart.cs,key=revIsOrig]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/QuickStart.cs,key=revIsOrig]
 
 FsCheck also *shrinks* the counter example: it tries to find the minimal counter example that 
 still fails the property. The counter example is indeed minimal: 
@@ -83,7 +83,7 @@ Check.Quick revRevIsOrigFloat
 
 (** That said, the example in C# using floats actually works!
 
-    [lang=csharp,file=../csharp/QuickStart.cs,key=revRevIsOrigFloat]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/QuickStart.cs,key=revRevIsOrigFloat]
 
 This is because SequenceEquals uses the default equality comparer under the hood, which uses `Double`'s `Equals` method, which
 has a special provision for `NaN`, as you can see in the [reference source](http://referencesource.microsoft.com/#mscorlib/system/double.cs,152).
@@ -142,7 +142,7 @@ let ``Reverse of reverse of a list is the original list``() =
   Check.QuickThrowOnFailure revRevIsOrig
   
 (**
-    [lang=csharp,file=../csharp/QuickStart.cs,key=revRevIsOrigFact]
+    [lang=csharp,file=../examples/CSharp.DocSnippets/QuickStart.cs,key=revRevIsOrigFact]
 
 For xUnit, the test looks like any normal test, and the QuickThrowOnFailure ensures that if the test fails,
 an exception with the necessary information is raised so xUnit knows the test failed. The output of the test is the same

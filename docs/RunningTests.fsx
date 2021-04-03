@@ -1,10 +1,10 @@
 ﻿(*** hide ***)
-#I "../../src/FsCheck/bin/Release/netstandard2.0"
-#I "../../src/FsCheck.Xunit/bin/Release/netstandard2.0"
-#I "../../src/FsCheck.NUnit/bin/Release/netstandard2.0"
-#r @"../../packages/xunit.abstractions/lib/netstandard1.0/xunit.abstractions.dll"
-#r @"../../packages/xunit.extensibility.core/lib/netstandard1.1/xunit.core.dll"
-#r @"../../packages/NUnit/lib/netstandard2.0/nunit.framework.dll"
+#I @"../src/FsCheck/bin/Release/netstandard2.0"
+#I @"../src/FsCheck.Xunit/bin/Release/netstandard2.0"
+#I @"../src/FsCheck.NUnit/bin/Release/netstandard2.0"
+#r @"../packages/xunit.abstractions/lib/netstandard1.0/xunit.abstractions.dll"
+#r @"../packages/xunit.extensibility.core/lib/netstandard1.1/xunit.core.dll"
+#r @"../packages/NUnit/lib/netstandard2.0/nunit.framework.dll"
 #r "FsCheck"
 #r "FsCheck.Xunit"
 #r "FsCheck.NUnit"
@@ -60,7 +60,7 @@ the output on success:*)
 Check.One({ Config.Quick with MaxTest = 1000; QuietOnSuccess=true }, fun _ -> true)
 
 (**
-    [lang=csharp, file=../csharp/RunningTests.cs,key=configuration]
+    [lang=csharp, file=../examples/CSharp.DocSnippets/RunningTests.cs,key=configuration]
 
 ### Running many properties at once with Check.All
 

@@ -6,6 +6,7 @@ module Prop =
     open Testable
     open System
     open System.ComponentModel
+    open System.Runtime.CompilerServices
 
     ///Quantified property combinator. Provide a custom test data generator to a property.
     [<CompiledName("ForAll")>]
@@ -138,6 +139,9 @@ module Prop =
         property testable
 
     [<CompiledName("Discard")>]
+    // Workaround to ensure function is not inlined in optimized builds causing a MethodAccessException due to the
+    // DiscardException being internal. For more details see https://github.com/fscheck/FsCheck/issues/549.
+    [<MethodImpl(MethodImplOptions.NoInlining)>]
     let discard() = raise DiscardException
 
 ///Operators for Prop.

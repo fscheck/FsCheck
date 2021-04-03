@@ -33,9 +33,9 @@ namespace CSharp.DocSnippets {
             return Gen.Elements(new Command<Counter, int>[] { new Inc(), new Dec() });
         }
 
-        public Counter InitialActual { get { return new Counter(); } }
+        public Counter InitialActual => new Counter();
 
-        public int InitialModel { get { return 0; } }
+        public int InitialModel => 0;
 
         private class Inc : Command<Counter,int> {
             public override Counter RunActual(Counter c) {
@@ -43,17 +43,13 @@ namespace CSharp.DocSnippets {
                 return c;
             }
 
-            public override int RunModel(int m) {
-                return m + 1;
-            }
+            public override int RunModel(int m) => m + 1;
 
             public override Property Post(Counter c, int m) {
                 return (m == c.Get()).ToProperty();
             }
 
-            public override string ToString() {
-                return "inc";
-            }
+            public override string ToString() => "inc";
         }
 
         private class Dec : Command<Counter,int>{
@@ -62,17 +58,13 @@ namespace CSharp.DocSnippets {
                 return c;
             }
 
-            public override int RunModel(int m) {
-                return m - 1;
-            }
+            public override int RunModel(int m) => m - 1;
 
             public override Property Post(Counter c, int m) {
                 return (m == c.Get()).ToProperty();
             }
 
-            public override string ToString() {
-                return "dec";
-            }
+            public override string ToString() => "dec";
         }
     }
     //[/counterspec]

@@ -1,5 +1,5 @@
 
-### What is FsCheck? ###
+# What is FsCheck? #
 
 FsCheck is a tool for testing .NET programs automatically. The programmer provides a specification of the program, in the form of properties which functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. While writing the properties, you are actually writing a testable specification of your program. Specifications are expressed in F#, C# or VB, using combinators defined in the FsCheck library. FsCheck provides combinators to define properties, observe the distribution of test data, and define test data generators. When a property fails, FsCheck automatically displays a minimal counter example.
 
@@ -9,56 +9,63 @@ Since v0.5, [scalacheck](https://github.com/rickynils/scalacheck) has influenced
 
 FsCheck's generator combinators can be used in any testing framework to easily generate a number of random values for many types, and FsCheck itself integrates nicely with existing unit testing frameworks such as NUnit, xUnit, MSTest and MbUnit.
 
-### NuGet ###
-
-Releases:
+# Releases #
 
 * [FsCheck](http://nuget.org/List/Packages/FsCheck)
-* [FsCheck with xUnit.NET integration](http://nuget.org/List/Packages/FsCheck.Xunit)
-* [FsCheck with NUnit integration](http://www.nuget.org/packages/FsCheck.Nunit/)
- 
+* [FsCheck.Xunit](http://nuget.org/List/Packages/FsCheck.Xunit)
+* [FsCheck.Nunit](http://www.nuget.org/packages/FsCheck.Nunit/)
+
 FsCheck follows [Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html), except for the API exposed in `FsCheck.Experimental` which is subject to change at any time.
 
-All AppVeyor builds are available using the NuGet feed: https://ci.appveyor.com/nuget/fscheck
+All AppVeyor builds are available using the NuGet feed: <https://ci.appveyor.com/nuget/fscheck>
 
 If using Paket, add the source at the top of `paket.dependencies`.
 
-```
+```paket
 source https://www.nuget.org/api/v2
 source https://ci.appveyor.com/nuget/fscheck
 ```
 
-See the build history for a list of available versions: https://ci.appveyor.com/project/kurtschelfthout/fscheck/history
+See the build history for a list of available versions: <https://ci.appveyor.com/project/kurtschelfthout/fscheck/history>
 
 Here are some options for specifying the dependency:
 
-```
+```paket
 nuget FsCheck
 nuget FsCheck prerelease
 nuget FsCheck 2.0.4
 nuget FsCheck 2.0.5-b247
 ```
 
-### Documentation ###
+# Documentation #
 
 * [English](https://fscheck.github.io/FsCheck/)
-* [Japanese](https://fscheck.github.io/FsCheck/ja)
 
-### Contributing ###
+# Contributing #
 
-Pull requests very welcome! 
+Pull requests very welcome!
 
 Check out the issues marked up-for-grabs if you need any inspiration.
 
 It's very rare that we reject PRs. Generally, if you intend to make a bigger change, it's better to open an issue first to discuss.
 
-## Building ###
+## Building ##
 
 Checkout the project and run build.cmd on Windows or build.sh on Linux/OSX. That should pull in all the dependencies, build and run the tests.
 
-For Visual Studio/MonoDevelop/Xamarin Studio/VsCode: open (the folder that contains) FsCheck.sln and start coding. 
+For Visual Studio/MonoDevelop/Xamarin Studio/VsCode: open (the folder that contains) FsCheck.sln and start coding.
 
-FsCheck uses FAKE, targets for building are `Build` and for testing `RunTests`. Documentation uses FSharp.Formatting, so literate fsx files. To generate the html files, run `build.[cmd|sh] -t GenerateDocs`.
+FsCheck uses FAKE, run `build.[cmd|sh] -t <Target>` to do something. Important targets are:
 
-- Windows on AppVeyor:[![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036/branch/master)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
-- Linux on Travis CI: [![Build Status](https://travis-ci.org/fscheck/FsCheck.svg?branch=master)](https://travis-ci.org/fscheck/FsCheck)
+* `Build`: cleanly builds all platforms in Release mode.
+* `Tests`: builds and runs the tests.
+* `Docs`:  builds and generates documentation. FsCheck uses FSharp.Formatting, so literate fsx files in the docs folder.
+* `WatchDocs`: convenient when developing documentation - starts a local webserver and watches for changes in the docs folder.
+* `PacketPack`: Creates NuGet packages.
+* `CI`: Target that is run on AppVeyor, basically all of the above.
+
+## CI ##
+
+| Windows on AppVeyor | Linux on Travis CI  
+|---------------------|---------------------
+| [![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036/branch/master)](https://ci.appveyor.com/project/kurtschelfthout/fscheck) |  [![Build Status](https://travis-ci.org/fscheck/FsCheck.svg?branch=master)](https://travis-ci.org/fscheck/FsCheck)

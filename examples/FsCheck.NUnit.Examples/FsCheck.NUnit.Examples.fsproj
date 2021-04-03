@@ -2,10 +2,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FsCheck.NUnit.Examples</AssemblyName>
-    <TargetFrameworks>net452</TargetFrameworks>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFramework>net452</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="App.config" />
     <Compile Include="PropertyExamples.fs" />
     <None Include="paket.references" />
   </ItemGroup>
