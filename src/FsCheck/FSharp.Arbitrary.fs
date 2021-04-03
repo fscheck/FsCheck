@@ -24,6 +24,30 @@ module Arb =
  
     let internal unArb (Arbitrary g) = g
 
+    /// Generates n values of the given size and starting with the given seed.
+    let sampleWithSeed seed size nbSamples (Arbitrary generator) :'T[] = 
+        generator
+        |> Gen.sampleWithSeed seed size nbSamples
+        |> Array.map (Shrink.getValue >> fst)
+
+    /// Generates a given number of values with a new seed and a given size.
+    let sampleWithSize size nbSamples gen : 'T[] = sampleWithSeed (Random.Create()) size nbSamples gen
+
+    /// Generates a given number of values with a new seed and a size of 50.
+    let sample nbSamples gen : 'T[] = sampleWithSize 50 nbSamples gen
+
+    /// Generates one sample from the given Arbitrary, and returns a sequence
+    /// of the generated value and its immediate shrink attempts.
+    let shrinkSample (Arbitrary arb) =
+        arb
+        |> Gen.sample 1
+        |> Array.head
+        |> Shrink.getValue
+        |> fun (generated,shrinks) -> generated, seq {
+            for elem in shrinks do
+                yield elem |> Shrink.getValue |> fst
+        }
+
     /// Generates only the given constant value.
     /// Does not shrink (because there is only one value).
     let constant (value:'T) =
@@ -32,20 +56,34 @@ module Arb =
         |> Gen.constant
         |> Arbitrary
 
-    let choose (l,h) =
-        Gen.choose (l,h)
-        // TODO: shrink to l, not 0...
-        |> Gen.map (Shrink.ofShrinker Shrink.signedNumber id)
-        |> Arbitrary
+    /// Generates int values in the given range (inclusive).
+    /// Shrinks towards zero, or as close as it can get within
+    /// the given range.
+    let rec choose (l,h) =
+        if l > h then
+            choose (h,l)
+        else
+            Gen.choose (l,h)
+            |> Gen.map (Shrink.ofShrinker (Shrink.signedNumberBetween l h) id)
+            |> Arbitrary
 
-    let choose64 (l,h) = 
-        Gen.choose64 (l,h)
-        // TODO: shrink to l, not 0...
-        |> Gen.map (Shrink.ofShrinker Shrink.signedNumber id)
-        |> Arbitrary
+    /// Generates int64 values in the given range (inclusive).
+    /// Shrinks towards zero, or as close as it can get within
+    /// the given range.
+    let rec choose64 (l,h) = 
+        if l > h then
+            choose64 (h,l)
+        else
+            Gen.choose64 (l,h)
+            |> Gen.map (Shrink.ofShrinker (Shrink.signedNumberBetween l h) id)
+            |> Arbitrary
 
     let sized (sizeFun: int -> Arbitrary<'T>) :Arbitrary<'T> =
         Gen.sized (sizeFun >> unArb)
+        |> Arbitrary
+
+    let resize (size: int) (Arbitrary arb: Arbitrary<'T>) :Arbitrary<'T> =
+        Gen.resize size arb
         |> Arbitrary
 
     let map (f:'T -> 'U) (Arbitrary arb) =
@@ -71,7 +109,7 @@ module Arb =
     let apply (f: Arbitrary<'T->'U>) (arb: Arbitrary<'T>) =
         map2 (fun f a -> f a) f arb
 
-    let bind (f: 'T -> Arbitrary<'U>) (Arbitrary (Gen gen): Arbitrary<'T>) =
+    let private bindGenShrink f (Gen gen) =
         (fun s r0 ->
             let struct(shrinkT,r1) = gen s r0
             // r2Store is used to conveniently pass through the resulting seed.
@@ -88,24 +126,10 @@ module Arb =
                     b)
             struct(shrinkU, r2Store))
         |> Gen
-        |> Arbitrary
 
-    [<Struct>]
-    type internal ListAccessWrapper<'T> =
-        { Count: int
-          Item: int -> 'T
-        }
-        static member Create(xs:seq<_>) =
-            match xs with
-            | :? array<_> as arr ->
-                { Count=arr.Length; Item=fun i -> arr.[i] }
-            | :? IReadOnlyList<_> as list ->
-                { Count=list.Count; Item=fun i -> list.[i] }
-            | :? IList<_> as list ->
-                { Count=list.Count; Item=fun i -> list.[i] }
-            | _ ->
-                let arr = xs |> Seq.toArray
-                { Count=arr.Length; Item=fun i -> arr.[i] }
+    let bind (f: 'T -> Arbitrary<'U>) (Arbitrary gen: Arbitrary<'T>) =
+        bindGenShrink f gen
+        |> Arbitrary
 
     let elements (xs : seq<'T>) =
         let elems = ListAccessWrapper<_>.Create xs
@@ -115,15 +139,23 @@ module Arb =
     let oneof (gens:seq<Arbitrary<'T>>) = bind id (elements gens)
 
     let frequency (dist:seq<int*Arbitrary<'T>>) =
-        let xs = ListAccessWrapper<_>.Create dist
         let tot = Seq.sumBy fst dist
-        let rec pick i n =
-            let k,x = xs.[i]
-            if n<=k then x else pick (i+1) (n-k)
         if tot <= 0 then 
-            invalidArg "dist" "Frequency was called with a sum of probabilities less than or equal to 0. No elements can be generated."
-        else
-            bind (pick 0) (choose (1,tot))
+            invalidArg "dist" "frequency was called with a sum of probabilities less than or equal to 0. no elements can be generated."
+        let xs = ListAccessWrapper<_>.Create dist
+        let rec pick i n =
+            let weight,_ = xs.[i]
+            if n<weight then i else pick (i+1) (n-weight)
+        
+        // this is not written in terms of choose directly, because then shrinking doesn't work as well:
+        // If we choose the weight, then shrinks of that weight can map to the same arbitrary instance in the dist
+        // sequence, and so we'll try the same shrinks multiple times.
+        // However, in this was, we first map the weight to an index in the list, and then the index is shrunk
+        // as normal, so each arbitrary in the list is only tried once.
+        Gen.choose (0,tot-1)
+        |> Gen.map (pick 0 >> fun i -> Shrink.ofShrinker (Shrink.signedNumberBetween 0 i) id i)
+        |> bindGenShrink (fun idx ->  xs.[idx] |> snd)
+        |> Arbitrary 
 
     let collectToList (f: 'T -> Arbitrary<'U>) (source:seq<'T>) =
         source
@@ -133,6 +165,18 @@ module Arb =
 
     let sequenceToList (source:seq<Arbitrary<'T>>) =
         collectToList id source
+
+    let collectToArray (f: 'T -> Arbitrary<'U>) (source:seq<'T>) =
+        source
+        |> Gen.collectToArray (f >> unArb)
+        |> Gen.map (Shrink.sequenceToArray)
+        |> Arbitrary
+
+    
+    let sequenceToArray (source:seq<Arbitrary<'T>>) =
+        collectToArray id source
+
+    let bool = elements [false; true]
 
     /// Generates option values that are None 1/8 of the time.
     let option (value: Arbitrary<'T>) = 
@@ -155,9 +199,12 @@ module Arb =
     /// Generates one-dimensional arrays. 
     /// The length of the generated array is between 0 and size.
     /// The sum of the sizes of the elements is equal to the size of the generated array.
-    //let array (elements: Arbitrary<'T>) =
-    //    let generator = Gen.arrayOf elements.Generator
-    //    fromGenShrink(generator, Shrink.array elements.Shrinker)
+    let array (elements: Arbitrary<'T>) =
+        elements
+        |> unArb
+        |> Gen.arrayOf
+        |> Gen.map (Shrink.sequenceToArray >> Shrink.bindInner (Shrink.ofShrinker Shrink.arrayShorten id))
+        |> Arbitrary
 
     ///// Generates pure functions that produce the given output values 'U. 
     ///// There is no shrinking for functions.

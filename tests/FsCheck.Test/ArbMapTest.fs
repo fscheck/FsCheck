@@ -18,16 +18,16 @@ module ArbMapTest =
     [<Fact>]
     let ``should memoize concrete types``() =
 
-        ArbMap.defaults |> ArbMap.generate<int> |> ignore
+        ArbMap.defaults |> ArbMap.arbitrary<int> |> ignore
         test <@ Array.contains typeof<int> (ArbMap.defaults :?> ArbMap).MemoizedInstances @>
 
     [<Fact>]
     let ``should memoize generic types``() =
-        ArbMap.defaults |> ArbMap.generate<list<int>> |> ignore
+        ArbMap.defaults |> ArbMap.arbitrary<list<int>> |> ignore
         test <@ Array.contains typeof<list<int>> (ArbMap.defaults :?> ArbMap).MemoizedInstances @>
 
     [<Fact>]
     let ``should memoize reflectively generated types``() =
-        ArbMap.defaults |> ArbMap.generate<int*char*string> |> ignore
+        ArbMap.defaults |> ArbMap.arbitrary<int*char*string> |> ignore
         test <@ Array.contains typeof<int*char*string> (ArbMap.defaults :?> ArbMap).MemoizedInstances @>
 

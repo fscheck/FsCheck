@@ -35,7 +35,7 @@ type internal Default private() =
 
     /// Generates bool values.
     static member val Bool :Arbitrary<bool> = 
-            Arb.elements [false; true]
+            Arb.bool
         with get
 
     /// Generates byte values that are uniformly distributed in the whole range of byte values.
@@ -52,61 +52,58 @@ type internal Default private() =
             |> Arbitrary
         with get
 
-    ///// Generates int16 values that are between -size and size.
-    //static member val Int16 =
-    //        (Gen.sized( fun s -> Gen.choose(-s, s) |> Gen.map int16),
-    //         Shrink.signedNumber)
-    //        |> Arb.fromGenShrink
-    //    with get
+    /// Generates int16 values that are between -size and size.
+    static member val Int16 :Arbitrary<int16> =
+            Gen.sized (fun s -> 
+                Gen.choose(-s, s) |> Gen.map (int16 >> Shrink.ofShrinker Shrink.signedNumber id))
+            |> Arbitrary
+        with get
 
-    ///// Generate int16 values that are uniformly distributed in the whole range of int16 values.
-    //static member val DoNotSizeInt16 :Arbitrary<DoNotSize<int16>> = 
-    //        (Gen.choose(int Int16.MinValue, int Int16.MaxValue) |> Gen.map int16,
-    //         Shrink.signedNumber)
-    //        |> Arb.fromGenShrink
-    //        |> Arb.convert DoNotSize DoNotSize.Unwrap 
-    //    with get
+    /// Generates int16 values that are uniformly distributed in the whole range of int16 values.
+    static member val DoNotSizeInt16 :Arbitrary<DoNotSize<int16>> = 
+            Gen.choose(int Int16.MinValue, int Int16.MaxValue)
+            |> Gen.map (int16 >> Shrink.ofShrinker Shrink.signedNumber DoNotSize)
+            |> Arbitrary
+        with get
 
-    ///// Generates uint16 values that are between 0 and size.
-    //static member val UInt16 =
-    //        (Gen.sized( fun s -> Gen.choose(0, s) |> Gen.map uint16),
-    //         Shrink.unsignedNumber)
-    //        |> Arb.fromGenShrink
-    //    with get
+    /// Generates uint16 values that are between 0 and size.
+    static member val UInt16 :Arbitrary<uint16> =
+            Gen.sized (fun s ->
+                Gen.choose (0, s) |> Gen.map (uint16 >> Shrink.ofShrinker Shrink.unsignedNumber id))
+            |> Arbitrary
+        with get
 
-    ///// Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
-    //static member val DoNotSizeUInt16 =
-    //        (Gen.choose(int UInt16.MinValue, int UInt16.MaxValue) |> Gen.map uint16, 
-    //         Shrink.unsignedNumber)
-    //        |> Arb.fromGenShrink
-    //        |> Arb.convert DoNotSize DoNotSize.Unwrap 
-    //    with get
+    /// Generates uint16 values that are uniformly distributed in the whole range of uint16 values.
+    static member val DoNotSizeUInt16 :Arbitrary<DoNotSize<uint16>> =
+            Gen.choose(int UInt16.MinValue, int UInt16.MaxValue)
+            |> Gen.map (uint16 >> Shrink.ofShrinker Shrink.unsignedNumber DoNotSize)
+            |> Arbitrary
+        with get
          
     /// Generates int32 values that are between -size and size.
-    static member val Int32 =
+    static member val Int32 :Arbitrary<int> =
             Arb.sized (fun n -> Arb.choose (-n,n))
         with get
 
-    ///Generate arbitrary int32 that is unrestricted by size.
-    static member val DoNotSizeInt32 =
+    /// Generates int32 values that are uniformly distributed in the whole range of Int32 values.
+    static member val DoNotSizeInt32 :Arbitrary<DoNotSize<int>> =
             Arb.choose(Int32.MinValue, Int32.MaxValue)
             |> Arb.map DoNotSize
         with get
 
-    /////Generates uint32 values that are between 0 and size.
-    //static member val UInt32 =
-    //        (Gen.sized( fun s -> Gen.choose(0, s) |> Gen.map uint32),
-    //         Shrink.unsignedNumber)
-    //        |> Arb.fromGenShrink
-    //    with get
+    /// Generates uint32 values that are between 0 and size.
+    static member val UInt32 :Arbitrary<uint32> =
+            Gen.sized (fun s ->
+                Gen.choose(0, s) |> Gen.map (uint32 >> Shrink.ofShrinker Shrink.unsignedNumber id))
+            |> Arbitrary
+        with get
 
-    /////Generate arbitrary uint32 that is unrestricted by size.
-    //static member val DoNotSizeUInt32 =
-    //        (Gen.choose64(int64 UInt32.MinValue, int64 UInt32.MaxValue) |> Gen.map uint32,
-    //         Shrink.unsignedNumber)
-    //        |> Arb.fromGenShrink
-    //        |> Arb.convert DoNotSize DoNotSize.Unwrap
-    //    with get
+    /// Generate arbitrary uint32 that is unrestricted by size.
+    static member val DoNotSizeUInt32 :Arbitrary<DoNotSize<uint32>> =
+            Gen.choose64(int64 UInt32.MinValue, int64 UInt32.MaxValue)
+            |> Gen.map (uint32 >> Shrink.ofShrinker Shrink.unsignedNumber DoNotSize)
+            |>Arbitrary
+        with get
 
     ///Generates int64 values that are between -size and size.
     ///Note that since the size is an int32, this does not actually cover the full
@@ -115,26 +112,25 @@ type internal Default private() =
             Arb.sized(fun s -> Arb.choose64(int64 -s, int64 s))
         with get
 
-    ///Generate arbitrary int64 that is unrestricted by size.
+    /// Generate arbitrary int64 that is unrestricted by size.
     static member val DoNotSizeInt64 : Arbitrary<DoNotSize<int64>> =
             Arb.choose64(Int64.MinValue, Int64.MaxValue)
             |> Arb.map DoNotSize
         with get
      
-    /////Generates uint64 values that are between 0 and size.
-    //static member val UInt64 =
-    //        (Gen.sized( fun s -> Gen.choose(0, s) |> Gen.map uint64),
-    //         Shrink.unsignedNumber)
-    //        |> Arb.fromGenShrink
-    //    with get
+    /// Generates uint64 values that are between 0 and size.
+    static member val UInt64 :Arbitrary<uint64> =
+            Gen.sized (fun s -> 
+                Gen.choose(0, s) |> Gen.map (uint64 >> Shrink.ofShrinker Shrink.unsignedNumber id))
+            |> Arbitrary
+        with get
      
-    /////Generates uint64 values that are unrestricted by size.
-    //static member val DoNotSizeUInt64 =
-    //        (Default.DoNotSizeInt64.Generator |> Gen.map (fun (DoNotSize i64) -> Operators.uint64 i64),
-    //         Shrink.unsignedNumber)
-    //        |> Arb.fromGenShrink
-    //        |> Arb.convert DoNotSize DoNotSize.Unwrap
-    //    with get
+    ///Generates uint64 values that are unrestricted by size.
+    static member val DoNotSizeUInt64 :Arbitrary<DoNotSize<uint64>> =
+            Gen.choose64(Int64.MinValue, Int64.MaxValue)
+            |> Gen.map (uint64 >> Shrink.ofShrinker Shrink.unsignedNumber DoNotSize)
+            |> Arbitrary
+        with get
 
     /////Generates float values that are between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
     /////Shrinks by yielding zero, abs of the origin and the truncated origin.
@@ -251,34 +247,24 @@ type internal Default private() =
     //        Arb.fromGenShrink (generator, shrinker)
     //    with get
 
-    ///// Generates characters that are between ASCII codes Char.MinValue and 127.
-    //static member val Char =
-    //        let generator = Gen.choose (int Char.MinValue, 127) |> Gen.map char
-    //        let shrinker c = seq { for c' in ['a';'b';'c'] do if c' < c || not (Char.IsLower c) then yield c' }
-    //        (generator, shrinker)
-    //        |> Arb.fromGenShrink
-    //    with get
+    /// Generates characters that are between ASCII codes Char.MinValue and 127.
+    static member val Char :Arbitrary<char> =
+            Arb.choose (int Char.MinValue, 127) 
+            |> Arb.map char
+        with get
 
-    /////Generates strings, which are lists of characters or null (1/10 of the time).
-    //static member val String :Arbitrary<string> =
-    //        let arrayOfChars = Arb.array Default.Char
-    //        let generator = 
-    //            arrayOfChars.Generator 
-    //            |> Gen.map String
-    //        let shrinker (s:string) = 
-    //                match s with
-    //                | null -> Seq.empty<string>
-    //                | _ -> s.ToCharArray() |> arrayOfChars.Shrinker |> Seq.map String
-    //        Arb.fromGenShrink (generator, shrinker)
-    //    with get
+    ///Generates strings, which are lists of characters or null (1/10 of the time).
+    static member val String :Arbitrary<string> =
+            let nonNullString = Arb.array Default.Char |> Arb.map String
+            Arb.frequency [(1, Arb.constant null); (9, nonNullString)]
+        with get
 
-    /////Generates a rank 1 arrays. 
-    /////The length of the generated array is between 0 and the test size + 1. 
-    /////The sum of the sizes of the elements is equal to the size of the generated array.
-    //static member Array(elements: Arbitrary<'T>) =
-    //    elements
-    //    |> Arb.array
-
+    /// Generates one-dimensional (rank 1) arrays. 
+    /// The length of the generated array is between 0 and the test size. 
+    /// The sum of the sizes of the elements is equal to the size of the generated array.
+    static member Array(elements: Arbitrary<'T>) =
+        elements
+        |> Arb.array
         
     ///Generates option values that are 'None' 1/8 of the time.
     static member Option(value: Arbitrary<'T>) = 
@@ -556,7 +542,9 @@ type internal Default private() =
 
     static member val NegativeInt =
             Default.Int32
-            |> Arb.map (fun x -> -abs x |> NegativeInt) // fsharplint:disable-line CanBeReplacedWithComposition
+            |> Arb.map (fun x -> -abs x) // fsharplint:disable-line CanBeReplacedWithComposition
+            |> Arb.filter(fun x -> x < 0)
+            |> Arb.map NegativeInt
         with get
 
     static member val NonNegativeInt =
@@ -601,31 +589,30 @@ type internal Default private() =
     //        Arb.fromGenShrink(generator, shrinker)
     //    with get
 
-    //static member val  StringNoNulls =
-    //        Default.String
-    //        |> Arb.filter (not << String.exists ((=) '\000'))
-    //        |> Arb.convert StringNoNulls string
-    //    with get
+    static member val StringNoNulls :Arbitrary<StringNoNulls> =
+            Default.String
+            |> Arb.filter (not << String.exists ((=) '\000'))
+            |> Arb.map StringNoNulls
+        with get
 
-    //static member val NonEmptyString =
-    //        Default.String
-    //        |> Arb.filter (fun s -> not (String.IsNullOrEmpty s) && not (String.exists ((=) '\000') s))
-    //        |> Arb.convert NonEmptyString string
-    //    with get
+    static member val NonEmptyString :Arbitrary<NonEmptyString> =
+            Default.String
+            |> Arb.filter (fun s -> not (String.IsNullOrEmpty s) && not (String.exists ((=) '\000') s))
+            |> Arb.map NonEmptyString
+        with get
 
-    //static member val NonWhiteSpaceString =
-    //        Default.String
-    //        |> Arb.filter (fun s -> not (String.IsNullOrWhiteSpace s) && not (String.exists ((=) '\000') s))
-    //        |> Arb.convert NonWhiteSpaceString string
-    //    with get
+    static member val NonWhiteSpaceString :Arbitrary<NonWhiteSpaceString> =
+            Default.String
+            |> Arb.filter (fun s -> not (String.IsNullOrWhiteSpace s) && not (String.exists ((=) '\000') s))
+            |> Arb.map NonWhiteSpaceString
+        with get
 
-    //static member val XmlEncodedString =
-    //        Default.String
-    //        |> Arb.mapFilter 
-    //            System.Net.WebUtility.HtmlEncode
-    //            (String.forall Xml.XmlConvert.IsXmlChar)
-    //        |> Arb.convert XmlEncodedString string
-    //    with get
+    static member val XmlEncodedString :Arbitrary<XmlEncodedString> =
+            Default.String
+            |> Arb.map System.Net.WebUtility.HtmlEncode
+            |> Arb.filter (String.forall Xml.XmlConvert.IsXmlChar)
+            |> Arb.map XmlEncodedString
+        with get
 
     static member Set(elements: Arbitrary<'T>) = 
         elements
@@ -920,25 +907,14 @@ type internal Default private() =
     //    |> Gen.map DoNotShrink
     //    |> Arb.fromGen
 
-    /////Try to derive an arbitrary instance for the given type reflectively. 
-    /////Generates and shrinks values for record, union, tuple and enum types.
-    /////Also generates (but doesn't shrink) values for basic classes 
-    /////(i.e. either classes having a single constructor with immutable values  
-    /////or DTO classes with a default constructor and public property setters).
-    //static member Derive<'T>(arbMap: IArbMap) =
-    //    let getGenerator t =
-    //        let arb = arbMap.ArbFor t
-    //        arb.Generator
-    //    let getShrink t =
-    //        let arb = arbMap.ArbFor t
-    //        arb.Shrinker
-                
-    //    let generator = 
-    //        typeof<'T>
-    //        |> ReflectiveGenerator.reflectGenObj getGenerator
-    //        |> Gen.map unbox<'T>
-    //    let shrinker a =
-    //        ReflectiveShrinker.reflectShrink getShrink a
-    //    Arb.fromGenShrink(generator, shrinker)
+    /// Try to derive an arbitrary instance for the given type reflectively. 
+    /// Generates and shrinks values for record, union, tuple and enum types.
+    /// Also generates (but doesn't shrink) values for basic classes 
+    /// (i.e. either classes having a single constructor with immutable values  
+    /// or DTO classes with a default constructor and public property setters).
+    static member Derive<'T>(arbMap: IArbMap) :Arbitrary<'T> =
+        typeof<'T>
+        |> ReflectiveGenerator.reflectGenObj  arbMap.ArbFor
+        |> Arb.map unbox<'T>
 
 

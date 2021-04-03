@@ -17,9 +17,9 @@
     <Compile Include="FSharp.Gen.fs" />
     <Compile Include="FSharp.GenBuilder.fs" />
     <Compile Include="Internals.Shrink.fs" />
+    <Compile Include="FSharp.Arbitrary.fs" />
     <Compile Include="Internals.ReflectiveGenerator.fs" />
     <Compile Include="Internals.ReflectiveShrinker.fs" />
-    <Compile Include="FSharp.Arbitrary.fs" />
     <Compile Include="ArbMap.fs" />
     <Compile Include="DefaultArbTypes.fs" />
     <Compile Include="Internals.DefaultArbs.fs" />

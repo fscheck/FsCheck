@@ -17,6 +17,7 @@ and [<NoEquality;NoComparison>] Gen<'T> = private Gen of (int -> Rnd -> struct (
 namespace FsCheck.FSharp
 
 open FsCheck
+open FsCheck.Internals
 
 [<RequireQualifiedAccess>]
 module Gen =
@@ -183,23 +184,6 @@ module Gen =
             let x = FsCheck.Random.NextDouble(&r1)
             struct (x, r1)
         )
-
-    [<Struct>]
-    type internal ListAccessWrapper<'T> =
-        { Count: int
-          Item: int -> 'T
-        }
-        static member Create(xs:seq<_>) =
-            match xs with
-            | :? array<_> as arr ->
-                { Count=arr.Length; Item=fun i -> arr.[i] }
-            | :? IReadOnlyList<_> as list ->
-                { Count=list.Count; Item=fun i -> list.[i] }
-            | :? IList<_> as list ->
-                { Count=list.Count; Item=fun i -> list.[i] }
-            | _ ->
-                let arr = xs |> Seq.toArray
-                { Count=arr.Length; Item=fun i -> arr.[i] }
 
     ///Build a generator that randomly generates one of the values in the given non-empty, finite seq.
     //[category: Creating generators]

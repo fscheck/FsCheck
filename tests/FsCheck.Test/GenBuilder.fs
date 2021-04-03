@@ -9,6 +9,10 @@ module GenBuilder =
     open Helpers
     open Swensen.Unquote.Assertions
 
+    let sample n = Gen.sampleWithSize 1000 n
+    
+    let sample1 gn = sample 1 gn |> Seq.head
+
     [<Fact>]
     let ``for loop``() =
         let actual = 

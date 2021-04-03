@@ -16,7 +16,7 @@ module internal ReflectiveGenerator =
 
 
     /// Generate a random enum of the type specified by the System.Type
-    let enumOfType (t: System.Type) : Gen<Enum> =
+    let enumOfType (t: System.Type) : Arbitrary<Enum> =
        let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<FlagsAttribute>,false).Any() 
        let vals: Array = Enum.GetValues(t)
        let elems = [ for i in 0..vals.Length-1 -> vals.GetValue(i)] |> List.distinct  
@@ -24,16 +24,17 @@ module internal ReflectiveGenerator =
            let elementType = Enum.GetUnderlyingType t
            let inline helper (elements : 'a list) =
                let primaries = elements |> List.filter Common.isPowerOf2
-               Gen.elements [true; false]
-               |> Gen.listOfLength primaries.Length
-               |> Gen.map (
+               Arb.bool
+               |> List.replicate primaries.Length
+               |> Arb.sequenceToList
+               |> Arb.map (
                    fun bools ->
                        bools
                        |> List.map2 
                            (fun flag isChecked -> if isChecked then flag else LanguagePrimitives.GenericZero )
                            primaries    
                        |> List.fold (|||) LanguagePrimitives.GenericZero )
-               |> Gen.map (fun e -> Enum.ToObject (t, e) :?> Enum)
+               |> Arb.map (fun e -> Enum.ToObject (t, e) :?> Enum)
            if   elementType = typeof<byte>   then
                elems |> List.map unbox<byte>   |> helper
            elif elementType = typeof<sbyte>  then 
@@ -52,7 +53,7 @@ module internal ReflectiveGenerator =
                elems |> List.map unbox<int64>  |> helper
            else invalidArg "t" (sprintf "Unexpected underlying enum type: %O" elementType)
        else 
-           Gen.elements (List.map (fun (o : obj) -> o :?> Enum) elems)
+           Arb.elements (List.map (fun (o : obj) -> o :?> Enum) elems)
 
     let private reflectObj getGenerator t =
 
@@ -79,10 +80,10 @@ module internal ReflectiveGenerator =
             let gs = [| for t in ts -> getGenerator t |]
             let n = gs.Length
             if n <= 0 then
-                Gen.constant (create [||])
+                Arb.constant (create [||])
             else
-                Gen.sized (fun s -> Gen.resize (max 0 ((s / n) - 1)) (Gen.sequenceToArray gs))
-                |> Gen.map create
+                Arb.sized (fun s -> Arb.resize (max 0 ((s / n) - 1)) (Arb.sequenceToArray gs))
+                |> Arb.map create
 
         if isRecordType t then
             let fields = getRecordFieldTypes t
@@ -112,9 +113,9 @@ module internal ReflectiveGenerator =
             let large() = [ for _,g in gs -> g.Force() ]
             let getgs size = 
                 if size <= 0 then small() else large() 
-                |> Gen.oneof 
-                |> Gen.resize (size - 1) 
-            Gen.sized getgs |> box
+                |> Arb.oneof 
+                |> Arb.resize (size - 1) 
+            Arb.sized getgs |> box
                 
         elif t.GetTypeInfo().IsEnum then
             enumOfType t |> box
@@ -141,6 +142,6 @@ module internal ReflectiveGenerator =
     ///Build a reflection-based generator for the given Type. Since we memoize based on type, can't use a
     ///typed variant reflectGen<'a> much here, as we need to be able to partially apply on the getGenerator.
     ///See also Default.Derive.
-    let reflectGenObj getGenerator = Common.memoize (fun (t:Type) ->(reflectObj getGenerator t |> unbox<IGen>).AsGenObject)
+    let reflectGenObj getGenerator = Common.memoize (fun (t:Type) ->(reflectObj getGenerator t |> unbox<IArbitrary>).ArbitraryObj)
 
     

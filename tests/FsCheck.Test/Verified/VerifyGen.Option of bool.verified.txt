@@ -1,0 +1,144 @@
+[
+  {
+    Success: [],
+    Fail: []
+  },
+  {
+    Original: {
+      Case: Some,
+      Fields: [
+        false
+      ]
+    },
+    Success: [
+      null
+    ],
+    Fail: [
+      null
+    ]
+  },
+  {
+    Original: {
+      Case: Some,
+      Fields: [
+        false
+      ]
+    },
+    Success: [
+      null
+    ],
+    Fail: [
+      null
+    ]
+  },
+  {
+    Original: {
+      Case: Some,
+      Fields: [
+        true
+      ]
+    },
+    Success: [
+      null
+    ],
+    Fail: [
+      null,
+      {
+        Case: Some,
+        Fields: [
+          false
+        ]
+      }
+    ]
+  },
+  {
+    Original: {
+      Case: Some,
+      Fields: [
+        false
+      ]
+    },
+    Success: [
+      null
+    ],
+    Fail: [
+      null
+    ]
+  },
+  {
+    Original: {
+      Case: Some,
+      Fields: [
+        false
+      ]
+    },
+    Success: [
+      null
+    ],
+    Fail: [
+      null
+    ]
+  },
+  {
+    Original: {
+      Case: Some,
+      Fields: [
+        false
+      ]
+    },
+    Success: [
+      null
+    ],
+    Fail: [
+      null
+    ]
+  },
+  {
+    Original: {
+      Case: Some,
+      Fields: [
+        false
+      ]
+    },
+    Success: [
+      null
+    ],
+    Fail: [
+      null
+    ]
+  },
+  {
+    Original: {
+      Case: Some,
+      Fields: [
+        true
+      ]
+    },
+    Success: [
+      null
+    ],
+    Fail: [
+      null,
+      {
+        Case: Some,
+        Fields: [
+          false
+        ]
+      }
+    ]
+  },
+  {
+    Original: {
+      Case: Some,
+      Fields: [
+        false
+      ]
+    },
+    Success: [
+      null
+    ],
+    Fail: [
+      null
+    ]
+  }
+]

@@ -1,6 +1,7 @@
 ﻿namespace FsCheck.Internals
 
 open System
+open System.Collections.Generic
 
 /// Shrink<T> keeps a value and the possible shrinks for that value in an n-ary tree.
 /// This tree is explored by the test runner to find a smaller value of a counter-example.
@@ -41,15 +42,29 @@ module internal Shrink =
                     yield! s2 |> Seq.map (map2 f left)
                 for right in s2 do
                     yield! s1 |> Seq.map (fun l -> map2 f l right) })
-        //Seq.map2 (map2 f) s1 s2)
 
     let rec filter (f: 'T -> bool) (ShrinkTree (x,rs)) =
         ShrinkTree (x, 
             seq {
                 for (ShrinkTree (y,ts)) in rs do
                     if f y.Value then
-                        for t in ts do
-                            yield filter f t })
+                        yield ShrinkTree(y, ts |> Seq.map (filter f)) })
+
+    /// Returns a new tree which never tries any value from the underlying
+    /// tree twice, based on the key function.
+    let distinctBy (f: 'T -> 'Key) (ShrinkTree (x,_) as source) :Shrink<'T> =
+        let keys = HashSet<'Key>()
+        let rec distinctByHelper (ShrinkTree (x,rs)) =
+            ShrinkTree(x,
+                seq {
+                    for (ShrinkTree (y,ts)) in rs do
+                        if (keys.Add(f y.Value)) then
+                            yield ShrinkTree(y, ts |> Seq.map distinctByHelper)
+                }
+            )
+        keys.Add(f x.Value) |> ignore
+        distinctByHelper source
+
 
     let rec join (ShrinkTree (r, tts)): Shrink<'T> =
         // Note 1: we can't pattern match as follows, as this will result in evaluation:
@@ -80,7 +95,7 @@ module internal Shrink =
 
         map k m |> joinInner
 
-    let rec collectToList (f:'T->Shrink<'U>) (source: seq<'T>) :Shrink<list<'U>> =
+    let collectToList (f:'T->Shrink<'U>) (source: seq<'T>) :Shrink<list<'U>> =
         let s = source |> Seq.map f |> Seq.toList
         let rec shrinkTreeList (l:list<Shrink<'U>>) =
             match l with
@@ -98,6 +113,32 @@ module internal Shrink =
     let sequenceToList (source:seq<Shrink<'T>>) =
         collectToList id source
 
+    let rec collectToArray (f:'T->Shrink<'U>) (source: seq<'T>) :Shrink<'U[]> =
+        let s = source |> Seq.map f |> Seq.toArray
+        // the array as it was, i.e. no shrinking.
+        // this will be copied every time we shrink one of the 
+        // elements, one by one.
+        let value = s |> Array.map (getValue >> fst)
+        let rec shrinkTreeArray value (shrinkers:Shrink<'U>[]) =
+            seq {
+                // Shrink one element at a time, first to last,
+                // exhausting each of the element shrinkers
+                let mutable i = 0
+                for elemShrinker in shrinkers do
+                    let (_,vs) = elemShrinker |> getValue
+                    for t in vs do
+                        yield t |> map (fun t -> 
+                            let copy = Array.copy value
+                            copy.[i] <- t
+                            copy
+                        )
+                    i <- i + 1
+            }
+        ShrinkTree(lazy value, shrinkTreeArray value s)
+
+    let sequenceToArray (source:seq<Shrink<'T>>) =
+        collectToArray id source
+
     // The sequence n-n/2^i for i starting at 1.
     // e.g. for 128: 64, 96, 112,...
     // In other words bisects the range 0..n successively, and 
@@ -106,23 +147,25 @@ module internal Shrink =
         let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
         seq { let mutable st = n / two
               while st <> LanguagePrimitives.GenericZero do
-                yield n-st
-                st <- st / two
-                
+                  yield n-st
+                  st <- st / two
         }
-        //Seq.unfold (fun st -> let st = st / two in Some (n-st, st)) n 
+
+    let inline private invert n = 
+        if n = Numeric.MinValue.Get() then
+            Numeric.MaxValue.Get()
+        else
+            -n
 
     /// A generic shrinker for signed numbers.
     let inline signedNumber n =
-        let inline invert n = 
-            if n = Numeric.MinValue.Get() then
-                Numeric.MaxValue.Get()
-            else
-                -n
-        let two = LanguagePrimitives.GenericOne + LanguagePrimitives.GenericOne
-        seq { if n < LanguagePrimitives.GenericZero then yield invert n
-              if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
+        seq { if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
+              if n < LanguagePrimitives.GenericZero then yield invert n
               yield! bisectIncreasing n }
+
+    let inline signedNumberBetween lo hi n =
+        signedNumber n
+        |> Seq.where (fun v -> lo <= v && v <= hi)
 
     /// A generic shrinker for unsigned numbers.
     let inline unsignedNumber n =

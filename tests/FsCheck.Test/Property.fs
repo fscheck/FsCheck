@@ -15,7 +15,7 @@ module Property =
 
     let internal curry2 f = fun a b c -> f (a,b,c)
 
-    let internal generate<'T> = ArbMap.defaults |> ArbMap.generate<'T>
+    let internal generate<'T> = ArbMap.defaults |> ArbMap.arbitrary<'T>
 
     type SymProp =  | Unit | Bool of bool | Exception
                     | ForAll of int * SymProp
@@ -33,24 +33,24 @@ module Property =
     let rec private symPropGen =
         let rec recGen size =
             match size with
-            | 0 -> Gen.oneof [Gen.constant Unit; Gen.map Bool generate; Gen.constant Exception]
+            | 0 -> Arb.oneof [Arb.constant Unit; Arb.map Bool generate; Arb.constant Exception]
             | n when n>0 ->
                 let subProp = recGen (size/2)
-                Gen.oneof
-                        [ Gen.map2 (curry ForAll) generate (subProp)
-                        ; Gen.map2 (curry Implies) generate (subProp)
-                        ; Gen.map2 (curry Collect) generate (subProp)
-                        ; Gen.map3 (curry2 Classify) generate generate (subProp)
-                        ; Gen.map2 (curry Label) generate (subProp)
-                        ; Gen.map2 (curry And) (subProp) (subProp)
-                        ; Gen.map2 (curry Or) (subProp) (subProp)
-                        ; Gen.map LazyProp subProp
-                        ; Gen.map2 (curry Tuple2) subProp subProp
-                        ; Gen.map3 (curry2 Tuple3) subProp subProp subProp
-                        ; Gen.map List (Gen.resize 3 <| Gen.nonEmptyListOf subProp)
+                Arb.oneof
+                        [ Arb.map2 (curry ForAll) generate subProp
+                          Arb.map2 (curry Implies) generate subProp
+                          Arb.map2 (curry Collect) generate subProp
+                          //Arb.map3 (curry2 Classify) generate generate subProp
+                          Arb.map2 (curry Label) generate subProp
+                          Arb.map2 (curry And) subProp subProp
+                          Arb.map2 (curry Or) subProp subProp
+                          Arb.map LazyProp subProp
+                          Arb.map2 (curry Tuple2) subProp subProp
+                          //Arb.map3 (curry2 Tuple3) subProp subProp subProp
+                          //Arb.map List (Arb.resize 3 <| Arb.nonEmptyListOf subProp)
                         ]
             | _ -> failwith "symPropGen: size must be positive"
-        Gen.sized recGen
+        Arb.sized recGen
                   
     let rec private determineResult prop =
         let result =
@@ -87,7 +87,7 @@ module Property =
         | Unit -> Prop.ofTestable ()
         | Bool b -> Prop.ofTestable b
         | Exception -> Prop.ofTestable (lazy (raise <| InvalidOperationException()))
-        | ForAll (i,prop) -> Prop.forAll (Gen.constant i |> Arb.fromGen) (fun _ -> toProperty prop)
+        | ForAll (i,prop) -> Prop.forAll (Arb.constant i) (fun _ -> toProperty prop)
         | Implies (b,prop) -> b ==> (toProperty prop)
         | Classify (b,stamp,prop) -> Prop.classify b stamp (toProperty prop)
         | Collect (i,prop) -> Prop.collect i (toProperty prop)
@@ -144,7 +144,7 @@ module Property =
 
     [<Property>]
     let DSL() = 
-        Prop.forAll (Arb.fromGen symPropGen) (fun symprop ->
+        Prop.forAll symPropGen (fun symprop ->
             let expected = determineResult symprop
             let resultRunner = GetResultRunner()
             let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(2)
