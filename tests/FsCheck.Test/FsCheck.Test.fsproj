@@ -9,6 +9,7 @@
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Fscheck.XUnit\PropertyAttributeTests.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Random.fs" />
     <Compile Include="TypeClass.fs" />
