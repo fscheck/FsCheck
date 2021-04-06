@@ -148,33 +148,32 @@ type public PropertyAttribute() =
     member internal __.Config = config
 
 ///Set common configuration for all properties within this class or module
-[<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
+[<AttributeUsage(AttributeTargets.Class ||| AttributeTargets.Assembly, AllowMultiple = false)>]
 type public PropertiesAttribute() = inherit PropertyAttribute()
 
 /// The xUnit2 test runner for the PropertyAttribute that executes the test via FsCheck
-type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =
+type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =    
     inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
+
+    let combineAttributes (attributes: (IAttributeInfo option) list) =
+        attributes
+        |> List.choose id
+        |> List.map(fun attr -> attr.GetNamedArgument<PropertyConfig> "Config")
+        |> List.reduce(fun higherLevelAttribute lowerLevelAttribute -> 
+            PropertyConfig.combine lowerLevelAttribute higherLevelAttribute)
 
     new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, null)
 
     member this.Init(output:TestOutputHelper) =
-        let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
         let arbitrariesOnClass =
             this.TestMethod.TestClass.Class.GetCustomAttributes(Type.GetType("FsCheck.Xunit.ArbitraryAttribute"))
                 |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
                 |> Seq.toArray
-        let generalAttribute = 
-            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<PropertiesAttribute>) 
-                |> Seq.tryFind (fun _ -> true)
 
-        let config =
-            match generalAttribute with
-            | Some generalAttribute ->
-                PropertyConfig.combine
-                    (factAttribute.GetNamedArgument "Config")
-                    (generalAttribute.GetNamedArgument "Config")
-            | None ->
-                factAttribute.GetNamedArgument "Config"
+        let config = combineAttributes [
+            this.TestMethod.TestClass.Class.Assembly.GetCustomAttributes(typeof<PropertiesAttribute>) |> Seq.tryHead
+            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<PropertiesAttribute>) |> Seq.tryHead
+            this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head |> Some]
         
         { config with Arbitrary = Array.append config.Arbitrary arbitrariesOnClass }
         |> PropertyConfig.toConfig output 
