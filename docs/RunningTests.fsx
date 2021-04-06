@@ -164,7 +164,7 @@ type Zero =
 [<assembly: Properties( Arbitrary = [| typeof<Zero> |])>] do()
 module ModuleWithoutProperties =
     [<Property>]
-    let ``should use Arb instances from enclosing module``(underTest:float) =
+    let ``should use Arb instances from assembly``(underTest:float) =
         underTest = 0.0
 
     [<Property( Arbitrary=[| typeof<Positive> |] )>]
