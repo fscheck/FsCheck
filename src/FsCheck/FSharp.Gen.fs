@@ -177,7 +177,7 @@ module Gen =
         let x, r = Random.RangeInt64 (l,h,r)
         struct (x, r))
 
-    /// Generates double values between l and h.
+    /// Generates double values in the [0,1) interval.
     let internal double =
         Gen (fun _ r ->
             let mutable r1 = r

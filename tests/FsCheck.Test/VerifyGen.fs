@@ -52,18 +52,10 @@ module VerifyGen =
         let samples = arb |> Arb.unArb |> sampleSmall
         let toVerify =
             samples
-            |> Array.map(fun sample ->
-                let success = ResizeArray<'T>()
-                let mutable next = sample |> Internals.Shrink.getValue |> snd |> Seq.tryHead
-                while next.IsSome do
-                    success.Add(next.Value |> Internals.Shrink.getValue |> fst)
-                    next <- next.Value |> Internals.Shrink.getValue |> snd |> Seq.tryHead
-
-                let fail = sample |> Internals.Shrink.getValue |> snd |> Seq.map (Internals.Shrink.getValue >> fst) |> Seq.toArray
-                { Original = sample |> Internals.Shrink.getValue |> fst
-                  Success = success.ToArray()
-                  Fail = fail
-                })
+            |> Array.map (Internals.Shrink.sample 
+                          >> (fun v -> { Original = v.Original 
+                                         Success = v.Success
+                                         Fail = v.Fail }))
         toVerify |> verify
 
     [<Fact>]
@@ -100,11 +92,11 @@ module VerifyGen =
         |> ArbMap.arbitrary<option<bool>>
         |> verifyArb
 
-    //[<Fact>]
-    //let ``Double``() =
-    //    ArbMap.defaults
-    //    |> ArbMap.arbitrary<Double>
-    //    |> verifyArb
+    [<Fact>]
+    let ``Double``() =
+        ArbMap.defaults
+        |> ArbMap.arbitrary<Double>
+        |> verifyArb
 
     [<Fact>]
     let ``Array of Int32``() =
@@ -118,11 +110,11 @@ module VerifyGen =
         |> ArbMap.arbitrary<list<int>>
         |> verifyArb
 
-    //[<Fact>]
-    //let ``String``() =
-    //    ArbMap.defaults
-    //    |> ArbMap.arbitrary<String>
-    //    |> verifyArb
+    [<Fact>]
+    let ``String``() =
+        ArbMap.defaults
+        |> ArbMap.arbitrary<String>
+        |> verifyArb
 
     //[<Fact>]
     //let ``DateTimeOffset``() =
@@ -130,11 +122,11 @@ module VerifyGen =
     //    |> ArbMap.arbitrary<DateTimeOffset>
     //    |> verifyArb
 
-    //[<Fact>]
-    //let ``Map int,char``() =
-    //    ArbMap.defaults
-    //    |> ArbMap.arbitrary<Map<int,char>>
-    //    |> verifyArb
+    [<Fact>]
+    let ``Map int,char``() =
+        ArbMap.defaults
+        |> ArbMap.arbitrary<Map<int,char>>
+        |> verifyArb
 
         
 // without this, attribute Verify refuses to work.

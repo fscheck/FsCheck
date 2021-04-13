@@ -132,57 +132,32 @@ type internal Default private() =
             |> Arbitrary
         with get
 
-    /////Generates float values that are between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
-    /////Shrinks by yielding zero, abs of the origin and the truncated origin.
-    //static member val NormalFloat :Arbitrary<NormalFloat> =
-    //        let generator = Gen.sized (fun size ->
-    //            Gen.map2
-    //                (fun f isNegative -> 
-    //                    let value = f * float size
-    //                    if isNegative then -value else value)
-    //                Gen.double
-    //                Default.Bool.Generator
-    //            )
-    //        let shrinker fl =
-    //            let (|<|) x y = abs x < abs y
-    //            seq { 
-    //                    if fl <> 0.0 then yield 0.0
-    //                    if fl < 0.0 then yield -fl
-    //                    let truncated = truncate fl
-    //                    if truncated |<| fl then yield truncated }
-    //            |> Seq.distinct
-    //        (generator, shrinker)
-    //        |> Arb.fromGenShrink
-    //        |> Arb.convert NormalFloat float
-    //    with get
+    ///Generates float values that are between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
+    ///Shrinks by yielding zero, abs of the origin and the truncated origin.
+    static member val NormalFloat :Arbitrary<NormalFloat> =
+            Arb.double
+            |> Arb.sized 
+            |> Arb.map NormalFloat
+        with get
 
-    ///// Generates float values that are between -size and size.
-    ///// One of NaN, NegativeInfinity, PositiveInfinity, MaxValue, MinValue or Epsilon is generated on average 1 time for every 8 values.
-    ///// Shrinks by yielding zero, abs of the origin and the truncated origin.
-    //static member val Float = 
-    //        let generator =
-    //            Gen.frequency [(7, Default.NormalFloat.Generator |> Gen.map (fun (NormalFloat f) -> f))
-    //                           (1, Gen.elements [ Double.NaN; Double.NegativeInfinity; Double.PositiveInfinity
-    //                                              Double.MaxValue; Double.MinValue; Double.Epsilon])]
-    //        let shrinker fl =
-    //            if Double.IsInfinity fl || Double.IsNaN fl then Seq.singleton 0.0
-    //            else Default.NormalFloat.Shrinker (NormalFloat fl) |> Seq.map (fun (NormalFloat f) -> f)
-    //        Arb.fromGenShrink(generator, shrinker)
-    //    with get
+    /// Generates float values that are between -size and size.
+    /// One of NaN, NegativeInfinity, PositiveInfinity, MaxValue, MinValue or Epsilon is generated on average 1 time for every 8 values.
+    /// Shrinks by yielding zero, abs of the origin and the truncated origin.
+    static member val Float :Arbitrary<float> = 
+            Arb.frequency [(7, Arb.sized Arb.double)
+                           (1, Arb.elements [ Double.NaN; Double.NegativeInfinity; Double.PositiveInfinity
+                                              Double.MaxValue; Double.MinValue; Double.Epsilon])]
 
-    ///// Generates float values that are between -size and size.
-    ///// One of NaN, NegativeInfinity, PositiveInfinity, MaxValue, MinValue or Epsilon is generated on average 1 time for every 8 values.
-    ///// Shrinks by yielding zero, abs of the origin and the truncated origin.
-    //static member val Float32 = 
-    //        let generator =
-    //            Gen.frequency [(7, Default.NormalFloat.Generator |> Gen.map (fun (NormalFloat f) -> float32 f))
-    //                           (1, Gen.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity
-    //                                              Single.MaxValue; Single.MinValue; Single.Epsilon])]
-    //        let shrinker fl =
-    //            if Single.IsInfinity fl || Single.IsNaN fl then seq {yield 0.0f}
-    //            else Default.NormalFloat.Shrinker (NormalFloat <| float fl) |> Seq.map (fun (NormalFloat f) -> float32 f)
-    //        Arb.fromGenShrink (generator,shrinker)
-    //    with get
+        with get
+
+    /// Generates float values that are between -size and size.
+    /// One of NaN, NegativeInfinity, PositiveInfinity, MaxValue, MinValue or Epsilon is generated on average 1 time for every 8 values.
+    /// Shrinks by yielding zero, abs of the origin and the truncated origin.
+    static member val Float32 :Arbitrary<float32> = 
+            Arb.frequency [(7, Default.NormalFloat |> Arb.map (fun (NormalFloat f) -> float32 f))
+                           (1, Arb.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity
+                                              Single.MaxValue; Single.MinValue; Single.Epsilon])]
+        with get
 
     ///// Generates decimal values that are between -size and size.
     //// /Shrinks by yielding zero, abs of the origin and the truncated origin.
@@ -621,15 +596,15 @@ type internal Default private() =
     static member Map(keys: Arbitrary<'K>, values: Arbitrary<'V>) = 
         Arb.mapKV (keys, values)
 
-    //static member NonEmptyArray(elements: Arbitrary<'T>) =
-    //    Default.Array(elements)
-    //    |> Arb.filter (fun a -> Array.length a > 0)
-    //    |> Arb.convert NonEmptyArray (fun (NonEmptyArray s) -> s)
+    static member NonEmptyArray(elements: Arbitrary<'T>) =
+        Default.Array(elements)
+        |> Arb.filter (fun a -> Array.length a > 0)
+        |> Arb.map NonEmptyArray
 
-    //static member NonEmptySet(elements: Arbitrary<'T>) =
-    //    Default.Set(elements)
-    //    |> Arb.filter (not << Set.isEmpty) 
-    //    |> Arb.convert NonEmptySet (fun (NonEmptySet s) -> s)
+    static member NonEmptySet(elements: Arbitrary<'T>) =
+        Default.Set(elements)
+        |> Arb.filter (not << Set.isEmpty) 
+        |> Arb.map NonEmptySet
 
     /////Arrays whose length does not change when shrinking.
     //static member FixedLengthArray(elements: Arbitrary<'T>) =
@@ -638,43 +613,30 @@ type internal Default private() =
     //    Arb.fromGenShrink (generator, Shrink.arrayElements elements.Shrinker)
     //    |> Arb.convert FixedLengthArray (fun (FixedLengthArray a) -> a)
 
-    ///// Generates System.Collections.Generic.List instances.
-    //static member List(elements: Arbitrary<'T>) =
-    //    Default.Array(elements)
-    //    |> Arb.convert Enumerable.ToList Seq.toArray
+    /// Generates System.Collections.Generic.List instances.
+    static member List(elements: Arbitrary<'T>) =
+        Default.Array(elements)
+        |> Arb.map Enumerable.ToList
 
-    ///// Generates System.Collections.Generic.IList instances.
-    //static member IList(elements: Arbitrary<'T>) =
-    //    Default.List(elements)
-    //    |> Arb.convert (fun x -> x :> _ IList) (fun x -> x :?> _ List)
+    /// Generates System.Collections.Generic.IList instances.
+    static member IList(elements: Arbitrary<'T>) =
+        Default.List(elements)
+        |> Arb.map (fun x -> x :> _ IList)
 
-    ///// Generates System.Collections.Generic.ICollection instances.
-    //static member ICollection(elements: Arbitrary<'T>) =
-    //    Default.List(elements)
-    //    |> Arb.convert (fun x -> x :> _ ICollection) (fun x -> x :?> _ List)
+    /// Generates System.Collections.Generic.ICollection instances.
+    static member ICollection(elements: Arbitrary<'T>) =
+        Default.List(elements)
+        |> Arb.map (fun x -> x :> _ ICollection)
 
-    ///// Generates System.Collections.Generic.Dictionary instances.
-    //static member Dictionary(keys: Arbitrary<'K>, values: Arbitrary<'V>) =
-    //    let genDictionary = 
-    //        gen {
-    //            let! keys = keys.Generator |> Gen.arrayOf |> Gen.map (Seq.where (fun x -> not (obj.Equals(x, null))) >> Seq.distinct >> Seq.toArray)
-    //            let! values = values.Generator |> Gen.arrayOfLength keys.Length
-    //            return (Seq.zip keys values).ToDictionary(fst, snd)
-    //        }
-    //    let shrinkDictionary (d: Dictionary<_,_>) = 
-    //        let keys = Seq.toArray d.Keys
-    //        seq {
-    //            for c in keys.Length-2 .. -1 .. 0 ->
-    //                let k = keys.[0..c]
-    //                let values = Seq.truncate k.Length d.Values
-    //                (Seq.zip k values).ToDictionary(fst, snd)
-    //        }
-    //    Arb.fromGenShrink (genDictionary, shrinkDictionary)
+    /// Generates System.Collections.Generic.Dictionary instances.
+    static member Dictionary(keys: Arbitrary<'K>, values: Arbitrary<'V>) :Arbitrary<Dictionary<'K,'V>>=
+        Arb.mapKV (keys, values)
+        |> Arb.map (fun map -> Dictionary(map))
 
-    ///// Generates System.Collections.Generic.IDictionary instances.
-    //static member IDictionary(keys: Arbitrary<'K>, values: Arbitrary<'V>) =
-    //    Default.Dictionary(keys, values)
-    //    |> Arb.convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
+    /// Generates System.Collections.Generic.IDictionary instances.
+    static member IDictionary(keys: Arbitrary<'K>, values: Arbitrary<'V>) =
+        Default.Dictionary(keys, values)
+        |> Arb.map (fun x -> x :> IDictionary<_,_>)
 
     //static member val Culture =
     //        let genCulture = Gen.elements (CultureInfo.GetCultures (CultureTypes.NeutralCultures ||| CultureTypes.SpecificCultures))

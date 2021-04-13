@@ -15,6 +15,7 @@
     <Compile Include="Gen.fs" />
     <Compile Include="GenBuilder.fs" />
     <Compile Include="GenExtensions.fs" />
+    <Compile Include="Shrink.fs" />
     <Compile Include="Arbitrary.fs" />
     <Compile Include="ArbMapTest.fs" />
     <Compile Include="Property.fs" />

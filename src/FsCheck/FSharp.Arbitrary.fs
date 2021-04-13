@@ -178,6 +178,14 @@ module Arb =
 
     let bool = elements [false; true]
 
+    let double maxAbsValue =
+        Gen.map2 (fun f isNegative -> 
+            let value = f * float maxAbsValue
+            if isNegative then -value else value)
+            Gen.double Gen.bool
+        |> Gen.map (Shrink.ofShrinker Shrink.double id)
+        |> Arbitrary
+
     /// Generates option values that are None 1/8 of the time.
     let option (value: Arbitrary<'T>) = 
         frequency [(1, constant None); (7, map Some value)]
@@ -222,6 +230,11 @@ module Arb =
     //              |> Gen.pureFunction
     //    fromGen gen
     
+    //let distinctBy (projection: 'T -> 'Key) (seq: Arbitrary<seq<'T>>) =
+    //    seq
+    //    |> unArb
+
+
     /// Generates Set<'T> values.
     let set (elements: Arbitrary<'T>) = 
         list elements
@@ -230,7 +243,26 @@ module Arb =
      /// Generates Map<TKey,TValue> values.
      /// Not named `map` because that has other meanings.
     let mapKV (keys: Arbitrary<'TKey>, values: Arbitrary<'TValue>) = 
-        zip keys values
-        |> list
-        |> map Map.ofList
+        // "Natural" implementation:
+        // zip keys values
+        // |> list
+        // |> map Map.ofList
+        // however shrinking doesn't work well because it generates 
+        // duplicate keys as a result of `list`, which then get 
+        // removed by `Map.ofList`. When shrinking, this creates
+        // a lot of duplicate shrink attempts, because the list shrinker
+        // is removing the elements one by one but this has no effect on
+        // the resulting Map.
+        let ((Arbitrary keysGen),(Arbitrary valuesGen)) = keys, values
+        Gen.map2 (Shrink.map2 (fun x y -> x,y)) keysGen valuesGen
+        |> Gen.listOf
+        |> Gen.map (List.distinctBy (Shrink.getValue >> fst >> fst))
+        |> Gen.map (Shrink.sequenceToList 
+                    >> Shrink.map Map.ofList
+                    >> Shrink.bindInner (Shrink.ofShrinker Shrink.mapShorten id))
+        |> Arbitrary
+
+
+
+
         

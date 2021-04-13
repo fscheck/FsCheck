@@ -15,6 +15,19 @@ module internal Shrink =
     /// as the rest of the Shrinks
     let getValue (ShrinkTree (Lazy v,t)) = (v, t)
 
+    let sample shrink =
+        let success = ResizeArray<'T>()
+        let mutable next = shrink |> getValue |> snd |> Seq.tryHead
+        while next.IsSome do
+            success.Add(next.Value |> getValue |> fst)
+            next <- next.Value |> getValue |> snd |> Seq.tryHead
+
+        let fail = shrink |> getValue |> snd |> Seq.map (getValue >> fst) |> Seq.toArray
+        {| Original = shrink |> getValue |> fst
+           Success = success.ToArray()
+           Fail = fail
+        |}
+
     /// Creates a Shrink<'T> for the given value with no shrinks.
     let ofValue x = ShrinkTree(lazy (x), Seq.empty)
 
@@ -50,20 +63,20 @@ module internal Shrink =
                     if f y.Value then
                         yield ShrinkTree(y, ts |> Seq.map (filter f)) })
 
-    /// Returns a new tree which never tries any value from the underlying
-    /// tree twice, based on the key function.
-    let distinctBy (f: 'T -> 'Key) (ShrinkTree (x,_) as source) :Shrink<'T> =
-        let keys = HashSet<'Key>()
-        let rec distinctByHelper (ShrinkTree (x,rs)) =
-            ShrinkTree(x,
-                seq {
-                    for (ShrinkTree (y,ts)) in rs do
-                        if (keys.Add(f y.Value)) then
-                            yield ShrinkTree(y, ts |> Seq.map distinctByHelper)
-                }
-            )
-        keys.Add(f x.Value) |> ignore
-        distinctByHelper source
+    ///// Returns a new tree which never tries any value from the underlying
+    ///// tree twice, based on the key function.
+    //let distinctBy (f: 'T -> 'Key) (ShrinkTree (x,_) as source) :Shrink<'T> =
+    //    let keys = HashSet<'Key>()
+    //    let rec distinctByHelper (ShrinkTree (x,rs)) =
+    //        ShrinkTree(x,
+    //            seq {
+    //                for (ShrinkTree (y,ts)) in rs do
+    //                    if (keys.Add(f y.Value)) then
+    //                        yield ShrinkTree(y, ts |> Seq.map distinctByHelper)
+    //            }
+    //        )
+    //    keys.Add(f x.Value) |> ignore
+    //    distinctByHelper source
 
 
     let rec join (ShrinkTree (r, tts)): Shrink<'T> =
@@ -72,13 +85,14 @@ module internal Shrink =
         //         instead, define everything inside the ShrinkTree ctor, as a lazily evaluated expression.
         // Note 2: This first shrinks outer quantification, this makes the most sense.
         //         shrink inner quantification can done like: ShrinkTree (x,(Seq.append ts (Seq.map join tts)))
-        let x =
-            lazy (let (ShrinkTree (x, _)) = r.Value in x.Value)
+        //let x =
+        //    lazy (let (ShrinkTree (x, _)) = r.Value in x.Value)
+        let rval,rtree = r.Value |> getValue
         let ts =
             Seq.append
                 (Seq.map join tts)
-                (match r with (Lazy (ShrinkTree (_, ts))) -> ts)
-        ShrinkTree(x, ts)
+                rtree //(match r with (Lazy (ShrinkTree (_, ts))) -> ts)
+        ShrinkTree(lazy rval, ts)
 
     let bind (k: 'T -> Shrink<'U>) m = map k m |> join
 
@@ -172,6 +186,14 @@ module internal Shrink =
         seq { if n <> LanguagePrimitives.GenericZero then yield LanguagePrimitives.GenericZero
               yield! bisectIncreasing n }
 
+    let inline double n =
+        let (|<|) x y = abs x < abs y
+        seq { if n <> 0.0 then yield 0.0
+              if n < 0.0 then yield -n
+              let truncated = truncate n
+              if truncated |<| n then yield truncated }
+        |> Seq.distinct
+
     let internal date (d:DateTime) =
         if d.Kind <> DateTimeKind.Unspecified then
             seq { yield DateTime.SpecifyKind(d, DateTimeKind.Unspecified) }
@@ -248,5 +270,10 @@ module internal Shrink =
         let length = arrayShorten arr
         let elements = arrayElements elementShrink arr
         Seq.append length elements
+
+    let mapShorten (map: Map<'K,'V>) =
+        seq { for (key,_) in map |> Map.toSeq do
+                yield Map.remove key map
+        }
 
 

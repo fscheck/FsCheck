@@ -101,25 +101,30 @@ module Arbitrary =
         assertTrue ( generate<DoNotSize<uint64>> |> Arb.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0UL) )
         assertTrue ( shrink<DoNotSize<uint64>> |> fun (DoNotSize v,shrinks) -> shrinks |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= v) )
 
-    //[<Property>]
-    //let Double (NonNegativeInt size) (value:float) =
-    //    assertTrue ( generate<float> |> Gen.resize size |> sample 10
-    //            |> Seq.forall (fun v -> 
-    //                (float -size <= v && v <= float size )
-    //                || Double.IsNaN(v) || Double.IsInfinity(v)
-    //                || v = Double.Epsilon || v = Double.MaxValue || v = Double.MinValue) )
-    //    assertTrue ( shrink<float> value 
-    //            |> Seq.forall (fun shrunkv -> shrunkv = 0.0 || shrunkv <= abs value) )
+    [<Property>]
+    let Double (NonNegativeInt size) =
+        let isSpecial v = 
+            Double.IsNaN(v) || Double.IsInfinity(v)
+            || v = Double.Epsilon || v = Double.MaxValue || v = Double.MinValue
+        assertTrue ( generate<float> |> Arb.resize size |> sample 10
+                |> Seq.forall (fun v -> 
+                    (float -size <= v && v <= float size ) || isSpecial v ) )
+        shrink<float> |> fun (value, shrinks) ->
+                shrinks |> Seq.iter (fun shrunkv -> 
+                    test <@ shrunkv = 0.0
+                            || shrunkv <= abs value 
+                            || isSpecial value @>)
         
-    //[<Property>]
-    //let Single (NonNegativeInt size) (value:float32) =
-    //    assertTrue ( generate<float32> |> Gen.resize size |> sample 10
-    //            |> Seq.forall (fun v -> 
-    //                (float32 -size <= v && v <= float32 size )
-    //                || Single.IsNaN(v) || Single.IsInfinity(v)
-    //                || v = Single.Epsilon || v = Single.MaxValue || v = Single.MinValue) )
-    //    assertTrue ( shrink<float32> value 
-    //            |> Seq.forall (fun shrunkv -> shrunkv = 0.0f || shrunkv <= abs value) )
+    [<Property>]
+    let Single (NonNegativeInt size) =
+        let isSpecial v = 
+            Single.IsNaN(v) || Single.IsInfinity(v)
+            || v = Single.Epsilon || v = Single.MaxValue || v = Single.MinValue
+        assertTrue ( generate<float32> |> Arb.resize size |> sample 10
+                |> Seq.forall (fun v -> 
+                    (float32 -size <= v && v <= float32 size ) || isSpecial v) )
+        assertTrue ( shrink<float32> |> fun (value, shrinks) ->
+                shrinks |> Seq.forall (fun shrunkv -> shrunkv = 0.0f || shrunkv <= abs value || isSpecial value) )
 
     [<Fact>]
     let Byte () =
@@ -140,7 +145,7 @@ module Arbitrary =
     let String () =
         assertTrue ( generate<string> |> sample 10 |> Seq.forall (fun _ -> true) )
             //or the length of the string is shorter, or one of its values have been shrunk
-        assertTrue ( shrink<string> |> fun (value, shrinks) -> shrinks |> Seq.forall (fun s -> s = null || String.length s < String.length value || (String.exists (isIn ['a';'b';'c']) s))  )
+        assertTrue ( shrink<string> |> fun (value, shrinks) -> shrinks |> Seq.forall (fun s -> s = null || String.length s < String.length value || s <> value)  )
 
     [<Property>]
     let ``Non-empty string`` (NonEmptyString v) = 
@@ -495,52 +500,55 @@ module Arbitrary =
         assertTrue result
         
 
-    //[<Fact>]
-    //let ``Generic List``() =
-    //    generate<List<int>> |> sample 10 |> ignore
+    [<Fact>]
+    let ``Generic List``() =
+        generate<List<int>> |> sample 10 |> ignore
 
-    //[<Fact>]
-    //let ``Generic IList``() =
-    //    generate<IList<int>> |> sample 10 |> ignore
+    [<Fact>]
+    let ``Generic IList``() =
+        generate<IList<int>> |> sample 10 |> ignore
 
-    //[<Property>]
-    //let ``Generic IList shrinks`` (value: int IList) =
-    //    shrink value 
-    //    |> Seq.forall (fun l -> l.Count <= value.Count)
-    //    |> assertTrue
+    [<Fact>]
+    let ``Generic IList shrinks`` () =
+        shrink<int IList> |> fun (value,shrinks) ->
+            shrinks
+            |> Seq.forall (fun l -> l.Count <= value.Count)
+        |> assertTrue
 
-    //[<Fact>]
-    //let ``Generic ICollection``() =
-    //    generate<ICollection<int>> |> sample 10 |> ignore
+    [<Fact>]
+    let ``Generic ICollection``() =
+        generate<ICollection<int>> |> sample 10 |> ignore
 
-    //[<Property>]
-    //let ``Generic ICollection shrinks`` (value: int ICollection) =
-    //    shrink value 
-    //    |> Seq.forall (fun l -> l.Count <= value.Count)
-    //    |> assertTrue
+    [<Fact>]
+    let ``Generic ICollection shrinks`` () =
+        shrink<ICollection<int>> |> fun (value,shrinks) ->
+            shrinks
+            |> Seq.forall (fun l -> l.Count <= value.Count)
+        |> assertTrue
 
-    //[<Fact>]
-    //let ``Generic Dictionary``() =
-    //    generate<Dictionary<int, char>> |> sample 10 |> ignore
+    [<Fact>]
+    let ``Generic Dictionary``() =
+        generate<Dictionary<int, char>> |> sample 10 |> ignore
 
-    //[<Fact>]
-    //let ``Generic Dictionary with string key``() =
-    //    generate<Dictionary<string, char>> |> sample 10 |> ignore
+    [<Fact>]
+    let ``Generic Dictionary with string key``() =
+        generate<Dictionary<string, char>> |> sample 10 |> ignore
 
-    //[<Property>]
-    //let ``Generic Dictionary shrinks`` (value: Dictionary<int, string>) =
-    //    shrink value 
-    //    |> Seq.forall (fun l -> l.Count < value.Count)
-    //    |> assertTrue
+    [<Fact>]
+    let ``Generic Dictionary shrinks`` () =
+        shrink<Dictionary<int, string>> |> fun (value,shrinks) ->
+            shrinks
+            |> Seq.forall (fun l -> l.Count < value.Count)
+        |> assertTrue
 
-    //[<Fact>]
-    //let ``Generic IDictionary``() =
-    //    generate<IDictionary<int, char>> |> sample 10 |> ignore
+    [<Fact>]
+    let ``Generic IDictionary``() =
+        generate<IDictionary<int, char>> |> sample 10 |> ignore
 
-    //[<Fact>]
-    //let ``Map with string key``() =
-    //    generate<Map<string, char>> |> sample 10 |> Seq.exists (fun x -> not x.IsEmpty)
-    //    |> assertTrue
+    [<Fact>]
+    let ``Map with string key``() =
+        generate<Map<string, char>> |> sample 10 |> Seq.exists (fun x -> not x.IsEmpty)
+        |> assertTrue
 
     //[<Property>]
     //let Decimal (size : PositiveInt) =
