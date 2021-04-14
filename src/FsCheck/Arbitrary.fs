@@ -54,7 +54,7 @@ type StringNoNulls = StringNoNulls of string with
     member x.Get = match x with StringNoNulls r -> r
     override x.ToString() = x.Get
 
-// Represents a string that is not null, empty or consists only of white-space characters and does not contain any null characters ('\000')
+/// Represents a string that is not null, empty or consists only of white-space characters and does not contain any null characters ('\000')
 type NonWhiteSpaceString = NonWhiteSpaceString of string with
     member x.Get = match x with NonWhiteSpaceString s -> s
     override x.ToString() = x.Get
@@ -62,6 +62,16 @@ type NonWhiteSpaceString = NonWhiteSpaceString of string with
 ///Represents a string that can be serializable as a XML value.
 type XmlEncodedString = XmlEncodedString of string with
     member x.Get = match x with XmlEncodedString v -> v
+    override x.ToString() = x.Get
+
+///Represents a unicode char.
+type UnicodeChar = UnicodeChar of char with
+    member x.Get = match x with UnicodeChar c -> c
+    override x.ToString() = string x.Get
+
+///Represents a string that can contain unicode characters.
+type UnicodeString = UnicodeString of string with
+    member x.Get = match x with UnicodeString v -> v
     override x.ToString() = x.Get
 
 ///Represents an integer interval.
@@ -973,6 +983,26 @@ module Arb =
                 (String.forall System.Xml.XmlConvert.IsXmlChar)
             |> convert XmlEncodedString string
 #endif
+
+        static member UnicodeChar() :Arbitrary<UnicodeChar> =
+            let generator = 
+                Gen.choose (int Char.MinValue, int Char.MaxValue)
+                |> Gen.map (char >> UnicodeChar)
+
+            let shrinker (UnicodeChar c) = seq { for c' in ['a';'b';'c'] do if c' < c || not (Char.IsLower c) then yield UnicodeChar c' }
+            fromGenShrink (generator, shrinker)
+            
+
+        static member UnicodeString() :Arbitrary<UnicodeString> =
+            let generator =
+                generate<UnicodeChar[]>
+                |> Gen.map (fun chars -> String(chars |> Array.map (fun c -> c.Get)) |> UnicodeString)
+            let shrinker (UnicodeString s) = 
+                    match s with
+                    | null -> Seq.empty
+                    | _ -> s.ToCharArray() |> shrink |> Seq.map (String >> UnicodeString)
+            fromGenShrink (generator,shrinker)
+           
 
         static member Set() = 
             Default.FsList()

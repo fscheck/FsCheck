@@ -1,3 +1,9 @@
+### 2.15.2 - To be released
+
+* Enabled FsCheck.Xunit's `PropertiesAttribute` to work at assembly level. (by Laurence King)
+
+* Added `UnicodeString` and `UnicodeChar` generators.
+
 ### 2.15.1 - 27 February 2021
 
 * Fixed a bug in FsCheck.Xunit: using ITestOutputHelper did not show output in `Property`-attributed tests.
