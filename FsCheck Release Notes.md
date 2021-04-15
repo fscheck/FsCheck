@@ -1,4 +1,4 @@
-### 2.15.2 - To be released
+### 2.15.2 - 15 Arpil 2021
 
 * Enabled FsCheck.Xunit's `PropertiesAttribute` to work at assembly level. (by Laurence King)
 
