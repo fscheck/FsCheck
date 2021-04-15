@@ -155,6 +155,13 @@ module Arbitrary =
 #endif
 
     [<Property>]
+    let ``Unicode char`` (UnicodeChar s) = true |> Prop.collect s
+
+    [<Property>]
+    let ``Unicode string`` (UnicodeString s) = true |> Prop.collect s
+
+
+    [<Property>]
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
         (   generate<int*char> |> sample 10 |> List.forall (fun _ -> true)
             //or the first value is shrunk, or the second
