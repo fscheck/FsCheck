@@ -692,11 +692,19 @@ module Arbitrary =
     let ``Derive generator for private two value record``() =
         generate<PrivateRecord> |> sample 10 |> ignore
 
+    [<Property>]
+    let ``Shrink for private two value record`` (DoNotShrink (value: PrivateRecord)) =
+        shrink value |> ignore
+
     type PrivateUnion = private | Case1 | Case2 of string
 
     [<Fact>]
     let ``Derive generator for private two case union``() =
         generate<PrivateUnion> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``Shrink for private two case union`` (DoNotShrink (value: PrivateUnion)) =
+        shrink value |> ignore
 
     [<Fact>]
     let ``should not crash on isCSharpDto issue #545``() =

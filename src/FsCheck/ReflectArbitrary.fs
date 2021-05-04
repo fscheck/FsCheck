@@ -190,9 +190,9 @@ module internal ReflectArbitrary =
                 if Seq.isEmpty children then 0 
                 elif Seq.exists ((=) t) children then 2 
                 else 1
-            let info,_ = FSharpValue.GetUnionFields(o,t)
-            let makeCase = FSharpValue.PreComputeUnionConstructor info
-            let readCase = FSharpValue.PreComputeUnionReader info
+            let info,_ = FSharpValue.GetUnionFields(o,t,true)
+            let makeCase = FSharpValue.PreComputeUnionConstructor(info,true)
+            let readCase = FSharpValue.PreComputeUnionReader(info,true)
             let childrenTypes = info.GetFields() |> Array.map ( fun x -> x.PropertyType )
             let partitionCase t s0 (_,(_,children,make,_)) =
                 match unionSize t children with
