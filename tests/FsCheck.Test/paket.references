@@ -1,5 +1,8 @@
 xunit.runner.visualstudio
-Unquote
 xunit.core
-FSharp.Core
 Microsoft.NETFramework.ReferenceAssemblies
+
+group Tests
+	FSharp.Core
+	Unquote
+	Microsoft.NET.Test.Sdk

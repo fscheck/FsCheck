@@ -1,4 +1,4 @@
-xunit framework: net452
-xunit.runner.visualstudio framework: net452
-FSharp.Core framework: net452
+FSharp.Core
+xunit
+xunit.runner.visualstudio
 Microsoft.NETFramework.ReferenceAssemblies

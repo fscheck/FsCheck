@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FsCheck.MsTest.Examples</AssemblyName>
-    <TargetFrameworks>net452</TargetFrameworks>
+    <TargetFramework>net5.0</TargetFramework>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <WarningLevel>3</WarningLevel>

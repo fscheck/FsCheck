@@ -1,3 +1,7 @@
+### 2.16.0 - To be released
+
+* Support generating C# record types.
+
 ### 2.15.3 - 8 May 2021
 
 * Allow shrinking private unions. (by Sander van Dijk)
