@@ -82,7 +82,7 @@ module Runner =
             |> Seq.distinct
         1 =! Seq.length same
         "should have failed" <>! Seq.head same
-        test <@ (Seq.head same).Contains "(123,654321)" @>
+        test <@ (Seq.head same).Contains "(123, 654321)" @>
 
     [<Fact>]
     let ``should replay property with complex set of generators``() =
@@ -98,7 +98,7 @@ module Runner =
             |> Seq.distinct
         1 =! Seq.length same
         "should have failed" <>! Seq.head same
-        test <@ (Seq.head same).Contains "(123,654321)" @>
+        test <@ (Seq.head same).Contains "(123, 654321)" @>
 
     [<Property(Replay="54321,67584")>]
     let ``should pick up replay seeds from PropertyAttribute without parens``(_:int, _:string) =

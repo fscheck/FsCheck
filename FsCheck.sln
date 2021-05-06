@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.XUnit.CSharpExample
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharp.DocSnippets", "examples\CSharp.DocSnippets\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.Test.CSharp", "tests\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj", "{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,10 @@ Global
 		{6AB84678-E55F-4387-A040-67312735D089}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AB84678-E55F-4387-A040-67312735D089}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AB84678-E55F-4387-A040-67312735D089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -22,12 +22,22 @@ module internal Reflect =
         
     let getProperties (ty: Type) = ty.GetRuntimeProperties() |> Seq.filter (fun p -> let m = getPropertyMethod p in  not m.IsStatic && m.IsPublic)
 
-    let isCSharpRecordType (ty: Type) = 
+
+    let isCSharpRecordType (ty: Type) =
+        let isInitOnly(property: PropertyInfo) =
+#if NETSTANDARD1_0
+            false
+#else
+            property.CanWrite
+            && (property.SetMethod.ReturnParameter.GetRequiredCustomModifiers()
+                |> Array.exists (fun t -> t.FullName = "System.Runtime.CompilerServices.IsExternalInit"))
+#endif
+
         let typeinfo = ty.GetTypeInfo()
         not typeinfo.IsAbstract
         && not typeinfo.ContainsGenericParameters
         && Seq.length (getPublicCtors ty) = 1
-        && not (ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic) |> Seq.exists (fun p -> p.CanWrite))
+        && not (ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic) |> Seq.exists (fun p -> p.CanWrite && not (isInitOnly p)))
         && ty.GetRuntimeFields() |> Seq.filter (fun m -> not m.IsStatic && m.IsPublic) |> Seq.forall (fun f -> f.IsInitOnly)
 
     let isCSharpDtoType (ty: Type) =

@@ -1,12 +1,10 @@
 source https://www.nuget.org/api/v2
 
-version 5.249.0
+version 6.0.0-rc001
 
 framework: auto-detect
 
 nuget FSharp.Core = 4.2.3
-
-nuget Unquote
 nuget xunit = 2.2
 nuget xunit.runner.visualstudio version_in_path: true
 nuget NUnit = 3.13.1
@@ -19,13 +17,23 @@ nuget MSTest.TestAdapter version_in_path: true
 // but it looks like paket can not yet do this.
 nuget Microsoft.NETFramework.ReferenceAssemblies
 
+group Tests
+	framework: auto-detect
+	source https://www.nuget.org/api/v2
+
+	nuget FSharp.Core
+	nuget Unquote
+	nuget xunit
+	nuget xunit.runner.visualstudio version_in_path: true
+	nuget Microsoft.NET.Test.Sdk
+
 // [ FAKE GROUP ]
 group Build
 	framework: auto-detect
 	source https://www.nuget.org/api/v2
 	source https://api.nuget.org/v3/index.json
 
-	nuget FSharp.Core 4.7.0.0
+	nuget FSharp.Core
 	nuget Octokit
 	nuget Fake.Api.GitHub
 	nuget Fake.BuildServer.AppVeyor

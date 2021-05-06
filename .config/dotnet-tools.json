@@ -3,10 +3,10 @@
   "isRoot": true,
   "tools": {
     "fake-cli": {
-      "version": "5.20.3",
-      "commands": [
-        "fake"
-      ]
+        "version": "5.20.4-alpha.1642",
+        "commands": [
+            "fake"
+        ]
     },
     "fsharp.formatting.commandtool": {
       "version": "9.0.1",

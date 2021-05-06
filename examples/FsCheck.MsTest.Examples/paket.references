@@ -1,4 +1,4 @@
-FSharp.Core framework: net452
-MSTest.TestFramework framework: net452
-MSTest.TestAdapter framework: net452
+FSharp.Core
+MSTest.TestFramework
+MSTest.TestAdapter
 Microsoft.NETFramework.ReferenceAssemblies
