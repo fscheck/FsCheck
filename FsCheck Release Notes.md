@@ -1,4 +1,4 @@
-### 2.15.3 - To be released
+### 2.15.3 - 8 May 2021
 
 * Allow shrinking private unions. (by Sander van Dijk)
 
