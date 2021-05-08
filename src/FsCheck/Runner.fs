@@ -138,15 +138,19 @@ module Runner =
                 | Passed _ -> TestResult.True (testData, config.QuietOnSuccess)
                 | Falsified result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
                 | Failed _ -> TestResult.Exhausted testData
+                // this means we gave up shrinking
+                | Shrink result | NoShrink result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
                 | EndShrink result -> TestResult.False ({ testData with Labels=result.Labels}, origArgs, result.Arguments, result.Outcome, usedSeed)
                 | _ -> failwith "Test ended prematurely"
         config.Runner.OnFinished(config.Name,testResult)
 
     let private runner config prop = 
+        // this would ideallyl be a config value, but config is hard to extend right now
+        let maxTotalShrinkNb = 5000
         let testNb = ref 0
         let failedNb = ref 0
         let shrinkNb = ref 0
-        let tryShrinkNb = ref 0
+        let totalShrinkNb = ref 0
         let origArgs = ref []
         let lastStep = ref (Failed Res.rejected)
         let seed = match config.Replay with None -> newSeed() | Some s -> s
@@ -156,13 +160,28 @@ module Runner =
             lastStep := step
             //printfn "%A" step
             match step with
-                | Generated args -> config.Runner.OnArguments(!testNb, args, config.Every); true
-                | Passed _ -> testNb := !testNb + 1; !testNb <> config.MaxTest //stop if we have enough tests
-                | Falsified result -> origArgs := result.Arguments; testNb := !testNb + 1; true //falsified, true to continue with shrinking
-                | Failed _ -> failedNb := !failedNb + 1; !failedNb <> config.MaxFail //failed, stop if we have too much failed tests
-                | Shrink result -> tryShrinkNb := 0; shrinkNb := !shrinkNb + 1; config.Runner.OnShrink(result.Arguments, config.EveryShrink); true
-                | NoShrink _ -> tryShrinkNb := !tryShrinkNb + 1; true
-                | EndShrink _ -> false )
+                | Generated args -> 
+                    config.Runner.OnArguments(!testNb, args, config.Every)
+                    true
+                | Passed _ ->
+                    testNb := !testNb + 1
+                    !testNb <> config.MaxTest //stop if we have enough tests
+                | Falsified result ->
+                    origArgs := result.Arguments
+                    testNb := !testNb + 1
+                    true //falsified, true to continue with shrinking
+                | Failed _ ->
+                    failedNb := !failedNb + 1
+                    !failedNb <> config.MaxFail //failed, stop if we have too much failed tests
+                | Shrink result ->
+                    totalShrinkNb := !totalShrinkNb + 1
+                    shrinkNb := !shrinkNb + 1
+                    config.Runner.OnShrink(result.Arguments, config.EveryShrink)
+                    !totalShrinkNb < maxTotalShrinkNb
+                | NoShrink _ ->
+                    totalShrinkNb := !totalShrinkNb + 1
+                    !totalShrinkNb < maxTotalShrinkNb
+                | EndShrink _ -> false)
         |> Seq.fold (fun acc elem ->
             match elem with
                 | Passed result -> (result.Stamp :: acc)
