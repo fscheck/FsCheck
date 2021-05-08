@@ -2,6 +2,8 @@
 
 * Allow shrinking private unions. (by Sander van Dijk)
 
+* Limit total number of shrink attempts to 5000, to avoid infinite loops in general, and in particular if an argument is mutated in the test.
+
 ### 2.15.2 - 15 Arpil 2021
 
 * Enabled FsCheck.Xunit's `PropertiesAttribute` to work at assembly level. (by Laurence King)

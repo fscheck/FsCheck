@@ -325,3 +325,24 @@ module BugReproIssue514 =
             let testCase = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, testMethod)
             testCase.RunAsync(null, new TestMessageBus(), [||], new ExceptionAggregator(), new CancellationTokenSource()) |> Async.AwaitTask |> ignore
             Check.One(Config.Quick, disposed)
+
+
+module ShrinkingMutatedTypes =
+    open Xunit
+    open Swensen.Unquote
+    open FsCheck
+
+
+    type Member () =
+        member val Name = "" with get, set
+
+    
+    let mutateMember (m:Member)  =
+        m.Name <- "1"
+        m.Name = "0"
+
+    [<Fact>]
+    let ``should not loop infinitely when shrinking mutated value``() =
+        raisesWith <@ Check.QuickThrowOnFailure(mutateMember) @> (fun e -> <@ e.Message.Contains("5000 shrinks") @>)
+            
+        
