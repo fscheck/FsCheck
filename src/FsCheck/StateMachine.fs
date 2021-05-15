@@ -55,7 +55,7 @@ type OperationResult<'a>(?name) =
 ///An operation describes pre and post conditions and the model for a single operation under test.
 ///The post-conditions are the invariants that will be checked; when these do not hold the test fails.
 [<AbstractClass>]
-type Operation<'Actual,'Model>() =
+type Operation<'Actual,'Model, 'Testable>() =
     let sets = HashSet<IOperationResult>()
     let gets = HashSet<IOperationResult>()
     interface IOperation with
@@ -70,7 +70,7 @@ type Operation<'Actual,'Model>() =
     ///Excecutes the command on the object under test, and returns a property that must hold.
     ///This property typically compares the state of the model with the state of the object after
     ///execution of the command.
-    abstract Check : 'Actual * 'Model  -> Property
+    abstract Check : 'Actual * 'Model  -> 'Testable
     ///Executes the command on the model of the object.
     abstract Run : 'Model -> 'Model
     ///Optional precondition for execution of the command. When this does not hold, the test continues
@@ -80,8 +80,8 @@ type Operation<'Actual,'Model>() =
     default __.Pre _ = true
 
 type StopOperation<'Actual,'Model>() =
-    inherit Operation<'Actual,'Model>()
-    override __.Check (_, _) = true.ToProperty()
+    inherit Operation<'Actual,'Model, bool>()
+    override __.Check (_, _) = true
     override __.Run m = m
     override __.ToString() = "Stop"
 
@@ -94,7 +94,7 @@ type TearDown<'Actual>() =
 ///Defines the initial state for actual and model object, and allows to define the generator to use
 ///for the next state, based on the model.
 [<AbstractClass>]
-type Machine<'Actual,'Model>(maxNumberOfCommands:int) =
+type Machine<'Actual,'Model, 'Testable>(maxNumberOfCommands:int) =
     new() = Machine(-1)
     member __.MaxNumberOfCommands = maxNumberOfCommands
 
@@ -105,14 +105,14 @@ type Machine<'Actual,'Model>(maxNumberOfCommands:int) =
     ///Generate a number of possible commands based on the current state of the model. 
     ///Preconditions are still checked, so even if a Command is returned, it is not chosen
     ///if its precondition does not hold.
-    abstract Next : 'Model -> Gen<Operation<'Actual,'Model>>
-    abstract ShrinkOperations : list<Operation<'Actual,'Model>> -> seq<list<Operation<'Actual,'Model>>>
+    abstract Next : 'Model -> Gen<Operation<'Actual,'Model, 'Testable>>
+    abstract ShrinkOperations : list<Operation<'Actual,'Model, 'Testable>> -> seq<list<Operation<'Actual,'Model, 'Testable>>>
     default __.ShrinkOperations s = Arb.Default.FsList().Shrinker s
 
 [<StructuredFormatDisplayAttribute("{StructuredToString}")>]
-type MachineRun<'Actual, 'Model> =
+type MachineRun<'Actual, 'Model, 'Testable> =
     { Setup         : 'Model * Setup<'Actual,'Model> 
-      Operations    : list<Operation<'Actual,'Model> * 'Model>
+      Operations    : list<Operation<'Actual,'Model, 'Testable> * 'Model>
       TearDown      : TearDown<'Actual> 
       UsedSize      : int} 
       with
@@ -138,7 +138,7 @@ type New<'Actual>(ctor:ConstructorInfo, parameters:array<obj>) =
         (result, result, str)
 
 type MethodCall<'Actual>(meth:MethodInfo, parameters:array<obj>) =
-    inherit Operation<'Actual,ObjectMachineModel>()
+    inherit Operation<'Actual,ObjectMachineModel, Property>()
     let paramstring = 
                   parameters
                   |> Seq.map (sprintf "%O") 
@@ -160,7 +160,7 @@ type DisposeCall<'Actual>() =
     override __.ToString() = if typeof<IDisposable>.GetTypeInfo().IsAssignableFrom (typeof<'Actual>.GetTypeInfo()) then sprintf "Dispose" else "Nothing"
 
 type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) = 
-    inherit Machine<'Actual,ObjectMachineModel>()
+    inherit Machine<'Actual,ObjectMachineModel, Property>()
     static let skipMethods = [ "GetType"; "Finalize"; "MemberwiseClone"; "Dispose"; "System-IDisposable-Dispose"] |> Set.ofList
     let methodFilter = defaultArg methodFilter (fun mi -> not <| Set.contains mi.Name skipMethods)
     let parameterGenerator (parameters:seq<ParameterInfo>) =
@@ -178,7 +178,7 @@ type ObjectMachine<'Actual>(?methodFilter:MethodInfo -> bool) =
         |> Seq.filter methodFilter
         |> Seq.map (fun meth -> 
                         gen { let! parameters = parameterGenerator (meth.GetParameters())
-                              return MethodCall<'Actual>(meth, List.toArray parameters) :> Operation<'Actual,ObjectMachineModel> })
+                              return MethodCall<'Actual>(meth, List.toArray parameters) :> Operation<'Actual,ObjectMachineModel, Property> })
         |> Gen.oneof
 
     override __.Setup = ctors |> Arb.fromGen
@@ -213,17 +213,17 @@ module StateMachine =
 
     [<CompiledName("Operation")>]
     let operationWithPrecondition name preCondition runModel check =
-        { new Operation<'Actual,'Model>() with
+        { new Operation<'Actual,'Model, 'Testable'>() with
             override __.Run pre = runModel pre
-            override __.Check(model,actual) = check (model,actual) |> Prop.ofTestable
+            override __.Check(model,actual) = check (model,actual)
             override __.Pre model = preCondition model
             override __.ToString() = name }
 
     [<CompiledName("Operation")>]
     let operation name runModel check =
-        { new Operation<'Actual,'Model>() with
+        { new Operation<'Actual,'Model, 'Testable>() with
             override __.Run pre = runModel pre
-            override __.Check(model,actual) = check (model,actual) |> Prop.ofTestable
+            override __.Check(model,actual) = check (model,actual)
             override __.ToString() = name }
 
     [<CompiledName("Operation"); CompilerMessage("This method is not intended for use from F#.", 10001, IsHidden=true, IsError=false)>]
@@ -239,7 +239,7 @@ module StateMachine =
         operation name runModel.Invoke (fun (a,b) -> Prop.ofTestable <| check.Invoke(a,b))
 
     [<CompiledName("Generate")>]
-    let generate (spec:Machine<'Actual,'Model>) = 
+    let generate (spec:Machine<'Actual,'Model,'Testable>) = 
         let rec genCommandsS state size =
             gen {
                 if size > 0 then
@@ -266,8 +266,8 @@ module StateMachine =
             })
 
     [<CompiledName("Shrink")>]
-    let shrink (spec:Machine<'Actual,'Model>) (run:MachineRun<_,_>) =
-        let runModels initial (operations:seq<Operation<'Actual,'Model>>) =
+    let shrink (spec:Machine<'Actual,'Model,'Testable>) (run:MachineRun<_,_,_>) =
+        let runModels initial (operations:seq<Operation<'Actual,'Model,'Testable>>) =
             let addProvided (set:HashSet<_>) (op:IOperation) =
                 set.UnionWith op.Provides
                 set
@@ -314,7 +314,7 @@ module StateMachine =
     /// Check one run, i.e. create a property from a single run.
     [<CompiledName("ForOne")>]
     let forOne { Setup = _:'Model,setup; Operations = operations; TearDown = teardown; UsedSize = usedSize } =
-            let rec run actual (operations:list<Operation<'Actual,'Model> * _>) property =
+            let rec run actual (operations:list<Operation<'Actual,'Model,'Testable> * _>) property =
                 match operations with
                 | [] -> teardown.Actual actual; property
                 | ((op,model)::ops) -> 
@@ -332,20 +332,20 @@ module StateMachine =
 
     ///Check all generated runs, i.e. create a property from an arbitrarily generated run.
     [<CompiledName("ForAll")>]
-    let forAll (arb:Arbitrary<MachineRun<'Actual,'Model>>) = 
+    let forAll (arb:Arbitrary<MachineRun<'Actual,'Model,'Testable>>) = 
         Prop.forAll arb forOne
 
     ///Turn a machine specification into a property.
     [<CompiledName("ToProperty")>]
-    let toProperty (spec:Machine<'Actual,'Model>) = 
+    let toProperty (spec:Machine<'Actual,'Model,'Testable>) = 
         forAll (Arb.fromGenShrink(generate spec, shrink spec))
 
 [<AbstractClass;Sealed;Extension>]
 type StateMachineExtensions =
     [<Extension>]
-    static member ToProperty(specification: Machine<'Actual,'Model>) = StateMachine.toProperty specification
+    static member ToProperty(specification: Machine<'Actual,'Model,'Testable>) = StateMachine.toProperty specification
     [<Extension>]
-    static member ToProperty(arbitraryRun:Arbitrary<MachineRun<'Actual,'Model>>) = StateMachine.forAll arbitraryRun
+    static member ToProperty(arbitraryRun:Arbitrary<MachineRun<'Actual,'Model,'Testable>>) = StateMachine.forAll arbitraryRun
     [<Extension>]
-    static member ToProperty(run: MachineRun<'Actual,'Model>) = StateMachine.forOne run
+    static member ToProperty(run: MachineRun<'Actual,'Model,'Testable>) = StateMachine.forOne run
 

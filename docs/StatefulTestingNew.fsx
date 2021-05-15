@@ -33,7 +33,7 @@ With this idea in mind, you can write a specification of the Counter class using
 
 let spec =
     let inc = 
-        { new Operation<Counter,int>() with
+        { new Operation<Counter,int,_>() with
             member __.Run m = m + 1
             member __.Check (c,m) = 
                 let res = c.Inc() 
@@ -41,7 +41,7 @@ let spec =
                 |@ sprintf "Inc: model = %i, actual = %i" m res
             override __.ToString() = "inc"}
     let dec = 
-        { new Operation<Counter,int>() with
+        { new Operation<Counter,int,_>() with
             member __.Run m = m - 1
             override __.Pre m = 
                 m > 0
@@ -54,7 +54,7 @@ let spec =
         { new Setup<Counter,int>() with
             member __.Actual() = new Counter(initialValue)
             member __.Model() = initialValue }
-    { new Machine<Counter,int>() with
+    { new Machine<Counter,int,_>() with
         member __.Setup = Gen.choose (0,3) |> Gen.map create |> Arb.fromGen
         member __.Next _ = Gen.elements [ inc; dec ] }
 
