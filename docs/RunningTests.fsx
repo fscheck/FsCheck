@@ -143,7 +143,8 @@ let ``abs(v) % k equals abs(v % k)`` v (NonZeroInt k) =
 
 (**
 Likely one of the most useful configuration options of `PropertyAttribute` is the ability to register or override an `Arbitrary`
-instance just for that test method. You can also use the `PropertiesAttribute` (note the plural form) to set custom configuration options per class or per module basis. For example:*)
+instance just for that test method. You can also use the `PropertiesAttribute` (note the plural form) to set custom configuration
+options per class, per module, or per assembly. For example:*)
 
 type Positive =
     static member Double() =
@@ -161,8 +162,10 @@ type Zero =
         |> Gen.constant
         |> Arb.fromGen
 
-[<assembly: Properties( Arbitrary = [| typeof<Zero> |])>] do()
+[<assembly: Properties( Arbitrary = [| typeof<Zero> |] )>] do()
+
 module ModuleWithoutProperties =
+
     [<Property>]
     let ``should use Arb instances from assembly``(underTest:float) =
         underTest = 0.0
