@@ -1,4 +1,4 @@
-### 2.16.0 - To be released
+### 2.16.0 - 13 August 2021
 
 * Support generating C# record types.
 
