@@ -144,10 +144,8 @@ configuration.QuietOnSuccess <span class="o">=</span> <span class="k">true</span
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 2 tests (5 shrinks) (StdGen (232008073, 296887454)):
+ListProperties.reverse is original-Falsifiable, after 3 tests (0 shrinks) (StdGen (1073073349, 296926364)):
 Original:
-[0; -2; -1]
-Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
 you can also use Check.QuickAll to test all the top level functions in a certain module.
@@ -201,7 +199,8 @@ method, similar to how you would use the <code>Config</code> type otherwise. For
     <span class="pn">(</span><span onmouseout="hideTip(event, 'fs34', 65)" onmouseover="showTip(event, 'fs34', 65)" class="fn">abs</span> <span onmouseout="hideTip(event, 'fs31', 66)" onmouseover="showTip(event, 'fs31', 66)" class="fn">v</span><span class="pn">)</span> <span class="o">%</span> <span onmouseout="hideTip(event, 'fs33', 67)" onmouseover="showTip(event, 'fs33', 67)" class="fn">k</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs34', 68)" onmouseover="showTip(event, 'fs34', 68)" class="fn">abs</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs31', 69)" onmouseover="showTip(event, 'fs31', 69)" class="fn">v</span> <span class="o">%</span> <span onmouseout="hideTip(event, 'fs33', 70)" onmouseover="showTip(event, 'fs33', 70)" class="fn">k</span><span class="pn">)</span>
 </code></pre>
 <p>Likely one of the most useful configuration options of <code>PropertyAttribute</code> is the ability to register or override an <code>Arbitrary</code>
-instance just for that test method. You can also use the <code>PropertiesAttribute</code> (note the plural form) to set custom configuration options per class or per module basis. For example:</p>
+instance just for that test method. You can also use the <code>PropertiesAttribute</code> (note the plural form) to set custom configuration
+options per class, per module, or per assembly. For example:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="rt">Positive</span> <span class="o">=</span>
     <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs35', 71)" onmouseover="showTip(event, 'fs35', 71)" class="fn">Double</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span>
         <span onmouseout="hideTip(event, 'fs18', 72)" onmouseover="showTip(event, 'fs18', 72)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs19', 73)" onmouseover="showTip(event, 'fs19', 73)" class="rt">Default</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs36', 74)" onmouseover="showTip(event, 'fs36', 74)" class="id">Float</span><span class="pn">(</span><span class="pn">)</span>
@@ -218,8 +217,10 @@ instance just for that test method. You can also use the <code>PropertiesAttribu
         <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs38', 90)" onmouseover="showTip(event, 'fs38', 90)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs39', 91)" onmouseover="showTip(event, 'fs39', 91)" class="id">constant</span>
         <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs18', 92)" onmouseover="showTip(event, 'fs18', 92)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 93)" onmouseover="showTip(event, 'fs40', 93)" class="id">fromGen</span>
 
-<span class="pn">[&lt;</span><span class="id">assembly</span><span class="pn">:</span> <span onmouseout="hideTip(event, 'fs41', 94)" onmouseover="showTip(event, 'fs41', 94)" class="rt">Properties</span><span class="pn">(</span> <span onmouseout="hideTip(event, 'fs42', 95)" onmouseover="showTip(event, 'fs42', 95)" class="fn">Arbitrary</span> <span class="o">=</span> <span class="pn">[|</span> <span onmouseout="hideTip(event, 'fs14', 96)" onmouseover="showTip(event, 'fs14', 96)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs43', 97)" onmouseover="showTip(event, 'fs43', 97)" class="rt">Zero</span><span class="pn">&gt;</span> <span class="pn">|]</span><span class="pn">)</span><span class="pn">&gt;]</span> <span class="k">do</span><span class="pn">(</span><span class="pn">)</span>
+<span class="pn">[&lt;</span><span class="id">assembly</span><span class="pn">:</span> <span onmouseout="hideTip(event, 'fs41', 94)" onmouseover="showTip(event, 'fs41', 94)" class="rt">Properties</span><span class="pn">(</span> <span onmouseout="hideTip(event, 'fs42', 95)" onmouseover="showTip(event, 'fs42', 95)" class="fn">Arbitrary</span> <span class="o">=</span> <span class="pn">[|</span> <span onmouseout="hideTip(event, 'fs14', 96)" onmouseover="showTip(event, 'fs14', 96)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs43', 97)" onmouseover="showTip(event, 'fs43', 97)" class="rt">Zero</span><span class="pn">&gt;</span> <span class="pn">|]</span> <span class="pn">)</span><span class="pn">&gt;]</span> <span class="k">do</span><span class="pn">(</span><span class="pn">)</span>
+
 <span class="k">module</span> <span class="m">ModuleWithoutProperties</span> <span class="o">=</span>
+
     <span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs29', 98)" onmouseover="showTip(event, 'fs29', 98)" class="rt">Property</span><span class="pn">&gt;]</span>
     <span class="k">let</span> <span onmouseout="hideTip(event, 'fs44', 99)" onmouseover="showTip(event, 'fs44', 99)" class="fn">``should use Arb instances from assembly``</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs45', 100)" onmouseover="showTip(event, 'fs45', 100)" class="fn">underTest</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs46', 101)" onmouseover="showTip(event, 'fs46', 101)" class="vt">float</span><span class="pn">)</span> <span class="o">=</span>
         <span onmouseout="hideTip(event, 'fs45', 102)" onmouseover="showTip(event, 'fs45', 102)" class="fn">underTest</span> <span class="o">=</span> <span class="n">0.0</span>
