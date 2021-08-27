@@ -51,6 +51,13 @@ module TypeClass =
                     Array <| arr
             | prim -> Primitive prim
  
+    let private getMethods (t: Type) =
+        #if NETSTANDARD1_0
+        t.GetRuntimeMethods()
+        #else
+        t.GetMethods(BindingFlags.Static ||| BindingFlags.Public ||| BindingFlags.FlattenHierarchy ||| BindingFlags.NonPublic ||| BindingFlags.Instance)
+        #endif
+    
     //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank
     let private findInstances (typeClass:Type) onlyPublic instancesType = 
         let addMethod acc (m:MethodInfo) =
@@ -62,7 +69,8 @@ module TypeClass =
                 (InstanceKind.FromType instance,m) :: acc
             | _ -> acc
         let addMethods (t:Type) =
-            t.GetRuntimeMethods()
+            t
+            |> getMethods
             |> Seq.append (t.GetRuntimeProperties() |> Seq.where (fun prop -> prop.CanRead)|> Seq.map (fun prop -> prop.GetMethod))
             |> Seq.where(fun meth -> meth.IsStatic && (meth.IsPublic || not onlyPublic) && meth.GetParameters().Length = 0)
             |> Seq.fold addMethod []

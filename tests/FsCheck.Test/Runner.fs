@@ -346,3 +346,34 @@ module ShrinkingMutatedTypes =
         raisesWith <@ Check.QuickThrowOnFailure(mutateMember) @> (fun e -> <@ e.Message.Contains("5000 shrinks") @>)
             
         
+module BugReproIssue583 =
+    module Common =
+        open FsCheck
+
+        type BaseGenerator =
+            static member Strings() =
+                {new Arbitrary<string>() with
+                    override x.Generator = Gen.constant "FsCheck"
+                }
+
+    module MyTests =
+        open FsCheck
+        open FsCheck.Xunit
+        open Common
+
+        type DerivedGenerator =
+            inherit BaseGenerator
+            
+            static member Ints() =
+                {new Arbitrary<int32>() with
+                    override x.Generator = Gen.constant 5
+                }
+
+        
+        [<Property(Arbitrary = [| typeof<DerivedGenerator> |])>]
+        let ``should use the inherited generator`` (str: string) =
+            str = "FsCheck"
+        
+        [<Property(Arbitrary = [| typeof<DerivedGenerator> |])>]
+        let ``should use the derived generator`` (i: int32) =
+            i = 5
