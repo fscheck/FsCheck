@@ -66,6 +66,4 @@ FsCheck uses FAKE, run `build.[cmd|sh] -t <Target>` to do something. Important t
 
 ## CI ##
 
-| Windows on AppVeyor | Linux on Travis CI  
-|---------------------|---------------------
-| [![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036/branch/master)](https://ci.appveyor.com/project/kurtschelfthout/fscheck) |  [![Build Status](https://travis-ci.org/fscheck/FsCheck.svg?branch=master)](https://travis-ci.org/fscheck/FsCheck)
+AppVeyor [![Build status](https://ci.appveyor.com/api/projects/status/7ytaslpgxxtw7036/branch/master)](https://ci.appveyor.com/project/kurtschelfthout/fscheck)
