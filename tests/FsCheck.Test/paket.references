@@ -6,3 +6,4 @@ group Tests
 	FSharp.Core
 	Unquote
 	Microsoft.NET.Test.Sdk
+	System.Collections.Immutable

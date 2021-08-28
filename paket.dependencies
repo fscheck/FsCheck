@@ -26,6 +26,9 @@ group Tests
 	nuget xunit
 	nuget xunit.runner.visualstudio version_in_path: true
 	nuget Microsoft.NET.Test.Sdk
+	// don't want to have dependency on this from main package,
+	// but FsCheck can generate these reflectively, so tests need it
+	nuget System.Collections.Immutable
 
 // [ FAKE GROUP ]
 group Build

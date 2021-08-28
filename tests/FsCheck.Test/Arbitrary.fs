@@ -1,6 +1,8 @@
 ﻿
 namespace FsCheck.Test
 
+open System.Collections.Immutable
+
 module Arbitrary =
 
     open Xunit    
@@ -9,6 +11,7 @@ module Arbitrary =
     open System
     open System.Globalization
     open System.Collections.Generic
+    open System.Linq
 #if !NETSTANDARD1_6
     open System.Net
     open System.Net.Mail
@@ -722,3 +725,40 @@ module Arbitrary =
         generate<CSharp.Person> |> sample 10 |> ignore
         generate<CSharp.PersonWithHeight> |> sample 10 |> ignore
 
+
+    [<Fact>]
+    let ``should derive generator for Immutable collections``() =
+        generate<ImmutableArray<int>> |> sample 10 |> ignore
+        generate<ImmutableHashSet<int>> |> sample 10 |> ignore
+        generate<ImmutableList<int>> |> sample 10 |> ignore
+        generate<ImmutableQueue<int>> |> sample 10 |> ignore
+        generate<ImmutableSortedSet<int>> |> sample 10 |> ignore
+        generate<ImmutableStack<int>> |> sample 10 |> ignore
+        generate<ImmutableDictionary<int, char>> |> sample 10 |> ignore
+        generate<ImmutableSortedDictionary<uint16, byte>> |> sample 10 |> ignore
+        
+    [<Property>]
+    let ``should shrink Immutable collections with one generic parameter``(values: int[]) =
+        let checkShrink (shrunkVals: seq<int>) =
+            let shrunkValues = shrunkVals |> Seq.toArray
+            shrunkValues.Length < values.Length 
+            || (Array.zip values shrunkValues
+                |> Array.exists (fun (value,shrunkValue) -> shrunkValue <> value))
+        assert (ImmutableArray.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableHashSet.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableList.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableQueue.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableSortedSet.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableStack.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+
+    [<Property>]
+    let ``should shrink Immutable collections with two generic parameters``(values: Dictionary<int,char>) =
+
+        let checkShrink (shrunkVals: IDictionary<int,char>) =
+            let shrunkValues = shrunkVals |> Seq.toArray
+            shrunkValues.Length < values.Count
+            || (Array.zip (values.ToArray()) shrunkValues
+                |> Array.exists (fun (value,shrunkValue) -> shrunkValue <> value))
+
+        assert (ImmutableDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableSortedDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink)
