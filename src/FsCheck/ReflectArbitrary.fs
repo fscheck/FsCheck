@@ -52,6 +52,7 @@ module internal ReflectArbitrary =
        else 
            Gen.elements (List.map (fun (o : obj) -> o :?> Enum) elems)
 
+
     let private reflectObj getGenerator t =
 
         // is there a path via the fieldType back to the containingType?
@@ -132,6 +133,25 @@ module internal ReflectArbitrary =
             let create = getCSharpDtoConstructor t
             let g = productGen fields create
             box g
+
+        elif isImmutableCollectionType t then
+            let genericArguments = t.GetTypeInfo().GenericTypeArguments
+            if genericArguments.Length = 1 then
+                let elementType = genericArguments.[0]
+                let arrGen = elementType.MakeArrayType() |> getGenerator
+                let make = getImmutableCollection1Constructor t elementType
+                arrGen
+                |> map make
+                |> box
+            elif genericArguments.Length = 2 then
+                // Immutable(Sorted)Dictionary
+                let dictGen = typedefof<Collections.Generic.Dictionary<_,_>>.MakeGenericType(genericArguments) |> getGenerator
+                let make = getImmutableCollection2Constructor t genericArguments
+                dictGen
+                |> map make
+                |> box
+            else
+                failwithf "Unexpected System.Collections.Immutable type: %s. This is a bug in FsCheck, please open an issue." t.AssemblyQualifiedName
 
         else
             failwithf "The type %s is not handled automatically by FsCheck. Consider using another type or writing and registering a generator for it." t.FullName
@@ -230,6 +250,35 @@ module internal ReflectArbitrary =
             let read = getCSharpDtoReader t
             let childrenTypes = getCSharpDtoFields t
             shrinkChildren read make o childrenTypes
+            
+        elif isImmutableCollectionType t then
+            let genericArguments = t.GetTypeInfo().GenericTypeArguments
+            if genericArguments.Length = 1 then
+                let elementType = genericArguments.[0]
+                let shrinkAsArray =
+                    elementType.MakeArrayType()
+                    |> getShrink
+                let read = getImmutableCollection1Reader elementType
+                let make = getImmutableCollection1Constructor t elementType
+                o
+                |> read
+                |> shrinkAsArray
+                |> Seq.map make
+            elif genericArguments.Length = 2 then
+                // Immutable(Sorted)Dictionary
+                let keyType, valueType = genericArguments.[0], genericArguments.[1]
+                let elementType = typedefof<Collections.Generic.KeyValuePair<_,_>>.MakeGenericType(keyType, valueType)
+                let shrinkAsArray =
+                    typedefof<Collections.Generic.KeyValuePair<_,_>>.MakeGenericType(keyType, valueType)
+                    |> getShrink
+                let read = getImmutableCollection1Reader elementType
+                let make = getImmutableCollection2Constructor t genericArguments
+                o
+                |> read
+                |> shrinkAsArray
+                |> Seq.map make
+            else
+                failwithf "Unexpected System.Collections.Immutable type: %s. This is a bug in FsCheck, please open an issue." t.AssemblyQualifiedName
 
         elif t.GetTypeInfo().IsEnum then
             let isFlags = t.GetTypeInfo().GetCustomAttributes(typeof<System.FlagsAttribute>,false).Any() 

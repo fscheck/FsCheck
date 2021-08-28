@@ -52,6 +52,14 @@ module internal Reflect =
         && not typeinfo.ContainsGenericParameters
         && hasOnlyDefaultCtor && hasWritableProperties
 
+    let isImmutableCollectionType (ty: Type) =
+        ty.FullName.StartsWith("System.Collections.Immutable")
+        && Array.contains ty.Name [| 
+                "ImmutableArray`1"; "ImmutableHashSet`1"; "ImmutableList`1" 
+                "ImmutableQueue`1"; "ImmutableSortedSet`1"; "ImmutableStack`1"
+                "ImmutableDictionary`2"; "ImmutableSortedDictionary`2"
+                |]
+
 
     /// Get information on the fields of a record type
     let getRecordFieldTypes (recordType: System.Type) = 
@@ -164,3 +172,41 @@ module internal Reflect =
         match target with 
         | None -> m.Invoke(null, args)
         | Some t -> m.Invoke(t, args)
+
+    /// Returns a function that creates the given System.Collections.Immutable type,
+    /// with a single generic type parameter, from an array.
+    let getImmutableCollection1Constructor (t:Type) (elementType: Type) =
+        let staticTypeName = t.GetGenericTypeDefinition().AssemblyQualifiedName.Replace("`1", "")
+        let staticType = Type.GetType(staticTypeName, throwOnError=true)
+        let createMethod = 
+            staticType.GetRuntimeMethods()
+            |> Seq.find(fun (mi:MethodInfo) -> 
+                            let parameters = mi.GetParameters()
+                            mi.IsPublic && mi.IsStatic && mi.Name = "Create" 
+                            && parameters.Length = 1 && parameters.[0].ParameterType.IsArray)
+        let genericCreateMethod = createMethod.MakeGenericMethod(elementType)
+        fun arr -> genericCreateMethod.Invoke(null, [| arr |])
+
+    /// Returns a function that reads the given System.Collections.Immutable type,
+    /// with a single generic type parameter, as an array.
+    let getImmutableCollection1Reader (elementType: Type) =
+        let toArrayMethod =
+            typeof<Linq.Enumerable>.GetRuntimeMethods()
+            |> Seq.find (fun mi -> mi.IsPublic && mi.IsStatic && mi.Name = "ToArray" && mi.GetParameters().Length = 1)
+        let genericToArrayMethod = toArrayMethod.MakeGenericMethod(elementType)
+        fun o -> genericToArrayMethod.Invoke(null, [| o |])
+
+
+    /// Returns a function that creates the given System.Collections.Immutable type
+    /// with two generic type parameters, from an IEnumerable<KeyValuePair<_,_,>>.
+    let getImmutableCollection2Constructor (t: Type) (genericArguments: Type[]) =
+        let staticTypeName = t.GetGenericTypeDefinition().AssemblyQualifiedName.Replace("`2", "")
+        let staticType = Type.GetType(staticTypeName, throwOnError=true)
+        let createRangeMethod = 
+            staticType.GetRuntimeMethods()
+            |> Seq.find(fun (mi:MethodInfo) -> 
+                            let parameters = mi.GetParameters()
+                            mi.IsPublic && mi.IsStatic && mi.Name = "CreateRange"
+                            && parameters.Length = 1 && parameters.[0].ParameterType.GetGenericTypeDefinition() = typedefof<Collections.Generic.IEnumerable<_>>)
+        let genericCreateRangeMethod = createRangeMethod.MakeGenericMethod(genericArguments)
+        fun dict -> genericCreateRangeMethod.Invoke(null, [| dict |])
