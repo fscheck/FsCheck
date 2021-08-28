@@ -1,3 +1,7 @@
+### 2.16.1 - 28 August 2021
+
+* Include inherited methods when registering Arbitrary instances. (by Bennie Copeland)
+
 ### 2.16.0 - 13 August 2021
 
 * Support generating C# record types.
