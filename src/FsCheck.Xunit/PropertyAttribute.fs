@@ -1,6 +1,7 @@
 ﻿namespace FsCheck.Xunit
 
 open System
+open System.Reflection
 open System.Threading.Tasks
 
 open FsCheck
@@ -155,10 +156,9 @@ type public PropertiesAttribute() = inherit PropertyAttribute()
 type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, testMethod:ITestMethod, ?testMethodArguments:obj []) =    
     inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
 
-    let combineAttributes (attributes: (IAttributeInfo option) list) =
-        attributes
+    let combineAttributes (configs: (PropertyConfig option) list) =
+        configs
         |> List.choose id
-        |> List.map(fun attr -> attr.GetNamedArgument<PropertyConfig> "Config")
         |> List.reduce(fun higherLevelAttribute lowerLevelAttribute -> 
             PropertyConfig.combine lowerLevelAttribute higherLevelAttribute)
 
@@ -170,10 +170,22 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                 |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
                 |> Seq.toArray
 
+        let getPropertiesOnDeclaringClasses (testClass: ITestClass) = 
+            [   let mutable current: Type = testClass.Class.ToRuntimeType()
+                while not (isNull current) do
+                    yield current.GetTypeInfo().GetCustomAttributes<PropertiesAttribute>()
+                          |> Seq.tryHead
+                          |> Option.map (fun attr -> attr.Config)
+                    current <- current.DeclaringType]
+            |> List.rev
+            
+        let getConfig (attr: IAttributeInfo) =
+            attr.GetNamedArgument<PropertyConfig> "Config"
+
         let config = combineAttributes [
-            this.TestMethod.TestClass.Class.Assembly.GetCustomAttributes(typeof<PropertiesAttribute>) |> Seq.tryHead
-            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<PropertiesAttribute>) |> Seq.tryHead
-            this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head |> Some]
+              yield this.TestMethod.TestClass.Class.Assembly.GetCustomAttributes(typeof<PropertiesAttribute>) |> Seq.tryHead |> Option.map getConfig
+              yield! getPropertiesOnDeclaringClasses this.TestMethod.TestClass
+              yield this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head |> getConfig |> Some]
         
         { config with Arbitrary = Array.append config.Arbitrary arbitrariesOnClass }
         |> PropertyConfig.toConfig output 
