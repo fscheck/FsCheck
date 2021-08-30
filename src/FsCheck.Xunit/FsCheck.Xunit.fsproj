@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Runner.fs" />
     <Compile Include="PropertyAttribute.fs" />
     <Compile Include="CheckExtensions.fs" />
   </ItemGroup>

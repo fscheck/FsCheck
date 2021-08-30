@@ -3,10 +3,11 @@
 open System
 open System.Threading.Tasks
 
-open FsCheck
 open Xunit
 open Xunit.Sdk
 open Xunit.Abstractions
+
+open FsCheck
 
 type PropertyFailedException =
     inherit Exception
