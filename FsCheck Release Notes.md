@@ -1,6 +1,6 @@
 ### 2.16.3 - To be released
 
-
+* Allow configuration in FsCheck.Xunit.PropertiesAttribute to affect properties on nested types or modules. PropertiesAttribute on the closest enclosing type takes precedence.
 
 ### 2.16.2 - 30 August 2021
 
