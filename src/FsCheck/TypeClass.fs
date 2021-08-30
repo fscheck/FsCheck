@@ -51,11 +51,11 @@ module TypeClass =
                     Array <| arr
             | prim -> Primitive prim
  
-    let private getMethods (t: Type) =
+    let private getMethods (t: Type) : seq<MethodInfo> =
         #if NETSTANDARD1_0
         t.GetRuntimeMethods()
         #else
-        t.GetMethods(BindingFlags.Static ||| BindingFlags.Public ||| BindingFlags.FlattenHierarchy ||| BindingFlags.NonPublic ||| BindingFlags.Instance)
+        upcast t.GetMethods(BindingFlags.Static ||| BindingFlags.Public ||| BindingFlags.FlattenHierarchy ||| BindingFlags.NonPublic ||| BindingFlags.Instance)
         #endif
     
     //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank

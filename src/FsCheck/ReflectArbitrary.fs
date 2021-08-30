@@ -191,7 +191,7 @@ module internal ReflectArbitrary =
         else
             fun _ -> []
 
-    let private reflectShrinkObj getShrink o (t:Type) = 
+    let private reflectShrinkObj (getShrink:Type->obj->seq<obj>) o (t:Type) = 
         //assumes that l contains at least one element. 
         let split3 l =
             let rec split3' front m back =
@@ -311,4 +311,4 @@ module internal ReflectArbitrary =
         else
             Seq.empty
 
-    let reflectShrink getShrink (a:'a) = reflectShrinkObj getShrink a (typeof<'a>) |> Seq.map (unbox<'a>)
+    let reflectShrink<'T> (getShrink: Type -> obj -> seq<obj>) (a:'T) = reflectShrinkObj getShrink a (typeof<'T>) |> Seq.map (unbox<'T>)
