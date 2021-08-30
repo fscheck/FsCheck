@@ -157,7 +157,7 @@ so when we run this specification we can check that FsCheck does the right thing
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs39', 99)" onmouseover="showTip(event, 'fs39', 99)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 100)" onmouseover="showTip(event, 'fs40', 100)" class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs41', 101)" onmouseover="showTip(event, 'fs41', 101)" class="m">StateMachine</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs42', 102)" onmouseover="showTip(event, 'fs42', 102)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs12', 103)" onmouseover="showTip(event, 'fs12', 103)" class="id">spec</span><span class="pn">)</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (2 shrinks) (StdGen (21401074, 296932596)):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (4 shrinks) (StdGen (508317871, 296933392)):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
 (3, Setup Counter)
@@ -165,6 +165,8 @@ inc -&gt; 4
 inc -&gt; 5
 inc -&gt; 6
 inc -&gt; 7
+dec -&gt; 6
+dec -&gt; 5
 
 Shrunk:
 (3, Setup Counter)
