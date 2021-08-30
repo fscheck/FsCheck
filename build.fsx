@@ -117,16 +117,7 @@ Target.create "Build" (fun _ ->
 
 Target.create "RunTests" (fun _ ->
   "tests/FsCheck.Test/"
-  |> DotNet.test (fun opt -> opt)
-    // !! testAssemblies
-    // |> XUnit2.run (fun p ->
-    //         { p with
-    //             //ToolPath = "packages/build/xunit.runner.console/tools/xunit.console.exe"
-    //             //The NoAppDomain setting requires care.
-    //             //On mono, it needs to be true otherwise xunit won't work due to a Mono bug.
-    //             //On .NET, it needs to be false otherwise Unquote won't work because it won't be able to load the FsCheck assembly.
-    //             NoAppDomain = Environment.isMono
-    //             ShadowCopy = false })
+  |> DotNet.test (fun opt -> { opt with Configuration = DotNet.BuildConfiguration.Release })
 )
 
 // --------------------------------------------------------------------------------------
