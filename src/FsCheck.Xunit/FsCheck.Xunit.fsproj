@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FsCheck.Xunit</AssemblyName>
-    <TargetFrameworks>net452;netstandard1.6;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net452;netstandard2.0;netstandard1.6</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>

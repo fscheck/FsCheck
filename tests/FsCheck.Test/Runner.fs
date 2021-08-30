@@ -8,33 +8,33 @@ module Runner =
     open FsCheck.Xunit
     open Swensen.Unquote
 
-    type TestArbitrary1 =
+    type PositiveDoublesOnly =
         static member PositiveDouble() =
             Arb.Default.Float()
             |> Arb.mapFilter abs (fun t -> t >= 0.0)
 
-    type TestArbitrary2 =
+    type NegativeDoublesOnly =
         static member NegativeDouble() =
             Arb.Default.Float()
             |> Arb.mapFilter (abs >> ((-) 0.0)) (fun t -> t <= 0.0)
 
-    [<Property( Arbitrary=[| typeof<TestArbitrary2>; typeof<TestArbitrary1> |] )>]
+    [<Property( Arbitrary=[| typeof<NegativeDoublesOnly>; typeof<PositiveDoublesOnly> |] )>]
     let ``should register Arbitrary instances from Config in last to first order``(underTest:float) =
         underTest <= 0.0
 
-    type TestArbitrary3 =
+    type NegativeDoublesOnlyAsProperty =
         static member NegativeDouble =
-            TestArbitrary2.NegativeDouble()
+            NegativeDoublesOnly.NegativeDouble()
 
-    [<Property( Arbitrary=[| typeof<TestArbitrary3> |] )>]
+    [<Property( Arbitrary=[| typeof<NegativeDoublesOnlyAsProperty> |] )>]
     let ``should register Arbitrary instances defined as properties``(underTest:float) =
         underTest <= 0.0
 
-    type TestArbitrary4() =
+    type NegativeDoublesOnlyAsAutoProperty() =
         static member val NegativeDouble  =
-            TestArbitrary2.NegativeDouble()
+            NegativeDoublesOnly.NegativeDouble()
 
-    [<Property( Arbitrary=[| typeof<TestArbitrary4> |] )>]
+    [<Property( Arbitrary=[| typeof<NegativeDoublesOnlyAsAutoProperty> |] )>]
     let ``should register Arbitrary instances defined as auto-implemented properties ``(underTest:float) =
         underTest <= 0.0
 
@@ -114,11 +114,11 @@ module Runner =
 
     [<Fact>]
     let ``PropertyConfig combine should prepend extra Arbitrary``() =
-        let original = { PropertyConfig.zero with Arbitrary = [| typeof<TestArbitrary1> |] }
-        let extra    = { PropertyConfig.zero with Arbitrary = [| typeof<TestArbitrary2> |] }
+        let original = { PropertyConfig.zero with Arbitrary = [| typeof<PositiveDoublesOnly> |] }
+        let extra    = { PropertyConfig.zero with Arbitrary = [| typeof<NegativeDoublesOnly> |] }
         let combined = PropertyConfig.combine extra original
 
-        combined.Arbitrary.[0] =! typeof<TestArbitrary2>
+        combined.Arbitrary.[0] =! typeof<NegativeDoublesOnly>
 
     [<Property>]
     let ``PropertyConfig combine should favor extra config``(orignalMaxTest, extraMaxTest) =
@@ -148,14 +148,27 @@ module Runner =
         [<Property>]
         member __.``Should run a property on an instance``(_:int) = ()
 
-    [<Properties(Arbitrary = [| typeof<TestArbitrary2> |])>]
+    [<Properties(Arbitrary = [| typeof<NegativeDoublesOnly> |])>]
     module ModuleWithPropertiesArb =
 
         [<Property>]
         let ``should use Arb instances from enclosing module``(underTest:float) =
             underTest <= 0.0
 
-        [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
+        module NestedModuleWithPropertiesArb =
+        
+            [<Property>]
+            let ``should use Arb instances from enclosing enclosing module``(underTest:float) =
+                underTest <= 0.0
+        
+        [<Properties( Arbitrary=[| typeof<PositiveDoublesOnly> |])>]
+        module NestedModuleWithPropertiesConfig =
+                
+            [<Property>]
+            let ``should use Arb instances from closest enclosing module``(underTest:float) =
+                underTest >= 0.0
+
+        [<Property( Arbitrary=[| typeof<PositiveDoublesOnly> |] )>]
         let ``should use Arb instance on method preferentially``(underTest:float) =
             underTest >= 0.0
 
@@ -166,6 +179,21 @@ module Runner =
         let ``should use configuration from enclosing module``(x:int) =
             // checking if the generated value is always the same (-59) from "01234,56789" Replay
             x =! -59
+
+        module NestedModuleWithoutPropertiesConfig =
+
+            [<Property>]
+            let ``should use configuration from enclosing enclosing module``(x:int) =
+                // checking if the generated value is always the same (-59) from "01234,56789" Replay
+                x =! -59
+
+        [<Properties( MaxTest = 1, StartSize = 100, EndSize = 100, Replay = "12345,67890")>]
+        module NestedModuleWithPropertiesConfig =
+        
+            [<Property>]
+            let ``should use configuration from closest enclosing module``(x:int) =
+                /// checking if the generated value is always the same (18) from "12345,67890" Replay
+               x =! 18
 
         [<Property( Replay = "12345,67890")>]
         let ``should use configuration on method preferentially``(x:int) =
@@ -276,14 +304,14 @@ module Deprecated =
     open FsCheck.Xunit
     open Runner
     
-    [<Arbitrary(typeof<TestArbitrary2>)>]
+    [<Arbitrary(typeof<NegativeDoublesOnly>)>]
     module ModuleWithArbitrary =
 
         [<Property>]
         let ``should use Arb instances from enclosing module``(underTest:float) =
             underTest <= 0.0
 
-        [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
+        [<Property( Arbitrary=[| typeof<PositiveDoublesOnly> |] )>]
         let ``should use Arb instance on method preferentially``(underTest:float) =
             underTest >= 0.0
 
