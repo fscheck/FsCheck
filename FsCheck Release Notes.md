@@ -1,6 +1,8 @@
-### 2.16.3 - To be released
+### 2.16.3 - 4 September 2021
 
 * Allow configuration in FsCheck.Xunit.PropertiesAttribute to affect properties on nested types or modules. PropertiesAttribute on the closest enclosing type takes precedence.
+
+* Add FsCheck.Xunit.TestOutputRunner - a simple runner which just redirects output to xUnit's TestOutputHelper.
 
 ### 2.16.2 - 30 August 2021
 
