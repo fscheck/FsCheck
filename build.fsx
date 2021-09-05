@@ -235,7 +235,7 @@ Target.create "Tests" ignore
   ==> "Docs"
 
 "Docs"
-  =?> ("ReleaseDocs", BuildServer.isLocalBuild)
+  //=?> ("ReleaseDocs", BuildServer.isLocalBuild)
   ==> "Release"
 
 "Tests"
