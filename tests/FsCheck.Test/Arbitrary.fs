@@ -1,6 +1,8 @@
 ﻿
 namespace FsCheck.Test
 
+open System.Collections.Immutable
+
 module Arbitrary =
 
     open Xunit    
@@ -150,6 +152,13 @@ module Arbitrary =
     let ``XML encoded string is serializable`` (XmlEncodedString value) =
         let doc = System.Xml.XmlDocument()
         doc.LoadXml (sprintf "<Root>%s</Root>" value)
+
+    [<Property>]
+    let ``Unicode char`` (UnicodeChar s) = true |> Prop.collect s
+
+    [<Property>]
+    let ``Unicode string`` (UnicodeString s) = true |> Prop.collect s
+
 
     [<Property>]
     let ``2-Tuple``((valuei:int,valuec:char) as value) =
@@ -706,11 +715,19 @@ module Arbitrary =
     let ``Derive generator for private two value record``() =
         generate<PrivateRecord> |> sample 10 |> ignore
 
+    [<Property>]
+    let ``Shrink for private two value record`` (DoNotShrink (value: PrivateRecord)) =
+        shrink value |> ignore
+
     type PrivateUnion = private | Case1 | Case2 of string
 
     [<Fact>]
     let ``Derive generator for private two case union``() =
         generate<PrivateUnion> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``Shrink for private two case union`` (DoNotShrink (value: PrivateUnion)) =
+        shrink value |> ignore
 
     [<Fact>]
     let ``should not crash on isCSharpDto issue #545``() =
@@ -719,3 +736,49 @@ module Arbitrary =
             failwith "Test should have failed because UriBuilder can not be generated"
         with exn as e ->
             test <@ e.InnerException.Message.Contains("is not handled automatically by FsCheck") @>
+
+    [<Fact>]
+    let ``should derive generator for csharp record types``() =
+        generate<CSharp.RgbColor> |> sample 10 |> ignore
+        generate<CSharp.CsRecordExample1> |> sample 10 |> ignore
+        generate<CSharp.CsRecordExample2> |> sample 10 |> ignore
+        generate<CSharp.Person> |> sample 10 |> ignore
+        generate<CSharp.PersonWithHeight> |> sample 10 |> ignore
+
+
+    [<Fact>]
+    let ``should derive generator for Immutable collections``() =
+        generate<ImmutableArray<int>> |> sample 10 |> ignore
+        generate<ImmutableHashSet<int>> |> sample 10 |> ignore
+        generate<ImmutableList<int>> |> sample 10 |> ignore
+        generate<ImmutableQueue<int>> |> sample 10 |> ignore
+        generate<ImmutableSortedSet<int>> |> sample 10 |> ignore
+        generate<ImmutableStack<int>> |> sample 10 |> ignore
+        generate<ImmutableDictionary<int, char>> |> sample 10 |> ignore
+        generate<ImmutableSortedDictionary<uint16, byte>> |> sample 10 |> ignore
+        
+    [<Property>]
+    let ``should shrink Immutable collections with one generic parameter``(values: int[]) =
+        let checkShrink (shrunkVals: seq<int>) =
+            let shrunkValues = shrunkVals |> Seq.toArray
+            shrunkValues.Length < values.Length 
+            || (Array.zip values shrunkValues
+                |> Array.exists (fun (value,shrunkValue) -> shrunkValue <> value))
+        assert (ImmutableArray.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableHashSet.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableList.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableQueue.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableSortedSet.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableStack.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+
+    [<Property>]
+    let ``should shrink Immutable collections with two generic parameters``(values: Dictionary<int,char>) =
+
+        let checkShrink (shrunkVals: IDictionary<int,char>) =
+            let shrunkValues = shrunkVals |> Seq.toArray
+            shrunkValues.Length < values.Count
+            || (Array.zip (values.ToArray()) shrunkValues
+                |> Array.exists (fun (value,shrunkValue) -> shrunkValue <> value))
+
+        assert (ImmutableDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink)
+        assert (ImmutableSortedDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink)

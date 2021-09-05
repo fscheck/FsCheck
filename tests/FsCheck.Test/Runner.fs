@@ -169,33 +169,33 @@ module Runner =
     open System.Linq
     open Swensen.Unquote
 
-    type TestArbitrary1 =
+    type PositiveDoublesOnly =
         static member PositiveDouble() =
             ArbMap.defaults.ArbFor<float>()
             |> Arb.mapFilter abs (fun t -> t >= 0.0)
 
-    type TestArbitrary2 =
+    type NegativeDoublesOnly =
         static member NegativeDouble() =
             ArbMap.defaults.ArbFor<float>()
             |> Arb.mapFilter (abs >> ((-) 0.0)) (fun t -> t <= 0.0)
 
-    [<Property( Arbitrary=[| typeof<TestArbitrary2>; typeof<TestArbitrary1> |] )>]
+    [<Property( Arbitrary=[| typeof<NegativeDoublesOnly>; typeof<PositiveDoublesOnly> |] )>]
     let ``should register Arbitrary instances from Config in last to first order``(underTest:float) =
         underTest <= 0.0
 
-    type TestArbitrary3 =
+    type NegativeDoublesOnlyAsProperty =
         static member NegativeDouble =
-            TestArbitrary2.NegativeDouble()
+            NegativeDoublesOnly.NegativeDouble()
 
-    [<Property( Arbitrary=[| typeof<TestArbitrary3> |] )>]
+    [<Property( Arbitrary=[| typeof<NegativeDoublesOnlyAsProperty> |] )>]
     let ``should register Arbitrary instances defined as properties``(underTest:float) =
         underTest <= 0.0
 
-    type TestArbitrary4() =
+    type NegativeDoublesOnlyAsAutoProperty() =
         static member val NegativeDouble  =
-            TestArbitrary2.NegativeDouble()
+            NegativeDoublesOnly.NegativeDouble()
 
-    [<Property( Arbitrary=[| typeof<TestArbitrary4> |] )>]
+    [<Property( Arbitrary=[| typeof<NegativeDoublesOnlyAsAutoProperty> |] )>]
     let ``should register Arbitrary instances defined as auto-implemented properties ``(underTest:float) =
         underTest <= 0.0
 
@@ -246,7 +246,7 @@ module Runner =
             |> Seq.distinct
         1 =! Seq.length same
         "should have failed" <>! Seq.head same
-        test <@ (Seq.head same).Contains "(123,654321)" @>
+        test <@ (Seq.head same).Contains "(123, 654321)" @>
 
     [<Fact>]
     let ``should replay property with complex set of generators``() =
@@ -265,7 +265,7 @@ module Runner =
             |> Seq.distinct
         1 =! Seq.length same
         "should have failed" <>! Seq.head same
-        test <@ (Seq.head same).Contains "(123,654321)" @>
+        test <@ (Seq.head same).Contains "(123, 654321)" @>
 
     
     //type Integer = Integer of int
@@ -348,11 +348,11 @@ module Runner =
 
     [<Fact>]
     let ``PropertyConfig combine should prepend extra Arbitrary``() =
-        let original = { PropertyConfig.zero with Arbitrary = [| typeof<TestArbitrary1> |] }
-        let extra    = { PropertyConfig.zero with Arbitrary = [| typeof<TestArbitrary2> |] }
+        let original = { PropertyConfig.zero with Arbitrary = [| typeof<PositiveDoublesOnly> |] }
+        let extra    = { PropertyConfig.zero with Arbitrary = [| typeof<NegativeDoublesOnly> |] }
         let combined = PropertyConfig.combine extra original
 
-        combined.Arbitrary.[0] =! typeof<TestArbitrary2>
+        combined.Arbitrary.[0] =! typeof<NegativeDoublesOnly>
 
     [<Property>]
     let ``PropertyConfig combine should favor extra config``(orignalMaxTest, extraMaxTest) =
@@ -399,14 +399,27 @@ module Runner =
         [<Property>]
         member __.``Should run a property on an instance``(_:int) = ()
 
-    [<Properties(Arbitrary = [| typeof<TestArbitrary2> |])>]
+    [<Properties(Arbitrary = [| typeof<NegativeDoublesOnly> |])>]
     module ModuleWithPropertiesArb =
 
         [<Property>]
         let ``should use Arb instances from enclosing module``(underTest:float) =
             underTest <= 0.0
 
-        [<Property( Arbitrary=[| typeof<TestArbitrary1> |] )>]
+        module NestedModuleWithPropertiesArb =
+        
+            [<Property>]
+            let ``should use Arb instances from enclosing enclosing module``(underTest:float) =
+                underTest <= 0.0
+        
+        [<Properties( Arbitrary=[| typeof<PositiveDoublesOnly> |])>]
+        module NestedModuleWithPropertiesConfig =
+                
+            [<Property>]
+            let ``should use Arb instances from closest enclosing module``(underTest:float) =
+                underTest >= 0.0
+
+        [<Property( Arbitrary=[| typeof<PositiveDoublesOnly> |] )>]
         let ``should use Arb instance on method preferentially``(underTest:float) =
             underTest >= 0.0
 
@@ -418,7 +431,22 @@ module Runner =
             // checking if the generated value is always the same (-59) from "01234,56789" Replay
             x =! -4
 
-        [<Property( Replay = "12345,67891")>]
+        module NestedModuleWithoutPropertiesConfig =
+
+            [<Property>]
+            let ``should use configuration from enclosing enclosing module``(x:int) =
+                // checking if the generated value is always the same (-59) from "01234,56789" Replay
+                x =! -59
+
+        [<Properties( MaxTest = 1, StartSize = 100, EndSize = 100, Replay = "12345,67890")>]
+        module NestedModuleWithPropertiesConfig =
+        
+            [<Property>]
+            let ``should use configuration from closest enclosing module``(x:int) =
+                /// checking if the generated value is always the same (18) from "12345,67890" Replay
+               x =! 18
+
+        [<Property( Replay = "12345,67890")>]
         let ``should use configuration on method preferentially``(x:int) =
             // checking if the generated value is always the same (18) from "12345,67890" Replay
             x =! -93
@@ -551,3 +579,55 @@ module BugReproIssue514 =
             let testCase = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, testMethod)
             testCase.RunAsync(null, new TestMessageBus(), [||], ExceptionAggregator(), new CancellationTokenSource()) |> Async.AwaitTask |> ignore
             Check.One(Config.Quick, disposed)
+
+
+module ShrinkingMutatedTypes =
+    open Xunit
+    open Swensen.Unquote
+    open FsCheck
+
+
+    type Member () =
+        member val Name = "" with get, set
+
+    
+    let mutateMember (m:Member)  =
+        m.Name <- "1"
+        m.Name = "0"
+
+    [<Fact>]
+    let ``should not loop infinitely when shrinking mutated value``() =
+        raisesWith <@ Check.QuickThrowOnFailure(mutateMember) @> (fun e -> <@ e.Message.Contains("5000 shrinks") @>)
+            
+        
+module BugReproIssue583 =
+    module Common =
+        open FsCheck
+
+        type BaseGenerator =
+            static member Strings() =
+                {new Arbitrary<string>() with
+                    override x.Generator = Gen.constant "FsCheck"
+                }
+
+    module MyTests =
+        open FsCheck
+        open FsCheck.Xunit
+        open Common
+
+        type DerivedGenerator =
+            inherit BaseGenerator
+            
+            static member Ints() =
+                {new Arbitrary<int32>() with
+                    override x.Generator = Gen.constant 5
+                }
+
+        
+        [<Property(Arbitrary = [| typeof<DerivedGenerator> |])>]
+        let ``should use the inherited generator`` (str: string) =
+            str = "FsCheck"
+        
+        [<Property(Arbitrary = [| typeof<DerivedGenerator> |])>]
+        let ``should use the derived generator`` (i: int32) =
+            i = 5

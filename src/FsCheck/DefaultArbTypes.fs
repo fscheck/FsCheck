@@ -55,6 +55,16 @@ type XmlEncodedString = XmlEncodedString of string with
     member x.Get = match x with XmlEncodedString v -> v
     override x.ToString() = x.Get
 
+///Represents a unicode char.
+type UnicodeChar = UnicodeChar of char with
+    member x.Get = match x with UnicodeChar c -> c
+    override x.ToString() = string x.Get
+
+///Represents a string that can contain unicode characters.
+type UnicodeString = UnicodeString of string with
+    member x.Get = match x with UnicodeString v -> v
+    override x.ToString() = x.Get
+
 ///Represents an integer interval.
 type Interval = Interval of int * int with
     member x.Left = match x with Interval (l,_) -> l

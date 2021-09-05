@@ -40,7 +40,7 @@ let releaseNotes = "FsCheck Release Notes.md"
 let solution = "FsCheck.sln"
 
 /// Pattern specifying assemblies to be tested
-let testAssemblies = "tests/**/bin/Release/netcoreapp3.1/*.Test.dll"
+let testAssemblies = "tests/**/bin/Release/net5.0/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
@@ -122,9 +122,8 @@ let runAndCheck (f: unit -> ProcessResult) =
     failwithf "%A" result
 
 Target.create "RunTests" (fun _ ->
-    for testAssembly in  !! testAssemblies do
-       runAndCheck (fun () -> DotNet.exec id "test" testAssembly)
-
+  "tests/FsCheck.Test/"
+  |> DotNet.test (fun opt -> { opt with Configuration = DotNet.BuildConfiguration.Release })
 )
 
 // --------------------------------------------------------------------------------------

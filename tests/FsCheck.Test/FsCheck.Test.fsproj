@@ -3,12 +3,14 @@
   <PropertyGroup>
     <AssemblyName>FsCheck.Test</AssemblyName>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Fscheck.XUnit\PropertyAttributeTests.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Random.fs" />
     <Compile Include="TypeClass.fs" />
@@ -25,6 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/FsCheck.Xunit/FsCheck.Xunit.fsproj" />
+    <ProjectReference Include="..\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

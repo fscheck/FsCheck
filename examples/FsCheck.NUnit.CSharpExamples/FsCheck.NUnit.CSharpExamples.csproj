@@ -3,6 +3,7 @@
   <PropertyGroup>
     <AssemblyName>FsCheck.NUnit.CSharpExamples</AssemblyName>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <WarningLevel>3</WarningLevel>

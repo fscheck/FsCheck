@@ -2,3 +2,4 @@ Microsoft.NET.Test.Sdk
 xunit
 xunit.runner.visualstudio
 FSharp.Core
+Microsoft.NETFramework.ReferenceAssemblies

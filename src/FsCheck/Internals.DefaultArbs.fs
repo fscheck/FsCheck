@@ -638,6 +638,28 @@ type internal Default private() =
             |> Arb.convert XmlEncodedString string
         with get
 
+    static member val UnicodeChar: Arbitrary<UnicodeChar> =
+            let generator = 
+                Gen.choose (int Char.MinValue, int Char.MaxValue)
+                |> Gen.map (char >> UnicodeChar)
+
+            let shrinker (UnicodeChar c) = seq { for c' in ['a';'b';'c'] do if c' < c || not (Char.IsLower c) then yield UnicodeChar c' }
+            Arb.fromGenShrink (generator, shrinker)
+        with get
+
+    static member val UnicodeString: Arbitrary<UnicodeString> =
+            let arrayOfChars = Arb.array Default.UnicodeChar
+            let generator = 
+                arrayOfChars.Generator 
+                |> Gen.map String
+            let shrinker (s:string) = 
+                match s with
+                | null -> Seq.empty<string>
+                | _ -> s.ToCharArray() |> arrayOfChars.Shrinker |> Seq.map String
+            Arb.fromGenShrink (generator, shrinker)
+            |> Arb.convert UnicodeString string
+        with get
+
     static member Set(elements: Arbitrary<'T>) = 
         Default.FsList(elements)
         |> Arb.convert Set.ofList Set.toList

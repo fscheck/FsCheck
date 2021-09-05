@@ -1,12 +1,14 @@
 ﻿namespace FsCheck.Xunit
 
 open System
+open System.Reflection
 open System.Threading.Tasks
 
-open FsCheck
 open Xunit
 open Xunit.Sdk
 open Xunit.Abstractions
+
+open FsCheck
 
 type PropertyFailedException =
     inherit Exception
@@ -156,7 +158,7 @@ type public PropertyAttribute() =
     member internal __.Config = config
 
 ///Set common configuration for all properties within this class or module
-[<AttributeUsage(AttributeTargets.Class, AllowMultiple = false)>]
+[<AttributeUsage(AttributeTargets.Class ||| AttributeTargets.Assembly, AllowMultiple = false)>]
 type public PropertiesAttribute() = inherit PropertyAttribute()
 
 /// The xUnit2 test runner for the PropertyAttribute that executes the test via FsCheck
@@ -165,20 +167,34 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
 
     new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, null)
 
-    member this.Init(output:TestOutputHelper) =
-        let factAttribute = this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head
-        let generalAttribute = 
-            this.TestMethod.TestClass.Class.GetCustomAttributes(typeof<PropertiesAttribute>) 
-                |> Seq.tryFind (fun _ -> true)
+    let combineAttributes (configs: (PropertyConfig option) list) =
+        configs
+        |> List.choose id
+        |> List.reduce(fun higherLevelAttribute lowerLevelAttribute -> 
+            PropertyConfig.combine lowerLevelAttribute higherLevelAttribute)
 
-        let config =
-            match generalAttribute with
-            | Some generalAttribute ->
-                PropertyConfig.combine
-                    (factAttribute.GetNamedArgument "Config")
-                    (generalAttribute.GetNamedArgument "Config")
-            | None ->
-                factAttribute.GetNamedArgument "Config"
+    member this.Init(output:TestOutputHelper) =
+        let arbitrariesOnClass =
+            this.TestMethod.TestClass.Class.GetCustomAttributes(Type.GetType("FsCheck.Xunit.ArbitraryAttribute"))
+                |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
+                |> Seq.toArray
+
+        let getPropertiesOnDeclaringClasses (testClass: ITestClass) = 
+            [   let mutable current: Type = testClass.Class.ToRuntimeType()
+                while not (isNull current) do
+                    yield current.GetTypeInfo().GetCustomAttributes<PropertiesAttribute>()
+                          |> Seq.tryHead
+                          |> Option.map (fun attr -> attr.Config)
+                    current <- current.DeclaringType]
+            |> List.rev
+            
+        let getConfig (attr: IAttributeInfo) =
+            attr.GetNamedArgument<PropertyConfig> "Config"
+
+        let config = combineAttributes [
+              yield this.TestMethod.TestClass.Class.Assembly.GetCustomAttributes(typeof<PropertiesAttribute>) |> Seq.tryHead |> Option.map getConfig
+              yield! getPropertiesOnDeclaringClasses this.TestMethod.TestClass
+              yield this.TestMethod.Method.GetCustomAttributes(typeof<PropertyAttribute>) |> Seq.head |> getConfig |> Some]
         
         { config with Arbitrary = config.Arbitrary }
         |> PropertyConfig.toConfig output 

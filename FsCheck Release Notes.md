@@ -22,7 +22,6 @@
 
 * Added support for `let!...and!...` syntax in computation expression builder.
 
-
 ### 3.0.0-alpha5 - 28 December 2020
 
 * Target netstandard 2.0 only.
@@ -60,6 +59,36 @@
 * Add support for parallel and async testing. (by Sergey - great effort!)
 
 * Simplify sampling data: Gen.sample et al.
+
+### 2.16.3 - 4 September 2021
+
+* Allow configuration in FsCheck.Xunit.PropertiesAttribute to affect properties on nested types or modules. PropertiesAttribute on the closest enclosing type takes precedence.
+
+* Add FsCheck.Xunit.TestOutputRunner - a simple runner which just redirects output to xUnit's TestOutputHelper.
+
+### 2.16.2 - 30 August 2021
+
+* Support generation and shrinking of System.Collections.Immutable types via reflection.
+
+### 2.16.1 - 28 August 2021
+
+* Include inherited methods when registering Arbitrary instances. (by Bennie Copeland)
+
+### 2.16.0 - 13 August 2021
+
+* Support generating C# record types.
+
+### 2.15.3 - 8 May 2021
+
+* Allow shrinking private unions. (by Sander van Dijk)
+
+* Limit total number of shrink attempts to 5000, to avoid infinite loops in general, and in particular if an argument is mutated in the test.
+
+### 2.15.2 - 15 Arpil 2021
+
+* Enabled FsCheck.Xunit's `PropertiesAttribute` to work at assembly level. (by Laurence King)
+
+* Added `UnicodeString` and `UnicodeChar` generators.
 
 ### 2.15.1 - 27 February 2021
 

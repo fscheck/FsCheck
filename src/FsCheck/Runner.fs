@@ -411,10 +411,12 @@ module Runner =
 
 
     let private runner (config:Config) prop = 
+        // TODO this should be a config value
+        let maxTotalShrinkNb = 5000
         let testNb = ref 0
         let rejectedNb = ref 0
         let shrinkNb = ref 0
-        let tryShrinkNb = ref 0
+        let totalShrinkNb = ref 0
         let origArgs = ref []
         let lastStep = ref (Run (Res.rejected,-1,Rnd()))
         let seed, size = match config.Replay with None -> Random.Create(), None | Some s -> s.Rnd, s.Size
@@ -449,12 +451,14 @@ module Runner =
                     lastStep := step
                     tryShrinkNb := 0
                     shrinkNb := !shrinkNb + 1
+                    totalShrinkNb := !totalShrinkNb + 1
                     config.Runner.OnShrink(result.Arguments, config.EveryShrink)
-                    true
+                    !totalShrinkNb < maxTotalShrinkNb
                 | Shrink _ ->
                     lastStep := step
                     tryShrinkNb := !tryShrinkNb + 1
-                    true
+                    totalShrinkNb := !totalShrinkNb + 1
+                    !totalShrinkNb < maxTotalShrinkNb
                 | Stop -> 
                     false)
         |> Seq.fold (fun acc elem ->

@@ -51,6 +51,13 @@ module internal TypeClass =
                     Array <| arr
             | prim -> Primitive prim
  
+    let private getMethods (t: Type) : seq<MethodInfo> =
+        #if NETSTANDARD1_0
+        t.GetRuntimeMethods()
+        #else
+        upcast t.GetMethods(BindingFlags.Static ||| BindingFlags.Public ||| BindingFlags.FlattenHierarchy ||| BindingFlags.NonPublic ||| BindingFlags.Instance)
+        #endif
+    
     //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank
     let private findInstances (typeClass:Type) onlyPublic injectParameters injectedConfigs instancesType (instance: _ option) = 
         let injectedConfigTypes = injectedConfigs |> Array.map (fun e -> e.GetType())
@@ -87,7 +94,8 @@ module internal TypeClass =
                 (InstanceKind.FromType instance,m) :: acc
             | _ -> acc
         let addMethods (t:Type) =
-            t.GetRuntimeMethods()
+            t
+            |> getMethods
             |> Seq.append (t.GetRuntimeProperties() |> Seq.where (fun prop -> prop.CanRead)|> Seq.map (fun prop -> prop.GetMethod))
             |> Seq.where(fun meth -> filterInstanceOrStatic(meth) && filterVisibility(meth) && filterParameters(meth))
             |> Seq.fold addMethod []
