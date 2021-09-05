@@ -1,8 +1,7 @@
-group Tests
-	FSharp.Core
-	xunit.core
-	xunit.runner.visualstudio
-	Unquote
-	Microsoft.NET.Test.Sdk
-	System.Collections.Immutable
-	Microsoft.NETFramework.ReferenceAssemblies
+FSharp.Core
+xunit.core
+xunit.runner.visualstudio
+Unquote
+Microsoft.NET.Test.Sdk
+System.Collections.Immutable
+Microsoft.NETFramework.ReferenceAssemblies
