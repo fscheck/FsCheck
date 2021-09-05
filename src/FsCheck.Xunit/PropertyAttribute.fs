@@ -165,20 +165,15 @@ type public PropertiesAttribute() = inherit PropertyAttribute()
 type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:TestMethodDisplay, defaultMethodDisplayOptions:TestMethodDisplayOptions, testMethod:ITestMethod, ?testMethodArguments:obj []) =
     inherit XunitTestCase(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod, (match testMethodArguments with | None -> null | Some v -> v))
 
-    new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, null)
-
     let combineAttributes (configs: (PropertyConfig option) list) =
         configs
         |> List.choose id
         |> List.reduce(fun higherLevelAttribute lowerLevelAttribute -> 
             PropertyConfig.combine lowerLevelAttribute higherLevelAttribute)
 
-    member this.Init(output:TestOutputHelper) =
-        let arbitrariesOnClass =
-            this.TestMethod.TestClass.Class.GetCustomAttributes(Type.GetType("FsCheck.Xunit.ArbitraryAttribute"))
-                |> Seq.collect (fun attr -> attr.GetNamedArgument "Arbitrary")
-                |> Seq.toArray
+    new() = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, null)
 
+    member this.Init(output:TestOutputHelper) =
         let getPropertiesOnDeclaringClasses (testClass: ITestClass) = 
             [   let mutable current: Type = testClass.Class.ToRuntimeType()
                 while not (isNull current) do

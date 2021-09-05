@@ -648,7 +648,7 @@ type internal Default private() =
         with get
 
     static member val UnicodeString: Arbitrary<UnicodeString> =
-            let arrayOfChars = Arb.array Default.UnicodeChar
+            let arrayOfChars = Arb.array (Default.UnicodeChar |> Arb.convert char UnicodeChar)
             let generator = 
                 arrayOfChars.Generator 
                 |> Gen.map String

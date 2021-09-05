@@ -1,6 +1,8 @@
 ﻿namespace Fscheck.Test.FsCheck.XUnit.PropertyAttribute
-open FsCheck.Xunit
+
 open FsCheck
+open FsCheck.FSharp
+open FsCheck.Xunit
 
 type AttributeLevel =
 | Assembly

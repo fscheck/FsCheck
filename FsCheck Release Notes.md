@@ -1,8 +1,8 @@
-### 3.0.0-alpha6 - To be released
+### 3.0.0-beta1 - To be released
 
 * Backwards incompatible: Refactor and split of the `Gen` API into `FsCheck.FSharp` and `FsCheck.Fluent`. This is a first step in splitting the entire API into a functional (for F# consumers) and fluent (for C# and VB.NET consumer) interface. This should be clearer for both kinds of consumers.
 
-* Backwards incompatible: Refactor and plit of the `Arbitrary` API into `FsCheck.FSharp` and `FsCheck.Fluent`.
+* Backwards incompatible: Refactor and split of the `Arbitrary` API into `FsCheck.FSharp` and `FsCheck.Fluent`.
 
 * By and large, if you are an F# user, now `open FsCheck.FSharp` in addition to `open FsCheck`. If you are a C# or VB.NET user, add `using FsCheck.Fluent`.
 

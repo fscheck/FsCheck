@@ -142,14 +142,14 @@ module internal ReflectiveGenerator =
                 let arrGen = elementType.MakeArrayType() |> getGenerator
                 let make = getImmutableCollection1Constructor t elementType
                 arrGen
-                |> map make
+                |> Gen.map make
                 |> box
             elif genericArguments.Length = 2 then
                 // Immutable(Sorted)Dictionary
                 let dictGen = typedefof<Collections.Generic.Dictionary<_,_>>.MakeGenericType(genericArguments) |> getGenerator
                 let make = getImmutableCollection2Constructor t genericArguments
                 dictGen
-                |> map make
+                |> Gen.map make
                 |> box
             else
                 failwithf "Unexpected System.Collections.Immutable type: %s. This is a bug in FsCheck, please open an issue." t.AssemblyQualifiedName

@@ -246,7 +246,7 @@ module Runner =
             |> Seq.distinct
         1 =! Seq.length same
         "should have failed" <>! Seq.head same
-        test <@ (Seq.head same).Contains "(123, 654321)" @>
+        test <@ (Seq.head same).Contains "(123,654321)" @>
 
     [<Fact>]
     let ``should replay property with complex set of generators``() =
@@ -265,7 +265,7 @@ module Runner =
             |> Seq.distinct
         1 =! Seq.length same
         "should have failed" <>! Seq.head same
-        test <@ (Seq.head same).Contains "(123, 654321)" @>
+        test <@ (Seq.head same).Contains "(123,654321)" @>
 
     
     //type Integer = Integer of int
@@ -423,7 +423,7 @@ module Runner =
         let ``should use Arb instance on method preferentially``(underTest:float) =
             underTest >= 0.0
 
-    [<Properties( MaxTest = 1, StartSize = 100, EndSize = 100, Replay = "01235,56789")>]
+    [<Properties( MaxTest = 1, StartSize = 100, EndSize = 100, Replay = "(01235,56789)")>]
     module ModuleWithPropertiesConfig =
 
         [<Property>]
@@ -436,17 +436,17 @@ module Runner =
             [<Property>]
             let ``should use configuration from enclosing enclosing module``(x:int) =
                 // checking if the generated value is always the same (-59) from "01234,56789" Replay
-                x =! -59
+                x =! -4
 
-        [<Properties( MaxTest = 1, StartSize = 100, EndSize = 100, Replay = "12345,67890")>]
+        [<Properties( MaxTest = 1, StartSize = 100, EndSize = 100, Replay = "12345,67891")>]
         module NestedModuleWithPropertiesConfig =
         
             [<Property>]
             let ``should use configuration from closest enclosing module``(x:int) =
-                /// checking if the generated value is always the same (18) from "12345,67890" Replay
-               x =! 18
+                /// checking if the generated value is always the same (18) from "12345,67891" Replay
+               x =! -93
 
-        [<Property( Replay = "12345,67890")>]
+        [<Property( Replay = "12345,67891")>]
         let ``should use configuration on method preferentially``(x:int) =
             // checking if the generated value is always the same (18) from "12345,67890" Replay
             x =! -93
@@ -582,7 +582,7 @@ module BugReproIssue514 =
 
 
 module ShrinkingMutatedTypes =
-    open Xunit
+    open global.Xunit
     open Swensen.Unquote
     open FsCheck
 

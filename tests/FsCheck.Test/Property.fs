@@ -165,7 +165,7 @@ module Property =
     let ``Task-asynchronous tests should be passable``() =
         let resultRunner = GetResultRunner()
         let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
-        let tcs = TaskCompletionSource()
+        let tcs = TaskCompletionSource<unit>()
         tcs.SetResult(())
         Check.One (config, Prop.ofTestable (tcs.Task :> Task))
         test <@ match resultRunner.Result with
@@ -179,7 +179,7 @@ module Property =
         let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
         let tcs = TaskCompletionSource()
         tcs.SetException(exn "fail")
-        Check.One (config, Prop.ofTestable (tcs.Task :> Task))
+        Check.One (config, Prop.ofTestable (tcs.Task))
         test <@ match resultRunner.Result with
                 | TestResult.Passed _ -> false
                 | TestResult.Failed _ -> true
@@ -191,7 +191,7 @@ module Property =
         let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
         let tcs = TaskCompletionSource()
         tcs.SetCanceled()
-        Check.One (config, Prop.ofTestable (tcs.Task :> Task))
+        Check.One (config, Prop.ofTestable (tcs.Task))
         test <@ match resultRunner.Result with
                 | TestResult.Passed _ -> false
                 | TestResult.Failed _ -> true

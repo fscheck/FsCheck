@@ -16,5 +16,5 @@ type TestOutputRunner(output: Xunit.Abstractions.ITestOutputHelper) =
         member _.OnFinished(name,testResult) =
             let resultText = Runner.onFinishedToString name testResult
             match testResult with
-            | TestResult.True _ -> resultText |> output.WriteLine
+            | TestResult.Passed _ -> resultText |> output.WriteLine
             | _ -> failwithf "%s" resultText

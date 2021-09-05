@@ -3,7 +3,6 @@
   <PropertyGroup>
     <AssemblyName>FsCheck.Xunit</AssemblyName>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <TargetFrameworks>net452;netstandard2.0;netstandard1.6</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>

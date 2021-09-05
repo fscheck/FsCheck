@@ -1,4 +1,7 @@
-﻿(*** hide ***)
+﻿open FsCheck.FSharp
+
+
+(*** hide ***)
 #I @"../src/FsCheck/bin/Release/netstandard2.0"
 #I @"../src/FsCheck.Xunit/bin/Release/netstandard2.0"
 #I @"../src/FsCheck.NUnit/bin/Release/netstandard2.0"
@@ -96,13 +99,13 @@ top level let-bound functions, and then register all generators and and all prop
 
 (***define-output:Marker***)
 let myprop (i:int) = i >= 0
-let mygen = Arb.Default.Int32() |> Arb.mapFilter (fun i -> Math.Abs i) (fun i -> i >= 0)
+let mygen = ArbMap.defaults |> ArbMap.arbitrary<int> |> Arb.mapFilter (fun i -> Math.Abs i) (fun i -> i >= 0)
 let helper = "a string"
 let private helper' = true
 
 type Marker = class end
-Arb.registerByType (typeof<Marker>.DeclaringType)
-Check.QuickAll (typeof<Marker>.DeclaringType)
+let config = Config.QuickThrowOnFailure.WithArbitrary([typeof<Marker>.DeclaringType])
+Check.All(config, typeof<Marker>.DeclaringType)
 
 (***include-output:Marker***)
 
@@ -148,12 +151,14 @@ options per class, per module, or per assembly. For example:*)
 
 type Positive =
     static member Double() =
-        Arb.Default.Float()
+        ArbMap.defaults
+        |> ArbMap.arbitrary<float>
         |> Arb.mapFilter abs (fun t -> t > 0.0)
 
 type Negative =
     static member Double() =
-        Arb.Default.Float()
+        ArbMap.defaults
+        |> ArbMap.arbitrary<float>
         |> Arb.mapFilter (abs >> ((-) 0.0)) (fun t -> t < 0.0)
 
 type Zero =

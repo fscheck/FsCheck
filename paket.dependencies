@@ -6,6 +6,8 @@ framework: auto-detect
 
 nuget FSharp.Core = 4.5.0
 
+nuget Microsoft.NETFramework.ReferenceAssemblies
+
 nuget Unquote
 
 nuget Microsoft.NET.Test.Sdk
@@ -24,6 +26,7 @@ group Tests
 	source https://www.nuget.org/api/v2
 
 	nuget FSharp.Core
+	nuget Microsoft.NETFramework.ReferenceAssemblies
 	nuget Unquote
 	nuget xunit
 	nuget xunit.runner.visualstudio version_in_path: true

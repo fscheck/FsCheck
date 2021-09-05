@@ -10,8 +10,9 @@ module Arbitrary =
     open FsCheck.FSharp
     open FsCheck.Xunit
     open System
-    open System.Globalization
     open System.Collections.Generic
+    open System.Globalization
+    open System.Linq
     open System.Net
     open System.Net.Mail
     open Helpers

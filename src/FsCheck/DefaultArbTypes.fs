@@ -59,6 +59,8 @@ type XmlEncodedString = XmlEncodedString of string with
 type UnicodeChar = UnicodeChar of char with
     member x.Get = match x with UnicodeChar c -> c
     override x.ToString() = string x.Get
+    static member op_Explicit(source: UnicodeChar) : char =
+        source.Get
 
 ///Represents a string that can contain unicode characters.
 type UnicodeString = UnicodeString of string with

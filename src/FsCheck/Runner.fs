@@ -449,14 +449,12 @@ module Runner =
                         !rejectedNb <> config.MaxRejected //rejected, stop if we have too much failed tests
                 | Shrink ({ Outcome = Outcome.Failed _ } as result) -> 
                     lastStep := step
-                    tryShrinkNb := 0
                     shrinkNb := !shrinkNb + 1
                     totalShrinkNb := !totalShrinkNb + 1
                     config.Runner.OnShrink(result.Arguments, config.EveryShrink)
                     !totalShrinkNb < maxTotalShrinkNb
                 | Shrink _ ->
                     lastStep := step
-                    tryShrinkNb := !tryShrinkNb + 1
                     totalShrinkNb := !totalShrinkNb + 1
                     !totalShrinkNb < maxTotalShrinkNb
                 | Stop -> 
