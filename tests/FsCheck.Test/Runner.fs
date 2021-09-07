@@ -159,7 +159,16 @@ module RunnerInternals =
                            .WithParallelRunConfig(Some { MaxDegreeOfParallelism = Environment.ProcessorCount })
                            .WithArbitrary([typeof<NonNullStringArb>])
 
-        Check.One(config, prop)
+        Check.One(config, prop)   
+        
+    [<Fact>]
+    let ```QuickThrowOnFailure should surface exception message``() =
+        try 
+            Check.QuickThrowOnFailure(fun i -> if abs i < 20 then true else failwith "bespoke error message")
+            do failwith "should have thrown an exception!"
+        with e ->
+            Helpers.assertTrue <| e.Message.Contains "with exception:"
+            Helpers.assertTrue <| e.Message.Contains "bespoke error message"
 
 module Runner =
     open RunnerHelper

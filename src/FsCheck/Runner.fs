@@ -454,7 +454,6 @@ module Runner =
                     config.Runner.OnShrink(result.Arguments, config.EveryShrink)
                     !totalShrinkNb < maxTotalShrinkNb
                 | Shrink _ ->
-                    lastStep := step
                     totalShrinkNb := !totalShrinkNb + 1
                     !totalShrinkNb < maxTotalShrinkNb
                 | Stop -> 
@@ -641,7 +640,7 @@ type Config with
             member __.OnFinished(name,testResult) = 
                 match testResult with
                 | TestResult.Passed _ -> printf "%s" (onFinishedToString name testResult)
-                | _ -> failwithf "%s" (onFinishedToString name testResult)
+                | _ ->  failwithf "%s" (onFinishedToString name testResult)
 
         }
 
