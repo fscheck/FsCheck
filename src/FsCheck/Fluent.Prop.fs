@@ -15,6 +15,8 @@ type Prop private() =
 
     static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,bool>) = Prop.forAll arb body.Invoke
 
+    static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,Threading.Tasks.Task>) = forAll arb body.Invoke
+
     static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,Threading.Tasks.Task<bool>>) = forAll arb body.Invoke
 
     static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,Property>) = forAll arb body.Invoke
@@ -22,6 +24,8 @@ type Prop private() =
     static member ForAll(body:Action<'Value>) = property body.Invoke
 
     static member ForAll(body:Func<'Value,bool>) = property body.Invoke
+
+    static member ForAll(body:Func<'Value,Threading.Tasks.Task>) = property body.Invoke
 
     static member ForAll(body:Func<'Value,Threading.Tasks.Task<bool>>) = property body.Invoke
 

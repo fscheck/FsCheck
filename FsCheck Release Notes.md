@@ -4,6 +4,8 @@
 
 * Added a few missing methods in `Fluent.Arbitrary`.
 
+* Add a few missing `Prop.ForAll` overloads.
+
 
 ### 3.0.0-beta1 - 5 September 2021
 
