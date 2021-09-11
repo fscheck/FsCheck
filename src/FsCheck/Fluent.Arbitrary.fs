@@ -50,4 +50,23 @@ type Arb private() =
     static member MapFilter (arb:Arbitrary<'T>, map: Func<_,_>, filter: Func<_,_>) =
         Arb.mapFilter map.Invoke filter.Invoke arb
 
+    /// Generates 2-tuples.
+    [<Extension>]
+    static member Zip(t1: Arbitrary<'T1>, t2: Arbitrary<'T2>) =
+        let generator = Gen.Zip(t1.Generator, t2.Generator)
+        let shrinker (struct (l,r)) = Seq.map2 (fun l r -> struct (l,r)) (t1.Shrinker l) (t2.Shrinker r)
+        Arb.fromGenShrink(generator, shrinker)
+
+    /// Generates one-dimensional arrays. 
+    /// The length of the generated array is between 0 and size.
+    /// The sum of the sizes of the elements is equal to the size of the generated array.
+    [<Extension>]
+    static member Array (elements: Arbitrary<'T>) =
+        Arb.array elements
+
+    /// Generates nullable values that are null 1/8 of the time.
+    [<Extension>]
+    static member Nullable (value: Arbitrary<'T>) = 
+        Arb.nullable value
+
 

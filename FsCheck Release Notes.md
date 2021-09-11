@@ -1,3 +1,10 @@
+### 3.0.0-beta2 - To be released
+
+* Fixed bug that caused exceptions not to be propagated to output correctly.
+
+* Added a few missing methods in `Fluent.Arbitrary`.
+
+
 ### 3.0.0-beta1 - 5 September 2021
 
 * *Backwards incompatible*: Refactor and split of the `Gen` and `Arbitrary` APIs into `FsCheck.FSharp` and `FsCheck.Fluent`. This is a first step in splitting the entire API into a functional (for F# consumers) and fluent (for C# and VB.NET consumers) interface. This should be clearer for both kinds of consumers.

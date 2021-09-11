@@ -85,7 +85,7 @@ module Arb =
             override __.Shrinker b =
                 b |> a.Shrinker |> Seq.filter pred }
         
-        
+    /// Generates 2-tuples.
     let zip(t1: Arbitrary<'T1>, t2: Arbitrary<'T2>) =
         let generator = Gen.zip t1.Generator t2.Generator
         let shrinker (l,r) = Seq.zip (t1.Shrinker l) (t2.Shrinker r)
