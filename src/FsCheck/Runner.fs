@@ -246,7 +246,7 @@ module Runner =
                     name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stampsToString)
         | TestResult.False (data, originalArgs, args, Outcome.Exception exc, usedSeed) -> 
             onFailureToString name data originalArgs args usedSeed
-            + sprintf "with exception:%s%O%s" newline exc newline
+            + sprintf "with exception:%s%A%s" newline exc newline
         | TestResult.False (data, _, args, Outcome.Timeout i, usedSeed) -> 
             sprintf "%sTimeout of %i milliseconds exceeded, after %i test%s (%i shrink%s) (%A):%s" 
                 name i data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline
