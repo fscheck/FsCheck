@@ -140,14 +140,17 @@ module Property =
             override __.OnFinished(_,testResult) = 
                 result <- Some testResult
 
+    let private checkResult (prop:Property) =
+        let resultRunner = GetResultRunner()
+        let config = { Config.Quick with Runner = resultRunner; MaxTest = 2  }
+        Check.One(config, prop)
+        resultRunner.Result
+
     [<Property>]
     let DSL() = 
         Prop.forAll (Arb.fromGen symPropGen) (fun symprop ->
             let expected = determineResult symprop
-            let resultRunner = GetResultRunner()
-            let config = { Config.Quick with Runner = resultRunner; MaxTest = 2  }
-            Check.One(config,toProperty symprop)
-            let actual = resultRunner.Result
+            let actual = checkResult (toProperty symprop)
             areSame expected actual
             |> Prop.label (sprintf "expected = %A - actual = %A" expected actual)
             |> Prop.collect (depth symprop)
@@ -158,3 +161,18 @@ module Property =
         let a = Prop.ofTestable <| lazy failwith "crash"
         let b =  Prop.ofTestable true
         a .|. b
+
+    [<Fact>]
+    let ``throws should fail on unexpected exception``() =
+        let test() =
+            (lazy invalidOp "boom")
+            |> Prop.throws<ArgumentException, _>
+            |> Prop.label "Expected ArgumentException"
+        let actual = checkResult (Prop.ofTestable test)
+        match actual with
+        | TestResult.False (td,_,_,Outcome.Exception e,_) when (e :? InvalidOperationException) -> 
+            if not (td.Labels.Contains("Expected ArgumentException")) then
+                failwith "Expected label to be applied"
+        | t -> failwithf "Expected failing test with exception, got %A" t
+
+
