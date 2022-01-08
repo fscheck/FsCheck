@@ -1,5 +1,8 @@
-### 2.16.4 - To Be Released
+### 2.16.4 - 8 January 2022
 
+* Fixed display issue affecting custom F# exceptions.
+
+* `Prop.throws` now fails the test if an unexpected exception is thrown.
 
 ### 2.16.3 - 4 September 2021
 
