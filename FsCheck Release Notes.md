@@ -1,4 +1,4 @@
-### 3.0.0-beta2 - To be released
+### 3.0.0-beta2 - 8 January 2022
 
 * Fixed bug that caused exceptions not to be propagated to output correctly.
 
