@@ -14,7 +14,7 @@ with existing test frameworks like NUnit, xUnit.NET or MsTest.
 
 First install FsCheck, open an fsx file and start with:*)
 
-#r "FsCheck"
+#r "nuget:FsCheck"
 
 open FsCheck
 

@@ -6,6 +6,8 @@
 
 * Add a few missing `Prop.ForAll` overloads.
 
+* Includes changes in 2.16.4.
+
 
 ### 3.0.0-beta1 - 5 September 2021
 
@@ -66,6 +68,12 @@
 * Add support for parallel and async testing. (by Sergey - great effort!)
 
 * Simplify sampling data: Gen.sample et al.
+
+### 2.16.4 - 8 January 2022
+
+* Fixed display issue affecting custom F# exceptions.
+
+* `Prop.throws` now fails the test if an unexpected exception is thrown.
 
 ### 2.16.3 - 4 September 2021
 

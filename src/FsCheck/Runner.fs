@@ -522,7 +522,7 @@ module Runner =
                     name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stampsToString)
         | TestResult.Failed (data, originalArgs, args, Outcome.Failed exc, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
-            + sprintf "with exception:%s%O%s" newline exc newline
+            + sprintf "with exception:%s%A%s" newline exc newline
         | TestResult.Failed (data, originalArgs, args, _, originalSeed, lastSeed, lastSize) -> 
             onFailureToString name data originalArgs args originalSeed lastSeed lastSize
         | TestResult.Exhausted data -> 

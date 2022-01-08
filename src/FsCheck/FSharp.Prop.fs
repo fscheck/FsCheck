@@ -24,7 +24,15 @@ module Prop =
     ///and a failure otherwise.
     [<CompiledName("Throws")>]
     let throws<'Exception, 'Testable when 'Exception :> exn> (p : Lazy<'Testable>) = 
-       property <| try ignore p.Value; Res.failedFalse with :? 'Exception -> Res.passed
+       try 
+           ignore p.Value
+           Res.failedException (exn "Expected exception, none was thrown") 
+       with 
+           | :? 'Exception -> 
+               Res.passed
+           | e ->
+               Res.failedException e
+       |> property
 
     let private stamp str = 
         let add res = 
