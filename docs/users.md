@@ -14,6 +14,7 @@ Please send a pull request if you want to be added.
 * [15below](http://15below.com/)
 * [AntaniXml](http://giacomociti.github.io/AntaniXml/)
 * [DoctestInteractive](https://github.com/tomakita/DoctestInteractive/)
+* [Darklang](https://github.com/darklang/dark/)
 
 ## Academia
 
