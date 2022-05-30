@@ -129,6 +129,7 @@ Target.create "PaketPack" (fun _ ->
           OutputPath = "bin"
           Version = buildVersion
           ReleaseNotes = String.toLines release.Notes
+          ToolType = ToolType.CreateLocalTool()
       })
 )
 
@@ -136,6 +137,7 @@ Target.create "PaketPush" (fun _ ->
     Paket.push (fun p ->
         { p with 
             WorkingDir = "bin"
+            ToolType = ToolType.CreateLocalTool()
         })
 )
 

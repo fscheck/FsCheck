@@ -1,7 +1,5 @@
 source https://www.nuget.org/api/v2
 
-version 6.0.7
-
 framework: auto-detect
 
 nuget FSharp.Core = 4.2.3
