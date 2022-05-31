@@ -22,35 +22,47 @@ module internal Reflect =
         
     let getProperties (ty: Type) = ty.GetRuntimeProperties() |> Seq.filter (fun p -> let m = getPropertyMethod p in  not m.IsStatic && m.IsPublic)
 
+    let isInitOnly(property: PropertyInfo) =
+#if NETSTANDARD1_0
+        false
+#else
+        property.CanWrite
+        && (property.SetMethod.ReturnParameter.GetRequiredCustomModifiers()
+            |> Array.exists (fun t -> t.FullName = "System.Runtime.CompilerServices.IsExternalInit"))
+#endif
 
     let isCSharpRecordType (ty: Type) =
-        let isInitOnly(property: PropertyInfo) =
-#if NETSTANDARD1_0
-            false
-#else
-            property.CanWrite
-            && (property.SetMethod.ReturnParameter.GetRequiredCustomModifiers()
-                |> Array.exists (fun t -> t.FullName = "System.Runtime.CompilerServices.IsExternalInit"))
-#endif
+
 
         let typeinfo = ty.GetTypeInfo()
         not typeinfo.IsAbstract
         && not typeinfo.ContainsGenericParameters
         && Seq.length (getPublicCtors ty) = 1
-        && not (ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic) |> Seq.exists (fun p -> p.CanWrite && not (isInitOnly p)))
+        && not (ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic) |> Seq.exists (fun p -> p.CanWrite))
         && ty.GetRuntimeFields() |> Seq.filter (fun m -> not m.IsStatic && m.IsPublic) |> Seq.forall (fun f -> f.IsInitOnly)
 
     let isCSharpDtoType (ty: Type) =
         let typeinfo = ty.GetTypeInfo()
-        let hasOnlyDefaultCtor =
+        let props = getProperties ty |> Seq.toArray
+        let initOnlyPropNames = 
+            props
+            |> Array.filter isInitOnly
+            |> Array.map (fun p -> p.Name)
+        let hasRecordCtor =
+            // either no parameters, or for each parameter there is a corresponding
+            // init-only property which we can set. THis is what C# generates with its
+            // record syntax.
             match getPublicCtors ty |> Array.ofSeq with
-            [| ctor |] -> ctor.GetParameters().Length = 0
+            [| ctor |] -> 
+                ctor.GetParameters() 
+                |> Seq.forall (fun param -> initOnlyPropNames |> Array.contains param.Name)
             | _ -> false
         let hasWritableProperties =
-            getProperties ty |> Seq.exists (fun p -> p.CanWrite)
+            props |> Array.exists (fun p -> p.CanWrite)
         typeinfo.IsClass && not typeinfo.IsAbstract
         && not typeinfo.ContainsGenericParameters
-        && hasOnlyDefaultCtor && hasWritableProperties
+        && hasRecordCtor
+        && hasWritableProperties
 
     let isImmutableCollectionType (ty: Type) =
         ty.FullName.StartsWith("System.Collections.Immutable")
@@ -107,8 +119,19 @@ module internal Reflect =
             failwithf "The input type must be a DTO class. Got %A" recordType
 
     let getCSharpDtoConstructor (t:Type) =
+        let props = getProperties t |> Seq.filter (fun p -> p.CanWrite) |> Seq.toArray
+        let propNames = props |> Array.map (fun p -> p.Name)
+  
+        let ctor  = getPublicCtors t |> Seq.head
+        let ctorps= ctor.GetParameters ()
+        let ctorParamPropIndex = 
+            ctorps
+            |> Array.map (fun ctorParam -> propNames |> Array.findIndex (fun propName -> propName = ctorParam.Name))
         let par = Expression.Parameter (typeof<obj[]>, "args")
-        let props = getProperties t |> Seq.filter (fun p -> p.CanWrite)
+        let pars  = ctorps |> Array.mapi (fun i p ->  Expression.Convert (
+                                                          Expression.ArrayIndex (par, Expression.Constant ctorParamPropIndex.[i]),
+                                                          p.ParameterType)
+                                                      :> Expression)
         let values = 
             props 
             |> Seq.mapi (fun i p ->  
@@ -118,7 +141,8 @@ module internal Reflect =
             props
             |> Seq.zip values
             |> Seq.map (fun (v, p) -> Expression.Bind(p, v) :> MemberBinding)
-        let ctor = Expression.New(getPublicCtors t |> Seq.head)
+
+        let ctor = Expression.New (ctor, pars)
         let body = Expression.MemberInit(ctor, bindings)
         let l     = Expression.Lambda<Func<obj[], obj>> (body, par)
         let f     = l.Compile ()
