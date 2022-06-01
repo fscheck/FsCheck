@@ -216,30 +216,30 @@ Target.create "Release" (fun _ ->
 Target.create "CI" ignore
 Target.create "Tests" ignore
 
-//"Clean"
-//  =?> ("BuildVersion", isAppVeyorBuild)
-//  ==> "AssemblyInfo"
-//  ==> "Build"
-//  ==> "RunTests"
-//  ==> "Tests"
+"Clean"
+  =?> ("BuildVersion", isAppVeyorBuild)
+  ==> "AssemblyInfo"
+  ==> "Build"
+  ==> "RunTests"
+  ==> "Tests"
 
-//"Build"
-//  ==> "Docs"
+"Build"
+  ==> "Docs"
 
-//"Docs"
-//  =?> ("ReleaseDocs", BuildServer.isLocalBuild)
-//  ==> "Release"
+"Docs"
+  =?> ("ReleaseDocs", BuildServer.isLocalBuild)
+  ==> "Release"
 
-//"Tests"
-//  ==> "PaketPack"
-"PaketPush"
-==> "Release"
+"Tests"
+  ==> "PaketPack"
+  ==> "PaketPush"
+  ==> "Release"
 
-//"Docs"
-//  ==> "CI"
+"Docs"
+  ==> "CI"
 
-//"Tests"
-//  ==> "PaketPack"
-//  ==> "CI"
+"Tests"
+  ==> "PaketPack"
+  ==> "CI"
 
 Target.runOrDefault "RunTests"
