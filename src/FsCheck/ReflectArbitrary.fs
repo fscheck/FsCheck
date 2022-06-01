@@ -118,19 +118,19 @@ module internal ReflectArbitrary =
         elif t.GetTypeInfo().IsEnum then
             enumOfType t |> box
 
+        elif isImmutableRecordLikeType t then
+            let fields = getImmutableRecordLikeTypeFields t
+            if fields |> Seq.exists ((=) t) then 
+                failwithf "Recursive record types cannot be generated automatically: %A" t 
+            let create = getImmutableRecordLikeTypeConstructor t
+            let g = productGen fields create
+            box g
+
         elif isCSharpRecordType t then
             let fields = getCSharpRecordFields t
             if fields |> Seq.exists ((=) t) then 
                 failwithf "Recursive record types cannot be generated automatically: %A" t 
             let create = getCSharpRecordConstructor t
-            let g = productGen fields create
-            box g
-
-        elif isCSharpDtoType t then
-            let fields = getCSharpDtoFields t
-            if fields |> Seq.exists ((=) t) then 
-                failwithf "Recursive record types cannot be generated automatically: %A" t 
-            let create = getCSharpDtoConstructor t
             let g = productGen fields create
             box g
 
@@ -245,10 +245,10 @@ module internal ReflectArbitrary =
             let read = FSharpValue.GetTupleFields
             shrinkChildren read make o childrenTypes
 
-        elif isCSharpDtoType t then
-            let make = getCSharpDtoConstructor t
-            let read = getCSharpDtoReader t
-            let childrenTypes = getCSharpDtoFields t
+        elif isCSharpRecordType t then
+            let make = getCSharpRecordConstructor t
+            let read = getCSharpRecordReader t
+            let childrenTypes = getCSharpRecordFields t
             shrinkChildren read make o childrenTypes
             
         elif isImmutableCollectionType t then
