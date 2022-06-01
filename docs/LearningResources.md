@@ -2,6 +2,7 @@
 
 ## Articles
 
+* A series on undertanding property-based testing through implementing a simplified PBT library: [Part 1](https://getcode.substack.com/p/property-based-testing-1-what-is), [Part 2](https://getcode.substack.com/p/-property-based-testing-2-the-essentials), [Part 3](https://getcode.substack.com/p/property-based-testing-3-shrinking)
 * "QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs" by Koen Claessen and John Hughes [pdf](http://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
 * "An introduction to property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing/)
 * "Choosing properties for property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing-2/)
@@ -13,7 +14,3 @@
 * "The lazy programmer's guide to writing 1000's of tests: An introduction to property based testing" by Scott Wlaschin [video](https://www.youtube.com/watch?v=IYzDFHx6QPY)
 * "Race Conditions, Distribution, Interactions - Testing the Hard Stuff and Staying Sane" by John Hughes [video](https://vimeo.com/68383317)
 * "Property-Based Testing for Better Code" by Jessica Kerr [video](https://www.youtube.com/watch?v=shngiiBfD80)
-
-## Blogs
-
-* Kurt's [Blog](http://fortysix-and-two.blogspot.com) for announcements, change logs and other posts more or less related to FsCheck. Now largely dormant.

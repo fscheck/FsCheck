@@ -1,4 +1,6 @@
-### 2.16.5 - To be released
+### 2.16.5 - 1 June 2022
+
+* Improved C# record type generation - previously no values for some properties were not generated.
 
 ### 2.16.4 - 8 January 2022
 
