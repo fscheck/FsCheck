@@ -722,8 +722,41 @@ module Arbitrary =
         generate<CSharp.RgbColor> |> sample 10 |> ignore
         generate<CSharp.CsRecordExample1> |> sample 10 |> ignore
         generate<CSharp.CsRecordExample2> |> sample 10 |> ignore
-        generate<CSharp.Person> |> sample 10 |> ignore
-        generate<CSharp.PersonWithHeight> |> sample 10 |> ignore
+
+        let persons = generate<CSharp.Person> |> sample 10 
+        test <@ persons |> Seq.exists(fun p -> not (System.String.IsNullOrEmpty(p.FirstName))) @>
+        
+        let personsWithHeight = generate<CSharp.PersonWithHeight> |> sample 10
+        test <@  personsWithHeight |> Seq.exists(fun p -> not (System.String.IsNullOrEmpty(p.FirstName))) @>
+        test <@  personsWithHeight |> Seq.exists(fun p -> p.HeightInInches <> 0) @>
+
+        let mixed = generate<CSharp.CtorAndProps> |> sample 10
+        test <@ mixed |> Seq.exists(fun p -> p.B <> 0) @>
+
+
+    [<Property>]
+    let ``Derived generator for c# record types shrinks - RgbColor`` (value: CSharp.RgbColor) =
+        let shrunk = shrink value
+        shrunk
+        |> Seq.forall (fun shrunkv -> 
+            shrunkv <> value
+            && (shrunkv.Red <= value.Red || shrunkv.Green <= value.Green || shrunkv.Blue <= value.Blue))
+
+    [<Property>]
+    let ``Derived generator for c# record types shrinks - Person`` (value: CSharp.Person) =
+        let shrunk = shrink value
+        shrunk
+        |> Seq.forall (fun shrunkv -> 
+            shrunkv <> value
+            && (shrunkv.FirstName <= value.FirstName || shrunkv.LastName <= value.LastName))
+
+    [<Property>]
+    let ``Derived generator for c# record types shrinks - CtorAndProps`` (value: CSharp.CtorAndProps) =
+        let shrunk = shrink value
+        shrunk
+        |> Seq.forall (fun shrunkv -> 
+            shrunkv <> value
+            && (abs shrunkv.A <= abs value.A || abs shrunkv.B <= abs value.B))
 
 
     [<Fact>]
@@ -744,12 +777,12 @@ module Arbitrary =
             shrunkValues.Length < values.Length 
             || (Array.zip values shrunkValues
                 |> Array.exists (fun (value,shrunkValue) -> shrunkValue <> value))
-        assert (ImmutableArray.Create<int>(values) |> shrink |> Seq.forall checkShrink)
-        assert (ImmutableHashSet.Create<int>(values) |> shrink |> Seq.forall checkShrink)
-        assert (ImmutableList.Create<int>(values) |> shrink |> Seq.forall checkShrink)
-        assert (ImmutableQueue.Create<int>(values) |> shrink |> Seq.forall checkShrink)
-        assert (ImmutableSortedSet.Create<int>(values) |> shrink |> Seq.forall checkShrink)
-        assert (ImmutableStack.Create<int>(values) |> shrink |> Seq.forall checkShrink)
+        test <@ (ImmutableArray.Create<int>(values) |> shrink |> Seq.forall checkShrink) @>
+        test <@ (ImmutableHashSet.Create<int>(values) |> shrink |> Seq.forall checkShrink) @>
+        test <@ (ImmutableList.Create<int>(values) |> shrink |> Seq.forall checkShrink) @>
+        test <@ (ImmutableQueue.Create<int>(values) |> shrink |> Seq.forall checkShrink) @>
+        test <@ (ImmutableSortedSet.Create<int>(values) |> shrink |> Seq.forall checkShrink) @>
+        test <@ (ImmutableStack.Create<int>(values) |> shrink |> Seq.forall checkShrink) @>
 
     [<Property>]
     let ``should shrink Immutable collections with two generic parameters``(values: Dictionary<int,char>) =
@@ -760,5 +793,5 @@ module Arbitrary =
             || (Array.zip (values.ToArray()) shrunkValues
                 |> Array.exists (fun (value,shrunkValue) -> shrunkValue <> value))
 
-        assert (ImmutableDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink)
-        assert (ImmutableSortedDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink)
+        test <@ (ImmutableDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink) @>
+        test <@ (ImmutableSortedDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink) @>

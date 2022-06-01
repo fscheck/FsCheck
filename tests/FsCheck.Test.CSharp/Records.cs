@@ -21,4 +21,9 @@ namespace FsCheck.Test.CSharp
         public PersonWithHeight Grow(int inches) =>
           this with { HeightInInches = HeightInInches + inches };
     }
+
+    public record CtorAndProps(int A)
+    {
+        public int B { get; init; }
+    }
 }
