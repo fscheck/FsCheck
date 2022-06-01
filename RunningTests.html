@@ -144,10 +144,8 @@ configuration.QuietOnSuccess <span class="o">=</span> <span class="k">true</span
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 4 tests (4 shrinks) (StdGen (2127588321, 296985922)):
+ListProperties.reverse is original-Falsifiable, after 1 test (0 shrinks) (StdGen (928367725, 297043896)):
 Original:
-[-1; 2; 0; 0; 0]
-Shrunk:
 [1; 0]</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
 you can also use Check.QuickAll to test all the top level functions in a certain module.
@@ -415,7 +413,7 @@ appears as normal.</p>
 <div class="fsdocs-tip" id="fs19">type Default =<br />&#160;&#160;static member Array : unit -&gt; Arbitrary&lt;&#39;a []&gt;<br />&#160;&#160;static member Array2D : unit -&gt; Arbitrary&lt;&#39;a0 [,]&gt;<br />&#160;&#160;static member Arrow : unit -&gt; Arbitrary&lt;(&#39;a -&gt; &#39;b)&gt; (requires equality)<br />&#160;&#160;static member BigInt : unit -&gt; Arbitrary&lt;bigint&gt;<br />&#160;&#160;static member Bool : unit -&gt; Arbitrary&lt;bool&gt;<br />&#160;&#160;static member Byte : unit -&gt; Arbitrary&lt;byte&gt;<br />&#160;&#160;static member Char : unit -&gt; Arbitrary&lt;char&gt;<br />&#160;&#160;static member Complex : unit -&gt; Arbitrary&lt;Complex&gt;<br />&#160;&#160;static member ConsoleKeyInfo : unit -&gt; Arbitrary&lt;ConsoleKeyInfo&gt;<br />&#160;&#160;static member Culture : unit -&gt; Arbitrary&lt;CultureInfo&gt;<br />&#160;&#160;...</div>
 <div class="fsdocs-tip" id="fs20">static member Arb.Default.Int32 : unit -&gt; Arbitrary&lt;int&gt;</div>
 <div class="fsdocs-tip" id="fs21">val mapFilter : mapper:(&#39;a -&gt; &#39;a) -&gt; pred:(&#39;a -&gt; bool) -&gt; a:Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;&#39;a&gt;</div>
-<div class="fsdocs-tip" id="fs22">type Math =<br />&#160;&#160;static member Abs : value: decimal -&gt; decimal + 6 overloads<br />&#160;&#160;static member Acos : d: float -&gt; float<br />&#160;&#160;static member Acosh : d: float -&gt; float<br />&#160;&#160;static member Asin : d: float -&gt; float<br />&#160;&#160;static member Asinh : d: float -&gt; float<br />&#160;&#160;static member Atan : d: float -&gt; float<br />&#160;&#160;static member Atan2 : y: float * x: float -&gt; float<br />&#160;&#160;static member Atanh : d: float -&gt; float<br />&#160;&#160;static member BigMul : a: int * b: int -&gt; int64<br />&#160;&#160;static member BitDecrement : x: float -&gt; float<br />&#160;&#160;...</div>
+<div class="fsdocs-tip" id="fs22">type Math =<br />&#160;&#160;static member Abs : value: decimal -&gt; decimal + 6 overloads<br />&#160;&#160;static member Acos : d: float -&gt; float<br />&#160;&#160;static member Acosh : d: float -&gt; float<br />&#160;&#160;static member Asin : d: float -&gt; float<br />&#160;&#160;static member Asinh : d: float -&gt; float<br />&#160;&#160;static member Atan : d: float -&gt; float<br />&#160;&#160;static member Atan2 : y: float * x: float -&gt; float<br />&#160;&#160;static member Atanh : d: float -&gt; float<br />&#160;&#160;static member BigMul : a: int * b: int -&gt; int64 + 2 overloads<br />&#160;&#160;static member BitDecrement : x: float -&gt; float<br />&#160;&#160;...</div>
 <div class="fsdocs-tip" id="fs23">Math.Abs(value: float32) : float32<br />Math.Abs(value: sbyte) : sbyte<br />Math.Abs(value: int64) : int64<br />Math.Abs(value: int) : int<br />Math.Abs(value: int16) : int16<br />Math.Abs(value: float) : float<br />Math.Abs(value: decimal) : decimal</div>
 <div class="fsdocs-tip" id="fs24">val helper : string</div>
 <div class="fsdocs-tip" id="fs25">val private helper&#39; : bool</div>
