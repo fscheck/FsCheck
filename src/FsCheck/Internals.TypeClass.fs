@@ -50,6 +50,11 @@ module internal TypeClass =
             | arr when arr.IsArray && arr.GetElementType().IsGenericParameter ->
                     Array <| arr
             | prim -> Primitive prim
+
+    type InvocationData = {
+        Method : MethodInfo
+        Target : obj
+    }
  
     let private getMethods (t: Type) : seq<MethodInfo> =
         #if NETSTANDARD1_0
@@ -57,20 +62,26 @@ module internal TypeClass =
         #else
         upcast t.GetMethods(BindingFlags.Static ||| BindingFlags.Public ||| BindingFlags.FlattenHierarchy ||| BindingFlags.NonPublic ||| BindingFlags.Instance)
         #endif
-    
-    //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank
-    let private findInstances (typeClass:Type) onlyPublic injectParameters injectedConfigs instancesType (instance: _ option) = 
-        let injectedConfigTypes = injectedConfigs |> Array.map (fun e -> e.GetType())
-        let filterInstanceOrStatic (meth:MethodInfo) =
-            if instance.IsSome then
-                not meth.IsStatic
-            else
-                meth.IsStatic
-        let filterVisibility (meth:MethodInfo) =
-             meth.IsPublic || not onlyPublic
 
-        let isUsableMethodArgumentType t =
-            match t with
+    let private toRegistryPair typeClass (inv: InvocationData) =
+        match inv.Method.ReturnType with
+        | GenericTypeDef typeClass args when args.Length <> 1 -> 
+            failwithf "Typeclasses must have exactly one generic parameter. Typeclass %A has %i" typeClass args.Length
+        | GenericTypeDef typeClass args ->
+            let instance = args.[0]
+            Some (InstanceKind.FromType instance, inv)
+        | _ -> None
+
+    type ParameterErrors = 
+        | NoneAllowed
+        | NotCreatable of ParameterInfo array
+
+    module Result = 
+        let isOk = function | Ok _ -> true | _ -> false
+
+    let private validateParameters (typeClass:Type) (injectParameters: bool) injectedConfigTypes (meth:MethodInfo) =
+        let isUsableMethodArgumentType argumentType =
+            match argumentType with
             | GenericTypeDef typeClass args when args.Length <> 1 -> 
                 failwithf "Typeclasses must have exactly one generic parameter. Typeclass %A has %i" typeClass args.Length
             | GenericTypeDef typeClass _  ->
@@ -79,20 +90,39 @@ module internal TypeClass =
                 true
             | _ ->
                 false
-        let filterParameters (meth:MethodInfo) =
-            if injectParameters then
+
+        if injectParameters then
+            let invalidParameters = 
                 meth.GetParameters()
-                |> Array.forall (fun p -> isUsableMethodArgumentType p.ParameterType)
+                |> Array.filter (fun p -> not(isUsableMethodArgumentType p.ParameterType))
+            if Array.isEmpty invalidParameters
+            then Ok ()
+            else Error  (NotCreatable invalidParameters)
+        else
+            if meth.GetParameters().Length = 0
+            then Ok ()
+            else Error (NoneAllowed)
+    
+    
+    //returns a dictionary of generic types to methodinfo, a catch all, and array types in a list by rank
+    let private findInstances (typeClass:Type) onlyPublic injectParameters injectedConfigs instancesType (instance: _ option) = 
+        let filterInstanceOrStatic (meth:MethodInfo) =
+            if instance.IsSome then
+                not meth.IsStatic
             else
-                meth.GetParameters().Length = 0
+                meth.IsStatic
+        let filterVisibility (meth:MethodInfo) =
+             meth.IsPublic || not onlyPublic
+
+        let injectedConfigTypes = injectedConfigs |> Array.map (fun e -> e.GetType())
+        let filterParameters (meth:MethodInfo) = 
+            validateParameters typeClass injectParameters injectedConfigTypes meth
+            |> Result.isOk
+
         let addMethod acc (m:MethodInfo) =
-            match m.ReturnType with
-            | GenericTypeDef typeClass args when args.Length <> 1 -> 
-                failwithf "Typeclasses must have exactly one generic parameter. Typeclass %A has %i" typeClass args.Length
-            | GenericTypeDef typeClass args ->
-                let instance = args.[0]
-                (InstanceKind.FromType instance,m) :: acc
-            | _ -> acc
+            match toRegistryPair typeClass { Target = null; Method = m } with
+            | Some registration -> registration :: acc
+            | None -> acc
         let addMethods (t:Type) =
             t
             |> getMethods
@@ -123,7 +153,7 @@ module internal TypeClass =
             instances
 
     type TypeClass<'TypeClass> 
-        internal(?instances:Map<InstanceKind,MethodInfo>, ?injectParameters:bool, ?injectedConfigs:array<obj>) =
+        internal(?instances:Map<InstanceKind,InvocationData>, ?injectParameters:bool, ?injectedConfigs:array<obj>) =
 
         let instances = defaultArg instances Map.empty
         let keySet map = map |> Map.toSeq |> Seq.map fst |> Set.ofSeq
@@ -182,6 +212,41 @@ module internal TypeClass =
             let newTC = this.Discover<'T>(onlyPublic, instance)
             this.Merge(newTC)
 
+        /// Merge a single instance factory with the existing TypeClass, overriding existing instances on this TypeClass
+        /// Factory must return an instance of the given TypeClass.
+        member this.MergeFactory(factory: Func<'a,'b>) =
+            match box factory with
+            | :? Func<unit, 'b> as f -> 
+                let factory = Func<'b>(f.Invoke)
+                this.MergeFactory(factory.Target, factory.Method)
+            | _ -> this.MergeFactory(factory.Target, factory.Method) 
+
+        member internal this.MergeFactory(target: obj, method: MethodInfo) = 
+            let factory = { Target = target; Method = method}
+            let toRegistryPair' (inv: InvocationData) =
+                match toRegistryPair this.Class inv with
+                | Some registration -> registration
+                | None -> invalidArg "factory" "Factory did not return a compatible type for this type class"
+
+            let throwParameterError err = 
+                match err with
+                | NoneAllowed -> invalidArg "factory" "Typeclass does not allow factories with parameters"
+                | NotCreatable invalidParams -> 
+                    let formatParam (pi:ParameterInfo) = sprintf "%s %s" pi.ParameterType.Name pi.Name
+                    let paramString = invalidParams |> Array.map formatParam |> String.concat "; "
+                    invalidArg "factory" (sprintf "Typeclass cannot create values for the factory's parameters. Invalid parameters: [%s]" paramString)
+            let errorIfParametersUnsupported method =
+                let injectedConfigTypes = injectedConfigs |> Array.map (fun e -> e.GetType())
+                match validateParameters this.Class injectParameters injectedConfigTypes factory.Method with
+                | Error err -> throwParameterError err
+                | Ok _ -> ()
+
+
+            errorIfParametersUnsupported factory.Method
+            let updatedMap = this.InstancesMap.Add(toRegistryPair' factory)
+            new TypeClass<'TypeClass>(updatedMap, injectParameters, injectedConfigs)
+            
+
         ///Compares this TypeClass with the given TypeClass. Returns, respectively, the new instances, overridden instances,
         ///new array instances, overridden array instances, new catch all or overridden catchall introduced by the other TypeClass.
         member x.Compare (other:TypeClass<'TypeClass>) =
@@ -208,11 +273,12 @@ module internal TypeClass =
                     
                 
 
-            let invoke (mi:MethodInfo) =
+            let invoke (inv:InvocationData) =
+                let mi = inv.Method
                 let parameters = 
                     mi.GetParameters()
                     |> Array.map resolveParameter
-                mi.Invoke(null, parameters)
+                mi.Invoke(inv.Target, parameters)
 
             let rec binding (concrete:Type) (generic:Type) =
                 if concrete.IsGenericType && generic.IsGenericType then
@@ -233,23 +299,28 @@ module internal TypeClass =
 
 
             Common.memoizeWith memo (fun (instance:Type) -> 
-                let mi =
+                let makeGenericInvocation inv types = 
+                    { inv with Method = inv.Method.MakeGenericMethod(types) }
+                let inv =
                     match instance,instances with
-                    | (_,MapContains (Primitive instance) mi') -> 
-                        mi'
-                    | (IsGeneric,MapContains (Generic (instance.GetGenericTypeDefinition())) mi') -> 
+                    | (_,MapContains (Primitive instance) inv') -> 
+                        inv'
+                    | (IsGeneric,MapContains (Generic (instance.GetGenericTypeDefinition())) inv') -> 
+                        let mi' = inv'.Method
                         if mi'.ContainsGenericParameters then
                             let b = binding instance (mi'.ReturnType.GetGenericArguments().[0])
                             let typeArgs = mi'.GetGenericArguments() |> Array.map (fun t -> b |> Array.find (fun (l,r) -> l = t) |> snd)
-                            mi'.MakeGenericMethod(typeArgs) 
-                        else mi'
-                    | (IsArray, MapContains (Array instance) mi') -> 
-                        if mi'.ContainsGenericParameters then mi'.MakeGenericMethod([|instance.GetElementType()|]) else mi'
-                    | (_,MapContains (CatchAll instance) mi') ->
-                        mi'.MakeGenericMethod([|instance|])
+                            makeGenericInvocation inv' typeArgs
+                        else inv'
+                    | (IsArray, MapContains (Array instance) inv') -> 
+                        if inv'.Method.ContainsGenericParameters 
+                        then makeGenericInvocation inv' [|instance.GetElementType()|]
+                        else inv'
+                    | (_,MapContains (CatchAll instance) inv') ->
+                        makeGenericInvocation inv' [|instance|]
                     | _ -> failwithf "No instances of class %A for type %A" x.Class instance
 
-                invoke mi) instance
+                invoke inv) instance
 
         ///Get the instance registered on this TypeClass for the given type parameter 'T. The result will be cast
         ///to TypeClassT, which should be 'TypeClass<'T> but that's impossible to express in .NET's type system.
