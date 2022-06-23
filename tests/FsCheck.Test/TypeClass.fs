@@ -138,3 +138,101 @@ module TypeClass =
 
         let instance = discovered.InstanceFor<string,ITypeClassUnderTest<string>>()
         43 =! instance.GetSomething
+
+    
+    module MergeFactory = 
+        [<Fact>]
+        let ``should instantiate primitive type`` () =
+            let instance = 
+                TypeClass<ITypeClassUnderTest<_>>
+                    .New()
+                    .MergeFactory(fun () -> PrimitiveInstance.Int())
+                    .InstanceFor<int,ITypeClassUnderTest<int>>()
+
+            1 =! instance.GetSomething
+
+        [<Fact>]
+        let ``should inject typeclass parameters (fully-specified types only)``() =
+            let discovered = 
+                TypeClass<ITypeClassUnderTest<obj>>
+                    .New(injectParameters=true)
+                    .MergeFactory(fun () -> InjectedInstance.Int32())
+                    .MergeFactory(fun (arb:ITypeClassUnderTest<int>) -> InjectedInstance.ListOf<int> arb)
+
+            2 =! discovered.Instances.Count
+
+            let instance = discovered.InstanceFor<list<int>,ITypeClassUnderTest<list<int>>>()
+            2 =! instance.GetSomething
+
+        [<Fact>]
+        let ``should inject config parameters``() =
+            let discovered = 
+                TypeClass<ITypeClassUnderTest<_>>
+                    .New(injectParameters=true)
+                    .Discover(true, typeof<PrimitiveInstance>, newInjectedConfigs=[|Config 42|])
+                    .MergeFactory(fun config -> InjectedConfigInstance.String config)
+
+            2 =! discovered.Instances.Count
+
+            let instance = discovered.InstanceFor<string,ITypeClassUnderTest<string>>()
+            43 =! instance.GetSomething
+
+        [<Fact>]
+        let ``should handle factories that require context`` () = 
+            let context = (System.Random()).Next()
+            let instance = 
+                TypeClass<ITypeClassUnderTest<_>>
+                    .New()
+                    .MergeFactory(fun () -> { 
+                        new ITypeClassUnderTest<int> with
+                            override __.GetSomething = context })
+                    .InstanceFor<int,ITypeClassUnderTest<int>>()
+
+            context =! instance.GetSomething
+
+        [<Fact>]
+        let ``should override existing factories of same type`` () = 
+            let original = PrimitiveInstance.Int()
+            let expected = { 
+                        new ITypeClassUnderTest<int> with
+                            override __.GetSomething = original.GetSomething + 2 }
+            let instance = 
+                TypeClass<ITypeClassUnderTest<_>>
+                    .New()
+                    .MergeFactory(fun () -> original)
+                    .MergeFactory(fun () -> expected)
+                    .InstanceFor<int,ITypeClassUnderTest<int>>()
+
+            expected.GetSomething =! instance.GetSomething
+
+        let raises<'T when 'T :> Exception> (f:unit->unit) =
+            // Unquote doesn't support the expression I needed to evaluate
+            let didThrow = 
+                try 
+                    f()
+                    false
+                with 
+                | :? 'T -> true
+                | e -> failwithf "Expected %s, got %A" typeof<'T>.Name e
+
+            if not didThrow then failwithf "Expected exception %s, but no exception was thrown" typeof<'T>.Name
+
+
+
+        [<Fact>]
+        let ``should error if factory returns incompatible type`` () = 
+            raises<ArgumentException> <| fun () ->
+                TypeClass<int list>
+                    .New()
+                    .MergeFactory(fun () -> 5)
+                    |> ignore
+
+        [<Fact>]
+        let ``should error if factory requires unavailable parameters`` () = 
+            raises<ArgumentException> <| fun () ->
+                TypeClass<int list>
+                    .New()
+                    .MergeFactory(fun (i:int) -> [i])
+                    |> ignore
+
+            
