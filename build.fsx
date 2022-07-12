@@ -40,7 +40,7 @@ let releaseNotes = "FsCheck Release Notes.md"
 let solution = "FsCheck.sln"
 
 /// Pattern specifying assemblies to be tested
-let testAssemblies = "tests/**/bin/Release/net5.0/*.Test.dll"
+let testAssemblies = "tests/**/bin/Release/net6.0/*.Test.dll"
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
