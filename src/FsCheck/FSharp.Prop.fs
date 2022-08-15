@@ -77,6 +77,14 @@ module Prop =
     [<CompiledName("Discard")>]
     let discard() = raise DiscardException
 
+    /// A rejected property
+    [<CompiledName("Rejected")>]
+    let rejected = Prop.ofBool false
+    
+    /// Reject a property with a specific message
+    [<CompiledName("RejectWith")>]
+    let rejectWith message = rejected |> label message
+
 ///Operators for Prop.
 [<AutoOpen>]
 module PropOperators =
