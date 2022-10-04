@@ -646,13 +646,16 @@ module Gen =
 ///Operators for Gen.
 type Gen<'a> with
 
+    /// Puts a in a Gen.
+    static member Return (a) = Gen.constant a
+    
     /// Lifted function application = apply f to a, all in the Gen applicative functor.
     static member (<*>) (f, a) = apply f a
 
-    /// Like <*>, but puts f in a Gen first. An alias for Map.
+    /// Like <*>, but puts f in a Gen first. An alias for Map but with arguments swapped.
     static member (<!>) (f, a) = Gen.constant f <*> a
     
-    /// Like <*>, but puts f in a Gen first.
+    /// Like <*> with arguments swapped, but puts f in a Gen first.
     static member Map (a, f) = Gen.constant f <*> a
 
     /// Bind operator; runs the first generator, then feeds the result
