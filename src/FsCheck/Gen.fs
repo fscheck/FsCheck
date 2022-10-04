@@ -653,7 +653,7 @@ type Gen<'a> with
     static member (<!>) (f, a) = Gen.constant f <*> a
     
     /// Like <*>, but puts f in a Gen first.
-    static member Map (f, a) = Gen.constant f <*> a
+    static member Map (a, f) = Gen.constant f <*> a
 
     /// Bind operator; runs the first generator, then feeds the result
     /// to the second generator function.
