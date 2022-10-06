@@ -663,5 +663,5 @@ type Gen<'a> with
     [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)>]
     static member Return value = Gen.constant value
 
-    /// Apply the function f to the value in the generator, yielding a new generator.
+    [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)>]
     static member Map (value, f) = Gen.map f value
