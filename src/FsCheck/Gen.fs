@@ -649,9 +649,19 @@ type Gen<'a> with
     /// Lifted function application = apply f to a, all in the Gen applicative functor.
     static member (<*>) (f, a) = apply f a
 
-    /// Like <*>, but puts f in a Gen first.
-    static member (<!>) (f, a) = Gen.constant f <*> a
-
+    /// An alias for Map with arguments swapped.
+    static member (<!>) (f, a) = Gen.map f a
+    
     /// Bind operator; runs the first generator, then feeds the result
     /// to the second generator function.
-    static member (>>=) (m,k) = bind m k
+    static member (>>=) (m, k) = bind m k
+
+    
+    // The reason for the following methods is that they are useful when
+    // interacting with FSharpPlus, together with the above defined operators.
+
+    [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)>]
+    static member Return value = Gen.constant value
+
+    [<System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)>]
+    static member Map (value, f) = Gen.map f value
