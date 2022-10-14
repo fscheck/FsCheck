@@ -2,7 +2,7 @@
 
 ## Articles
 
-* A series on undertanding property-based testing through implementing a simplified PBT library: [Part 1](https://getcode.substack.com/p/property-based-testing-1-what-is), [Part 2](https://getcode.substack.com/p/-property-based-testing-2-the-essentials), [Part 3](https://getcode.substack.com/p/property-based-testing-3-shrinking)
+* A series on understanding property-based testing through implementing a simplified PBT library: [Part 1](https://getcode.substack.com/p/property-based-testing-1-what-is), [Part 2](https://getcode.substack.com/p/-property-based-testing-2-the-essentials), [Part 3](https://getcode.substack.com/p/property-based-testing-3-shrinking)
 * "QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs" by Koen Claessen and John Hughes [pdf](http://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
 * "An introduction to property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing/)
 * "Choosing properties for property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing-2/)
