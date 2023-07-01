@@ -6,7 +6,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.travis.yml = .travis.yml
 		appveyor.yml = appveyor.yml
+		build.cmd = build.cmd
 		build.fsx = build.fsx
+		build.sh = build.sh
 		Contributors.txt = Contributors.txt
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 		FsCheck Release Notes.md = FsCheck Release Notes.md
@@ -53,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.XUnit.CSharpExample
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharp.DocSnippets", "examples\CSharp.DocSnippets\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FsCheck.Test.CSharp", "tests\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj", "{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.Test.CSharp", "tests\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj", "{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

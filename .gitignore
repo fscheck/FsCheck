@@ -164,7 +164,7 @@ project.lock.json
 .vscode
 
 # Paket
-.paket/Paket.Restore.targets
+.paket/
 .ionide/symbolCache.db
 
 .ionide

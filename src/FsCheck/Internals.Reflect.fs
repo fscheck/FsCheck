@@ -22,36 +22,61 @@ module internal Reflect =
         
     let getProperties (ty: Type) = ty.GetRuntimeProperties() |> Seq.filter (fun p -> let m = getPropertyMethod p in  not m.IsStatic && m.IsPublic)
 
-
-    let isCSharpRecordType (ty: Type) =
-        let isInitOnly(property: PropertyInfo) =
+    let isInitOnlyProperty(property: PropertyInfo) =
 #if NETSTANDARD1_0
-            false
+        false
 #else
-            property.CanWrite
-            && (property.SetMethod.ReturnParameter.GetRequiredCustomModifiers()
-                |> Array.exists (fun t -> t.FullName = "System.Runtime.CompilerServices.IsExternalInit"))
+        property.CanWrite
+        && (property.SetMethod.ReturnParameter.GetRequiredCustomModifiers()
+            |> Array.exists (fun t -> t.FullName = "System.Runtime.CompilerServices.IsExternalInit"))
 #endif
 
+    /// An immutable "record-like" type:
+    /// - must have a single public constructor
+    /// - must not have any property setters (not even C# init)
+    /// - must have all init-only fields (readonly in C# - these fields can only be set in the ctor)
+    /// These can be generated but not shrunk, because there is no reliable way to build a reader,
+    /// i.e. get the ctor parameter values back out from an existing value, because there's no 
+    /// guarantee that the properties map back to the constructor arguments.
+    let isImmutableRecordLikeType (ty: Type) =
         let typeinfo = ty.GetTypeInfo()
         not typeinfo.IsAbstract
         && not typeinfo.ContainsGenericParameters
         && Seq.length (getPublicCtors ty) = 1
-        && not (ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic) |> Seq.exists (fun p -> p.CanWrite && not (isInitOnly p)))
+        && not (ty.GetRuntimeProperties() |> Seq.filter (fun m -> not m.GetMethod.IsStatic && m.GetMethod.IsPublic) |> Seq.exists (fun p -> p.CanWrite))
         && ty.GetRuntimeFields() |> Seq.filter (fun m -> not m.IsStatic && m.IsPublic) |> Seq.forall (fun f -> f.IsInitOnly)
 
-    let isCSharpDtoType (ty: Type) =
+
+    /// A "C# record" type:
+    /// - must have a single public constructor
+    /// - must have a correspondingly named init-only property for every ctor argument
+    /// - may have additional settable properties (set or init)
+    /// This should cover types declared using C#'s record syntax, but also others.
+    /// As opposed to "immutable record-like" types, these can be shrunk automatically.
+    let isCSharpRecordType (ty: Type) =
         let typeinfo = ty.GetTypeInfo()
-        let hasOnlyDefaultCtor =
+        let props = getProperties ty |> Seq.toArray
+        let initOnlyPropNames = 
+            props
+            |> Array.filter isInitOnlyProperty
+            |> Array.map (fun p -> p.Name)
+        let hasRecordCtor =
+            // either no parameters, or for each parameter there is a corresponding
+            // init-only property which we can set. THis is what C# generates with its
+            // record syntax.
             match getPublicCtors ty |> Array.ofSeq with
-            [| ctor |] -> ctor.GetParameters().Length = 0
+            [| ctor |] -> 
+                ctor.GetParameters() 
+                |> Seq.forall (fun param -> initOnlyPropNames |> Array.contains param.Name)
             | _ -> false
         let hasWritableProperties =
-            getProperties ty |> Seq.exists (fun p -> p.CanWrite)
+            props |> Array.exists (fun p -> p.CanWrite)
         typeinfo.IsClass && not typeinfo.IsAbstract
         && not typeinfo.ContainsGenericParameters
-        && hasOnlyDefaultCtor && hasWritableProperties
+        && hasRecordCtor
+        && hasWritableProperties
 
+    /// A collection type in the System.Collections.Immutable namespace.
     let isImmutableCollectionType (ty: Type) =
         ty.FullName.StartsWith("System.Collections.Immutable")
         && Array.contains ty.Name [| 
@@ -61,30 +86,30 @@ module internal Reflect =
                 |]
 
 
-    /// Get information on the fields of a record type
+    /// Get information on the fields of an F# record type
     let getRecordFieldTypes (recordType: System.Type) = 
         if isRecordType recordType then 
             FSharpType.GetRecordFields(recordType, true)
             |> Array.map (fun pi -> pi.PropertyType)
         else 
-            failwithf "The input type must be a record type.  Got %A" recordType
+            failwithf "The input type must be an F# record type.  Got %A" recordType
 
-    /// Get constructor for record type
+    /// Get constructor for F# record type
     let getRecordConstructor recordType = 
         FSharpValue.PreComputeRecordConstructor(recordType, true)
 
-    /// Get reader for record type
+    /// Get reader for F# record type
     let getRecordReader recordType = 
         FSharpValue.PreComputeRecordReader(recordType, true)
 
-    let getCSharpRecordFields (recordType: Type) =
-        if isCSharpRecordType recordType then
+    let getImmutableRecordLikeTypeFields (recordType: Type) =
+        if isImmutableRecordLikeType recordType then
             let ctor = getPublicCtors recordType |> Seq.head
             ctor.GetParameters() |> Seq.map (fun p -> p.ParameterType)
         else
             failwithf "The input type must be an immutable class with a single constructor. Got %A" recordType
         
-    let getCSharpRecordConstructor (t:Type) =
+    let getImmutableRecordLikeTypeConstructor (t:Type) =
         let ctor  = getPublicCtors t |> Seq.head
         let ctorps= ctor.GetParameters ()
         let par   = Expression.Parameter (typeof<obj[]>, "args")
@@ -98,17 +123,28 @@ module internal Reflect =
         let f     = l.Compile ()
         f.Invoke
 
-    let getCSharpDtoFields (recordType: Type) =
-        if isCSharpDtoType recordType then
+    let getCSharpRecordFields (recordType: Type) =
+        if isCSharpRecordType recordType then
             getProperties recordType
             |> Seq.filter (fun p -> p.CanWrite)
             |> Seq.map (fun p -> p.PropertyType)
         else
-            failwithf "The input type must be a DTO class. Got %A" recordType
+            failwithf "The input type must be a C# record-like class. Got %A" recordType
 
-    let getCSharpDtoConstructor (t:Type) =
+    let getCSharpRecordConstructor (t:Type) =
+        let props = getProperties t |> Seq.filter (fun p -> p.CanWrite) |> Seq.toArray
+        let propNames = props |> Array.map (fun p -> p.Name)
+  
+        let ctor  = getPublicCtors t |> Seq.head
+        let ctorps= ctor.GetParameters ()
+        let ctorParamPropIndex = 
+            ctorps
+            |> Array.map (fun ctorParam -> propNames |> Array.findIndex (fun propName -> propName = ctorParam.Name))
         let par = Expression.Parameter (typeof<obj[]>, "args")
-        let props = getProperties t |> Seq.filter (fun p -> p.CanWrite)
+        let pars  = ctorps |> Array.mapi (fun i p ->  Expression.Convert (
+                                                          Expression.ArrayIndex (par, Expression.Constant ctorParamPropIndex.[i]),
+                                                          p.ParameterType)
+                                                      :> Expression)
         let values = 
             props 
             |> Seq.mapi (fun i p ->  
@@ -118,14 +154,15 @@ module internal Reflect =
             props
             |> Seq.zip values
             |> Seq.map (fun (v, p) -> Expression.Bind(p, v) :> MemberBinding)
-        let ctor = Expression.New(getPublicCtors t |> Seq.head)
+
+        let ctor = Expression.New (ctor, pars)
         let body = Expression.MemberInit(ctor, bindings)
         let l     = Expression.Lambda<Func<obj[], obj>> (body, par)
         let f     = l.Compile ()
         f.Invoke
 
-    let getCSharpDtoReader (recordType: Type) =
-        if isCSharpDtoType recordType then
+    let getCSharpRecordReader (recordType: Type) =
+        if isCSharpRecordType recordType then
             let properties = getProperties recordType
                              |> Seq.filter (fun p -> p.CanWrite)
                              |> Seq.map (fun p -> p.GetValue)
@@ -133,7 +170,7 @@ module internal Reflect =
             let lookup o = Array.map (fun f -> f o) properties
             lookup
         else
-            failwithf "The input type must be a DTO class. Got %A" recordType
+            failwithf "The input type must be a C# record-like class. Got %A" recordType
 
     /// Returns the case name, type, and functions that will construct a constructor and a reader of a union type respectively
     let getUnionCases unionType : (string * (int * System.Type list * (obj[] -> obj) * (obj -> obj[]))) list = 

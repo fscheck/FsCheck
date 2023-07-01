@@ -7,8 +7,9 @@ FsCheck is a tool for testing .NET programs automatically. The programmer provid
 FsCheck, NUnit and xUnit.NET plugin can be <a href="https://www.nuget.org/packages?q=fscheck">installed from NuGet</a> using your favorite package manager.
 
 Users have also created integrations with [Expecto](https://github.com/haf/Expecto), 
-[Fuchu](https://github.com/mausch/Fuchu) and 
-[AutoFixture](https://github.com/AutoFixture/AutoFixture) that 
+[Fuchu](https://github.com/mausch/Fuchu), 
+[AutoFixture](https://github.com/AutoFixture/AutoFixture) and 
+[MSTest](https://github.com/microsoft/testfx) that 
 you can [find on NuGet](https://www.nuget.org/packages?q=fscheck).
 
 Documentation

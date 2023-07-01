@@ -119,19 +119,19 @@ module internal ReflectiveGenerator =
         elif t.GetTypeInfo().IsEnum then
             enumOfType t |> box
 
+        elif isImmutableRecordLikeType t then
+            let fields = getImmutableRecordLikeTypeFields t
+            if fields |> Seq.exists ((=) t) then 
+                failwithf "Recursive record types cannot be generated automatically: %A" t 
+            let create = getImmutableRecordLikeTypeConstructor t
+            let g = productGen fields create
+            box g
+
         elif isCSharpRecordType t then
             let fields = getCSharpRecordFields t
             if fields |> Seq.exists ((=) t) then 
                 failwithf "Recursive record types cannot be generated automatically: %A" t 
             let create = getCSharpRecordConstructor t
-            let g = productGen fields create
-            box g
-
-        elif isCSharpDtoType t then
-            let fields = getCSharpDtoFields t
-            if fields |> Seq.exists ((=) t) then 
-                failwithf "Recursive record types cannot be generated automatically: %A" t 
-            let create = getCSharpDtoConstructor t
             let g = productGen fields create
             box g
 

@@ -1,3 +1,5 @@
+### 3.0.0 - To be released
+
 ### 3.0.0-beta2 - 8 January 2022
 
 * Fixed bug that caused exceptions not to be propagated to output correctly.
@@ -7,7 +9,6 @@
 * Add a few missing `Prop.ForAll` overloads.
 
 * Includes changes in 2.16.4.
-
 
 ### 3.0.0-beta1 - 5 September 2021
 
@@ -68,6 +69,14 @@
 * Add support for parallel and async testing. (by Sergey - great effort!)
 
 * Simplify sampling data: Gen.sample et al.
+
+### 2.16.6 - 1 July 2023
+
+* Added Map and Return methods to make FsCheck more F#+ friendly. (by Gustavo Leon)
+
+### 2.16.5 - 1 June 2022
+
+* Improved C# record type generation - previously no values for some properties were not generated.
 
 ### 2.16.4 - 8 January 2022
 

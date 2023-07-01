@@ -93,10 +93,10 @@ module internal ReflectiveShrinker =
             let read = FSharpValue.GetTupleFields
             shrinkChildren read make o childrenTypes
 
-        elif isCSharpDtoType t then
-            let make = getCSharpDtoConstructor t
-            let read = getCSharpDtoReader t
-            let childrenTypes = getCSharpDtoFields t
+        elif isCSharpRecordType t then
+            let make = getCSharpRecordConstructor t
+            let read = getCSharpRecordReader t
+            let childrenTypes = getCSharpRecordFields t
             shrinkChildren read make o childrenTypes
 
         elif isImmutableCollectionType t then
