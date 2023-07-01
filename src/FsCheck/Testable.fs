@@ -200,6 +200,9 @@ module private Testable =
         static member Task() =
             { new ITestable<Task> with
                 member __.Property b = Prop.ofTask b }
+        static member TaskGeneric() =
+            { new ITestable<Task<'T>> with
+                member __.Property b = Prop.ofTask (b :> Task) }
         static member AsyncBool() =
             { new ITestable<Async<bool>> with
                 member __.Property b = Prop.ofTaskBool <| Async.StartAsTask b }

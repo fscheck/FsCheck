@@ -179,7 +179,19 @@ module Property =
                 | TestResult.Passed _  -> true
                 | TestResult.Failed _ -> false
                 | TestResult.Exhausted _ -> false @>
-    
+
+    [<Fact>]
+    let ``Generic task-asynchronous tests should be passable``() =
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        let tcs = TaskCompletionSource<unit>()
+        tcs.SetResult(())
+        Check.One (config, Prop.ofTestable tcs.Task) // No upcast
+        test <@ match resultRunner.Result with
+                | TestResult.Passed _  -> true
+                | TestResult.Failed _ -> false
+                | TestResult.Exhausted _ -> false @>
+
     [<Fact>]
     let ``Task-asynchronous tests should be failable by raising an exception``() =
         let resultRunner = GetResultRunner()
