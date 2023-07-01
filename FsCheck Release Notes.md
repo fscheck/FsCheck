@@ -1,3 +1,7 @@
+### 2.16.6 - 1 July 2023
+
+* Added Map and Return methods to make FsCheck more F#+ friendly. (by Gustavo Leon)
+
 ### 2.16.5 - 1 June 2022
 
 * Improved C# record type generation - previously no values for some properties were not generated.
