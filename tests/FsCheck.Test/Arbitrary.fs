@@ -821,5 +821,3 @@ module Arbitrary =
     let ``should execute generic-task-valued property`` (value: int) =
         // Since this doesn't throw, the test should pass and ignore the integer value
         System.Threading.Tasks.Task.FromResult value
-        test <@ (ImmutableDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink) @>
-        test <@ (ImmutableSortedDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink) @>
