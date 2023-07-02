@@ -1,5 +1,9 @@
 ### 3.0.0 - To be released
 
+* Enable properties that return `Task<T>`. (by Mark Seemann)
+
+* Includes all changes up to 2.16.6.
+
 ### 3.0.0-beta2 - 8 January 2022
 
 * Fixed bug that caused exceptions not to be propagated to output correctly.
