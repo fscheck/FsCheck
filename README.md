@@ -1,13 +1,13 @@
 
 # What is FsCheck? #
 
-FsCheck is a tool for testing .NET programs automatically. The programmer provides a specification of the program, in the form of properties which functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. While writing the properties, you are actually writing a testable specification of your program. Specifications are expressed in F#, C# or VB, using combinators defined in the FsCheck library. FsCheck provides combinators to define properties, observe the distribution of test data, and define test data generators. When a property fails, FsCheck automatically displays a minimal counter example.
+FsCheck is a tool for testing .NET programs automatically. The programmer provides a specification of the program, in the form of properties that functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. While writing the properties, you are writing a testable specification of your program. Specifications are expressed in F#, C# or VB, using combinators defined in the FsCheck library. FsCheck provides combinators to define properties, observe the distribution of test data, and define test data generators. When a property fails, FsCheck automatically displays a minimal counter-example.
 
-FsCheck is a port of Haskell's [QuickCheck](http://www.cse.chalmers.se/~rjmh/QuickCheck/). Important parts of the [manual](https://fscheck.github.io/FsCheck/) for using FsCheck is almost literally adapted from the QuickCheck [manual](http://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html). Any errors and omissions are entirely my responsibility.
+FsCheck is a port of Haskell's [QuickCheck](http://www.cse.chalmers.se/~rjmh/QuickCheck/). Important parts of the [manual](https://fscheck.github.io/FsCheck/) for using FsCheck are almost literally adapted from the QuickCheck [manual](http://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html). Any errors and omissions are entirely my responsibility.
 
 Since v0.5, [scalacheck](https://github.com/rickynils/scalacheck) has influenced FsCheck as well. Scalacheck is itself a port of QuickCheck to Scala.
 
-FsCheck's generator combinators can be used in any testing framework to easily generate a number of random values for many types, and FsCheck itself integrates nicely with existing unit testing frameworks such as NUnit, xUnit, MSTest and MbUnit.
+FsCheck's generator combinators can be used in any testing framework to easily generate random values for many types, and FsCheck itself integrates nicely with existing unit testing frameworks such as NUnit, xUnit, MSTest and MbUnit.
 
 # Releases #
 
@@ -43,11 +43,11 @@ nuget FsCheck 2.0.5-b247
 
 # Contributing #
 
-Pull requests very welcome!
+Pull requests are very welcome!
 
-Check out the issues marked up-for-grabs if you need any inspiration.
+Check out the issues marked "good first issue" and "help wanted" if you need any inspiration.
 
-It's very rare that we reject PRs. Generally, if you intend to make a bigger change, it's better to open an issue first to discuss.
+We rarely reject PRs. If you intend to make a bigger change, it's better to open an issue first to discuss.
 
 ## Building ##
 
