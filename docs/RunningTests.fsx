@@ -7,6 +7,7 @@
 #I @"../src/FsCheck.NUnit/bin/Release/netstandard2.0"
 #r @"../packages/xunit.abstractions/lib/netstandard1.0/xunit.abstractions.dll"
 #r @"../packages/xunit.extensibility.core/lib/netstandard1.1/xunit.core.dll"
+#r @"../packages/xunit.extensibility.execution/lib/netstandard1.1/xunit.execution.dotnet.dll"
 #r @"../packages/NUnit/lib/netstandard2.0/nunit.framework.dll"
 #r "FsCheck"
 #r "FsCheck.Xunit"

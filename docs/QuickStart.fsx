@@ -3,6 +3,7 @@
 #r @"../src/FsCheck.Xunit/bin/Release/netstandard2.0/FsCheck.Xunit.dll"
 #r @"../packages/xunit.abstractions/lib/netstandard1.0/xunit.abstractions.dll"
 #r @"../packages/xunit.extensibility.core/lib/netstandard1.1/xunit.core.dll"
+#r @"../packages/xunit.extensibility.execution/lib/netstandard1.1/xunit.execution.dotnet.dll"
 #r "FsCheck"
 
 (**

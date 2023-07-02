@@ -4,7 +4,7 @@ version 7.1.5
 
 framework: auto-detect
 
-nuget FSharp.Core = 4.5.0
+nuget FSharp.Core ~> 5.0.0
 
 nuget Microsoft.NETFramework.ReferenceAssemblies
 
@@ -31,7 +31,7 @@ group Build
 	source https://www.nuget.org/api/v2
 	source https://api.nuget.org/v3/index.json
 
-	nuget FSharp.Core
+	nuget FSharp.Core ~> 6.0.0
 	nuget Octokit
 	nuget Fake.Api.GitHub
 	nuget Fake.BuildServer.AppVeyor
