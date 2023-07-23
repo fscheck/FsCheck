@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>GenBuilder (FsCheck)</title>
+    <title>Arb (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,32 +87,25 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    GenBuilder Type
+    Arb Type
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
-      FsCheck
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-fluent.html">
+      FsCheck.Fluent
     </a>
   </p>
   <p>
     Assembly: FsCheck.dll
   </p>
-  <span>
-    Parent Module: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-genbuilder.html">
-      GenBuilder
-    </a>
-  </span>
   <p>
     Base Type: 
     <code>obj</code>
   </p>
   <div class="fsdocs-xmldoc">
     
-The workflow type for generators.
-
   </div>
+  <div></div>
   <div></div>
   <div></div>
   <div></div>
@@ -122,13 +115,13 @@ The workflow type for generators.
   <div></div>
   <div>
     <h3>
-      Instance members
+      Static members
     </h3>
     <table class="table outer-list fsdocs-member-list">
       <thead>
         <tr>
           <td class="fsdocs-member-list-header">
-            Instance member
+            Static member
           </td>
           <td class="fsdocs-member-list-header">
             Description
@@ -139,44 +132,36 @@ The workflow type for generators.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '237', 237)" onmouseover="showTip(event, '237', 237)">
+              <code onmouseout="hideTip(event, '327', 327)" onmouseover="showTip(event, '327', 327)">
                 <p>
-                  <a id="Bind">
-                    <a href="#Bind">
-                      <code><span>this.Bind<span><span>(<span>m,&#32;k</span>)</span></span></span></code>
+                  <a id="Array">
+                    <a href="#Array">
+                      <code><span>Arb.Array<span><span>(<span>elements</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="237">
+              <div class="fsdocs-tip" id="327">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.Bind<span><span>(<span>m,&#32;k</span>)</span></span></span></code>
+                  <code><span>Arb.Array<span><span>(<span>elements</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        m
+                        elements
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        k
-                      </b>
-                      :
-                      <code><span>'a18&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a19&gt;</span></span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a19&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T[]</span>&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -185,27 +170,23 @@ The workflow type for generators.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L88-88" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.Arbitrary.fs#L64-64" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Generates one-dimensional arrays. 
+ The length of the generated array is between 0 and size.
+ The sum of the sizes of the elements is equal to the size of the generated array.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  m
+                  elements
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  k
-                </span>
-                :
-                <code><span>'a18&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a19&gt;</span></span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -214,7 +195,7 @@ The workflow type for generators.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a19&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T[]</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -223,44 +204,52 @@ The workflow type for generators.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '238', 238)" onmouseover="showTip(event, '238', 238)">
+              <code onmouseout="hideTip(event, '328', 328)" onmouseover="showTip(event, '328', 328)">
                 <p>
-                  <a id="Combine">
-                    <a href="#Combine">
-                      <code><span>this.Combine<span><span>(<span>m1,&#32;m2</span>)</span></span></span></code>
+                  <a id="Convert">
+                    <a href="#Convert">
+                      <code><span>Arb.Convert<span><span>(<span>arb,&#32;convertTo,&#32;convertFrom</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="238">
+              <div class="fsdocs-tip" id="328">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.Combine<span><span>(<span>m1,&#32;m2</span>)</span></span></span></code>
+                  <code><span>Arb.Convert<span><span>(<span>arb,&#32;convertTo,&#32;convertFrom</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        m1
+                        arb
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;unit&gt;</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        m2
+                        convertTo
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'T,&#32;'U</span>&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        convertFrom
+                      </b>
+                      :
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'U,&#32;'T</span>&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'U&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -269,27 +258,38 @@ The workflow type for generators.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L90-90" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.Arbitrary.fs#L35-35" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
+based on a Arbitrary instance for the source type and two mapping functions. 
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  m1
+                  arb
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;unit&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  m2
+                  convertTo
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'T,&#32;'U</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  convertFrom
+                </span>
+                :
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'U,&#32;'T</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -298,7 +298,7 @@ The workflow type for generators.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'U&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -307,36 +307,44 @@ The workflow type for generators.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '239', 239)" onmouseover="showTip(event, '239', 239)">
+              <code onmouseout="hideTip(event, '329', 329)" onmouseover="showTip(event, '329', 329)">
                 <p>
-                  <a id="Delay">
-                    <a href="#Delay">
-                      <code><span>this.Delay<span><span>(<span>f</span>)</span></span></span></code>
+                  <a id="Filter">
+                    <a href="#Filter">
+                      <code><span>Arb.Filter<span><span>(<span>arb,&#32;filter</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="239">
+              <div class="fsdocs-tip" id="329">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.Delay<span><span>(<span>f</span>)</span></span></span></code>
+                  <code><span>Arb.Filter<span><span>(<span>arb,&#32;filter</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        f
+                        arb
                       </b>
                       :
-                      <code><span>unit&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        filter
+                      </b>
+                      :
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'T,&#32;bool</span>&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -345,19 +353,30 @@ The workflow type for generators.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L89-89" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.Arbitrary.fs#L41-41" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Return an Arbitrary instance that is a filtered version of an existing arbitrary instance.
+ The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter with the given predicate.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  f
+                  arb
                 </span>
                 :
-                <code><span>unit&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  filter
+                </span>
+                :
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'T,&#32;bool</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -366,7 +385,7 @@ The workflow type for generators.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -375,44 +394,44 @@ The workflow type for generators.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '240', 240)" onmouseover="showTip(event, '240', 240)">
+              <code onmouseout="hideTip(event, '330', 330)" onmouseover="showTip(event, '330', 330)">
                 <p>
-                  <a id="For">
-                    <a href="#For">
-                      <code><span>this.For<span><span>(<span>s,&#32;f</span>)</span></span></span></code>
+                  <a id="From">
+                    <a href="#From">
+                      <code><span>Arb.From<span><span>(<span>gen,&#32;shrinker</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="240">
+              <div class="fsdocs-tip" id="330">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.For<span><span>(<span>s,&#32;f</span>)</span></span></span></code>
+                  <code><span>Arb.From<span><span>(<span>gen,&#32;shrinker</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        s
+                        gen
                       </b>
                       :
-                      <code>'c</code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'Value&gt;</span></code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        f
+                        shrinker
                       </b>
                       :
-                      <code><span>'a&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></span></code>
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Value,&#32;<span>seq&lt;'Value&gt;</span></span>&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;unit&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -421,27 +440,29 @@ The workflow type for generators.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L96-96" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.Arbitrary.fs#L19-19" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Construct an Arbitrary instance from a generator and shrinker.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  s
+                  gen
                 </span>
                 :
-                <code>'c</code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'Value&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  f
+                  shrinker
                 </span>
                 :
-                <code><span>'a&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></span></code>
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Value,&#32;<span>seq&lt;'Value&gt;</span></span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -450,7 +471,7 @@ The workflow type for generators.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;unit&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -459,36 +480,36 @@ The workflow type for generators.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '241', 241)" onmouseover="showTip(event, '241', 241)">
+              <code onmouseout="hideTip(event, '331', 331)" onmouseover="showTip(event, '331', 331)">
                 <p>
-                  <a id="Return">
-                    <a href="#Return">
-                      <code><span>this.Return<span><span>(<span>a</span>)</span></span></span></code>
+                  <a id="From">
+                    <a href="#From">
+                      <code><span>Arb.From<span><span>(<span>gen</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="241">
+              <div class="fsdocs-tip" id="331">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.Return<span><span>(<span>a</span>)</span></span></span></code>
+                  <code><span>Arb.From<span><span>(<span>gen</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        a
+                        gen
                       </b>
                       :
-                      <code>'a18</code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'Value&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -497,19 +518,22 @@ The workflow type for generators.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L87-87" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.Arbitrary.fs#L15-15" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Construct an Arbitrary instance from a generator.
+ Shrink is not supported for this type.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  a
+                  gen
                 </span>
                 :
-                <code>'a18</code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'Value&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -518,7 +542,7 @@ The workflow type for generators.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -527,36 +551,52 @@ The workflow type for generators.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '242', 242)" onmouseover="showTip(event, '242', 242)">
+              <code onmouseout="hideTip(event, '332', 332)" onmouseover="showTip(event, '332', 332)">
                 <p>
-                  <a id="ReturnFrom">
-                    <a href="#ReturnFrom">
-                      <code><span>this.ReturnFrom<span><span>(<span>g</span>)</span></span></span></code>
+                  <a id="MapFilter">
+                    <a href="#MapFilter">
+                      <code><span>Arb.MapFilter<span><span>(<span>arb,&#32;map,&#32;filter</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="242">
+              <div class="fsdocs-tip" id="332">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.ReturnFrom<span><span>(<span>g</span>)</span></span></span></code>
+                  <code><span>Arb.MapFilter<span><span>(<span>arb,&#32;map,&#32;filter</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        g
+                        arb
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        map
+                      </b>
+                      :
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'T,&#32;'T</span>&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        filter
+                      </b>
+                      :
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'T,&#32;bool</span>&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -565,19 +605,41 @@ The workflow type for generators.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L94-94" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.Arbitrary.fs#L50-50" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Return an Arbitrary instance that is a mapped and filtered version of an existing arbitrary instance.
+ The generator uses Gen.map with the given mapper and then Gen.suchThat with the given predicate, 
+ and the shrinks are filtered using Seq.filter with the given predicate.
+This is sometimes useful if using just a filter would reduce the chance of getting a good value
+from the generator - and you can map the value instead. E.g. PositiveInt.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  g
+                  arb
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  map
+                </span>
+                :
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'T,&#32;'T</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  filter
+                </span>
+                :
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'T,&#32;bool</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -586,7 +648,7 @@ The workflow type for generators.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a18&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -595,44 +657,36 @@ The workflow type for generators.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '243', 243)" onmouseover="showTip(event, '243', 243)">
+              <code onmouseout="hideTip(event, '333', 333)" onmouseover="showTip(event, '333', 333)">
                 <p>
-                  <a id="TryFinally">
-                    <a href="#TryFinally">
-                      <code><span>this.TryFinally<span><span>(<span>m,&#32;handler</span>)</span></span></span></code>
+                  <a id="Nullable">
+                    <a href="#Nullable">
+                      <code><span>Arb.Nullable<span><span>(<span>value</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="243">
+              <div class="fsdocs-tip" id="333">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.TryFinally<span><span>(<span>m,&#32;handler</span>)</span></span></span></code>
+                  <code><span>Arb.Nullable<span><span>(<span>value</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        m
+                        value
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        handler
-                      </b>
-                      :
-                      <code><span>unit&#32;->&#32;unit</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span><a href="https://docs.microsoft.com/dotnet/api/system.nullable-1">Nullable</a>&lt;'T&gt;</span>&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -641,27 +695,21 @@ The workflow type for generators.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L91-91" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.Arbitrary.fs#L69-69" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Generates nullable values that are null 1/8 of the time.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  m
+                  value
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  handler
-                </span>
-                :
-                <code><span>unit&#32;->&#32;unit</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -670,7 +718,7 @@ The workflow type for generators.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span><a href="https://docs.microsoft.com/dotnet/api/system.nullable-1">Nullable</a>&lt;'T&gt;</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -679,44 +727,44 @@ The workflow type for generators.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '244', 244)" onmouseover="showTip(event, '244', 244)">
+              <code onmouseout="hideTip(event, '334', 334)" onmouseover="showTip(event, '334', 334)">
                 <p>
-                  <a id="TryWith">
-                    <a href="#TryWith">
-                      <code><span>this.TryWith<span><span>(<span>arg1,&#32;handler</span>)</span></span></span></code>
+                  <a id="ToArbitrary">
+                    <a href="#ToArbitrary">
+                      <code><span>Arb.ToArbitrary<span><span>(<span>gen,&#32;shrinker</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="244">
+              <div class="fsdocs-tip" id="334">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.TryWith<span><span>(<span>arg1,&#32;handler</span>)</span></span></span></code>
+                  <code><span>Arb.ToArbitrary<span><span>(<span>gen,&#32;shrinker</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        arg0
+                        gen
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'Value&gt;</span></code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        handler
+                        shrinker
                       </b>
                       :
-                      <code><span>exn&#32;->&#32;'a</span></code>
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Value,&#32;<span>seq&lt;'Value&gt;</span></span>&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -725,27 +773,29 @@ The workflow type for generators.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L92-92" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.Arbitrary.fs#L29-29" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Construct an Arbitrary instance from a generator and shrinker.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  arg0
+                  gen
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'Value&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  handler
+                  shrinker
                 </span>
                 :
-                <code><span>exn&#32;->&#32;'a</span></code>
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Value,&#32;<span>seq&lt;'Value&gt;</span></span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -754,7 +804,7 @@ The workflow type for generators.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -763,44 +813,36 @@ The workflow type for generators.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '245', 245)" onmouseover="showTip(event, '245', 245)">
+              <code onmouseout="hideTip(event, '335', 335)" onmouseover="showTip(event, '335', 335)">
                 <p>
-                  <a id="Using">
-                    <a href="#Using">
-                      <code><span>this.Using<span><span>(<span>a,&#32;k</span>)</span></span></span></code>
+                  <a id="ToArbitrary">
+                    <a href="#ToArbitrary">
+                      <code><span>Arb.ToArbitrary<span><span>(<span>generator</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="245">
+              <div class="fsdocs-tip" id="335">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.Using<span><span>(<span>a,&#32;k</span>)</span></span></span></code>
+                  <code><span>Arb.ToArbitrary<span><span>(<span>generator</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        a
+                        generator
                       </b>
                       :
-                      <code>'a</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        k
-                      </b>
-                      :
-                      <code><span>'a&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -809,27 +851,22 @@ The workflow type for generators.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L93-93" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.Arbitrary.fs#L25-25" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Construct an Arbitrary instance from a generator.
+ Shrink is not supported for this type.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  a
+                  generator
                 </span>
                 :
-                <code>'a</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  k
-                </span>
-                :
-                <code><span>'a&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -838,7 +875,7 @@ The workflow type for generators.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -847,44 +884,44 @@ The workflow type for generators.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '246', 246)" onmouseover="showTip(event, '246', 246)">
+              <code onmouseout="hideTip(event, '336', 336)" onmouseover="showTip(event, '336', 336)">
                 <p>
-                  <a id="While">
-                    <a href="#While">
-                      <code><span>this.While<span><span>(<span>p,&#32;m</span>)</span></span></span></code>
+                  <a id="Zip">
+                    <a href="#Zip">
+                      <code><span>Arb.Zip<span><span>(<span>t1,&#32;t2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="246">
+              <div class="fsdocs-tip" id="336">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.While<span><span>(<span>p,&#32;m</span>)</span></span></span></code>
+                  <code><span>Arb.Zip<span><span>(<span>t1,&#32;t2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        p
+                        t1
                       </b>
                       :
-                      <code><span>unit&#32;->&#32;bool</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T1&gt;</span></code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        m
+                        t2
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T2&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;unit&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T1&#32;*&#32;'T2</span>&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -893,27 +930,29 @@ The workflow type for generators.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L95-95" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.Arbitrary.fs#L55-55" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Generates 2-tuples.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  p
+                  t1
                 </span>
                 :
-                <code><span>unit&#32;->&#32;bool</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T1&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  m
+                  t2
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T2&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -922,53 +961,7 @@ The workflow type for generators.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;unit&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '247', 247)" onmouseover="showTip(event, '247', 247)">
-                <p>
-                  <a id="Zero">
-                    <a href="#Zero">
-                      <code><span>this.Zero<span>()</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="247">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.Zero<span>()</span></span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;unit&gt;</span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Gen.fs#L100-100" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;unit&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T1&#32;*&#32;'T2</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -977,7 +970,6 @@ The workflow type for generators.
       </tbody>
     </table>
   </div>
-  <div></div>
 </div>
             
         </div>

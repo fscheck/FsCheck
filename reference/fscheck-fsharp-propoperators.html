@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>ArbitraryExtensions (FsCheck)</title>
+    <title>PropOperators (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,43 +87,31 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    ArbitraryExtensions Type
+    PropOperators Module
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
-      FsCheck
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-fsharp.html">
+      FsCheck.FSharp
     </a>
   </p>
   <p>
     Assembly: FsCheck.dll
   </p>
-  <p>
-    Base Type: 
-    <code>obj</code>
-  </p>
   <div class="fsdocs-xmldoc">
     
-Extensons to transform Arbitrary instances into other Arbitrary instances.
+Operators for Prop.
 
   </div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
   <div>
     <h3>
-      Static members
+      Functions and values
     </h3>
     <table class="table outer-list fsdocs-member-list">
       <thead>
         <tr>
           <td class="fsdocs-member-list-header">
-            Static member
+            Function or value
           </td>
           <td class="fsdocs-member-list-header">
             Description
@@ -134,52 +122,24 @@ Extensons to transform Arbitrary instances into other Arbitrary instances.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '271', 271)" onmouseover="showTip(event, '271', 271)">
+              <code onmouseout="hideTip(event, '110', 110)" onmouseover="showTip(event, '110', 110)">
                 <p>
-                  <a id="Convert">
-                    <a href="#Convert">
-                      <code><span>ArbitraryExtensions.Convert<span><span>(<span>arb,&#32;convertTo,&#32;convertFrom</span>)</span></span></span></code>
+                  <a id="( %> )">
+                    <a href="#( %> )">
+                      <code><span>(%>)&#32;<span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="271">
+              <div class="fsdocs-tip" id="110">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>ArbitraryExtensions.Convert<span><span>(<span>arb,&#32;convertTo,&#32;convertFrom</span>)</span></span></span></code>
+                  <code><span>(%>)&#32;<span></span></span></code>
                   <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        arb
-                      </b>
-                      :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        convertTo
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'a,&#32;'b</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        convertFrom
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'b,&#32;'a</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                  </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'b&gt;</span></code>
+                    <code><span>'a&#32;->&#32;string&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
                   </span>
                   <br/>
                 </div>
@@ -188,47 +148,20 @@ Extensons to transform Arbitrary instances into other Arbitrary instances.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L11-11" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L96-96" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
-based on a Arbitrary instance for the source type and two mapping functions. 
+Add the given label to the property. Property on the left hand side, label on the right.
 
             </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  arb
-                </span>
-                :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  convertTo
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'a,&#32;'b</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  convertFrom
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'b,&#32;'a</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
             <dl class="fsdocs-returns">
               <dt>
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'b&gt;</span></code>
+                <code><span>'a&#32;->&#32;string&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -237,44 +170,44 @@ based on a Arbitrary instance for the source type and two mapping functions.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '272', 272)" onmouseover="showTip(event, '272', 272)">
+              <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
                 <p>
-                  <a id="Filter">
-                    <a href="#Filter">
-                      <code><span>ArbitraryExtensions.Filter<span><span>(<span>arb,&#32;filter</span>)</span></span></span></code>
+                  <a id="( .&. )">
+                    <a href="#( .&. )">
+                      <code><span><span>l</span>&#32;.&.&#32;<span>r</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="272">
+              <div class="fsdocs-tip" id="111">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>ArbitraryExtensions.Filter<span><span>(<span>arb,&#32;filter</span>)</span></span></span></code>
+                  <code><span><span>l</span>&#32;.&.&#32;<span>r</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        arb
+                        l
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                      <code>'LeftTestable</code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        filter
+                        r
                       </b>
                       :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'a,&#32;bool</span>&gt;</span></code>
+                      <code>'RightTestable</code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
                   </span>
                   <br/>
                 </div>
@@ -283,30 +216,29 @@ based on a Arbitrary instance for the source type and two mapping functions.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L17-17" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L99-99" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
- Return an Arbitrary instance that is a filtered version of an existing arbitrary instance.
- The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter with the given predicate.
+Construct a property that succeeds if both succeed. (cfr 'and')
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  arb
+                  l
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                <code>'LeftTestable</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  filter
+                  r
                 </span>
                 :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'a,&#32;bool</span>&gt;</span></code>
+                <code>'RightTestable</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -315,7 +247,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -324,52 +256,44 @@ based on a Arbitrary instance for the source type and two mapping functions.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '273', 273)" onmouseover="showTip(event, '273', 273)">
+              <code onmouseout="hideTip(event, '112', 112)" onmouseover="showTip(event, '112', 112)">
                 <p>
-                  <a id="MapFilter">
-                    <a href="#MapFilter">
-                      <code><span>ArbitraryExtensions.MapFilter<span><span>(<span>arb,&#32;map,&#32;filter</span>)</span></span></span></code>
+                  <a id="( .|. )">
+                    <a href="#( .|. )">
+                      <code><span><span>l</span>&#32;.|.&#32;<span>r</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="273">
+              <div class="fsdocs-tip" id="112">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>ArbitraryExtensions.MapFilter<span><span>(<span>arb,&#32;map,&#32;filter</span>)</span></span></span></code>
+                  <code><span><span>l</span>&#32;.|.&#32;<span>r</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        arb
+                        l
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                      <code>'LeftTestable</code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        map
+                        r
                       </b>
                       :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'a,&#32;'a</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        filter
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'a,&#32;bool</span>&gt;</span></code>
+                      <code>'RightTestable</code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
                   </span>
                   <br/>
                 </div>
@@ -378,41 +302,29 @@ based on a Arbitrary instance for the source type and two mapping functions.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/ArbitraryExtensions.fs#L26-26" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L104-104" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
- Return an Arbitrary instance that is a mapped and filtered version of an existing arbitrary instance.
- The generator uses Gen.map with the given mapper and then Gen.suchThat with the given predicate, 
- and the shrinks are filtered using Seq.filter with the given predicate.
-This is sometimes useful if using just a filter would reduce the chance of getting a good value
-from the generator - and you can map the value instead. E.g. PositiveInt.
+Construct a property that fails if both fail. (cfr 'or')
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  arb
+                  l
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                <code>'LeftTestable</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  map
+                  r
                 </span>
                 :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'a,&#32;'a</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  filter
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'a,&#32;bool</span>&gt;</span></code>
+                <code>'RightTestable</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -421,7 +333,227 @@ from the generator - and you can map the value instead. E.g. PositiveInt.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '113', 113)" onmouseover="showTip(event, '113', 113)">
+                <p>
+                  <a id="( ==> )">
+                    <a href="#( ==> )">
+                      <code><span><span>condition</span>&#32;==>&#32;<span>assertion</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="113">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span><span>condition</span>&#32;==>&#32;<span>assertion</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        condition
+                      </b>
+                      :
+                      <code>bool</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        assertion
+                      </b>
+                      :
+                      <code>'Testable</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L87-87" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  condition
+                </span>
+                :
+                <code>bool</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  assertion
+                </span>
+                :
+                <code>'Testable</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '114', 114)" onmouseover="showTip(event, '114', 114)">
+                <p>
+                  <a id="( @| )">
+                    <a href="#( @| )">
+                      <code><span>(@|)&#32;<span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="114">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>(@|)&#32;<span></span></span></code>
+                  <br/>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span>string&#32;->&#32;'a&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L93-93" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Add the given label to the property. label on the left hand side, property on the right.
+
+            </p>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span>string&#32;->&#32;'a&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '115', 115)" onmouseover="showTip(event, '115', 115)">
+                <p>
+                  <a id="( |@ )">
+                    <a href="#( |@ )">
+                      <code><span><span>x</span>&#32;|@&#32;<span>y</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="115">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span><span>x</span>&#32;|@&#32;<span>y</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        x
+                      </b>
+                      :
+                      <code>'a</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        y
+                      </b>
+                      :
+                      <code>string</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L90-90" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Add the given label to the property. Property on the left hand side, label on the right.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  x
+                </span>
+                :
+                <code>'a</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  y
+                </span>
+                :
+                <code>string</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -430,6 +562,14 @@ from the generator - and you can map the value instead. E.g. PositiveInt.
       </tbody>
     </table>
   </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
 </div>
             
         </div>

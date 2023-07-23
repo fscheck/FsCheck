@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>TypeClass<'TypeClass> (FsCheck)</title>
+    <title>ArbMap (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,23 +87,17 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    TypeClass<'TypeClass> Type
+    ArbMap Type
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
-      FsCheck
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-fluent.html">
+      FsCheck.Fluent
     </a>
   </p>
   <p>
     Assembly: FsCheck.dll
   </p>
-  <span>
-    Parent Module: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass.html">
-      TypeClass
-    </a>
-  </span>
   <p>
     Base Type: 
     <code>obj</code>
@@ -118,600 +112,7 @@
   <div></div>
   <div></div>
   <div></div>
-  <div>
-    <h3>
-      Instance members
-    </h3>
-    <table class="table outer-list fsdocs-member-list">
-      <thead>
-        <tr>
-          <td class="fsdocs-member-list-header">
-            Instance member
-          </td>
-          <td class="fsdocs-member-list-header">
-            Description
-          </td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '255', 255)" onmouseover="showTip(event, '255', 255)">
-                <p>
-                  <a id="Class">
-                    <a href="#Class">
-                      <code><span>this.Class</span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="255">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.Class</span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/TypeClass.fs#L105-105" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '256', 256)" onmouseover="showTip(event, '256', 256)">
-                <p>
-                  <a id="Compare">
-                    <a href="#Compare">
-                      <code><span>this.Compare<span><span>(<span>other</span>)</span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="256">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.Compare<span><span>(<span>other</span>)</span></span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        other
-                      </b>
-                      :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclasscomparison.html">TypeClassComparison</a></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/TypeClass.fs#L133-133" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Compares this TypeClass with the given TypeClass. Returns, respectively, the new instances, overridden instances,
-new array instances, overridden array instances, new catch all or overridden catchall introduced by the other TypeClass.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  other
-                </span>
-                :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclasscomparison.html">TypeClassComparison</a></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '257', 257)" onmouseover="showTip(event, '257', 257)">
-                <p>
-                  <a id="Discover">
-                    <a href="#Discover">
-                      <code><span>this.Discover<span><span>(<span>onlyPublic,&#32;instancesType</span>)</span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="257">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.Discover<span><span>(<span>onlyPublic,&#32;instancesType</span>)</span></span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        onlyPublic
-                      </b>
-                      :
-                      <code>bool</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        instancesType
-                      </b>
-                      :
-                      <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/TypeClass.fs#L114-114" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Make a new TypeClass with only the instances registered on the given type.
-Note that the instances of this TypeClass will not be registered on the new TypeClass. 
-Use Merge in addition to achieve that, or use DiscoverAndMerge to do both.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  onlyPublic
-                </span>
-                :
-                <code>bool</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  instancesType
-                </span>
-                :
-                <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '258', 258)" onmouseover="showTip(event, '258', 258)">
-                <p>
-                  <a id="DiscoverAndMerge">
-                    <a href="#DiscoverAndMerge">
-                      <code><span>this.DiscoverAndMerge<span><span>(<span>onlyPublic,&#32;instancesType</span>)</span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="258">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.DiscoverAndMerge<span><span>(<span>onlyPublic,&#32;instancesType</span>)</span></span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        onlyPublic
-                      </b>
-                      :
-                      <code>bool</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        instancesType
-                      </b>
-                      :
-                      <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/TypeClass.fs#L127-127" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Discover instances for this TypeClass on the given type. Merge the result with this TypeClass,
-with the newly discovered instances overriding the instances on this TypeClass.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  onlyPublic
-                </span>
-                :
-                <code>bool</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  instancesType
-                </span>
-                :
-                <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '259', 259)" onmouseover="showTip(event, '259', 259)">
-                <p>
-                  <a id="GetInstance">
-                    <a href="#GetInstance">
-                      <code><span>this.GetInstance<span><span>(<span>instance</span>)</span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="259">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.GetInstance<span><span>(<span>instance</span>)</span></span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        instance
-                      </b>
-                      :
-                      <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>obj</code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/TypeClass.fs#L142-142" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Get the instance registered on this TypeClass for the given type and optionally the given arguments. 
-The result is of type 'TypeClass<'T>, dynamically.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  instance
-                </span>
-                :
-                <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>obj</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '260', 260)" onmouseover="showTip(event, '260', 260)">
-                <p>
-                  <a id="HasCatchAll">
-                    <a href="#HasCatchAll">
-                      <code><span>this.HasCatchAll</span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="260">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.HasCatchAll</span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>bool</code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/TypeClass.fs#L107-107" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>bool</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '261', 261)" onmouseover="showTip(event, '261', 261)">
-                <p>
-                  <a id="InstanceFor">
-                    <a href="#InstanceFor">
-                      <code><span>this.InstanceFor<span>()</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="261">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.InstanceFor<span>()</span></span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>'TypeClassT</code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/TypeClass.fs#L160-160" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Get the instance registered on this TypeClass for the given type parameter 'T. The result will be cast
-to TypeClassT, which should be 'TypeClass<'T> but that's impossible to express in .NET's type system.
-
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>'TypeClassT</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '262', 262)" onmouseover="showTip(event, '262', 262)">
-                <p>
-                  <a id="Instances">
-                    <a href="#Instances">
-                      <code><span>this.Instances</span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="262">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.Instances</span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span><a href="https://docs.microsoft.com/dotnet/api/microsoft.fsharp.collections.fsharpset-1">Set</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-instancekind.html">InstanceKind</a>&gt;</span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/TypeClass.fs#L106-106" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/microsoft.fsharp.collections.fsharpset-1">Set</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-instancekind.html">InstanceKind</a>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '263', 263)" onmouseover="showTip(event, '263', 263)">
-                <p>
-                  <a id="Merge">
-                    <a href="#Merge">
-                      <code><span>this.Merge<span><span>(<span>overrideWith</span>)</span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="263">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.Merge<span><span>(<span>overrideWith</span>)</span></span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        overrideWith
-                      </b>
-                      :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/TypeClass.fs#L122-122" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Merge the instances defined by the given instances type with the ones already defined in this TypeClass.
-Instances defined in the given type override the instances in this TypeClass instance.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  overrideWith
-                </span>
-                :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <div></div>
   <div>
     <h3>
       Static members
@@ -731,24 +132,24 @@ Instances defined in the given type override the instances in this TypeClass ins
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '264', 264)" onmouseover="showTip(event, '264', 264)">
+              <code onmouseout="hideTip(event, '337', 337)" onmouseover="showTip(event, '337', 337)">
                 <p>
-                  <a id="New">
-                    <a href="#New">
-                      <code><span>TypeClass.New<span>()</span></span></code>
+                  <a id="Default">
+                    <a href="#Default">
+                      <code><span>ArbMap.Default</span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="264">
+              <div class="fsdocs-tip" id="337">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>TypeClass.New<span>()</span></span></code>
+                  <code><span>ArbMap.Default</span></code>
                   <br/>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
                   </span>
                   <br/>
                 </div>
@@ -757,7 +158,7 @@ Instances defined in the given type override the instances in this TypeClass ins
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/TypeClass.fs#L164-164" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.ArbMap.fs#L12-12" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -768,7 +169,563 @@ Instances defined in the given type override the instances in this TypeClass ins
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclass-1.html">TypeClass</a>&lt;'TypeClass&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '338', 338)" onmouseover="showTip(event, '338', 338)">
+                <p>
+                  <a id="GeneratorFor">
+                    <a href="#GeneratorFor">
+                      <code><span>ArbMap.GeneratorFor<span><span>(<span>map</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="338">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ArbMap.GeneratorFor<span><span>(<span>map</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        map
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.ArbMap.fs#L36-36" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  map
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '339', 339)" onmouseover="showTip(event, '339', 339)">
+                <p>
+                  <a id="Merge">
+                    <a href="#Merge">
+                      <code><span>ArbMap.Merge<span><span>(<span>map,&#32;instancesType</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="339">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ArbMap.Merge<span><span>(<span>map,&#32;instancesType</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        map
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        instancesType
+                      </b>
+                      :
+                      <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.ArbMap.fs#L18-18" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  map
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  instancesType
+                </span>
+                :
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '340', 340)" onmouseover="showTip(event, '340', 340)">
+                <p>
+                  <a id="Merge">
+                    <a href="#Merge">
+                      <code><span>ArbMap.Merge<span><span>(<span>map</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="340">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ArbMap.Merge<span><span>(<span>map</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        map
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.ArbMap.fs#L15-15" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  map
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '341', 341)" onmouseover="showTip(event, '341', 341)">
+                <p>
+                  <a id="MergeArb">
+                    <a href="#MergeArb">
+                      <code><span>ArbMap.MergeArb<span><span>(<span>map,&#32;arb</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="341">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ArbMap.MergeArb<span><span>(<span>map,&#32;arb</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        map
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arb
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.ArbMap.fs#L21-21" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  map
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arb
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '342', 342)" onmouseover="showTip(event, '342', 342)">
+                <p>
+                  <a id="MergeArbFactory">
+                    <a href="#MergeArbFactory">
+                      <code><span>ArbMap.MergeArbFactory<span><span>(<span>map,&#32;factory</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="342">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ArbMap.MergeArbFactory<span><span>(<span>map,&#32;factory</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        map
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        factory
+                      </b>
+                      :
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span>&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.ArbMap.fs#L32-32" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  map
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  factory
+                </span>
+                :
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '343', 343)" onmouseover="showTip(event, '343', 343)">
+                <p>
+                  <a id="MergeArbFactory">
+                    <a href="#MergeArbFactory">
+                      <code><span>ArbMap.MergeArbFactory<span><span>(<span>map,&#32;factory</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="343">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ArbMap.MergeArbFactory<span><span>(<span>map,&#32;factory</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        map
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        factory
+                      </b>
+                      :
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span>,&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'U&gt;</span></span>&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.ArbMap.fs#L28-28" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  map
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  factory
+                </span>
+                :
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span>,&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'U&gt;</span></span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '344', 344)" onmouseover="showTip(event, '344', 344)">
+                <p>
+                  <a id="MergeArbFactory">
+                    <a href="#MergeArbFactory">
+                      <code><span>ArbMap.MergeArbFactory<span><span>(<span>map,&#32;factory</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="344">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ArbMap.MergeArbFactory<span><span>(<span>map,&#32;factory</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        map
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        factory
+                      </b>
+                      :
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a>,&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></span>&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Fluent.ArbMap.fs#L24-24" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  map
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  factory
+                </span>
+                :
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a>,&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>CommandExtensions (FsCheck)</title>
+    <title>Replay (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,7 +87,7 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    CommandExtensions Type
+    Replay Type
   </h1>
   <p>
     Namespace: 
@@ -102,6 +102,18 @@
     Base Type: 
     <code>obj</code>
   </p>
+  <p>
+    All Interfaces: 
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-replay.html">Replay</a>&gt;</span></code>
+    , 
+    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralequatable">IStructuralEquatable</a></code>
+    , 
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.icomparable-1">IComparable</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-replay.html">Replay</a>&gt;</span></code>
+    , 
+    <code><a href="https://docs.microsoft.com/dotnet/api/system.icomparable">IComparable</a></code>
+    , 
+    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralcomparable">IStructuralComparable</a></code>
+  </p>
   <div class="fsdocs-xmldoc">
     
   </div>
@@ -109,19 +121,15 @@
   <div></div>
   <div></div>
   <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
   <div>
     <h3>
-      Static members
+      Record fields
     </h3>
     <table class="table outer-list fsdocs-member-list">
       <thead>
         <tr>
           <td class="fsdocs-member-list-header">
-            Static member
+            Record Field
           </td>
           <td class="fsdocs-member-list-header">
             Description
@@ -132,53 +140,20 @@
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '305', 305)" onmouseover="showTip(event, '305', 305)">
+              <code onmouseout="hideTip(event, '236', 236)" onmouseover="showTip(event, '236', 236)">
                 <p>
-                  <a id="ToProperty">
-                    <a href="#ToProperty">
-                      <code><span>CommandExtensions.ToProperty<span><span>(<span>spec,&#32;generator,&#32;shrinker</span>)</span></span></span></code>
+                  <a id="Rnd">
+                    <a href="#Rnd">
+                      <code>Rnd</code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="305">
+              <div class="fsdocs-tip" id="236">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>CommandExtensions.ToProperty<span><span>(<span>spec,&#32;generator,&#32;shrinker</span>)</span></span></span></code>
+                  <code>Rnd</code>
                   <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        spec
-                      </b>
-                      :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        generator
-                      </b>
-                      :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        shrinker
-                      </b>
-                      :
-                      <code><span><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&#32;->&#32;<span>seq&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></span></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-                  </span>
                   <br/>
                 </div>
               </div>
@@ -186,85 +161,31 @@
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L129-129" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L39-39" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Turn a specification into a property, allowing you to specify generator and shrinker.
-
             </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  spec
-                </span>
-                :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  generator
-                </span>
-                :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  shrinker
-                </span>
-                :
-                <code><span><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&#32;->&#32;<span>seq&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
           </td>
         </tr>
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '306', 306)" onmouseover="showTip(event, '306', 306)">
+              <code onmouseout="hideTip(event, '237', 237)" onmouseover="showTip(event, '237', 237)">
                 <p>
-                  <a id="ToProperty">
-                    <a href="#ToProperty">
-                      <code><span>CommandExtensions.ToProperty<span><span>(<span>spec</span>)</span></span></span></code>
+                  <a id="Size">
+                    <a href="#Size">
+                      <code>Size</code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="306">
+              <div class="fsdocs-tip" id="237">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>CommandExtensions.ToProperty<span><span>(<span>spec</span>)</span></span></span></code>
+                  <code>Size</code>
                   <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        spec
-                      </b>
-                      :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-                  </span>
                   <br/>
                 </div>
               </div>
@@ -272,38 +193,21 @@ Turn a specification into a property, allowing you to specify generator and shri
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L125-125" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L39-39" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Turn a specification into a property.
-
             </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  spec
-                </span>
-                :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
 </div>
             
         </div>

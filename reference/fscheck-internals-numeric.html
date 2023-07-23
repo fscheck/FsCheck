@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>StdGen (FsCheck)</title>
+    <title>Numeric (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,139 +87,81 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    StdGen Type
+    Numeric Module
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
-      FsCheck
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals.html">
+      FsCheck.Internals
     </a>
   </p>
   <p>
     Assembly: FsCheck.dll
   </p>
-  <span>
-    Parent Module: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-random.html">
-      Random
-    </a>
-  </span>
-  <p>
-    Base Type: 
-    <code>obj</code>
-  </p>
-  <p>
-    All Interfaces: 
-    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-random-stdgen.html">StdGen</a>&gt;</span></code>
-    , 
-    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralequatable">IStructuralEquatable</a></code>
-    , 
-    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.icomparable-1">IComparable</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-random-stdgen.html">StdGen</a>&gt;</span></code>
-    , 
-    <code><a href="https://docs.microsoft.com/dotnet/api/system.icomparable">IComparable</a></code>
-    , 
-    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralcomparable">IStructuralComparable</a></code>
-  </p>
   <div class="fsdocs-xmldoc">
     
+ Adapted slightly from FSharpPlus, https://github.com/fsprojects/FSharpPlus/blob/master/LICENSE.md
+
   </div>
-  <div></div>
-  <div></div>
-  <div></div>
   <div>
     <h3>
-      Union cases
+      Types
     </h3>
-    <table class="table outer-list fsdocs-member-list">
+    <table class="table outer-list fsdocs-entity-list">
       <thead>
         <tr>
-          <td class="fsdocs-member-list-header">
-            Union case
+          <td>
+            Type
           </td>
-          <td class="fsdocs-member-list-header">
+          <td>
             Description
           </td>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '248', 248)" onmouseover="showTip(event, '248', 248)">
-                <p>
-                  <a id="StdGen">
-                    <a href="#StdGen">
-                      <code><span>StdGen(<span>int,&#32;int</span>)</span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="248">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>StdGen(<span>int,&#32;int</span>)</span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        Item1
-                      </b>
-                      :
-                      <code>int</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        Item2
-                      </b>
-                      :
-                      <code>int</code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                </div>
-              </div>
-            </div>
+          <td class="fsdocs-entity-name">
+            <p>
+              <a name="MaxValue">
+                <a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">
+                  MaxValue
+                </a>
+              </a>
+            </p>
           </td>
           <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Random.fs#L8-8" class="fsdocs-source-link">
+            <p>
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L34-34" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
             </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  Item1
-                </span>
-                :
-                <code>int</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  Item2
-                </span>
-                :
-                <code>int</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-entity-name">
+            <p>
+              <a name="MinValue">
+                <a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">
+                  MinValue
+                </a>
+              </a>
+            </p>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p>
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L9-9" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
 </div>
             
         </div>

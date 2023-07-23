@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>DontShrink<'a> (FsCheck)</title>
+    <title>ArbPatterns (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,50 +87,31 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    DontShrink<'a> Type
+    ArbPatterns Module
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
-      FsCheck
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-fsharp.html">
+      FsCheck.FSharp
     </a>
   </p>
   <p>
     Assembly: FsCheck.dll
   </p>
-  <p>
-    Base Type: 
-    <code>obj</code>
-  </p>
-  <p>
-    All Interfaces: 
-    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-dontshrink-1.html">DontShrink</a>&lt;'a&gt;</span>&gt;</span></code>
-    , 
-    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralequatable">IStructuralEquatable</a></code>
-    , 
-    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.icomparable-1">IComparable</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-dontshrink-1.html">DontShrink</a>&lt;'a&gt;</span>&gt;</span></code>
-    , 
-    <code><a href="https://docs.microsoft.com/dotnet/api/system.icomparable">IComparable</a></code>
-    , 
-    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralcomparable">IStructuralComparable</a></code>
-  </p>
   <div class="fsdocs-xmldoc">
     
-Use the generator for 'a, but don't shrink.
-
   </div>
-  <div></div>
   <div></div>
   <div></div>
   <div>
     <h3>
-      Union cases
+      Active patterns
     </h3>
     <table class="table outer-list fsdocs-member-list">
       <thead>
         <tr>
           <td class="fsdocs-member-list-header">
-            Union case
+            Active pattern
           </td>
           <td class="fsdocs-member-list-header">
             Description
@@ -141,32 +122,37 @@ Use the generator for 'a, but don't shrink.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '342', 342)" onmouseover="showTip(event, '342', 342)">
+              <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
                 <p>
-                  <a id="DontShrink">
-                    <a href="#DontShrink">
-                      <code><span>DontShrink&#32;'a</span></code>
+                  <a id="( |Fun| )">
+                    <a href="#( |Fun| )">
+                      <code><span>(|Fun|)&#32;<span>f</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="342">
+              <div class="fsdocs-tip" id="48">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>DontShrink&#32;'a</span></code>
+                  <code><span>(|Fun|)&#32;<span>f</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        Item
+                        f
                       </b>
                       :
-                      <code>'a</code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-function-2.html">Function</a>&lt;<span>'a,&#32;'b</span>&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span>'a&#32;->&#32;'b</span></code>
+                  </span>
                   <br/>
                 </div>
               </div>
@@ -174,7 +160,7 @@ Use the generator for 'a, but don't shrink.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L137-137" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/DefaultArbTypes.fs#L146-146" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -183,18 +169,28 @@ Use the generator for 'a, but don't shrink.
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  Item
+                  f
                 </span>
                 :
-                <code>'a</code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-function-2.html">Function</a>&lt;<span>'a,&#32;'b</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span>'a&#32;->&#32;'b</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
             </dl>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+  <div></div>
   <div></div>
   <div></div>
   <div></div>

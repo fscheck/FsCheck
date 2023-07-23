@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>StateMachine (FsCheck)</title>
+    <title>MinValue (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,29 +87,47 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    StateMachine Module
+    MinValue Type
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental.html">
-      FsCheck.Experimental
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals.html">
+      FsCheck.Internals
     </a>
   </p>
   <p>
     Assembly: FsCheck.dll
   </p>
+  <span>
+    Parent Module: 
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric.html">
+      Numeric
+    </a>
+  </span>
+  <p>
+    Base Type: 
+    <code>obj</code>
+  </p>
   <div class="fsdocs-xmldoc">
     
   </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
   <div>
     <h3>
-      Functions and values
+      Static members
     </h3>
     <table class="table outer-list fsdocs-member-list">
       <thead>
         <tr>
           <td class="fsdocs-member-list-header">
-            Function or value
+            Static member
           </td>
           <td class="fsdocs-member-list-header">
             Description
@@ -120,68 +138,49 @@
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
+              <code onmouseout="hideTip(event, '478', 478)" onmouseover="showTip(event, '478', 478)">
                 <p>
-                  <a id="forAll">
-                    <a href="#forAll">
-                      <code><span>forAll&#32;<span>arb</span></span></code>
+                  <a id="Get">
+                    <a href="#Get">
+                      <code><span>MinValue.Get<span>()</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="9">
+              <div class="fsdocs-tip" id="478">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>forAll&#32;<span>arb</span></span></code>
+                  <code><span>MinValue.Get<span>()</span></span></code>
                   <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        arb
-                      </b>
-                      :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">MachineRun</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                  </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                    <code>^g</code>
                   </span>
                   <br/>
+                  Modifiers: 
+                  inline
+                  <br/>
+                  Type parameters: 
+                  ^g
                 </div>
               </div>
             </div>
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L339-339" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L28-28" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Check all generated runs, i.e. create a property from an arbitrarily generated run.
-
             </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  arb
-                </span>
-                :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">MachineRun</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
             <dl class="fsdocs-returns">
               <dt>
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                <code>^g</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -190,19 +189,19 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
+              <code onmouseout="hideTip(event, '479', 479)" onmouseover="showTip(event, '479', 479)">
                 <p>
-                  <a id="forOne">
-                    <a href="#forOne">
-                      <code><span>forOne&#32;<span>arg1</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="10">
+              <div class="fsdocs-tip" id="479">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>forOne&#32;<span>arg1</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
@@ -212,14 +211,22 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                         arg0
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">MachineRun</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                      <code><a href="https://docs.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                    <code><a href="https://docs.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></code>
                   </span>
                   <br/>
                 </div>
@@ -228,13 +235,11 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L320-320" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L26-26" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
- Check one run, i.e. create a property from a single run.
-
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
@@ -242,7 +247,15 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                   arg0
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">MachineRun</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -251,7 +264,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -260,36 +273,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
+              <code onmouseout="hideTip(event, '480', 480)" onmouseover="showTip(event, '480', 480)">
                 <p>
-                  <a id="generate">
-                    <a href="#generate">
-                      <code><span>generate&#32;<span>spec</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="11">
+              <div class="fsdocs-tip" id="480">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>generate&#32;<span>spec</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        spec
+                        arg0
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machine-2.html">Machine</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                      <code><a href="https://docs.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">MachineRun</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span></code>
+                    <code><a href="https://docs.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></code>
                   </span>
                   <br/>
                 </div>
@@ -298,7 +319,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L246-246" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L25-25" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -307,10 +328,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  spec
+                  arg0
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machine-2.html">Machine</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -319,7 +348,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">MachineRun</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span></code>
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -328,52 +357,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
+              <code onmouseout="hideTip(event, '481', 481)" onmouseover="showTip(event, '481', 481)">
                 <p>
-                  <a id="operation">
-                    <a href="#operation">
-                      <code><span>operation&#32;<span>name&#32;runModel&#32;check</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="12">
+              <div class="fsdocs-tip" id="481">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>operation&#32;<span>name&#32;runModel&#32;check</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        name
+                        arg0
                       </b>
                       :
-                      <code>string</code>
+                      <code><a href="https://docs.microsoft.com/dotnet/api/system.datetime">DateTime</a></code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        runModel
+                        arg1
                       </b>
                       :
-                      <code><span>'Model&#32;->&#32;'Model</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        check
-                      </b>
-                      :
-                      <code><span><span>'Actual&#32;*&#32;'Model</span>&#32;->&#32;'a</span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">Operation</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                    <code><a href="https://docs.microsoft.com/dotnet/api/system.datetime">DateTime</a></code>
                   </span>
                   <br/>
                 </div>
@@ -382,7 +403,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L227-227" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L24-24" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -391,26 +412,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  name
+                  arg0
                 </span>
                 :
-                <code>string</code>
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.datetime">DateTime</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  runModel
+                  arg1
                 </span>
                 :
-                <code><span>'Model&#32;->&#32;'Model</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  check
-                </span>
-                :
-                <code><span><span>'Actual&#32;*&#32;'Model</span>&#32;->&#32;'a</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -419,7 +432,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">Operation</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.datetime">DateTime</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -428,52 +441,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
+              <code onmouseout="hideTip(event, '482', 482)" onmouseover="showTip(event, '482', 482)">
                 <p>
-                  <a id="operationAction">
-                    <a href="#operationAction">
-                      <code><span>operationAction&#32;<span>name&#32;runModel&#32;check</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="13">
+              <div class="fsdocs-tip" id="482">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>operationAction&#32;<span>name&#32;runModel&#32;check</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        name
+                        arg0
                       </b>
                       :
-                      <code>string</code>
+                      <code>decimal</code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        runModel
+                        arg1
                       </b>
                       :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Model,&#32;'Model</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        check
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">Operation</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                    <code>decimal</code>
                   </span>
                   <br/>
                 </div>
@@ -482,7 +487,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L242-242" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L23-23" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -491,26 +496,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  name
+                  arg0
                 </span>
                 :
-                <code>string</code>
+                <code>decimal</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  runModel
+                  arg1
                 </span>
                 :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Model,&#32;'Model</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  check
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.action-2">Action</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -519,7 +516,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">Operation</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code>decimal</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -528,52 +525,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+              <code onmouseout="hideTip(event, '483', 483)" onmouseover="showTip(event, '483', 483)">
                 <p>
-                  <a id="operationBool">
-                    <a href="#operationBool">
-                      <code><span>operationBool&#32;<span>name&#32;runModel&#32;check</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="14">
+              <div class="fsdocs-tip" id="483">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>operationBool&#32;<span>name&#32;runModel&#32;check</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        name
+                        arg0
                       </b>
                       :
-                      <code>string</code>
+                      <code>uint64</code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        runModel
+                        arg1
                       </b>
                       :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Model,&#32;'Model</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        check
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<span>'Actual,&#32;'Model,&#32;bool</span>&gt;</span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">Operation</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                    <code>uint64</code>
                   </span>
                   <br/>
                 </div>
@@ -582,7 +571,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L238-238" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L22-22" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -591,26 +580,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  name
+                  arg0
                 </span>
                 :
-                <code>string</code>
+                <code>uint64</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  runModel
+                  arg1
                 </span>
                 :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Model,&#32;'Model</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  check
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<span>'Actual,&#32;'Model,&#32;bool</span>&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -619,7 +600,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">Operation</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code>uint64</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -628,52 +609,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
+              <code onmouseout="hideTip(event, '484', 484)" onmouseover="showTip(event, '484', 484)">
                 <p>
-                  <a id="operationProp">
-                    <a href="#operationProp">
-                      <code><span>operationProp&#32;<span>name&#32;runModel&#32;check</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="15">
+              <div class="fsdocs-tip" id="484">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>operationProp&#32;<span>name&#32;runModel&#32;check</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        name
+                        arg0
                       </b>
                       :
-                      <code>string</code>
+                      <code>uint32</code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        runModel
+                        arg1
                       </b>
                       :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Model,&#32;'Model</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        check
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<span>'Actual,&#32;'Model,&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span>&gt;</span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">Operation</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                    <code>uint32</code>
                   </span>
                   <br/>
                 </div>
@@ -682,7 +655,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L234-234" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L21-21" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -691,26 +664,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  name
+                  arg0
                 </span>
                 :
-                <code>string</code>
+                <code>uint32</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  runModel
+                  arg1
                 </span>
                 :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Model,&#32;'Model</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  check
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<span>'Actual,&#32;'Model,&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span>&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -719,7 +684,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">Operation</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code>uint32</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -728,60 +693,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
+              <code onmouseout="hideTip(event, '485', 485)" onmouseover="showTip(event, '485', 485)">
                 <p>
-                  <a id="operationWithPrecondition">
-                    <a href="#operationWithPrecondition">
-                      <code><span>operationWithPrecondition&#32;<span>name&#32;preCondition&#32;runModel&#32;check</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="16">
+              <div class="fsdocs-tip" id="485">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>operationWithPrecondition&#32;<span>name&#32;preCondition&#32;runModel&#32;check</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        name
+                        arg0
                       </b>
                       :
-                      <code>string</code>
+                      <code>uint16</code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        preCondition
+                        arg1
                       </b>
                       :
-                      <code><span>'Model&#32;->&#32;bool</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        runModel
-                      </b>
-                      :
-                      <code><span>'Model&#32;->&#32;'Model</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        check
-                      </b>
-                      :
-                      <code><span><span>'Actual&#32;*&#32;'Model</span>&#32;->&#32;'a</span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">Operation</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                    <code>uint16</code>
                   </span>
                   <br/>
                 </div>
@@ -790,7 +739,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L219-219" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L20-20" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -799,34 +748,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  name
+                  arg0
                 </span>
                 :
-                <code>string</code>
+                <code>uint16</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  preCondition
+                  arg1
                 </span>
                 :
-                <code><span>'Model&#32;->&#32;bool</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  runModel
-                </span>
-                :
-                <code><span>'Model&#32;->&#32;'Model</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  check
-                </span>
-                :
-                <code><span><span>'Actual&#32;*&#32;'Model</span>&#32;->&#32;'a</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -835,7 +768,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">Operation</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code>uint16</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -844,44 +777,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
+              <code onmouseout="hideTip(event, '486', 486)" onmouseover="showTip(event, '486', 486)">
                 <p>
-                  <a id="setup">
-                    <a href="#setup">
-                      <code><span>setup&#32;<span>actual&#32;model</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="17">
+              <div class="fsdocs-tip" id="486">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>setup&#32;<span>actual&#32;model</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        actual
+                        arg0
                       </b>
                       :
-                      <code><span>unit&#32;->&#32;'a</span></code>
+                      <code>float32</code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        model
+                        arg1
                       </b>
                       :
-                      <code><span>unit&#32;->&#32;'b</span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-setup-2.html">Setup</a>&lt;<span>'a,&#32;'b</span>&gt;</span></code>
+                    <code>float32</code>
                   </span>
                   <br/>
                 </div>
@@ -890,7 +823,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L197-197" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L19-19" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -899,18 +832,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  actual
+                  arg0
                 </span>
                 :
-                <code><span>unit&#32;->&#32;'a</span></code>
+                <code>float32</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  model
+                  arg1
                 </span>
                 :
-                <code><span>unit&#32;->&#32;'b</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -919,7 +852,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-setup-2.html">Setup</a>&lt;<span>'a,&#32;'b</span>&gt;</span></code>
+                <code>float32</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -928,44 +861,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
+              <code onmouseout="hideTip(event, '487', 487)" onmouseover="showTip(event, '487', 487)">
                 <p>
-                  <a id="setupFunc">
-                    <a href="#setupFunc">
-                      <code><span>setupFunc&#32;<span>actual&#32;model</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="18">
+              <div class="fsdocs-tip" id="487">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>setupFunc&#32;<span>actual&#32;model</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        actual
+                        arg0
                       </b>
                       :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;'a&gt;</span></code>
+                      <code>int64</code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        model
+                        arg1
                       </b>
                       :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;'b&gt;</span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-setup-2.html">Setup</a>&lt;<span>'a,&#32;'b</span>&gt;</span></code>
+                    <code>int64</code>
                   </span>
                   <br/>
                 </div>
@@ -974,7 +907,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L203-203" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L18-18" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -983,18 +916,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  actual
+                  arg0
                 </span>
                 :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;'a&gt;</span></code>
+                <code>int64</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  model
+                  arg1
                 </span>
                 :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;'b&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -1003,7 +936,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-setup-2.html">Setup</a>&lt;<span>'a,&#32;'b</span>&gt;</span></code>
+                <code>int64</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -1012,44 +945,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+              <code onmouseout="hideTip(event, '488', 488)" onmouseover="showTip(event, '488', 488)">
                 <p>
-                  <a id="shrink">
-                    <a href="#shrink">
-                      <code><span>shrink&#32;<span>spec&#32;run</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="19">
+              <div class="fsdocs-tip" id="488">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>shrink&#32;<span>spec&#32;run</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        spec
+                        arg0
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machine-2.html">Machine</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                      <code>int</code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        run
+                        arg1
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">MachineRun</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">MachineRun</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span></code>
+                    <code>int</code>
                   </span>
                   <br/>
                 </div>
@@ -1058,7 +991,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L273-273" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L17-17" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -1067,18 +1000,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  spec
+                  arg0
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machine-2.html">Machine</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code>int</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  run
+                  arg1
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">MachineRun</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -1087,7 +1020,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">MachineRun</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span></code>
+                <code>int</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -1096,36 +1029,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+              <code onmouseout="hideTip(event, '489', 489)" onmouseover="showTip(event, '489', 489)">
                 <p>
-                  <a id="tearDown">
-                    <a href="#tearDown">
-                      <code><span>tearDown&#32;<span>run</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="20">
+              <div class="fsdocs-tip" id="489">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>tearDown&#32;<span>run</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        run
+                        arg0
                       </b>
                       :
-                      <code><span>'a&#32;->&#32;unit</span></code>
+                      <code>int16</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-teardown-1.html">TearDown</a>&lt;'a&gt;</span></code>
+                    <code>int16</code>
                   </span>
                   <br/>
                 </div>
@@ -1134,7 +1075,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L209-209" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L16-16" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -1143,10 +1084,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  run
+                  arg0
                 </span>
                 :
-                <code><span>'a&#32;->&#32;unit</span></code>
+                <code>int16</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -1155,7 +1104,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-teardown-1.html">TearDown</a>&lt;'a&gt;</span></code>
+                <code>int16</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -1164,36 +1113,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
+              <code onmouseout="hideTip(event, '490', 490)" onmouseover="showTip(event, '490', 490)">
                 <p>
-                  <a id="tearDownAction">
-                    <a href="#tearDownAction">
-                      <code><span>tearDownAction&#32;<span>run</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="21">
+              <div class="fsdocs-tip" id="490">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>tearDownAction&#32;<span>run</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        run
+                        arg0
                       </b>
                       :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;'a&gt;</span></code>
+                      <code>float</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-teardown-1.html">TearDown</a>&lt;'a&gt;</span></code>
+                    <code>float</code>
                   </span>
                   <br/>
                 </div>
@@ -1202,7 +1159,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L214-214" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L15-15" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -1211,10 +1168,18 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  run
+                  arg0
                 </span>
                 :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.action-1">Action</a>&lt;'a&gt;</span></code>
+                <code>float</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -1223,7 +1188,7 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-teardown-1.html">TearDown</a>&lt;'a&gt;</span></code>
+                <code>float</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -1232,36 +1197,44 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+              <code onmouseout="hideTip(event, '491', 491)" onmouseover="showTip(event, '491', 491)">
                 <p>
-                  <a id="toProperty">
-                    <a href="#toProperty">
-                      <code><span>toProperty&#32;<span>spec</span></span></code>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="22">
+              <div class="fsdocs-tip" id="491">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>toProperty&#32;<span>spec</span></span></code>
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        spec
+                        arg0
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machine-2.html">Machine</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                      <code>sbyte</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                    <code>sbyte</code>
                   </span>
                   <br/>
                 </div>
@@ -1270,21 +1243,27 @@ Check all generated runs, i.e. create a property from an arbitrarily generated r
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L344-344" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L14-14" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Turn a machine specification into a property.
-
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  spec
+                  arg0
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machine-2.html">Machine</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code>sbyte</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -1293,23 +1272,337 @@ Turn a machine specification into a property.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                <code>sbyte</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '492', 492)" onmouseover="showTip(event, '492', 492)">
+                <p>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="492">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>byte</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>byte</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L13-13" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>byte</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>byte</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '493', 493)" onmouseover="showTip(event, '493', 493)">
+                <p>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="493">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>char</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>char</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L12-12" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>char</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>char</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '494', 494)" onmouseover="showTip(event, '494', 494)">
+                <p>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="494">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MinValue.MinValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>bool</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>bool</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L11-11" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>bool</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>bool</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '495', 495)" onmouseover="showTip(event, '495', 495)">
+                <p>
+                  <a id="MinValue">
+                    <a href="#MinValue">
+                      <code><span>MinValue.MinValue<span><span>(<span>(),&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="495">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MinValue.MinValue<span><span>(<span>(),&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        ()
+                      </b>
+                      :
+                      <code>unit</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L10-10" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  ()
+                </span>
+                :
+                <code>unit</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-minvalue.html">MinValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
             </dl>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
 </div>
             
         </div>

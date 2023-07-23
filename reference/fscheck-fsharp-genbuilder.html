@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>ICommandGenerator<'Actual, 'Model> (FsCheck)</title>
+    <title>GenBuilder (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,47 +87,70 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    ICommandGenerator<'Actual, 'Model> Type
+    GenBuilder Module
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
-      FsCheck
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-fsharp.html">
+      FsCheck.FSharp
     </a>
   </p>
   <p>
     Assembly: FsCheck.dll
   </p>
-  <p>
-    Base Type: 
-    <code>obj</code>
-  </p>
-  <p>
-    All Interfaces: 
-    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
-  </p>
   <div class="fsdocs-xmldoc">
     
-Defines the initial state for actual and model object, and allows to define the generator to use
-for the next state, based on the model.
-
   </div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
   <div>
     <h3>
-      Instance members
+      Types
+    </h3>
+    <table class="table outer-list fsdocs-entity-list">
+      <thead>
+        <tr>
+          <td>
+            Type
+          </td>
+          <td>
+            Description
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fsdocs-entity-name">
+            <p>
+              <a name="GenBuilder">
+                <a href="https://fscheck.github.io/FsCheck/reference/fscheck-fsharp-genbuilder-genbuilder.html">
+                  GenBuilder
+                </a>
+              </a>
+            </p>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p>
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.GenBuilder.fs#L38-38" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ The computation expression type for generators.
+
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <h3>
+      Functions and values
     </h3>
     <table class="table outer-list fsdocs-member-list">
       <thead>
         <tr>
           <td class="fsdocs-member-list-header">
-            Instance member
+            Function or value
           </td>
           <td class="fsdocs-member-list-header">
             Description
@@ -138,28 +161,25 @@ for the next state, based on the model.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '386', 386)" onmouseover="showTip(event, '386', 386)">
+              <code onmouseout="hideTip(event, '96', 96)" onmouseover="showTip(event, '96', 96)">
                 <p>
-                  <a id="InitialActual">
-                    <a href="#InitialActual">
-                      <code><span>this.InitialActual</span></code>
+                  <a id="gen">
+                    <a href="#gen">
+                      <code><span>gen&#32;<span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="386">
+              <div class="fsdocs-tip" id="96">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>this.InitialActual</span></code>
+                  <code><span>gen&#32;<span></span></span></code>
                   <br/>
                   <br/>
                   <span>
                     Returns: 
-                    <code>'Actual</code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-fsharp-genbuilder-genbuilder.html">GenBuilder</a></code>
                   </span>
-                  <br/>
-                  Modifiers: 
-                  abstract
                   <br/>
                 </div>
               </div>
@@ -167,12 +187,12 @@ for the next state, based on the model.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L28-28" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.GenBuilder.fs#L73-73" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Initial state of actual object. Should correspond to initial state of model object.
+ The computation expressions for generators: gen { ... }
 
             </p>
             <dl class="fsdocs-returns">
@@ -180,133 +200,7 @@ Initial state of actual object. Should correspond to initial state of model obje
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code>'Actual</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '387', 387)" onmouseover="showTip(event, '387', 387)">
-                <p>
-                  <a id="InitialModel">
-                    <a href="#InitialModel">
-                      <code><span>this.InitialModel</span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="387">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.InitialModel</span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>'Model</code>
-                  </span>
-                  <br/>
-                  Modifiers: 
-                  abstract
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L30-30" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Initial state of model object. Should correspond to initial state of actual object.
-
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>'Model</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '388', 388)" onmouseover="showTip(event, '388', 388)">
-                <p>
-                  <a id="Next">
-                    <a href="#Next">
-                      <code><span>this.Next<span><span>(<span>arg1</span>)</span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="388">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.Next<span><span>(<span>arg1</span>)</span></span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        arg0
-                      </b>
-                      :
-                      <code>'Model</code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span></code>
-                  </span>
-                  <br/>
-                  Modifiers: 
-                  abstract
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L34-34" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Generate a number of possible commands based on the current state of the model. 
-Preconditions are still checked, so even if a Command is returned, it is not chosen
-if its precondition does not hold.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  arg0
-                </span>
-                :
-                <code>'Model</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-fsharp-genbuilder-genbuilder.html">GenBuilder</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -315,6 +209,13 @@ if its precondition does not hold.
       </tbody>
     </table>
   </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
   <div></div>
 </div>
             

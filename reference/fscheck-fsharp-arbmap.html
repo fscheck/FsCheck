@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Command (FsCheck)</title>
+    <title>ArbMap (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,12 +87,12 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    Command Module
+    ArbMap Module
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
-      FsCheck
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-fsharp.html">
+      FsCheck.FSharp
     </a>
   </p>
   <p>
@@ -120,60 +120,36 @@
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
+              <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
                 <p>
-                  <a id="create">
-                    <a href="#create">
-                      <code><span>create&#32;<span>preCondition&#32;runActual&#32;runModel&#32;checkPostCondition</span></span></code>
+                  <a id="arbitrary">
+                    <a href="#arbitrary">
+                      <code><span>ArbMap.arbitrary&#32;<span>arbMap</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="16">
+              <div class="fsdocs-tip" id="39">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>create&#32;<span>preCondition&#32;runActual&#32;runModel&#32;checkPostCondition</span></span></code>
+                  <code><span>ArbMap.arbitrary&#32;<span>arbMap</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        preCondition
+                        arbMap
                       </b>
                       :
-                      <code><span><span>(<span>'Model&#32;->&#32;bool</span>)</span>&#32;option</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        runActual
-                      </b>
-                      :
-                      <code><span>'Actual&#32;->&#32;'Actual</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        runModel
-                      </b>
-                      :
-                      <code><span>'Model&#32;->&#32;'Model</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        checkPostCondition
-                      </b>
-                      :
-                      <code><span><span>'Actual&#32;*&#32;'Model</span>&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -182,7 +158,7 @@
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L43-43" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.ArbMap.fs#L49-49" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -191,34 +167,10 @@
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  preCondition
+                  arbMap
                 </span>
                 :
-                <code><span><span>(<span>'Model&#32;->&#32;bool</span>)</span>&#32;option</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  runActual
-                </span>
-                :
-                <code><span>'Actual&#32;->&#32;'Actual</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  runModel
-                </span>
-                :
-                <code><span>'Model&#32;->&#32;'Model</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  checkPostCondition
-                </span>
-                :
-                <code><span><span>'Actual&#32;*&#32;'Model</span>&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -227,7 +179,7 @@
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -236,52 +188,24 @@
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
+              <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
                 <p>
-                  <a id="createFuncBool">
-                    <a href="#createFuncBool">
-                      <code><span>createFuncBool&#32;<span>runActual&#32;runModel&#32;postCondition</span></span></code>
+                  <a id="defaults">
+                    <a href="#defaults">
+                      <code><span>ArbMap.defaults&#32;<span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="17">
+              <div class="fsdocs-tip" id="40">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>createFuncBool&#32;<span>runActual&#32;runModel&#32;postCondition</span></span></code>
+                  <code><span>ArbMap.defaults&#32;<span></span></span></code>
                   <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        runActual
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Actual,&#32;'Actual</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        runModel
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Model,&#32;'Model</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        postCondition
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<span>'Actual,&#32;'Model,&#32;bool</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                  </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
                   </span>
                   <br/>
                 </div>
@@ -290,44 +214,20 @@
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L55-55" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.ArbMap.fs#L11-11" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ The immutable default mapping from a type to Arbitrary for that type.
+
             </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  runActual
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Actual,&#32;'Actual</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  runModel
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Model,&#32;'Model</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  postCondition
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<span>'Actual,&#32;'Model,&#32;bool</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
             <dl class="fsdocs-returns">
               <dt>
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -336,136 +236,36 @@
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
-                <p>
-                  <a id="createFuncProp">
-                    <a href="#createFuncProp">
-                      <code><span>createFuncProp&#32;<span>runActual&#32;runModel&#32;postCondition</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="18">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>createFuncProp&#32;<span>runActual&#32;runModel&#32;postCondition</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        runActual
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Actual,&#32;'Actual</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        runModel
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Model,&#32;'Model</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        postCondition
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<span>'Actual,&#32;'Model,&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span>&gt;</span></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L51-51" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  runActual
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Actual,&#32;'Actual</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  runModel
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Model,&#32;'Model</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  postCondition
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<span>'Actual,&#32;'Model,&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+              <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
                 <p>
                   <a id="generate">
                     <a href="#generate">
-                      <code><span>generate&#32;<span>spec</span></span></code>
+                      <code><span>ArbMap.generate&#32;<span>arbMap</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="19">
+              <div class="fsdocs-tip" id="41">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>generate&#32;<span>spec</span></span></code>
+                  <code><span>ArbMap.generate&#32;<span>arbMap</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        spec
+                        arbMap
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -474,22 +274,19 @@
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L61-61" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.ArbMap.fs#L50-50" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Create a generator that generates a sequence of Command objects that
-satisfies the given specification.
-
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  spec
+                  arbMap
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -498,7 +295,7 @@ satisfies the given specification.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -507,36 +304,44 @@ satisfies the given specification.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+              <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
                 <p>
-                  <a id="shrink">
-                    <a href="#shrink">
-                      <code><span>shrink&#32;<span>spec</span></span></code>
+                  <a id="mergeArb">
+                    <a href="#mergeArb">
+                      <code><span>ArbMap.mergeArb&#32;<span>arb&#32;existingMap</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="20">
+              <div class="fsdocs-tip" id="42">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>shrink&#32;<span>spec</span></span></code>
+                  <code><span>ArbMap.mergeArb&#32;<span>arb&#32;existingMap</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        spec
+                        arb
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        existingMap
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&#32;->&#32;<span>seq&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></span></code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
                   </span>
                   <br/>
                 </div>
@@ -545,22 +350,29 @@ satisfies the given specification.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L87-87" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.ArbMap.fs#L45-45" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Create a shrinker to reduce a sequence of Command objects so that
-the reduced sequence satisfies the given specification.
+ Return a new Type to Arbitrary map that merges the existing map with the provided Arbitrary<'T> instance.
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  spec
+                  arb
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  existingMap
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -569,7 +381,7 @@ the reduced sequence satisfies the given specification.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&#32;->&#32;<span>seq&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -578,36 +390,44 @@ the reduced sequence satisfies the given specification.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
+              <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
                 <p>
-                  <a id="toProperty">
-                    <a href="#toProperty">
-                      <code><span>toProperty&#32;<span>spec</span></span></code>
+                  <a id="mergeArbFactory">
+                    <a href="#mergeArbFactory">
+                      <code><span>ArbMap.mergeArbFactory&#32;<span>factory&#32;existingMap</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="21">
+              <div class="fsdocs-tip" id="43">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>toProperty&#32;<span>spec</span></span></code>
+                  <code><span>ArbMap.mergeArbFactory&#32;<span>factory&#32;existingMap</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        spec
+                        factory
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                      <code><span><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span>&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'b&gt;</span></span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        existingMap
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
                   </span>
                   <br/>
                 </div>
@@ -616,21 +436,29 @@ the reduced sequence satisfies the given specification.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L116-116" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.ArbMap.fs#L37-37" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Turn a specification into a property.
+ Return a new Type to Arbitrary map that merges the existing map with the Arbitrary<'T> returned by the given function.
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  spec
+                  factory
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><span><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span>&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'b&gt;</span></span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  existingMap
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -639,7 +467,7 @@ Turn a specification into a property.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -648,52 +476,44 @@ Turn a specification into a property.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+              <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
                 <p>
-                  <a id="toPropertyWith">
-                    <a href="#toPropertyWith">
-                      <code><span>toPropertyWith&#32;<span>spec&#32;generator&#32;shrinker</span></span></code>
+                  <a id="mergeFactory">
+                    <a href="#mergeFactory">
+                      <code><span>ArbMap.mergeFactory&#32;<span>factory&#32;existingMap</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="22">
+              <div class="fsdocs-tip" id="44">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>toPropertyWith&#32;<span>spec&#32;generator&#32;shrinker</span></span></code>
+                  <code><span>ArbMap.mergeFactory&#32;<span>factory&#32;existingMap</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        spec
+                        factory
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                      <code><span>unit&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'b&gt;</span></span></code>
                     </span>
                     <br/>
                     <span>
                       <b>
-                        generator
+                        existingMap
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        shrinker
-                      </b>
-                      :
-                      <code><span><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&#32;->&#32;<span>seq&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
                   </span>
                   <br/>
                 </div>
@@ -702,37 +522,29 @@ Turn a specification into a property.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L97-97" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.ArbMap.fs#L33-33" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Turn a specification into a property, allowing you to specify generator and shrinker.
+ Return a new Type to Arbitrary map that merges the existing map with the Arbitrary<'T> returned by the given function.
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  spec
+                  factory
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-icommandgenerator-2.html">ICommandGenerator</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><span>unit&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'b&gt;</span></span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  generator
+                  existingMap
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  shrinker
-                </span>
-                :
-                <code><span><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&#32;->&#32;<span>seq&lt;<span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span>&gt;</span>&gt;</span></span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -741,7 +553,261 @@ Turn a specification into a property, allowing you to specify generator and shri
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
+                <p>
+                  <a id="mergeMapFactory">
+                    <a href="#mergeMapFactory">
+                      <code><span>ArbMap.mergeMapFactory&#32;<span>factory&#32;existingMap</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="45">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ArbMap.mergeMapFactory&#32;<span>factory&#32;existingMap</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        factory
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a>&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'b&gt;</span></span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        existingMap
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.ArbMap.fs#L41-41" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Return a new Type to Arbitrary map that merges the existing map with the Arbitrary<'T> returned by the given function.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  factory
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a>&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'b&gt;</span></span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  existingMap
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
+                <p>
+                  <a id="mergeWith">
+                    <a href="#mergeWith">
+                      <code><span>ArbMap.mergeWith&#32;<span>existingMap</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="46">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ArbMap.mergeWith&#32;<span>existingMap</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        existingMap
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.ArbMap.fs#L30-30" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Return a new Type to Arbitrary map that merges the existing map with new Arbitrary<'T> instances
+ discovered on the given type argument 'TArb.
+ The new Arbitrary instances take precedence over the ones for the same type
+ in the existing map.
+
+ instancesType should have static methods or properties that return Arbitrary<'T>
+ instances. The methods or properties can have any name, and there can be any number of them.
+
+ A method may return Arbitrary instances for generic types, e.g. Arbitrary<KeyValuePair<'K,'V>>.
+ In that case, the implementation needs to obtain an Arbitrary<'Key> and Arbitrary<'Value> - it can declare
+ parameters of type Arbitrary<'T> to obtain them. Arbitrary instance of the correct type are automatically
+ injected on construction of a particular type.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  existingMap
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
+                <p>
+                  <a id="mergeWithType">
+                    <a href="#mergeWithType">
+                      <code><span>ArbMap.mergeWithType&#32;<span>instancesType&#32;existingMap</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="47">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ArbMap.mergeWithType&#32;<span>instancesType&#32;existingMap</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        instancesType
+                      </b>
+                      :
+                      <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        existingMap
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.ArbMap.fs#L15-15" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Return a new Type to Arbitrary map that merges the existing map with new Arbitrary<'T> instances
+ discovered on the given Type. See mergeWith<'TArb> for more info on what the shape of instancesType can be.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  instancesType
+                </span>
+                :
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  existingMap
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>

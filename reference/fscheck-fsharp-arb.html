@@ -91,8 +91,8 @@
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
-      FsCheck
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-fsharp.html">
+      FsCheck.FSharp
     </a>
   </p>
   <p>
@@ -100,45 +100,6 @@
   </p>
   <div class="fsdocs-xmldoc">
     
-  </div>
-  <div>
-    <h3>
-      Types
-    </h3>
-    <table class="table outer-list fsdocs-entity-list">
-      <thead>
-        <tr>
-          <td>
-            Type
-          </td>
-          <td>
-            Description
-          </td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="fsdocs-entity-name">
-            <p>
-              <a name="Default">
-                <a href="https://fscheck.github.io/FsCheck/reference/fscheck-arb-default.html">
-                  Default
-                </a>
-              </a>
-            </p>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p>
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L177-177" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
   <div>
     <h3>
@@ -159,19 +120,91 @@
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '1', 1)" onmouseover="showTip(event, '1', 1)">
+              <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
                 <p>
-                  <a id="convert">
-                    <a href="#convert">
-                      <code><span>convert&#32;<span>convertTo&#32;convertFrom&#32;a</span></span></code>
+                  <a id="array">
+                    <a href="#array">
+                      <code><span>Arb.array&#32;<span>elements</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="1">
+              <div class="fsdocs-tip" id="23">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>convert&#32;<span>convertTo&#32;convertFrom&#32;a</span></span></code>
+                  <code><span>Arb.array&#32;<span>elements</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        elements
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T[]</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L97-97" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates one-dimensional arrays. 
+ The length of the generated array is between 0 and size.
+ The sum of the sizes of the elements is equal to the size of the generated array.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  elements
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T[]</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
+                <p>
+                  <a id="convert">
+                    <a href="#convert">
+                      <code><span>Arb.convert&#32;<span>convertTo&#32;convertFrom&#32;a</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="24">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Arb.convert&#32;<span>convertTo&#32;convertFrom&#32;a</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
@@ -181,7 +214,7 @@
                         convertTo
                       </b>
                       :
-                      <code><span>'a&#32;->&#32;'b</span></code>
+                      <code><span>'T&#32;->&#32;'U</span></code>
                     </span>
                     <br/>
                     <span>
@@ -189,7 +222,7 @@
                         convertFrom
                       </b>
                       :
-                      <code><span>'b&#32;->&#32;'a</span></code>
+                      <code><span>'U&#32;->&#32;'T</span></code>
                     </span>
                     <br/>
                     <span>
@@ -197,14 +230,14 @@
                         a
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'b&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'U&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -213,13 +246,13 @@
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L265-265" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L58-58" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
-based on a Arbitrary instance for the source type and two mapping functions.
+ Construct an Arbitrary instance for a type that can be mapped to and from another type (e.g. a wrapper),
+ based on a Arbitrary instance for the source type and two mapping functions.
 
             </p>
             <dl class="fsdocs-params">
@@ -228,7 +261,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
                   convertTo
                 </span>
                 :
-                <code><span>'a&#32;->&#32;'b</span></code>
+                <code><span>'T&#32;->&#32;'U</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
@@ -236,7 +269,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
                   convertFrom
                 </span>
                 :
-                <code><span>'b&#32;->&#32;'a</span></code>
+                <code><span>'U&#32;->&#32;'T</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
@@ -244,7 +277,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
                   a
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -253,7 +286,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'b&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'U&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -262,19 +295,19 @@ based on a Arbitrary instance for the source type and two mapping functions.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
+              <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
                 <p>
                   <a id="filter">
                     <a href="#filter">
-                      <code><span>filter&#32;<span>pred&#32;a</span></span></code>
+                      <code><span>Arb.filter&#32;<span>pred&#32;a</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="2">
+              <div class="fsdocs-tip" id="25">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>filter&#32;<span>pred&#32;a</span></span></code>
+                  <code><span>Arb.filter&#32;<span>pred&#32;a</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
@@ -284,7 +317,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
                         pred
                       </b>
                       :
-                      <code><span>'a&#32;->&#32;bool</span></code>
+                      <code><span>'T&#32;->&#32;bool</span></code>
                     </span>
                     <br/>
                     <span>
@@ -292,14 +325,14 @@ based on a Arbitrary instance for the source type and two mapping functions.
                         a
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -308,7 +341,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L274-274" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L70-70" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -323,7 +356,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
                   pred
                 </span>
                 :
-                <code><span>'a&#32;->&#32;bool</span></code>
+                <code><span>'T&#32;->&#32;bool</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
@@ -331,7 +364,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
                   a
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -340,7 +373,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -349,67 +382,19 @@ based on a Arbitrary instance for the source type and two mapping functions.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
-                <p>
-                  <a id="from">
-                    <a href="#from">
-                      <code><span>from&#32;<span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="3">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>from&#32;<span></span></span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L199-199" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Get the Arbitrary instance for the given type.
-
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
+              <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
                 <p>
                   <a id="fromGen">
                     <a href="#fromGen">
-                      <code><span>fromGen&#32;<span>gen</span></span></code>
+                      <code><span>Arb.fromGen&#32;<span>gen</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="4">
+              <div class="fsdocs-tip" id="26">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>fromGen&#32;<span>gen</span></span></code>
+                  <code><span>Arb.fromGen&#32;<span>gen</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
@@ -435,7 +420,7 @@ Get the Arbitrary instance for the given type.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L244-244" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L44-44" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -468,19 +453,19 @@ Get the Arbitrary instance for the given type.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
+              <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
                 <p>
                   <a id="fromGenShrink">
                     <a href="#fromGenShrink">
-                      <code><span>fromGenShrink&#32;<span><span>(<span>gen,&#32;shrinker</span>)</span></span></span></code>
+                      <code><span>Arb.fromGenShrink&#32;<span><span>(<span>gen,&#32;shrinker</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="5">
+              <div class="fsdocs-tip" id="27">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>fromGenShrink&#32;<span><span>(<span>gen,&#32;shrinker</span>)</span></span></span></code>
+                  <code><span>Arb.fromGenShrink&#32;<span><span>(<span>gen,&#32;shrinker</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
@@ -514,7 +499,7 @@ Get the Arbitrary instance for the given type.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L251-251" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L50-50" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -554,44 +539,36 @@ Get the Arbitrary instance for the given type.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
+              <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
                 <p>
-                  <a id="fromGenShrinkFunc">
-                    <a href="#fromGenShrinkFunc">
-                      <code><span>fromGenShrinkFunc&#32;<span><span>(<span>gen,&#32;shrinker</span>)</span></span></span></code>
+                  <a id="list">
+                    <a href="#list">
+                      <code><span>Arb.list&#32;<span>elements</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="6">
+              <div class="fsdocs-tip" id="28">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>fromGenShrinkFunc&#32;<span><span>(<span>gen,&#32;shrinker</span>)</span></span></span></code>
+                  <code><span>Arb.list&#32;<span>elements</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        gen
+                        elements
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'Value&gt;</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        shrinker
-                      </b>
-                      :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Value,&#32;<span>seq&lt;'Value&gt;</span></span>&gt;</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -600,29 +577,23 @@ Get the Arbitrary instance for the given type.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L259-259" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L123-123" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
- Construct an Arbitrary instance from a generator and shrinker.
+ Generates FSharp.Core list<'T> values. 
+ The length of the generated list is between 0 and size. 
+ The sum of the sizes of the elements is equal to the size of the generated list.
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  gen
+                  elements
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'Value&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  shrinker
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span>'Value,&#32;<span>seq&lt;'Value&gt;</span></span>&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -631,7 +602,7 @@ Get the Arbitrary instance for the given type.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -640,67 +611,19 @@ Get the Arbitrary instance for the given type.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
-                <p>
-                  <a id="generate">
-                    <a href="#generate">
-                      <code><span>generate&#32;<span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="7">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>generate&#32;<span></span></span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'Value&gt;</span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L203-203" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Returns a Gen<'Value>
-
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'Value&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
+              <code onmouseout="hideTip(event, '29', 29)" onmouseover="showTip(event, '29', 29)">
                 <p>
                   <a id="mapFilter">
                     <a href="#mapFilter">
-                      <code><span>mapFilter&#32;<span>mapper&#32;pred&#32;a</span></span></code>
+                      <code><span>Arb.mapFilter&#32;<span>mapper&#32;pred&#32;a</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="8">
+              <div class="fsdocs-tip" id="29">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>mapFilter&#32;<span>mapper&#32;pred&#32;a</span></span></code>
+                  <code><span>Arb.mapFilter&#32;<span>mapper&#32;pred&#32;a</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
@@ -710,7 +633,7 @@ Returns a Gen<'Value>
                         mapper
                       </b>
                       :
-                      <code><span>'a&#32;->&#32;'a</span></code>
+                      <code><span>'T&#32;->&#32;'T</span></code>
                     </span>
                     <br/>
                     <span>
@@ -718,7 +641,7 @@ Returns a Gen<'Value>
                         pred
                       </b>
                       :
-                      <code><span>'a&#32;->&#32;bool</span></code>
+                      <code><span>'T&#32;->&#32;bool</span></code>
                     </span>
                     <br/>
                     <span>
@@ -726,14 +649,14 @@ Returns a Gen<'Value>
                         a
                       </b>
                       :
-                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -742,16 +665,16 @@ Returns a Gen<'Value>
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L286-286" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L81-81" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
  Return an Arbitrary instance that is a mapped and filtered version of an existing arbitrary instance.
- The generator uses Gen.map with the given mapper and then Gen.suchThat with the given predicate, 
+ The generator uses Gen.map with the given mapper and then Gen.suchThat with the given predicate,
  and the shrinks are filtered using Seq.filter with the given predicate.
-This is sometimes useful if using just a filter would reduce the chance of getting a good value
-from the generator - and you can map the value instead. E.g. PositiveInt.
+ This is sometimes useful if using just a filter would reduce the chance of getting a good value
+ from the generator - and you can map the value instead. E.g. PositiveInt.
 
             </p>
             <dl class="fsdocs-params">
@@ -760,7 +683,7 @@ from the generator - and you can map the value instead. E.g. PositiveInt.
                   mapper
                 </span>
                 :
-                <code><span>'a&#32;->&#32;'a</span></code>
+                <code><span>'T&#32;->&#32;'T</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
@@ -768,7 +691,7 @@ from the generator - and you can map the value instead. E.g. PositiveInt.
                   pred
                 </span>
                 :
-                <code><span>'a&#32;->&#32;bool</span></code>
+                <code><span>'T&#32;->&#32;bool</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
@@ -776,7 +699,7 @@ from the generator - and you can map the value instead. E.g. PositiveInt.
                   a
                 </span>
                 :
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -785,7 +708,7 @@ from the generator - and you can map the value instead. E.g. PositiveInt.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -794,36 +717,44 @@ from the generator - and you can map the value instead. E.g. PositiveInt.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
+              <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
                 <p>
-                  <a id="register">
-                    <a href="#register">
-                      <code><span>register&#32;<span>()</span></span></code>
+                  <a id="mapKV">
+                    <a href="#mapKV">
+                      <code><span>Arb.mapKV&#32;<span><span>(<span>keys,&#32;values</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="9">
+              <div class="fsdocs-tip" id="30">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>register&#32;<span>()</span></span></code>
+                  <code><span>Arb.mapKV&#32;<span><span>(<span>keys,&#32;values</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        ()
+                        keys
                       </b>
                       :
-                      <code>unit</code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'TKey&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        values
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'TValue&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclasscomparison.html">TypeClassComparison</a></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span><a href="https://docs.microsoft.com/dotnet/api/microsoft.fsharp.collections.fsharpmap-2">Map</a>&lt;<span>'TKey,&#32;'TValue</span>&gt;</span>&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -832,21 +763,30 @@ from the generator - and you can map the value instead. E.g. PositiveInt.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L195-195" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L150-150" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Register the generators that are static members of the type argument.
+ Generates Map<TKey,TValue> values.
+ Not named `map` because that has other meanings.
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  ()
+                  keys
                 </span>
                 :
-                <code>unit</code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'TKey&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  values
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'TValue&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -855,7 +795,7 @@ Register the generators that are static members of the type argument.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclasscomparison.html">TypeClassComparison</a></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span><a href="https://docs.microsoft.com/dotnet/api/microsoft.fsharp.collections.fsharpmap-2">Map</a>&lt;<span>'TKey,&#32;'TValue</span>&gt;</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -864,36 +804,36 @@ Register the generators that are static members of the type argument.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
+              <code onmouseout="hideTip(event, '31', 31)" onmouseover="showTip(event, '31', 31)">
                 <p>
-                  <a id="registerByType">
-                    <a href="#registerByType">
-                      <code><span>registerByType&#32;<span>t</span></span></code>
+                  <a id="nullable">
+                    <a href="#nullable">
+                      <code><span>Arb.nullable&#32;<span>value</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="10">
+              <div class="fsdocs-tip" id="31">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>registerByType&#32;<span>t</span></span></code>
+                  <code><span>Arb.nullable&#32;<span>value</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        t
+                        value
                       </b>
                       :
-                      <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclasscomparison.html">TypeClassComparison</a></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span><a href="https://docs.microsoft.com/dotnet/api/system.nullable-1">Nullable</a>&lt;'T&gt;</span>&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -902,21 +842,21 @@ Register the generators that are static members of the type argument.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L187-187" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L111-111" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Register the generators that are static members of the given type.
+ Generates nullable values that are null 1/8 of the time.
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  t
+                  value
                 </span>
                 :
-                <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -925,7 +865,7 @@ Register the generators that are static members of the given type.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-typeclass-typeclasscomparison.html">TypeClassComparison</a></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span><a href="https://docs.microsoft.com/dotnet/api/system.nullable-1">Nullable</a>&lt;'T&gt;</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -934,36 +874,36 @@ Register the generators that are static members of the given type.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
+              <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
                 <p>
-                  <a id="shrink">
-                    <a href="#shrink">
-                      <code><span>shrink&#32;<span>a</span></span></code>
+                  <a id="option">
+                    <a href="#option">
+                      <code><span>Arb.option&#32;<span>value</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="11">
+              <div class="fsdocs-tip" id="32">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>shrink&#32;<span>a</span></span></code>
+                  <code><span>Arb.option&#32;<span>value</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        a
+                        value
                       </b>
                       :
-                      <code>'Value</code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span>seq&lt;'Value&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T&#32;option</span>&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -972,21 +912,21 @@ Register the generators that are static members of the given type.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L207-207" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L102-102" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Returns the immediate shrinks for the given value based on its type.
+ Generates option values that are None 1/8 of the time.
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  a
+                  value
                 </span>
                 :
-                <code>'Value</code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -995,7 +935,7 @@ Returns the immediate shrinks for the given value based on its type.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span>seq&lt;'Value&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T&#32;option</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -1004,36 +944,36 @@ Returns the immediate shrinks for the given value based on its type.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
+              <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
                 <p>
-                  <a id="shrinkNumber">
-                    <a href="#shrinkNumber">
-                      <code><span>shrinkNumber&#32;<span>n</span></span></code>
+                  <a id="pureFunction">
+                    <a href="#pureFunction">
+                      <code><span>Arb.pureFunction&#32;<span>target</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="12">
+              <div class="fsdocs-tip" id="33">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>shrinkNumber&#32;<span>n</span></span></code>
+                  <code><span>Arb.pureFunction&#32;<span>target</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        n
+                        target
                       </b>
                       :
-                      <code>^a</code>
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'U&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span>seq&lt;^a&gt;</span></code>
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>(<span>'T&#32;->&#32;'U</span>)</span>&gt;</span></code>
                   </span>
                   <br/>
                 </div>
@@ -1042,21 +982,22 @@ Returns the immediate shrinks for the given value based on its type.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L210-210" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L129-129" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-A generic shrinker that should work for most number-like types.
+ Generates pure functions that produce the given output values 'U. 
+ There is no shrinking for functions.
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  n
+                  target
                 </span>
                 :
-                <code>^a</code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'U&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -1065,7 +1006,7 @@ A generic shrinker that should work for most number-like types.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span>seq&lt;^a&gt;</span></code>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>(<span>'T&#32;->&#32;'U</span>)</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -1074,19 +1015,176 @@ A generic shrinker that should work for most number-like types.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
+              <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
+                <p>
+                  <a id="set">
+                    <a href="#set">
+                      <code><span>Arb.set&#32;<span>elements</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="34">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Arb.set&#32;<span>elements</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        elements
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span><a href="https://docs.microsoft.com/dotnet/api/microsoft.fsharp.collections.fsharpset-1">Set</a>&lt;'T&gt;</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L144-144" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates Set<'T> values.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  elements
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span><a href="https://docs.microsoft.com/dotnet/api/microsoft.fsharp.collections.fsharpset-1">Set</a>&lt;'T&gt;</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
+                <p>
+                  <a id="throwingFunction">
+                    <a href="#throwingFunction">
+                      <code><span>Arb.throwingFunction&#32;<span>exceptions&#32;target</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="35">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Arb.throwingFunction&#32;<span>exceptions&#32;target</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        exceptions
+                      </b>
+                      :
+                      <code><span>seq&lt;<a href="https://docs.microsoft.com/dotnet/api/system.exception">Exception</a>&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        target
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'U&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>(<span>'T&#32;->&#32;'U</span>)</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L135-135" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates F# function values that generate an instance of the function result type about half the time. The other 
+ times it generate one of the given exceptions.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  exceptions
+                </span>
+                :
+                <code><span>seq&lt;<a href="https://docs.microsoft.com/dotnet/api/system.exception">Exception</a>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  target
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'U&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>(<span>'T&#32;->&#32;'U</span>)</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
                 <p>
                   <a id="toGen">
                     <a href="#toGen">
-                      <code><span>toGen&#32;<span>arb</span></span></code>
+                      <code><span>Arb.toGen&#32;<span>arb</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="13">
+              <div class="fsdocs-tip" id="36">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>toGen&#32;<span>arb</span></span></code>
+                  <code><span>Arb.toGen&#32;<span>arb</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
@@ -1112,11 +1210,13 @@ A generic shrinker that should work for most number-like types.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L237-237" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L36-36" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Get the Gen from the given Arbitary.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
@@ -1142,19 +1242,19 @@ A generic shrinker that should work for most number-like types.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+              <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
                 <p>
                   <a id="toShrink">
                     <a href="#toShrink">
-                      <code><span>toShrink&#32;<span>arb</span></span></code>
+                      <code><span>Arb.toShrink&#32;<span>arb</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="14">
+              <div class="fsdocs-tip" id="37">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>toShrink&#32;<span>arb</span></span></code>
+                  <code><span>Arb.toShrink&#32;<span>arb</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
@@ -1180,11 +1280,13 @@ A generic shrinker that should work for most number-like types.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Arbitrary.fs#L239-239" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L39-39" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Get the shrinker function from the given Arbitrary.
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
@@ -1202,6 +1304,92 @@ A generic shrinker that should work for most number-like types.
                   Returns:
                 </span>
                 <code><span>'Value&#32;->&#32;<span>seq&lt;'Value&gt;</span></span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
+                <p>
+                  <a id="zip">
+                    <a href="#zip">
+                      <code><span>Arb.zip&#32;<span><span>(<span>t1,&#32;t2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="38">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Arb.zip&#32;<span><span>(<span>t1,&#32;t2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        t1
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T1&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        t2
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T2&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T1&#32;*&#32;'T2</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Arbitrary.fs#L89-89" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates 2-tuples.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  t1
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T1&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  t2
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'T2&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;<span>'T1&#32;*&#32;'T2</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Runner (FsCheck)</title>
+    <title>Prop (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,12 +87,12 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    Runner Module
+    Prop Module
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
-      FsCheck
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-fsharp.html">
+      FsCheck.FSharp
     </a>
   </p>
   <p>
@@ -100,6 +100,9 @@
   </p>
   <div class="fsdocs-xmldoc">
     
+Combinators to build properties, which define the property to be tested, with some
+convenience methods to investigate the generated arguments and any found counter-examples.
+
   </div>
   <div>
     <h3>
@@ -120,223 +123,31 @@
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '1', 1)" onmouseover="showTip(event, '1', 1)">
+              <code onmouseout="hideTip(event, '100', 100)" onmouseover="showTip(event, '100', 100)">
                 <p>
-                  <a id="argumentsToString">
-                    <a href="#argumentsToString">
-                      <code><span>argumentsToString&#32;<span>args</span></span></code>
+                  <a id="classify">
+                    <a href="#classify">
+                      <code><span>Prop.classify&#32;<span>b&#32;name</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="1">
+              <div class="fsdocs-tip" id="100">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>argumentsToString&#32;<span>args</span></span></code>
+                  <code><span>Prop.classify&#32;<span>b&#32;name</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        args
+                        b
                       </b>
                       :
-                      <code><span>'a&#32;list</span></code>
+                      <code>bool</code>
                     </span>
                     <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>string</code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L470-470" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  args
-                </span>
-                :
-                <code><span>'a&#32;list</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
-                <p>
-                  <a id="consoleRunner">
-                    <a href="#consoleRunner">
-                      <code><span>consoleRunner&#32;<span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="2">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>consoleRunner&#32;<span></span></span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-irunner.html">IRunner</a></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L539-539" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-A runner that prints results to the standard output.
-
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-irunner.html">IRunner</a></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
-                <p>
-                  <a id="onArgumentsToString">
-                    <a href="#onArgumentsToString">
-                      <code><span>onArgumentsToString&#32;<span>n&#32;args</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="3">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>onArgumentsToString&#32;<span>n&#32;args</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        n
-                      </b>
-                      :
-                      <code>int</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        args
-                      </b>
-                      :
-                      <code><span>'a&#32;list</span></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>string</code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L532-532" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  n
-                </span>
-                :
-                <code>int</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  args
-                </span>
-                :
-                <code><span>'a&#32;list</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
-                <p>
-                  <a id="onFailureToString">
-                    <a href="#onFailureToString">
-                      <code><span>onFailureToString&#32;<span>name&#32;data&#32;originalArgs&#32;args&#32;usedSeed&#32;lastSeed&#32;lastSize</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="4">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>onFailureToString&#32;<span>name&#32;data&#32;originalArgs&#32;args&#32;usedSeed&#32;lastSeed&#32;lastSize</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
                     <span>
                       <b>
                         name
@@ -345,59 +156,11 @@ A runner that prints results to the standard output.
                       <code>string</code>
                     </span>
                     <br/>
-                    <span>
-                      <b>
-                        data
-                      </b>
-                      :
-                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-testdata.html">TestData</a></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        originalArgs
-                      </b>
-                      :
-                      <code><span>'a&#32;list</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        args
-                      </b>
-                      :
-                      <code><span>'b&#32;list</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        usedSeed
-                      </b>
-                      :
-                      <code>'c</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        lastSeed
-                      </b>
-                      :
-                      <code>'d</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        lastSize
-                      </b>
-                      :
-                      <code>int</code>
-                    </span>
-                    <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code>string</code>
+                    <code><span>'Testable&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
                   </span>
                   <br/>
                 </div>
@@ -406,162 +169,38 @@ A runner that prints results to the standard output.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L502-502" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L48-48" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  name
-                </span>
-                :
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  data
-                </span>
-                :
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-testdata.html">TestData</a></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  originalArgs
-                </span>
-                :
-                <code><span>'a&#32;list</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  args
-                </span>
-                :
-                <code><span>'b&#32;list</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  usedSeed
-                </span>
-                :
-                <code>'c</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  lastSeed
-                </span>
-                :
-                <code>'d</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  lastSize
-                </span>
-                :
-                <code>int</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
-                <p>
-                  <a id="onFinishedToString">
-                    <a href="#onFinishedToString">
-                      <code><span>onFinishedToString&#32;<span>name&#32;testResult</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="5">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>onFinishedToString&#32;<span>name&#32;testResult</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        name
-                      </b>
-                      :
-                      <code>string</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        testResult
-                      </b>
-                      :
-                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-testresult.html">TestResult</a></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>string</code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L510-510" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-A function that returns the default string that is printed as a result of the test.
+Classify test cases. Test cases satisfying the condition are assigned the classification given.
 
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
+                  b
+                </span>
+                :
+                <code>bool</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
                   name
                 </span>
                 :
                 <code>string</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  testResult
-                </span>
-                :
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-testresult.html">TestResult</a></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
             </dl>
             <dl class="fsdocs-returns">
               <dt>
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code>string</code>
+                <code><span>'Testable&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -570,36 +209,36 @@ A function that returns the default string that is printed as a result of the te
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
+              <code onmouseout="hideTip(event, '101', 101)" onmouseover="showTip(event, '101', 101)">
                 <p>
-                  <a id="onShrinkToString">
-                    <a href="#onShrinkToString">
-                      <code><span>onShrinkToString&#32;<span>args</span></span></code>
+                  <a id="collect">
+                    <a href="#collect">
+                      <code><span>Prop.collect&#32;<span>v</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="6">
+              <div class="fsdocs-tip" id="101">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>onShrinkToString&#32;<span>args</span></span></code>
+                  <code><span>Prop.collect&#32;<span>v</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        args
+                        v
                       </b>
                       :
-                      <code><span>'a&#32;list</span></code>
+                      <code>'CollectedValue</code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code>string</code>
+                    <code><span>'Testable&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
                   </span>
                   <br/>
                 </div>
@@ -608,19 +247,22 @@ A function that returns the default string that is printed as a result of the te
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L535-535" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L57-57" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+Collect data values. The argument of collect is evaluated in each test case, 
+and the distribution of values is reported, using sprintf "%A".
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  args
+                  v
                 </span>
                 :
-                <code><span>'a&#32;list</span></code>
+                <code>'CollectedValue</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -629,7 +271,7 @@ A function that returns the default string that is printed as a result of the te
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code>string</code>
+                <code><span>'Testable&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -638,36 +280,36 @@ A function that returns the default string that is printed as a result of the te
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
+              <code onmouseout="hideTip(event, '102', 102)" onmouseover="showTip(event, '102', 102)">
                 <p>
-                  <a id="onStartFixtureToString">
-                    <a href="#onStartFixtureToString">
-                      <code><span>onStartFixtureToString&#32;<span>t</span></span></code>
+                  <a id="discard">
+                    <a href="#discard">
+                      <code><span>Prop.discard&#32;<span>()</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="7">
+              <div class="fsdocs-tip" id="102">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>onStartFixtureToString&#32;<span>t</span></span></code>
+                  <code><span>Prop.discard&#32;<span>()</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        t
+                        ()
                       </b>
                       :
-                      <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
+                      <code>unit</code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code>string</code>
+                    <code>'b</code>
                   </span>
                   <br/>
                 </div>
@@ -676,7 +318,7 @@ A function that returns the default string that is printed as a result of the te
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L489-489" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L78-78" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -685,10 +327,10 @@ A function that returns the default string that is printed as a result of the te
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  t
+                  ()
                 </span>
                 :
-                <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
+                <code>unit</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -697,7 +339,7 @@ A function that returns the default string that is printed as a result of the te
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code>string</code>
+                <code>'b</code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -706,36 +348,44 @@ A function that returns the default string that is printed as a result of the te
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
+              <code onmouseout="hideTip(event, '103', 103)" onmouseover="showTip(event, '103', 103)">
                 <p>
-                  <a id="stepsSeq">
-                    <a href="#stepsSeq">
-                      <code><span>stepsSeq&#32;<span>resize</span></span></code>
+                  <a id="filter">
+                    <a href="#filter">
+                      <code><span>Prop.filter&#32;<span>condition&#32;assertion</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="8">
+              <div class="fsdocs-tip" id="103">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>stepsSeq&#32;<span>resize</span></span></code>
+                  <code><span>Prop.filter&#32;<span>condition&#32;assertion</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        resize
+                        condition
                       </b>
                       :
-                      <code><span>'a&#32;->&#32;'a</span></code>
+                      <code>bool</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        assertion
+                      </b>
+                      :
+                      <code>'Testable</code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><span>'a&#32;*&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></span>&#32;->&#32;<span>seq&lt;<span>'a&#32;*&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></span>&gt;</span></span></code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
                   </span>
                   <br/>
                 </div>
@@ -744,19 +394,29 @@ A function that returns the default string that is printed as a result of the te
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L217-217" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L21-21" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+Conditional property combinator. Resulting property holds if the given property holds whenever the condition does. See also operator:  'assertion ==> property'
+
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  resize
+                  condition
                 </span>
                 :
-                <code><span>'a&#32;->&#32;'a</span></code>
+                <code>bool</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  assertion
+                </span>
+                :
+                <code>'Testable</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -765,7 +425,478 @@ A function that returns the default string that is printed as a result of the te
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><span>'a&#32;*&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></span>&#32;->&#32;<span>seq&lt;<span>'a&#32;*&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></span>&gt;</span></span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '104', 104)" onmouseover="showTip(event, '104', 104)">
+                <p>
+                  <a id="forAll">
+                    <a href="#forAll">
+                      <code><span>Prop.forAll&#32;<span>arb&#32;body</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="104">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Prop.forAll&#32;<span>arb&#32;body</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arb
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        body
+                      </b>
+                      :
+                      <code><span>'Value&#32;->&#32;'Testable</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L13-13" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Quantified property combinator. Provide a custom test data generator to a property.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arb
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-arbitrary-1.html">Arbitrary</a>&lt;'Value&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  body
+                </span>
+                :
+                <code><span>'Value&#32;->&#32;'Testable</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '105', 105)" onmouseover="showTip(event, '105', 105)">
+                <p>
+                  <a id="given">
+                    <a href="#given">
+                      <code><span>Prop.given&#32;<span>condition&#32;<span>(<span>iftrue,&#32;ifFalse</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="105">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Prop.given&#32;<span>condition&#32;<span>(<span>iftrue,&#32;ifFalse</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        condition
+                      </b>
+                      :
+                      <code>bool</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        iftrue
+                      </b>
+                      :
+                      <code>'TestableIfTrue</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        ifFalse
+                      </b>
+                      :
+                      <code>'TestableIfFalse</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L17-17" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Depending on the condition, return the first testable if true and the second if false.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  condition
+                </span>
+                :
+                <code>bool</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  iftrue
+                </span>
+                :
+                <code>'TestableIfTrue</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  ifFalse
+                </span>
+                :
+                <code>'TestableIfFalse</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '106', 106)" onmouseover="showTip(event, '106', 106)">
+                <p>
+                  <a id="label">
+                    <a href="#label">
+                      <code><span>Prop.label&#32;<span>l</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="106">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Prop.label&#32;<span>l</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        l
+                      </b>
+                      :
+                      <code>string</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span>'Testable&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L61-61" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  l
+                </span>
+                :
+                <code>string</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span>'Testable&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '107', 107)" onmouseover="showTip(event, '107', 107)">
+                <p>
+                  <a id="ofTestable">
+                    <a href="#ofTestable">
+                      <code><span>Prop.ofTestable&#32;<span>testable</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="107">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Prop.ofTestable&#32;<span>testable</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        testable
+                      </b>
+                      :
+                      <code>'Testable</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L74-74" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Turns a testable type into a property. Testables are unit, boolean, Lazy testables, Gen testables, functions
+ from a type for which a generator is know to a testable, tuples up to 6 tuple containing testables, and lists
+ containing testables.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  testable
+                </span>
+                :
+                <code>'Testable</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '108', 108)" onmouseover="showTip(event, '108', 108)">
+                <p>
+                  <a id="throws">
+                    <a href="#throws">
+                      <code><span>Prop.throws&#32;<span>p</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="108">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Prop.throws&#32;<span>p</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        p
+                      </b>
+                      :
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.lazy-1">Lazy</a>&lt;'Testable&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L26-26" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Expect exception 't when executing p. So, results in success if an exception of the given type is thrown, 
+and a failure otherwise.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  p
+                </span>
+                :
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.lazy-1">Lazy</a>&lt;'Testable&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '109', 109)" onmouseover="showTip(event, '109', 109)">
+                <p>
+                  <a id="trivial">
+                    <a href="#trivial">
+                      <code><span>Prop.trivial&#32;<span>b</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="109">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Prop.trivial&#32;<span>b</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        b
+                      </b>
+                      :
+                      <code>bool</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span>'Testable&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Prop.fs#L52-52" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Count trivial cases. Test cases for which the condition is True are classified as trivial.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  b
+                </span>
+                :
+                <code>bool</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span>'Testable&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>

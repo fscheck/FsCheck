@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Runner (FsCheck)</title>
+    <title>ConfigExtensions (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,7 +87,7 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    Runner Module
+    ConfigExtensions Type
   </h1>
   <p>
     Namespace: 
@@ -98,18 +98,30 @@
   <p>
     Assembly: FsCheck.dll
   </p>
+  <p>
+    Base Type: 
+    <code>obj</code>
+  </p>
   <div class="fsdocs-xmldoc">
     
   </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
   <div>
     <h3>
-      Functions and values
+      Static members
     </h3>
     <table class="table outer-list fsdocs-member-list">
       <thead>
         <tr>
           <td class="fsdocs-member-list-header">
-            Function or value
+            Static member
           </td>
           <td class="fsdocs-member-list-header">
             Description
@@ -120,36 +132,44 @@
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '1', 1)" onmouseover="showTip(event, '1', 1)">
+              <code onmouseout="hideTip(event, '174', 174)" onmouseover="showTip(event, '174', 174)">
                 <p>
-                  <a id="argumentsToString">
-                    <a href="#argumentsToString">
-                      <code><span>argumentsToString&#32;<span>args</span></span></code>
+                  <a id="WithEvery">
+                    <a href="#WithEvery">
+                      <code><span>ConfigExtensions.WithEvery<span><span>(<span>config,&#32;every</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="1">
+              <div class="fsdocs-tip" id="174">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>argumentsToString&#32;<span>args</span></span></code>
+                  <code><span>ConfigExtensions.WithEvery<span><span>(<span>config,&#32;every</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        args
+                        config
                       </b>
                       :
-                      <code><span>'a&#32;list</span></code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        every
+                      </b>
+                      :
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<span>int,&#32;<span>obj&#32;array</span>,&#32;string</span>&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code>string</code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
                   </span>
                   <br/>
                 </div>
@@ -158,7 +178,7 @@
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L470-470" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/RunnerExtensions.fs#L10-10" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -167,10 +187,18 @@
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  args
+                  config
                 </span>
                 :
-                <code><span>'a&#32;list</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  every
+                </span>
+                :
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-3">Func</a>&lt;<span>int,&#32;<span>obj&#32;array</span>,&#32;string</span>&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -179,7 +207,7 @@
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code>string</code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -188,24 +216,44 @@
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '2', 2)" onmouseover="showTip(event, '2', 2)">
+              <code onmouseout="hideTip(event, '175', 175)" onmouseover="showTip(event, '175', 175)">
                 <p>
-                  <a id="consoleRunner">
-                    <a href="#consoleRunner">
-                      <code><span>consoleRunner&#32;<span></span></span></code>
+                  <a id="WithEveryShrink">
+                    <a href="#WithEveryShrink">
+                      <code><span>ConfigExtensions.WithEveryShrink<span><span>(<span>config,&#32;everyShrink</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="2">
+              <div class="fsdocs-tip" id="175">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>consoleRunner&#32;<span></span></span></code>
+                  <code><span>ConfigExtensions.WithEveryShrink<span><span>(<span>config,&#32;everyShrink</span>)</span></span></span></code>
                   <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        config
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        everyShrink
+                      </b>
+                      :
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span><span>obj&#32;array</span>,&#32;string</span>&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-irunner.html">IRunner</a></code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
                   </span>
                   <br/>
                 </div>
@@ -214,20 +262,36 @@
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L539-539" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/RunnerExtensions.fs#L15-15" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-A runner that prints results to the standard output.
-
             </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  config
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  everyShrink
+                </span>
+                :
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span><span>obj&#32;array</span>,&#32;string</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
             <dl class="fsdocs-returns">
               <dt>
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-irunner.html">IRunner</a></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -236,44 +300,380 @@ A runner that prints results to the standard output.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
+              <code onmouseout="hideTip(event, '176', 176)" onmouseover="showTip(event, '176', 176)">
                 <p>
-                  <a id="onArgumentsToString">
-                    <a href="#onArgumentsToString">
-                      <code><span>onArgumentsToString&#32;<span>n&#32;args</span></span></code>
+                  <a id="WithNoParallelRunConfig">
+                    <a href="#WithNoParallelRunConfig">
+                      <code><span>ConfigExtensions.WithNoParallelRunConfig<span><span>(<span>config</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="3">
+              <div class="fsdocs-tip" id="176">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>onArgumentsToString&#32;<span>n&#32;args</span></span></code>
+                  <code><span>ConfigExtensions.WithNoParallelRunConfig<span><span>(<span>config</span>)</span></span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        n
+                        config
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/RunnerExtensions.fs#L40-40" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  config
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '177', 177)" onmouseover="showTip(event, '177', 177)">
+                <p>
+                  <a id="WithNoReplay">
+                    <a href="#WithNoReplay">
+                      <code><span>ConfigExtensions.WithNoReplay<span><span>(<span>config</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="177">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ConfigExtensions.WithNoReplay<span><span>(<span>config</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        config
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/RunnerExtensions.fs#L30-30" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  config
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '178', 178)" onmouseover="showTip(event, '178', 178)">
+                <p>
+                  <a id="WithParallelRunConfig">
+                    <a href="#WithParallelRunConfig">
+                      <code><span>ConfigExtensions.WithParallelRunConfig<span><span>(<span>config,&#32;parallelRunConfig</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="178">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ConfigExtensions.WithParallelRunConfig<span><span>(<span>config,&#32;parallelRunConfig</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        config
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        parallelRunConfig
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-parallelrunconfig.html">ParallelRunConfig</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/RunnerExtensions.fs#L35-35" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  config
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  parallelRunConfig
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-parallelrunconfig.html">ParallelRunConfig</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '179', 179)" onmouseover="showTip(event, '179', 179)">
+                <p>
+                  <a id="WithReplay">
+                    <a href="#WithReplay">
+                      <code><span>ConfigExtensions.WithReplay<span><span>(<span>config,&#32;seed,&#32;gamma</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="179">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ConfigExtensions.WithReplay<span><span>(<span>config,&#32;seed,&#32;gamma</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        config
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        seed
+                      </b>
+                      :
+                      <code>uint64</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        gamma
+                      </b>
+                      :
+                      <code>uint64</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/RunnerExtensions.fs#L25-25" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  config
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  seed
+                </span>
+                :
+                <code>uint64</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gamma
+                </span>
+                :
+                <code>uint64</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '180', 180)" onmouseover="showTip(event, '180', 180)">
+                <p>
+                  <a id="WithReplay">
+                    <a href="#WithReplay">
+                      <code><span>ConfigExtensions.WithReplay<span><span>(<span>config,&#32;seed,&#32;gamma,&#32;size</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="180">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>ConfigExtensions.WithReplay<span><span>(<span>config,&#32;seed,&#32;gamma,&#32;size</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        config
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        seed
+                      </b>
+                      :
+                      <code>uint64</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        gamma
+                      </b>
+                      :
+                      <code>uint64</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        size
                       </b>
                       :
                       <code>int</code>
                     </span>
                     <br/>
-                    <span>
-                      <b>
-                        args
-                      </b>
-                      :
-                      <code><span>'a&#32;list</span></code>
-                    </span>
-                    <br/>
                   </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code>string</code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
                   </span>
                   <br/>
                 </div>
@@ -282,7 +682,7 @@ A runner that prints results to the standard output.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L532-532" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/RunnerExtensions.fs#L20-20" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -291,179 +691,31 @@ A runner that prints results to the standard output.
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  n
+                  config
                 </span>
                 :
-                <code>int</code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  args
+                  seed
                 </span>
                 :
-                <code><span>'a&#32;list</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
-                <p>
-                  <a id="onFailureToString">
-                    <a href="#onFailureToString">
-                      <code><span>onFailureToString&#32;<span>name&#32;data&#32;originalArgs&#32;args&#32;usedSeed&#32;lastSeed&#32;lastSize</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="4">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>onFailureToString&#32;<span>name&#32;data&#32;originalArgs&#32;args&#32;usedSeed&#32;lastSeed&#32;lastSize</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        name
-                      </b>
-                      :
-                      <code>string</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        data
-                      </b>
-                      :
-                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-testdata.html">TestData</a></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        originalArgs
-                      </b>
-                      :
-                      <code><span>'a&#32;list</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        args
-                      </b>
-                      :
-                      <code><span>'b&#32;list</span></code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        usedSeed
-                      </b>
-                      :
-                      <code>'c</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        lastSeed
-                      </b>
-                      :
-                      <code>'d</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        lastSize
-                      </b>
-                      :
-                      <code>int</code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>string</code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L502-502" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  name
-                </span>
-                :
-                <code>string</code>
+                <code>uint64</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  data
+                  gamma
                 </span>
                 :
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-testdata.html">TestData</a></code>
+                <code>uint64</code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  originalArgs
-                </span>
-                :
-                <code><span>'a&#32;list</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  args
-                </span>
-                :
-                <code><span>'b&#32;list</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  usedSeed
-                </span>
-                :
-                <code>'c</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  lastSeed
-                </span>
-                :
-                <code>'d</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  lastSize
+                  size
                 </span>
                 :
                 <code>int</code>
@@ -475,297 +727,7 @@ A runner that prints results to the standard output.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
-                <p>
-                  <a id="onFinishedToString">
-                    <a href="#onFinishedToString">
-                      <code><span>onFinishedToString&#32;<span>name&#32;testResult</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="5">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>onFinishedToString&#32;<span>name&#32;testResult</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        name
-                      </b>
-                      :
-                      <code>string</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        testResult
-                      </b>
-                      :
-                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-testresult.html">TestResult</a></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>string</code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L510-510" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-A function that returns the default string that is printed as a result of the test.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  name
-                </span>
-                :
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  testResult
-                </span>
-                :
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-testresult.html">TestResult</a></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
-                <p>
-                  <a id="onShrinkToString">
-                    <a href="#onShrinkToString">
-                      <code><span>onShrinkToString&#32;<span>args</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="6">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>onShrinkToString&#32;<span>args</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        args
-                      </b>
-                      :
-                      <code><span>'a&#32;list</span></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>string</code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L535-535" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  args
-                </span>
-                :
-                <code><span>'a&#32;list</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
-                <p>
-                  <a id="onStartFixtureToString">
-                    <a href="#onStartFixtureToString">
-                      <code><span>onStartFixtureToString&#32;<span>t</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="7">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>onStartFixtureToString&#32;<span>t</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        t
-                      </b>
-                      :
-                      <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>string</code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L489-489" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  t
-                </span>
-                :
-                <code><a href="https://docs.microsoft.com/dotnet/api/system.type">Type</a></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
-                <p>
-                  <a id="stepsSeq">
-                    <a href="#stepsSeq">
-                      <code><span>stepsSeq&#32;<span>resize</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="8">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>stepsSeq&#32;<span>resize</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        resize
-                      </b>
-                      :
-                      <code><span>'a&#32;->&#32;'a</span></code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span><span>'a&#32;*&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></span>&#32;->&#32;<span>seq&lt;<span>'a&#32;*&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></span>&gt;</span></span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Runner.fs#L217-217" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  resize
-                </span>
-                :
-                <code><span>'a&#32;->&#32;'a</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><span>'a&#32;*&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></span>&#32;->&#32;<span>seq&lt;<span>'a&#32;*&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></span>&gt;</span></span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-config.html">Config</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -774,14 +736,6 @@ A function that returns the default string that is printed as a result of the te
       </tbody>
     </table>
   </div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
 </div>
             
         </div>

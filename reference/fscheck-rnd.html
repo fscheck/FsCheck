@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Command<'Actual, 'Model> (FsCheck)</title>
+    <title>Rnd (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,7 +87,7 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    Command<'Actual, 'Model> Type
+    Rnd Type
   </h1>
   <p>
     Namespace: 
@@ -100,19 +100,117 @@
   </p>
   <p>
     Base Type: 
-    <code>obj</code>
+    <code><a href="https://docs.microsoft.com/dotnet/api/system.valuetype">ValueType</a></code>
+  </p>
+  <p>
+    All Interfaces: 
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a>&gt;</span></code>
+    , 
+    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralequatable">IStructuralEquatable</a></code>
+    , 
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.icomparable-1">IComparable</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a>&gt;</span></code>
+    , 
+    <code><a href="https://docs.microsoft.com/dotnet/api/system.icomparable">IComparable</a></code>
+    , 
+    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralcomparable">IStructuralComparable</a></code>
+  </p>
+  <p>
+    Kind: Struct
   </p>
   <div class="fsdocs-xmldoc">
     
-A single command describes pre and post conditions and the model for a single method under test.
-The post-conditions are the invariants that will be checked; when these do not hold the test fails.
-
   </div>
   <div></div>
   <div></div>
   <div></div>
   <div></div>
-  <div></div>
+  <div>
+    <h3>
+      Record fields
+    </h3>
+    <table class="table outer-list fsdocs-member-list">
+      <thead>
+        <tr>
+          <td class="fsdocs-member-list-header">
+            Record Field
+          </td>
+          <td class="fsdocs-member-list-header">
+            Description
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '246', 246)" onmouseover="showTip(event, '246', 246)">
+                <p>
+                  <a id="Gamma">
+                    <a href="#Gamma">
+                      <code>Gamma</code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="246">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code>Gamma</code>
+                  <br/>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Random.fs#L33-33" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ An odd integer
+
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '247', 247)" onmouseover="showTip(event, '247', 247)">
+                <p>
+                  <a id="Seed">
+                    <a href="#Seed">
+                      <code>Seed</code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="247">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code>Seed</code>
+                  <br/>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Random.fs#L31-31" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Seed value for the random number generator.
+
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div></div>
   <div>
     <h3>
@@ -133,24 +231,36 @@ The post-conditions are the invariants that will be checked; when these do not h
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '300', 300)" onmouseover="showTip(event, '300', 300)">
+              <code onmouseout="hideTip(event, '248', 248)" onmouseover="showTip(event, '248', 248)">
                 <p>
                   <a id="( .ctor )">
                     <a href="#( .ctor )">
-                      <code><span>Command<span>()</span></span></code>
+                      <code><span>Rnd<span><span>(<span>seed</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="300">
+              <div class="fsdocs-tip" id="248">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>Command<span>()</span></span></code>
+                  <code><span>Rnd<span><span>(<span>seed</span>)</span></span></span></code>
                   <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        seed
+                      </b>
+                      :
+                      <code>uint64</code>
+                    </span>
+                    <br/>
+                  </ul>
                   <br/>
                   <span>
                     Returns: 
-                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></code>
                   </span>
                   <br/>
                 </div>
@@ -159,18 +269,120 @@ The post-conditions are the invariants that will be checked; when these do not h
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L8-8" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Random.fs#L47-47" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
+ Create a new Rnd value with the specified seed value and the 'golden' gamma.
+
             </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  seed
+                </span>
+                :
+                <code>uint64</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
             <dl class="fsdocs-returns">
               <dt>
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-command-2.html">Command</a>&lt;<span>'Actual,&#32;'Model</span>&gt;</span></code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '249', 249)" onmouseover="showTip(event, '249', 249)">
+                <p>
+                  <a id="( .ctor )">
+                    <a href="#( .ctor )">
+                      <code><span>Rnd<span><span>(<span>seed,&#32;gamma</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="249">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Rnd<span><span>(<span>seed,&#32;gamma</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        seed
+                      </b>
+                      :
+                      <code>uint64</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        gamma
+                      </b>
+                      :
+                      <code>uint64</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Random.fs#L40-40" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Create a new random number generator with the given seed and gamma.
+ Useful to faithfully reproduce a sequence or part of it. gamma must be odd,
+ or this throws invalid argument exception. For good pseudo-random properties,
+ please only use seeds and gamma that were generated as part of a sequence
+ started with the default create function.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  seed
+                </span>
+                :
+                <code>uint64</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gamma
+                </span>
+                :
+                <code>uint64</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>
@@ -179,335 +391,7 @@ The post-conditions are the invariants that will be checked; when these do not h
       </tbody>
     </table>
   </div>
-  <div>
-    <h3>
-      Instance members
-    </h3>
-    <table class="table outer-list fsdocs-member-list">
-      <thead>
-        <tr>
-          <td class="fsdocs-member-list-header">
-            Instance member
-          </td>
-          <td class="fsdocs-member-list-header">
-            Description
-          </td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '301', 301)" onmouseover="showTip(event, '301', 301)">
-                <p>
-                  <a id="Post">
-                    <a href="#Post">
-                      <code><span>this.Post<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="301">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.Post<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        arg0
-                      </b>
-                      :
-                      <code>'Actual</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        arg1
-                      </b>
-                      :
-                      <code>'Model</code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-                  </span>
-                  <br/>
-                  Modifiers: 
-                  abstract
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L18-18" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Postcondition that must hold after execution of the command. Compares state of model and actual
-object and fails the property if they do not match.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  arg0
-                </span>
-                :
-                <code>'Actual</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  arg1
-                </span>
-                :
-                <code>'Model</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '302', 302)" onmouseover="showTip(event, '302', 302)">
-                <p>
-                  <a id="Pre">
-                    <a href="#Pre">
-                      <code><span>this.Pre<span><span>(<span>arg1</span>)</span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="302">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.Pre<span><span>(<span>arg1</span>)</span></span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        arg0
-                      </b>
-                      :
-                      <code>'Model</code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>bool</code>
-                  </span>
-                  <br/>
-                  Modifiers: 
-                  abstract
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L15-15" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Precondition for execution of the command. When this does not hold, the test continues
-but the command will not be executed.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  arg0
-                </span>
-                :
-                <code>'Model</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>bool</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '303', 303)" onmouseover="showTip(event, '303', 303)">
-                <p>
-                  <a id="RunActual">
-                    <a href="#RunActual">
-                      <code><span>this.RunActual<span><span>(<span>arg1</span>)</span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="303">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.RunActual<span><span>(<span>arg1</span>)</span></span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        arg0
-                      </b>
-                      :
-                      <code>'Actual</code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>'Actual</code>
-                  </span>
-                  <br/>
-                  Modifiers: 
-                  abstract
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L10-10" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Excecutes the command on the actual object under test.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  arg0
-                </span>
-                :
-                <code>'Actual</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>'Actual</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '304', 304)" onmouseover="showTip(event, '304', 304)">
-                <p>
-                  <a id="RunModel">
-                    <a href="#RunModel">
-                      <code><span>this.RunModel<span><span>(<span>arg1</span>)</span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="304">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>this.RunModel<span><span>(<span>arg1</span>)</span></span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        arg0
-                      </b>
-                      :
-                      <code>'Model</code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code>'Model</code>
-                  </span>
-                  <br/>
-                  Modifiers: 
-                  abstract
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Commands.fs#L12-12" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Executes the command on the model of the object.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  arg0
-                </span>
-                :
-                <code>'Model</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code>'Model</code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <div></div>
   <div></div>
 </div>
             

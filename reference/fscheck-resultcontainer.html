@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>PropOperators (FsCheck)</title>
+    <title>ResultContainer (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,7 +87,7 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    PropOperators Module
+    ResultContainer Type
   </h1>
   <p>
     Namespace: 
@@ -98,20 +98,31 @@
   <p>
     Assembly: FsCheck.dll
   </p>
+  <p>
+    Base Type: 
+    <code>obj</code>
+  </p>
+  <p>
+    All Interfaces: 
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a>&gt;</span></code>
+    , 
+    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralequatable">IStructuralEquatable</a></code>
+  </p>
   <div class="fsdocs-xmldoc">
     
-Operators for Prop.
-
   </div>
+  <div></div>
+  <div></div>
+  <div></div>
   <div>
     <h3>
-      Functions and values
+      Union cases
     </h3>
     <table class="table outer-list fsdocs-member-list">
       <thead>
         <tr>
           <td class="fsdocs-member-list-header">
-            Function or value
+            Union case
           </td>
           <td class="fsdocs-member-list-header">
             Description
@@ -122,93 +133,32 @@ Operators for Prop.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
+              <code onmouseout="hideTip(event, '242', 242)" onmouseover="showTip(event, '242', 242)">
                 <p>
-                  <a id="( %> )">
-                    <a href="#( %> )">
-                      <code><span>(%>)&#32;<span></span></span></code>
+                  <a id="Future">
+                    <a href="#Future">
+                      <code><span>Future&#32;<span><a href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-result.html">Result</a>&gt;</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="111">
+              <div class="fsdocs-tip" id="242">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>(%>)&#32;<span></span></span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span>'a&#32;->&#32;string&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L171-171" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Add the given label to the property. Property on the left hand side, label on the right.
-
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span>'a&#32;->&#32;string&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '112', 112)" onmouseover="showTip(event, '112', 112)">
-                <p>
-                  <a id="( .&. )">
-                    <a href="#( .&. )">
-                      <code><span><span>l</span>&#32;.&.&#32;<span>r</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="112">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span><span>l</span>&#32;.&.&#32;<span>r</span></span></code>
+                  <code><span>Future&#32;<span><a href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-result.html">Result</a>&gt;</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        l
+                        Item
                       </b>
                       :
-                      <code>'LeftTestable</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        r
-                      </b>
-                      :
-                      <code>'RightTestable</code>
+                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-result.html">Result</a>&gt;</span></code>
                     </span>
                     <br/>
                   </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-                  </span>
                   <br/>
                 </div>
               </div>
@@ -216,346 +166,75 @@ Add the given label to the property. Property on the left hand side, label on th
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L174-174" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Testable.fs#L44-44" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Construct a property that succeeds if both succeed. (cfr 'and')
-
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  l
+                  Item
                 </span>
                 :
-                <code>'LeftTestable</code>
+                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-result.html">Result</a>&gt;</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  r
-                </span>
-                :
-                <code>'RightTestable</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
             </dl>
           </td>
         </tr>
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '113', 113)" onmouseover="showTip(event, '113', 113)">
+              <code onmouseout="hideTip(event, '243', 243)" onmouseover="showTip(event, '243', 243)">
                 <p>
-                  <a id="( .|. )">
-                    <a href="#( .|. )">
-                      <code><span><span>l</span>&#32;.|.&#32;<span>r</span></span></code>
+                  <a id="Value">
+                    <a href="#Value">
+                      <code><span>Value&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-result.html">Result</a></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="113">
+              <div class="fsdocs-tip" id="243">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span><span>l</span>&#32;.|.&#32;<span>r</span></span></code>
+                  <code><span>Value&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-result.html">Result</a></span></code>
                   <br/>
                   <br/>
                   Parameters: 
                   <ul>
                     <span>
                       <b>
-                        l
+                        Item
                       </b>
                       :
-                      <code>'LeftTestable</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        r
-                      </b>
-                      :
-                      <code>'RightTestable</code>
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-result.html">Result</a></code>
                     </span>
                     <br/>
                   </ul>
                   <br/>
-                  <span>
-                    Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-                  </span>
-                  <br/>
                 </div>
               </div>
             </div>
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L179-179" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Testable.fs#L43-43" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
               
-Construct a property that fails if both fail. (cfr 'or')
-
             </p>
             <dl class="fsdocs-params">
               <dt class="fsdocs-param">
                 <span class="fsdocs-param-name">
-                  l
+                  Item
                 </span>
                 :
-                <code>'LeftTestable</code>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-result.html">Result</a></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  r
-                </span>
-                :
-                <code>'RightTestable</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '114', 114)" onmouseover="showTip(event, '114', 114)">
-                <p>
-                  <a id="( ==> )">
-                    <a href="#( ==> )">
-                      <code><span><span>condition</span>&#32;==>&#32;<span>assertion</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="114">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span><span>condition</span>&#32;==>&#32;<span>assertion</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        condition
-                      </b>
-                      :
-                      <code>bool</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        assertion
-                      </b>
-                      :
-                      <code>'Testable</code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L162-162" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  condition
-                </span>
-                :
-                <code>bool</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  assertion
-                </span>
-                :
-                <code>'Testable</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '115', 115)" onmouseover="showTip(event, '115', 115)">
-                <p>
-                  <a id="( @| )">
-                    <a href="#( @| )">
-                      <code><span>(@|)&#32;<span></span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="115">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span>(@|)&#32;<span></span></span></code>
-                  <br/>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><span>string&#32;->&#32;'a&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L168-168" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Add the given label to the property. label on the left hand side, property on the right.
-
-            </p>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span>string&#32;->&#32;'a&#32;->&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
-          </td>
-        </tr>
-        <tr>
-          <td class="fsdocs-member-name">
-            <div>
-              <code onmouseout="hideTip(event, '116', 116)" onmouseover="showTip(event, '116', 116)">
-                <p>
-                  <a id="( |@ )">
-                    <a href="#( |@ )">
-                      <code><span><span>x</span>&#32;|@&#32;<span>y</span></span></code>
-                    </a>
-                  </a>
-                </p>
-              </code>
-              <div class="fsdocs-tip" id="116">
-                <div class="member-tooltip">
-                  Full Usage: 
-                  <code><span><span>x</span>&#32;|@&#32;<span>y</span></span></code>
-                  <br/>
-                  <br/>
-                  Parameters: 
-                  <ul>
-                    <span>
-                      <b>
-                        x
-                      </b>
-                      :
-                      <code>'a</code>
-                    </span>
-                    <br/>
-                    <span>
-                      <b>
-                        y
-                      </b>
-                      :
-                      <code>string</code>
-                    </span>
-                    <br/>
-                  </ul>
-                  <br/>
-                  <span>
-                    Returns: 
-                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-                  </span>
-                  <br/>
-                </div>
-              </div>
-            </div>
-          </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Prop.fs#L165-165" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-Add the given label to the property. Property on the left hand side, label on the right.
-
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  x
-                </span>
-                :
-                <code>'a</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  y
-                </span>
-                :
-                <code>string</code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-property.html">Property</a></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
             </dl>
           </td>
         </tr>
@@ -566,10 +245,193 @@ Add the given label to the property. Property on the left hand side, label on th
   <div></div>
   <div></div>
   <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
+  <div>
+    <h3>
+      Static members
+    </h3>
+    <table class="table outer-list fsdocs-member-list">
+      <thead>
+        <tr>
+          <td class="fsdocs-member-list-header">
+            Static member
+          </td>
+          <td class="fsdocs-member-list-header">
+            Description
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '244', 244)" onmouseover="showTip(event, '244', 244)">
+                <p>
+                  <a id="( &&& )">
+                    <a href="#( &&& )">
+                      <code><span><span>l</span>&#32;&&&&#32;<span>r</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="244">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span><span>l</span>&#32;&&&&#32;<span>r</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        l
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        r
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Testable.fs#L52-52" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  l
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  r
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '245', 245)" onmouseover="showTip(event, '245', 245)">
+                <p>
+                  <a id="( ||| )">
+                    <a href="#( ||| )">
+                      <code><span><span>l</span>&#32;|||&#32;<span>r</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="245">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span><span>l</span>&#32;|||&#32;<span>r</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        l
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        r
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Testable.fs#L53-53" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  l
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  r
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-resultcontainer.html">ResultContainer</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
             
         </div>

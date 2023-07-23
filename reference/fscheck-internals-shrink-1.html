@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Rose<'a> (FsCheck)</title>
+    <title>Shrink<'T> (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -87,12 +87,12 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    Rose<'a> Type
+    Shrink<'T> Type
   </h1>
   <p>
     Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck.html">
-      FsCheck
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals.html">
+      FsCheck.Internals
     </a>
   </p>
   <p>
@@ -104,6 +104,9 @@
   </p>
   <div class="fsdocs-xmldoc">
     
+ Shrink<T> keeps a value and the possible shrinks for that value in an n-ary tree.
+ This tree is explored by the test runner to find a smaller value of a counter-example.
+
   </div>
 </div>
             
