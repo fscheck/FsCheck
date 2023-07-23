@@ -1,7 +1,0 @@
-language: csharp
-mono: none
-dotnet: 5.0.101 # for F# 5 compiler
-
-script:
-  - sudo apt-get install -y dotnet-sdk-3.1 # tests are netcoreapp3.1
-  - ./build.sh -t RunTests
