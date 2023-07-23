@@ -108,14 +108,18 @@ But what has actually happened? Using the generators from the `Machine` methods,
   [(inc, 1); (dec, 0); (inc, 1); (inc, 2); (inc, 3); (inc, 4); (inc, 5);
    (dec, 4); (dec, 3)];
  TearDown = TearDown Counter;}
- ```
+```
 
- You can read this as a trace of the operations: the counter started off in state `0`, then using operation `inc` when to state `1`, then using operation `dec`
- went to state `0` and so on.
+You can read this as a trace of the operations: the counter started off in state `0`, then using operation `inc` when to state `1`, then using operation `dec`
+went to state `0` and so on.
 
- This sequence is first generated using the model only, i.e. no operations are actually applied to any `Counter` objects. After generating a full trace, the operations
- are actually applied to the system under test, using the `Operation.Check` methods of the various `Operation` objects.
+This sequence is first generated using the model only, i.e. no operations are actually applied to any `Counter` objects. After generating a full trace, the operations
+are actually applied to the system under test, using the `Operation.Check` methods of the various `Operation` objects.
 
- If a failing test is found, FsCheck will attempt to remove operations from the sequence of operations, as long as the test still fails. So in the example above,
- although the original sequence contains a few superfluous operations, FsCheck normally finds a shorter if not the shortest sequence that leads to the failure.
- *)
+If a failing test is found, FsCheck will attempt to remove operations from the sequence of operations, as long as the test still fails. So in the example above,
+although the original sequence contains a few superfluous operations, FsCheck normally finds a shorter if not the shortest sequence that leads to the failure.
+
+Final tip: make the model class immutable. This makes it easier to reason about the model and the operations on it, and it also makes it easier to write the `Check` methods.
+If the model is mutable, you MUST make sure that the result of `Run` is a new instance of the model that you don't modify later on. FsCheck captures these results
+during the test run and during shrinking, and relies on them not changing.
+*)
