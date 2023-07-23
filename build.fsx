@@ -1,7 +1,9 @@
 // --------------------------------------------------------------------------------------
 // FAKE build script 
 // --------------------------------------------------------------------------------------
+#if FAKE
 #r "paket: groupref Build //"
+#endif
 #load "./.fake/build.fsx/intellisense.fsx"
 
 open System
@@ -237,7 +239,7 @@ Target.create "Tests" ignore
   ==> "Docs"
 
 "Docs"
-  //=?> ("ReleaseDocs", BuildServer.isLocalBuild)
+  =?> ("ReleaseDocs", BuildServer.isLocalBuild)
   ==> "Release"
 
 "Tests"

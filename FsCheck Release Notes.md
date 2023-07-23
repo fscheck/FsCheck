@@ -1,4 +1,4 @@
-### 3.0.0 - To be released
+### 3.0.0-rc1 - 23 July 2023
 
 * Enable properties that return `Task<T>`. (by Mark Seemann)
 
@@ -22,13 +22,13 @@
 
 * *Backwards incompatible*: redesigned API for per-type Arbitrary instance discovery and lookup. There is no longer a single global, mutable map of type to Arbitrary instances, instead there are any number of immutable `IArbMap`s that can be configured at your leisure, and set via `Config.WithArbitrary` on the test.
 
-* Detailed changes to `FsCheck.FSharp.Gen`: Added `RequireQualifiedAccess`. Added `apply` and `bind`. Renamed `collect` and `sequence` to `collect/sequenceToList/Array/Seq` for clarity. Removed `unzip` and `unzip3` - their implementation is problematic, and it's hard to see a use case for them. Removed `subListOfToIlist`, `subListOfArr` - these returned `IList<'T>` types. Untupled `rows,cols` arguments in `array2DOfDim`.
+* Detailed changes to `FsCheck.FSharp.Gen`: Added `RequireQualifiedAccess`. Added `apply` and `bind`. Renamed `collect` and `sequence` to `collect/sequenceToList/Array/Seq` for clarity. Removed `unzip` and `unzip3` - their implementation is problematic, and it's hard to see a use case for them. Removed `subListOfToIlist`, `subListOfArr` - these returned `IList<'T>` types. Un-tupled `rows,cols` arguments in `array2DOfDim`.
 
-* Detailed changes to `FsCheck.Fluent.Gen`: Split into non-extension methods on `Gen` and extension methods on `Gen<T>` type in `GenExtensions`. Removed `Gen.Apply` - not useful without partial application. `Two`, `Three`, `Four` and `Zip` now output ValueTuples, which is idiomatic in modern C#, and are only visible as extension methods on `Gen<T>`. Removed the overloads of `Zip` with arity 3. Changed the return type of methods that returned `IList<T>` previously to `List<T>`. Split the `Sample` method with optional arguments in three overloads, this is better for backwards compatibilty going forward.
+* Detailed changes to `FsCheck.Fluent.Gen`: Split into non-extension methods on `Gen` and extension methods on `Gen<T>` type in `GenExtensions`. Removed `Gen.Apply` - not useful without partial application. `Two`, `Three`, `Four` and `Zip` now output ValueTuples, which is idiomatic in modern C#, and are only visible as extension methods on `Gen<T>`. Removed the overloads of `Zip` with arity 3. Changed the return type of methods that returned `IList<T>` previously to `List<T>`. Split the `Sample` method with optional arguments in three overloads, this is better for backwards compatibility going forward.
 
 * Detailed changes to `FsCheck.FSharp.Arb`: Removed `fromGenShrinkFunc`. Removed `register`, `registerByType`, `from`, `generate` and `shrink` - these are replaced by functions on `ArbMap`, resp. `mergeWith`, `mergeWithType`, `arbitrary` and `generate`. Made `Arb.Default` internal. Default types should now be looked up using `ArbMap`, e.g. `ArbMap.defaults |> ArbMap.arbitrary<list<int>>`.
 
-* Detailed changes to `FsCheck.Fluent.Arb`: Removed extension method `ToArbitrary` that took an F# function as argument for the shrinker. Renamad `Arb.From` methods to `Arbitrary.From` - C# does not tolerate ambiguity between using two types of the same name in the same namespace. Removed `Register`, `RegisterByType`, `From`, `Generate` and `Shrink` - these are replaced by methods on `ArbMap`, resp. `Merge<'T>`, `Merge`, `ArbFor` and `GeneratorFor`. Made `Arb.Default` internal. Default Arbitrary types should now be looked up using `ArbMap`, e.g. `ArbMap.Default.ArbFor<int[]>()`.
+* Detailed changes to `FsCheck.Fluent.Arb`: Removed extension method `ToArbitrary` that took an F# function as argument for the shrinker. Renamed `Arb.From` methods to `Arbitrary.From` - C# does not tolerate ambiguity between using two types of the same name in the same namespace. Removed `Register`, `RegisterByType`, `From`, `Generate` and `Shrink` - these are replaced by methods on `ArbMap`, resp. `Merge<'T>`, `Merge`, `ArbFor` and `GeneratorFor`. Made `Arb.Default` internal. Default Arbitrary types should now be looked up using `ArbMap`, e.g. `ArbMap.Default.ArbFor<int[]>()`.
 
 * First pass at improving XML docs for Gen API.
 
@@ -64,7 +64,7 @@
 
 * Remove tuple and list testables.
 
-* Bug fix: Tasks that were faulted or canceled were not detected as test failures (by chrisoverzero)
+* Bug fix: Tasks that were faulted or cancelled were not detected as test failures (by chrisoverzero)
 
 ### 3.0.0-alpha1 - 26 September 2017
 
@@ -112,7 +112,7 @@
 
 * Limit total number of shrink attempts to 5000, to avoid infinite loops in general, and in particular if an argument is mutated in the test.
 
-### 2.15.2 - 15 Arpil 2021
+### 2.15.2 - 15 April 2021
 
 * Enabled FsCheck.Xunit's `PropertiesAttribute` to work at assembly level. (by Laurence King)
 
@@ -333,7 +333,7 @@ were hiding a bunch of methods unnecessarily. The upshot is that C# users will s
 * Add Gen.growingElements.
 * Add default generator and shrinker for IPAddress and MailAddress.
 * Gen.eval now uses the given size directly to generate an element of that size, instead of randomly choosing a size up to the given size. This means that on average test case sizes are bigger.
-* Gen.frequency now throws a clearer exeption if no element can be generated.
+* Gen.frequency now throws a clearer exception if no element can be generated.
 * Renamed Gen.suchThat and Gen.suchThatOption to Gen.where or Gen.filter and Gen.tryWhere or Gen.tryFilter. (The functions/methods with the old names are still there, they are just marked Obsolete and will be removed in a future version.)
 * Renamed DontSize to DoNotSize, DontShrink to DoNotShrink, DontSizeInt16 to DoNotSizeInt16 etc. (The types with the old names are still there, they are just marked Obsolete and will be removed in a future version.)
 * StateMachine: operation shrinker shrinks operations too, not just the list of operations.
@@ -386,7 +386,7 @@ were hiding a bunch of methods unnecessarily. The upshot is that C# users will s
 * Add QuietOnSuccess option to vanilla runner.
 * Add bigint generator.
 * Deprecate some infrequently used and incorrectly named methods.
-* Lots of internal and mostly syntactic code cleanup.
+* Lots of internal and mostly syntactic code clean-up.
 * Switch to paket for creating NuGet packages.
 
 ### 2.1.0 - 30 September 2015
@@ -442,7 +442,7 @@ were hiding a bunch of methods unnecessarily. The upshot is that C# users will s
 
 ### 2.0.1-rc1 - 23 May 2015
 
-* Improve asssert failure reporting in FsCheck.Xunit (by Mark Seemann)
+* Improve assert failure reporting in FsCheck.Xunit (by Mark Seemann)
 * Add discard method (by Mauricio Scheffer)
 * Fix capitalization of Fscheck.NUnit package
 

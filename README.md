@@ -51,7 +51,7 @@ We rarely reject PRs. If you intend to make a bigger change, it's better to open
 
 ## Building ##
 
-Checkout the project and run build.cmd on Windows or build.sh on Linux/OSX. That should pull in all the dependencies, build and run the tests.
+Check out the project and run build.cmd on Windows or build.sh on Linux/OSX. That should pull in all the dependencies, build and run the tests.
 
 For Visual Studio/MonoDevelop/Xamarin Studio/VsCode: open (the folder that contains) FsCheck.sln and start coding.
 
