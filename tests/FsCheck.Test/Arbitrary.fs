@@ -560,6 +560,15 @@ module Arbitrary =
         |> Seq.forall (fun shrunkv -> shrunkv = 0m || shrunkv <= abs value)
         |> assertTrue
 
+    [<Property>]
+    let ``Negative decimal values are generated`` (size : PositiveInt) =
+        let predicate = fun (d: decimal) -> d < 0m
+        generate<decimal>
+        |> Gen.filter predicate
+        |> Gen.sampleWithSize size.Get 10
+        |> Array.forall predicate
+        |> assertTrue
+
     [<Fact>]
     let DoNotSizeDecimal() =
         generate<DoNotSize<decimal>> |> sample 10 |> ignore
