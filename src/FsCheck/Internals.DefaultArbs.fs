@@ -208,8 +208,13 @@ type internal Default private() =
                 |> Gen.map Decimal
                 |> Gen.map (fun d -> d / (Decimal tenPow9)) 
             let generator = Gen.sized (fun size ->
-                decimalGen
-                |> Gen.map (fun d -> d * Decimal(size)))
+                Gen.map2
+                    (fun d isNegative -> 
+                        let value = d * Decimal(size)
+                        if isNegative then -value else value)
+                    decimalGen
+                    Default.Bool.Generator
+                )
             let shrinker d =
                 let (|<|) x y = abs x < abs y
                 seq {
