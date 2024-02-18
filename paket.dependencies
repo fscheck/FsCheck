@@ -12,8 +12,8 @@ nuget Unquote
 
 nuget Microsoft.NET.Test.Sdk
 
-nuget xunit
-nuget xunit.runner.visualstudio
+nuget xunit ~> 2.4
+nuget xunit.runner.visualstudio ~> 2.4
 
 nuget NUnit
 nuget NUnit3TestAdapter
