@@ -5,11 +5,10 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <PackageDescription>FsCheck is a tool for testing .NET programs automatically using randomly generated test cases.</PackageDescription>
-        <Description>FsCheck is a tool for testing .NET programs automatically. You provide a specification of the program, in the form of properties which functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. Such properties are actually a testable specification of your program.
+        <PackageDescription>FsCheck is a tool for testing .NET programs automatically. You provide a specification of the program, in the form of properties which functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. Such properties are actually a testable specification of your program.
 
             Properties are written in F#, C# or VB. FsCheck helps you to define properties, observe the distribution of test data, and define test data generators. Crucially, when a property fails, FsCheck automatically displays a minimal counter example.
-        </Description>
+        </PackageDescription>
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="AssemblyInfo.fs"/>

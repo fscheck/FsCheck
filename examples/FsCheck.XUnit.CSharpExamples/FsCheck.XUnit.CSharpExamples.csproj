@@ -6,6 +6,7 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <WarningLevel>3</WarningLevel>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup>
         <None Remove="App.config"/>
