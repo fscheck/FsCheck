@@ -515,16 +515,23 @@ let rec getUserInput (prompt : string) =
 
 type GitHubAsset =
     {
+        [<JsonPropertyName "browser_download_url">]
         BrowserDownloadUrl : Uri
+        [<JsonPropertyName "name">]
         Name : string
+        [<JsonPropertyName "content_type">]
         ContentType : string
+        [<JsonPropertyName "size">]
         Size : uint64
     }
 
 type GitHubReleaseResponse =
     {
+        [<JsonPropertyName "name">]
         Name : string
+        [<JsonPropertyName "published_at">]
         PublishedAt : DateTime
+        [<JsonPropertyName "assets">]
         Assets : GitHubAsset list
     }
 
