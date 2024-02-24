@@ -13,7 +13,6 @@ open System.Text.Json
 open System.Text.Json.Serialization
 open System.Threading
 open System.Threading.Tasks
-open System.Xml
 
 [<AutoOpen>]
 module Utils =
