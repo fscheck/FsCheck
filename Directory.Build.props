@@ -50,7 +50,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <Copyright>Copyright 2008</Copyright>
+    <Copyright>Copyright 2008-2024</Copyright>
     <Authors>Kurt Schelfthout and contributors</Authors>
     <PackageTags>F# fsharp test random</PackageTags>
     <RepositoryUrl>https://github.com/Fscheck/fscheck</RepositoryUrl>
@@ -58,5 +58,8 @@
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <DebugType>embedded</DebugType>
+    <PackageIconUrl>https://raw.githubusercontent.com/fscheck/FsCheck/master/docs/files/img/logo.png</PackageIconUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageTags>test;testing;random;fscheck;quickcheck</PackageTags>
   </PropertyGroup>
 </Project>

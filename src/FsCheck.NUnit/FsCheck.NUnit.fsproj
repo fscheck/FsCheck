@@ -5,6 +5,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PackageDescription>Integrates FsCheck with NUnit</PackageDescription>
+    <Description>FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute.
+
+    All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.</Description>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
