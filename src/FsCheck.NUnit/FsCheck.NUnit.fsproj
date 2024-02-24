@@ -9,6 +9,7 @@
 
             All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
         </PackageDescription>
+        <PackageTags>$(PackageTags);nunit</PackageTags>
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="AssemblyInfo.fs"/>
