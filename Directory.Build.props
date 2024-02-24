@@ -3,7 +3,8 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Update="FSharp.Core" Version="5.0.2" />
+    <!-- TODO: should this one be an Update? It messes with the C# projects if so? -->
+    <PackageVersion Include="FSharp.Core" Version="5.0.2" />
     <PackageVersion Include="Microsoft.CodeCoverage" Version="16.11" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="16.11" />
     <PackageVersion Include="Microsoft.NETCore.Platforms" Version="5.0.2" />
@@ -47,4 +48,15 @@
     <PackageVersion Include="xunit.extensibility.execution" Version="2.4.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <Copyright>Copyright 2008</Copyright>
+    <Authors>Kurt Schelfthout and contributors</Authors>
+    <PackageTags>F# fsharp test random</PackageTags>
+    <RepositoryUrl>https://github.com/Fscheck/fscheck</RepositoryUrl>
+    <PackageProjectUrl>https://fscheck.github.io/FsCheck/</PackageProjectUrl>
+    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
 </Project>

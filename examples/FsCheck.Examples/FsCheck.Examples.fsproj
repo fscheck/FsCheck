@@ -12,6 +12,6 @@
     <ProjectReference Include="../../src/FsCheck/FsCheck.fsproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FSharp.Core" />
+    <PackageReference Update="FSharp.Core" />
   </ItemGroup>
 </Project>

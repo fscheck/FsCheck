@@ -38,6 +38,7 @@
     <None Include="Script.fsx" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" />
+    <!-- TODO: this is usually `Update`; does that cause problems? -->
+    <PackageReference Include="FSharp.Core" />
   </ItemGroup>
 </Project>
