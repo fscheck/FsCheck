@@ -27,13 +27,21 @@ module Utils =
             let args = args |> String.concat " "
             failwith $"Process '%s{command}' failed with nonzero exit code %i{proc.ExitCode}. Args: %s{args}"
 
+    let rec copyDir (source : DirectoryInfo) (target : DirectoryInfo) : unit =
+        target.Create ()
+        for file in source.EnumerateFiles () do
+            file.CopyTo (Path.Combine (target.FullName, file.Name)) |> ignore<FileInfo>
+        for dir in source.EnumerateDirectories () do
+            copyDir dir (Path.Combine (target.FullName, dir.Name) |> DirectoryInfo)
 
 // --------------------------------------------------------------------------------------
 // Clean build results
 
 type HaveCleaned = HaveCleaned
 let doClean () : HaveCleaned =
+    printf "Cleaning... "
     cleanDirectories ["bin" ; "temp" ; "output"]
+    printfn "done."
     HaveCleaned
 
 (*
@@ -60,7 +68,7 @@ type ProjectInfo =
   }
 
 //File that contains the release notes.
-let releaseNotes = "FsCheck Release Notes.md"
+let releaseNotesFile = "FsCheck Release Notes.md"
 
 /// Solution or project files to be built during the building process
 let solution = "FsCheck.sln"
@@ -83,7 +91,7 @@ let gitName = "FsCheck"
 
 // Read additional information from the release notes document
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-let release = Fake.Core.ReleaseNotes.load releaseNotes
+let releaseNotes = Fake.Core.ReleaseNotes.load releaseNotesFile
 
 let isAppVeyorBuild =
     String.IsNullOrEmpty (Environment.GetEnvironmentVariable "APPVEYOR_BUILD_VERSION")
@@ -91,7 +99,7 @@ let isAppVeyorBuild =
 let buildDate = DateTime.UtcNow
 let buildVersion : string =
     if not isAppVeyorBuild then
-        release.NugetVersion
+        releaseNotes.NugetVersion
     else
 
     let repoVersion : string option =
@@ -110,7 +118,7 @@ let buildVersion : string =
 
     match repoVersion with
     | None ->
-        release.NugetVersion
+        releaseNotes.NugetVersion
     | Some repoVersion ->
         let buildNumber = Environment.GetEnvironmentVariable "APPVEYOR_BUILD_NUMBER"
         sprintf "%s-b%s" repoVersion buildNumber
@@ -130,7 +138,9 @@ let packages =
 
 type HaveUpdatedBuildVersion = | HaveUpdatedBuildVersion
 let appveyorBuildVersion (_ : HaveCleaned) : HaveUpdatedBuildVersion =
+    printf "appveyor UpdateBuild... "
     runProcess "appveyor" ["UpdateBuild" ; "-Version" ; buildVersion]
+    printfn "done."
     HaveUpdatedBuildVersion
 
 (*
@@ -142,8 +152,10 @@ Target.create "BuildVersion" (fun _ ->
 // Generate assembly info files with the right version & up-to-date information
 type HaveGeneratedAssemblyInfo = | HaveGeneratedAssemblyInfo
 let generateAssemblyInfo (_ : HaveCleaned) : HaveGeneratedAssemblyInfo =
+    printf "Generating AssemblyInfo files... "
     for package in packages do
         let fileName = $"src/%s{package.Name}/AssemblyInfo.fs"
+        printf $"(%s{fileName}) "
 
         let shouldHaveInternalsVisibleTo =
             [
@@ -166,8 +178,8 @@ open System.Runtime.CompilerServices
 [<assembly: AssemblyTitle("%s{package.Name}")>]
 [<assembly: AssemblyProduct("%s{package.Name}")>]
 [<assembly: AssemblyDescription(%s{package.Summary}")>]
-[<assembly: AssemblyVersion("%s{release.AssemblyVersion}")>]
-[<assembly: AssemblyFileVersion("%s{release.AssemblyVersion}")>]
+[<assembly: AssemblyVersion("%s{releaseNotes.AssemblyVersion}")>]
+[<assembly: AssemblyFileVersion("%s{releaseNotes.AssemblyVersion}")>]
 [<assembly: AssemblyKeyFile("../../FsCheckKey.snk")>]
 %s{ivt}
 do ()
@@ -176,12 +188,13 @@ module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "%s{package.Name}"
     let [<Literal>] AssemblyProduct = "%s{package.Name}"
     let [<Literal>] AssemblyDescription = "%s{package.Summary}"
-    let [<Literal>] AssemblyVersion = "%s{release.AssemblyVersion}"
-    let [<Literal>] AssemblyFileVersion = "%s{release.AssemblyVersion}"
+    let [<Literal>] AssemblyVersion = "%s{releaseNotes.AssemblyVersion}"
+    let [<Literal>] AssemblyFileVersion = "%s{releaseNotes.AssemblyVersion}"
     let [<Literal>] AssemblyKeyFile = "../../FsCheckKey.snk"
     %s{ivtLiteral}
 """
         File.WriteAllText (fileName, assemblyInfoText)
+    printfn "done."
     HaveGeneratedAssemblyInfo
 
 (*
@@ -207,8 +220,12 @@ Target.create "AssemblyInfo" (fun _ ->
 
 type HaveBuilt = HaveBuilt
 let build (_ : HaveCleaned) : HaveBuilt =
+    printf "Performing dotnet restore... "
     runProcess "dotnet" ["restore" ; solution]
+    printfn "done."
+    printf "Performing dotnet build... "
     runProcess "dotnet" ["build" ; solution ; "--configuration" ; "Release"]
+    printfn "done."
     HaveBuilt
 
 (*
@@ -223,7 +240,9 @@ Target.create "Build" (fun _ ->
 
 type HaveTested = HaveTested
 let runDotnetTest (_ : HaveCleaned) : HaveTested =
+    printf "Performing dotnet test... "
     runProcess "dotnet" ["test" ; "tests/FsCheck.Test" ; "--configuration" ; "Release"]
+    printfn "done."
     HaveTested
 
 (*
@@ -238,10 +257,12 @@ Target.create "RunTests" (fun _ ->
 
 type HavePacked = HavePacked
 let packNuGet (_ : HaveTested) : HavePacked =
+    printf "Performing dotnet pack... "
     let releaseNotes =
-        release.Notes
+        releaseNotes.Notes
         |> String.concat "\n"
     runProcess "dotnet" ["pack" ; "--configuration" ; "Release" ; $"-p:Version=%s{buildVersion}" ; "--output" ; "bin" ; $"-p:PackageReleaseNotes=%s{releaseNotes}"]
+    printfn "done."
     HavePacked
 
 (*
@@ -258,7 +279,9 @@ Target.create "PaketPack" (fun _ ->
 
 type HavePushed = HavePushed
 let pushNuGet (_ : HaveTested) =
+    printf "Performing NuGet push... "
     failwith "TODO"
+    printfn "done."
     HavePushed
 
 (*
@@ -287,6 +310,7 @@ let fsdocProperties = [
 
 type HaveGeneratedDocs = HaveGeneratedDocs
 let docs (_ : HaveBuilt) : HaveGeneratedDocs =
+    printf "Running fsdocs build... "
     cleanDirectories [".fsdocs"]
 
     [
@@ -296,6 +320,8 @@ let docs (_ : HaveBuilt) : HaveGeneratedDocs =
         "--parameters" ; yield! fsdocParameters
     ]
     |> runProcess "dotnet"
+
+    printfn "done."
 
     HaveGeneratedDocs
 
@@ -310,6 +336,7 @@ Target.create "Docs" (fun _ ->
 *)
 
 let watchDocs () =
+    printf "Running fsdocs watch... "
     cleanDirectories [".fsdocs"]
 
     [
@@ -319,6 +346,7 @@ let watchDocs () =
         "--parameters" ; yield! fsdocParameters
     ]
     |> runProcess "dotnet"
+    printfn "fsdocs watch completed."
 
 (*
 Target.create "WatchDocs" (fun _ ->
@@ -333,14 +361,8 @@ Target.create "WatchDocs" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Release Scripts
 
-let rec copyDir (source : DirectoryInfo) (target : DirectoryInfo) : unit =
-    target.Create ()
-    for file in source.EnumerateFiles () do
-        file.CopyTo (Path.Combine (target.FullName, file.Name)) |> ignore<FileInfo>
-    for dir in source.EnumerateDirectories () do
-        copyDir dir (Path.Combine (target.FullName, dir.Name) |> DirectoryInfo)
-
 let releaseDocs (_ : HaveBuilt) =
+    printf "Releasing docs to gh-pages branch... "
     let tempDocsDir = "temp/gh-pages"
     cleanDirectories [tempDocsDir]
     let tempDocsDir = Directory.CreateDirectory tempDocsDir
@@ -350,6 +372,7 @@ let releaseDocs (_ : HaveBuilt) =
 
     runProcess "git" ["--git-dir" ; tempDocsDir.FullName ; "commit" ; "--all" ; "--message" ; $"Update generated documentation for version %s{buildVersion}"]
     runProcess "git" ["--git-dir" ; tempDocsDir.FullName ; "push"]
+    printfn "done."
 
 (*
 Target.create "ReleaseDocs" (fun _ ->
@@ -366,7 +389,9 @@ Target.create "ReleaseDocs" (fun _ ->
 *)
 
 let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
+    printf "Tagging new version and performing GitHub release... "
     failwith "TODO"
+    printfn "done."
 
 (*
 Target.create "Release" (fun _ ->

@@ -2,12 +2,6 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "fake-cli": {
-      "version": "6.0.0",
-      "commands": [
-        "fake"
-      ]
-    },
     "fsharp.formatting.commandtool": {
       "version": "9.0.4",
       "commands": [
