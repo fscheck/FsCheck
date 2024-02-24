@@ -1,39 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>FsCheck.MsTest.Examples</AssemblyName>
-    <TargetFramework>net6.0</TargetFramework>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <WarningLevel>3</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="MSTest.TestFramework" />
-    <PackageReference Include="MSTest.TestAdapter" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" />
-  </ItemGroup>
+    <PropertyGroup>
+        <AssemblyName>FsCheck.MsTest.Examples</AssemblyName>
+        <TargetFramework>net6.0</TargetFramework>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <WarningLevel>3</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Remove="App.config"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="App.config"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Update="FSharp.Core"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="MSTest.TestFramework"/>
+        <PackageReference Include="MSTest.TestAdapter"/>
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies"/>
+    </ItemGroup>
 </Project>
 
-  <!--<ItemGroup>
-    <Compile Include="ClassesToTest\Counter.cs" />
-    <Compile Include="ClassesToTest\CounterSpec.cs" />
-    <Compile Include="ClassesToTest\Doc.cs" />
-    <Compile Include="ClassesToTest\EnumerableExtensions.cs" />
-    <Compile Include="CounterTest.cs" />
-    <Compile Include="DocGen.cs" />
-    <Compile Include="DocTest.cs" />
-    <Compile Include="SampleTests.cs" />
-    <None Include="App.config" />
-  </ItemGroup>-->
+        <!--<ItemGroup>
+          <Compile Include="ClassesToTest\Counter.cs" />
+          <Compile Include="ClassesToTest\CounterSpec.cs" />
+          <Compile Include="ClassesToTest\Doc.cs" />
+          <Compile Include="ClassesToTest\EnumerableExtensions.cs" />
+          <Compile Include="CounterTest.cs" />
+          <Compile Include="DocGen.cs" />
+          <Compile Include="DocTest.cs" />
+          <Compile Include="SampleTests.cs" />
+          <None Include="App.config" />
+        </ItemGroup>-->
   

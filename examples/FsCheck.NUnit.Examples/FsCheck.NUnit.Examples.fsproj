@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>FsCheck.NUnit.Examples</AssemblyName>
-    <TargetFramework>net6.0</TargetFramework>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="App.config" />
-    <Compile Include="PropertyExamples.fs" />
-  </ItemGroup>
-  <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="NUnit" />
-        <PackageReference Include="NUnit3TestAdapter" />
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="../../src/FsCheck/FsCheck.fsproj" />
-    <ProjectReference Include="../../src/FsCheck.NUnit/FsCheck.NUnit.fsproj" />
-  </ItemGroup>
+    <PropertyGroup>
+        <AssemblyName>FsCheck.NUnit.Examples</AssemblyName>
+        <TargetFramework>net6.0</TargetFramework>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    </PropertyGroup>
+    <ItemGroup>
+        <Content Include="App.config"/>
+        <Compile Include="PropertyExamples.fs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="NUnit"/>
+        <PackageReference Include="NUnit3TestAdapter"/>
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../src/FsCheck/FsCheck.fsproj"/>
+        <ProjectReference Include="../../src/FsCheck.NUnit/FsCheck.NUnit.fsproj"/>
+    </ItemGroup>
 </Project>

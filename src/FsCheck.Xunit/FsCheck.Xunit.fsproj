@@ -1,28 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>FsCheck.Xunit</AssemblyName>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PackageDescription>Integrates FsCheck with xUnit.NET</PackageDescription>
-    <Description>
-    FsCheck.Xunit integrates FsCheck with xUnit.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.NET's FactAttribute.
+    <PropertyGroup>
+        <AssemblyName>FsCheck.Xunit</AssemblyName>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <PackageDescription>Integrates FsCheck with xUnit.NET</PackageDescription>
+        <Description>
+            FsCheck.Xunit integrates FsCheck with xUnit.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.NET's FactAttribute.
 
-    All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
-    </Description>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Runner.fs" />
-    <Compile Include="PropertyAttribute.fs" />
-    <Compile Include="CheckExtensions.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" />
-    <PackageReference Include="xunit.extensibility.execution" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="../FsCheck/FsCheck.fsproj" />
-  </ItemGroup>
+            All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
+        </Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="AssemblyInfo.fs"/>
+        <Compile Include="Runner.fs"/>
+        <Compile Include="PropertyAttribute.fs"/>
+        <Compile Include="CheckExtensions.fs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Update="FSharp.Core"/>
+        <PackageReference Include="xunit.extensibility.execution"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../FsCheck/FsCheck.fsproj"/>
+    </ItemGroup>
 </Project>

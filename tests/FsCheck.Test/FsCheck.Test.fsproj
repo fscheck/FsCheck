@@ -1,40 +1,40 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>FsCheck.Test</AssemblyName>
-    <TargetFramework>net6.0</TargetFramework>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>DEBUG</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Fscheck.XUnit\PropertyAttributeTests.fs" />
-    <Compile Include="Helpers.fs" />
-    <Compile Include="Random.fs" />
-    <Compile Include="TypeClass.fs" />
-    <Compile Include="Gen.fs" />
-    <Compile Include="GenBuilder.fs" />
-    <Compile Include="GenExtensions.fs" />
-    <Compile Include="Arbitrary.fs" />
-    <Compile Include="ArbMapTest.fs" />
-    <Compile Include="Property.fs" />
-    <Compile Include="Runner.fs" />
-    <Compile Include="StateMachine.fs" />
-    <Content Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="../../src/FsCheck.Xunit/FsCheck.Xunit.fsproj" />
-    <ProjectReference Include="..\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="FSharp.Core" />
-    <PackageReference Include="xunit.core" />
-    <PackageReference Include="xunit.runner.visualstudio" />
-    <PackageReference Include="Unquote" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="System.Collections.Immutable" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" />
-  </ItemGroup>
+    <PropertyGroup>
+        <AssemblyName>FsCheck.Test</AssemblyName>
+        <TargetFramework>net6.0</TargetFramework>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DefineConstants>DEBUG</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="Fscheck.XUnit\PropertyAttributeTests.fs"/>
+        <Compile Include="Helpers.fs"/>
+        <Compile Include="Random.fs"/>
+        <Compile Include="TypeClass.fs"/>
+        <Compile Include="Gen.fs"/>
+        <Compile Include="GenBuilder.fs"/>
+        <Compile Include="GenExtensions.fs"/>
+        <Compile Include="Arbitrary.fs"/>
+        <Compile Include="ArbMapTest.fs"/>
+        <Compile Include="Property.fs"/>
+        <Compile Include="Runner.fs"/>
+        <Compile Include="StateMachine.fs"/>
+        <Content Include="App.config"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../src/FsCheck.Xunit/FsCheck.Xunit.fsproj"/>
+        <ProjectReference Include="..\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FSharp.Core"/>
+        <PackageReference Include="xunit.core"/>
+        <PackageReference Include="xunit.runner.visualstudio"/>
+        <PackageReference Include="Unquote"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="System.Collections.Immutable"/>
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies"/>
+    </ItemGroup>
 </Project>

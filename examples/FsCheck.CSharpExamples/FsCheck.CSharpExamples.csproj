@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>FsCheck.CSharpExamples</AssemblyName>
-    <TargetFramework>net6.0</TargetFramework>
-    <OutputType>Exe</OutputType>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="FSharp.Core" />
-  </ItemGroup>
+    <PropertyGroup>
+        <AssemblyName>FsCheck.CSharpExamples</AssemblyName>
+        <TargetFramework>net6.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FSharp.Core"/>
+    </ItemGroup>
 </Project>
