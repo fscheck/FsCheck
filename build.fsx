@@ -655,7 +655,7 @@ match args |> List.map (fun s -> s.ToLowerInvariant ()) with
     docs haveBuilt |> ignore<HaveGeneratedDocs>
 | ["-t" ; "watchdocs"] -> watchDocs ()
 | ["-t"; "releasedocs"] ->
-    if not isAppVeyorBuild then
+    if isAppVeyorBuild then
         failwith "Refusing to release docs from CI"
     let haveCleaned = doClean ()
     let haveBuilt = build haveCleaned
