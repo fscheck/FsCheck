@@ -111,7 +111,7 @@ a test passes if it does not throw. The entry point to create properties is the 
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span> xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
     .QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 19 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 18 tests.</code></pre></td></tr></table>
 <p>Such a property holds if the property after <code>==&gt;</code> holds whenever the condition does.</p>
 <p>Testing discards test cases which do not satisfy the condition. Test case generation
 continues until 100 cases which do satisfy the condition have been found, or until
@@ -129,8 +129,8 @@ example, this may limit the expressiveness of properties - consider:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 55)" onmouseover="showTip(event, 'fs22', 55)" class="fn">tooEager</span> <span onmouseout="hideTip(event, 'fs23', 56)" onmouseover="showTip(event, 'fs23', 56)" class="fn">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs23', 57)" onmouseover="showTip(event, 'fs23', 57)" class="fn">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="pn">(</span><span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs23', 58)" onmouseover="showTip(event, 'fs23', 58)" class="fn">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs23', 59)" onmouseover="showTip(event, 'fs23', 59)" class="fn">a</span><span class="pn">)</span>
 <span onmouseout="hideTip(event, 'fs20', 60)" onmouseover="showTip(event, 'fs20', 60)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 61)" onmouseover="showTip(event, 'fs21', 61)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs22', 62)" onmouseover="showTip(event, 'fs22', 62)" class="fn">tooEager</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (16091880671463979538,12954581364208638031)
-Last step was invoked with size of 2 and seed of (8921313082666154939,3381742121635832661):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (14909894448057606127,12279171391140841887)
+Last step was invoked with size of 2 and seed of (7852419065498467916,13949927723544264963):
 Original:
 0
 with exception:
@@ -202,7 +202,7 @@ are then summarized when testing is complete.</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>Test cases for which the condition is true are classified as trivial, and the proportion of
 trivial test cases in the total is reported:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 13 tests (38% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 23 tests (30% trivial).</code></pre></td></tr></table>
 <h3><a name="Classifying-Test-Cases" class="anchor" href="#Classifying-Test-Cases">Classifying Test Cases</a></h3>
 <p>A property may take the form <code>classify &lt;condition&gt; &lt;string&gt; &lt;property&gt;</code></p>
 <p>For example,</p>
@@ -220,10 +220,10 @@ trivial test cases in the total is reported:</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>Test cases satisfying the condition are assigned the classification given, and the distribution of
 classifications is reported after testing:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 18 tests.
-50% at-tail, at-head.
-33% at-tail.
-11% at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 17 tests.
+41% at-head.
+29% at-tail, at-head.
+23% at-tail.</code></pre></td></tr></table>
 <p>Note that a test case may fall into more than one classification.</p>
 <h3><a name="Collecting-Data-Values" class="anchor" href="#Collecting-Data-Values">Collecting Data Values</a></h3>
 <p>A property may take the form <code>collect &lt;expression&gt; &lt;property&gt;</code></p>
@@ -240,11 +240,11 @@ classifications is reported after testing:</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>The argument of collect is evaluated in each test case, and the distribution of
 values is reported. The type of this argument is printed using <code>sprintf "%A"</code>:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 15 tests.
-40% 1.
-33% 0.
-20% 2.
-6% 3.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 21 tests.
+38% 1.
+33% 2.
+23% 0.
+4% 3.</code></pre></td></tr></table>
 <h3><a name="Combining-Observations" class="anchor" href="#Combining-Observations">Combining Observations</a></h3>
 <p>The observations described here may be combined in any way. All the observations
 of each test case are combined, and the distribution of these combinations is
@@ -264,15 +264,14 @@ reported. For example:</p>
         .Collect(<span class="s">"length "</span> <span class="o">+</span> xs.Count().ToString()))
     .QuickCheck();</code></pre></td></tr></table>
 <table class="pre"><tr><td><pre><code>Arguments exhausted after 20 tests.
-25% 1, at-head.
-20% 1, at-tail.
-20% 0, at-tail, at-head.
-10% 2, at-head.
-5% 9.
-5% 3, at-tail.
-5% 3, at-head.
-5% 2, at-tail.
-5% 1, at-tail, at-head.</code></pre></td></tr></table>
+35% 1, at-head.
+15% 2, at-tail.
+15% 0, at-tail, at-head.
+10% 3, at-head.
+10% 1, at-tail.
+5% 2, at-tail, at-head.
+5% 2, at-head.
+5% 14, at-tail.</code></pre></td></tr></table>
 <h2><a name="And-Or-and-Labels" class="anchor" href="#And-Or-and-Labels">And, Or and Labels</a></h2>
 <p>Properties may take the form</p>
 <ul>
@@ -297,12 +296,12 @@ it finds a counter-example. This takes the form: <code>&lt;string&gt; @| &lt;pro
        .And(result <span class="o">&gt;</span><span class="o">=</span> n).Label(<span class="s">"result &gt; #2"</span>)
        .And(result <span class="o">&lt;</span> m <span class="o">+</span> n).Label(<span class="s">"result not sum"</span>);
 }).QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (15647300052025238593,4262782604161212863)
-Last step was invoked with size of 2 and seed of (8528710766969571347,17861641028895781811):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (2135820381698793963,9259582990740806195)
+Last step was invoked with size of 2 and seed of (6917938264310693312,12856530204502659023):
 Label of failing property: result not sum
 Original:
--1
 1
+0
 Shrunk:
 0
 0
@@ -327,8 +326,8 @@ This is useful for displaying intermediate results, for example:</p>
       .And((res <span class="o">&gt;</span> n).Label(<span class="s">"lt2"</span>))
       .Label(<span class="k">string</span>.Format(<span class="s">"evidence = {0}"</span>, res));
 }).QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (336275711152670952,14226251175969994247)
-Last step was invoked with size of 2 and seed of (9142379076117027589,952485636906321213):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (10283254713268650307,13507230217666785315)
+Last step was invoked with size of 2 and seed of (13822766268360398447,9956115351855618503):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1

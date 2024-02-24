@@ -145,12 +145,12 @@ the output on success:</p>
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 1 test (1 shrink) (1667631938653143869,2311529419549755585)
-Last step was invoked with size of 2 and seed of (17558843644835891348,15941068472043735065):
+ListProperties.reverse is original-Falsifiable, after 1 test (1 shrink) (14294970192361054759,15307540745606834831)
+Last step was invoked with size of 2 and seed of (7216979882002268227,13897479485057350077):
 Original:
-[-1; 0]
+[-1; 1]
 Shrunk:
-[1; 0]
+[0; 1]
 with exception:
 System.Exception: Expected true, got false.</code></pre></td></tr></table>
 <p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
