@@ -4,6 +4,7 @@
 open System
 open System.Diagnostics
 open System.IO
+open System.IO.Compression
 open System.Net.Http
 open System.Net.Http.Headers
 open System.Runtime.InteropServices
@@ -12,6 +13,7 @@ open System.Text.Json
 open System.Text.Json.Serialization
 open System.Threading
 open System.Threading.Tasks
+open System.Xml
 
 [<AutoOpen>]
 module Utils =
@@ -332,7 +334,29 @@ let packNuGet (_ : HaveTested) : HavePacked =
     let releaseNotes =
         releaseNotes.Notes
         |> String.concat "\n"
-    runProcess "dotnet" ["pack" ; "-p:IsPacking=true" ; "--configuration" ; "Release" ; $"-p:Version=%s{buildVersion}" ; "--output" ; "bin" ; $"-p:PackageReleaseNotes=%s{releaseNotes}"]
+    runProcess "dotnet" ["pack" ; "--configuration" ; "Release" ; $"-p:Version=%s{buildVersion}" ; "--output" ; "bin" ; $"-p:PackageReleaseNotes=%s{releaseNotes}"]
+
+    // I *believe* it is impossible to have a fixed (not floating) version number from a source reference
+    // via `dotnet pack`. Without this next bit, FsCheck.Xunit vA.B.C depends on >= FsCheck vA.B.C, not
+    // on FsCheck exactly at vA.B.C.
+
+    for package in ["FsCheck.Xunit" ; "FsCheck.NUnit"] do
+        let nupkg = FileInfo (Path.Combine ("bin", $"%s{package}.%s{buildVersion}.nupkg"))
+        let stream = nupkg.Open (FileMode.Open, FileAccess.ReadWrite)
+        use archive = new ZipArchive (stream, ZipArchiveMode.Update)
+        let existingEntry = archive.GetEntry $"%s{package}.nuspec"
+        let desiredContents =
+            use nuspecContents = existingEntry.Open ()
+            let reader = new StreamReader (nuspecContents)
+            let contents = reader.ReadToEnd ()
+            contents.Replace ($" version=\"%s{buildVersion}\"", $" version=\"[%s{buildVersion}]\"")
+        existingEntry.Delete ()
+        let newEntry = archive.CreateEntry $"%s{package}.nuspec"
+        do
+            let newContents = newEntry.Open ()
+            use writer = new StreamWriter (newContents)
+            writer.Write desiredContents
+
     Console.WriteLine "done."
     HavePacked
 

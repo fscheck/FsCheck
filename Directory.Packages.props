@@ -42,7 +42,5 @@
     <PackageVersion Include="xunit.extensibility.core" Version="2.4.1" />
     <PackageVersion Include="xunit.extensibility.execution" Version="[2.4.1, 3.0.0)" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" />
-    <!-- Work around NuGet's inability to do package refs on source dependencies at a pinned version -->
-    <PackageVersion Include="FsCheck" Version="[$(Version)]" />
   </ItemGroup>
 </Project>
