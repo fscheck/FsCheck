@@ -332,7 +332,7 @@ let packNuGet (_ : HaveTested) : HavePacked =
     let releaseNotes =
         releaseNotes.Notes
         |> String.concat "\n"
-    runProcess "dotnet" ["pack" ; "--configuration" ; "Release" ; $"-p:Version=%s{buildVersion}" ; "--output" ; "bin" ; $"-p:PackageReleaseNotes=%s{releaseNotes}"]
+    runProcess "dotnet" ["pack" ; "-p:IsPacking=true" ; "--configuration" ; "Release" ; $"-p:Version=%s{buildVersion}" ; "--output" ; "bin" ; $"-p:PackageReleaseNotes=%s{releaseNotes}"]
     Console.WriteLine "done."
     HavePacked
 

@@ -22,7 +22,10 @@
         <PackageReference Include="FSharp.Core"/>
         <PackageReference Include="xunit.extensibility.execution"/>
     </ItemGroup>
-    <ItemGroup>
+    <ItemGroup Condition="'$(IsPacking)' != 'true'">
         <ProjectReference Include="../FsCheck/FsCheck.fsproj"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(IsPacking)' == 'true'">
+        <PackageReference Include="FsCheck" />
     </ItemGroup>
 </Project>

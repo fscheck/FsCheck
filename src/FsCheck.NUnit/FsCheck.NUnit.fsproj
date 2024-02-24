@@ -15,8 +15,11 @@
         <Compile Include="AssemblyInfo.fs"/>
         <Compile Include="FsCheckPropertyAttribute.fs"/>
     </ItemGroup>
-    <ItemGroup>
+    <ItemGroup Condition="'$(IsPacking)' != 'true'">
         <ProjectReference Include="../FsCheck/FsCheck.fsproj"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(IsPacking)' == 'true'">
+        <PackageReference Include="FsCheck" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="NUnit"/>
