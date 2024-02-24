@@ -569,7 +569,7 @@ let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
     let releaseSpec =
         {
             TagName = releaseNotes.NugetVersion
-            TargetCommitish = "" // the default branch
+            TargetCommitish = "" // if empty, uses the default branch
             Name = releaseNotes.NugetVersion
             Body = releaseNotes.Notes |> String.concat "\n"
             IsDraft = true
