@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Running tests
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Kurt Schelfthout and contributors">
+
+    <link rel="stylesheet" id="theme_link" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/materia/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script> -->
+
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/navbar-fixed-left.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-default.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-custom.css" />
+    <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+    <!-- END SEARCH BOX: this adds support for the search box -->
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-secondary fixed-left" id="fsdocs-menu">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+            <div id="header">
+                <div class="searchbox" id="fsdocs-searchbox">
+                    <label for="search-by">
+                        <i class="fas fa-search"></i>
+                    </label>
+                    <input data-search-input="" id="search-by" type="search" placeholder="Search..." />
+                    <span data-search-clear="">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- END SEARCH BOX: this adds support for the search box -->
+            <ul class="navbar-nav">
+                <li class="nav-header">FsCheck</li>
+                <li class="nav-item"><a class="nav-link" href="http://nuget.org/packages/FsCheck">Get via NuGet</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License (BSD-3-Clause)</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//users.html">Who is using FsCheck?</a></li>
+            
+                <li class="nav-header">Getting started</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//QuickStart.html">Quick Start</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//LearningResources.html">Learning Resources</a></li>
+
+                <li class="nav-header">Documentation</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//Properties.html">Properties</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TestData.html">Generating test data</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//RunningTests.html">Running tests</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TipsAndTricks.html">Tips and Tricks</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTestingNew.html">Model-based testing vNext (Experimental)</a></li>
+                <li class="nav-header">
+  API Reference
+</li>             
+<li class="nav-item">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/index.html">
+    All Namespaces
+  </a>
+</li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="masthead">
+            <h3 class="muted"><a href="https://fscheck.github.io/FsCheck/">FsCheck</a></h3>
+        </div>
+        <hr />
+        <div class="container" id="fsdocs-content">
+            <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="id">FsCheck</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="id">FSharp</span>
+</code></pre>
+<h1><a name="Running-tests" class="anchor" href="#Running-tests">Running tests</a></h1>
+<p>This section describes the various ways in which you can run FsCheck tests:</p>
+<ul>
+<li>
+<p>FsCheck has a built-in test runner that is easy to invoke from F#/C# Interactive, commandline program or any test framework.
+It writes the result of tests to standard output, and you can configure the FsCheck runner to throw an exception on test failure
+to signal the failure to whichever test runner you use.</p>
+</li>
+<li>
+<p>FsCheck.Xunit integrates FsCheck with xUnit.NET to allow you to specify properties in a terse way. Tests written
+this way look like native xUnit.NET tests, except they can take arguments.</p>
+</li>
+<li>
+<p>FsCheck.NUnit integrates FsCheck with NUnit to allow you to specify properties in a terse way. Tests written
+this way look like native NUnit tests, except they can take arguments.</p>
+</li>
+<li>
+<p>FsCheck allows you to register an IRunner implementation that it calls on each outcome and each individual test it runs. This allows
+a tighter integration with a specific test framework, and offers more control over printing of results.</p>
+</li>
+</ul>
+<h2><a name="Using-the-built-in-test-runner" class="anchor" href="#Using-the-built-in-test-runner">Using the built-in test runner</a></h2>
+<h3><a name="Running-a-single-property-from-an-fsx-csx-file-or-a-command-line-runner" class="anchor" href="#Running-a-single-property-from-an-fsx-csx-file-or-a-command-line-runner">Running a single property from an fsx/csx file or a command line runner</a></h3>
+<p>From F# the preferred way of running a property is to use the methods on <code>Check</code>; for C# the preferred way is to use the extension
+methods on the <code>Property</code> type.</p>
+<p><code>Check.One</code> or <code>&lt;property.Check&gt;</code> runs the tests for a single property. It takes as argument an instance of the <code>Config</code> type
+or <code>Configuration</code> type respectively, which allows you to configure many aspects of how the FsCheck test runner works,
+among others the size of the test data and the random seed used (so you can reproduce a run). The <code>Config</code> type is an F#
+record type so is the preferred way to use from F#; for other languages <code>Configuration</code> is a mutable
+version of it so is easier to use.</p>
+<p>Most of the methods on <code>Check</code> and the extension methods like <code>QuickCheck()</code> are a short-hand for running a test with a particular configuration. For example, <code>Check.Quick</code>
+is equivalent to <code>Check.One(Config.Quick, &lt;property&gt;)</code>; respectively <code>&lt;property&gt;.QuickCheck()</code> is a shorthand for <code>&lt;property&gt;.Check(Configuration.Quick)</code>.</p>
+<p>Take note of <code>Config(uration).Verbose</code> and <code>Check.Verbose</code>/<code>VerboseCheck</code>. These will print the arguments for each test, and are useful for example if
+your test loops infinitely on some inputs.</p>
+<p>Also take note of <code>Check.QuickThrowOnFailure</code>/<code>QuickCheckThrowOnFailure()</code> and <code>Check.VerboseThrowOnFailure</code>/<code>VerboseThrowOnFailure()</code>.
+These are intended to be used from unit tests executed through an existing test runner. They'll call the FsCheck runner
+and configure it such that is throws on failure; in all frameworks we are aware of this signals that the test has failed
+and so is an easy way to integrate FsCheck tests with unit tests you may already have.</p>
+<p>Here is an example of how to run a test with a similar configuration to Quick, but that runs 1000 tests and does not print to
+the output on success:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs5', 6)" onmouseover="showTip(event, 'fs5', 6)" class="id">One</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 7)" onmouseover="showTip(event, 'fs6', 7)" class="rt">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 8)" onmouseover="showTip(event, 'fs7', 8)" class="id">Quick</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="id">WithMaxTest</span><span class="pn">(</span><span class="n">1000</span><span class="pn">)</span><span class="pn">.</span><span class="id">WithQuietOnSuccess</span><span class="pn">(</span><span class="k">true</span><span class="pn">)</span><span class="pn">,</span> <span class="k">fun</span> <span class="id">_</span> <span class="k">-&gt;</span> <span class="k">true</span><span class="pn">)</span>
+</code></pre>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">var</span> configuration <span class="o">=</span> Config.Quick
+                          .WithMaxTest(<span class="n">1000</span>)
+                          .WithQuietOnSuccess(<span class="k">true</span>);
+<span class="k">true</span>.ToProperty().Check(configuration);</code></pre></td></tr></table>
+<h3><a name="Running-many-properties-at-once-with-Check-All" class="anchor" href="#Running-many-properties-at-once-with-Check-All">Running many properties at once with Check.All</a></h3>
+<p>Usually, you'll write more than one property to test. FsCheck allows you to group together properties as static members of a class:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="rt">ListProperties</span> <span class="o">=</span>
+  <span class="k">static</span> <span class="k">member</span> <span class="fn">``reverse of reverse is original``</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs9', 10)" onmouseover="showTip(event, 'fs9', 10)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs10', 11)" onmouseover="showTip(event, 'fs10', 11)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs11', 12)" onmouseover="showTip(event, 'fs11', 12)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 13)" onmouseover="showTip(event, 'fs12', 13)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs13', 14)" onmouseover="showTip(event, 'fs13', 14)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs12', 15)" onmouseover="showTip(event, 'fs12', 15)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs13', 16)" onmouseover="showTip(event, 'fs13', 16)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs9', 17)" onmouseover="showTip(event, 'fs9', 17)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 18)" onmouseover="showTip(event, 'fs9', 18)" class="fn">xs</span>
+  <span class="k">static</span> <span class="k">member</span> <span class="fn">``reverse is original``</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs9', 19)" onmouseover="showTip(event, 'fs9', 19)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs10', 20)" onmouseover="showTip(event, 'fs10', 20)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs11', 21)" onmouseover="showTip(event, 'fs11', 21)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 22)" onmouseover="showTip(event, 'fs12', 22)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs13', 23)" onmouseover="showTip(event, 'fs13', 23)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs9', 24)" onmouseover="showTip(event, 'fs9', 24)" class="fn">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 25)" onmouseover="showTip(event, 'fs9', 25)" class="fn">xs</span>
+</code></pre>
+<p>These can be checked at once using:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs4', 26)" onmouseover="showTip(event, 'fs4', 26)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs14', 27)" onmouseover="showTip(event, 'fs14', 27)" class="id">QuickAll</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs15', 28)" onmouseover="showTip(event, 'fs15', 28)" class="rt">ListProperties</span><span class="pn">&gt;</span><span class="pn">(</span><span class="pn">)</span>
+</code></pre>
+<p>FsCheck now also prints the name of each test:</p>
+<table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
+ListProperties.reverse of reverse is original-Ok, passed 100 tests.
+ListProperties.reverse is original-Falsifiable, after 1 test (1 shrink) (1667631938653143869,2311529419549755585)
+Last step was invoked with size of 2 and seed of (17558843644835891348,15941068472043735065):
+Original:
+[-1; 0]
+Shrunk:
+[1; 0]
+with exception:
+System.Exception: Expected true, got false.</code></pre></td></tr></table>
+<p>Since all top level functions of a a module are also compiled as static member of a class with the name of the module,
+you can also use Check.QuickAll to test all the top level functions in a certain module.
+However, the type of a module is not directly accessible via F#, so you can use the following trick:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs4', 29)" onmouseover="showTip(event, 'fs4', 29)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs14', 30)" onmouseover="showTip(event, 'fs14', 30)" class="id">QuickAll</span> <span onmouseout="hideTip(event, 'fs16', 31)" onmouseover="showTip(event, 'fs16', 31)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs15', 32)" onmouseover="showTip(event, 'fs15', 32)" class="rt">ListProperties</span><span class="pn">&gt;</span><span class="pn">.</span><span class="id">DeclaringType</span>
+</code></pre>
+<p>Notice also the counterpart of <code>Check.Verbose</code>: <code>Check.VerboseAll</code>.</p>
+<h3><a name="Running-tests-using-only-modules" class="anchor" href="#Running-tests-using-only-modules">Running tests using only modules</a></h3>
+<p>Arbitrary instances are given as static members of classes, and properties can be grouped together
+as static members of classes. Top level let functions are compiled as static member of their
+enclosing module (which is compiled as a class), and so you can simply define your properties and generators as
+top level let-bound functions, and then register all generators and and all properties at once using the following trick:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs17', 33)" onmouseover="showTip(event, 'fs17', 33)" class="fn">myprop</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs18', 34)" onmouseover="showTip(event, 'fs18', 34)" class="fn">i</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs11', 35)" onmouseover="showTip(event, 'fs11', 35)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs18', 36)" onmouseover="showTip(event, 'fs18', 36)" class="fn">i</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 37)" onmouseover="showTip(event, 'fs19', 37)" class="id">mygen</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 38)" onmouseover="showTip(event, 'fs20', 38)" class="m">ArbMap</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 39)" onmouseover="showTip(event, 'fs21', 39)" class="id">defaults</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 40)" onmouseover="showTip(event, 'fs20', 40)" class="m">ArbMap</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs22', 41)" onmouseover="showTip(event, 'fs22', 41)" class="id">arbitrary</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs11', 42)" onmouseover="showTip(event, 'fs11', 42)" class="vt">int</span><span class="pn">&gt;</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 43)" onmouseover="showTip(event, 'fs23', 43)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs24', 44)" onmouseover="showTip(event, 'fs24', 44)" class="id">mapFilter</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs18', 45)" onmouseover="showTip(event, 'fs18', 45)" class="fn">i</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs25', 46)" onmouseover="showTip(event, 'fs25', 46)" class="id">Math</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs26', 47)" onmouseover="showTip(event, 'fs26', 47)" class="id">Abs</span> <span onmouseout="hideTip(event, 'fs18', 48)" onmouseover="showTip(event, 'fs18', 48)" class="fn">i</span><span class="pn">)</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs18', 49)" onmouseover="showTip(event, 'fs18', 49)" class="fn">i</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs18', 50)" onmouseover="showTip(event, 'fs18', 50)" class="fn">i</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">0</span><span class="pn">)</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs27', 51)" onmouseover="showTip(event, 'fs27', 51)" class="id">helper</span> <span class="o">=</span> <span class="s">&quot;a string&quot;</span>
+<span class="k">let</span> <span class="k">private</span> <span onmouseout="hideTip(event, 'fs28', 52)" onmouseover="showTip(event, 'fs28', 52)" class="id">helper&#39;</span> <span class="o">=</span> <span class="k">true</span>
+
+<span class="k">type</span> <span onmouseout="hideTip(event, 'fs29', 53)" onmouseover="showTip(event, 'fs29', 53)" class="rt">Marker</span> <span class="o">=</span> <span class="k">class</span> <span class="k">end</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs30', 54)" onmouseover="showTip(event, 'fs30', 54)" class="id">config</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 55)" onmouseover="showTip(event, 'fs6', 55)" class="rt">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs31', 56)" onmouseover="showTip(event, 'fs31', 56)" class="id">QuickThrowOnFailure</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs32', 57)" onmouseover="showTip(event, 'fs32', 57)" class="id">WithArbitrary</span><span class="pn">(</span><span class="pn">[</span><span onmouseout="hideTip(event, 'fs16', 58)" onmouseover="showTip(event, 'fs16', 58)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs29', 59)" onmouseover="showTip(event, 'fs29', 59)" class="rt">Marker</span><span class="pn">&gt;</span><span class="pn">.</span><span class="id">DeclaringType</span><span class="pn">]</span><span class="pn">)</span>
+<span onmouseout="hideTip(event, 'fs4', 60)" onmouseover="showTip(event, 'fs4', 60)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs33', 61)" onmouseover="showTip(event, 'fs33', 61)" class="id">All</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs30', 62)" onmouseover="showTip(event, 'fs30', 62)" class="id">config</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs16', 63)" onmouseover="showTip(event, 'fs16', 63)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs29', 64)" onmouseover="showTip(event, 'fs29', 64)" class="rt">Marker</span><span class="pn">&gt;</span><span class="pn">.</span><span class="id">DeclaringType</span><span class="pn">)</span>
+</code></pre>
+<table class="pre"><tr><td><pre><code>--- Checking FSI_0117 ---
+FSI_0117.myprop-Ok, passed 100 tests.
+FSI_0117.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
+<p>The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way
+to get to a module's Type directly.</p>
+<p>FsCheck determines the intent of the function based on its return type:</p>
+<ul>
+<li>
+Properties: public functions that return unit, bool, Property or function of any arguments to those types 
+or Lazy value of any of those types. So <code>myprop</code> is the only property that is run; <code>helper'</code> also returns bool but is private.
+</li>
+<li>Arbitrary instances: return Arbitrary<_></li>
+</ul>
+<p>All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will
+do something with, but do not want them checked or registered, just make them private. FsCheck will ignore those functions.</p>
+<h2><a name="Using-FsCheck-Xunit" class="anchor" href="#Using-FsCheck-Xunit">Using FsCheck.Xunit</a></h2>
+<p>To use the integration install the FsCheck.Xunit nuget package. Then:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 65)" onmouseover="showTip(event, 'fs1', 65)" class="id">FsCheck</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 66)" onmouseover="showTip(event, 'fs1', 66)" class="id">FsCheck</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs34', 67)" onmouseover="showTip(event, 'fs34', 67)" class="id">Xunit</span>
+</code></pre>
+<p>You can now attribute tests with <code>PropertyAttribute</code> (a subclass of xUnit.NET's <code>FactAttribute</code>). Unlike xUnit.NET's facts, these
+methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
+type and the currently registered generators.</p>
+<p>An FsCheck test fails from xUnit.NET's perspective if it finds a counter-example, or if the arguments are exhausted. It
+passes when FsCheck can execute 100 tests (or whatever the configured number of tests is) succesfully.</p>
+<p>The <code>PropertyAttribute</code> allows you to customize how FsCheck will run for that
+method, similar to how you would use the <code>Config</code> type otherwise. For example:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs35', 68)" onmouseover="showTip(event, 'fs35', 68)" class="rt">Property</span><span class="pn">&gt;]</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs36', 69)" onmouseover="showTip(event, 'fs36', 69)" class="fn">``abs(v) % k equals abs(v % k)``</span> <span onmouseout="hideTip(event, 'fs37', 70)" onmouseover="showTip(event, 'fs37', 70)" class="fn">v</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs38', 71)" onmouseover="showTip(event, 'fs38', 71)" class="id">NonZeroInt</span> <span onmouseout="hideTip(event, 'fs39', 72)" onmouseover="showTip(event, 'fs39', 72)" class="fn">k</span><span class="pn">)</span> <span class="o">=</span> 
+    <span class="pn">(</span><span onmouseout="hideTip(event, 'fs40', 73)" onmouseover="showTip(event, 'fs40', 73)" class="fn">abs</span> <span onmouseout="hideTip(event, 'fs37', 74)" onmouseover="showTip(event, 'fs37', 74)" class="fn">v</span><span class="pn">)</span> <span class="o">%</span> <span onmouseout="hideTip(event, 'fs39', 75)" onmouseover="showTip(event, 'fs39', 75)" class="fn">k</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs40', 76)" onmouseover="showTip(event, 'fs40', 76)" class="fn">abs</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs37', 77)" onmouseover="showTip(event, 'fs37', 77)" class="fn">v</span> <span class="o">%</span> <span onmouseout="hideTip(event, 'fs39', 78)" onmouseover="showTip(event, 'fs39', 78)" class="fn">k</span><span class="pn">)</span>
+</code></pre>
+<p>Likely one of the most useful configuration options of <code>PropertyAttribute</code> is the ability to register or override an <code>Arbitrary</code>
+instance just for that test method. You can also use the <code>PropertiesAttribute</code> (note the plural form) to set custom configuration
+options per class, per module, or per assembly. For example:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="rt">Positive</span> <span class="o">=</span>
+    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs41', 79)" onmouseover="showTip(event, 'fs41', 79)" class="fn">Double</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span>
+        <span onmouseout="hideTip(event, 'fs20', 80)" onmouseover="showTip(event, 'fs20', 80)" class="m">ArbMap</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 81)" onmouseover="showTip(event, 'fs21', 81)" class="id">defaults</span>
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 82)" onmouseover="showTip(event, 'fs20', 82)" class="m">ArbMap</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs22', 83)" onmouseover="showTip(event, 'fs22', 83)" class="id">arbitrary</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs42', 84)" onmouseover="showTip(event, 'fs42', 84)" class="vt">float</span><span class="pn">&gt;</span>
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 85)" onmouseover="showTip(event, 'fs23', 85)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs24', 86)" onmouseover="showTip(event, 'fs24', 86)" class="id">mapFilter</span> <span onmouseout="hideTip(event, 'fs40', 87)" onmouseover="showTip(event, 'fs40', 87)" class="fn">abs</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs43', 88)" onmouseover="showTip(event, 'fs43', 88)" class="fn">t</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs43', 89)" onmouseover="showTip(event, 'fs43', 89)" class="fn">t</span> <span class="o">&gt;</span> <span class="n">0.0</span><span class="pn">)</span>
+
+<span class="k">type</span> <span class="rt">Negative</span> <span class="o">=</span>
+    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs41', 90)" onmouseover="showTip(event, 'fs41', 90)" class="fn">Double</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span>
+        <span onmouseout="hideTip(event, 'fs20', 91)" onmouseover="showTip(event, 'fs20', 91)" class="m">ArbMap</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 92)" onmouseover="showTip(event, 'fs21', 92)" class="id">defaults</span>
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 93)" onmouseover="showTip(event, 'fs20', 93)" class="m">ArbMap</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs22', 94)" onmouseover="showTip(event, 'fs22', 94)" class="id">arbitrary</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs42', 95)" onmouseover="showTip(event, 'fs42', 95)" class="vt">float</span><span class="pn">&gt;</span>
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 96)" onmouseover="showTip(event, 'fs23', 96)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs24', 97)" onmouseover="showTip(event, 'fs24', 97)" class="id">mapFilter</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs40', 98)" onmouseover="showTip(event, 'fs40', 98)" class="fn">abs</span> <span class="o">&gt;</span><span class="pn">&gt;</span> <span class="pn">(</span><span class="pn">(</span><span class="o">-</span><span class="pn">)</span> <span class="n">0.0</span><span class="pn">)</span><span class="pn">)</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs43', 99)" onmouseover="showTip(event, 'fs43', 99)" class="fn">t</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs43', 100)" onmouseover="showTip(event, 'fs43', 100)" class="fn">t</span> <span class="o">&lt;</span> <span class="n">0.0</span><span class="pn">)</span>
+
+<span class="k">type</span> <span class="rt">Zero</span> <span class="o">=</span>
+    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs41', 101)" onmouseover="showTip(event, 'fs41', 101)" class="fn">Double</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span>
+        <span class="n">0.0</span>
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs44', 102)" onmouseover="showTip(event, 'fs44', 102)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs45', 103)" onmouseover="showTip(event, 'fs45', 103)" class="id">constant</span>
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 104)" onmouseover="showTip(event, 'fs23', 104)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs46', 105)" onmouseover="showTip(event, 'fs46', 105)" class="id">fromGen</span>
+
+<span class="pn">[&lt;</span><span class="id">assembly</span><span class="pn">:</span> <span class="id">Properties</span><span class="pn">(</span> <span onmouseout="hideTip(event, 'fs47', 106)" onmouseover="showTip(event, 'fs47', 106)" class="id">Arbitrary</span> <span class="o">=</span> <span class="pn">[|</span> <span onmouseout="hideTip(event, 'fs16', 107)" onmouseover="showTip(event, 'fs16', 107)" class="id">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs48', 108)" onmouseover="showTip(event, 'fs48', 108)" class="id">Zero</span><span class="pn">&gt;</span> <span class="pn">|]</span> <span class="pn">)</span><span class="pn">&gt;]</span> <span class="k">do</span><span class="pn">(</span><span class="pn">)</span>
+
+<span class="k">module</span> <span class="m">ModuleWithoutProperties</span> <span class="o">=</span>
+
+    <span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs35', 109)" onmouseover="showTip(event, 'fs35', 109)" class="rt">Property</span><span class="pn">&gt;]</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs49', 110)" onmouseover="showTip(event, 'fs49', 110)" class="fn">``should use Arb instances from assembly``</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 111)" onmouseover="showTip(event, 'fs50', 111)" class="fn">underTest</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs42', 112)" onmouseover="showTip(event, 'fs42', 112)" class="vt">float</span><span class="pn">)</span> <span class="o">=</span>
+        <span onmouseout="hideTip(event, 'fs50', 113)" onmouseover="showTip(event, 'fs50', 113)" class="fn">underTest</span> <span class="o">=</span> <span class="n">0.0</span>
+
+    <span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs35', 114)" onmouseover="showTip(event, 'fs35', 114)" class="rt">Property</span><span class="pn">(</span> <span onmouseout="hideTip(event, 'fs47', 115)" onmouseover="showTip(event, 'fs47', 115)" class="id">Arbitrary</span><span class="o">=</span><span class="pn">[|</span> <span onmouseout="hideTip(event, 'fs16', 116)" onmouseover="showTip(event, 'fs16', 116)" class="id">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs51', 117)" onmouseover="showTip(event, 'fs51', 117)" class="id">Positive</span><span class="pn">&gt;</span> <span class="pn">|]</span> <span class="pn">)</span><span class="pn">&gt;]</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs52', 118)" onmouseover="showTip(event, 'fs52', 118)" class="fn">``should use Arb instance on method``</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 119)" onmouseover="showTip(event, 'fs50', 119)" class="fn">underTest</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs42', 120)" onmouseover="showTip(event, 'fs42', 120)" class="vt">float</span><span class="pn">)</span> <span class="o">=</span>
+        <span onmouseout="hideTip(event, 'fs50', 121)" onmouseover="showTip(event, 'fs50', 121)" class="fn">underTest</span> <span class="o">&gt;</span> <span class="n">0.0</span>
+
+<span class="pn">[&lt;</span><span class="id">Properties</span><span class="pn">(</span> <span onmouseout="hideTip(event, 'fs47', 122)" onmouseover="showTip(event, 'fs47', 122)" class="id">Arbitrary</span><span class="o">=</span><span class="pn">[|</span> <span onmouseout="hideTip(event, 'fs16', 123)" onmouseover="showTip(event, 'fs16', 123)" class="id">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs53', 124)" onmouseover="showTip(event, 'fs53', 124)" class="id">Negative</span><span class="pn">&gt;</span> <span class="pn">|]</span> <span class="pn">)</span><span class="pn">&gt;]</span>
+<span class="k">module</span> <span class="m">ModuleWithProperties</span> <span class="o">=</span>
+
+    <span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs35', 125)" onmouseover="showTip(event, 'fs35', 125)" class="rt">Property</span><span class="pn">&gt;]</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs54', 126)" onmouseover="showTip(event, 'fs54', 126)" class="fn">``should use Arb instances from enclosing module``</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 127)" onmouseover="showTip(event, 'fs50', 127)" class="fn">underTest</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs42', 128)" onmouseover="showTip(event, 'fs42', 128)" class="vt">float</span><span class="pn">)</span> <span class="o">=</span>
+        <span onmouseout="hideTip(event, 'fs50', 129)" onmouseover="showTip(event, 'fs50', 129)" class="fn">underTest</span> <span class="o">&lt;</span> <span class="n">0.0</span>
+
+    <span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs35', 130)" onmouseover="showTip(event, 'fs35', 130)" class="rt">Property</span><span class="pn">(</span> <span onmouseout="hideTip(event, 'fs47', 131)" onmouseover="showTip(event, 'fs47', 131)" class="id">Arbitrary</span><span class="o">=</span><span class="pn">[|</span> <span onmouseout="hideTip(event, 'fs16', 132)" onmouseover="showTip(event, 'fs16', 132)" class="id">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs51', 133)" onmouseover="showTip(event, 'fs51', 133)" class="id">Positive</span><span class="pn">&gt;</span> <span class="pn">|]</span> <span class="pn">)</span><span class="pn">&gt;]</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs52', 134)" onmouseover="showTip(event, 'fs52', 134)" class="fn">``should use Arb instance on method``</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 135)" onmouseover="showTip(event, 'fs50', 135)" class="fn">underTest</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs42', 136)" onmouseover="showTip(event, 'fs42', 136)" class="vt">float</span><span class="pn">)</span> <span class="o">=</span>
+        <span onmouseout="hideTip(event, 'fs50', 137)" onmouseover="showTip(event, 'fs50', 137)" class="fn">underTest</span> <span class="o">&gt;</span> <span class="n">0.0</span>
+</code></pre>
+<p>Using <code>PropertiesAttribute</code> and <code>PropertyAttribute</code> you can set any configuration. For example in following module:</p>
+<ul>
+<li>property 1 would use default config + overriden MaxTest = 10 and EndSize = 10 from <code>Properties</code> attribute</li>
+<li>property 2 would use default config + overriden EndSize = 10 from <code>Properties</code> attribute and MaxTest = 500 from <code>Property</code> attribute</li>
+<li>property 3 would use default config + overriden MaxTest = 10 and EndSize = 10 from <code>Properties</code> attribute and Replay = "123,456" from <code>Property</code> attribute</li>
+</ul>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">[&lt;</span><span class="id">Properties</span><span class="pn">(</span><span class="id">MaxTest</span> <span class="o">=</span> <span class="n">10</span><span class="pn">,</span> <span class="id">EndSize</span> <span class="o">=</span> <span class="n">10</span><span class="pn">)</span><span class="pn">&gt;]</span> 
+<span class="k">module</span> <span class="m">Properties</span> <span class="o">=</span>
+
+    <span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs35', 138)" onmouseover="showTip(event, 'fs35', 138)" class="rt">Property</span><span class="pn">&gt;]</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs55', 139)" onmouseover="showTip(event, 'fs55', 139)" class="fn">``property 1``</span> <span onmouseout="hideTip(event, 'fs56', 140)" onmouseover="showTip(event, 'fs56', 140)" class="fn">input</span> <span class="o">=</span>
+        <span class="k">true</span>
+
+    <span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs35', 141)" onmouseover="showTip(event, 'fs35', 141)" class="rt">Property</span><span class="pn">(</span><span class="id">MaxTest</span> <span class="o">=</span> <span class="n">500</span><span class="pn">)</span><span class="pn">&gt;]</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs57', 142)" onmouseover="showTip(event, 'fs57', 142)" class="fn">``property 2``</span> <span onmouseout="hideTip(event, 'fs56', 143)" onmouseover="showTip(event, 'fs56', 143)" class="fn">input</span> <span class="o">=</span>
+        <span class="k">true</span>
+
+    <span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs35', 144)" onmouseover="showTip(event, 'fs35', 144)" class="rt">Property</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs58', 145)" onmouseover="showTip(event, 'fs58', 145)" class="id">Replay</span> <span class="o">=</span> <span class="s">&quot;123,456&quot;</span><span class="pn">)</span><span class="pn">&gt;]</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs59', 146)" onmouseover="showTip(event, 'fs59', 146)" class="fn">``property 3``</span> <span onmouseout="hideTip(event, 'fs56', 147)" onmouseover="showTip(event, 'fs56', 147)" class="fn">input</span> <span class="o">=</span>
+        <span class="k">true</span>
+</code></pre>
+<h3><a name="Using-FsCheck-Xunit-with-TestDriven-Net" class="anchor" href="#Using-FsCheck-Xunit-with-TestDriven-Net">Using FsCheck.Xunit with TestDriven.Net</a></h3>
+<p><a href="http://testdriven.net">TestDriven.Net</a> is a Visual Studio add-in that enables you to easily run a variety of tests
+while working with code in the IDE. Out of the box, TestDriven.Net can run tests written with FsCheck.Xunit.</p>
+<p>However, the user experience may, by default, be slightly less than optimal. TestDriven.Net outputs the state of the
+test run in an unobtrusive manner, but if test failures occur, it outputs the result of the failing tests to Visual
+Studio's Output window. If you have Visual Studio configured in such a way that the Output window only appears if there
+actually <em>is</em> any output, you may be used to interpret the appearance of the Output window as a test failure.</p>
+<p>Since the Output window also appears if anything is written to the console in general, this can produce false
+positives. If you're accustomed to interpret the appearance of the Output window as a sign of a test failure, it can be
+a little jarring that FsCheck by default always reports a bit of output on success.</p>
+<p>If, for that, or other reasons, you want to disable output on success, you can do so:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs35', 148)" onmouseover="showTip(event, 'fs35', 148)" class="rt">Property</span><span class="pn">(</span><span class="id">QuietOnSuccess</span> <span class="o">=</span> <span class="k">true</span><span class="pn">)</span><span class="pn">&gt;]</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs60', 149)" onmouseover="showTip(event, 'fs60', 149)" class="fn">``abs(v) % k equals abs(v % k) ``</span> <span onmouseout="hideTip(event, 'fs37', 150)" onmouseover="showTip(event, 'fs37', 150)" class="fn">v</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs38', 151)" onmouseover="showTip(event, 'fs38', 151)" class="id">NonZeroInt</span> <span onmouseout="hideTip(event, 'fs39', 152)" onmouseover="showTip(event, 'fs39', 152)" class="fn">k</span><span class="pn">)</span> <span class="o">=</span> 
+    <span class="pn">(</span><span onmouseout="hideTip(event, 'fs40', 153)" onmouseover="showTip(event, 'fs40', 153)" class="fn">abs</span> <span onmouseout="hideTip(event, 'fs37', 154)" onmouseover="showTip(event, 'fs37', 154)" class="fn">v</span><span class="pn">)</span> <span class="o">%</span> <span onmouseout="hideTip(event, 'fs39', 155)" onmouseover="showTip(event, 'fs39', 155)" class="fn">k</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs40', 156)" onmouseover="showTip(event, 'fs40', 156)" class="fn">abs</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs37', 157)" onmouseover="showTip(event, 'fs37', 157)" class="fn">v</span> <span class="o">%</span> <span onmouseout="hideTip(event, 'fs39', 158)" onmouseover="showTip(event, 'fs39', 158)" class="fn">k</span><span class="pn">)</span>
+</code></pre>
+<p>Setting <code>QuietOnSuccess = true</code> only suppresses the output in case of success; in the case of test failures, output
+appears as normal.</p>
+<h3><a name="Capturing-output-when-using" class="anchor" href="#Capturing-output-when-using">Capturing output when using <code>FactAttribute</code></a></h3>
+<p>xUnit 2 doesn't capture messages written to the console but instead provides <code>ITestOutputHelper</code> to <a href="https://xunit.github.io/docs/capturing-output.html">capture output</a>.
+<code>ITestOutputHelper</code> has a single method <code>WriteLine</code> and xUnit will automatically pass it in as a constructor argument.
+FsCheck.Xunit provides overloads for <code>Property.QuickCheck</code>, <code>Property.QuickCheckThrowOnFailure</code>, <code>Property.VerboseCheck</code> and <code>Property.VerboseCheckThrowOnFailure</code>
+that you can pass an <code>ITestOutputHelper</code> so that xUnit captures FsCheck messages:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs61', 159)" onmouseover="showTip(event, 'fs61', 159)" class="fn">using</span> <span onmouseout="hideTip(event, 'fs3', 160)" onmouseover="showTip(event, 'fs3', 160)" class="id">System</span><span class="pn">;</span>
+<span onmouseout="hideTip(event, 'fs61', 161)" onmouseover="showTip(event, 'fs61', 161)" class="fn">using</span> <span class="id">FsCheck</span><span class="pn">;</span>
+<span onmouseout="hideTip(event, 'fs61', 162)" onmouseover="showTip(event, 'fs61', 162)" class="fn">using</span> <span class="id">FsCheck</span><span class="pn">.</span><span class="id">Xunit</span><span class="pn">;</span>
+<span onmouseout="hideTip(event, 'fs61', 163)" onmouseover="showTip(event, 'fs61', 163)" class="fn">using</span> <span class="id">Xunit</span><span class="pn">;</span>
+<span onmouseout="hideTip(event, 'fs61', 164)" onmouseover="showTip(event, 'fs61', 164)" class="fn">using</span> <span class="id">Xunit</span><span class="pn">.</span><span class="id">Abstractions</span><span class="pn">;</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="id">Test</span>
+<span class="pn">{</span>
+    <span class="k">private</span> <span class="id">readonly</span> <span class="id">ITestOutputHelper</span> <span class="id">_TestOutputHelper</span><span class="pn">;</span>
+    <span class="k">public</span> <span class="id">Test</span><span class="pn">(</span><span class="id">ITestOutputHelper</span> <span class="id">testOutputHelper</span><span class="pn">)</span>
+    <span class="pn">{</span>
+        <span class="id">_TestOutputHelper</span> <span class="o">=</span> <span class="id">testOutputHelper</span><span class="pn">;</span>
+    <span class="pn">}</span>
+
+    <span class="pn">[</span><span class="id">Fact</span><span class="pn">]</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="id">Test1</span><span class="pn">(</span><span class="pn">)</span>
+    <span class="pn">{</span>
+        <span class="id">Prop</span>
+            <span class="pn">.</span><span class="id">ForAll</span><span class="pn">(</span><span class="o">..</span><span class="pn">.</span><span class="pn">)</span>
+            <span class="pn">.</span><span class="id">VerboseCheckThrowOnFailure</span><span class="pn">(</span><span class="id">_TestOutputHelper</span><span class="pn">)</span><span class="pn">;</span>
+    <span class="pn">}</span>
+<span class="pn">}</span>
+</code></pre>
+<h2><a name="Using-FsCheck-NUnit" class="anchor" href="#Using-FsCheck-NUnit">Using FsCheck.NUnit</a></h2>
+<p>To use the integration with NUnit 3 install the FsCheck.NUnit nuget package.
+Make sure your project(s) has target .NET <code>4.5</code> or greater.
+Then open FsCheck.NUnit.</p>
+<p>You can now attribute tests with <code>PropertyAttribute</code> (a subclass of NUnit's <code>TestAttribute</code>). Unlike NUnit tests, these
+methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
+type and the currently registered generators.</p>
+<p>An FsCheck test fails from NUnit's perspective if it finds a counter-example, or if the arguments are exhausted. It
+passes when FsCheck can execute 100 tests (or whatever the configured number of tests is) succesfully.</p>
+<p>The <code>PropertyAttribute</code> allows you to customize how FsCheck will run for that
+method, similar to how you would use the <code>Config</code> type otherwise.</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 165)" onmouseover="showTip(event, 'fs1', 165)" class="id">FsCheck</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs62', 166)" onmouseover="showTip(event, 'fs62', 166)" class="id">NUnit</span>
+
+<span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs63', 167)" onmouseover="showTip(event, 'fs63', 167)" class="rt">Property</span><span class="pn">&gt;]</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs64', 168)" onmouseover="showTip(event, 'fs64', 168)" class="fn">``Reverse of reverse of a list is the original list ``</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs9', 169)" onmouseover="showTip(event, 'fs9', 169)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs10', 170)" onmouseover="showTip(event, 'fs10', 170)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs11', 171)" onmouseover="showTip(event, 'fs11', 171)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs12', 172)" onmouseover="showTip(event, 'fs12', 172)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs13', 173)" onmouseover="showTip(event, 'fs13', 173)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs12', 174)" onmouseover="showTip(event, 'fs12', 174)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs13', 175)" onmouseover="showTip(event, 'fs13', 175)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs9', 176)" onmouseover="showTip(event, 'fs9', 176)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 177)" onmouseover="showTip(event, 'fs9', 177)" class="fn">xs</span>
+</code></pre>
+<p>Note: the NUnit integration doesn't have the ability, like FsCheck.Xunit, to override <code>Arbitrary</code> instances on a per class
+or per module basis. Otherwise, it is very similar.</p>
+<h2><a name="Implementing-IRunner" class="anchor" href="#Implementing-IRunner">Implementing IRunner</a></h2>
+<h3><a name="Example-1-to-integrate-FsCheck-with-other-unit-testing-frameworks" class="anchor" href="#Example-1-to-integrate-FsCheck-with-other-unit-testing-frameworks">Example 1: to integrate FsCheck with other unit testing frameworks</a></h3>
+<p>The <code>Config</code> type that can be passed to the <code>Check.One</code> or <code>Check.All</code> methods takes an <code>IRunner</code> as argument. This i
+nterface has the following methods:</p>
+<ul>
+<li><code>OnStartFixture</code> is called when FsCheck is testing all the methods on a type, before starting any tests.</li>
+<li><code>OnArguments</code> is called after every test, passing the implementation the test number, the arguments and the every function.</li>
+<li><code>OnShrink</code> is called at every succesful shrink.</li>
+<li>
+<code>OnFinished</code> is called with the name of the test and the outcome of the overall test run. This is used in the example below 
+to call Assert statements from a particular unit testing framework - allowing FsCheck to integrate easily. You can leverage
+another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.
+</li>
+</ul>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs65', 178)" onmouseover="showTip(event, 'fs65', 178)" class="id">testRunner</span> <span class="o">=</span>
+  <span class="pn">{</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs66', 179)" onmouseover="showTip(event, 'fs66', 179)" class="if">IRunner</span> <span class="k">with</span>
+      <span class="k">member</span> <span class="id">__</span><span class="pn">.</span><span class="fn">OnStartFixture</span> <span onmouseout="hideTip(event, 'fs67', 180)" onmouseover="showTip(event, 'fs67', 180)" class="fn">t</span> <span class="o">=</span> <span class="pn">(</span><span class="pn">)</span>
+      <span class="k">member</span> <span onmouseout="hideTip(event, 'fs68', 181)" onmouseover="showTip(event, 'fs68', 181)" class="id">__</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs69', 182)" onmouseover="showTip(event, 'fs69', 182)" class="fn">OnArguments</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs70', 183)" onmouseover="showTip(event, 'fs70', 183)" class="fn">ntest</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs71', 184)" onmouseover="showTip(event, 'fs71', 184)" class="fn">args</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs72', 185)" onmouseover="showTip(event, 'fs72', 185)" class="fn">every</span><span class="pn">)</span> <span class="o">=</span> <span class="pn">(</span><span class="pn">)</span>
+      <span class="k">member</span> <span onmouseout="hideTip(event, 'fs68', 186)" onmouseover="showTip(event, 'fs68', 186)" class="id">__</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs73', 187)" onmouseover="showTip(event, 'fs73', 187)" class="fn">OnShrink</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs71', 188)" onmouseover="showTip(event, 'fs71', 188)" class="fn">args</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs74', 189)" onmouseover="showTip(event, 'fs74', 189)" class="fn">everyShrink</span><span class="pn">)</span> <span class="o">=</span> <span class="pn">(</span><span class="pn">)</span>
+      <span class="k">member</span> <span onmouseout="hideTip(event, 'fs68', 190)" onmouseover="showTip(event, 'fs68', 190)" class="id">__</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs75', 191)" onmouseover="showTip(event, 'fs75', 191)" class="fn">OnFinished</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs76', 192)" onmouseover="showTip(event, 'fs76', 192)" class="fn">name</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs77', 193)" onmouseover="showTip(event, 'fs77', 193)" class="fn">testResult</span><span class="pn">)</span> <span class="o">=</span> 
+          <span class="k">match</span> <span onmouseout="hideTip(event, 'fs77', 194)" onmouseover="showTip(event, 'fs77', 194)" class="fn">testResult</span> <span class="k">with</span> 
+          <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs78', 195)" onmouseover="showTip(event, 'fs78', 195)" class="rt">TestResult</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs79', 196)" onmouseover="showTip(event, 'fs79', 196)" class="id">Passed</span> <span class="id">_</span> <span class="k">-&gt;</span> <span class="pn">(</span><span class="pn">)</span> <span class="c">//let the test runner know that the test passed</span>
+          <span class="pn">|</span> <span class="id">_</span> <span class="k">-&gt;</span> <span class="pn">(</span><span class="pn">)</span> <span class="c">// test failed, or other problem. Notify test runner. Runner.onFinishedToString name testResult</span>
+  <span class="pn">}</span>
+   
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs80', 197)" onmouseover="showTip(event, 'fs80', 197)" class="id">withxUnitConfig</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 198)" onmouseover="showTip(event, 'fs6', 198)" class="rt">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs81', 199)" onmouseover="showTip(event, 'fs81', 199)" class="id">Default</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs82', 200)" onmouseover="showTip(event, 'fs82', 200)" class="id">WithRunner</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs65', 201)" onmouseover="showTip(event, 'fs65', 201)" class="id">testRunner</span><span class="pn">)</span>
+</code></pre>
+<h3><a name="Example-2-to-customize-printing-of-generated-arguments" class="anchor" href="#Example-2-to-customize-printing-of-generated-arguments">Example 2: to customize printing of generated arguments</a></h3>
+<p>By default, FsCheck prints generated arguments using <code>sprintf "%A"</code>, or structured formatting. This usually does what you expect,
+i.e. for primitive types the value, for objects the ToString override and so on. If it does not (A motivating case is
+testing with COM objects - overriding ToString is not an option and structured formatting does not do anything useful with it),
+you can use the <code>label</code> combinator to solve this on a per property basis, but a more structured solution can be achieved by
+implementing <code>IRunner</code>. For example:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs83', 202)" onmouseover="showTip(event, 'fs83', 202)" class="fn">formatterRunner</span> <span onmouseout="hideTip(event, 'fs84', 203)" onmouseover="showTip(event, 'fs84', 203)" class="fn">formatter</span> <span class="o">=</span>
+  <span class="pn">{</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs66', 204)" onmouseover="showTip(event, 'fs66', 204)" class="if">IRunner</span> <span class="k">with</span>
+      <span class="k">member</span> <span onmouseout="hideTip(event, 'fs85', 205)" onmouseover="showTip(event, 'fs85', 205)" class="fn">x</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs86', 206)" onmouseover="showTip(event, 'fs86', 206)" class="fn">OnStartFixture</span> <span onmouseout="hideTip(event, 'fs67', 207)" onmouseover="showTip(event, 'fs67', 207)" class="fn">t</span> <span class="o">=</span>
+          <span onmouseout="hideTip(event, 'fs87', 208)" onmouseover="showTip(event, 'fs87', 208)" class="fn">printf</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s">&quot;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs88', 209)" onmouseover="showTip(event, 'fs88', 209)" class="m">Runner</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs89', 210)" onmouseover="showTip(event, 'fs89', 210)" class="id">onStartFixtureToString</span> <span onmouseout="hideTip(event, 'fs67', 211)" onmouseover="showTip(event, 'fs67', 211)" class="fn">t</span><span class="pn">)</span>
+      <span class="k">member</span> <span onmouseout="hideTip(event, 'fs85', 212)" onmouseover="showTip(event, 'fs85', 212)" class="fn">x</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs69', 213)" onmouseover="showTip(event, 'fs69', 213)" class="fn">OnArguments</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs70', 214)" onmouseover="showTip(event, 'fs70', 214)" class="fn">ntest</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs71', 215)" onmouseover="showTip(event, 'fs71', 215)" class="fn">args</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs72', 216)" onmouseover="showTip(event, 'fs72', 216)" class="fn">every</span><span class="pn">)</span> <span class="o">=</span>
+          <span onmouseout="hideTip(event, 'fs87', 217)" onmouseover="showTip(event, 'fs87', 217)" class="fn">printf</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s">&quot;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs72', 218)" onmouseover="showTip(event, 'fs72', 218)" class="fn">every</span> <span onmouseout="hideTip(event, 'fs70', 219)" onmouseover="showTip(event, 'fs70', 219)" class="fn">ntest</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs71', 220)" onmouseover="showTip(event, 'fs71', 220)" class="fn">args</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs12', 221)" onmouseover="showTip(event, 'fs12', 221)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs90', 222)" onmouseover="showTip(event, 'fs90', 222)" class="id">map</span> <span onmouseout="hideTip(event, 'fs84', 223)" onmouseover="showTip(event, 'fs84', 223)" class="fn">formatter</span><span class="pn">)</span><span class="pn">)</span>
+      <span class="k">member</span> <span onmouseout="hideTip(event, 'fs85', 224)" onmouseover="showTip(event, 'fs85', 224)" class="fn">x</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs73', 225)" onmouseover="showTip(event, 'fs73', 225)" class="fn">OnShrink</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs71', 226)" onmouseover="showTip(event, 'fs71', 226)" class="fn">args</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs74', 227)" onmouseover="showTip(event, 'fs74', 227)" class="fn">everyShrink</span><span class="pn">)</span> <span class="o">=</span>
+          <span onmouseout="hideTip(event, 'fs87', 228)" onmouseover="showTip(event, 'fs87', 228)" class="fn">printf</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s">&quot;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs74', 229)" onmouseover="showTip(event, 'fs74', 229)" class="fn">everyShrink</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs71', 230)" onmouseover="showTip(event, 'fs71', 230)" class="fn">args</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs12', 231)" onmouseover="showTip(event, 'fs12', 231)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs90', 232)" onmouseover="showTip(event, 'fs90', 232)" class="id">map</span> <span onmouseout="hideTip(event, 'fs84', 233)" onmouseover="showTip(event, 'fs84', 233)" class="fn">formatter</span><span class="pn">)</span><span class="pn">)</span>
+      <span class="k">member</span> <span onmouseout="hideTip(event, 'fs85', 234)" onmouseover="showTip(event, 'fs85', 234)" class="fn">x</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs75', 235)" onmouseover="showTip(event, 'fs75', 235)" class="fn">OnFinished</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs76', 236)" onmouseover="showTip(event, 'fs76', 236)" class="fn">name</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs77', 237)" onmouseover="showTip(event, 'fs77', 237)" class="fn">testResult</span><span class="pn">)</span> <span class="o">=</span> 
+          <span class="k">let</span> <span onmouseout="hideTip(event, 'fs91', 238)" onmouseover="showTip(event, 'fs91', 238)" class="fn">testResult&#39;</span> <span class="o">=</span> <span class="k">match</span> <span onmouseout="hideTip(event, 'fs77', 239)" onmouseover="showTip(event, 'fs77', 239)" class="fn">testResult</span> <span class="k">with</span> 
+                              <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs78', 240)" onmouseover="showTip(event, 'fs78', 240)" class="rt">TestResult</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs92', 241)" onmouseover="showTip(event, 'fs92', 241)" class="id">Failed</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs93', 242)" onmouseover="showTip(event, 'fs93', 242)" class="fn">testData</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs94', 243)" onmouseover="showTip(event, 'fs94', 243)" class="fn">origArgs</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs95', 244)" onmouseover="showTip(event, 'fs95', 244)" class="fn">shrunkArgs</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs96', 245)" onmouseover="showTip(event, 'fs96', 245)" class="fn">outCome</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs97', 246)" onmouseover="showTip(event, 'fs97', 246)" class="fn">seed</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs98', 247)" onmouseover="showTip(event, 'fs98', 247)" class="fn">seed2</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs99', 248)" onmouseover="showTip(event, 'fs99', 248)" class="fn">size</span><span class="pn">)</span> <span class="k">-&gt;</span> 
+                                  <span onmouseout="hideTip(event, 'fs78', 249)" onmouseover="showTip(event, 'fs78', 249)" class="rt">TestResult</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs92', 250)" onmouseover="showTip(event, 'fs92', 250)" class="id">Failed</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs93', 251)" onmouseover="showTip(event, 'fs93', 251)" class="fn">testData</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs94', 252)" onmouseover="showTip(event, 'fs94', 252)" class="fn">origArgs</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs12', 253)" onmouseover="showTip(event, 'fs12', 253)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs90', 254)" onmouseover="showTip(event, 'fs90', 254)" class="id">map</span> <span onmouseout="hideTip(event, 'fs84', 255)" onmouseover="showTip(event, 'fs84', 255)" class="fn">formatter</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs95', 256)" onmouseover="showTip(event, 'fs95', 256)" class="fn">shrunkArgs</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs12', 257)" onmouseover="showTip(event, 'fs12', 257)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs90', 258)" onmouseover="showTip(event, 'fs90', 258)" class="id">map</span> <span onmouseout="hideTip(event, 'fs84', 259)" onmouseover="showTip(event, 'fs84', 259)" class="fn">formatter</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs96', 260)" onmouseover="showTip(event, 'fs96', 260)" class="fn">outCome</span><span class="pn">,</span><span onmouseout="hideTip(event, 'fs97', 261)" onmouseover="showTip(event, 'fs97', 261)" class="fn">seed</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs98', 262)" onmouseover="showTip(event, 'fs98', 262)" class="fn">seed2</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs99', 263)" onmouseover="showTip(event, 'fs99', 263)" class="fn">size</span><span class="pn">)</span>
+                              <span class="pn">|</span> <span onmouseout="hideTip(event, 'fs100', 264)" onmouseover="showTip(event, 'fs100', 264)" class="fn">t</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs100', 265)" onmouseover="showTip(event, 'fs100', 265)" class="fn">t</span>
+          <span onmouseout="hideTip(event, 'fs87', 266)" onmouseover="showTip(event, 'fs87', 266)" class="fn">printf</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s">&quot;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs88', 267)" onmouseover="showTip(event, 'fs88', 267)" class="m">Runner</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs101', 268)" onmouseover="showTip(event, 'fs101', 268)" class="id">onFinishedToString</span> <span onmouseout="hideTip(event, 'fs76', 269)" onmouseover="showTip(event, 'fs76', 269)" class="fn">name</span> <span onmouseout="hideTip(event, 'fs91', 270)" onmouseover="showTip(event, 'fs91', 270)" class="fn">testResult&#39;</span><span class="pn">)</span> 
+  <span class="pn">}</span>
+</code></pre>
+<h3><a name="Using-FsCheck-NUnit-with-TestDriven-Net" class="anchor" href="#Using-FsCheck-NUnit-with-TestDriven-Net">Using FsCheck.NUnit with TestDriven.Net</a></h3>
+<p><a href="http://testdriven.net">TestDriven.Net</a> is a Visual Studio add-in that enables you to easily run a variety of tests
+while working with code in the IDE. Out of the box, TestDriven.Net can run tests written with FsCheck.NUnit.</p>
+<p>However, the user experience may, by default, be slightly less than optimal. TestDriven.Net outputs the state of the
+test run in an unobtrusive manner, but if test failures occur, it outputs the result of the failing tests to Visual
+Studio's Output window. If you have Visual Studio configured in such a way that the Output window only appears if there
+actually <em>is</em> any output, you may be used to interpret the appearance of the Output window as a test failure.</p>
+<p>Since the Output window also appears if anything is written to the console in general, this can produce false
+positives. If you're accustomed to interpret the appearance of the Output window as a sign of a test failure, it can be
+a little jarring that FsCheck by default always reports a bit of output on success.</p>
+<p>If, for that, or other reasons, you want to disable output on success, you can do so:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs63', 271)" onmouseover="showTip(event, 'fs63', 271)" class="rt">Property</span><span class="pn">(</span><span class="id">QuietOnSuccess</span> <span class="o">=</span> <span class="k">true</span><span class="pn">)</span><span class="pn">&gt;]</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs102', 272)" onmouseover="showTip(event, 'fs102', 272)" class="fn">revUnit</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs103', 273)" onmouseover="showTip(event, 'fs103', 273)" class="fn">x</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs104', 274)" onmouseover="showTip(event, 'fs104', 274)" class="vt">char</span><span class="pn">)</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs12', 275)" onmouseover="showTip(event, 'fs12', 275)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs13', 276)" onmouseover="showTip(event, 'fs13', 276)" class="id">rev</span> <span class="pn">[</span><span onmouseout="hideTip(event, 'fs103', 277)" onmouseover="showTip(event, 'fs103', 277)" class="fn">x</span><span class="pn">]</span> <span class="o">=</span> <span class="pn">[</span><span onmouseout="hideTip(event, 'fs103', 278)" onmouseover="showTip(event, 'fs103', 278)" class="fn">x</span><span class="pn">]</span>
+</code></pre>
+<p>Setting <code>QuietOnSuccess = true</code> only suppresses the output in case of success; in the case of test failures, output
+appears as normal.</p>
+
+            <div class="fsdocs-tip" id="fs1">namespace FsCheck</div>
+<div class="fsdocs-tip" id="fs2">namespace FsCheck.FSharp</div>
+<div class="fsdocs-tip" id="fs3">namespace System</div>
+<div class="fsdocs-tip" id="fs4">type Check =<br />&#160;&#160;static member All : config:Config * test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member Method : config:Config * methodInfo:MethodInfo * ?target:obj -&gt; unit<br />&#160;&#160;static member One : config:Config * property:&#39;Testable -&gt; unit + 1 overload<br />&#160;&#160;static member Quick : property:&#39;Testable -&gt; unit + 1 overload<br />&#160;&#160;static member QuickAll : test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member QuickThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;static member QuickThrowOnFailureAll : test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member Verbose : property:&#39;Testable -&gt; unit + 1 overload<br />&#160;&#160;static member VerboseAll : test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member VerboseThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;...</div>
+<div class="fsdocs-tip" id="fs5">static member Check.One : config:Config * property:&#39;Testable -&gt; unit<br />static member Check.One : name:string * config:Config * property:&#39;Testable -&gt; unit</div>
+<div class="fsdocs-tip" id="fs6">type Config =<br />&#160;&#160;private | Config of {| ArbMap: IArbMap; EndSize: int; Every: (int -&gt; obj list -&gt; string); EveryShrink: (obj list -&gt; string); MaxRejected: int; MaxTest: int; Name: string; ParallelRunConfig: ParallelRunConfig option; QuietOnSuccess: bool; Replay: Replay option; Runner: IRunner; StartSize: int |}<br />&#160;&#160;&#160;&#160;member WithArbitrary : arbitrary:seq&lt;#Type&gt; -&gt; Config<br />&#160;&#160;&#160;&#160;member WithEndSize : endSize:int -&gt; Config<br />&#160;&#160;&#160;&#160;member WithEvery : every:(int -&gt; obj list -&gt; string) -&gt; Config<br />&#160;&#160;&#160;&#160;member WithEveryShrink : everyShrink:(obj list -&gt; string) -&gt; Config<br />&#160;&#160;&#160;&#160;member WithMaxRejected : maxRejected:int -&gt; Config<br />&#160;&#160;&#160;&#160;member WithMaxTest : maxTest:int -&gt; Config<br />&#160;&#160;&#160;&#160;member WithName : name:string -&gt; Config<br />&#160;&#160;&#160;&#160;member WithParallelRunConfig : config:ParallelRunConfig option -&gt; Config<br />&#160;&#160;&#160;&#160;member WithQuietOnSuccess : quietOnSuccess:bool -&gt; Config<br />&#160;&#160;&#160;&#160;member WithReplay : replay:Replay option -&gt; Config<br />&#160;&#160;&#160;&#160;...</div>
+<div class="fsdocs-tip" id="fs7">property Config.Quick: Config with get</div>
+<div class="fsdocs-tip" id="fs8">member Config.WithMaxTest : maxTest:int -&gt; Config</div>
+<div class="fsdocs-tip" id="fs9">val xs : int list</div>
+<div class="fsdocs-tip" id="fs10">type &#39;T list = List&lt;&#39;T&gt;</div>
+<div class="fsdocs-tip" id="fs11">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />[&lt;Struct&gt;]<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; =<br />&#160;&#160;int</div>
+<div class="fsdocs-tip" id="fs12">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyList&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetReverseIndex : rank:int * offset:int -&gt; int<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;...</div>
+<div class="fsdocs-tip" id="fs13">val rev : list:&#39;T list -&gt; &#39;T list</div>
+<div class="fsdocs-tip" id="fs14">static member Check.QuickAll : unit -&gt; unit<br />static member Check.QuickAll : test:Type -&gt; unit</div>
+<div class="fsdocs-tip" id="fs15">type ListProperties =<br />&#160;&#160;static member ( reverse is original ) : xs:int list -&gt; bool<br />&#160;&#160;static member ( reverse of reverse is original ) : xs:int list -&gt; bool</div>
+<div class="fsdocs-tip" id="fs16">val typeof&lt;&#39;T&gt; : Type</div>
+<div class="fsdocs-tip" id="fs17">val myprop : i:int -&gt; bool</div>
+<div class="fsdocs-tip" id="fs18">val i : int</div>
+<div class="fsdocs-tip" id="fs19">val mygen : Arbitrary&lt;int&gt;</div>
+<div class="fsdocs-tip" id="fs20">module ArbMap<br /><br />from FsCheck.FSharp</div>
+<div class="fsdocs-tip" id="fs21">val defaults : IArbMap</div>
+<div class="fsdocs-tip" id="fs22">val arbitrary : arbMap:IArbMap -&gt; Arbitrary&lt;&#39;T&gt;</div>
+<div class="fsdocs-tip" id="fs23">module Arb<br /><br />from FsCheck.FSharp</div>
+<div class="fsdocs-tip" id="fs24">val mapFilter : mapper:(&#39;T -&gt; &#39;T) -&gt; pred:(&#39;T -&gt; bool) -&gt; a:Arbitrary&lt;&#39;T&gt; -&gt; Arbitrary&lt;&#39;T&gt;</div>
+<div class="fsdocs-tip" id="fs25">type Math =<br />&#160;&#160;static member Abs : value: decimal -&gt; decimal + 7 overloads<br />&#160;&#160;static member Acos : d: float -&gt; float<br />&#160;&#160;static member Acosh : d: float -&gt; float<br />&#160;&#160;static member Asin : d: float -&gt; float<br />&#160;&#160;static member Asinh : d: float -&gt; float<br />&#160;&#160;static member Atan : d: float -&gt; float<br />&#160;&#160;static member Atan2 : y: float * x: float -&gt; float<br />&#160;&#160;static member Atanh : d: float -&gt; float<br />&#160;&#160;static member BigMul : a: int * b: int -&gt; int64 + 2 overloads<br />&#160;&#160;static member BitDecrement : x: float -&gt; float<br />&#160;&#160;...</div>
+<div class="fsdocs-tip" id="fs26">Math.Abs(value: float32) : float32<br />Math.Abs(value: sbyte) : sbyte<br />Math.Abs(value: nativeint) : nativeint<br />Math.Abs(value: int64) : int64<br />Math.Abs(value: int) : int<br />Math.Abs(value: int16) : int16<br />Math.Abs(value: float) : float<br />Math.Abs(value: decimal) : decimal</div>
+<div class="fsdocs-tip" id="fs27">val helper : string</div>
+<div class="fsdocs-tip" id="fs28">val private helper&#39; : bool</div>
+<div class="fsdocs-tip" id="fs29">type Marker</div>
+<div class="fsdocs-tip" id="fs30">val config : Config</div>
+<div class="fsdocs-tip" id="fs31">property Config.QuickThrowOnFailure: Config with get</div>
+<div class="fsdocs-tip" id="fs32">member Config.WithArbitrary : arbitrary:seq&lt;#Type&gt; -&gt; Config</div>
+<div class="fsdocs-tip" id="fs33">static member Check.All : config:Config -&gt; unit<br />static member Check.All : config:Config * test:Type -&gt; unit</div>
+<div class="fsdocs-tip" id="fs34">namespace FsCheck.Xunit</div>
+<div class="fsdocs-tip" id="fs35">type Property =<br />&#160;&#160;private | Property of (IArbMap -&gt; Gen&lt;Shrink&lt;ResultContainer&gt;&gt;)<br />&#160;&#160;&#160;&#160;static member private GetGen : arbMap:IArbMap -&gt; Property -&gt; Gen&lt;Shrink&lt;ResultContainer&gt;&gt;</div>
+<div class="fsdocs-tip" id="fs36">val ( abs(v) % k equals abs(v % k) ) : v:int -&gt; NonZeroInt -&gt; bool</div>
+<div class="fsdocs-tip" id="fs37">val v : int</div>
+<div class="fsdocs-tip" id="fs38">Multiple items<br />union case NonZeroInt.NonZeroInt: int -&gt; NonZeroInt<br /><br />--------------------<br />type NonZeroInt =<br />&#160;&#160;| NonZeroInt of int<br />&#160;&#160;&#160;&#160;override ToString : unit -&gt; string<br />&#160;&#160;&#160;&#160;static member op_Explicit : NonZeroInt -&gt; int<br />&#160;&#160;&#160;&#160;member Get : int</div>
+<div class="fsdocs-tip" id="fs39">val k : int</div>
+<div class="fsdocs-tip" id="fs40">val abs : value:&#39;T -&gt; &#39;T (requires member Abs)</div>
+<div class="fsdocs-tip" id="fs41">[&lt;Struct&gt;]<br />type Double =<br />&#160;&#160;member CompareTo : value: float -&gt; int + 1 overload<br />&#160;&#160;member Equals : obj: float -&gt; bool + 1 overload<br />&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;member GetTypeCode : unit -&gt; TypeCode<br />&#160;&#160;member System.IConvertible.ToBoolean : provider: IFormatProvider -&gt; bool<br />&#160;&#160;member System.IConvertible.ToByte : provider: IFormatProvider -&gt; byte<br />&#160;&#160;member System.IConvertible.ToChar : provider: IFormatProvider -&gt; char<br />&#160;&#160;member System.IConvertible.ToDateTime : provider: IFormatProvider -&gt; DateTime<br />&#160;&#160;member System.IConvertible.ToDecimal : provider: IFormatProvider -&gt; decimal<br />&#160;&#160;member System.IConvertible.ToDouble : provider: IFormatProvider -&gt; float<br />&#160;&#160;...</div>
+<div class="fsdocs-tip" id="fs42">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />--------------------<br />[&lt;Struct&gt;]<br />type float = Double<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; =<br />&#160;&#160;float</div>
+<div class="fsdocs-tip" id="fs43">val t : float</div>
+<div class="fsdocs-tip" id="fs44">Multiple items<br />module Gen<br /><br />from FsCheck.FSharp<br /><br />--------------------<br />type Gen&lt;&#39;T&gt; =<br />&#160;&#160;private | Gen of (int -&gt; Rnd -&gt; struct (&#39;T * Rnd))<br />&#160;&#160;&#160;&#160;interface IGen</div>
+<div class="fsdocs-tip" id="fs45">val constant : value:&#39;T -&gt; Gen&lt;&#39;T&gt;</div>
+<div class="fsdocs-tip" id="fs46">val fromGen : gen:Gen&lt;&#39;Value&gt; -&gt; Arbitrary&lt;&#39;Value&gt;</div>
+<div class="fsdocs-tip" id="fs47">Multiple items<br />type Arbitrary&lt;&#39;T&gt; =<br />&#160;&#160;interface IArbitrary<br />&#160;&#160;new : unit -&gt; Arbitrary&lt;&#39;T&gt;<br />&#160;&#160;abstract member Shrinker : &#39;T -&gt; seq&lt;&#39;T&gt; + 1 overload<br />&#160;&#160;abstract member Generator : Gen&lt;&#39;T&gt;<br /><br />--------------------<br />new : unit -&gt; Arbitrary&lt;&#39;T&gt;</div>
+<div class="fsdocs-tip" id="fs48">type Zero =<br />&#160;&#160;static member Double : unit -&gt; Arbitrary&lt;float&gt;</div>
+<div class="fsdocs-tip" id="fs49">val ( should use Arb instances from assembly ) : underTest:float -&gt; bool</div>
+<div class="fsdocs-tip" id="fs50">val underTest : float</div>
+<div class="fsdocs-tip" id="fs51">type Positive =<br />&#160;&#160;static member Double : unit -&gt; Arbitrary&lt;float&gt;</div>
+<div class="fsdocs-tip" id="fs52">val ( should use Arb instance on method ) : underTest:float -&gt; bool</div>
+<div class="fsdocs-tip" id="fs53">type Negative =<br />&#160;&#160;static member Double : unit -&gt; Arbitrary&lt;float&gt;</div>
+<div class="fsdocs-tip" id="fs54">val ( should use Arb instances from enclosing module ) : underTest:float -&gt; bool</div>
+<div class="fsdocs-tip" id="fs55">val ( property 1 ) : input:&#39;a -&gt; bool</div>
+<div class="fsdocs-tip" id="fs56">val input : &#39;a</div>
+<div class="fsdocs-tip" id="fs57">val ( property 2 ) : input:&#39;a -&gt; bool</div>
+<div class="fsdocs-tip" id="fs58">type Replay =<br />&#160;&#160;{ Rnd: Rnd<br />&#160;&#160;&#160;&#160;Size: int option }</div>
+<div class="fsdocs-tip" id="fs59">val ( property 3 ) : input:&#39;a -&gt; bool</div>
+<div class="fsdocs-tip" id="fs60">val ( abs(v) % k equals abs(v % k)  ) : v:int -&gt; NonZeroInt -&gt; bool</div>
+<div class="fsdocs-tip" id="fs61">val using : resource:&#39;T -&gt; action:(&#39;T -&gt; &#39;U) -&gt; &#39;U (requires &#39;T :&gt; System.IDisposable)</div>
+<div class="fsdocs-tip" id="fs62">namespace FsCheck.NUnit</div>
+<div class="fsdocs-tip" id="fs63">Multiple items<br />type Property =<br />&#160;&#160;private | Property of (IArbMap -&gt; Gen&lt;Shrink&lt;ResultContainer&gt;&gt;)<br />&#160;&#160;&#160;&#160;static member private GetGen : arbMap:IArbMap -&gt; Property -&gt; Gen&lt;Shrink&lt;ResultContainer&gt;&gt;<br /><br />--------------------<br /><br />--------------------<br />new : unit -&gt; PropertyAttribute</div>
+<div class="fsdocs-tip" id="fs64">val ( Reverse of reverse of a list is the original list  ) : xs:int list -&gt; bool</div>
+<div class="fsdocs-tip" id="fs65">val testRunner : IRunner</div>
+<div class="fsdocs-tip" id="fs66">type IRunner =<br />&#160;&#160;abstract member OnArguments : int * obj list * (int -&gt; obj list -&gt; string) -&gt; unit<br />&#160;&#160;abstract member OnFinished : string * TestResult -&gt; unit<br />&#160;&#160;abstract member OnShrink : obj list * (obj list -&gt; string) -&gt; unit<br />&#160;&#160;abstract member OnStartFixture : Type -&gt; unit</div>
+<div class="fsdocs-tip" id="fs67">val t : Type</div>
+<div class="fsdocs-tip" id="fs68">val __ : IRunner</div>
+<div class="fsdocs-tip" id="fs69">abstract member IRunner.OnArguments : int * obj list * (int -&gt; obj list -&gt; string) -&gt; unit</div>
+<div class="fsdocs-tip" id="fs70">val ntest : int</div>
+<div class="fsdocs-tip" id="fs71">val args : obj list</div>
+<div class="fsdocs-tip" id="fs72">val every : (int -&gt; obj list -&gt; string)</div>
+<div class="fsdocs-tip" id="fs73">abstract member IRunner.OnShrink : obj list * (obj list -&gt; string) -&gt; unit</div>
+<div class="fsdocs-tip" id="fs74">val everyShrink : (obj list -&gt; string)</div>
+<div class="fsdocs-tip" id="fs75">abstract member IRunner.OnFinished : string * TestResult -&gt; unit</div>
+<div class="fsdocs-tip" id="fs76">val name : string</div>
+<div class="fsdocs-tip" id="fs77">val testResult : TestResult</div>
+<div class="fsdocs-tip" id="fs78">type TestResult =<br />&#160;&#160;| Passed of TestData * bool<br />&#160;&#160;| Failed of TestData * obj list * obj list * Outcome * Rnd * Rnd * int<br />&#160;&#160;| Exhausted of TestData</div>
+<div class="fsdocs-tip" id="fs79">union case TestResult.Passed: TestData * bool -&gt; TestResult</div>
+<div class="fsdocs-tip" id="fs80">val withxUnitConfig : Config</div>
+<div class="fsdocs-tip" id="fs81">property Config.Default: Config with get</div>
+<div class="fsdocs-tip" id="fs82">member Config.WithRunner : runner:IRunner -&gt; Config</div>
+<div class="fsdocs-tip" id="fs83">val formatterRunner : formatter:(obj -&gt; obj) -&gt; IRunner</div>
+<div class="fsdocs-tip" id="fs84">val formatter : (obj -&gt; obj)</div>
+<div class="fsdocs-tip" id="fs85">val x : IRunner</div>
+<div class="fsdocs-tip" id="fs86">abstract member IRunner.OnStartFixture : Type -&gt; unit</div>
+<div class="fsdocs-tip" id="fs87">val printf : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T</div>
+<div class="fsdocs-tip" id="fs88">module Runner<br /><br />from FsCheck</div>
+<div class="fsdocs-tip" id="fs89">val onStartFixtureToString : t:Type -&gt; string</div>
+<div class="fsdocs-tip" id="fs90">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; list:&#39;T list -&gt; &#39;U list</div>
+<div class="fsdocs-tip" id="fs91">val testResult&#39; : TestResult</div>
+<div class="fsdocs-tip" id="fs92">union case TestResult.Failed: TestData * obj list * obj list * Outcome * Rnd * Rnd * int -&gt; TestResult</div>
+<div class="fsdocs-tip" id="fs93">val testData : TestData</div>
+<div class="fsdocs-tip" id="fs94">val origArgs : obj list</div>
+<div class="fsdocs-tip" id="fs95">val shrunkArgs : obj list</div>
+<div class="fsdocs-tip" id="fs96">val outCome : Outcome</div>
+<div class="fsdocs-tip" id="fs97">val seed : Rnd</div>
+<div class="fsdocs-tip" id="fs98">val seed2 : Rnd</div>
+<div class="fsdocs-tip" id="fs99">val size : int</div>
+<div class="fsdocs-tip" id="fs100">val t : TestResult</div>
+<div class="fsdocs-tip" id="fs101">val onFinishedToString : name:string -&gt; testResult:TestResult -&gt; string</div>
+<div class="fsdocs-tip" id="fs102">val revUnit : x:char -&gt; bool</div>
+<div class="fsdocs-tip" id="fs103">val x : char</div>
+<div class="fsdocs-tip" id="fs104">Multiple items<br />val char : value:&#39;T -&gt; char (requires member op_Explicit)<br /><br />--------------------<br />[&lt;Struct&gt;]<br />type char = Char</div>
+
+        </div>
+
+        <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+        <script type="text/javascript">var fsdocs_search_baseurl = 'https://fscheck.github.io/FsCheck/';</script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-search.js"></script>
+        <!-- END SEARCH BOX: this adds support for the search box -->
+    </div>
+</body>
+
+</html>
+

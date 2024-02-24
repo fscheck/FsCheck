@@ -1,0 +1,4326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Gen (FsCheck)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Kurt Schelfthout and contributors">
+
+    <link rel="stylesheet" id="theme_link" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/materia/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script> -->
+
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/navbar-fixed-left.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-default.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-custom.css" />
+    <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+    <!-- END SEARCH BOX: this adds support for the search box -->
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-secondary fixed-left" id="fsdocs-menu">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+            <div id="header">
+                <div class="searchbox" id="fsdocs-searchbox">
+                    <label for="search-by">
+                        <i class="fas fa-search"></i>
+                    </label>
+                    <input data-search-input="" id="search-by" type="search" placeholder="Search..." />
+                    <span data-search-clear="">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- END SEARCH BOX: this adds support for the search box -->
+            <ul class="navbar-nav">
+                <li class="nav-header">FsCheck</li>
+                <li class="nav-item"><a class="nav-link" href="http://nuget.org/packages/FsCheck">Get via NuGet</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License (BSD-3-Clause)</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//users.html">Who is using FsCheck?</a></li>
+            
+                <li class="nav-header">Getting started</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//QuickStart.html">Quick Start</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//LearningResources.html">Learning Resources</a></li>
+
+                <li class="nav-header">Documentation</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//Properties.html">Properties</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TestData.html">Generating test data</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//RunningTests.html">Running tests</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TipsAndTricks.html">Tips and Tricks</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTestingNew.html">Model-based testing vNext (Experimental)</a></li>
+                <li class="nav-header">
+  API Reference
+</li>             
+<li class="nav-item">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/index.html">
+    All Namespaces
+  </a>
+</li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="masthead">
+            <h3 class="muted"><a href="https://fscheck.github.io/FsCheck/">FsCheck</a></h3>
+        </div>
+        <hr />
+        <div class="container" id="fsdocs-content">
+            <div>
+  <h1>
+    Gen Module
+  </h1>
+  <p>
+    Namespace: 
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-fsharp.html">
+      FsCheck.FSharp
+    </a>
+  </p>
+  <p>
+    Assembly: FsCheck.dll
+  </p>
+  <div class="fsdocs-xmldoc">
+    
+  </div>
+  <h3>
+    Table of contents
+  </h3>
+  <ul>
+    <li>
+      <a href="#section0">
+        Other module members
+      </a>
+    </li>
+    <li>
+      <a href="#section1">
+        Create generators from generators
+      </a>
+    </li>
+    <li>
+      <a href="#section2">
+        Creating generators from generators
+      </a>
+    </li>
+  </ul>
+  <h2 id="section0">
+    Other module members
+  </h2>
+  <div>
+    <h3>
+      Functions and values
+    </h3>
+    <table class="table outer-list fsdocs-member-list">
+      <thead>
+        <tr>
+          <td class="fsdocs-member-list-header">
+            Function or value
+          </td>
+          <td class="fsdocs-member-list-header">
+            Description
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
+                <p>
+                  <a id="apply">
+                    <a href="#apply">
+                      <code><span>Gen.apply&#32;<span>arg1&#32;arg2</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="49">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.apply&#32;<span>arg1&#32;arg2</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>(<span>'T&#32;->&#32;'U</span>)</span>&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L63-63" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Apply the functions f from the first generator to the values from the second generator pairwise,
+ yielding a new generator that generates the results.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>(<span>'T&#32;->&#32;'U</span>)</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
+                <p>
+                  <a id="array2DOf">
+                    <a href="#array2DOf">
+                      <code><span>Gen.array2DOf&#32;<span>gen</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="50">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.array2DOf&#32;<span>gen</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        gen
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T[,]</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L499-499" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates a 2D array. The square root of the size is the maximum number of rows and columns.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gen
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T[,]</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
+                <p>
+                  <a id="array2DOfDim">
+                    <a href="#array2DOfDim">
+                      <code><span>Gen.array2DOfDim&#32;<span>rows&#32;cols&#32;gen</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="51">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.array2DOfDim&#32;<span>rows&#32;cols&#32;gen</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        rows
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        cols
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        gen
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T[,]</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L492-492" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates 2D arrays of the given dimensions.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  rows
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  cols
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gen
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T[,]</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
+                <p>
+                  <a id="arrayOf">
+                    <a href="#arrayOf">
+                      <code><span>Gen.arrayOf&#32;<span>gen</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="52">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.arrayOf&#32;<span>gen</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        gen
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T[]</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L482-482" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates arrays of random length between zero and size.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gen
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T[]</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
+                <p>
+                  <a id="arrayOfLength">
+                    <a href="#arrayOfLength">
+                      <code><span>Gen.arrayOfLength&#32;<span>length&#32;gen</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="53">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.arrayOfLength&#32;<span>length&#32;gen</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        length
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        gen
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T[]</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L476-476" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates arrays of given length, containing values generated by the given generator.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  length
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gen
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T[]</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
+                <p>
+                  <a id="bind">
+                    <a href="#bind">
+                      <code><span>Gen.bind&#32;<span>k&#32;arg2</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="54">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.bind&#32;<span>k&#32;arg2</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        k
+                      </b>
+                      :
+                      <code><span>'T&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L72-72" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Creates a new generator that generates values from the source generator, 
+ applies the function k to them, and generates values from the resulting generator.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  k
+                </span>
+                :
+                <code><span>'T&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
+                <p>
+                  <a id="choose">
+                    <a href="#choose">
+                      <code><span>Gen.choose&#32;<span><span>(<span>l,&#32;h</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="55">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.choose&#32;<span><span>(<span>l,&#32;h</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        l
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        h
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;int&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L170-170" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates ints between l and h, inclusive.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  l
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  h
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;int&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
+                <p>
+                  <a id="constant">
+                    <a href="#constant">
+                      <code><span>Gen.constant&#32;<span>value</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="56">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.constant&#32;<span>value</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        value
+                      </b>
+                      :
+                      <code>'T</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L40-40" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Always generate the same given value. See also fresh.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  value
+                </span>
+                :
+                <code>'T</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
+                <p>
+                  <a id="elements">
+                    <a href="#elements">
+                      <code><span>Gen.elements&#32;<span>xs</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="57">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.elements&#32;<span>xs</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        xs
+                      </b>
+                      :
+                      <code><span>seq&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L209-209" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Build a generator that randomly generates one of the values in the given non-empty, finite seq.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  xs
+                </span>
+                :
+                <code><span>seq&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
+                <p>
+                  <a id="filter">
+                    <a href="#filter">
+                      <code><span>Gen.filter&#32;<span>predicate&#32;generator</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="58">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.filter&#32;<span>predicate&#32;generator</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        predicate
+                      </b>
+                      :
+                      <code><span>'T&#32;->&#32;bool</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        generator
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L401-401" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Generates a value that satisfies a predicate. Contrary to tryFilter, this function keeps re-trying
+by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
+the predicate is satisfied.
+
+The `filter` function is an alias for the `where` function. These two functions are identical, but co-exist
+so that you can choose the word that makes your code most readable in your given context.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  predicate
+                </span>
+                :
+                <code><span>'T&#32;->&#32;bool</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  generator
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
+                <p>
+                  <a id="four">
+                    <a href="#four">
+                      <code><span>Gen.four&#32;<span>g</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="59">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.four&#32;<span>g</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        g
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;*&#32;'T&#32;*&#32;'T&#32;*&#32;'T</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L267-267" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Build a generator that generates a 4-tuple of the values generated by the given generator.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  g
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;*&#32;'T&#32;*&#32;'T&#32;*&#32;'T</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
+                <p>
+                  <a id="frequency">
+                    <a href="#frequency">
+                      <code><span>Gen.frequency&#32;<span>dist</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="60">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.frequency&#32;<span>dist</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        dist
+                      </b>
+                      :
+                      <code><span>seq&lt;<span>int&#32;*&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></span>&gt;</span></code>
+                       - 
+                      Sequence of tuples where each tuple contains a weight and a generator.
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L243-243" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Build a generator that generates a value from one of the generators in the given non-empty seq, with
+ given probabilities. The sum of the probabilities must be larger than zero.
+ 
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  dist
+                </span>
+                :
+                <code><span>seq&lt;<span>int&#32;*&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs">
+                <p>
+                  Sequence of tuples where each tuple contains a weight and a generator.
+                </p>
+              </dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+            <table class="fsdocs-exception-list">
+              <tr>
+                <td>
+                  <a href="https://docs.microsoft.com/dotnet/api/system.argumentexception">
+                    ArgumentException
+                  </a>
+                </td>
+                <td>
+                  Thrown if the sum of the probabilities is less than or equal to 0.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
+                <p>
+                  <a id="fresh">
+                    <a href="#fresh">
+                      <code><span>Gen.fresh&#32;<span>create</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="61">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.fresh&#32;<span>create</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        create
+                      </b>
+                      :
+                      <code><span>unit&#32;->&#32;'T</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L56-56" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generate fresh instances by calling create every time the generator 
+ generates a new value. Useful for generating new instances of mutable
+ objects.
+ See also constant.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  create
+                </span>
+                :
+                <code><span>unit&#32;->&#32;'T</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
+                <p>
+                  <a id="growingElements">
+                    <a href="#growingElements">
+                      <code><span>Gen.growingElements&#32;<span>xs</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="62">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.growingElements&#32;<span>xs</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        xs
+                      </b>
+                      :
+                      <code><span>seq&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L219-219" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Build a generator that takes a non-empty sequence and randomly generates
+one of the values among an initial segment of that sequence. The size of
+this initial segment increases with the size parameter. Essentially this
+generator is Gen.elements but taking also the size into account.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  xs
+                </span>
+                :
+                <code><span>seq&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
+                <p>
+                  <a id="listOf">
+                    <a href="#listOf">
+                      <code><span>Gen.listOf&#32;<span>gen</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="63">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.listOf&#32;<span>gen</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        gen
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L455-455" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates lists of random lengths between zero and size.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gen
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
+                <p>
+                  <a id="listOfLength">
+                    <a href="#listOfLength">
+                      <code><span>Gen.listOfLength&#32;<span>length&#32;gen</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="64">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.listOfLength&#32;<span>length&#32;gen</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        length
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        gen
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L449-449" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates lists of given length, containing values generated by the given generator.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  length
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gen
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+                <p>
+                  <a id="map">
+                    <a href="#map">
+                      <code><span>Gen.map&#32;<span>f&#32;arg2</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="65">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.map&#32;<span>f&#32;arg2</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span>'T&#32;->&#32;'U</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L45-45" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Create a new generator by applying f to each value in the given generator.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span>'T&#32;->&#32;'U</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+                <p>
+                  <a id="map2">
+                    <a href="#map2">
+                      <code><span>Gen.map2&#32;<span>f&#32;arg2&#32;arg3</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="66">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.map2&#32;<span>f&#32;arg2&#32;arg3</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span>'a&#32;->&#32;'b&#32;->&#32;'c</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg2
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'c&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L80-80" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Create a new generator by applying f to each value in the given generators.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span>'a&#32;->&#32;'b&#32;->&#32;'c</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg2
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'c&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
+                <p>
+                  <a id="map3">
+                    <a href="#map3">
+                      <code><span>Gen.map3&#32;<span>f&#32;arg2&#32;arg3&#32;arg4</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="67">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.map3&#32;<span>f&#32;arg2&#32;arg3&#32;arg4</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span>'a&#32;->&#32;'b&#32;->&#32;'c&#32;->&#32;'d</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg2
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg3
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'c&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'d&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L89-89" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Create a new generator by applying f to each value in the given generators.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span>'a&#32;->&#32;'b&#32;->&#32;'c&#32;->&#32;'d</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg2
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg3
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'c&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'d&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
+                <p>
+                  <a id="map4">
+                    <a href="#map4">
+                      <code><span>Gen.map4&#32;<span>f&#32;arg2&#32;arg3&#32;arg4&#32;arg5</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="68">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.map4&#32;<span>f&#32;arg2&#32;arg3&#32;arg4&#32;arg5</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span>'a&#32;->&#32;'b&#32;->&#32;'c&#32;->&#32;'d&#32;->&#32;'e</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg2
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg3
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'c&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg4
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'d&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'e&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L99-99" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Create a new generator by applying f to each value in the given generators.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span>'a&#32;->&#32;'b&#32;->&#32;'c&#32;->&#32;'d&#32;->&#32;'e</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg2
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg3
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'c&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg4
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'d&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'e&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
+                <p>
+                  <a id="map5">
+                    <a href="#map5">
+                      <code><span>Gen.map5&#32;<span>f&#32;arg2&#32;arg3&#32;arg4&#32;arg5&#32;arg6</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="69">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.map5&#32;<span>f&#32;arg2&#32;arg3&#32;arg4&#32;arg5&#32;arg6</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span>'a&#32;->&#32;'b&#32;->&#32;'c&#32;->&#32;'d&#32;->&#32;'e&#32;->&#32;'f</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg2
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg3
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'c&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg4
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'d&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg5
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'e&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'f&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L110-110" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Create a new generator by applying f to each value in the given generators.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span>'a&#32;->&#32;'b&#32;->&#32;'c&#32;->&#32;'d&#32;->&#32;'e&#32;->&#32;'f</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg2
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg3
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'c&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg4
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'d&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg5
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'e&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'f&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
+                <p>
+                  <a id="map6">
+                    <a href="#map6">
+                      <code><span>Gen.map6&#32;<span>f&#32;arg2&#32;arg3&#32;arg4&#32;arg5&#32;arg6&#32;arg7</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="70">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.map6&#32;<span>f&#32;arg2&#32;arg3&#32;arg4&#32;arg5&#32;arg6&#32;arg7</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span>'a&#32;->&#32;'b&#32;->&#32;'c&#32;->&#32;'d&#32;->&#32;'e&#32;->&#32;'f&#32;->&#32;'g</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg2
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg3
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'c&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg4
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'d&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg5
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'e&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg6
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'f&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'g&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L122-122" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Create a new generator by applying f to each value in the given generators.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span>'a&#32;->&#32;'b&#32;->&#32;'c&#32;->&#32;'d&#32;->&#32;'e&#32;->&#32;'f&#32;->&#32;'g</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'a&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg2
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'b&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg3
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'c&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg4
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'d&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg5
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'e&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg6
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'f&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'g&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
+                <p>
+                  <a id="nonEmptyListOf">
+                    <a href="#nonEmptyListOf">
+                      <code><span>Gen.nonEmptyListOf&#32;<span>gen</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="71">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.nonEmptyListOf&#32;<span>gen</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        gen
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L465-465" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates non-empty lists of random lengths between zero and size.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gen
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
+                <p>
+                  <a id="oneof">
+                    <a href="#oneof">
+                      <code><span>Gen.oneof&#32;<span>gens</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="72">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.oneof&#32;<span>gens</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        gens
+                      </b>
+                      :
+                      <code><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span>&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L233-233" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Build a generator that generates a value from one of the generators in the given non-empty seq, with
+equal probability.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gens
+                </span>
+                :
+                <code><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '73', 73)" onmouseover="showTip(event, '73', 73)">
+                <p>
+                  <a id="optionOf">
+                    <a href="#optionOf">
+                      <code><span>Gen.optionOf&#32;<span>g</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="73">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.optionOf&#32;<span>g</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        g
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;option</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L527-527" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Generates option values that are 'None' 1/8 of the time.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  g
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;option</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '74', 74)" onmouseover="showTip(event, '74', 74)">
+                <p>
+                  <a id="piles">
+                    <a href="#piles">
+                      <code><span>Gen.piles&#32;<span>length&#32;sum</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="74">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.piles&#32;<span>length&#32;sum</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        length
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        sum
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>int[]</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L426-426" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates random arrays of given length where the sum of
+ all elements equals the given sum.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  length
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  sum
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>int[]</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
+                <p>
+                  <a id="resize">
+                    <a href="#resize">
+                      <code><span>Gen.resize&#32;<span>newSize&#32;arg2</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="75">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.resize&#32;<span>newSize&#32;arg2</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        newSize
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L140-140" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Override the current size of the test. resize n g invokes generator g with size parameter n.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  newSize
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
+                <p>
+                  <a id="sample">
+                    <a href="#sample">
+                      <code><span>Gen.sample&#32;<span>nbSamples&#32;gen</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="76">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.sample&#32;<span>nbSamples&#32;gen</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        nbSamples
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        gen
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span>'T[]</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L165-165" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates a given number of values with a new seed and a size of 50.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  nbSamples
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gen
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span>'T[]</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
+                <p>
+                  <a id="sampleWithSeed">
+                    <a href="#sampleWithSeed">
+                      <code><span>Gen.sampleWithSeed&#32;<span>seed&#32;size&#32;nbSamples&#32;arg4</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="77">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.sampleWithSeed&#32;<span>seed&#32;size&#32;nbSamples&#32;arg4</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        seed
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        size
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        nbSamples
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg3
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span>'T[]</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L150-150" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates n values of the given size and starting with the given seed.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  seed
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-rnd.html">Rnd</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  size
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  nbSamples
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg3
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span>'T[]</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '78', 78)" onmouseover="showTip(event, '78', 78)">
+                <p>
+                  <a id="sampleWithSize">
+                    <a href="#sampleWithSize">
+                      <code><span>Gen.sampleWithSize&#32;<span>size&#32;nbSamples&#32;gen</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="78">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.sampleWithSize&#32;<span>size&#32;nbSamples&#32;gen</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        size
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        nbSamples
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        gen
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span>'T[]</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L160-160" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates a given number of values with a new seed and a given size.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  size
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  nbSamples
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gen
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span>'T[]</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '79', 79)" onmouseover="showTip(event, '79', 79)">
+                <p>
+                  <a id="scaleSize">
+                    <a href="#scaleSize">
+                      <code><span>Gen.scaleSize&#32;<span>f&#32;g</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="79">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.scaleSize&#32;<span>f&#32;g</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span>int&#32;->&#32;int</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        g
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L145-145" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Modify a size using the given function before passing it to the given Gen.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span>int&#32;->&#32;int</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  g
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '80', 80)" onmouseover="showTip(event, '80', 80)">
+                <p>
+                  <a id="sequenceToArray">
+                    <a href="#sequenceToArray">
+                      <code><span>Gen.sequenceToArray&#32;<span>source</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="80">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.sequenceToArray&#32;<span>source</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        source
+                      </b>
+                      :
+                      <code><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span>&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T[]</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L342-342" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Sequence the given array of generators into a generator of an array.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  source
+                </span>
+                :
+                <code><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T[]</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '81', 81)" onmouseover="showTip(event, '81', 81)">
+                <p>
+                  <a id="sequenceToList">
+                    <a href="#sequenceToList">
+                      <code><span>Gen.sequenceToList&#32;<span>source</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="81">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.sequenceToList&#32;<span>source</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        source
+                      </b>
+                      :
+                      <code><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span>&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L336-336" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Sequence the given enumerable of generators into a generator of a list.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  source
+                </span>
+                :
+                <code><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '82', 82)" onmouseover="showTip(event, '82', 82)">
+                <p>
+                  <a id="sequenceToSeq">
+                    <a href="#sequenceToSeq">
+                      <code><span>Gen.sequenceToSeq&#32;<span>source</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="82">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.sequenceToSeq&#32;<span>source</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        source
+                      </b>
+                      :
+                      <code><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span>&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>seq&lt;'T&gt;</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L349-349" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Sequence the given seq of generators into a generator of a seq.
+ Each seq generated by the resulting generator can be infinite, if the source seq is infinite.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  source
+                </span>
+                :
+                <code><span>seq&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>seq&lt;'T&gt;</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '83', 83)" onmouseover="showTip(event, '83', 83)">
+                <p>
+                  <a id="shuffle">
+                    <a href="#shuffle">
+                      <code><span>Gen.shuffle&#32;<span>xs</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="83">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.shuffle&#32;<span>xs</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        xs
+                      </b>
+                      :
+                      <code><span>seq&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;array</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L417-417" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Generates random permutations of the given sequence.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  xs
+                </span>
+                :
+                <code><span>seq&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;array</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '84', 84)" onmouseover="showTip(event, '84', 84)">
+                <p>
+                  <a id="sized">
+                    <a href="#sized">
+                      <code><span>Gen.sized&#32;<span>gen</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="84">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.sized&#32;<span>gen</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        gen
+                      </b>
+                      :
+                      <code><span>int&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L135-135" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Obtain the current size. sized g calls g, passing it the current size as a parameter.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  gen
+                </span>
+                :
+                <code><span>int&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '85', 85)" onmouseover="showTip(event, '85', 85)">
+                <p>
+                  <a id="subListOf">
+                    <a href="#subListOf">
+                      <code><span>Gen.subListOf&#32;<span>lst</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="85">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.subListOf&#32;<span>lst</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        lst
+                      </b>
+                      :
+                      <code><span>seq&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L515-515" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Generates sublists of the given seq. For a given list of length n,
+ each sublist has between 0 and n elements, and the order of the 
+ elements is the same as in the given seq.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  lst
+                </span>
+                :
+                <code><span>seq&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;list</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '86', 86)" onmouseover="showTip(event, '86', 86)">
+                <p>
+                  <a id="three">
+                    <a href="#three">
+                      <code><span>Gen.three&#32;<span>g</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="86">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.three&#32;<span>g</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        g
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;*&#32;'T&#32;*&#32;'T</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L262-262" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Build a generator that generates a 3-tuple of the values generated by the given generator.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  g
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;*&#32;'T&#32;*&#32;'T</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '87', 87)" onmouseover="showTip(event, '87', 87)">
+                <p>
+                  <a id="tryFilter">
+                    <a href="#tryFilter">
+                      <code><span>Gen.tryFilter&#32;<span>predicate&#32;generator</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="87">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.tryFilter&#32;<span>predicate&#32;generator</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        predicate
+                      </b>
+                      :
+                      <code><span>'T&#32;->&#32;bool</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        generator
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;option</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L377-377" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
+if the given original generator did not generate any values that satisfied the predicate, after trying to
+get values by increasing its size.
+
+The `tryFilter` function is an alias for the `tryWhere` function. These two functions are identical, but co-exist
+so that you can choose the word that makes your code most readable in your given context.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  predicate
+                </span>
+                :
+                <code><span>'T&#32;->&#32;bool</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  generator
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;option</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '88', 88)" onmouseover="showTip(event, '88', 88)">
+                <p>
+                  <a id="tryWhere">
+                    <a href="#tryWhere">
+                      <code><span>Gen.tryWhere&#32;<span>predicate&#32;generator</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="88">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.tryWhere&#32;<span>predicate&#32;generator</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        predicate
+                      </b>
+                      :
+                      <code><span>'T&#32;->&#32;bool</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        generator
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;option</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L360-360" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Tries to generate a value that satisfies a predicate. This function 'gives up' by generating None
+if the given original generator did not generate any values that satisfied the predicate, after trying to
+get values by increasing its size.
+
+The `tryWhere` function is also aliased as `tryFilter`. These two functions are identical, but co-exist
+so that you can choose the word that makes your code most readable in your given context.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  predicate
+                </span>
+                :
+                <code><span>'T&#32;->&#32;bool</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  generator
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;option</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '89', 89)" onmouseover="showTip(event, '89', 89)">
+                <p>
+                  <a id="two">
+                    <a href="#two">
+                      <code><span>Gen.two&#32;<span>g</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="89">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.two&#32;<span>g</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        g
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;*&#32;'T</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L257-257" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Build a generator that generates a 2-tuple of the values generated by the given generator.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  g
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T&#32;*&#32;'T</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '90', 90)" onmouseover="showTip(event, '90', 90)">
+                <p>
+                  <a id="where">
+                    <a href="#where">
+                      <code><span>Gen.where&#32;<span>predicate&#32;generator</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="90">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.where&#32;<span>predicate&#32;generator</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        predicate
+                      </b>
+                      :
+                      <code><span>'T&#32;->&#32;bool</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        generator
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L387-387" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Generates a value that satisfies a predicate. Contrary to tryWhere, this function keeps re-trying
+by increasing the size of the original generator ad infinitum.  Make sure there is a high probability that 
+the predicate is satisfied.
+
+The `where` function is also aliased as `filter`. These two functions are identical, but co-exist
+so that you can choose the word that makes your code most readable in your given context.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  predicate
+                </span>
+                :
+                <code><span>'T&#32;->&#32;bool</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  generator
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '91', 91)" onmouseover="showTip(event, '91', 91)">
+                <p>
+                  <a id="zip">
+                    <a href="#zip">
+                      <code><span>Gen.zip&#32;<span>f&#32;g</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="91">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.zip&#32;<span>f&#32;g</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T1&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        g
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T2&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T1&#32;*&#32;'T2</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L272-272" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Combine two generators into a generator of pairs.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T1&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  g
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T2&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T1&#32;*&#32;'T2</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '92', 92)" onmouseover="showTip(event, '92', 92)">
+                <p>
+                  <a id="zip3">
+                    <a href="#zip3">
+                      <code><span>Gen.zip3&#32;<span>f&#32;g&#32;h</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="92">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.zip3&#32;<span>f&#32;g&#32;h</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T1&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        g
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T2&gt;</span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        h
+                      </b>
+                      :
+                      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T3&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T1&#32;*&#32;'T2&#32;*&#32;'T3</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L277-277" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+Combine three generators into a generator of 3-tuples.
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T1&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  g
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T2&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  h
+                </span>
+                :
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'T3&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'T1&#32;*&#32;'T2&#32;*&#32;'T3</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <h2 id="section1">
+    Create generators from generators
+  </h2>
+  <div>
+    <h3>
+      Functions and values
+    </h3>
+    <table class="table outer-list fsdocs-member-list">
+      <thead>
+        <tr>
+          <td class="fsdocs-member-list-header">
+            Function or value
+          </td>
+          <td class="fsdocs-member-list-header">
+            Description
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '93', 93)" onmouseover="showTip(event, '93', 93)">
+                <p>
+                  <a id="collectToList">
+                    <a href="#collectToList">
+                      <code><span>Gen.collectToList&#32;<span>f&#32;source</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="93">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.collectToList&#32;<span>f&#32;source</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span>'T&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        source
+                      </b>
+                      :
+                      <code><span>seq&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'U&#32;list</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L282-282" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Traverse the given enumerable into a generator of a list using the specified binder function to create generators.
+[category: Create generators from generators]
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span>'T&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  source
+                </span>
+                :
+                <code><span>seq&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'U&#32;list</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '94', 94)" onmouseover="showTip(event, '94', 94)">
+                <p>
+                  <a id="collectToSeq">
+                    <a href="#collectToSeq">
+                      <code><span>Gen.collectToSeq&#32;<span>f&#32;source</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="94">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.collectToSeq&#32;<span>f&#32;source</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span>'T&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        source
+                      </b>
+                      :
+                      <code><span>seq&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>seq&lt;'U&gt;</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L316-316" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Traverse the given enumerable into a generator of an enumerable using the specified binder function to create generators.
+ Each seq generated by the resulting generator can be infinite, if the source seq is infinite.
+[category: Create generators from generators]
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span>'T&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  source
+                </span>
+                :
+                <code><span>seq&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>seq&lt;'U&gt;</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <h2 id="section2">
+    Creating generators from generators
+  </h2>
+  <div>
+    <h3>
+      Functions and values
+    </h3>
+    <table class="table outer-list fsdocs-member-list">
+      <thead>
+        <tr>
+          <td class="fsdocs-member-list-header">
+            Function or value
+          </td>
+          <td class="fsdocs-member-list-header">
+            Description
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '95', 95)" onmouseover="showTip(event, '95', 95)">
+                <p>
+                  <a id="collectToArray">
+                    <a href="#collectToArray">
+                      <code><span>Gen.collectToArray&#32;<span>f&#32;source</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="95">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>Gen.collectToArray&#32;<span>f&#32;source</span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        f
+                      </b>
+                      :
+                      <code><span>'T&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></span></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        source
+                      </b>
+                      :
+                      <code><span>seq&lt;'T&gt;</span></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'U[]</span>&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/FSharp.Gen.fs#L296-296" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+ Traverse the given array into a generator of an array using the specified binder function to create generators.
+[category: Creating generators from generators]
+
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  f
+                </span>
+                :
+                <code><span>'T&#32;->&#32;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;'U&gt;</span></span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  source
+                </span>
+                :
+                <code><span>seq&lt;'T&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-gen-1.html">Gen</a>&lt;<span>'U[]</span>&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+            
+        </div>
+
+        <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+        <script type="text/javascript">var fsdocs_search_baseurl = 'https://fscheck.github.io/FsCheck/';</script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-search.js"></script>
+        <!-- END SEARCH BOX: this adds support for the search box -->
+    </div>
+</body>
+
+</html>
+

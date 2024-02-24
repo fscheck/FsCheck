@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>MaxValue (FsCheck)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Kurt Schelfthout and contributors">
+
+    <link rel="stylesheet" id="theme_link" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/materia/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script> -->
+
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/navbar-fixed-left.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-default.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-custom.css" />
+    <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+    <!-- END SEARCH BOX: this adds support for the search box -->
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-secondary fixed-left" id="fsdocs-menu">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+            <div id="header">
+                <div class="searchbox" id="fsdocs-searchbox">
+                    <label for="search-by">
+                        <i class="fas fa-search"></i>
+                    </label>
+                    <input data-search-input="" id="search-by" type="search" placeholder="Search..." />
+                    <span data-search-clear="">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- END SEARCH BOX: this adds support for the search box -->
+            <ul class="navbar-nav">
+                <li class="nav-header">FsCheck</li>
+                <li class="nav-item"><a class="nav-link" href="http://nuget.org/packages/FsCheck">Get via NuGet</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License (BSD-3-Clause)</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//users.html">Who is using FsCheck?</a></li>
+            
+                <li class="nav-header">Getting started</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//QuickStart.html">Quick Start</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//LearningResources.html">Learning Resources</a></li>
+
+                <li class="nav-header">Documentation</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//Properties.html">Properties</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TestData.html">Generating test data</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//RunningTests.html">Running tests</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TipsAndTricks.html">Tips and Tricks</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTestingNew.html">Model-based testing vNext (Experimental)</a></li>
+                <li class="nav-header">
+  API Reference
+</li>             
+<li class="nav-item">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/index.html">
+    All Namespaces
+  </a>
+</li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="masthead">
+            <h3 class="muted"><a href="https://fscheck.github.io/FsCheck/">FsCheck</a></h3>
+        </div>
+        <hr />
+        <div class="container" id="fsdocs-content">
+            <div>
+  <h1>
+    MaxValue Type
+  </h1>
+  <p>
+    Namespace: 
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals.html">
+      FsCheck.Internals
+    </a>
+  </p>
+  <p>
+    Assembly: FsCheck.dll
+  </p>
+  <span>
+    Parent Module: 
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric.html">
+      Numeric
+    </a>
+  </span>
+  <p>
+    Base Type: 
+    <code>obj</code>
+  </p>
+  <div class="fsdocs-xmldoc">
+    
+  </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div>
+    <h3>
+      Static members
+    </h3>
+    <table class="table outer-list fsdocs-member-list">
+      <thead>
+        <tr>
+          <td class="fsdocs-member-list-header">
+            Static member
+          </td>
+          <td class="fsdocs-member-list-header">
+            Description
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '460', 460)" onmouseover="showTip(event, '460', 460)">
+                <p>
+                  <a id="Get">
+                    <a href="#Get">
+                      <code><span>MaxValue.Get<span>()</span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="460">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.Get<span>()</span></span></code>
+                  <br/>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>^a</code>
+                  </span>
+                  <br/>
+                  Modifiers: 
+                  inline
+                  <br/>
+                  Type parameters: 
+                  ^a
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L53-53" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>^a</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '461', 461)" onmouseover="showTip(event, '461', 461)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="461">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code><a href="https://docs.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://docs.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L51-51" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.timespan">TimeSpan</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '462', 462)" onmouseover="showTip(event, '462', 462)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="462">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code><a href="https://docs.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://docs.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L50-50" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '463', 463)" onmouseover="showTip(event, '463', 463)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="463">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code><a href="https://docs.microsoft.com/dotnet/api/system.datetime">DateTime</a></code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://docs.microsoft.com/dotnet/api/system.datetime">DateTime</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L49-49" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.datetime">DateTime</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://docs.microsoft.com/dotnet/api/system.datetime">DateTime</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '464', 464)" onmouseover="showTip(event, '464', 464)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="464">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>decimal</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>decimal</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L48-48" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>decimal</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>decimal</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '465', 465)" onmouseover="showTip(event, '465', 465)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="465">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>uint64</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>uint64</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L47-47" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>uint64</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>uint64</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '466', 466)" onmouseover="showTip(event, '466', 466)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="466">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>uint32</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>uint32</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L46-46" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>uint32</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>uint32</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '467', 467)" onmouseover="showTip(event, '467', 467)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="467">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>uint16</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>uint16</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L45-45" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>uint16</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>uint16</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '468', 468)" onmouseover="showTip(event, '468', 468)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="468">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>float32</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>float32</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L44-44" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>float32</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>float32</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '469', 469)" onmouseover="showTip(event, '469', 469)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="469">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>int64</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>int64</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L43-43" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>int64</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>int64</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '470', 470)" onmouseover="showTip(event, '470', 470)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="470">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>int</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>int</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L42-42" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '471', 471)" onmouseover="showTip(event, '471', 471)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="471">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>int16</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>int16</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L41-41" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>int16</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>int16</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '472', 472)" onmouseover="showTip(event, '472', 472)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="472">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>float</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>float</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L40-40" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>float</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>float</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '473', 473)" onmouseover="showTip(event, '473', 473)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="473">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>sbyte</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>sbyte</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L39-39" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>sbyte</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>sbyte</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '474', 474)" onmouseover="showTip(event, '474', 474)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="474">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>byte</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>byte</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L38-38" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>byte</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>byte</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '475', 475)" onmouseover="showTip(event, '475', 475)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="475">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>char</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>char</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L37-37" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>char</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>char</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '476', 476)" onmouseover="showTip(event, '476', 476)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="476">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>arg1,&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        arg0
+                      </b>
+                      :
+                      <code>bool</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>bool</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L36-36" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg0
+                </span>
+                :
+                <code>bool</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>bool</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '477', 477)" onmouseover="showTip(event, '477', 477)">
+                <p>
+                  <a id="MaxValue">
+                    <a href="#MaxValue">
+                      <code><span>MaxValue.MaxValue<span><span>(<span>(),&#32;arg2</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="477">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>MaxValue.MaxValue<span><span>(<span>(),&#32;arg2</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        ()
+                      </b>
+                      :
+                      <code>unit</code>
+                    </span>
+                    <br/>
+                    <span>
+                      <b>
+                        arg1
+                      </b>
+                      :
+                      <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/Internals.Numeric.fs#L35-35" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  ()
+                </span>
+                :
+                <code>unit</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  arg1
+                </span>
+                :
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals-numeric-maxvalue.html">MaxValue</a></code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+            
+        </div>
+
+        <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+        <script type="text/javascript">var fsdocs_search_baseurl = 'https://fscheck.github.io/FsCheck/';</script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-search.js"></script>
+        <!-- END SEARCH BOX: this adds support for the search box -->
+    </div>
+</body>
+
+</html>
+

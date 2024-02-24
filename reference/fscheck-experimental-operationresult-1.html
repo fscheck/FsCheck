@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>OperationResult<'a> (FsCheck)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Kurt Schelfthout and contributors">
+
+    <link rel="stylesheet" id="theme_link" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/materia/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script> -->
+
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/navbar-fixed-left.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-default.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-custom.css" />
+    <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+    <!-- END SEARCH BOX: this adds support for the search box -->
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-secondary fixed-left" id="fsdocs-menu">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+            <div id="header">
+                <div class="searchbox" id="fsdocs-searchbox">
+                    <label for="search-by">
+                        <i class="fas fa-search"></i>
+                    </label>
+                    <input data-search-input="" id="search-by" type="search" placeholder="Search..." />
+                    <span data-search-clear="">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- END SEARCH BOX: this adds support for the search box -->
+            <ul class="navbar-nav">
+                <li class="nav-header">FsCheck</li>
+                <li class="nav-item"><a class="nav-link" href="http://nuget.org/packages/FsCheck">Get via NuGet</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License (BSD-3-Clause)</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//users.html">Who is using FsCheck?</a></li>
+            
+                <li class="nav-header">Getting started</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//QuickStart.html">Quick Start</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//LearningResources.html">Learning Resources</a></li>
+
+                <li class="nav-header">Documentation</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//Properties.html">Properties</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TestData.html">Generating test data</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//RunningTests.html">Running tests</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TipsAndTricks.html">Tips and Tricks</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTestingNew.html">Model-based testing vNext (Experimental)</a></li>
+                <li class="nav-header">
+  API Reference
+</li>             
+<li class="nav-item">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/index.html">
+    All Namespaces
+  </a>
+</li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="masthead">
+            <h3 class="muted"><a href="https://fscheck.github.io/FsCheck/">FsCheck</a></h3>
+        </div>
+        <hr />
+        <div class="container" id="fsdocs-content">
+            <div>
+  <h1>
+    OperationResult<'a> Type
+  </h1>
+  <p>
+    Namespace: 
+    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental.html">
+      FsCheck.Experimental
+    </a>
+  </p>
+  <p>
+    Assembly: FsCheck.dll
+  </p>
+  <p>
+    Base Type: 
+    <code>obj</code>
+  </p>
+  <p>
+    All Interfaces: 
+    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-ioperationresult.html">IOperationResult</a></code>
+  </p>
+  <div class="fsdocs-xmldoc">
+    
+  </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div>
+    <h3>
+      Constructors
+    </h3>
+    <table class="table outer-list fsdocs-member-list">
+      <thead>
+        <tr>
+          <td class="fsdocs-member-list-header">
+            Constructor
+          </td>
+          <td class="fsdocs-member-list-header">
+            Description
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '297', 297)" onmouseover="showTip(event, '297', 297)">
+                <p>
+                  <a id="( .ctor )">
+                    <a href="#( .ctor )">
+                      <code><span>OperationResult<span><span>(<span>?name</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="297">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>OperationResult<span><span>(<span>?name</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  Parameters: 
+                  <ul>
+                    <span>
+                      <b>
+                        ?name
+                      </b>
+                      :
+                      <code>string</code>
+                    </span>
+                    <br/>
+                  </ul>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operationresult-1.html">OperationResult</a>&lt;'a&gt;</span></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L37-37" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-params">
+              <dt class="fsdocs-param">
+                <span class="fsdocs-param-name">
+                  ?name
+                </span>
+                :
+                <code>string</code>
+              </dt>
+              <dd class="fsdocs-param-docs"></dd>
+            </dl>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operationresult-1.html">OperationResult</a>&lt;'a&gt;</span></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <h3>
+      Instance members
+    </h3>
+    <table class="table outer-list fsdocs-member-list">
+      <thead>
+        <tr>
+          <td class="fsdocs-member-list-header">
+            Instance member
+          </td>
+          <td class="fsdocs-member-list-header">
+            Description
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '298', 298)" onmouseover="showTip(event, '298', 298)">
+                <p>
+                  <a id="Counter">
+                    <a href="#Counter">
+                      <code><span>this.Counter</span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="298">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>this.Counter</span></code>
+                  <br/>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code>int</code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L47-47" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code>int</code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td class="fsdocs-member-name">
+            <div>
+              <code onmouseout="hideTip(event, '299', 299)" onmouseover="showTip(event, '299', 299)">
+                <p>
+                  <a id="V">
+                    <a href="#V">
+                      <code><span>this.V<span><span>(<span>operation</span>)</span></span></span></code>
+                    </a>
+                  </a>
+                </p>
+              </code>
+              <div class="fsdocs-tip" id="299">
+                <div class="member-tooltip">
+                  Full Usage: 
+                  <code><span>this.V<span><span>(<span>operation</span>)</span></span></span></code>
+                  <br/>
+                  <br/>
+                  <span>
+                    Returns: 
+                    <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-ioperation.html">IOperation</a></code>
+                  </span>
+                  <br/>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="fsdocs-xmldoc">
+            <p class="fsdocs-summary">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L48-48" class="fsdocs-source-link">
+                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+              </a>
+              
+            </p>
+            <dl class="fsdocs-returns">
+              <dt>
+                <span class="fsdocs-return-name">
+                  Returns:
+                </span>
+                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-ioperation.html">IOperation</a></code>
+              </dt>
+              <dd class="fsdocs-return-docs"></dd>
+            </dl>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div></div>
+</div>
+            
+        </div>
+
+        <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+        <script type="text/javascript">var fsdocs_search_baseurl = 'https://fscheck.github.io/FsCheck/';</script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-search.js"></script>
+        <!-- END SEARCH BOX: this adds support for the search box -->
+    </div>
+</body>
+
+</html>
+

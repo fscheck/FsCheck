@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>FsCheck.Experimental</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Kurt Schelfthout and contributors">
+
+    <link rel="stylesheet" id="theme_link" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/materia/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script> -->
+
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/navbar-fixed-left.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-default.css" />
+    <link type="text/css" rel="stylesheet" href="https://fscheck.github.io/FsCheck/content/fsdocs-custom.css" />
+    <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+    <!-- END SEARCH BOX: this adds support for the search box -->
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-secondary fixed-left" id="fsdocs-menu">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+            <div id="header">
+                <div class="searchbox" id="fsdocs-searchbox">
+                    <label for="search-by">
+                        <i class="fas fa-search"></i>
+                    </label>
+                    <input data-search-input="" id="search-by" type="search" placeholder="Search..." />
+                    <span data-search-clear="">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- END SEARCH BOX: this adds support for the search box -->
+            <ul class="navbar-nav">
+                <li class="nav-header">FsCheck</li>
+                <li class="nav-item"><a class="nav-link" href="http://nuget.org/packages/FsCheck">Get via NuGet</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck">Source Code on GitHub</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License (BSD-3-Clause)</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/FsCheck Release Notes.md">Release Notes</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//users.html">Who is using FsCheck?</a></li>
+            
+                <li class="nav-header">Getting started</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//QuickStart.html">Quick Start</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//LearningResources.html">Learning Resources</a></li>
+
+                <li class="nav-header">Documentation</li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//Properties.html">Properties</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TestData.html">Generating test data</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//RunningTests.html">Running tests</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//TipsAndTricks.html">Tips and Tricks</a></li>
+                <li class="nav-item"><a class="nav-link" href="https://fscheck.github.io/FsCheck//StatefulTestingNew.html">Model-based testing vNext (Experimental)</a></li>
+                <li class="nav-header">
+  API Reference
+</li>             
+<li class="nav-item">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/index.html">
+    All Namespaces
+  </a>
+</li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="masthead">
+            <h3 class="muted"><a href="https://fscheck.github.io/FsCheck/">FsCheck</a></h3>
+        </div>
+        <hr />
+        <div class="container" id="fsdocs-content">
+            <div>
+  <h2 id="fscheck-experimental">
+    FsCheck.Experimental Namespace
+  </h2>
+  <table class="table outer-list fsdocs-entity-list">
+    <thead>
+      <tr>
+        <td>
+          Type/Module
+        </td>
+        <td>
+          Description
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="DisposeCall<'Actual>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-disposecall-1.html">
+                DisposeCall<'Actual>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L161-161" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="IOperation">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-ioperation.html">
+                IOperation
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L26-26" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="IOperationResult">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-ioperationresult.html">
+                IOperationResult
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L33-33" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="Machine<'Actual, 'Model>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machine-2.html">
+                Machine<'Actual, 'Model>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L101-101" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+Defines the initial state for actual and model object, and allows to define the generator to use
+for the next state, based on the model.
+
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="MachineRun<'Actual, 'Model>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machinerun-2.html">
+                MachineRun<'Actual, 'Model>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L117-117" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="MethodCall<'Actual>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-methodcall-1.html">
+                MethodCall<'Actual>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L144-144" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="New<'Actual>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-new-1.html">
+                New<'Actual>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L132-132" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="ObjectMachine<'Actual>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-objectmachine-1.html">
+                ObjectMachine<'Actual>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L166-166" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="ObjectMachineModel">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-objectmachinemodel.html">
+                ObjectMachineModel
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L130-130" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="Operation<'Actual, 'Model>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operation-2.html">
+                Operation<'Actual, 'Model>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L62-62" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+An operation describes pre and post conditions and the model for a single operation under test.
+The post-conditions are the invariants that will be checked; when these do not hold the test fails.
+
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="OperationResult<'a>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-operationresult-1.html">
+                OperationResult<'a>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L37-37" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="Setup<'Actual, 'Model>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-setup-2.html">
+                Setup<'Actual, 'Model>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L15-15" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="StateMachine">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-statemachine.html">
+                StateMachine
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L192-192" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="StateMachineExtensions">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-statemachineextensions.html">
+                StateMachineExtensions
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L348-348" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="StopOperation<'Actual, 'Model>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-stopoperation-2.html">
+                StopOperation<'Actual, 'Model>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L86-86" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td class="fsdocs-entity-name">
+          <p>
+            <a name="TearDown<'Actual>">
+              <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-teardown-1.html">
+                TearDown<'Actual>
+              </a>
+            </a>
+          </p>
+        </td>
+        <td class="fsdocs-xmldoc">
+          <p>
+            <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L93-93" class="fsdocs-source-link">
+              <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
+              <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
+            </a>
+            
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+            
+        </div>
+
+        <!-- BEGIN SEARCH BOX: this adds support for the search box -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
+        <script type="text/javascript">var fsdocs_search_baseurl = 'https://fscheck.github.io/FsCheck/';</script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-search.js"></script>
+        <!-- END SEARCH BOX: this adds support for the search box -->
+    </div>
+</body>
+
+</html>
+
