@@ -80,17 +80,17 @@ module Utils =
             failwith $"Failed to start process '%s{command}' with args: %s{args}"
         proc.BeginOutputReadLine ()
         proc.BeginErrorReadLine ()
-        printf $"(started process %i{proc.Id}) "
+        Console.Write $"(started process %i{proc.Id}) "
 
         do
             use waiter = new Waiter (stdoutArr, stderrArr)
             proc.WaitForExit ()
 
-        let stdout = String.concat " " stdoutArr
-        let stdout = if String.IsNullOrEmpty stdout then "" else $"\nStdout:\n  %s{stdout}"
+        let stdout = stdoutArr |> Seq.filter (fun s -> not (String.IsNullOrEmpty s)) |> String.concat " "
 
         if proc.ExitCode <> 0 then
             let args = args |> String.concat " "
+            let stdout = if String.IsNullOrEmpty stdout then "" else $"\nStdout:\n  %s{stdout}"
             failwith $"Process '%s{command}' failed with nonzero exit code %i{proc.ExitCode}. Args: %s{args}.%s{stdout}"
 
         stdout
@@ -110,9 +110,9 @@ module Utils =
 
 type HaveCleaned = HaveCleaned
 let doClean () : HaveCleaned =
-    printf "Cleaning... "
+    Console.Write "Cleaning... "
     cleanDirectories ["bin" ; "temp" ; "output"]
-    printfn "done."
+    Console.WriteLine "done."
     HaveCleaned
 
 (*
@@ -209,9 +209,9 @@ let packages =
 
 type HaveUpdatedBuildVersion = | HaveUpdatedBuildVersion
 let appveyorBuildVersion (_ : HaveCleaned) : HaveUpdatedBuildVersion =
-    printf "appveyor UpdateBuild... "
+    Console.Write "appveyor UpdateBuild... "
     runProcess "appveyor" ["UpdateBuild" ; "-Version" ; buildVersion]
-    printfn "done."
+    Console.WriteLine "done."
     HaveUpdatedBuildVersion
 
 (*
@@ -223,10 +223,10 @@ Target.create "BuildVersion" (fun _ ->
 // Generate assembly info files with the right version & up-to-date information
 type HaveGeneratedAssemblyInfo = | HaveGeneratedAssemblyInfo
 let generateAssemblyInfo (_ : HaveCleaned) : HaveGeneratedAssemblyInfo =
-    printf "Generating AssemblyInfo files... "
+    Console.Write "Generating AssemblyInfo files... "
     for package in packages do
         let fileName = $"src/%s{package.Name}/AssemblyInfo.fs"
-        printf $"(%s{fileName}) "
+        Console.Write $"(%s{fileName}) "
 
         let shouldHaveInternalsVisibleTo =
             [
@@ -237,7 +237,7 @@ let generateAssemblyInfo (_ : HaveCleaned) : HaveGeneratedAssemblyInfo =
 
         let ivt, ivtLiteral =
             if Set.contains package.Name shouldHaveInternalsVisibleTo then
-                """[<Assembly: internalsVisibleTo("FsCheck.Test")>]""", "let [<Literal>] InternalsVisibleTo = \"FsCheck.Test\""
+                """[<assembly: InternalsVisibleTo("FsCheck.Test")>]""", "let [<Literal>] InternalsVisibleTo = \"FsCheck.Test\""
             else "", ""
 
         let assemblyInfoText = $"""
@@ -248,7 +248,7 @@ open System.Runtime.CompilerServices
 
 [<assembly: AssemblyTitle("%s{package.Name}")>]
 [<assembly: AssemblyProduct("%s{package.Name}")>]
-[<assembly: AssemblyDescription(%s{package.Summary}")>]
+[<assembly: AssemblyDescription("%s{package.Summary}")>]
 [<assembly: AssemblyVersion("%s{releaseNotes.AssemblyVersion}")>]
 [<assembly: AssemblyFileVersion("%s{releaseNotes.AssemblyVersion}")>]
 [<assembly: AssemblyKeyFile("../../FsCheckKey.snk")>]
@@ -265,7 +265,7 @@ module internal AssemblyVersionInformation =
     %s{ivtLiteral}
 """
         File.WriteAllText (fileName, assemblyInfoText)
-    printfn "done."
+    Console.WriteLine "done."
     HaveGeneratedAssemblyInfo
 
 (*
@@ -291,12 +291,12 @@ Target.create "AssemblyInfo" (fun _ ->
 
 type HaveBuilt = HaveBuilt
 let build (_ : HaveCleaned) : HaveBuilt =
-    printf "Performing dotnet restore... "
+    Console.Write "Performing dotnet restore... "
     runProcess "dotnet" ["restore" ; solution]
-    printfn "done."
-    printf "Performing dotnet build... "
+    Console.WriteLine "done."
+    Console.Write "Performing dotnet build... "
     runProcess "dotnet" ["build" ; solution ; "--configuration" ; "Release"]
-    printfn "done."
+    Console.WriteLine "done."
     HaveBuilt
 
 (*
@@ -311,9 +311,9 @@ Target.create "Build" (fun _ ->
 
 type HaveTested = HaveTested
 let runDotnetTest (_ : HaveCleaned) : HaveTested =
-    printf "Performing dotnet test... "
+    Console.Write "Performing dotnet test... "
     runProcess "dotnet" ["test" ; "tests/FsCheck.Test" ; "--configuration" ; "Release"]
-    printfn "done."
+    Console.WriteLine "done."
     HaveTested
 
 (*
@@ -328,12 +328,12 @@ Target.create "RunTests" (fun _ ->
 
 type HavePacked = HavePacked
 let packNuGet (_ : HaveTested) : HavePacked =
-    printf "Performing dotnet pack... "
+    Console.Write "Performing dotnet pack... "
     let releaseNotes =
         releaseNotes.Notes
         |> String.concat "\n"
     runProcess "dotnet" ["pack" ; "--configuration" ; "Release" ; $"-p:Version=%s{buildVersion}" ; "--output" ; "bin" ; $"-p:PackageReleaseNotes=%s{releaseNotes}"]
-    printfn "done."
+    Console.WriteLine "done."
     HavePacked
 
 (*
@@ -350,7 +350,7 @@ Target.create "PaketPack" (fun _ ->
 
 type HavePushed = HavePushed
 let pushNuGet (_ : HaveTested) (_ : HavePacked) =
-    printf "Performing NuGet push... "
+    Console.Write "Performing NuGet push... "
     let nugetKey =
         match Environment.GetEnvironmentVariable "NUGET_KEY" with
         | null ->
@@ -372,7 +372,7 @@ let pushNuGet (_ : HaveTested) (_ : HavePacked) =
             runProcessWithEnv env "cmd" ["/c" ; $"dotnet nuget push %s{package} --api-key %%NUGET_KEY%% --source https://api.nuget.org/v3/index.json"]
         else
             runProcessWithEnv env "sh" ["-c" ; $"dotnet nuget push %s{package} --api-key $NUGET_KEY --source https://api.nuget.org/v3/index.json"]
-    printfn "done."
+    Console.WriteLine "done."
     HavePushed
 
 (*
@@ -402,7 +402,7 @@ let fsdocProperties = [
 
 type HaveGeneratedDocs = HaveGeneratedDocs
 let docs (_ : HaveBuilt) : HaveGeneratedDocs =
-    printf "Running fsdocs build... "
+    Console.Write "Running fsdocs build... "
     cleanDirectories [".fsdocs"]
 
     [
@@ -414,7 +414,7 @@ let docs (_ : HaveBuilt) : HaveGeneratedDocs =
     |> runProcess "dotnet"
 
     let cwd = Environment.CurrentDirectory
-    printfn $"done (access at %s{cwd}/output/index.html)."
+    Console.WriteLine $"done (access at %s{cwd}/output/index.html)."
 
     HaveGeneratedDocs
 
@@ -429,7 +429,7 @@ Target.create "Docs" (fun _ ->
 *)
 
 let watchDocs () =
-    printf "Running fsdocs watch... "
+    Console.Write "Running fsdocs watch... "
     cleanDirectories [".fsdocs"]
 
     [
@@ -439,7 +439,7 @@ let watchDocs () =
         "--parameters" ; yield! fsdocParameters
     ]
     |> runProcess "dotnet"
-    printfn "fsdocs watch completed."
+    Console.WriteLine "fsdocs watch completed."
 
 (*
 Target.create "WatchDocs" (fun _ ->
@@ -455,7 +455,7 @@ Target.create "WatchDocs" (fun _ ->
 // Release Scripts
 
 let releaseDocs (_ : HaveBuilt) =
-    printf "Releasing docs to gh-pages branch... "
+    Console.Write "Releasing docs to gh-pages branch... "
     let tempDocsDir = "temp/gh-pages"
     cleanDirectories [tempDocsDir]
     let tempDocsDir = Directory.CreateDirectory tempDocsDir
@@ -465,7 +465,7 @@ let releaseDocs (_ : HaveBuilt) =
 
     runProcess "git" ["--git-dir" ; Path.Combine (tempDocsDir.FullName, ".git") ; "commit" ; "--all" ; "--message" ; $"Update generated documentation for version %s{buildVersion}"]
     runProcess "git" ["--git-dir" ; Path.Combine (tempDocsDir.FullName, ".git") ; "push"]
-    printfn "done."
+    Console.WriteLine "done."
 
 (*
 Target.create "ReleaseDocs" (fun _ ->
@@ -482,10 +482,10 @@ Target.create "ReleaseDocs" (fun _ ->
 *)
 
 let rec getUserInput (prompt : string) =
-    printfn $"%s{prompt}"
+    Console.Write $"%s{prompt}: "
     let line = Console.ReadLine ()
     if String.IsNullOrWhiteSpace line then
-        printfn "Entry must be non-whitespace."
+        Console.WriteLine "Entry must be non-whitespace."
         getUserInput prompt
     else
         line
@@ -522,7 +522,7 @@ type GitHubReleaseRequest =
     }
 
 let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
-    printfn "Tagging new version and performing GitHub release... "
+    Console.WriteLine "Tagging new version and performing GitHub release... "
 
     let pat =
         match Environment.GetEnvironmentVariable "github-pat" with
@@ -532,7 +532,7 @@ let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
                 $"Scope it to at least %s{gitOwner}/%s{gitName} and write access to Repository Permissions -> Contents."
             ]
             |> List.iter Console.WriteLine
-            getUserInput "GitHub PAT: "
+            getUserInput "GitHub PAT"
         | s -> s
     let remote =
         let matchingRemotes =
@@ -557,12 +557,14 @@ let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
             failwith $"Multiple matching push remotes found for %s{gitOwner}/%s{gitName}: %s{remotes}"
 
     runProcess "git" ["commit" ; "--all" ; "--message" ; $"Bump version to %s{releaseNotes.NugetVersion}"]
-    let gitBranch = runProcessWithOutput Map.empty "git" ["symbolic-ref" ; "--short" ; "HEAD"]
+    let gitBranch =
+        runProcessWithOutput Map.empty "git" ["symbolic-ref" ; "--short" ; "HEAD"]
+    Console.WriteLine $"Branch: '%s{gitBranch}'; remote: '%s{remote}'"
     runProcess "git" ["push" ; remote ; gitBranch]
     runProcess "git" ["tag" ; releaseNotes.NugetVersion]
-    runProcess "git" ["push" ; remote ; "--tag" ; releaseNotes.NugetVersion]
+    runProcess "git" ["push" ; remote ; releaseNotes.NugetVersion]
 
-    printfn "Creating GitHub release... "
+    Console.WriteLine "Creating GitHub release... "
 
     let releaseSpec =
         {
@@ -585,9 +587,9 @@ let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
     let response = response.Content.ReadAsStringAsync().Result
     let output = JsonSerializer.Deserialize<GitHubReleaseResponse> response
 
-    printfn $"GitHub response: %+A{output}"
+    Console.WriteLine $"GitHub response: %+A{output}"
 
-    printfn "done."
+    Console.WriteLine "done."
 
 (*
 Target.create "Release" (fun _ ->
