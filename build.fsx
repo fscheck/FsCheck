@@ -552,31 +552,54 @@ let args =
     | "build.fsx" :: rest -> rest
     | args -> args
 
-match args with
-| ["-t" ; "WatchDocs"] -> watchDocs ()
-| [] | ["-t" ; "RunTests"] ->
+match args |> List.map (fun s -> s.ToLowerInvariant ()) with
+| [] | ["-t" ; "runtests"] ->
     let haveCleaned = doClean ()
     runDotnetTest haveCleaned |> ignore<HaveTested>
-| ["-t"; "Clean"] -> doClean () |> ignore<HaveCleaned>
-| ["-t"; "CI"] ->
+| ["-t"; "clean"] -> doClean () |> ignore<HaveCleaned>
+| ["-t"; "ci"] ->
     let haveCleaned = doClean ()
     let haveBuilt = build haveCleaned
     let haveTested = runDotnetTest haveCleaned
     let haveGeneratedDocs = docs haveBuilt
     runCi haveGeneratedDocs haveTested
-| ["-t"; "Tests"] ->
+| ["-t" ; "release"] ->
+    let haveCleaned = doClean ()
+    let haveBuilt = build haveCleaned
+    let haveTested = runDotnetTest haveCleaned
+    let haveGeneratedDocs = docs haveBuilt
+    release haveTested haveGeneratedDocs
+| ["-t"; "build"] ->
+    let haveCleaned = doClean ()
+    build haveCleaned |> ignore<HaveBuilt>
+| ["-t"; "tests"] ->
     let haveCleaned = doClean ()
     runDotnetTest haveCleaned |> ignore<HaveTested>
-| ["-t"; "Docs"] ->
+| ["-t"; "docs"] ->
     let haveCleaned = doClean ()
     let haveBuilt = build haveCleaned
     docs haveBuilt |> ignore<HaveGeneratedDocs>
-| ["-t"; "ReleaseDocs"] ->
+| ["-t" ; "watchdocs"] -> watchDocs ()
+| ["-t"; "releasedocs"] ->
     if not isAppVeyorBuild then
         failwith "Refusing to release docs from CI"
     let haveCleaned = doClean ()
     let haveBuilt = build haveCleaned
     releaseDocs haveBuilt
+| ["-t"; "nugetpack"] ->
+    let haveCleaned = doClean ()
+    let haveTested = runDotnetTest haveCleaned
+    packNuGet haveTested |> ignore<HavePacked>
+| ["-t"; "nugetpush"] ->
+    let haveCleaned = doClean ()
+    let haveTested = runDotnetTest haveCleaned
+    pushNuGet haveTested |> ignore<HavePushed>
+| ["-t"; "buildversion"] ->
+    let haveCleaned = doClean ()
+    appveyorBuildVersion haveCleaned |> ignore<HaveUpdatedBuildVersion>
+| ["-t"; "assemblyinfo"] ->
+    let haveCleaned = doClean ()
+    generateAssemblyInfo haveCleaned |> ignore<HaveGeneratedAssemblyInfo>
 | _ ->
     let args =
         args
