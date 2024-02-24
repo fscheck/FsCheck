@@ -34,7 +34,7 @@ module Utils =
 
     type Waiter (stdout : ResizeArray<string>, stderr : ResizeArray<string>) =
         let rec go () : Async<unit> = async {
-            do! Async.Sleep (TimeSpan.FromSeconds 5.0)
+            do! Async.Sleep (TimeSpan.FromSeconds 10.0)
             let lastStdout =
                 lock stdout (fun () -> if stdout.Count = 0 then None else Some stdout.[stdout.Count - 1])
                 |> Option.defaultValue "<no output yet>"
@@ -364,7 +364,8 @@ let pushNuGet (_ : HaveTested) (_ : HavePacked) =
         ["NUGET_KEY", nugetKey]
         |> Map.ofList
 
-    for package in [] do
+    for package in ["FsCheck" ; "FsCheck.NUnit" ; "FsCheck.Xunit"] do
+        let package = Path.Combine ("bin", $"%s{package}.%s{buildVersion}.nupkg")
         // yup, `dotnet nuget` really does have no way to pass in the critical secret secretly, so we have
         // to get the shell to do it
         if RuntimeInformation.IsOSPlatform OSPlatform.Windows then
