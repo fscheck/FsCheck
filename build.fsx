@@ -259,7 +259,7 @@ Target.create "Build" (fun _ ->
 
 type HaveTested = HaveTested
 let runDotnetTest (_ : HaveCleaned) : HaveTested =
-    printf "Performing dotnet test... "
+    printf "Performing dotnet test (expect this to take several minutes)... "
     runProcess "dotnet" ["test" ; "tests/FsCheck.Test" ; "--configuration" ; "Release"]
     printfn "done."
     HaveTested
@@ -316,11 +316,12 @@ Target.create "PaketPush" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Generate the documentation
 
-let fsdocParameters = [
-  "fsdocs-release-notes-link https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md"
-  "fsdocs-license-link https://github.com/fscheck/FsCheck/blob/master/License.txt"
-  "fsdocs-navbar-position fixed-left"
-]
+let fsdocParameters =
+    [
+        "fsdocs-release-notes-link"; "https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md"
+        "fsdocs-license-link"; "https://github.com/fscheck/FsCheck/blob/master/License.txt"
+        "fsdocs-navbar-position"; "fixed-left"
+    ]
 
 let fsdocProperties = [
   "Configuration=Release"
@@ -340,7 +341,8 @@ let docs (_ : HaveBuilt) : HaveGeneratedDocs =
     ]
     |> runProcess "dotnet"
 
-    printfn "done."
+    let cwd = Environment.CurrentDirectory
+    printfn $"done (access at %s{cwd}/output/index.html)."
 
     HaveGeneratedDocs
 
@@ -568,7 +570,7 @@ match args with
 | ["-t"; "Docs"] ->
     let haveCleaned = doClean ()
     let haveBuilt = build haveCleaned
-    releaseDocs haveBuilt
+    docs haveBuilt |> ignore<HaveGeneratedDocs>
 | ["-t"; "ReleaseDocs"] ->
     if not isAppVeyorBuild then
         failwith "Refusing to release docs from CI"
@@ -579,4 +581,4 @@ match args with
     let args =
         args
         |> String.concat " "
-    failwith $"Unrecognised arguments: %s{args}"
+    failwith $"Unrecognised arguments. Supply '-t [WatchDocs,RunTests,Clean,CI,Tests,Docs,ReleaseDocs]'. Unrecognised args were: %s{args}"
