@@ -6,9 +6,12 @@ open System.Diagnostics
 open System.IO
 open System.Net.Http
 open System.Net.Http.Headers
+open System.Runtime.InteropServices
 open System.Text
 open System.Text.Json
 open System.Text.Json.Serialization
+open System.Threading
+open System.Threading.Tasks
 
 [<AutoOpen>]
 module Utils =
@@ -21,30 +24,79 @@ module Utils =
             with :? DirectoryNotFoundException -> ()
         )
 
-    let runProcessWithOutput (command : string) (args : string seq) : string =
+    let rec containsTaskCancellation (exc : Exception) =
+        match exc with
+        | :? TaskCanceledException -> true
+        | :? AggregateException as e ->
+            e.InnerExceptions
+            |> Seq.exists containsTaskCancellation
+        | _ -> false
+
+    type Waiter (stdout : ResizeArray<string>, stderr : ResizeArray<string>) =
+        let rec go () : Async<unit> = async {
+            do! Async.Sleep (TimeSpan.FromSeconds 5.0)
+            let lastStdout =
+                lock stdout (fun () -> if stdout.Count = 0 then None else Some stdout.[stdout.Count - 1])
+                |> Option.defaultValue "<no output yet>"
+            Console.WriteLine $"Last stdout: %s{lastStdout}"
+            let lastStderr =
+                lock stderr (fun () -> if stderr.Count = 0 then None else Some stderr.[stderr.Count - 1])
+                |> Option.defaultValue "<no error output yet>"
+            Console.WriteLine $"Last stderr: %s{lastStderr}"
+            return! go ()
+        }
+        let cts = new CancellationTokenSource ()
+
+        let task = Async.StartAsTask (go (), cancellationToken = cts.Token)
+
+        interface IDisposable with
+            member _.Dispose () =
+                cts.Cancel ()
+                try
+                    task.Wait ()
+                with
+                | e when containsTaskCancellation e -> ()
+
+    let runProcessWithOutput (env : Map<string, string>) (command : string) (args : string seq) : string =
         let psi = ProcessStartInfo (command, args)
-        psi.RedirectStandardError <- true
         psi.RedirectStandardOutput <- true
+        psi.RedirectStandardError <- true
+        env
+        |> Map.iter (fun key value ->
+            psi.EnvironmentVariables.[key] <- value
+        )
         use proc = new Process ()
         proc.StartInfo <- psi
+        // have to do the dance to avoid the classic deadlock condition where the subprocess is waiting to push
+        // to a full output buffer, but we aren't doing anything to clear the output buffer until the subprocess
+        // quits
+        let stdoutArr = ResizeArray ()
+        proc.OutputDataReceived.Add (fun evt -> lock stdoutArr (fun () -> stdoutArr.Add evt.Data))
+        let stderrArr = ResizeArray ()
+        proc.ErrorDataReceived.Add (fun evt -> lock stderrArr (fun () -> stderrArr.Add evt.Data))
+
         if not (proc.Start ()) then
             let args = args |> String.concat " "
             failwith $"Failed to start process '%s{command}' with args: %s{args}"
-        proc.WaitForExit ()
-        let stdout =
-            let stdout = proc.StandardOutput.ReadToEnd ()
-            if String.IsNullOrWhiteSpace stdout then "" else $"\nStdout:\n  %s{stdout}"
+        proc.BeginOutputReadLine ()
+        proc.BeginErrorReadLine ()
+        printf $"(started process %i{proc.Id}) "
+
+        do
+            use waiter = new Waiter (stdoutArr, stderrArr)
+            proc.WaitForExit ()
+
+        let stdout = String.concat " " stdoutArr
+        let stdout = if String.IsNullOrEmpty stdout then "" else $"\nStdout:\n  %s{stdout}"
 
         if proc.ExitCode <> 0 then
             let args = args |> String.concat " "
-            let stderr =
-                let stderr = proc.StandardOutput.ReadToEnd ()
-                if String.IsNullOrWhiteSpace stderr then "" else $"\nStderr:\n  %s{stderr}"
-            failwith $"Process '%s{command}' failed with nonzero exit code %i{proc.ExitCode}. Args: %s{args}.%s{stdout}%s{stderr}"
+            failwith $"Process '%s{command}' failed with nonzero exit code %i{proc.ExitCode}. Args: %s{args}.%s{stdout}"
 
         stdout
 
-    let runProcess command args = runProcessWithOutput command args |> ignore<string>
+    let inline runProcessWithEnv env command args : unit = runProcessWithOutput env command args |> ignore<string>
+    let inline runProcess command args : unit = runProcessWithEnv Map.empty command args
 
     let rec copyDir (source : DirectoryInfo) (target : DirectoryInfo) : unit =
         target.Create ()
@@ -259,7 +311,7 @@ Target.create "Build" (fun _ ->
 
 type HaveTested = HaveTested
 let runDotnetTest (_ : HaveCleaned) : HaveTested =
-    printf "Performing dotnet test (expect this to take several minutes)... "
+    printf "Performing dotnet test... "
     runProcess "dotnet" ["test" ; "tests/FsCheck.Test" ; "--configuration" ; "Release"]
     printfn "done."
     HaveTested
@@ -297,9 +349,28 @@ Target.create "PaketPack" (fun _ ->
 *)
 
 type HavePushed = HavePushed
-let pushNuGet (_ : HaveTested) =
+let pushNuGet (_ : HaveTested) (_ : HavePacked) =
     printf "Performing NuGet push... "
-    failwith "TODO"
+    let nugetKey =
+        match Environment.GetEnvironmentVariable "NUGET_KEY" with
+        | null ->
+            match Environment.GetEnvironmentVariable "NUGETKEY" with
+            | null ->
+                failwith "No NuGet key in environment for NuGet publish. Set NUGET_KEY."
+            | s -> s
+        | s -> s
+
+    let env =
+        ["NUGET_KEY", nugetKey]
+        |> Map.ofList
+
+    for package in [] do
+        // yup, `dotnet nuget` really does have no way to pass in the critical secret secretly, so we have
+        // to get the shell to do it
+        if RuntimeInformation.IsOSPlatform OSPlatform.Windows then
+            runProcessWithEnv env "cmd" ["/c" ; $"dotnet nuget push %s{package} --api-key %%NUGET_KEY%% --source https://api.nuget.org/v3/index.json"]
+        else
+            runProcessWithEnv env "sh" ["-c" ; $"dotnet nuget push %s{package} --api-key $NUGET_KEY --source https://api.nuget.org/v3/index.json"]
     printfn "done."
     HavePushed
 
@@ -464,7 +535,7 @@ let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
         | s -> s
     let remote =
         let matchingRemotes =
-            runProcessWithOutput "git" ["remote" ; "-v"]
+            runProcessWithOutput Map.empty "git" ["remote" ; "-v"]
             |> fun stdout -> stdout.Split '\n'
             |> Seq.choose (fun line ->
                 let line = line.Trim ()
@@ -485,7 +556,7 @@ let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
             failwith $"Multiple matching push remotes found for %s{gitOwner}/%s{gitName}: %s{remotes}"
 
     runProcess "git" ["commit" ; "--all" ; "--message" ; $"Bump version to %s{releaseNotes.NugetVersion}"]
-    let gitBranch = runProcessWithOutput "git" ["symbolic-ref" ; "--short" ; "HEAD"]
+    let gitBranch = runProcessWithOutput Map.empty "git" ["symbolic-ref" ; "--short" ; "HEAD"]
     runProcess "git" ["push" ; remote ; gitBranch]
     runProcess "git" ["tag" ; releaseNotes.NugetVersion]
     runProcess "git" ["push" ; remote ; "--tag" ; releaseNotes.NugetVersion]
@@ -593,7 +664,8 @@ match args |> List.map (fun s -> s.ToLowerInvariant ()) with
 | ["-t"; "nugetpush"] ->
     let haveCleaned = doClean ()
     let haveTested = runDotnetTest haveCleaned
-    pushNuGet haveTested |> ignore<HavePushed>
+    let havePacked = packNuGet haveTested
+    pushNuGet haveTested havePacked |> ignore<HavePushed>
 | ["-t"; "buildversion"] ->
     let haveCleaned = doClean ()
     appveyorBuildVersion haveCleaned |> ignore<HaveUpdatedBuildVersion>
@@ -604,4 +676,4 @@ match args |> List.map (fun s -> s.ToLowerInvariant ()) with
     let args =
         args
         |> String.concat " "
-    failwith $"Unrecognised arguments. Supply '-t [WatchDocs,RunTests,Clean,CI,Tests,Docs,ReleaseDocs]'. Unrecognised args were: %s{args}"
+    failwith $"Unrecognised arguments. Supply '-t [RunTests,Clean,CI,Build,Tests,Release,Docs,WatchDocs,ReleaseDocs,NugetPack,NugetPush,BuildVersion,AssemblyInfo]'. Unrecognised args were: %s{args}"
