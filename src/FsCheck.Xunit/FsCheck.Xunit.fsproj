@@ -19,7 +19,7 @@
         <Compile Include="CheckExtensions.fs"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Update="FSharp.Core"/>
+        <PackageReference Include="FSharp.Core"/>
         <PackageReference Include="xunit.extensibility.execution"/>
     </ItemGroup>
     <ItemGroup>

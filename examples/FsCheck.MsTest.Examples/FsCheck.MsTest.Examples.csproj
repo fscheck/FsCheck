@@ -17,7 +17,7 @@
         <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Update="FSharp.Core"/>
+        <PackageReference Include="FSharp.Core"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="MSTest.TestFramework"/>
         <PackageReference Include="MSTest.TestAdapter"/>
