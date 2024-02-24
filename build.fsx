@@ -17,6 +17,8 @@ module Utils =
 
     let runProcess (command : string) (args : string seq) =
         let psi = ProcessStartInfo (command, args)
+        psi.RedirectStandardError <- true
+        psi.RedirectStandardOutput <- true
         use proc = new Process ()
         proc.StartInfo <- psi
         if not (proc.Start ()) then
@@ -25,7 +27,13 @@ module Utils =
         proc.WaitForExit ()
         if proc.ExitCode <> 0 then
             let args = args |> String.concat " "
-            failwith $"Process '%s{command}' failed with nonzero exit code %i{proc.ExitCode}. Args: %s{args}"
+            let stdout =
+                let stdout = proc.StandardOutput.ReadToEnd ()
+                if String.IsNullOrWhiteSpace stdout then "" else $"\nStdout:\n  %s{stdout}"
+            let stderr =
+                let stderr = proc.StandardOutput.ReadToEnd ()
+                if String.IsNullOrWhiteSpace stderr then "" else $"\nStderr:\n  %s{stderr}"
+            failwith $"Process '%s{command}' failed with nonzero exit code %i{proc.ExitCode}. Args: %s{args}.%s{stdout}%s{stderr}"
 
     let rec copyDir (source : DirectoryInfo) (target : DirectoryInfo) : unit =
         target.Create ()
@@ -423,7 +431,10 @@ let runCi (_ : HaveGeneratedDocs) (_ : HaveTested) =
     // this is just a target to note that we have done all the above
     ()
 
-let args = fsi.CommandLineArgs |> List.ofArray
+let args =
+    match fsi.CommandLineArgs |> List.ofArray with
+    | "build.fsx" :: rest -> rest
+    | args -> args
 
 match args with
 | ["WatchDocs"] -> watchDocs ()
@@ -451,4 +462,7 @@ match args with
     let haveBuilt = build haveCleaned
     releaseDocs haveBuilt
 | _ ->
-    failwith "Unrecognised arguments."
+    let args =
+        args
+        |> String.concat " "
+    failwith $"Unrecognised arguments: %s{args}"
