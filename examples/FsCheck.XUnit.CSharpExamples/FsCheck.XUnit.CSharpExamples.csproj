@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>FsCheck.Xunit.CSharpExamples</AssemblyName>
+        <TargetFramework>net6.0</TargetFramework>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <WarningLevel>3</WarningLevel>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Remove="App.config" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="App.config" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\FsCheck.Xunit\FsCheck.Xunit.fsproj" />
+        <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio" />
+        <PackageReference Include="FSharp.Core" />
+    </ItemGroup>
+</Project>

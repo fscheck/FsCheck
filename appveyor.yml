@@ -1,0 +1,14 @@
+image: Visual Studio 2022
+
+init:
+  - git config --global core.autocrlf input
+  
+build_script:
+  - cmd: ./build.cmd -t CI
+  
+test: false
+version: '{build}'
+
+artifacts:
+  - path: 'bin\*.nupkg'
+    type: NuGetPackage

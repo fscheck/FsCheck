@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>FsCheck.NUnit.CSharpExamples</AssemblyName>
+        <TargetFramework>net6.0</TargetFramework>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <WarningLevel>3</WarningLevel>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Remove="App.config" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="App.config" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\FsCheck.NUnit\FsCheck.NUnit.fsproj" />
+        <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FSharp.Core" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="NUnit" />
+        <PackageReference Include="NUnit3TestAdapter" />
+    </ItemGroup>
+</Project>

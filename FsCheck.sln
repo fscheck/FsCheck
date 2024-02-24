@@ -1,0 +1,133 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34616.47
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3162219D-7729-49C4-849A-9CCD889798DB}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+		build.cmd = build.cmd
+		build.fsx = build.fsx
+		build.sh = build.sh
+		Contributors.txt = Contributors.txt
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		.config\dotnet-tools.json = .config\dotnet-tools.json
+		FsCheck Release Notes.md = FsCheck Release Notes.md
+		License.txt = License.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{DA5DD4BB-1953-4614-A5E0-9687C63A7234}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsCheck.Examples", "examples\FsCheck.Examples\FsCheck.Examples.fsproj", "{7662113E-E531-4223-99C4-62EFCDDD77FF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.CSharpExamples", "examples\FsCheck.CSharpExamples\FsCheck.CSharpExamples.csproj", "{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsCheck.NUnit.Examples", "examples\FsCheck.NUnit.Examples\FsCheck.NUnit.Examples.fsproj", "{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.NUnit.CSharpExamples", "examples\FsCheck.NUnit.CSharpExamples\FsCheck.NUnit.CSharpExamples.csproj", "{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.MsTest.Examples", "examples\FsCheck.MsTest.Examples\FsCheck.MsTest.Examples.csproj", "{CB41BAC5-272F-4562-9494-E3DC1D0B4139}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsCheck", "src\FsCheck\FsCheck.fsproj", "{32AA3276-BBA1-41CE-B78A-706B8454EC8D}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsCheck.Xunit", "src\FsCheck.Xunit\FsCheck.Xunit.fsproj", "{26A87ED0-9836-45F6-A88E-603DA8FCD856}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsCheck.Test", "tests\FsCheck.Test\FsCheck.Test.fsproj", "{EB8B96DF-C654-410D-B590-FDBE3BC235FE}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsCheck.NUnit", "src\FsCheck.NUnit\FsCheck.NUnit.fsproj", "{6B1B9FF5-8E6D-4461-9D77-CD1619403684}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6B36173B-D4E0-4CF4-840D-3F3016653F85}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\index.fsx = Docs\index.fsx
+		Docs\LearningResources.md = Docs\LearningResources.md
+		Docs\Properties.fsx = Docs\Properties.fsx
+		Docs\QuickStart.fsx = Docs\QuickStart.fsx
+		Docs\RunningTests.fsx = Docs\RunningTests.fsx
+		Docs\StatefulTestingNew.fsx = Docs\StatefulTestingNew.fsx
+		Docs\TestData.fsx = Docs\TestData.fsx
+		Docs\TipsAndTricks.fsx = Docs\TipsAndTricks.fsx
+		Docs\users.md = Docs\users.md
+		Docs\_template.html = Docs\_template.html
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.XUnit.CSharpExamples", "examples\FsCheck.XUnit.CSharpExamples\FsCheck.XUnit.CSharpExamples.csproj", "{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharp.DocSnippets", "examples\CSharp.DocSnippets\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.Test.CSharp", "tests\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj", "{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7662113E-E531-4223-99C4-62EFCDDD77FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB41BAC5-272F-4562-9494-E3DC1D0B4139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB41BAC5-272F-4562-9494-E3DC1D0B4139}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB41BAC5-272F-4562-9494-E3DC1D0B4139}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB41BAC5-272F-4562-9494-E3DC1D0B4139}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32AA3276-BBA1-41CE-B78A-706B8454EC8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26A87ED0-9836-45F6-A88E-603DA8FCD856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB8B96DF-C654-410D-B590-FDBE3BC235FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B1B9FF5-8E6D-4461-9D77-CD1619403684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AB84678-E55F-4387-A040-67312735D089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AB84678-E55F-4387-A040-67312735D089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AB84678-E55F-4387-A040-67312735D089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AB84678-E55F-4387-A040-67312735D089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7662113E-E531-4223-99C4-62EFCDDD77FF} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
+		{50CD1015-5417-4EC0-B63D-F7E54B75D3AB} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
+		{D87946C4-4607-49A0-B2C6-DEDBBBAE1D5A} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
+		{FC5EACAD-41E5-4D6D-8F31-6FB51D0A0DEF} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
+		{CB41BAC5-272F-4562-9494-E3DC1D0B4139} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
+		{F24A8502-B118-4BF2-B5F9-CC9DB9A40C23} = {DA5DD4BB-1953-4614-A5E0-9687C63A7234}
+		{6AB84678-E55F-4387-A040-67312735D089} = {6B36173B-D4E0-4CF4-840D-3F3016653F85}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9FFC733A-4B2D-4F47-B5F4-A7E6707CCC67}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = examples\FsCheck.Examples\FsCheck.Examples.fsproj
+	EndGlobalSection
+EndGlobal

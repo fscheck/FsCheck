@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>FsCheck</AssemblyName>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <PackageDescription>FsCheck is a tool for testing .NET programs automatically. You provide a specification of the program, in the form of properties which functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. Such properties are actually a testable specification of your program.
+
+            Properties are written in F#, C# or VB. FsCheck helps you to define properties, observe the distribution of test data, and define test data generators. Crucially, when a property fails, FsCheck automatically displays a minimal counter example.
+        </PackageDescription>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="AssemblyInfo.fs"/>
+        <Compile Include="Internals.Common.fs"/>
+        <Compile Include="Internals.Numeric.fs"/>
+        <Compile Include="Internals.Data.fs"/>
+        <Compile Include="Random.fs"/>
+        <Compile Include="Internals.Reflect.fs"/>
+        <Compile Include="Internals.TypeClass.fs"/>
+        <Compile Include="FSharp.Gen.fs"/>
+        <Compile Include="FSharp.GenBuilder.fs"/>
+        <Compile Include="Internals.Shrink.fs"/>
+        <Compile Include="Internals.ReflectiveGenerator.fs"/>
+        <Compile Include="Internals.ReflectiveShrinker.fs"/>
+        <Compile Include="FSharp.Arbitrary.fs"/>
+        <Compile Include="ArbMap.fs"/>
+        <Compile Include="DefaultArbTypes.fs"/>
+        <Compile Include="Internals.DefaultArbs.fs"/>
+        <Compile Include="FSharp.ArbMap.fs"/>
+        <Compile Include="Testable.fs"/>
+        <Compile Include="FSharp.Prop.fs"/>
+        <Compile Include="StateMachine.fs"/>
+        <Compile Include="Runner.fs"/>
+        <Compile Include="Fluent.Gen.fs"/>
+        <Compile Include="Fluent.Arbitrary.fs"/>
+        <Compile Include="Fluent.ArbMap.fs"/>
+        <Compile Include="Fluent.Prop.fs"/>
+        <Compile Include="RunnerExtensions.fs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="Script.fsx"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FSharp.Core"/>
+    </ItemGroup>
+</Project>

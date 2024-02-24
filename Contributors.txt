@@ -1,0 +1,21 @@
+First of all credit should go to John Hughes and Koen Claessen for coming up with the fist version of Haskell's QuickCheck and many fundanmental improvements and ideas. All contributors to QuickCheck are contributors to FsCheck.
+
+The same is true, but to a lesser degree, for scalacheck (which is itself a port of QuickCheck to Scala).
+
+Contributors:
+Carsten Koenig
+Mauricio Scheffer
+Alex Bogomaz
+Neil Mitchell (the first version of reflective generators and shrinker)
+Ganesh Sittampalam (various improvements and fixes in the property DSL)
+toyvo (Makefile for mono users)
+Steve Gilham (byte arbitrary instance)
+David Crocker (first version of replay mechanism, bug fix)
+Howard Mansell (lots of generators and arbitrary instances)
+David Jones (tail recursive version of Gen.sequence, bug fixes)
+Matthew Peacock (gen workflow extensions)
+(my sincerest apologies to anyone I overlooked - feel free to protest!)
+
+Thanks to:
+Howard Mansell and team from Credit Suisse, for taking the time to clear up legal stuff and donate code, and being enthusiastic early adopters.
+Everyone that takes the time to report bugs or send feedback.
