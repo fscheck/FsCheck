@@ -8,11 +8,15 @@
   <ItemGroup>
     <Content Include="App.config" />
     <Compile Include="PropertyExamples.fs" />
-    <None Include="paket.references" />
+  </ItemGroup>
+  <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="NUnit" />
+        <PackageReference Include="NUnit3TestAdapter" />
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/FsCheck/FsCheck.fsproj" />
     <ProjectReference Include="../../src/FsCheck.NUnit/FsCheck.NUnit.fsproj" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

@@ -13,11 +13,10 @@
     <Compile Include="CheckExtensions.fs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="paket.references" />
-    <None Include="paket.template" />
+    <PackageReference Update="FSharp.Core" />
+    <PackageReference Include="xunit.extensibility.execution" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../FsCheck/FsCheck.fsproj" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

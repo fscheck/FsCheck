@@ -35,9 +35,9 @@
     <Compile Include="RunnerExtensions.fs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="paket.references" />
-    <None Include="paket.template" />
     <None Include="Script.fsx" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" />
+  </ItemGroup>
 </Project>

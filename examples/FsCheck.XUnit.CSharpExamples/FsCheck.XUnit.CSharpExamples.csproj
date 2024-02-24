@@ -17,5 +17,7 @@
     <ProjectReference Include="..\..\src\FsCheck.Xunit\FsCheck.Xunit.fsproj" />
     <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+  </ItemGroup>
 </Project>

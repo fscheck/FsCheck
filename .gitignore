@@ -171,3 +171,5 @@ project.lock.json
 .fsdocs/
 output/
 tmp/
+
+.idea/

@@ -21,12 +21,10 @@
     <Compile Include="Property.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="StateMachine.fs" />
-    <None Include="paket.references" />
     <Content Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/FsCheck.Xunit/FsCheck.Xunit.fsproj" />
     <ProjectReference Include="..\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

@@ -17,5 +17,4 @@
     <ProjectReference Include="..\..\src\FsCheck.NUnit\FsCheck.NUnit.fsproj" />
     <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

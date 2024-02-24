@@ -7,10 +7,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Examples.fs" />
-    <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/FsCheck/FsCheck.fsproj" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <PackageReference Include="FSharp.Core" />
+  </ItemGroup>
 </Project>
