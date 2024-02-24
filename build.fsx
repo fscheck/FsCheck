@@ -377,10 +377,10 @@ let releaseDocs (_ : HaveBuilt) =
     let tempDocsDir = Directory.CreateDirectory tempDocsDir
     runProcess "git" ["clone" ; "git@github.com:fscheck/FsCheck.git" ; "--single-branch" ; "--branch" ; "gh-pages" ; tempDocsDir.FullName]
 
-    copyDir (DirectoryInfo "output") tempDocsDir
+    copyDir tempDocsDir (DirectoryInfo "output")
 
-    runProcess "git" ["--git-dir" ; tempDocsDir.FullName ; "commit" ; "--all" ; "--message" ; $"Update generated documentation for version %s{buildVersion}"]
-    runProcess "git" ["--git-dir" ; tempDocsDir.FullName ; "push"]
+    runProcess "git" ["--git-dir" ; Path.Combine (tempDocsDir.FullName, ".git") ; "commit" ; "--all" ; "--message" ; $"Update generated documentation for version %s{buildVersion}"]
+    runProcess "git" ["--git-dir" ; Path.Combine (tempDocsDir.FullName, ".git") ; "push"]
     printfn "done."
 
 (*
