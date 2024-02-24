@@ -4,6 +4,11 @@
 open System
 open System.Diagnostics
 open System.IO
+open System.Net.Http
+open System.Net.Http.Headers
+open System.Text
+open System.Text.Json
+open System.Text.Json.Serialization
 
 [<AutoOpen>]
 module Utils =
@@ -16,7 +21,7 @@ module Utils =
             with :? DirectoryNotFoundException -> ()
         )
 
-    let runProcess (command : string) (args : string seq) =
+    let runProcessWithOutput (command : string) (args : string seq) : string =
         let psi = ProcessStartInfo (command, args)
         psi.RedirectStandardError <- true
         psi.RedirectStandardOutput <- true
@@ -26,15 +31,20 @@ module Utils =
             let args = args |> String.concat " "
             failwith $"Failed to start process '%s{command}' with args: %s{args}"
         proc.WaitForExit ()
+        let stdout =
+            let stdout = proc.StandardOutput.ReadToEnd ()
+            if String.IsNullOrWhiteSpace stdout then "" else $"\nStdout:\n  %s{stdout}"
+
         if proc.ExitCode <> 0 then
             let args = args |> String.concat " "
-            let stdout =
-                let stdout = proc.StandardOutput.ReadToEnd ()
-                if String.IsNullOrWhiteSpace stdout then "" else $"\nStdout:\n  %s{stdout}"
             let stderr =
                 let stderr = proc.StandardOutput.ReadToEnd ()
                 if String.IsNullOrWhiteSpace stderr then "" else $"\nStderr:\n  %s{stderr}"
             failwith $"Process '%s{command}' failed with nonzero exit code %i{proc.ExitCode}. Args: %s{args}.%s{stdout}%s{stderr}"
+
+        stdout
+
+    let runProcess command args = runProcessWithOutput command args |> ignore<string>
 
     let rec copyDir (source : DirectoryInfo) (target : DirectoryInfo) : unit =
         target.Create ()
@@ -397,9 +407,112 @@ Target.create "ReleaseDocs" (fun _ ->
 )
 *)
 
+let rec getUserInput (prompt : string) =
+    printfn $"%s{prompt}"
+    let line = Console.ReadLine ()
+    if String.IsNullOrWhiteSpace line then
+        printfn "Entry must be non-whitespace."
+        getUserInput prompt
+    else
+        line
+
+type GitHubAsset =
+    {
+        BrowserDownloadUrl : Uri
+        Name : string
+        ContentType : string
+        Size : uint64
+    }
+
+type GitHubReleaseResponse =
+    {
+        Name : string
+        PublishedAt : DateTime
+        Assets : GitHubAsset list
+    }
+
+type GitHubReleaseRequest =
+    {
+        [<JsonPropertyName "tag_name">]
+        TagName : string
+        [<JsonPropertyName "target_commitish">]
+        TargetCommitish : string
+        [<JsonPropertyName "name">]
+        Name : string
+        [<JsonPropertyName "body">]
+        Body : string
+        [<JsonPropertyName "draft">]
+        IsDraft : bool
+        [<JsonPropertyName "prerelease">]
+        IsPreRelease : bool
+    }
+
 let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
-    printf "Tagging new version and performing GitHub release... "
-    failwith "TODO"
+    printfn "Tagging new version and performing GitHub release... "
+
+    let pat =
+        match Environment.GetEnvironmentVariable "github-pat" with
+        | null ->
+            [
+                "Obtain a GitHub personal access token from https://github.com/settings/tokens?type=beta ."
+                $"Scope it to at least %s{gitOwner}/%s{gitName} and write access to Repository Permissions -> Contents."
+            ]
+            |> List.iter Console.WriteLine
+            getUserInput "GitHub PAT: "
+        | s -> s
+    let remote =
+        let matchingRemotes =
+            runProcessWithOutput "git" ["remote" ; "-v"]
+            |> fun stdout -> stdout.Split '\n'
+            |> Seq.choose (fun line ->
+                let line = line.Trim ()
+                if line.EndsWith ("(push)", StringComparison.Ordinal) then
+                    if line.Contains $"%s{gitOwner}/%s{gitName}" then
+                        Some line
+                    else None
+                else None
+            )
+            |> Seq.toList
+        match matchingRemotes with
+        | [] -> $"%s{gitHome}/%s{gitName}"
+        | [x] -> x.Split().[0]
+        | _ ->
+            let remotes =
+                matchingRemotes
+                |> String.concat " "
+            failwith $"Multiple matching push remotes found for %s{gitOwner}/%s{gitName}: %s{remotes}"
+
+    runProcess "git" ["commit" ; "--all" ; "--message" ; $"Bump version to %s{releaseNotes.NugetVersion}"]
+    let gitBranch = runProcessWithOutput "git" ["symbolic-ref" ; "--short" ; "HEAD"]
+    runProcess "git" ["push" ; remote ; gitBranch]
+    runProcess "git" ["tag" ; releaseNotes.NugetVersion]
+    runProcess "git" ["push" ; remote ; "--tag" ; releaseNotes.NugetVersion]
+
+    printfn "Creating GitHub release... "
+
+    let releaseSpec =
+        {
+            TagName = releaseNotes.NugetVersion
+            TargetCommitish = "" // the default branch
+            Name = releaseNotes.NugetVersion
+            Body = releaseNotes.Notes |> String.concat "\n"
+            IsDraft = true
+            IsPreRelease = releaseNotes.SemVer.PreRelease.IsSome
+        }
+
+    use client = new HttpClient ()
+    client.DefaultRequestHeaders.Add ("Accept", "application/vnd.github+json")
+    client.DefaultRequestHeaders.Add ("X-GitHub-Api-Version", "2022-11-28")
+    client.DefaultRequestHeaders.Authorization <- AuthenticationHeaderValue ("Bearer", pat)
+    client.DefaultRequestHeaders.Add ("Authorization", "2022-11-28")
+    let postData = JsonSerializer.Serialize releaseSpec
+    use content = new StringContent (postData, Encoding.UTF8, "application/json")
+    use response = client.PostAsync($"https://api.github.com/repos/%s{gitOwner}/%s{gitName}/releases", content).Result.EnsureSuccessStatusCode()
+    let response = response.Content.ReadAsStringAsync().Result
+    let output = JsonSerializer.Deserialize<GitHubReleaseResponse> response
+
+    printfn $"GitHub response: %+A{output}"
+
     printfn "done."
 
 (*
