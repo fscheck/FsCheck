@@ -1,3 +1,4 @@
+// TODO: delete this reference, it makes the script take ages to start
 #r "nuget:Fake.Core.ReleaseNotes"
 
 open System
@@ -437,25 +438,25 @@ let args =
     | args -> args
 
 match args with
-| ["WatchDocs"] -> watchDocs ()
-| [] | ["RunTests"] ->
+| ["-t" ; "WatchDocs"] -> watchDocs ()
+| [] | ["-t" ; "RunTests"] ->
     let haveCleaned = doClean ()
     runDotnetTest haveCleaned |> ignore<HaveTested>
-| ["Clean"] -> doClean () |> ignore<HaveCleaned>
-| ["CI"] ->
+| ["-t"; "Clean"] -> doClean () |> ignore<HaveCleaned>
+| ["-t"; "CI"] ->
     let haveCleaned = doClean ()
     let haveBuilt = build haveCleaned
     let haveTested = runDotnetTest haveCleaned
     let haveGeneratedDocs = docs haveBuilt
     runCi haveGeneratedDocs haveTested
-| ["Tests"] ->
+| ["-t"; "Tests"] ->
     let haveCleaned = doClean ()
     runDotnetTest haveCleaned |> ignore<HaveTested>
-| ["Docs"] ->
+| ["-t"; "Docs"] ->
     let haveCleaned = doClean ()
     let haveBuilt = build haveCleaned
     releaseDocs haveBuilt
-| ["ReleaseDocs"] ->
+| ["-t"; "ReleaseDocs"] ->
     if not isAppVeyorBuild then
         failwith "Refusing to release docs from CI"
     let haveCleaned = doClean ()
