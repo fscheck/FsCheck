@@ -1,21 +1,48 @@
-// --------------------------------------------------------------------------------------
-// FAKE build script 
-// --------------------------------------------------------------------------------------
-#load "./.fake/build.fsx/intellisense.fsx"
+#r "nuget:Fake.Core.ReleaseNotes"
 
 open System
+open System.Diagnostics
 open System.IO
 
-open Fake.Api
-open Fake.Core
-open Fake.Core.TargetOperators
-open Fake.BuildServer
-open Fake.DotNet
-open Fake.DotNet.Testing
-open Fake.IO
-open Fake.IO.FileSystemOperators
-open Fake.IO.Globbing.Operators
-open Fake.Tools.Git
+[<AutoOpen>]
+module Utils =
+    let cleanDirectories (relativeDirNames : string list) : unit =
+        relativeDirNames
+        |> List.iter (fun dirName ->
+            let di = DirectoryInfo dirName
+            try
+                di.Delete true
+            with :? DirectoryNotFoundException -> ()
+        )
+
+    let runProcess (command : string) (args : string seq) =
+        let psi = ProcessStartInfo (command, args)
+        use proc = new Process ()
+        proc.StartInfo <- psi
+        if not (proc.Start ()) then
+            let args = args |> String.concat " "
+            failwith $"Failed to start process '%s{command}' with args: %s{args}"
+        proc.WaitForExit ()
+        if proc.ExitCode <> 0 then
+            let args = args |> String.concat " "
+            failwith $"Process '%s{command}' failed with nonzero exit code %i{proc.ExitCode}. Args: %s{args}"
+
+
+// --------------------------------------------------------------------------------------
+// Clean build results
+
+type HaveCleaned = HaveCleaned
+let doClean () : HaveCleaned =
+    cleanDirectories ["bin" ; "temp" ; "output"]
+    HaveCleaned
+
+(*
+Target.create "Clean" (fun _ ->
+    Shell.cleanDirs ["bin"; "temp"; "output"]
+)
+*)
+
+// ===================
 
 // Information about each project is used
 //  - for version and project name in generated AssemblyInfo file
@@ -46,22 +73,47 @@ let testAssemblies = "tests/**/bin/Release/net6.0/*.Test.dll"
 let gitOwner = "fscheck"
 let gitHome = sprintf "ssh://github.com/%s" gitOwner
 // gitraw location - used for source linking
-let gitRaw = Environment.environVarOrDefault "gitRaw" "https://raw.github.com/fscheck"
+let gitRaw =
+    match Environment.GetEnvironmentVariable "gitRaw" with
+    | null | "" -> "https://raw.github.com/fscheck"
+    | s -> s
+
 // The name of the project on GitHub
 let gitName = "FsCheck"
 
 // Read additional information from the release notes document
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-let release = ReleaseNotes.load releaseNotes
+let release = Fake.Core.ReleaseNotes.load releaseNotes
 
-let isAppVeyorBuild = BuildServer.buildServer = BuildServer.AppVeyor
+let isAppVeyorBuild =
+    String.IsNullOrEmpty (Environment.GetEnvironmentVariable "APPVEYOR_BUILD_VERSION")
+    |> not
 let buildDate = DateTime.UtcNow
-let buildVersion = 
-    let isVersionTag (tag:string) = Version.TryParse tag |> fst
-    let hasRepoVersionTag = isAppVeyorBuild && AppVeyor.Environment.RepoTag && isVersionTag AppVeyor.Environment.RepoTagName
-    let assemblyVersion = if hasRepoVersionTag then AppVeyor.Environment.RepoTagName else release.NugetVersion
-    if isAppVeyorBuild then sprintf "%s-b%s" assemblyVersion AppVeyor.Environment.BuildNumber
-    else assemblyVersion
+let buildVersion : string =
+    if not isAppVeyorBuild then
+        release.NugetVersion
+    else
+
+    let repoVersion : string option =
+        match Environment.GetEnvironmentVariable "APPVEYOR_REPO_TAG" with
+        | null -> None
+        | s ->
+            if s.Equals ("true", StringComparison.OrdinalIgnoreCase) then
+                match Environment.GetEnvironmentVariable "APPVEYOR_REPO_TAG_NAME" with
+                | null -> failwith "AppVeyor unexpectedly told us we had a repo tag, but didn't give us its name"
+                | s ->
+                    match Version.TryParse s with
+                    | false, _ -> None
+                    | true, _ -> Some s
+            else
+                None
+
+    match repoVersion with
+    | None ->
+        release.NugetVersion
+    | Some repoVersion ->
+        let buildNumber = Environment.GetEnvironmentVariable "APPVEYOR_BUILD_NUMBER"
+        sprintf "%s-b%s" repoVersion buildNumber
 
 let packages =
   [
@@ -76,11 +128,63 @@ let packages =
     }
   ]
 
-Target.create "BuildVersion" (fun _ -> 
+type HaveUpdatedBuildVersion = | HaveUpdatedBuildVersion
+let appveyorBuildVersion (_ : HaveCleaned) : HaveUpdatedBuildVersion =
+    runProcess "appveyor" ["UpdateBuild" ; "-Version" ; buildVersion]
+    HaveUpdatedBuildVersion
+
+(*
+Target.create "BuildVersion" (fun _ ->
     Shell.Exec("appveyor", sprintf "UpdateBuild -Version \"%s\"" buildVersion) |> ignore
 )
+*)
 
 // Generate assembly info files with the right version & up-to-date information
+type HaveGeneratedAssemblyInfo = | HaveGeneratedAssemblyInfo
+let generateAssemblyInfo (_ : HaveCleaned) : HaveGeneratedAssemblyInfo =
+    for package in packages do
+        let fileName = $"src/%s{package.Name}/AssemblyInfo.fs"
+
+        let shouldHaveInternalsVisibleTo =
+            [
+                "FsCheck"
+                "FsCheck.Xunit"
+            ]
+            |> Set.ofList
+
+        let ivt, ivtLiteral =
+            if Set.contains package.Name shouldHaveInternalsVisibleTo then
+                """[<Assembly: internalsVisibleTo("FsCheck.Test")>]""", "let [<Literal>] InternalsVisibleTo = \"FsCheck.Test\""
+            else "", ""
+
+        let assemblyInfoText = $"""
+// Auto-generated; edits may be deleted at any time
+namespace System
+open System.Reflection
+open System.Runtime.CompilerServices
+
+[<assembly: AssemblyTitle("%s{package.Name}")>]
+[<assembly: AssemblyProduct("%s{package.Name}")>]
+[<assembly: AssemblyDescription(%s{package.Summary}")>]
+[<assembly: AssemblyVersion("%s{release.AssemblyVersion}")>]
+[<assembly: AssemblyFileVersion("%s{release.AssemblyVersion}")>]
+[<assembly: AssemblyKeyFile("../../FsCheckKey.snk")>]
+%s{ivt}
+do ()
+
+module internal AssemblyVersionInformation =
+    let [<Literal>] AssemblyTitle = "%s{package.Name}"
+    let [<Literal>] AssemblyProduct = "%s{package.Name}"
+    let [<Literal>] AssemblyDescription = "%s{package.Summary}"
+    let [<Literal>] AssemblyVersion = "%s{release.AssemblyVersion}"
+    let [<Literal>] AssemblyFileVersion = "%s{release.AssemblyVersion}"
+    let [<Literal>] AssemblyKeyFile = "../../FsCheckKey.snk"
+    %s{ivtLiteral}
+"""
+        File.WriteAllText (fileName, assemblyInfoText)
+    HaveGeneratedAssemblyInfo
+
+(*
 Target.create "AssemblyInfo" (fun _ ->
     packages |> Seq.iter (fun package ->
     let fileName = "src/" + package.Name + "/AssemblyInfo.fs"
@@ -96,38 +200,51 @@ Target.create "AssemblyInfo" (fun _ ->
              then [AssemblyInfo.InternalsVisibleTo("FsCheck.Test")] else []))
     )
 )
-
-// --------------------------------------------------------------------------------------
-// Clean build results
-
-Target.create "Clean" (fun _ ->
-    Shell.cleanDirs ["bin"; "temp"; "output"]
-)
+*)
 
 // --------------------------------------------------------------------------------------
 // Build library & test project
 
+type HaveBuilt = HaveBuilt
+let build (_ : HaveCleaned) : HaveBuilt =
+    runProcess "dotnet" ["restore" ; solution]
+    runProcess "dotnet" ["build" ; solution ; "--configuration" ; "Release"]
+    HaveBuilt
+
+(*
 Target.create "Build" (fun _ ->
     DotNet.restore id solution
     DotNet.build (fun opt -> { opt with Configuration = DotNet.BuildConfiguration.Release }) solution
 )
+*)
 
 // --------------------------------------------------------------------------------------
 // Run the unit tests
 
-let runAndCheck (f: unit -> ProcessResult) =
-  let result = f()
-  if not result.OK then
-    failwithf "%A" result
+type HaveTested = HaveTested
+let runDotnetTest (_ : HaveCleaned) : HaveTested =
+    runProcess "dotnet" ["test" ; "tests/FsCheck.Test" ; "--configuration" ; "Release"]
+    HaveTested
 
+(*
 Target.create "RunTests" (fun _ ->
   "tests/FsCheck.Test/"
   |> DotNet.test (fun opt -> { opt with Configuration = DotNet.BuildConfiguration.Release })
 )
+*)
 
 // --------------------------------------------------------------------------------------
 // Build a NuGet package
 
+type HavePacked = HavePacked
+let packNuGet (_ : HaveTested) : HavePacked =
+    let releaseNotes =
+        release.Notes
+        |> String.concat "\n"
+    runProcess "dotnet" ["pack" ; "--configuration" ; "Release" ; $"-p:Version=%s{buildVersion}" ; "--output" ; "bin" ; $"-p:PackageReleaseNotes=%s{releaseNotes}"]
+    HavePacked
+
+(*
 Target.create "PaketPack" (fun _ ->
     Paket.pack (fun p ->
       { p with
@@ -137,7 +254,14 @@ Target.create "PaketPack" (fun _ ->
           ToolType = ToolType.CreateLocalTool()
       })
 )
+*)
 
+type HavePushed = HavePushed
+let pushNuGet (_ : HaveTested) =
+    failwith "TODO"
+    HavePushed
+
+(*
 Target.create "PaketPush" (fun _ ->
     Paket.push (fun p ->
         { p with 
@@ -145,6 +269,7 @@ Target.create "PaketPush" (fun _ ->
             ToolType = ToolType.CreateLocalTool()
         })
 )
+*)
 
 // --------------------------------------------------------------------------------------
 // Generate the documentation
@@ -160,10 +285,21 @@ let fsdocProperties = [
   "TargetFramework=netstandard2.0"
 ]
 
-let checkResult (r:ProcessResult) =
-  if not r.OK then
-    failwithf "%A" r
+type HaveGeneratedDocs = HaveGeneratedDocs
+let docs (_ : HaveBuilt) : HaveGeneratedDocs =
+    cleanDirectories [".fsdocs"]
 
+    [
+        "fsdocs" ; "build" ; "--strict" ; "--eval" ; "--clean"
+        "--projects" ; "src/FsCheck/FsCheck.fsproj"
+        "--properties" ; yield! fsdocProperties
+        "--parameters" ; yield! fsdocParameters
+    ]
+    |> runProcess "dotnet"
+
+    HaveGeneratedDocs
+
+(*
 Target.create "Docs" (fun _ ->
     Shell.cleanDir ".fsdocs"
     DotNet.exec id "fsdocs" ("build --strict --eval --clean"
@@ -171,18 +307,51 @@ Target.create "Docs" (fun _ ->
       + " --properties " + String.Join(" ",fsdocProperties) 
       + " --parameters " + String.Join(" ", fsdocParameters)) |> checkResult
 )
+*)
 
+let watchDocs () =
+    cleanDirectories [".fsdocs"]
+
+    [
+        "fsdocs" ; "watch" ; "--eval"
+        "--projects" ; "src/FsCheck/FsCheck.fsproj"
+        "--properties" ; yield! fsdocProperties
+        "--parameters" ; yield! fsdocParameters
+    ]
+    |> runProcess "dotnet"
+
+(*
 Target.create "WatchDocs" (fun _ ->
     Shell.cleanDir ".fsdocs"
     DotNet.exec id "fsdocs" ("watch --eval"
-      + " --projects src/FsCheck/FsCheck.fsproj" 
-      + " --properties " + String.Join(" ",fsdocProperties) 
+      + " --projects src/FsCheck/FsCheck.fsproj"
+      + " --properties " + String.Join(" ",fsdocProperties)
       + " --parameters " + String.Join(" ", fsdocParameters)) |> checkResult
 )
+*)
 
 // --------------------------------------------------------------------------------------
 // Release Scripts
 
+let rec copyDir (source : DirectoryInfo) (target : DirectoryInfo) : unit =
+    target.Create ()
+    for file in source.EnumerateFiles () do
+        file.CopyTo (Path.Combine (target.FullName, file.Name)) |> ignore<FileInfo>
+    for dir in source.EnumerateDirectories () do
+        copyDir dir (Path.Combine (target.FullName, dir.Name) |> DirectoryInfo)
+
+let releaseDocs (_ : HaveBuilt) =
+    let tempDocsDir = "temp/gh-pages"
+    cleanDirectories [tempDocsDir]
+    let tempDocsDir = Directory.CreateDirectory tempDocsDir
+    runProcess "git" ["clone" ; "git@github.com:fscheck/FsCheck.git" ; "--single-branch" ; "--branch" ; "gh-pages" ; tempDocsDir.FullName]
+
+    copyDir (DirectoryInfo "output") tempDocsDir
+
+    runProcess "git" ["--git-dir" ; tempDocsDir.FullName ; "commit" ; "--all" ; "--message" ; $"Update generated documentation for version %s{buildVersion}"]
+    runProcess "git" ["--git-dir" ; tempDocsDir.FullName ; "push"]
+
+(*
 Target.create "ReleaseDocs" (fun _ ->
     let tempDocsDir = "temp/gh-pages"
     Shell.cleanDir tempDocsDir
@@ -194,7 +363,12 @@ Target.create "ReleaseDocs" (fun _ ->
     Commit.exec tempDocsDir (sprintf "Update generated documentation for version %s" buildVersion)
     Branches.push tempDocsDir
 )
+*)
 
+let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
+    failwith "TODO"
+
+(*
 Target.create "Release" (fun _ ->
     let user = Environment.environVarOrDefault "github-user" (UserInput.getUserInput "Username: ")
     let pw = Environment.environVarOrDefault "github-pw" (UserInput.getUserPassword "Password: ")
@@ -218,37 +392,38 @@ Target.create "Release" (fun _ ->
     |> GitHub.publishDraft
     |> Async.RunSynchronously
 )
+*)
 
-// --------------------------------------------------------------------------------------
-// Run all targets by default. Invoke 'build <Target>' to override
+let runCi (_ : HaveGeneratedDocs) (_ : HaveTested) =
+    // this is just a target to note that we have done all the above
+    ()
 
-Target.create "CI" ignore
-Target.create "Tests" ignore
+let args = fsi.CommandLineArgs |> List.ofArray
 
-"Clean"
-  =?> ("BuildVersion", isAppVeyorBuild)
-  ==> "AssemblyInfo"
-  ==> "Build"
-  ==> "RunTests"
-  ==> "Tests"
-
-"Build"
-  ==> "Docs"
-
-"Docs"
-  =?> ("ReleaseDocs", BuildServer.isLocalBuild)
-  ==> "Release"
-
-"Tests"
-  ==> "PaketPack"
-  ==> "PaketPush"
-  ==> "Release"
-
-"Docs"
-  ==> "CI"
-
-"Tests"
-  ==> "PaketPack"
-  ==> "CI"
-
-Target.runOrDefault "RunTests"
+match args with
+| ["WatchDocs"] -> watchDocs ()
+| [] | ["RunTests"] ->
+    let haveCleaned = doClean ()
+    runDotnetTest haveCleaned |> ignore<HaveTested>
+| ["Clean"] -> doClean () |> ignore<HaveCleaned>
+| ["CI"] ->
+    let haveCleaned = doClean ()
+    let haveBuilt = build haveCleaned
+    let haveTested = runDotnetTest haveCleaned
+    let haveGeneratedDocs = docs haveBuilt
+    runCi haveGeneratedDocs haveTested
+| ["Tests"] ->
+    let haveCleaned = doClean ()
+    runDotnetTest haveCleaned |> ignore<HaveTested>
+| ["Docs"] ->
+    let haveCleaned = doClean ()
+    let haveBuilt = build haveCleaned
+    releaseDocs haveBuilt
+| ["ReleaseDocs"] ->
+    if not isAppVeyorBuild then
+        failwith "Refusing to release docs from CI"
+    let haveCleaned = doClean ()
+    let haveBuilt = build haveCleaned
+    releaseDocs haveBuilt
+| _ ->
+    failwith "Unrecognised arguments."
