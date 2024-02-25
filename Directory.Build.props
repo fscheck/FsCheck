@@ -11,8 +11,14 @@
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <DebugType>embedded</DebugType>
-    <PackageIconUrl>https://raw.githubusercontent.com/fscheck/FsCheck/master/docs/files/img/logo.png</PackageIconUrl>
+    <PackageIcon>logo.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>test;testing;random;fscheck;quickcheck</PackageTags>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="../../docs/img/logo.png">
+      <Pack>true</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 </Project>
