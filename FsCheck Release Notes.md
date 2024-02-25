@@ -1,3 +1,5 @@
+### 3.0.0-rc2 - To be released
+
 ### 3.0.0-rc1 - 23 July 2023
 
 * Enable properties that return `Task<T>`. (by Mark Seemann)
