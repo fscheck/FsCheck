@@ -3,6 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <PropertyGroup>
+    <Deterministic>true</Deterministic>
     <Copyright>Copyright 2008-2024</Copyright>
     <Authors>Kurt Schelfthout and contributors</Authors>
     <PackageTags>F# fsharp test random</PackageTags>
@@ -20,5 +21,8 @@
       <Pack>true</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All"/>
   </ItemGroup>
 </Project>
