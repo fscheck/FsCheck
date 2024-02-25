@@ -379,10 +379,7 @@ let pushNuGet (_ : HaveTested) (_ : HavePacked) =
     let nugetKey =
         match Environment.GetEnvironmentVariable "NUGET_KEY" with
         | null ->
-            match Environment.GetEnvironmentVariable "NUGETKEY" with
-            | null ->
                 failwith "No NuGet key in environment for NuGet publish. Set NUGET_KEY."
-            | s -> s
         | s -> s
 
     let env =
@@ -554,11 +551,11 @@ type GitHubReleaseRequest =
         IsPreRelease : bool
     }
 
-let release (_ : HaveTested) (_ : HaveGeneratedDocs) =
+let gitHubRelease (_ : HaveTested) =
     Console.WriteLine "Tagging new version and performing GitHub release... "
 
     let pat =
-        match Environment.GetEnvironmentVariable "github-pat" with
+        match Environment.GetEnvironmentVariable "GITHUB_PAT" with
         | null ->
             [
                 "Obtain a GitHub personal access token from https://github.com/settings/tokens?type=beta ."
@@ -671,13 +668,12 @@ match args |> List.map (fun s -> s.ToLowerInvariant ()) with
     let haveTested = runDotnetTest haveCleaned
     let haveGeneratedDocs = docs haveBuilt
     runCi haveGeneratedDocs haveTested
-| ["-t" ; "release"] ->
+| ["-t" ; "ghrelease"] ->
     let haveCleaned = doClean ()
     let haveGeneratedAssemblyInfo = generateAssemblyInfo haveCleaned
     let haveBuilt = build haveCleaned haveGeneratedAssemblyInfo
     let haveTested = runDotnetTest haveCleaned
-    let haveGeneratedDocs = docs haveBuilt
-    release haveTested haveGeneratedDocs
+    gitHubRelease haveTested
 | ["-t"; "build"] ->
     let haveCleaned = doClean ()
     let haveGeneratedAssemblyInfo = generateAssemblyInfo haveCleaned
@@ -718,4 +714,4 @@ match args |> List.map (fun s -> s.ToLowerInvariant ()) with
     let args =
         args
         |> String.concat " "
-    failwith $"Unrecognised arguments. Supply '-t [RunTests,Clean,CI,Build,Tests,Release,Docs,WatchDocs,ReleaseDocs,NugetPack,NugetPush,BuildVersion,AssemblyInfo]'. Unrecognised args were: %s{args}"
+    failwith $"Unrecognised arguments. Supply '-t [RunTests,Clean,CI,Build,Tests,GHRelease,Docs,WatchDocs,ReleaseDocs,NugetPack,NugetPush,BuildVersion,AssemblyInfo]'. Unrecognised args were: %s{args}"
