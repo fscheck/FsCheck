@@ -16,6 +16,11 @@
   </Task>
 </UsingTask>
 
+<!-- This is the decode end of the base64-encoding that gets the release notes into `dotnet pack`.
+     The problem is that we can't supply MsBuild properties that contain MsBuild metacharacters.
+     (At least, I don't know how.)
+     The release notes are liable to contain MsBuild property metacharacters, such as the comma;
+     so just before we `dotnet pack`, we base64-encode it. -->
 <Target Name="DecodeReleaseNotes" BeforeTargets="GenerateNuspec">
   <Base64Decode EncodedString="$(RELEASE_NOTES)">
     <Output TaskParameter="DecodedString" PropertyName="DecodedReleaseNotes" />
