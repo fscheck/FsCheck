@@ -55,13 +55,13 @@ Check out the project and run build.cmd on Windows or build.sh on Linux/OSX. Tha
 
 For Visual Studio/MonoDevelop/Xamarin Studio/VsCode: open (the folder that contains) FsCheck.sln and start coding.
 
-FsCheck uses FAKE, run `build.[cmd|sh] -t <Target>` to do something. Important targets are:
+FsCheck uses a build script inspired by FAKE. Run `build.[cmd|sh] -t <Target>` (or `dotnet fsi build.fsx -t <Target>`) to do something. Important targets are:
 
 * `Build`: cleanly builds all platforms in Release mode.
 * `Tests`: builds and runs the tests.
 * `Docs`:  builds and generates documentation. FsCheck uses FSharp.Formatting, so literate fsx files in the docs folder.
 * `WatchDocs`: convenient when developing documentation - starts a local webserver and watches for changes in the docs folder.
-* `PacketPack`: Creates NuGet packages.
+* `NuGetPack`: Creates NuGet packages.
 * `CI`: Target that is run on AppVeyor, basically all of the above.
 
 ## CI ##

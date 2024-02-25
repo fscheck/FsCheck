@@ -2,22 +2,10 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "fake-cli": {
-      "version": "6.0.0",
-      "commands": [
-        "fake"
-      ]
-    },
     "fsharp.formatting.commandtool": {
       "version": "9.0.4",
       "commands": [
         "fsdocs"
-      ]
-    },
-    "paket": {
-      "version": "7.1.5",
-      "commands": [
-        "paket"
       ]
     }
   }

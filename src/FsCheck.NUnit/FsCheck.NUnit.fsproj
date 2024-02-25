@@ -1,21 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>FsCheck.NUnit</AssemblyName>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="FsCheckPropertyAttribute.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="../FsCheck/FsCheck.fsproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="paket.references" />
-    <None Include="paket.template" />
-  </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+    <PropertyGroup>
+        <AssemblyName>FsCheck.NUnit</AssemblyName>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <PackageDescription>FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute.
+
+            All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
+        </PackageDescription>
+        <PackageTags>$(PackageTags);nunit</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="AssemblyInfo.fs"/>
+        <Compile Include="FsCheckPropertyAttribute.fs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../FsCheck/FsCheck.fsproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="NUnit"/>
+    </ItemGroup>
 </Project>

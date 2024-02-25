@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>CSharp.DocSnippets</AssemblyName>
-    <TargetFramework>net6.0</TargetFramework>
-    <OutputType>Exe</OutputType>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="paket.references" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\FsCheck.Xunit\FsCheck.Xunit.fsproj" />
-    <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj" />
-  </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+    <PropertyGroup>
+        <AssemblyName>CSharp.DocSnippets</AssemblyName>
+        <TargetFramework>net6.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="xunit"/>
+        <PackageReference Include="FSharp.Core"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\FsCheck.Xunit\FsCheck.Xunit.fsproj"/>
+        <ProjectReference Include="..\..\src\FsCheck\FsCheck.fsproj"/>
+    </ItemGroup>
 </Project>

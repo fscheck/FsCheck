@@ -1,7 +1,0 @@
-FSharp.Core
-xunit.core
-xunit.runner.visualstudio
-Unquote
-Microsoft.NET.Test.Sdk
-System.Collections.Immutable
-Microsoft.NETFramework.ReferenceAssemblies
