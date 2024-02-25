@@ -12,6 +12,20 @@ Users have also created integrations with [Expecto](https://github.com/haf/Expec
 [MSTest](https://github.com/microsoft/testfx) that 
 you can [find on NuGet](https://www.nuget.org/packages?q=fscheck).
 
+Warning: Documentation Problems
+-------------------------------
+
+The Documentation section was written for version FsCheck 2.x, but 3.x is the version that is actually maintained at this point and will get new features and fixes (even though it's in pre-release).
+
+This leaves us in the unfortunate position that the section under the next heading are out of date and incomplete. The API docs are generated from the 3.x code and so are up to date - if in doubt, believe the API docs.
+
+The documentation and API docs for 2.x are not easily accessible anymore, sadly. The last commit of the 2.x documentation site is [here](https://github.com/fscheck/FsCheck/tree/1458b268b4311f7e4b25871715f1f9b5d58a21b3).
+
+FsCheck could use your contributions to docs (or otherwise!):
+
+* See [issues](https://github.com/fscheck/FsCheck/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) for inspiration.
+* Open an issue that highlights specific documentation problems or gaps (even if you're not sure it really is a problem - it'll highlight confusion)
+
 Documentation
 -------------
 
