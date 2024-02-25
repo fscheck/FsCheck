@@ -2,6 +2,7 @@
 
 open System
 open System.Runtime.CompilerServices
+open System.Threading.Tasks
 
 open FsCheck
 open FsCheck.FSharp
@@ -15,21 +16,29 @@ type Prop private() =
 
     static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,bool>) = Prop.forAll arb body.Invoke
 
-    static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,Threading.Tasks.Task>) = forAll arb body.Invoke
-
-    static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,Threading.Tasks.Task<bool>>) = forAll arb body.Invoke
-
     static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,Property>) = forAll arb body.Invoke
+
+
+    static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,Task>) = forAll arb body.Invoke
+
+    static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,Task<bool>>) = forAll arb body.Invoke
+
+    static member ForAll(arb:Arbitrary<'Value>, body:Func<'Value,Task<Property>>) = forAll arb body.Invoke
+
 
     static member ForAll(body:Action<'Value>) = property body.Invoke
 
     static member ForAll(body:Func<'Value,bool>) = property body.Invoke
 
-    static member ForAll(body:Func<'Value,Threading.Tasks.Task>) = property body.Invoke
-
-    static member ForAll(body:Func<'Value,Threading.Tasks.Task<bool>>) = property body.Invoke
-
     static member ForAll(body:Func<'Value,Property>) = property body.Invoke
+
+
+    static member ForAll(body:Func<'Value,Task>) = property body.Invoke
+
+    static member ForAll(body:Func<'Value,Task<bool>>) = property body.Invoke
+
+    static member ForAll(body:Func<'Value,Task<Property>>) = property body.Invoke
+
 
     static member ForAll(arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>, body:Action<'V1,'V2>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
 
@@ -37,11 +46,27 @@ type Prop private() =
 
     static member ForAll(arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>, body:Func<'V1,'V2,Property>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
 
+
+    static member ForAll(arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>, body:Func<'V1,'V2, Task>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
+
+    static member ForAll(arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>, body:Func<'V1,'V2,Task<bool>>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
+
+    static member ForAll(arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>, body:Func<'V1,'V2,Task<Property>>) = forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> body.Invoke(v1,v2)))
+
+
     static member ForAll(body:Action<'V1,'V2>) = property body.Invoke
 
     static member ForAll(body:Func<'V1,'V2,bool>) = property body.Invoke
 
     static member ForAll(body:Func<'V1,'V2,Property>) = property body.Invoke
+
+
+    static member ForAll(body:Func<'V1,'V2, Task>) = property body.Invoke
+
+    static member ForAll(body:Func<'V1,'V2,Task<bool>>) = property body.Invoke
+
+    static member ForAll(body:Func<'V1,'V2,Task<Property>>) = property body.Invoke
+
     
     static member ForAll(arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>,arb3:Arbitrary<'V3>, body:Action<'V1,'V2,'V3>) = 
         forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> forAll arb3 (fun v3 -> body.Invoke(v1,v2,v3))))
@@ -52,11 +77,30 @@ type Prop private() =
     static member ForAll(arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>,arb3:Arbitrary<'V3>, body:Func<'V1,'V2,'V3,Property>) = 
         forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> forAll arb3 (fun v3 -> body.Invoke(v1,v2,v3))))
 
+
+    static member ForAll(arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>,arb3:Arbitrary<'V3>, body:Func<'V1,'V2,'V3, Task>) = 
+        forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> forAll arb3 (fun v3 -> body.Invoke(v1,v2,v3))))
+
+    static member ForAll(arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>,arb3:Arbitrary<'V3>, body:Func<'V1,'V2,'V3,Task<bool>>) = 
+        forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> forAll arb3 (fun v3 -> body.Invoke(v1,v2,v3))))
+
+    static member ForAll(arb1:Arbitrary<'V1>,arb2:Arbitrary<'V2>,arb3:Arbitrary<'V3>, body:Func<'V1,'V2,'V3,Task<Property>>) = 
+        forAll arb1 (fun v1 -> forAll arb2 (fun v2 -> forAll arb3 (fun v3 -> body.Invoke(v1,v2,v3))))
+
+
     static member ForAll(body:Action<'V1,'V2,'V3>) = property body.Invoke
 
     static member ForAll(body:Func<'V1,'V2,'V3,bool>) = property body.Invoke
 
     static member ForAll(body:Func<'V1,'V2,'V3,Property>) = property body.Invoke
+
+    
+    static member ForAll(body:Func<'V1,'V2,'V3,Task>) = property body.Invoke
+
+    static member ForAll(body:Func<'V1,'V2,'V3,Func<bool>>) = property body.Invoke
+
+    static member ForAll(body:Func<'V1,'V2,'V3,Func<Property>>) = property body.Invoke
+
 
     /// Turns a testable type into a property.
     [<Extension>]
