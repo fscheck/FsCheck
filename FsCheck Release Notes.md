@@ -1,5 +1,13 @@
 ### 3.0.0-rc2 - To be released
 
+* Negative decimals are now also generated. (by Stephen Smith)
+
+* Relax FsCheck.Xunit's restriction on xUnit versions. (by Tom Rijnbeek)
+
+* Made `Gen.choose64` public.
+
+* Remove dependency on FAKE and paket in favor of standard .NET tools. (by Patrick Stevens)
+
 ### 3.0.0-rc1 - 23 July 2023
 
 * Enable properties that return `Task<T>`. (by Mark Seemann)
