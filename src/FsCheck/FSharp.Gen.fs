@@ -173,12 +173,12 @@ module Gen =
 
     /// Generates int64 between l and h, inclusive.
     //[category: Creating generators]
-    [<CompiledName("Choose")>]
-    let internal choose64 (l,h) = Gen (fun _ r ->
+    [<CompiledName("Choose64")>]
+    let choose64 (l,h) = Gen (fun _ r ->
         let x, r = Random.RangeInt64 (l,h,r)
         struct (x, r))
 
-    /// Generates double values between l and h.
+    /// Generates double values in [0, 1).
     let internal double =
         Gen (fun _ r ->
             let mutable r1 = r
