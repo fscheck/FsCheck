@@ -81,7 +81,7 @@ do some complicated calculations with the generated arguments first. To make thi
 define your own labelling equality combinator:*)
 
 (***define-output:testCompare***)
-let (.=.) left right = left = right |@ sprintf "%A = %A" left right
+let (.=.) left right = left = right |> Prop.label (sprintf "%A = %A" left right)
 
 let testCompare (i:int) (j:int) = 2*i+1  .=. 2*j-1
 Check.Quick testCompare

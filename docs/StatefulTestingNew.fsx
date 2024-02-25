@@ -39,7 +39,7 @@ let spec =
             member __.Check (c,m) = 
                 let res = c.Inc() 
                 m = res 
-                |@ sprintf "Inc: model = %i, actual = %i" m res
+                |> Prop.label (sprintf "Inc: model = %i, actual = %i" m res)
             override __.ToString() = "inc"}
     let dec = 
         { new Operation<Counter,int>() with
@@ -49,7 +49,7 @@ let spec =
             member __.Check (c,m) = 
                 let res = c.Dec()
                 m = res 
-                |@ sprintf "Dec: model = %i, actual = %i" m res
+                |> Prop.label (sprintf "Dec: model = %i, actual = %i" m res)
             override __.ToString() = "dec"}
     let create initialValue = 
         { new Setup<Counter,int>() with

@@ -2,6 +2,8 @@
 
 * Breaking change: confusingly named `StringNoNnulls` is renamed to `StringNoNullChar`.
 
+* Breaking change: The operators `|@`, `@|` and `%>` are removed. Please use `Prop.label` instead.
+
 * Negative decimals are now also generated. (by Stephen Smith)
 
 * Relaxed FsCheck.Xunit's restriction on xUnit versions. (by Tom Rijnbeek)

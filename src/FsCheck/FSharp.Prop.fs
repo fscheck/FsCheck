@@ -86,15 +86,6 @@ module PropOperators =
     ///Conditional property combinator. Resulting property holds if the property after ==> holds whenever the condition does.
     let (==>) condition (assertion:'Testable) = Prop.filter condition assertion
 
-    ///Add the given label to the property. Property on the left hand side, label on the right.
-    let (|@) x y = Prop.label y x
-
-    ///Add the given label to the property. label on the left hand side, property on the right.
-    let (@|) = Prop.label
-
-    ///Add the given label to the property. Property on the left hand side, label on the right.
-    let (%>) = (|@)
-
     ///Construct a property that succeeds if both succeed. (cfr 'and')
     let (.&.) (l:'LeftTestable) (r:'RightTestable) = 
         let andProp = l .& r
