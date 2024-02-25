@@ -16,7 +16,7 @@
     <PackageTags>test;testing;random;fscheck;quickcheck</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="../../docs/img/logo.png">
+    <None Include="../../docs/img/logo.png" Condition="'$(IsPackable)' == 'true'" >
       <Pack>true</Pack>
       <PackagePath>\</PackagePath>
     </None>
