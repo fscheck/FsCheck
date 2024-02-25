@@ -6,7 +6,7 @@ init:
 build_script:
   - cmd: ./build.cmd -t CI
   
-test: off
+test: false
 version: '{build}'
 
 artifacts:
