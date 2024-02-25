@@ -653,7 +653,7 @@ Target.create "Release" (fun _ ->
 )
 *)
 
-let runCi (_ : HaveGeneratedDocs) (_ : HaveTested) =
+let runCi (_ : HaveGeneratedDocs) (_ : HaveTested) (_ : HavePacked) =
     // this is just a target to note that we have done all the above
     ()
 
@@ -673,7 +673,8 @@ match args |> List.map (fun s -> s.ToLowerInvariant ()) with
     let haveBuilt = build haveCleaned haveGeneratedAssemblyInfo
     let haveTested = runDotnetTest haveCleaned
     let haveGeneratedDocs = docs haveBuilt
-    runCi haveGeneratedDocs haveTested
+    let havePacked = packNuGet haveTested
+    runCi haveGeneratedDocs haveTested havePacked
 | ["-t" ; "ghrelease"] ->
     let haveCleaned = doClean ()
     let haveGeneratedAssemblyInfo = generateAssemblyInfo haveCleaned
