@@ -610,7 +610,6 @@ let gitHubRelease (_ : HaveTested) =
     client.DefaultRequestHeaders.Add ("Accept", "application/vnd.github+json")
     client.DefaultRequestHeaders.Add ("X-GitHub-Api-Version", "2022-11-28")
     client.DefaultRequestHeaders.Authorization <- AuthenticationHeaderValue ("Bearer", pat)
-    client.DefaultRequestHeaders.Add ("Authorization", "2022-11-28")
     let postData = JsonSerializer.Serialize releaseSpec
     use content = new StringContent (postData, Encoding.UTF8, "application/json")
     use response = client.PostAsync($"https://api.github.com/repos/%s{gitOwner}/%s{gitName}/releases", content).Result.EnsureSuccessStatusCode()
