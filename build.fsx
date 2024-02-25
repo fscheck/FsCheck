@@ -20,9 +20,11 @@ module Utils =
         relativeDirNames
         |> List.iter (fun dirName ->
             let di = DirectoryInfo dirName
-            try
-                di.Delete true
-            with :? DirectoryNotFoundException -> ()
+            if di.Exists then
+                di.GetFileSystemInfos("*", SearchOption.AllDirectories) |> Array.iter (fun info -> info.Attributes <- FileAttributes.Normal)
+                try
+                    di.Delete true
+                with :? DirectoryNotFoundException -> ()
         )
 
     let rec containsTaskCancellation (exc : Exception) =
@@ -99,12 +101,12 @@ module Utils =
     let inline runProcessWithEnv env command args : unit = runProcessWithOutput env command args |> ignore<string>
     let inline runProcess command args : unit = runProcessWithEnv Map.empty command args
 
-    let rec copyDir (source : DirectoryInfo) (target : DirectoryInfo) : unit =
+    let rec copyDir (source : DirectoryInfo) (target : DirectoryInfo) (overwrite : bool): unit =
         target.Create ()
         for file in source.EnumerateFiles () do
-            file.CopyTo (Path.Combine (target.FullName, file.Name)) |> ignore<FileInfo>
+            file.CopyTo(Path.Combine (target.FullName, file.Name), overwrite) |> ignore<FileInfo>
         for dir in source.EnumerateDirectories () do
-            copyDir dir (Path.Combine (target.FullName, dir.Name) |> DirectoryInfo)
+            copyDir dir (Path.Combine (target.FullName, dir.Name) |> DirectoryInfo) overwrite
 
 // --------------------------------------------------------------------------------------
 // Clean build results
@@ -291,7 +293,7 @@ Target.create "AssemblyInfo" (fun _ ->
 // Build library & test project
 
 type HaveBuilt = HaveBuilt
-let build (_ : HaveCleaned) : HaveBuilt =
+let build (_ : HaveCleaned) (_ : HaveGeneratedAssemblyInfo) : HaveBuilt =
     Console.Write "Performing dotnet restore... "
     runProcess "dotnet" ["restore" ; solution]
     Console.WriteLine "done."
@@ -477,17 +479,18 @@ Target.create "WatchDocs" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Release Scripts
 
-let releaseDocs (_ : HaveBuilt) =
+let releaseDocs (_ : HaveGeneratedDocs) =
     Console.Write "Releasing docs to gh-pages branch... "
     let tempDocsDir = "temp/gh-pages"
     cleanDirectories [tempDocsDir]
     let tempDocsDir = Directory.CreateDirectory tempDocsDir
     runProcess "git" ["clone" ; "git@github.com:fscheck/FsCheck.git" ; "--single-branch" ; "--branch" ; "gh-pages" ; tempDocsDir.FullName]
 
-    copyDir tempDocsDir (DirectoryInfo "output")
+    copyDir (DirectoryInfo "output") tempDocsDir true
 
-    runProcess "git" ["--git-dir" ; Path.Combine (tempDocsDir.FullName, ".git") ; "commit" ; "--all" ; "--message" ; $"Update generated documentation for version %s{buildVersion}"]
-    runProcess "git" ["--git-dir" ; Path.Combine (tempDocsDir.FullName, ".git") ; "push"]
+    runProcess "git" ["-C" ; tempDocsDir.FullName ; "add" ; "--all"]
+    runProcess "git" ["-C" ; tempDocsDir.FullName ; "commit" ; "--all" ; "--message" ; $"Update generated documentation for version %s{buildVersion}"]
+    runProcess "git" ["-C" ; tempDocsDir.FullName ; "push"]
     Console.WriteLine "done."
 
 (*
@@ -663,33 +666,39 @@ match args |> List.map (fun s -> s.ToLowerInvariant ()) with
 | ["-t"; "clean"] -> doClean () |> ignore<HaveCleaned>
 | ["-t"; "ci"] ->
     let haveCleaned = doClean ()
-    let haveBuilt = build haveCleaned
+    let haveGeneratedAssemblyInfo = generateAssemblyInfo haveCleaned
+    let haveBuilt = build haveCleaned haveGeneratedAssemblyInfo
     let haveTested = runDotnetTest haveCleaned
     let haveGeneratedDocs = docs haveBuilt
     runCi haveGeneratedDocs haveTested
 | ["-t" ; "release"] ->
     let haveCleaned = doClean ()
-    let haveBuilt = build haveCleaned
+    let haveGeneratedAssemblyInfo = generateAssemblyInfo haveCleaned
+    let haveBuilt = build haveCleaned haveGeneratedAssemblyInfo
     let haveTested = runDotnetTest haveCleaned
     let haveGeneratedDocs = docs haveBuilt
     release haveTested haveGeneratedDocs
 | ["-t"; "build"] ->
     let haveCleaned = doClean ()
-    build haveCleaned |> ignore<HaveBuilt>
+    let haveGeneratedAssemblyInfo = generateAssemblyInfo haveCleaned
+    build haveCleaned haveGeneratedAssemblyInfo |> ignore<HaveBuilt>
 | ["-t"; "tests"] ->
     let haveCleaned = doClean ()
     runDotnetTest haveCleaned |> ignore<HaveTested>
 | ["-t"; "docs"] ->
     let haveCleaned = doClean ()
-    let haveBuilt = build haveCleaned
+    let haveGeneratedAssemblyInfo = generateAssemblyInfo haveCleaned
+    let haveBuilt = build haveCleaned haveGeneratedAssemblyInfo
     docs haveBuilt |> ignore<HaveGeneratedDocs>
 | ["-t" ; "watchdocs"] -> watchDocs ()
 | ["-t"; "releasedocs"] ->
     if isAppVeyorBuild then
         failwith "Refusing to release docs from CI"
     let haveCleaned = doClean ()
-    let haveBuilt = build haveCleaned
-    releaseDocs haveBuilt
+    let haveGeneratedAssemblyInfo = generateAssemblyInfo haveCleaned
+    let haveBuilt = build haveCleaned haveGeneratedAssemblyInfo
+    let haveGeneratedDocs = docs haveBuilt
+    releaseDocs haveGeneratedDocs
 | ["-t"; "nugetpack"] ->
     let haveCleaned = doClean ()
     let haveTested = runDotnetTest haveCleaned
