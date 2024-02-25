@@ -337,13 +337,23 @@ Target.create "RunTests" (fun _ ->
 // --------------------------------------------------------------------------------------
 // Build a NuGet package
 
+let base64 (s : string) =
+    Convert.ToBase64String (Encoding.UTF8.GetBytes s)
+
 type HavePacked = HavePacked
 let packNuGet (_ : HaveTested) : HavePacked =
     Console.Write "Performing dotnet pack... "
     let releaseNotes =
         releaseNotes.Notes
         |> String.concat "\n"
-    runProcess "dotnet" ["pack" ; "--configuration" ; "Release" ; $"-p:Version=%s{buildVersion}" ; "--output" ; "bin" ; $"-p:PackageReleaseNotes=%s{releaseNotes}"]
+        // MsBuild will interpret some characters, apparently including the comma.
+        // To work around this, we pass it in base64-encoded, and pick it up on the other side.
+        |> base64
+    let env = ["RELEASE_NOTES", releaseNotes ; "BUILD_VERSION", buildVersion ] |> Map.ofList
+    if RuntimeInformation.IsOSPlatform OSPlatform.Windows then
+        runProcessWithEnv env "cmd" ["/c" ; "dotnet pack --configuration Release -p:Version=%BUILD_VERSION% --output bin -p:RELEASE_NOTES=%RELEASE_NOTES%"]
+    else
+        runProcessWithEnv env "sh" ["-c" ; "dotnet pack --configuration Release -p:Version=\"$BUILD_VERSION\" --output bin -p:RELEASE_NOTES=\"$RELEASE_NOTES\""]
 
     // I *believe* it is impossible to have a fixed (not floating) version number from a source reference
     // via `dotnet pack`. Without this next bit, FsCheck.Xunit vA.B.C depends on >= FsCheck vA.B.C, not
@@ -401,7 +411,7 @@ let pushNuGet (_ : HaveTested) (_ : HavePacked) =
         if RuntimeInformation.IsOSPlatform OSPlatform.Windows then
             runProcessWithEnv env "cmd" ["/c" ; $"dotnet nuget push %s{package} --api-key %%NUGET_KEY%% --source https://api.nuget.org/v3/index.json"]
         else
-            runProcessWithEnv env "sh" ["-c" ; $"dotnet nuget push %s{package} --api-key $NUGET_KEY --source https://api.nuget.org/v3/index.json"]
+            runProcessWithEnv env "sh" ["-c" ; $"dotnet nuget push %s{package} --api-key \"$NUGET_KEY\" --source https://api.nuget.org/v3/index.json"]
     Console.WriteLine "done."
     HavePushed
 
