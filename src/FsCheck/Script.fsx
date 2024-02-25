@@ -121,9 +121,9 @@ let procRegSpec =
                 try
                     actual.Reg (name, pid.V(op))
                     (nameExists name model || List.exists ((=) pid) model.Killed)
-                        |@ "register succeeded but shouldn't work"
+                        |> Prop.label "register succeeded but shouldn't work"
                 with e ->
-                    nameExists name model |@ sprintf "register failed but should work: %O" e
+                    nameExists name model |> Prop.label (sprintf "register failed but should work: %O" e)
             override __.ToString() = sprintf "reg %s %O" name pid
         }
     let unreg name =
@@ -135,7 +135,7 @@ let procRegSpec =
                 { m with Regs = m.Regs |> List.where (fun (e,_) -> e <> name)  }
             override __.Check (actual,model) =
                 let r = actual.Unreg name
-                r = unregisterOk name model |@ sprintf "unregister result was %b but should have been %b" r (not r)
+                r = unregisterOk name model |> Prop.label (sprintf "unregister result was %b but should have been %b" r (not r))
                 |> Prop.ofTestable
             override __.ToString() = sprintf "unreg %s" name
         }

@@ -245,16 +245,16 @@ Properties may take the form
 The `.&.` combinator is most commonly used to write complex properties which share a generator. 
 In that case, it might be difficult upon failure to know excactly which sub-property has caused the failure. 
 That's why you can label sub-properties, and FsCheck shows the labels of the failed subproperties when 
-it finds a counter-example. This takes the form: `<string> @| <property>` or `<property> |@ <string>`.
+it finds a counter-example using `Prop.label`.
 
 For example,*)
 
 (***define-output:complex***)
 let complex (m: int) (n: int) =
   let res = n + m
-  (res >= m)    |@ "result > #1" .&.
-  (res >= n)    |@ "result > #2" .&. 
-  (res < m + n) |@ "result not sum"
+  (res >= m)    |> Prop.label "result > #1" .&.
+  (res >= n)    |> Prop.label "result > #2" .&. 
+  (res < m + n) |> Prop.label "result not sum"
 Check.Quick complex
 
 (**
@@ -270,31 +270,13 @@ This is useful for displaying intermediate results, for example:*)
 let multiply (n: int, m: int) =
     let res = n*m
     sprintf "evidence = %i" res @| (
-      "div1" @| (m <> 0 ==> lazy (res / m = n)) .&. 
-      "div2" @| (n <> 0 ==> lazy (res / n = m)) .&. 
-      "lt1"  @| (res > m) .&. 
-      "lt2"  @| (res > n))
+      Prop.label "div1" (m <> 0 ==> lazy (res / m = n)) .&. 
+      Prop.label "div2" (n <> 0 ==> lazy (res / n = m)) .&. 
+      Prop.label "lt1"  (res > m) .&. 
+      Prop.label "lt2"  (res > n))
 Check.Quick multiply
 
 (**
     [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=multipleLabels]*)
 
 (***include-output:multiply***)
-
-(**
-Notice that the above property combines subproperties by tupling them. This works for tuples up to length 6 and lists:
-
-*    `(<property1>,<property2>,...,<property6>)` means `<property1> .&. <property2> .&.... .&.<property6>`
-*    `[property1;property2,...,propertyN]` means `<property1> .&. <property2> .&.... .&.<propertyN>`
-
-The example written as a list:*)
-
-let multiplyAsList (n: int, m: int) =
-    let res = n*m
-    sprintf "evidence = %i" res @| [
-      "div1" @| (m <> 0 ==> lazy (res / m = n));
-      "div2" @| (n <> 0 ==> lazy (res / n = m));
-      "lt1"  @| (res > m);
-      "lt2"  @| (res > n)]
-(**
-Produces the same result.*)

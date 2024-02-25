@@ -184,7 +184,14 @@ namespace FsCheck.CSharpExamples
             ArbMap.Default.GeneratorFor<int>().Sample(10);
             ArbMap.Default.GeneratorFor<int>().Sample(10, size:25);
 
-			Console.WriteLine("Press any key...");
+
+            Prop.ForAll<DoNotSize<int>>(async i =>
+            {
+                await Task.Delay(10);
+                return true.Collect(i.Item);
+            }).QuickCheck();
+
+            Console.WriteLine("Press any key...");
             Console.ReadKey();
         }
 

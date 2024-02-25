@@ -199,7 +199,7 @@ module StateMachine =
                 member __.Check (c,m) = 
                     let res = c.Inc() 
                     m = res 
-                    |@ sprintf "Inc: model = %i, actual = %i" m res
+                    |> Prop.label (sprintf "Inc: model = %i, actual = %i" m res)
                 override __.ToString() = "inc"}
         let dec = 
             { new Operation<Counter,int>() with
@@ -209,7 +209,7 @@ module StateMachine =
                 member __.Check (c,m) = 
                     let res = c.Dec()
                     m = res 
-                    |@ sprintf "Dec: model = %i, actual = %i" m res
+                    |> Prop.label (sprintf "Dec: model = %i, actual = %i" m res)
                 override __.ToString() = "dec"}
         let create init = 
             { new Setup<Counter,int>() with
@@ -252,10 +252,10 @@ module StateMachine =
                     act.Set actualNextState
                     if failureState = act.Get then 
                         false
-                        |@ sprintf "failurestate: model = %A, actual = %A" model act
+                        |> Prop.label (sprintf "failurestate: model = %A, actual = %A" model act)
                     else 
                         model.Check act
-                        |@ sprintf "model = %A, actual = %A" model act
+                        |> Prop.label (sprintf "model = %A, actual = %A" model act)
                 override __.ToString() = sprintf "%A->%A" startState endState }
 
          ( makeOperation failureState "B" A B
