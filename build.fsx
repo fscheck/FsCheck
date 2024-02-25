@@ -530,7 +530,7 @@ type GitHubReleaseResponse =
         [<JsonPropertyName "name">]
         Name : string
         [<JsonPropertyName "published_at">]
-        PublishedAt : DateTime
+        PublishedAt : System.Nullable<DateTime>
         [<JsonPropertyName "assets">]
         Assets : GitHubAsset list
     }
@@ -586,13 +586,13 @@ let gitHubRelease (_ : HaveTested) =
                 |> String.concat " "
             failwith $"Multiple matching push remotes found for %s{gitOwner}/%s{gitName}: %s{remotes}"
 
-    runProcess "git" ["commit" ; "--all" ; "--message" ; $"Bump version to %s{releaseNotes.NugetVersion}"]
+    runProcess "git" ["commit" ; "--all" ; "--allow-empty" ; "--message" ; $"Bump version to %s{releaseNotes.NugetVersion}"]
     let gitBranch =
         runProcessWithOutput Map.empty "git" ["symbolic-ref" ; "--short" ; "HEAD"]
     Console.WriteLine $"Branch: '%s{gitBranch}'; remote: '%s{remote}'"
     runProcess "git" ["push" ; remote ; gitBranch]
-    runProcess "git" ["tag" ; releaseNotes.NugetVersion]
-    runProcess "git" ["push" ; remote ; releaseNotes.NugetVersion]
+    runProcess "git" ["tag" ; "-f" ; releaseNotes.NugetVersion]
+    runProcess "git" ["push" ; "-f" ; remote ; releaseNotes.NugetVersion]
 
     Console.WriteLine "Creating GitHub release... "
 
@@ -607,16 +607,20 @@ let gitHubRelease (_ : HaveTested) =
         }
 
     use client = new HttpClient ()
-    client.DefaultRequestHeaders.Add ("Accept", "application/vnd.github+json")
-    client.DefaultRequestHeaders.Add ("X-GitHub-Api-Version", "2022-11-28")
-    client.DefaultRequestHeaders.Authorization <- AuthenticationHeaderValue ("Bearer", pat)
+    use message = new HttpRequestMessage (Method = HttpMethod.Post, RequestUri = Uri $"https://api.github.com/repos/%s{gitOwner}/%s{gitName}/releases")
+    message.Headers.Add ("Accept", "application/vnd.github+json")
+    message.Headers.Add ("X-GitHub-Api-Version", "2022-11-28")
+    message.Headers.Add ("Authorization", $"Bearer %s{pat}")
+    message.Headers.Add ("User-Agent", "build-fsx-release")
     let postData = JsonSerializer.Serialize releaseSpec
     use content = new StringContent (postData, Encoding.UTF8, "application/json")
-    use response = client.PostAsync($"https://api.github.com/repos/%s{gitOwner}/%s{gitName}/releases", content).Result.EnsureSuccessStatusCode()
+    message.Content <- content
+    use response = client.SendAsync(message).Result
     let response = response.Content.ReadAsStringAsync().Result
+    Console.WriteLine $"GitHub raw response: %s{response}"
     let output = JsonSerializer.Deserialize<GitHubReleaseResponse> response
 
-    Console.WriteLine $"GitHub response: %+A{output}"
+    Console.WriteLine $"Parsed GitHub response: %+A{output}"
 
     Console.WriteLine "done."
 
