@@ -472,7 +472,7 @@ module BugReproIssue195 =
     // registration time for the string generator below, a duplicate key exception was thrown.
     // this was fixed by using Default.String() in StringWithoutNullChars instead, and a bunch
     // of other similar cases in the default generator was fixed as well.
-    let breaksIt = ArbMap.defaults.ArbFor<StringNoNulls>() |> ignore
+    let breaksIt = ArbMap.defaults.ArbFor<StringNoNullChar>() |> ignore
 
     type BrokenGen = 
         static member String() = intStr |> Arb.fromGen

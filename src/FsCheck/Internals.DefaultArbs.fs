@@ -617,10 +617,10 @@ type internal Default private() =
             Arb.fromGenShrink(generator, shrinker)
         with get
 
-    static member val  StringNoNulls =
+    static member val StringNoNullChar =
             Default.String
             |> Arb.filter (not << String.exists ((=) '\000'))
-            |> Arb.convert StringNoNulls string
+            |> Arb.convert StringNoNullChar string
         with get
 
     static member val NonEmptyString =

@@ -41,8 +41,8 @@ type NonEmptyString = NonEmptyString of string with
     override x.ToString() = x.Get
 
 ///Represents a string that does not contain null characters ('\000')
-type StringNoNulls = StringNoNulls of string with
-    member x.Get = match x with StringNoNulls r -> r
+type StringNoNullChar = StringNoNullChar of string with
+    member x.Get = match x with StringNoNullChar r -> r
     override x.ToString() = x.Get
 
 // Represents a string that is not null, empty or consists only of white-space characters and does not contain any null characters ('\000')
