@@ -2,6 +2,9 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(APPVEYOR_BUILD_VERSION)' != ''">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
   <PropertyGroup>
     <Deterministic>true</Deterministic>
     <Copyright>Copyright 2008-2024</Copyright>
