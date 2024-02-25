@@ -1,0 +1,27 @@
+<Project>
+<UsingTask TaskName="Base64Decode" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+  <ParameterGroup>
+    <EncodedString ParameterType="System.String" Required="true" />
+    <DecodedString Output="true" ParameterType="System.String" />
+  </ParameterGroup>
+  <Task>
+    <Using Namespace="System" />
+    <Using Namespace="System.Text" />
+    <Code Type="Fragment" Language="cs">
+    <![CDATA[
+      System.IO.File.WriteAllText("/tmp/foo.txt", EncodedString);
+      DecodedString = Encoding.UTF8.GetString(Convert.FromBase64String(EncodedString));
+    ]]>
+    </Code>
+  </Task>
+</UsingTask>
+
+<Target Name="DecodeReleaseNotes" BeforeTargets="GenerateNuspec">
+  <Base64Decode EncodedString="$(RELEASE_NOTES)">
+    <Output TaskParameter="DecodedString" PropertyName="DecodedReleaseNotes" />
+  </Base64Decode>
+  <PropertyGroup>
+    <PackageReleaseNotes>$(DecodedReleaseNotes)</PackageReleaseNotes>
+  </PropertyGroup>
+</Target>
+</Project>
