@@ -89,12 +89,15 @@ module Utils =
             use waiter = new Waiter (stdoutArr, stderrArr)
             proc.WaitForExit ()
 
-        let stdout = stdoutArr |> Seq.filter (fun s -> not (String.IsNullOrEmpty s)) |> String.concat " "
+        let stdout = stdoutArr |> Seq.filter (fun s -> not (String.IsNullOrEmpty s)) |> String.concat "\n"
 
         if proc.ExitCode <> 0 then
             let args = args |> String.concat " "
             let stdout = if String.IsNullOrEmpty stdout then "" else $"\nStdout:\n  %s{stdout}"
-            failwith $"Process '%s{command}' failed with nonzero exit code %i{proc.ExitCode}. Args: %s{args}.%s{stdout}"
+            let stderr =
+                stderrArr
+                |> String.concat "\n"
+            failwith $"Process '%s{command}' failed with nonzero exit code %i{proc.ExitCode}. Args: %s{args}.\nStdout:\n%s{stdout}\nStderr:\n%s{stderr}"
 
         stdout
 
