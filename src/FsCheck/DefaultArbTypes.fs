@@ -1,6 +1,8 @@
 ﻿namespace FsCheck
 
 open System.Net
+open System.Collections
+open System.Collections.Generic
 
 // This file contains a number of convenience types that have built-in generators.
 
@@ -79,16 +81,31 @@ type IntWithMinMax = IntWithMinMax of int with
     static member op_Explicit(IntWithMinMax i) = i
 
 ///Represents a non-empty Set.
-type NonEmptySet<'a when 'a : comparison> = NonEmptySet of Set<'a> with
+type NonEmptySet<'T when 'T : comparison> = NonEmptySet of Set<'T> with
     member x.Get = match x with NonEmptySet r -> r
+    interface IEnumerable<'T> with
+        member this.GetEnumerator(): IEnumerator = 
+            (this.Get :> IEnumerable).GetEnumerator()
+        member this.GetEnumerator(): IEnumerator<'T> = 
+            (this.Get :> IEnumerable<'T>).GetEnumerator()
     
 ///Represents a non-empty array.
-type NonEmptyArray<'a> = NonEmptyArray of 'a[] with
+type NonEmptyArray<'T> = NonEmptyArray of 'T[] with
     member x.Get = match x with NonEmptyArray r -> r
+    interface IEnumerable<'T> with
+        member this.GetEnumerator(): IEnumerator = 
+            (this.Get :> IEnumerable).GetEnumerator()
+        member this.GetEnumerator(): IEnumerator<'T> = 
+            (this.Get :> IEnumerable<'T>).GetEnumerator()
 
 ///Represents an array whose length does not change when shrinking.
-type FixedLengthArray<'a> = FixedLengthArray of 'a[] with
+type FixedLengthArray<'T> = FixedLengthArray of 'T[] with
     member x.Get = match x with FixedLengthArray r -> r
+    interface IEnumerable<'T> with
+        member this.GetEnumerator(): IEnumerator = 
+            (this.Get :> IEnumerable).GetEnumerator()
+        member this.GetEnumerator(): IEnumerator<'T> = 
+            (this.Get :> IEnumerable<'T>).GetEnumerator()
 
 ///Wrap a type in NonNull to prevent null being generated for the wrapped type.
 type NonNull<'a when 'a : null> = NonNull of 'a with

@@ -2,15 +2,17 @@
 
 * Breaking change: confusingly named `StringNoNnulls` is renamed to `StringNoNullChar`.
 
-* * Negative decimals are now also generated. (by Stephen Smith)
+* Negative decimals are now also generated. (by Stephen Smith)
 
-* Relax FsCheck.Xunit's restriction on xUnit versions. (by Tom Rijnbeek)
+* Relaxed FsCheck.Xunit's restriction on xUnit versions. (by Tom Rijnbeek)
 
 * Made `Gen.choose64` public.
 
-* Remove dependency on FAKE and paket in favor of standard .NET tools. (by Patrick Stevens)
+* Removed dependency on FAKE and paket in favor of standard .NET tools. (by Patrick Stevens)
 
-* Add more `ForAll` overloads for various `Task` types.
+* Added more `ForAll` overloads for various `Task` types.
+
+* The collections types `NonEmptySet`, `NonEmptyArray` and `FixedLengthArray` now implemented `IEnnumerable` to avoid a call to `Get` in common scenarios.
 
 ### 3.0.0-rc1 - 23 July 2023
 
