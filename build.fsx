@@ -41,12 +41,17 @@ module Utils =
             let lastStdout =
                 lock stdout (fun () -> if stdout.Count = 0 then None else Some stdout.[stdout.Count - 1])
                 |> Option.defaultValue "<no output yet>"
-            Console.WriteLine $"Last stdout: %s{lastStdout}"
-            let lastStderr =
-                lock stderr (fun () -> if stderr.Count = 0 then None else Some stderr.[stderr.Count - 1])
-                |> Option.defaultValue "<no error output yet>"
-            Console.WriteLine $"Last stderr: %s{lastStderr}"
-            return! go ()
+            if lastStdout.Contains ("listener started", StringComparison.OrdinalIgnoreCase) then
+                // `fsdocs watch` will sit there until it's quit, so we just stop watching in that case
+                Console.WriteLine $"\n%s{lastStdout}"
+                return ()
+            else
+                Console.WriteLine $"Last stdout: %s{lastStdout}"
+                let lastStderr =
+                    lock stderr (fun () -> if stderr.Count = 0 then None else Some stderr.[stderr.Count - 1])
+                    |> Option.defaultValue "<no error output yet>"
+                Console.WriteLine $"Last stderr: %s{lastStderr}"
+                return! go ()
         }
         let cts = new CancellationTokenSource ()
 
