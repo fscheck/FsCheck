@@ -7,17 +7,16 @@
         <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup>
-        <Content Include="App.config"/>
-        <Compile Include="PropertyExamples.fs"/>
+        <Content Include="App.config" />
+        <Compile Include="PropertyExamples.fs" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
-        <PackageReference Include="NUnit"/>
-        <PackageReference Include="NUnit3TestAdapter"/>
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="NUnit" />
+        <PackageReference Include="NUnit3TestAdapter" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="../../src/FsCheck/FsCheck.fsproj"/>
-        <ProjectReference Include="../../src/FsCheck.NUnit/FsCheck.NUnit.fsproj"/>
+        <ProjectReference Include="../../src/FsCheck/FsCheck.fsproj" />
+        <ProjectReference Include="../../src/FsCheck.NUnit/FsCheck.NUnit.fsproj" />
     </ItemGroup>
 </Project>
