@@ -9,7 +9,6 @@
     <Using Namespace="System.Text" />
     <Code Type="Fragment" Language="cs">
     <![CDATA[
-      System.IO.File.WriteAllText("/tmp/foo.txt", EncodedString);
       DecodedString = Encoding.UTF8.GetString(Convert.FromBase64String(EncodedString));
     ]]>
     </Code>
