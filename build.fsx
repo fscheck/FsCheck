@@ -126,12 +126,6 @@ let doClean () : HaveCleaned =
     Console.WriteLine "done."
     HaveCleaned
 
-(*
-Target.create "Clean" (fun _ ->
-    Shell.cleanDirs ["bin"; "temp"; "output"]
-)
-*)
-
 // ===================
 
 // Information about each project is used
@@ -225,12 +219,6 @@ let appveyorBuildVersion (_ : HaveCleaned) : HaveUpdatedBuildVersion =
     Console.WriteLine "done."
     HaveUpdatedBuildVersion
 
-(*
-Target.create "BuildVersion" (fun _ ->
-    Shell.Exec("appveyor", sprintf "UpdateBuild -Version \"%s\"" buildVersion) |> ignore
-)
-*)
-
 // Generate assembly info files with the right version & up-to-date information
 type HaveGeneratedAssemblyInfo = | HaveGeneratedAssemblyInfo
 let generateAssemblyInfo (_ : HaveCleaned) : HaveGeneratedAssemblyInfo =
@@ -279,24 +267,6 @@ module internal AssemblyVersionInformation =
     Console.WriteLine "done."
     HaveGeneratedAssemblyInfo
 
-(*
-Target.create "AssemblyInfo" (fun _ ->
-    packages |> Seq.iter (fun package ->
-    let fileName = "src/" + package.Name + "/AssemblyInfo.fs"
-    
-    AssemblyInfoFile.createFSharp fileName
-        ([AssemblyInfo.Title package.Name
-          AssemblyInfo.Product package.Name
-          AssemblyInfo.Description package.Summary
-          AssemblyInfo.Version release.AssemblyVersion
-          AssemblyInfo.FileVersion release.AssemblyVersion
-          AssemblyInfo.KeyFile "../../FsCheckKey.snk"
-        ] @ (if package.Name = "FsCheck" || package.Name = "FsCheck.Xunit"
-             then [AssemblyInfo.InternalsVisibleTo("FsCheck.Test")] else []))
-    )
-)
-*)
-
 // --------------------------------------------------------------------------------------
 // Build library & test project
 
@@ -310,13 +280,6 @@ let build (_ : HaveCleaned) (_ : HaveGeneratedAssemblyInfo) : HaveBuilt =
     Console.WriteLine "done."
     HaveBuilt
 
-(*
-Target.create "Build" (fun _ ->
-    DotNet.restore id solution
-    DotNet.build (fun opt -> { opt with Configuration = DotNet.BuildConfiguration.Release }) solution
-)
-*)
-
 // --------------------------------------------------------------------------------------
 // Run the unit tests
 
@@ -326,13 +289,6 @@ let runDotnetTest (_ : HaveCleaned) : HaveTested =
     runProcess "dotnet" ["test" ; "tests/FsCheck.Test" ; "--configuration" ; "Release"]
     Console.WriteLine "done."
     HaveTested
-
-(*
-Target.create "RunTests" (fun _ ->
-  "tests/FsCheck.Test/"
-  |> DotNet.test (fun opt -> { opt with Configuration = DotNet.BuildConfiguration.Release })
-)
-*)
 
 // --------------------------------------------------------------------------------------
 // Build a NuGet package
@@ -379,18 +335,6 @@ let packNuGet (_ : HaveTested) : HavePacked =
     Console.WriteLine "done."
     HavePacked
 
-(*
-Target.create "PaketPack" (fun _ ->
-    Paket.pack (fun p ->
-      { p with
-          OutputPath = "bin"
-          Version = buildVersion
-          ReleaseNotes = String.toLines release.Notes
-          ToolType = ToolType.CreateLocalTool()
-      })
-)
-*)
-
 type HavePushed = HavePushed
 let pushNuGet (_ : HaveTested) (_ : HavePacked) =
     Console.Write "Performing NuGet push... "
@@ -414,16 +358,6 @@ let pushNuGet (_ : HaveTested) (_ : HavePacked) =
             runProcessWithEnv env "sh" ["-c" ; $"dotnet nuget push %s{package} --api-key \"$NUGET_KEY\" --source https://api.nuget.org/v3/index.json"]
     Console.WriteLine "done."
     HavePushed
-
-(*
-Target.create "PaketPush" (fun _ ->
-    Paket.push (fun p ->
-        { p with 
-            WorkingDir = "bin"
-            ToolType = ToolType.CreateLocalTool()
-        })
-)
-*)
 
 // --------------------------------------------------------------------------------------
 // Generate the documentation
@@ -458,16 +392,6 @@ let docs (_ : HaveBuilt) : HaveGeneratedDocs =
 
     HaveGeneratedDocs
 
-(*
-Target.create "Docs" (fun _ ->
-    Shell.cleanDir ".fsdocs"
-    DotNet.exec id "fsdocs" ("build --strict --eval --clean"
-      + " --projects src/FsCheck/FsCheck.fsproj" 
-      + " --properties " + String.Join(" ",fsdocProperties) 
-      + " --parameters " + String.Join(" ", fsdocParameters)) |> checkResult
-)
-*)
-
 let watchDocs () =
     Console.Write "Running fsdocs watch... "
     cleanDirectories [".fsdocs"]
@@ -480,16 +404,6 @@ let watchDocs () =
     ]
     |> runProcess "dotnet"
     Console.WriteLine "fsdocs watch completed."
-
-(*
-Target.create "WatchDocs" (fun _ ->
-    Shell.cleanDir ".fsdocs"
-    DotNet.exec id "fsdocs" ("watch --eval"
-      + " --projects src/FsCheck/FsCheck.fsproj"
-      + " --properties " + String.Join(" ",fsdocProperties)
-      + " --parameters " + String.Join(" ", fsdocParameters)) |> checkResult
-)
-*)
 
 // --------------------------------------------------------------------------------------
 // Release Scripts
@@ -507,20 +421,6 @@ let releaseDocs (_ : HaveGeneratedDocs) =
     runProcess "git" ["-C" ; tempDocsDir.FullName ; "commit" ; "--all" ; "--message" ; $"Update generated documentation for version %s{buildVersion}"]
     runProcess "git" ["-C" ; tempDocsDir.FullName ; "push"]
     Console.WriteLine "done."
-
-(*
-Target.create "ReleaseDocs" (fun _ ->
-    let tempDocsDir = "temp/gh-pages"
-    Shell.cleanDir tempDocsDir
-    Repository.cloneSingleBranch "" ("git@github.com:fscheck/FsCheck.git") "gh-pages" tempDocsDir
-
-    Repository.fullclean tempDocsDir
-    Shell.copyRecursive "output" tempDocsDir true |> Trace.tracefn "%A"
-    Staging.stageAll tempDocsDir
-    Commit.exec tempDocsDir (sprintf "Update generated documentation for version %s" buildVersion)
-    Branches.push tempDocsDir
-)
-*)
 
 let rec getUserInput (prompt : string) =
     Console.Write $"%s{prompt}: "
@@ -641,32 +541,6 @@ let gitHubRelease (_ : HaveTested) =
     Console.WriteLine $"Parsed GitHub response: %+A{output}"
 
     Console.WriteLine "done."
-
-(*
-Target.create "Release" (fun _ ->
-    let user = Environment.environVarOrDefault "github-user" (UserInput.getUserInput "Username: ")
-    let pw = Environment.environVarOrDefault "github-pw" (UserInput.getUserPassword "Password: ")
-    let remote =
-        CommandHelper.getGitResult "" "remote -v"
-        |> Seq.filter (fun (s: string) -> s.EndsWith("(push)"))
-        |> Seq.tryFind (fun (s: string) -> s.Contains(gitOwner + "/" + gitName))
-        |> function None -> gitHome + "/" + gitName | Some (s: string) -> s.Split().[0]
-
-    Staging.stageAll ""
-    Commit.exec "" (sprintf "Bump version to %s" release.NugetVersion)
-    Branches.pushBranch "" remote (Information.getBranchName "")
-
-    Branches.tag "" release.NugetVersion
-    Branches.pushTag "" remote release.NugetVersion
-
-    // release on github
-    GitHub.createClient user pw
-    |> GitHub.draftNewRelease gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
-    // to upload a file: |> GitHub.uploadFiles "PATH_TO_FILE"
-    |> GitHub.publishDraft
-    |> Async.RunSynchronously
-)
-*)
 
 let runCi (_ : HaveGeneratedDocs) (_ : HaveTested) (_ : HavePacked) =
     // this is just a target to note that we have done all the above
