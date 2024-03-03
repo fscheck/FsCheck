@@ -1,4 +1,6 @@
-### 3.0.0-rc3 - To be released
+### 3.0.0 - To be released
+
+### 3.0.0-rc3 - 3 March 2024
 
 * Breaking change: confusingly named `StringNoNnulls` is renamed to `StringNoNullChar`.
 
