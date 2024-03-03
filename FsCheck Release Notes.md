@@ -6,7 +6,9 @@
 
 * Added more `ForAll` overloads for various `Task` types.
 
-* The collections types `NonEmptySet`, `NonEmptyArray` and `FixedLengthArray` now implemented `IEnnumerable` to avoid a call to `Get` in common scenarios.
+* The collections types `NonEmptySet`, `NonEmptyArray` and `FixedLengthArray` now implement `IEnnumerable` to avoid a call to `Get` in common scenarios.
+
+* Enabled source linking and deterministic builds. (by Patrick Stevens)
 
 ### 3.0.0-rc2 - 25 February 2024
 
