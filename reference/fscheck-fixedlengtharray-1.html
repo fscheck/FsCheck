@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>FixedLengthArray<'a> (FsCheck)</title>
+    <title>FixedLengthArray<'T> (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -86,7 +86,7 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    FixedLengthArray<'a> Type
+    FixedLengthArray<'T> Type
   </h1>
   <p>
     Namespace: 
@@ -103,15 +103,19 @@
   </p>
   <p>
     All Interfaces: 
-    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-fixedlengtharray-1.html">FixedLengthArray</a>&lt;'a&gt;</span>&gt;</span></code>
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-fixedlengtharray-1.html">FixedLengthArray</a>&lt;'T&gt;</span>&gt;</span></code>
     , 
     <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralequatable">IStructuralEquatable</a></code>
     , 
-    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.icomparable-1">IComparable</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-fixedlengtharray-1.html">FixedLengthArray</a>&lt;'a&gt;</span>&gt;</span></code>
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.icomparable-1">IComparable</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-fixedlengtharray-1.html">FixedLengthArray</a>&lt;'T&gt;</span>&gt;</span></code>
     , 
     <code><a href="https://docs.microsoft.com/dotnet/api/system.icomparable">IComparable</a></code>
     , 
     <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralcomparable">IStructuralComparable</a></code>
+    , 
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;'T&gt;</span></code>
+    , 
+    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></code>
   </p>
   <div class="fsdocs-xmldoc">
     
@@ -140,19 +144,19 @@ Represents an array whose length does not change when shrinking.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '184', 184)" onmouseover="showTip(event, '184', 184)">
+              <code onmouseout="hideTip(event, '182', 182)" onmouseover="showTip(event, '182', 182)">
                 <p>
                   <a id="FixedLengthArray">
                     <a href="#FixedLengthArray">
-                      <code><span>FixedLengthArray&#32;<span>'a[]</span></span></code>
+                      <code><span>FixedLengthArray&#32;<span>'T[]</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="184">
+              <div class="fsdocs-tip" id="182">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>FixedLengthArray&#32;<span>'a[]</span></span></code>
+                  <code><span>FixedLengthArray&#32;<span>'T[]</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
@@ -162,7 +166,7 @@ Represents an array whose length does not change when shrinking.
                         Item
                       </b>
                       :
-                      <code><span>'a[]</span></code>
+                      <code><span>'T[]</span></code>
                     </span>
                     <br/>
                   </ul>
@@ -173,7 +177,7 @@ Represents an array whose length does not change when shrinking.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/DefaultArbTypes.fs#L90-90" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/DefaultArbTypes.fs#L102-102" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -185,7 +189,7 @@ Represents an array whose length does not change when shrinking.
                   Item
                 </span>
                 :
-                <code><span>'a[]</span></code>
+                <code><span>'T[]</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -216,7 +220,7 @@ Represents an array whose length does not change when shrinking.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '185', 185)" onmouseover="showTip(event, '185', 185)">
+              <code onmouseout="hideTip(event, '183', 183)" onmouseover="showTip(event, '183', 183)">
                 <p>
                   <a id="Get">
                     <a href="#Get">
@@ -225,7 +229,7 @@ Represents an array whose length does not change when shrinking.
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="185">
+              <div class="fsdocs-tip" id="183">
                 <div class="member-tooltip">
                   Full Usage: 
                   <code><span>this.Get</span></code>
@@ -233,7 +237,7 @@ Represents an array whose length does not change when shrinking.
                   <br/>
                   <span>
                     Returns: 
-                    <code><span>'a[]</span></code>
+                    <code><span>'T[]</span></code>
                   </span>
                   <br/>
                 </div>
@@ -242,7 +246,7 @@ Represents an array whose length does not change when shrinking.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/DefaultArbTypes.fs#L91-91" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/DefaultArbTypes.fs#L103-103" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -253,7 +257,7 @@ Represents an array whose length does not change when shrinking.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span>'a[]</span></code>
+                <code><span>'T[]</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>

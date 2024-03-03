@@ -145,10 +145,10 @@ the output on success:</p>
 <p>FsCheck now also prints the name of each test:</p>
 <table class="pre"><tr><td><pre><code>--- Checking ListProperties ---
 ListProperties.reverse of reverse is original-Ok, passed 100 tests.
-ListProperties.reverse is original-Falsifiable, after 1 test (1 shrink) (14294970192361054759,15307540745606834831)
-Last step was invoked with size of 2 and seed of (7216979882002268227,13897479485057350077):
+ListProperties.reverse is original-Falsifiable, after 2 tests (4 shrinks) (12394975693502514121,11048480033499951041)
+Last step was invoked with size of 3 and seed of (12427705748592770437,15290041744239143249):
 Original:
-[-1; 1]
+[0; 0; -3]
 Shrunk:
 [0; 1]
 with exception:
@@ -173,9 +173,9 @@ top level let-bound functions, and then register all generators and and all prop
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs30', 54)" onmouseover="showTip(event, 'fs30', 54)" class="id">config</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 55)" onmouseover="showTip(event, 'fs6', 55)" class="rt">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs31', 56)" onmouseover="showTip(event, 'fs31', 56)" class="id">QuickThrowOnFailure</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs32', 57)" onmouseover="showTip(event, 'fs32', 57)" class="id">WithArbitrary</span><span class="pn">(</span><span class="pn">[</span><span onmouseout="hideTip(event, 'fs16', 58)" onmouseover="showTip(event, 'fs16', 58)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs29', 59)" onmouseover="showTip(event, 'fs29', 59)" class="rt">Marker</span><span class="pn">&gt;</span><span class="pn">.</span><span class="id">DeclaringType</span><span class="pn">]</span><span class="pn">)</span>
 <span onmouseout="hideTip(event, 'fs4', 60)" onmouseover="showTip(event, 'fs4', 60)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs33', 61)" onmouseover="showTip(event, 'fs33', 61)" class="id">All</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs30', 62)" onmouseover="showTip(event, 'fs30', 62)" class="id">config</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs16', 63)" onmouseover="showTip(event, 'fs16', 63)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs29', 64)" onmouseover="showTip(event, 'fs29', 64)" class="rt">Marker</span><span class="pn">&gt;</span><span class="pn">.</span><span class="id">DeclaringType</span><span class="pn">)</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>--- Checking FSI_0117 ---
-FSI_0117.myprop-Ok, passed 100 tests.
-FSI_0117.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>--- Checking FSI_0112 ---
+FSI_0112.myprop-Ok, passed 100 tests.
+FSI_0112.get_it-Ok, passed 100 tests.</code></pre></td></tr></table>
 <p>The Marker type is just any type defined in the module, to be able to get to the module's Type. F# offers no way
 to get to a module's Type directly.</p>
 <p>FsCheck determines the intent of the function based on its return type:</p>

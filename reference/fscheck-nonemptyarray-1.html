@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>NonEmptyArray<'a> (FsCheck)</title>
+    <title>NonEmptyArray<'T> (FsCheck)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Kurt Schelfthout and contributors">
 
@@ -86,7 +86,7 @@
         <div class="container" id="fsdocs-content">
             <div>
   <h1>
-    NonEmptyArray<'a> Type
+    NonEmptyArray<'T> Type
   </h1>
   <p>
     Namespace: 
@@ -103,15 +103,19 @@
   </p>
   <p>
     All Interfaces: 
-    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-nonemptyarray-1.html">NonEmptyArray</a>&lt;'a&gt;</span>&gt;</span></code>
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-nonemptyarray-1.html">NonEmptyArray</a>&lt;'T&gt;</span>&gt;</span></code>
     , 
     <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralequatable">IStructuralEquatable</a></code>
     , 
-    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.icomparable-1">IComparable</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-nonemptyarray-1.html">NonEmptyArray</a>&lt;'a&gt;</span>&gt;</span></code>
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.icomparable-1">IComparable</a>&lt;<span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-nonemptyarray-1.html">NonEmptyArray</a>&lt;'T&gt;</span>&gt;</span></code>
     , 
     <code><a href="https://docs.microsoft.com/dotnet/api/system.icomparable">IComparable</a></code>
     , 
     <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.istructuralcomparable">IStructuralComparable</a></code>
+    , 
+    <code><span><a href="https://docs.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;'T&gt;</span></code>
+    , 
+    <code><a href="https://docs.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></code>
   </p>
   <div class="fsdocs-xmldoc">
     
@@ -140,19 +144,19 @@ Represents a non-empty array.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '210', 210)" onmouseover="showTip(event, '210', 210)">
+              <code onmouseout="hideTip(event, '208', 208)" onmouseover="showTip(event, '208', 208)">
                 <p>
                   <a id="NonEmptyArray">
                     <a href="#NonEmptyArray">
-                      <code><span>NonEmptyArray&#32;<span>'a[]</span></span></code>
+                      <code><span>NonEmptyArray&#32;<span>'T[]</span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="210">
+              <div class="fsdocs-tip" id="208">
                 <div class="member-tooltip">
                   Full Usage: 
-                  <code><span>NonEmptyArray&#32;<span>'a[]</span></span></code>
+                  <code><span>NonEmptyArray&#32;<span>'T[]</span></span></code>
                   <br/>
                   <br/>
                   Parameters: 
@@ -162,7 +166,7 @@ Represents a non-empty array.
                         Item
                       </b>
                       :
-                      <code><span>'a[]</span></code>
+                      <code><span>'T[]</span></code>
                     </span>
                     <br/>
                   </ul>
@@ -173,7 +177,7 @@ Represents a non-empty array.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/DefaultArbTypes.fs#L86-86" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/DefaultArbTypes.fs#L93-93" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -185,7 +189,7 @@ Represents a non-empty array.
                   Item
                 </span>
                 :
-                <code><span>'a[]</span></code>
+                <code><span>'T[]</span></code>
               </dt>
               <dd class="fsdocs-param-docs"></dd>
             </dl>
@@ -216,7 +220,7 @@ Represents a non-empty array.
         <tr>
           <td class="fsdocs-member-name">
             <div>
-              <code onmouseout="hideTip(event, '211', 211)" onmouseover="showTip(event, '211', 211)">
+              <code onmouseout="hideTip(event, '209', 209)" onmouseover="showTip(event, '209', 209)">
                 <p>
                   <a id="Get">
                     <a href="#Get">
@@ -225,7 +229,7 @@ Represents a non-empty array.
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="211">
+              <div class="fsdocs-tip" id="209">
                 <div class="member-tooltip">
                   Full Usage: 
                   <code><span>this.Get</span></code>
@@ -233,7 +237,7 @@ Represents a non-empty array.
                   <br/>
                   <span>
                     Returns: 
-                    <code><span>'a[]</span></code>
+                    <code><span>'T[]</span></code>
                   </span>
                   <br/>
                 </div>
@@ -242,7 +246,7 @@ Represents a non-empty array.
           </td>
           <td class="fsdocs-xmldoc">
             <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/DefaultArbTypes.fs#L87-87" class="fsdocs-source-link">
+              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/DefaultArbTypes.fs#L94-94" class="fsdocs-source-link">
                 <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
                 <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
               </a>
@@ -253,7 +257,7 @@ Represents a non-empty array.
                 <span class="fsdocs-return-name">
                   Returns:
                 </span>
-                <code><span>'a[]</span></code>
+                <code><span>'T[]</span></code>
               </dt>
               <dd class="fsdocs-return-docs"></dd>
             </dl>

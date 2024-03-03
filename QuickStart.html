@@ -113,10 +113,10 @@ Prop.ForAll((Func&lt;<span class="k">int</span>[], <span class="k">bool</span>&g
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 15)" onmouseover="showTip(event, 'fs10', 15)" class="fn">revIsOrig</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs3', 16)" onmouseover="showTip(event, 'fs3', 16)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 17)" onmouseover="showTip(event, 'fs4', 17)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 18)" onmouseover="showTip(event, 'fs5', 18)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 20)" onmouseover="showTip(event, 'fs7', 20)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs3', 21)" onmouseover="showTip(event, 'fs3', 21)" class="fn">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 22)" onmouseover="showTip(event, 'fs3', 22)" class="fn">xs</span>
 <span onmouseout="hideTip(event, 'fs8', 23)" onmouseover="showTip(event, 'fs8', 23)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 24)" onmouseover="showTip(event, 'fs9', 24)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs10', 25)" onmouseover="showTip(event, 'fs10', 25)" class="fn">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (1 shrink) (17776209737425577932,3415077255596847533)
-Last step was invoked with size of 4 and seed of (9588861571684697522,5726652962648183217):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (2 shrinks) (13267287472967635298,18211440624688182821)
+Last step was invoked with size of 5 and seed of (13322308203434852808,12069236234672464129):
 Original:
-[2; 0]
+[-2; -1; 0]
 Shrunk:
 [1; 0]
 with exception:
@@ -144,10 +144,10 @@ To see this error, ask FsCheck to generate lists of floats:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 26)" onmouseover="showTip(event, 'fs11', 26)" class="fn">revRevIsOrigFloat</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs12', 27)" onmouseover="showTip(event, 'fs12', 27)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 28)" onmouseover="showTip(event, 'fs4', 28)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs13', 29)" onmouseover="showTip(event, 'fs13', 29)" class="vt">float</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 30)" onmouseover="showTip(event, 'fs6', 30)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 31)" onmouseover="showTip(event, 'fs7', 31)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 32)" onmouseover="showTip(event, 'fs6', 32)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 33)" onmouseover="showTip(event, 'fs7', 33)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs12', 34)" onmouseover="showTip(event, 'fs12', 34)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 35)" onmouseover="showTip(event, 'fs12', 35)" class="fn">xs</span>
 <span onmouseout="hideTip(event, 'fs8', 36)" onmouseover="showTip(event, 'fs8', 36)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 37)" onmouseover="showTip(event, 'fs9', 37)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs11', 38)" onmouseover="showTip(event, 'fs11', 38)" class="fn">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 17 tests (5 shrinks) (5155372307839894845,5351500529807594299)
-Last step was invoked with size of 18 and seed of (2023201170633068019,5052472305460538091):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 8 tests (6 shrinks) (18014236043352962824,13495439114589001055)
+Last step was invoked with size of 9 and seed of (8924499886130544753,6764838283798129305):
 Original:
-[nan; -6.736373839; 0.8896749534; 6.88397199; -0.0; 1.797693135e+308]
+[nan; -0.6919015549; -0.0; nan; -0.0; 0.0; nan]
 Shrunk:
 [nan]
 with exception:
