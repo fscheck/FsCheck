@@ -2,12 +2,16 @@
 
 ## Articles
 
-* A series on understanding property-based testing through implementing a simplified PBT library: [Part 1](https://getcode.substack.com/p/property-based-testing-1-what-is), [Part 2](https://getcode.substack.com/p/-property-based-testing-2-the-essentials), [Part 3](https://getcode.substack.com/p/property-based-testing-3-shrinking)
+* A six-part series on understanding property-based testing through implementing a simplified PBT library: [1](https://getcode.substack.com/p/property-based-testing-1-what-is), [2](https://getcode.substack.com/p/-property-based-testing-2-the-essentials), [3](https://getcode.substack.com/p/property-based-testing-3-shrinking), [4](https://getcode.substack.com/p/property-based-testing-4-unifying), [5](https://getcode.substack.com/p/property-based-testing-5-shrinking), [6](https://getcode.substack.com/p/property-based-testing-6-random-all).
 * "QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs" by Koen Claessen and John Hughes [pdf](http://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
 * "An introduction to property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing/)
 * "Choosing properties for property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing-2/)
 * An interesting read about QuickCheck is in [Chapter 11](http://book.realworldhaskell.org/read/testing-and-quality-assurance.html) of the excellent [Real world Haskell](http://book.realworldhaskell.org) book. The book is freely available online, but do the authors a favor and buy it, it's really worth it also for F# programmers.
 * [This section](http://opcoast.com/demos/fsharp/part3.html) of the [Learning F#: Case study with Branch and Bound](http://opcoast.com/demos/fsharp/index.html) article demonstrates uses of FsCheck to test functions that arise in development of a branch and bound algorithm.
+
+## Books
+
+* "Property-Based Testing with PropEr, Erlang, and Elixir: Find Bugs Before Your Users Do" by Fred Hebert [link](https://www.amazon.com/Property-Based-Testing-PropEr-Erlang-Elixir/dp/1680506218).
 
 ## Videos
 
