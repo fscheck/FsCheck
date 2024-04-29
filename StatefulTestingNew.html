@@ -156,19 +156,22 @@ so when we run this specification we can check that FsCheck does the right thing
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs42', 105)" onmouseover="showTip(event, 'fs42', 105)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs43', 106)" onmouseover="showTip(event, 'fs43', 106)" class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs44', 107)" onmouseover="showTip(event, 'fs44', 107)" class="m">StateMachine</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs45', 108)" onmouseover="showTip(event, 'fs45', 108)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs13', 109)" onmouseover="showTip(event, 'fs13', 109)" class="id">spec</span><span class="pn">)</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 7 tests (6 shrinks) (8898997135889442479,9692081928994144837)
-Last step was invoked with size of 8 and seed of (821688670418066841,589392447838876129):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 10 tests (9 shrinks) (14109763696607613050,486088154503131329)
+Last step was invoked with size of 11 and seed of (1756509616903215099,12028728125209013407):
 Label of failing property: Inc: model = 5, actual = 6
 Original:
 (3, Setup Counter)
 inc -&gt; 4
-inc -&gt; 5
-dec -&gt; 4
-inc -&gt; 5
-dec -&gt; 4
+dec -&gt; 3
+inc -&gt; 4
 dec -&gt; 3
 inc -&gt; 4
 inc -&gt; 5
+dec -&gt; 4
+dec -&gt; 3
+dec -&gt; 2
+inc -&gt; 3
+dec -&gt; 2
 
 Shrunk:
 (3, Setup Counter)

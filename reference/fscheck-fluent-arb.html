@@ -358,7 +358,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
               </a>
               
  Return an Arbitrary instance that is a filtered version of an existing arbitrary instance.
- The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter with the given predicate.
+ The generator uses Gen.where, and the shrinks are filtered using Seq.filter with the given predicate.
 
             </p>
             <dl class="fsdocs-params">
@@ -610,7 +610,7 @@ based on a Arbitrary instance for the source type and two mapping functions.
               </a>
               
  Return an Arbitrary instance that is a mapped and filtered version of an existing arbitrary instance.
- The generator uses Gen.map with the given mapper and then Gen.suchThat with the given predicate, 
+ The generator uses Gen.map with the given mapper and then Gen.where with the given predicate, 
  and the shrinks are filtered using Seq.filter with the given predicate.
 This is sometimes useful if using just a filter would reduce the chance of getting a good value
 from the generator - and you can map the value instead. E.g. PositiveInt.
