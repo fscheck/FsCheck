@@ -65,7 +65,7 @@ module Arb =
                 |> Seq.map convertTo }
 
     /// Return an Arbitrary instance that is a filtered version of an existing arbitrary instance.
-    /// The generator uses Gen.suchThat, and the shrinks are filtered using Seq.filter with the given predicate.
+    /// The generator uses Gen.where, and the shrinks are filtered using Seq.filter with the given predicate.
     [<CompiledName("Filter")>]
     let filter pred (a: Arbitrary<'T>) =
         { new Arbitrary<'T>() with
@@ -73,7 +73,7 @@ module Arb =
             override __.Shrinker b = b |> a.Shrinker |> Seq.filter pred }
 
     /// Return an Arbitrary instance that is a mapped and filtered version of an existing arbitrary instance.
-    /// The generator uses Gen.map with the given mapper and then Gen.suchThat with the given predicate,
+    /// The generator uses Gen.map with the given mapper and then Gen.where with the given predicate,
     /// and the shrinks are filtered using Seq.filter with the given predicate.
     /// This is sometimes useful if using just a filter would reduce the chance of getting a good value
     /// from the generator - and you can map the value instead. E.g. PositiveInt.
