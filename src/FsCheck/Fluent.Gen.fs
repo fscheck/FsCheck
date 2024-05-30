@@ -20,7 +20,7 @@ type Gen =
     /// objects.
     /// See also constant.
     //[category: Creating generators]
-    static member Fresh(create:Func<Gen<'T>>) = 
+    static member Fresh(create:Func<'T>) = 
         if isNull create then nullArg "create"
         Gen.fresh create.Invoke
 
