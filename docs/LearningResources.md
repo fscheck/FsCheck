@@ -2,6 +2,7 @@
 
 ## Articles
 
+* "FsCheck 3: Property-based testing in C#" - introduction to FsCheck 3 [link](https://wqplease.com/p/fscheck-3-property-based-testing-in-c-3ba4a2a50388)
 * A six-part series on understanding property-based testing through implementing a simplified PBT library: [1](https://getcode.substack.com/p/property-based-testing-1-what-is), [2](https://getcode.substack.com/p/-property-based-testing-2-the-essentials), [3](https://getcode.substack.com/p/property-based-testing-3-shrinking), [4](https://getcode.substack.com/p/property-based-testing-4-unifying), [5](https://getcode.substack.com/p/property-based-testing-5-shrinking), [6](https://getcode.substack.com/p/property-based-testing-6-random-all).
 * "QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs" by Koen Claessen and John Hughes [pdf](http://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
 * "An introduction to property-based testing" by Scott Wlaschin [link](http://fsharpforfunandprofit.com/posts/property-based-testing/)
