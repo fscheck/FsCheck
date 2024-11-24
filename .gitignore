@@ -171,3 +171,9 @@ project.lock.json
 .fsdocs/
 output/
 tmp/
+
+#######
+# Rider
+#######
+.idea/
+
