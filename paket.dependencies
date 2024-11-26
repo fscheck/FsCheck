@@ -15,7 +15,7 @@ nuget Microsoft.NET.Test.Sdk
 nuget xunit
 nuget xunit.runner.visualstudio
 
-nuget NUnit
+nuget NUnit >= 3.13.1 < 5
 nuget NUnit3TestAdapter
 
 nuget MSTest.TestFramework
