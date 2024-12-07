@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FsCheck.Fluent;
 using NUnit.Framework;
 
@@ -27,6 +28,29 @@ namespace FsCheck.NUnit.CSharpExamples
         public bool Replay(int x)
         {
             return Int32.MaxValue >= x;
+        }
+
+        /// <summary> Example for using Assert.Pass; Note: should pass </summary>
+        [Property]
+        public async Task AssertPass_shouldPass()
+        {
+            await Task.Yield();
+
+            Assert.Pass("this test is successful");
+        }
+
+        /// <summary> Example for using Assert.Ignore; Note: test should be marked as Skipped in results </summary>
+        [Property]
+        public void AssertIgnore_should_be_Skipped()
+        {
+            Assert.Ignore("ignore this test");
+        }
+
+        /// <summary> Example for using Assert.Inconclusive; Note: test should be marked as Not Run in results </summary>
+        [Property]
+        public void AssertInconclusive_should_be_NotRun()
+        {
+            Assert.Inconclusive("this test is inconclusive");
         }
     }
 }
