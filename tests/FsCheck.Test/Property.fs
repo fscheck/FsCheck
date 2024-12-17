@@ -169,6 +169,16 @@ module Property =
         a .|. b
 
     [<Fact>]
+    let ``Single test with stamp should have the stamp in output``() =
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        Check.One (config, true |> Prop.trivial true)
+        test <@ match resultRunner.Result with
+                | TestResult.Passed (d, _) -> Seq.toList d.Stamps = [ 100, ["trivial"] ]
+                | TestResult.Failed _ -> false
+                | TestResult.Exhausted _ -> false @>
+
+    [<Fact>]
     let ``Task-asynchronous tests should be passable``() =
         let resultRunner = GetResultRunner()
         let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)

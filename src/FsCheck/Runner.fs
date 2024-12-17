@@ -429,7 +429,7 @@ module Runner =
             else 
                 test size.IsSome
         testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen config.ArbMap)
-        |> Seq.takeWhile (fun step ->
+        |> Common.takeWhilePlusLast (fun step ->
             match step with
                 | Run (result,s,seed) ->
                     lastStep := step
