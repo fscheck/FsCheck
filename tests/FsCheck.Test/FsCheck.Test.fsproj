@@ -10,6 +10,7 @@
         <DefineConstants>DEBUG</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
+        <Compile Include="FsCheck.NUnit\PropertiesAttributeTests.fs" />
         <Compile Include="FsCheck.NUnit\PropertyAttributeTests.fs" />
         <Compile Include="Fscheck.XUnit\PropertyAttributeTests.fs" />
         <Compile Include="Helpers.fs" />
