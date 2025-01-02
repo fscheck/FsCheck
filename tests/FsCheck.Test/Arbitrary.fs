@@ -830,3 +830,11 @@ module Arbitrary =
     let ``should execute generic-task-valued property`` (value: int) =
         // Since this doesn't throw, the test should pass and ignore the integer value
         System.Threading.Tasks.Task.FromResult value
+
+    [<Fact>]
+    let ``Zip should shrink both values independently``() =
+        let shrinkable = Arb.fromGenShrink(Gen.choose(0, 10), fun x -> [| x-1 |] |> Seq.where(fun x -> x >= 0))
+        let notShrinkable = Gen.choose(0, 10) |> Arb.fromGen
+        let zipped = Fluent.Arb.Zip(shrinkable, notShrinkable)
+        let shrinks = zipped.Shrinker(struct (10, 10)) |> Seq.toArray
+        test <@ shrinks = [| struct (9, 10) |]  @>

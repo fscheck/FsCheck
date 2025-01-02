@@ -4,6 +4,7 @@ open System
 open System.Runtime.CompilerServices
 
 open FsCheck
+open FsCheck.Internals
 open FsCheck.FSharp
 
 
@@ -54,7 +55,7 @@ type Arb private() =
     [<Extension>]
     static member Zip(t1: Arbitrary<'T1>, t2: Arbitrary<'T2>) =
         let generator = Gen.Zip(t1.Generator, t2.Generator)
-        let shrinker (struct (l,r)) = Seq.map2 (fun l r -> struct (l,r)) (t1.Shrinker l) (t2.Shrinker r)
+        let shrinker (struct (l,r)) = Seq.append (t1.Shrinker l |> Seq.map (fun l -> struct (l,r))) (t2.Shrinker r |> Seq.map(fun r -> struct (l,r)))
         Arb.fromGenShrink(generator, shrinker)
 
     /// Generates one-dimensional arrays. 
