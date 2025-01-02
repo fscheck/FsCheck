@@ -197,11 +197,22 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
     override this.RunAsync(diagnosticMessageSink:IMessageSink, messageBus:IMessageBus, constructorArguments:obj [], aggregator:ExceptionAggregator, cancellationTokenSource:Threading.CancellationTokenSource) =
         let test = XunitTest(this, this.DisplayName)
         let summary = RunSummary(Total = 1);
-        let outputHelper =
-            constructorArguments
-            |> Array.tryFind (fun x -> x :? TestOutputHelper)
-            |> Option.map (fun x -> x :?> TestOutputHelper)
-            |> Option.defaultValue (new TestOutputHelper())
+
+        // 1. We always need an initialized TestOutputHelper so we can write output.
+        // 2. xunit supports test classes that have a constructor that takes a TestOutputHelper, which we need to pass along.
+        // xunit has two different ways of passing us the TestOutputHelper.
+        // pre-2.9.0: as a TestOutputHelper constructor argument
+        // post-2.9.0: as a Func<TestOutputHelper> constructor argument https://github.com/xunit/xunit/issues/2996#issuecomment-2271764192
+        // The below code handles both cases.
+        let mutable outputHelper = TestOutputHelper()
+        for i in 0..constructorArguments.Length-1 do
+            match constructorArguments[i] with
+            | :? TestOutputHelper as foundHelper -> 
+                outputHelper <- foundHelper
+            | :? Func<TestOutputHelper> as foundHelperFunc -> 
+                outputHelper <- foundHelperFunc.Invoke()
+                constructorArguments.[i] <- outputHelper
+            | _ -> ()
         outputHelper.Initialize(messageBus, test)
 
         let dispose testClass =
