@@ -260,7 +260,8 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
 
     member private x.HandleException ex testResult failureSite =
         match ex with
-        | :? ThreadAbortException -> Thread.ResetAbort()
+        | :? ThreadAbortException -> () // old code called obsolete Thread.ResetAbort() which is no longer supported on net core and 5+ and above, but those won't ever throw ThreadAbortException either. 
+                                        // https://learn.microsoft.com/en-us/dotnet/api/system.threading.threadabortexception?view=net-8.0
         | _ -> ()
         testResult.RecordException(x.FilterException <| ex, failureSite)
 

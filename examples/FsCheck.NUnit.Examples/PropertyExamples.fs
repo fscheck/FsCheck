@@ -43,7 +43,7 @@ type NUnitTest() =
 
     [<Property>]
     member __.PrintUnhandledException_ShouldFail (xs : int list) =
-        Assert.IsTrue(List.length xs < 6, "this message should be visible in test explorer")
+        Assert.That(List.length xs < 6, "this message should be visible in test explorer")
 
     [<Property; Ignore("reason")>]
     member __.ShouldIgnore (xs : int list) =
