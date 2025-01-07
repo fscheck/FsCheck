@@ -1,6 +1,14 @@
-### 3.0.0 - To be released
+### 3.0.0 - 7 January 2025
 
-TBD
+* Fix stamp missing for final test. (by Calum Sieppert)
+
+* FsCheck.NUnit: updated to NUnit 4. (with David Naylor)
+
+* FsCheck.NUnit: implement PropertiesAttribute. (by Oleksandr Bogomaz)
+
+* FsCheck.NUnit: handle NUnit's signalling exceptions. (by Oleksandr Bogomaz)
+
+* FsCheck.Xunit: fixed MissingMethodException caused by integration issue with xunit 2.9.x.
 
 ### 3.0.0-rc3 - 3 March 2024
 
