@@ -113,11 +113,9 @@ Prop.ForAll((Func&lt;<span class="k">int</span>[], <span class="k">bool</span>&g
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 15)" onmouseover="showTip(event, 'fs10', 15)" class="fn">revIsOrig</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs3', 16)" onmouseover="showTip(event, 'fs3', 16)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 17)" onmouseover="showTip(event, 'fs4', 17)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 18)" onmouseover="showTip(event, 'fs5', 18)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 20)" onmouseover="showTip(event, 'fs7', 20)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs3', 21)" onmouseover="showTip(event, 'fs3', 21)" class="fn">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 22)" onmouseover="showTip(event, 'fs3', 22)" class="fn">xs</span>
 <span onmouseout="hideTip(event, 'fs8', 23)" onmouseover="showTip(event, 'fs8', 23)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 24)" onmouseover="showTip(event, 'fs9', 24)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs10', 25)" onmouseover="showTip(event, 'fs10', 25)" class="fn">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (1044306273230240130,12856555433618444501)
-Last step was invoked with size of 2 and seed of (11529939979664627634,3928163698192096459):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (4393646069879480,18079488167729558079)
+Last step was invoked with size of 2 and seed of (7357945107814917971,14014315941052924635):
 Original:
-[-1; 0]
-Shrunk:
 [1; 0]
 with exception:
 System.Exception: Expected true, got false.</code></pre></td></tr></table>
@@ -144,10 +142,10 @@ To see this error, ask FsCheck to generate lists of floats:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 26)" onmouseover="showTip(event, 'fs11', 26)" class="fn">revRevIsOrigFloat</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs12', 27)" onmouseover="showTip(event, 'fs12', 27)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 28)" onmouseover="showTip(event, 'fs4', 28)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs13', 29)" onmouseover="showTip(event, 'fs13', 29)" class="vt">float</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 30)" onmouseover="showTip(event, 'fs6', 30)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 31)" onmouseover="showTip(event, 'fs7', 31)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 32)" onmouseover="showTip(event, 'fs6', 32)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 33)" onmouseover="showTip(event, 'fs7', 33)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs12', 34)" onmouseover="showTip(event, 'fs12', 34)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 35)" onmouseover="showTip(event, 'fs12', 35)" class="fn">xs</span>
 <span onmouseout="hideTip(event, 'fs8', 36)" onmouseover="showTip(event, 'fs8', 36)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 37)" onmouseover="showTip(event, 'fs9', 37)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs11', 38)" onmouseover="showTip(event, 'fs11', 38)" class="fn">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 17 tests (6 shrinks) (12003914617536896781,4245046932773807927)
-Last step was invoked with size of 18 and seed of (801088087772054284,8353231879387336807):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 5 tests (2 shrinks) (6052624745530665396,8848057741778897767)
+Last step was invoked with size of 6 and seed of (7793851348548928310,17417373581710584239):
 Original:
-[0.0; -0.8516859466; nan; 0.0; -infinity; nan; -0.0]
+[-0.6356436296; -0.1077786633; nan]
 Shrunk:
 [nan]
 with exception:
