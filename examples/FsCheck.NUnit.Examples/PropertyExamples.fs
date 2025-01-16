@@ -7,6 +7,34 @@ open FsCheck.NUnit
 
 [<TestFixture>]
 type NUnitTest() =
+    // Fails as expected.
+    [<Property>]
+    let test1 b =
+        b && not b
+
+    // Fails as expected.
+    [<Property>]
+    let test2 b =
+        (b && not b) |> Prop.label "Some label."
+
+    // Fails as expected.
+    [<Property>]
+    let test3 b = async {
+        return (b && not b)
+    }
+
+    // Passes. I would expect this to fail.
+    [<Property>]
+    let test4 b = async { 
+        return ((b && not b) |> Prop.label "Some label.")
+    }
+
+    // Passes. I would expect this to fail.
+    [<Property>]
+    let test5 b = async {
+        return (b .&. not b)
+    }
+
 
     [<Test>]
     member __.NormalTest() =

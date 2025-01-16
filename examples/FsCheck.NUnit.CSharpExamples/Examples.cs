@@ -52,5 +52,31 @@ namespace FsCheck.NUnit.CSharpExamples
         {
             Assert.Inconclusive("this test is inconclusive");
         }
+
+        // Fails as expected.
+        [Property]
+        public bool Test1(bool b) =>
+            b && !b;
+
+        // Fails as expected.
+        [Property]
+        public Property Test2(bool b) =>
+            Prop.Label(b && !b, "Some label.");
+
+        // Fails as expected.
+        [Property]
+        public Task<bool> Test3(bool b) =>
+            Task.FromResult(b && !b);
+
+        // Passes. I would expect this to fail.
+        [Property]
+        public Task<Property> Test4(bool b) =>
+            Task.FromResult(Prop.Label(b && !b, "Some label."));
+
+        // Passes. I would expect this to fail.
+        [Property]
+        public Task<Property> Test5(bool b) =>
+            Task.FromResult(Prop.ToProperty(b).And(!b));
+
     }
 }
