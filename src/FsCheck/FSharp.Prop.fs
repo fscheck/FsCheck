@@ -36,11 +36,7 @@ module Prop =
 
     let private stamp str = 
         let add res = 
-            match res with
-            | ResultContainer.Value r -> { r with Stamp = str :: r.Stamp } |> Value
-            | ResultContainer.Future t -> t.ContinueWith (fun (rt :Threading.Tasks.Task<Result>) -> 
-                let r = rt.Result
-                { r with Stamp = str :: r.Stamp }) |> Future
+            { res with Stamp = str :: res.Stamp }
         Prop.mapResult add
 
     ///Classify test cases. Test cases satisfying the condition are assigned the classification given.
@@ -60,11 +56,7 @@ module Prop =
     [<CompiledName("Label")>]
     let label l : ('Testable -> Property) = 
         let add res = 
-            match res with
-            | ResultContainer.Value r -> { r with Labels = Set.add l r.Labels } |> Value
-            | ResultContainer.Future t -> t.ContinueWith (fun (rt :Threading.Tasks.Task<Result>) -> 
-                let r = rt.Result
-                { r with Labels = Set.add l r.Labels }) |> Future
+            { res with Labels = Set.add l res.Labels }
         Prop.mapResult add
 
     /// Turns a testable type into a property. Testables are unit, boolean, Lazy testables, Gen testables, functions

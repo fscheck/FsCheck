@@ -39,18 +39,8 @@ type Result =
         | (_,Outcome.Passed) -> r
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
 
-type ResultContainer = 
-    | Value of Result
-    | Future of Task<Result>
-    static member private MapResult2(f, l, r) =
-        match (l,r) with
-        | (Value vl,Value vr) -> f (vl, vr) |> Value
-        | (Future tl,Value vr) -> tl.ContinueWith (fun (x :Task<Result>) -> f (x.Result, vr)) |> Future
-        | (Value vl,Future tr) -> tr.ContinueWith (fun (x :Task<Result>) -> f (x.Result, vl)) |> Future
-        | (Future tl,Future tr) -> tl.ContinueWith (fun (x :Task<Result>) -> 
-            tr.ContinueWith (fun (y :Task<Result>) -> f (x.Result, y.Result))) |> TaskExtensions.Unwrap |> Future
-    static member (&&&) (l,r) = ResultContainer.MapResult2(Result.ResAnd, l, r)
-    static member (|||) (l,r) = ResultContainer.MapResult2(Result.ResOr, l, r)
+    static member (&&&) (l,r) = Result.ResAnd(l, r)
+    static member (|||) (l,r) = Result.ResOr(l, r)
 
 
 module internal Res =
@@ -76,7 +66,7 @@ module internal Res =
 
 
 ///A Property can be checked by FsCheck.
-type Property = private Property of (IArbMap -> Gen<Shrink<ResultContainer>>) with
+type Property = private Property of (IArbMap -> Gen<Shrink<Result>>) with
     static member internal GetGen arbMap (Property g) = g arbMap
 
 module private Testable =
@@ -103,35 +93,51 @@ module private Testable =
             fun _  -> Gen.constant t
             |> Property
 
-        let ofResult (r:ResultContainer) : Property = 
+        let ofResult (r:Result) : Property = 
             r
             |> Shrink.ofValue
             |> ofShrinkResult
          
         let ofBool b =
             Res.ofBool b
-            |> Value
             |> ofResult
         
         let ofTaskBool (b:Task<bool>) :Property = 
-            b.ContinueWith (fun (x:Task<bool>) -> 
-                match (x.IsCanceled, x.IsFaulted) with
-                    | (false,false) -> Res.ofBool x.Result
-                    | (_,true) -> Res.failedException x.Exception
-                    | (true,_) -> Res.failedCancelled)
-            |> Future
-            |> ofResult
-        
-        let ofTask (b:Task) :Property = 
-            b.ContinueWith (fun (x:Task) -> 
-                match (x.IsCanceled, x.IsFaulted) with
-                    | (false,false) -> Res.passed
-                    | (_,true) -> Res.failedException x.Exception
-                    | (true,_) -> Res.failedCancelled)
-            |> Future
+            try 
+                b.Wait()
+            with
+                | :? AggregateException -> ()
+
+            match (b.IsCanceled, b.IsFaulted) with
+                | (false,false) -> Res.ofBool b.Result
+                | (_,true) -> Res.failedException b.Exception
+                | (true,_) -> Res.failedCancelled
             |> ofResult
 
-        let mapShrinkResult (f:Shrink<ResultContainer> -> _) a = 
+        let ofTaskProperty (b:Task<Property>) :Property = 
+            try 
+                b.Wait()
+            with
+                | :? AggregateException -> ()
+
+            match (b.IsCanceled, b.IsFaulted) with
+                | (false,false) -> b.Result
+                | (_,true) -> Res.failedException b.Exception |> ofResult
+                | (true,_) -> Res.failedCancelled |> ofResult
+        
+        let ofTask (b:Task) :Property = 
+            try 
+                b.Wait()
+            with
+                | :? AggregateException -> ()
+
+            match (b.IsCanceled, b.IsFaulted) with
+                | (false,false) -> Res.passed
+                | (_,true) -> Res.failedException b.Exception
+                | (true,_) -> Res.failedCancelled
+            |> ofResult
+
+        let mapShrinkResult (f:Shrink<Result> -> _) a = 
             fun arbMap -> 
                 property a 
                 |> Property.GetGen arbMap
@@ -144,8 +150,8 @@ module private Testable =
             try
                 property body.Value
             with
-            | :? DiscardException -> Res.rejected |> Value |> ofResult
-            | e -> Res.failedException e |> Value |> ofResult
+            | :? DiscardException -> Res.rejected |> ofResult
+            | e -> Res.failedException e |> ofResult
 
     let private shrinking shrink generatedValue propertyFun =
         let promoteRose (m:Shrink<Gen<'T>>) : Gen<Shrink<'T>> = 
@@ -158,11 +164,7 @@ module private Testable =
     
     let private evaluate body a arbMap =
         let argument a res = 
-            match res with
-            | ResultContainer.Value r -> { r with Arguments = (box a) :: r.Arguments } |> Value
-            | ResultContainer.Future t -> t.ContinueWith (fun (rt :Task<Result>) -> 
-                let r = rt.Result
-                { r with Arguments = (box a) :: r.Arguments }) |> Future
+            { res with Arguments = (box a) :: res.Arguments }
         Prop.safeForce (lazy ( body a ))
         |> Property.GetGen arbMap
         |> Gen.map (Shrink.map (argument a))
@@ -190,13 +192,16 @@ module private Testable =
     type Testables with
         static member Unit() =
             { new ITestable<unit> with
-                member __.Property _ = Prop.ofResult (Value Res.passed) }
+                member __.Property _ = Prop.ofResult Res.passed }
         static member Bool() =
             { new ITestable<bool> with
                 member __.Property b = Prop.ofBool b }
         static member TaskBool() =
             { new ITestable<Task<bool>> with
                 member __.Property b = Prop.ofTaskBool b }
+        static member TaskProperty() =
+            { new ITestable<Task<Property>> with
+                member __.Property b = Prop.ofTaskProperty b }
         static member Task() =
             { new ITestable<Task> with
                 member __.Property b = Prop.ofTask b }
@@ -206,6 +211,9 @@ module private Testable =
         static member AsyncBool() =
             { new ITestable<Async<bool>> with
                 member __.Property b = Prop.ofTaskBool <| Async.StartAsTask b }
+        static member AsyncProperty() =
+            { new ITestable<Async<Property>> with
+                member __.Property b = Prop.ofTaskProperty <| Async.StartAsTask b }
         static member Async() =
             { new ITestable<Async<unit>> with
                 member __.Property b = Prop.ofTask <| Async.StartAsTask b }
@@ -218,10 +226,7 @@ module private Testable =
                     |> Property } 
         static member Result() =
             { new ITestable<Result> with
-                member __.Property res = Prop.ofResult <| Value res }
-        static member ResultContainer() =
-            { new ITestable<ResultContainer> with
-                member __.Property resC = Prop.ofResult resC }
+                member __.Property res = Prop.ofResult res }
         static member Property() =
             { new ITestable<Property> with
                 member __.Property prop = prop }
@@ -231,7 +236,7 @@ module private Testable =
                     fun arbMap -> gen { let! a = gena in return! property a |> Property.GetGen arbMap }
                     |> Property }
         static member RoseResult() =
-            { new ITestable<Shrink<ResultContainer>> with
+            { new ITestable<Shrink<Result>> with
                 member __.Property rosea =
                     fun arbMap -> gen { return rosea }
                     |> Property }

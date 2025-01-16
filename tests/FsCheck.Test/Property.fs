@@ -182,9 +182,9 @@ module Property =
     let ``Task-asynchronous tests should be passable``() =
         let resultRunner = GetResultRunner()
         let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
-        let tcs = TaskCompletionSource<unit>()
-        tcs.SetResult(())
-        Check.One (config, Prop.ofTestable (tcs.Task :> Task))
+        let tcs = TaskCompletionSource()
+        tcs.SetResult()
+        Check.One (config, Prop.ofTestable tcs.Task)
         test <@ match resultRunner.Result with
                 | TestResult.Passed _  -> true
                 | TestResult.Failed _ -> false
@@ -196,7 +196,19 @@ module Property =
         let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
         let tcs = TaskCompletionSource<unit>()
         tcs.SetResult(())
-        Check.One (config, Prop.ofTestable tcs.Task) // No upcast
+        Check.One (config, Prop.ofTestable tcs.Task)
+        test <@ match resultRunner.Result with
+                | TestResult.Passed _  -> true
+                | TestResult.Failed _ -> false
+                | TestResult.Exhausted _ -> false @>
+
+    [<Fact>]
+    let ``Bool-task tests should be passable``() =
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        let tcs = TaskCompletionSource<bool>()
+        tcs.SetResult(true)
+        Check.One (config, Prop.ofTestable tcs.Task)
         test <@ match resultRunner.Result with
                 | TestResult.Passed _  -> true
                 | TestResult.Failed _ -> false
@@ -223,6 +235,43 @@ module Property =
         Check.One (config, Prop.ofTestable (tcs.Task))
         test <@ match resultRunner.Result with
                 | TestResult.Passed _ -> false
+                | TestResult.Failed _ -> true
+                | TestResult.Exhausted _ -> false @>
+
+    [<Fact>]
+    let ``Bool-task tests should be failable by raising an exception``() =
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        let tcs = TaskCompletionSource<bool>()
+        tcs.SetException(exn "fail")
+        Check.One (config, Prop.ofTestable (tcs.Task))
+        test <@ match resultRunner.Result with
+                | TestResult.Passed _ -> false
+                | TestResult.Failed _ -> true
+                | TestResult.Exhausted _ -> false @>
+
+    [<Fact>]
+    let ``Bool-task tests should be failable by cancellation``() =
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        let tcs = TaskCompletionSource<bool>()
+        tcs.SetCanceled()
+        Check.One (config, Prop.ofTestable (tcs.Task))
+        test <@ match resultRunner.Result with
+                | TestResult.Passed _ -> false
+                | TestResult.Failed _ -> true
+                | TestResult.Exhausted _ -> false @>
+
+    [<Fact>]
+    let ``Property-task tests should be failable by failed property``() =
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        let tcs = TaskCompletionSource<Property>()
+        let alwaysFails b = (b .&. not b)
+        tcs.SetResult(Prop.ofTestable alwaysFails)
+        Check.One (config, Prop.ofTestable tcs.Task)
+        test <@ match resultRunner.Result with
+                | TestResult.Passed _  -> false
                 | TestResult.Failed _ -> true
                 | TestResult.Exhausted _ -> false @>
 

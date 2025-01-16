@@ -144,12 +144,7 @@ module Runner =
         | Shrink of Result
         | Stop
 
-        
-    [<NoEquality;NoComparison>]
-    type private OutcomeSeqOrFuture =
-        | Value of seq<TestStep>
-        | Future of Threading.Tasks.Task<seq<TestStep>>
- 
+
     let rec private shrinkResultValue (result :Result) (shrinks :IEnumerator<Shrink<Result>>) =
         seq { 
             if (shrinks.MoveNext ()) then
@@ -164,54 +159,20 @@ module Runner =
                 yield Stop
         }
  
-    let rec private shrinkResultTask (result :Result) (shrinks :IEnumerator<Shrink<ResultContainer>>) =
-        let goNext (s :seq<Shrink<ResultContainer>>) r = 
-            async {
-                if r.Outcome.Shrink then 
-                    let! xs = shrinkResultTask r (s.GetEnumerator ()) |> Async.AwaitTask
-                    return seq { yield Shrink r; yield! xs }
-                else 
-                    let! xs = shrinkResultTask result shrinks |> Async.AwaitTask
-                    return seq { yield Shrink r; yield! xs }
-            }
-        if (shrinks.MoveNext ()) then
-            //result forced here
-            let (result',shrinks') = shrinks.Current |> Shrink.getValue
-            match result' with
-            | ResultContainer.Value r -> 
-                goNext shrinks' r |> Async.StartAsTask
-            | ResultContainer.Future t ->
-                let rt = t |> Async.AwaitTask
-                async.Bind (rt, goNext shrinks') |> Async.StartAsTask
-        else Stop |> Seq.singleton |> Threading.Tasks.Task.FromResult
-
-    let private shrinkResultTaskIter (result: Result) (shrinks :IEnumerator<Shrink<ResultContainer>>) =
+    let private shrinkResultIter (result: Result) (shrinks :IEnumerator<Shrink<Result>>) =
         let xs :List<TestStep> = ResizeArray () 
-        let rec iter (result: Result) (shrinks :IEnumerator<Shrink<ResultContainer>>) =
+        let rec iter (result: Result) (shrinks :IEnumerator<Shrink<Result>>) =
             if (shrinks.MoveNext ()) then
-                //result forced here
                 let (result', shrinks') = shrinks.Current |> Shrink.getValue
-                match result' with
-                | ResultContainer.Value r -> 
-                    if r.Outcome.Shrink then 
-                        xs.Add <| Shrink r
-                        iter r (shrinks'.GetEnumerator ())
-                    else
-                        xs.Add <| Shrink r
-                        iter result shrinks
-                | ResultContainer.Future t ->
-                    async {
-                        let! rt = t |> Async.AwaitTask
-                        if rt.Outcome.Shrink then 
-                            let! ys = shrinkResultTask rt (shrinks'.GetEnumerator ()) |> Async.AwaitTask
-                            return seq { yield! xs; yield Shrink rt; yield! ys }
-                        else 
-                            let! ys = shrinkResultTask result shrinks |> Async.AwaitTask
-                            return seq { yield! xs; yield Shrink rt; yield! ys }
-                    } |> Async.StartAsTask |> OutcomeSeqOrFuture.Future
+                if result'.Outcome.Shrink then 
+                    xs.Add <| Shrink result'
+                    iter result' (shrinks'.GetEnumerator ())
+                else
+                    xs.Add <| Shrink result'
+                    iter result shrinks
             else
                 xs.Add <| Stop
-                xs :> seq<_> |> OutcomeSeqOrFuture.Value
+                xs :> seq<_>
         iter result shrinks
 
     let stepsSeq resize =
@@ -236,31 +197,23 @@ module Runner =
                 yield! shrinkResultValue result (shrinks.GetEnumerator ())
         }
 
-    let private test isReplay (initSize:float) resize rnd0 gen =    
-        //Since we're not running test for parallel scenarios it's impossible to discover `ResultContainer.Future` inside `result`
-        let gen' = gen |> Gen.map (Shrink.map (fun rc -> 
-                match rc with 
-                | ResultContainer.Value r -> r 
-                | ResultContainer.Future t -> t.Result))
+    let private test isReplay (initSize:float) resize rnd0 gen =
         if isReplay then
-            testSingle gen' (initSize, rnd0)
+            testSingle gen (initSize, rnd0)
         else
             let source = stepsSeq resize (initSize, rnd0)
-            Seq.collect (testSingle gen') source
+            Seq.collect (testSingle gen) source
 
-    let private outcomeSeq result (shrinks :seq<_>) rnd usedSize = 
-        //let data = {| Args = result.Arguments, rnd, usedSize)
+    let private outcomeSeq result (shrinks :seq<_>) rnd usedSize =
         let runResult = Run (result, usedSize, rnd)
         match result.Outcome with
         | o when o.Shrink -> 
-            match shrinkResultTaskIter result (shrinks.GetEnumerator ()) with
-            | OutcomeSeqOrFuture.Value v -> seq { yield runResult; yield! v} |> OutcomeSeqOrFuture.Value
-            | OutcomeSeqOrFuture.Future t -> t.ContinueWith (fun (xs :Threading.Tasks.Task<seq<TestStep>>) -> 
-                seq {yield runResult; yield! xs.Result}) |> OutcomeSeqOrFuture.Future         
+            let shrinkResults = shrinkResultIter result (shrinks.GetEnumerator ())
+            seq { yield runResult; yield! shrinkResults }
         | _ ->
-            seq {yield runResult} |> OutcomeSeqOrFuture.Value
+            seq {yield runResult}
 
-    let private testStep rnd (size :float) (gen:Gen<Shrink<ResultContainer>>) =
+    let private testStep rnd (size :float) (gen:Gen<Shrink<Result>>) =
             let usedSize = size |> round |> int
             let result, shrinks =
                 try
@@ -268,26 +221,13 @@ module Runner =
                     |> Gen.run usedSize rnd
                     |> Shrink.getValue
                 with :? DiscardException ->
-                    ResultContainer.Value Res.rejected, Seq.empty
+                    Res.rejected, Seq.empty
 
-            match result with
-            | ResultContainer.Value r -> outcomeSeq r shrinks rnd usedSize
-            | ResultContainer.Future t -> t.ContinueWith (fun (x :Threading.Tasks.Task<Result>) -> 
-                match outcomeSeq x.Result shrinks rnd usedSize with
-                | OutcomeSeqOrFuture.Value v -> Threading.Tasks.Task.FromResult v
-                | OutcomeSeqOrFuture.Future t -> t) |> Threading.Tasks.TaskExtensions.Unwrap |> OutcomeSeqOrFuture.Future
-
-    let private outcomeSeqFutureCont (xs :Threading.Tasks.Task<seq<TestStep>>) (state :obj) =
-        match state with 
-        | :? (int * Threading.CancellationToken * array<seq<TestStep>> * int) as state ->
-            let (j, ct, results, iters) = state
-            if (not ct.IsCancellationRequested) && j < iters then
-                results.[j] <- xs.Result
-        | _ -> raise (ArgumentException ("state"))
+            outcomeSeq result shrinks rnd usedSize
 
     let private tpWorkerFun (state :obj) =
         match state with 
-        | :? ((float * Rnd) array * (int ref) * int * Gen<Shrink<ResultContainer>> * array<seq<TestStep>> * Threading.CancellationToken) as state ->
+        | :? ((float * Rnd) array * (int ref) * int * Gen<Shrink<Result>> * array<seq<TestStep>> * Threading.CancellationToken) as state ->
             let (steps, i, iters, gen, results, ct) = state
             let mutable j = 0
             while (not ct.IsCancellationRequested) && j < iters do
@@ -295,10 +235,7 @@ module Runner =
                 if j < iters then
                     let rnd, size = steps.[j]
                     let res = testStep size rnd gen
-                    match res with
-                    | OutcomeSeqOrFuture.Value xs -> results.[j] <- xs
-                    | OutcomeSeqOrFuture.Future ts -> 
-                        ts.ContinueWith (outcomeSeqFutureCont, (j, ct, results, iters)) |> ignore
+                    results.[j] <- res
         | _ -> invalidArg "state" (sprintf "This is a bug in FsCheck, please report it. Unexpected argument: %O" state)
 
     ///Enumerates over `steps` seq publishing every item to `tpWorkerFun` via `ThreadPool.QueueUserWorkItem`
