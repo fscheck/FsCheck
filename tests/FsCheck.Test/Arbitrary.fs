@@ -937,3 +937,6 @@ module Arbitrary =
 
         [<Fact>]
         let ``task { return task { return false } }`` () = shouldBeFalsy "task { return task { return false } }" (System.Threading.Tasks.Task.FromResult (Prop.ofTestable (System.Threading.Tasks.Task.FromResult false)))
+
+        [<Fact>]
+        let ``task { return lazy false }`` () = shouldBeFalsy "task { return lazy false }" (System.Threading.Tasks.Task.FromResult (lazy false))
