@@ -67,9 +67,8 @@ module Prop =
                 { r with Labels = Set.add l r.Labels }) |> Future
         Prop.mapResult add
 
-    /// Turns a testable type into a property. Testables are unit, boolean, Lazy testables, Gen testables, functions
-    /// from a type for which a generator is know to a testable, tuples up to 6 tuple containing testables, and lists
-    /// containing testables.
+    /// Turns a testable type into a property. Testables are unit, boolean, Lazy testables, Gen testables,
+    /// Async testables, Task testables, and functions from a type for which a generator is know to a testable.
     [<CompiledName("OfTestable")>]
     let ofTestable (testable:'Testable) =
         property testable
