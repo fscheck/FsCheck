@@ -152,6 +152,14 @@ module Property =
         | LazyProp prop -> 1 + (depth prop)
         | Task | FaultedTask | CancelledTask -> 0
         | TaskProp prop | AsyncProp prop | FaultedTaskProp prop | CancelledTaskProp prop -> 1 + depth prop
+
+    module private TestResult =
+        let areSame result1 result2 =
+            match result1, result2 with
+            | TestResult.Failed ({ Labels = labels1 },_,_,Outcome.Failed _,_,_,_), TestResult.Failed ({ Labels = labels2 },_,_,Outcome.Failed _,_,_,_) -> labels1 = labels2
+            | TestResult.Passed ({ Stamps = stamps1 },_), TestResult.Passed ({ Stamps = stamps2 },_) -> (stamps1 |> Seq.collect snd |> Set.ofSeq) = (stamps2 |> Seq.collect snd |> Set.ofSeq)
+            | TestResult.Exhausted _, TestResult.Exhausted _ -> true
+            | _ -> false
     
     //can not be an anonymous type because of let mutable.
     type private GetResultRunner() =
@@ -184,6 +192,48 @@ module Property =
             |> Prop.label (sprintf "\nexpected =\n%A\nactual =\n%A" expected actual)
             |> Prop.collect (depth symprop)
         )
+
+    [<Property>]
+    let ``Synchronous unit properties behave the same as asynchronous ones`` () =
+        (
+            checkResult (Prop.ofTestable ()),
+            checkResult (Prop.ofTestable (async { return () }))
+        ) ||> TestResult.areSame
+
+    [<Property>]
+    let ``Synchronous unit properties behave the same as task-asynchronous ones`` () =
+        (
+            checkResult (Prop.ofTestable ()),
+            checkResult (Prop.ofTestable (Task.FromResult ()))
+        ) ||> TestResult.areSame
+
+    [<Property>]
+    let ``Synchronous Boolean properties behave the same as asynchronous ones`` (b : bool) =
+        (
+            checkResult (Prop.ofTestable b),
+            checkResult (Prop.ofTestable (async { return b }))
+        ) ||> TestResult.areSame
+
+    [<Property>]
+    let ``Synchronous Boolean properties behave the same as task-asynchronous ones`` (b : bool) =
+        (
+            checkResult (Prop.ofTestable b),
+            checkResult (Prop.ofTestable (Task.FromResult b))
+        ) ||> TestResult.areSame
+
+    [<Property>]
+    let ``Synchronous properties behave the same as asynchronous ones`` (b : bool) =
+        (
+            checkResult (b |> Prop.label $"{b}"),
+            checkResult (Prop.ofTestable (async { return b |> Prop.label $"{b}" }))
+        ) ||> TestResult.areSame
+
+    [<Property>]
+    let ``Synchronous properties behave the same as task-asynchronous ones`` (b : bool) =
+        (
+            checkResult (b |> Prop.label $"{b}"),
+            checkResult (Prop.ofTestable (Task.FromResult (b |> Prop.label $"{b}")))
+        ) ||> TestResult.areSame
 
     [<Property(MaxTest=1)>]
     let ``Or of exception and success should be success``() =
