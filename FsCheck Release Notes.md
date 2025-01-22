@@ -1,3 +1,7 @@
+### 3.0.1 - 22 January 2025
+
+* FsCheck.Xunit: target net462 explicitly, so xunit picks the right runner on .NET Framework.
+
 ### 3.0.0 - 7 January 2025
 
 * Fix stamp missing for final test. (by Calum Sieppert)
