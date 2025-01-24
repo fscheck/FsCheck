@@ -129,6 +129,7 @@ type public PropertyAttribute() =
     
     ///If set, the seed to use to start testing. Allows reproduction of previous runs. You can just paste
     ///the tuple from the output window, e.g. 12344,12312 or (123,123).
+    ///Additionally, you can also specify a start size as the third parameter, e.g. 12344,12312,10 or (123,123,10).
     member __.Replay with get() = replay and set(v) = replay <- v; config <- {config with Replay = if String.IsNullOrEmpty v then None else Some v}
     ///If set, run tests in parallel. Useful for Task/async related work and heavy number crunching
     ///Environment.ProcessorCount have been found to be useful default.
