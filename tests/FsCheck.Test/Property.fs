@@ -8,6 +8,7 @@ module Property =
     open FsCheck.FSharp
     open FsCheck.Xunit
     open System
+    open System.Threading
     open System.Threading.Tasks
     open Swensen.Unquote
     
@@ -26,9 +27,13 @@ module Property =
                     | And of SymProp * SymProp
                     | Or of SymProp * SymProp
                     | LazyProp of SymProp
-                    | Tuple2 of SymProp * SymProp
-                    | Tuple3 of SymProp * SymProp * SymProp //and 4,5,6
-                    | List of SymProp list
+                    | Task
+                    | FaultedTask
+                    | CancelledTask
+                    | TaskProp of SymProp
+                    | FaultedTaskProp of SymProp
+                    | CancelledTaskProp of SymProp
+                    | AsyncProp of SymProp
      
     let rec private symPropGen =
         let rec recGen size =
@@ -45,9 +50,13 @@ module Property =
                         ; Gen.map2 (curry And) (subProp) (subProp)
                         ; Gen.map2 (curry Or) (subProp) (subProp)
                         ; Gen.map LazyProp subProp
-                        ; Gen.map2 (curry Tuple2) subProp subProp
-                        ; Gen.map3 (curry2 Tuple3) subProp subProp subProp
-                        ; Gen.map List (Gen.resize 3 <| Gen.nonEmptyListOf subProp)
+                        ; Gen.constant Task
+                        ; Gen.constant FaultedTask
+                        ; Gen.constant CancelledTask
+                        ; Gen.map TaskProp subProp
+                        ; Gen.map FaultedTaskProp subProp
+                        ; Gen.map CancelledTaskProp subProp
+                        ; Gen.map AsyncProp subProp
                         ]
             | _ -> failwith "symPropGen: size must be positive"
         Gen.sized recGen
@@ -67,7 +76,7 @@ module Property =
         | Unit ->   { result with Outcome= Outcome.Passed }
         | Bool true -> { result with Outcome= Outcome.Passed }
         | Bool false -> { result with Outcome= Outcome.Failed (exn "")}
-        | Exception  -> { result with Outcome= Outcome.Failed (InvalidOperationException() :> exn)}
+        | Exception | FaultedTask | FaultedTaskProp _ -> { result with Outcome= Outcome.Failed (InvalidOperationException() :> exn)}
         | ForAll (i,prop) -> determineResult prop |> addArgument i
         | Implies (true,prop) -> determineResult prop
         | Implies (false,_) -> { result with Outcome= Outcome.Rejected }
@@ -78,9 +87,9 @@ module Property =
         | And (prop1, prop2) -> andCombine prop1 prop2
         | Or (prop1, prop2) -> let r1,r2 = determineResult prop1, determineResult prop2 in Result.ResOr(r1, r2)
         | LazyProp prop -> determineResult prop
-        | Tuple2 (prop1,prop2) -> andCombine prop1 prop2
-        | Tuple3 (prop1,prop2,prop3) -> Result.ResAnd (andCombine prop1 prop2, determineResult prop3)
-        | List props -> List.fold (fun st p -> Result.ResAnd (st, determineResult p)) (List.head props |> determineResult) (List.tail props)
+        | Task -> { result with Outcome = Outcome.Passed }
+        | CancelledTask | CancelledTaskProp _ -> { result with Outcome = Outcome.Failed (exn "The Task was canceled.") }
+        | TaskProp prop | AsyncProp prop -> determineResult prop
         
     let rec private toProperty prop =
         match prop with
@@ -94,10 +103,26 @@ module Property =
         | Label (l,prop) -> Prop.label l (toProperty prop)
         | And (prop1,prop2) -> (toProperty prop1) .&. (toProperty prop2)
         | Or (prop1,prop2) -> (toProperty prop1) .|. (toProperty prop2)
-        | LazyProp prop -> toProperty prop
-        | Tuple2 (prop1,prop2) -> (toProperty prop1) .&. (toProperty prop2)
-        | Tuple3 (prop1,prop2,prop3) -> (toProperty prop1) .&. (toProperty prop2) .&. (toProperty prop3)
-        | List props -> List.fold (fun st p -> st .&. toProperty p) (List.head props |> toProperty) (List.tail props)
+        | LazyProp prop -> Prop.ofTestable (lazy toProperty prop)
+        | Task -> Prop.ofTestable Task.CompletedTask
+        | FaultedTask -> Prop.ofTestable (Task.FromException (InvalidOperationException ()))
+        | CancelledTask -> Prop.ofTestable (Task.FromCanceled (CancellationToken (canceled=true)))
+        | FaultedTaskProp Unit -> Prop.ofTestable (Task.FromException<unit> (InvalidOperationException ()))
+        | FaultedTaskProp (Bool _) -> Prop.ofTestable (Task.FromException<bool> (InvalidOperationException ()))
+        | FaultedTaskProp (LazyProp (Bool _)) -> Prop.ofTestable (Task.FromException<Lazy<bool>> (InvalidOperationException ()))
+        | FaultedTaskProp _ -> Prop.ofTestable (Task.FromException<Property> (InvalidOperationException ()))
+        | CancelledTaskProp Unit -> Prop.ofTestable (Task.FromCanceled<unit> (CancellationToken (canceled=true)))
+        | CancelledTaskProp (Bool _) -> Prop.ofTestable (Task.FromCanceled<bool> (CancellationToken (canceled=true)))
+        | CancelledTaskProp (LazyProp (Bool _)) -> Prop.ofTestable (Task.FromCanceled<Lazy<bool>> (CancellationToken (canceled=true)))
+        | CancelledTaskProp _ -> Prop.ofTestable (Task.FromCanceled<Property> (CancellationToken (canceled=true)))
+        | TaskProp Unit -> Prop.ofTestable (Task.FromResult ())
+        | TaskProp (Bool b) -> Prop.ofTestable (Task.FromResult b)
+        | TaskProp (LazyProp prop) -> Prop.ofTestable (Task.FromResult (lazy toProperty prop))
+        | TaskProp prop -> Prop.ofTestable (Task.FromResult (toProperty prop))
+        | AsyncProp Unit -> Prop.ofTestable (async { return () })
+        | AsyncProp (Bool b) -> Prop.ofTestable (async { return b })
+        | AsyncProp (LazyProp prop) -> Prop.ofTestable (async { return lazy toProperty prop })
+        | AsyncProp prop -> Prop.ofTestable (async { return toProperty prop })
     
     let private areSame (r0:Result) (r1:TestResult) =
         let testData =
@@ -125,9 +150,16 @@ module Property =
         | And (prop1,prop2) -> 1 + Math.Max(depth prop1, depth prop2)
         | Or (prop1,prop2) -> 1 + Math.Max(depth prop1, depth prop2)
         | LazyProp prop -> 1 + (depth prop)
-        | Tuple2 (prop1,prop2) -> 1 + Math.Max(depth prop1, depth prop2)
-        | Tuple3 (prop1,prop2,prop3) -> 1 + Math.Max(Math.Max(depth prop1, depth prop2),depth prop3)
-        | List props -> 1 + List.fold (fun a b -> Math.Max(a, depth b)) 0 props
+        | Task | FaultedTask | CancelledTask -> 0
+        | TaskProp prop | AsyncProp prop | FaultedTaskProp prop | CancelledTaskProp prop -> 1 + depth prop
+
+    module private TestResult =
+        let areSame result1 result2 =
+            match result1, result2 with
+            | TestResult.Failed ({ Labels = labels1 },_,_,Outcome.Failed _,_,_,_), TestResult.Failed ({ Labels = labels2 },_,_,Outcome.Failed _,_,_,_) -> labels1 = labels2
+            | TestResult.Passed ({ Stamps = stamps1 },_), TestResult.Passed ({ Stamps = stamps2 },_) -> (stamps1 |> Seq.collect snd |> Set.ofSeq) = (stamps2 |> Seq.collect snd |> Set.ofSeq)
+            | TestResult.Exhausted _, TestResult.Exhausted _ -> true
+            | _ -> false
     
     //can not be an anonymous type because of let mutable.
     type private GetResultRunner() =
@@ -152,15 +184,56 @@ module Property =
     let DSL() = 
         Prop.forAll (Arb.fromGen symPropGen) (fun symprop ->
             let expected = determineResult symprop
-            let actual = checkResult (toProperty symprop)
             let resultRunner = GetResultRunner()
             let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(2)
             Check.One(config,toProperty symprop)
             let actual = resultRunner.Result
             areSame expected actual
-            |> Prop.label (sprintf "expected = %A - actual = %A" expected actual)
+            |> Prop.label (sprintf "\nexpected =\n%A\nactual =\n%A" expected actual)
             |> Prop.collect (depth symprop)
         )
+
+    [<Property>]
+    let ``Synchronous unit properties behave the same as asynchronous ones`` () =
+        (
+            checkResult (Prop.ofTestable ()),
+            checkResult (Prop.ofTestable (async { return () }))
+        ) ||> TestResult.areSame
+
+    [<Property>]
+    let ``Synchronous unit properties behave the same as task-asynchronous ones`` () =
+        (
+            checkResult (Prop.ofTestable ()),
+            checkResult (Prop.ofTestable (Task.FromResult ()))
+        ) ||> TestResult.areSame
+
+    [<Property>]
+    let ``Synchronous Boolean properties behave the same as asynchronous ones`` (b : bool) =
+        (
+            checkResult (Prop.ofTestable b),
+            checkResult (Prop.ofTestable (async { return b }))
+        ) ||> TestResult.areSame
+
+    [<Property>]
+    let ``Synchronous Boolean properties behave the same as task-asynchronous ones`` (b : bool) =
+        (
+            checkResult (Prop.ofTestable b),
+            checkResult (Prop.ofTestable (Task.FromResult b))
+        ) ||> TestResult.areSame
+
+    [<Property>]
+    let ``Synchronous properties behave the same as asynchronous ones`` (b : bool) =
+        (
+            checkResult (b |> Prop.label $"{b}"),
+            checkResult (Prop.ofTestable (async { return b |> Prop.label $"{b}" }))
+        ) ||> TestResult.areSame
+
+    [<Property>]
+    let ``Synchronous properties behave the same as task-asynchronous ones`` (b : bool) =
+        (
+            checkResult (b |> Prop.label $"{b}"),
+            checkResult (Prop.ofTestable (Task.FromResult (b |> Prop.label $"{b}")))
+        ) ||> TestResult.areSame
 
     [<Property(MaxTest=1)>]
     let ``Or of exception and success should be success``() =

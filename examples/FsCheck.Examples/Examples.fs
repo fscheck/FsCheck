@@ -194,7 +194,7 @@ Check.One(bigSize,fun (s:Simple) -> match s with Leaf2 _ -> false | Void3 -> fal
 
 Check.One(bigSize,fun i -> (-10 < i && i < 0) || (0 < i) && (i < 10 ))
 Check.Quick (fun opt -> match opt with None -> false | Some b  -> b  )
-Check.Quick (fun opt -> match opt with Some n when n<0 -> false | Some n when n >= 0 -> true | _ -> true )
+Check.Quick (fun opt -> match opt with Some n when n < 0 -> false | Some n when n >= 0 -> true | _ -> true )
 
 let prop_RevId' (xs:list<int>) (x:int) = if (xs.Length > 2) && (x >10) then false else true
 Check.Quick prop_RevId'

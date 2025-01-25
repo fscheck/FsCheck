@@ -9,6 +9,7 @@
     <ItemGroup>
         <Content Include="App.config" />
         <Compile Include="PropertyExamples.fs" />
+        <Compile Include="SyncVersusAsyncExamples.fs" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" />

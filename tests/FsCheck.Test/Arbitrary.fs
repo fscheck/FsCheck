@@ -826,11 +826,6 @@ module Arbitrary =
         assert (ImmutableDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink)
         assert (ImmutableSortedDictionary.CreateRange(values) |> shrink |> Seq.forall checkShrink)
 
-    [<Property>]
-    let ``should execute generic-task-valued property`` (value: int) =
-        // Since this doesn't throw, the test should pass and ignore the integer value
-        System.Threading.Tasks.Task.FromResult value
-
     [<Fact>]
     let ``Zip should shrink both values independently``() =
         let shrinkable = Arb.fromGenShrink(Gen.choose(0, 10), fun x -> [| x-1 |] |> Seq.where(fun x -> x >= 0))
@@ -838,3 +833,110 @@ module Arbitrary =
         let zipped = Fluent.Arb.Zip(shrinkable, notShrinkable)
         let shrinks = zipped.Shrinker(struct (10, 10)) |> Seq.toArray
         test <@ shrinks = [| struct (9, 10) |]  @>
+
+    module Truthy =
+        let private shouldBeTruthy description testable =
+            try Check.One (Config.QuickThrowOnFailure, testable) with
+            | exn -> failwith $"'%s{description}' should be truthy. Got: '{exn}'."
+
+        [<Fact>]
+        let ``()`` () = shouldBeTruthy "()" ()
+
+        [<Fact>]
+        let ``true`` () = shouldBeTruthy "true" true
+
+        [<Fact>]
+        let ``Prop.ofTestable ()`` () = shouldBeTruthy "Prop.ofTestable ()" (Prop.ofTestable ())
+
+        [<Fact>]
+        let ``lazy ()`` () = shouldBeTruthy "lazy ()" (lazy ())
+
+        [<Fact>]
+        let ``lazy true`` () = shouldBeTruthy "lazy true" (lazy true)
+
+        [<Fact>]
+        let ``lazy Prop.ofTestable ()`` () = shouldBeTruthy "lazy Prop.ofTestable ()" (lazy Prop.ofTestable ())
+
+        [<Fact>]
+        let ``gen { return () }`` () = shouldBeTruthy "gen { return () }" (gen { return () })
+
+        [<Fact>]
+        let ``gen { return true }`` () = shouldBeTruthy "gen { return true }" (gen { return true })
+
+        [<Fact>]
+        let ``gen { return Prop.ofTestable () }`` () = shouldBeTruthy "gen { return Prop.ofTestable () }" (gen { return Prop.ofTestable () })
+
+        [<Fact>]
+        let ``async { return () }`` () = shouldBeTruthy "async { return () }" (async { return () })
+
+        [<Fact>]
+        let ``async { return true }`` () = shouldBeTruthy "async { return true }" (async { return true })
+
+        [<Fact>]
+        let ``async { return Prop.ofTestable () }`` () = shouldBeTruthy "async { return Prop.ofTestable () }" (async { return Prop.ofTestable () })
+
+        [<Fact>]
+        let ``task { return true }`` () = shouldBeTruthy "task { return true }" (System.Threading.Tasks.Task.FromResult true)
+
+        [<Fact>]
+        let ``task { return () }`` () = shouldBeTruthy "task { return () }" (System.Threading.Tasks.Task.FromResult ())
+
+        [<Fact>]
+        let ``task { return Prop.ofTestable () }`` () = shouldBeTruthy "task { return Prop.ofTestable () }" (System.Threading.Tasks.Task.FromResult (Prop.ofTestable ()))
+
+        [<Fact>]
+        let ``task { return fun b -> b ==> b }`` () = shouldBeTruthy "task { return fun b -> b ==> b }" (System.Threading.Tasks.Task.FromResult (fun b -> b ==> b))
+
+        [<Fact>]
+        let ``task { return task { return true } }`` () = shouldBeTruthy "task { return task { return true } }" (System.Threading.Tasks.Task.FromResult (Prop.ofTestable (System.Threading.Tasks.Task.FromResult true)))
+
+    module Falsy =
+        let private shouldBeFalsy description testable =
+            let exn =
+                try Check.One (Config.QuickThrowOnFailure, testable); None with
+                | exn -> Some exn
+
+            match exn with
+            | None -> failwith $"'%s{description}' should be falsy."
+            | Some exn ->
+                if not (exn.Message.StartsWith "Falsifiable") then
+                    failwith $"Unexpected exception: '{exn}'."
+
+        [<Fact>]
+        let ``false`` () = shouldBeFalsy "false" false
+
+        [<Fact>]
+        let ``Prop.ofTestable false`` () = shouldBeFalsy "Prop.ofTestable false" (Prop.ofTestable false)
+
+        [<Fact>]
+        let ``lazy false`` () = shouldBeFalsy "lazy false" (lazy false)
+
+        [<Fact>]
+        let ``lazy Prop.ofTestable false`` () = shouldBeFalsy "lazy Prop.ofTestable false" (lazy Prop.ofTestable false)
+
+        [<Fact>]
+        let ``gen { return false }`` () = shouldBeFalsy "gen { return false }" (gen { return false })
+
+        [<Fact>]
+        let ``gen { return Prop.ofTestable false }`` () = shouldBeFalsy "gen { return Prop.ofTestable false }" (gen { return Prop.ofTestable false })
+
+        [<Fact>]
+        let ``async { return false }`` () = shouldBeFalsy "async { return false }" (async { return false })
+
+        [<Fact>]
+        let ``async { return Prop.ofTestable false }`` () = shouldBeFalsy "async { return Prop.ofTestable false }" (async { return Prop.ofTestable false })
+
+        [<Fact>]
+        let ``task { return false }`` () = shouldBeFalsy "task { return false }" (System.Threading.Tasks.Task.FromResult false)
+
+        [<Fact>]
+        let ``task { return Prop.ofTestable false }`` () = shouldBeFalsy "task { return Prop.ofTestable false }" (System.Threading.Tasks.Task.FromResult (Prop.ofTestable false))
+
+        [<Fact>]
+        let ``task { return fun b -> b ==> not b }`` () = shouldBeFalsy "task { return fun b -> b ==> not b }" (System.Threading.Tasks.Task.FromResult (fun b -> b ==> not b))
+
+        [<Fact>]
+        let ``task { return task { return false } }`` () = shouldBeFalsy "task { return task { return false } }" (System.Threading.Tasks.Task.FromResult (Prop.ofTestable (System.Threading.Tasks.Task.FromResult false)))
+
+        [<Fact>]
+        let ``task { return lazy false }`` () = shouldBeFalsy "task { return lazy false }" (System.Threading.Tasks.Task.FromResult (lazy false))
