@@ -600,6 +600,12 @@ match args |> List.map (fun s -> s.ToLowerInvariant ()) with
     let haveTested = runDotnetTest haveCleaned
     let havePacked = packNuGet haveTested
     pushNuGet haveTested havePacked |> ignore<HavePushed>
+| ["-t"; "release"] ->
+    let haveCleaned = doClean ()
+    let haveTested = runDotnetTest haveCleaned
+    let havePacked = packNuGet haveTested
+    pushNuGet haveTested havePacked |> ignore
+    gitHubRelease haveTested |> ignore
 | ["-t"; "buildversion"] ->
     let haveCleaned = doClean ()
     appveyorBuildVersion haveCleaned |> ignore<HaveUpdatedBuildVersion>
@@ -610,4 +616,4 @@ match args |> List.map (fun s -> s.ToLowerInvariant ()) with
     let args =
         args
         |> String.concat " "
-    failwith $"Unrecognised arguments. Supply '-t [RunTests,Clean,CI,Build,Tests,GHRelease,Docs,WatchDocs,ReleaseDocs,NugetPack,NugetPush,BuildVersion,AssemblyInfo]'. Unrecognised args were: %s{args}"
+    failwith $"Unrecognised arguments. Supply '-t [RunTests,Clean,CI,Build,Tests,GHRelease,Docs,WatchDocs,ReleaseDocs,NugetPack,NugetPush,BuildVersion,AssemblyInfo,Release]'. Unrecognised args were: %s{args}"
