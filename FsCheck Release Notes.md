@@ -1,3 +1,7 @@
+### 3.1.0 - To be released
+
+* Support Async<'Testable> & Task<'Testable>. Slight behavior change: an explicit upcast to non-generic `Task` (`:> Task`) is now needed for tests involving `Task<'T>` where `'T` is not itself a testable type. (by Brian Rourke Boll)
+
 ### 3.0.1 - 22 January 2025
 
 * FsCheck.Xunit: target net462 explicitly, so xunit picks the right runner on .NET Framework.
