@@ -1,4 +1,4 @@
-### 3.1.0 - To be released
+### 3.1.0 - 30 January 2025
 
 * Support Async<'Testable> & Task<'Testable>. Slight behavior change: an explicit upcast to non-generic `Task` (`:> Task`) is now needed for tests involving `Task<'T>` where `'T` is not itself a testable type. (by Brian Rourke Boll)
 
