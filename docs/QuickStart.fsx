@@ -111,7 +111,7 @@ Here's a sample:
 open Expecto
 open Expecto.ExpectoFsCheck
 
-let config = { FsCheck.Config.Default with MaxTest = 10000 }
+let config = { FsCheckConfig.defaultConfig with maxTest = 10000 }
 
 let properties =
   testList "FsCheck samples" [
@@ -127,7 +127,7 @@ let properties =
         a * (b + c) = a * b + a * c
   ]
 
-Tests.runTests defaultConfig properties
+runTestsWithCLIArgs [] [||] properties
 ```
 
 ### Integration with xUnit
