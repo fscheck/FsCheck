@@ -62,7 +62,7 @@ To learn more on how to write properties, see [Properties](Properties.html).
 ## What do I do if a test loops or encounters an error?
 
 In this case we know that the property does not hold, but Check.Quick does not display the counter-example. 
-There is another testing function provided for this situation. Repeat the test using 
+There is another testing function provided for this situation. Repeat the test using:
 <pre>Check.Verbose</pre> or in C# <pre>VerboseCheck()</pre>
 which displays each test case before running the test: the last test case displayed is thus
 the one in which the loop or error arises.
