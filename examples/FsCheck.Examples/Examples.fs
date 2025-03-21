@@ -25,7 +25,7 @@ Check.Quick testEnum
 
 
 //bug: label not printed because of exception. Workaround: use lazy.
-//actually I don't hink this is fixable, as the exception rolls up the stack, so the labelling
+//actually I don't think this is fixable, as the exception rolls up the stack, so the labelling
 //that happens when a property "returns" gets bypassed.
 //this is irritating when using Assert statements from unit testing frameworks though.
 let labelBug (x:int) =
