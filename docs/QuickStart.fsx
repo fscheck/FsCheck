@@ -19,7 +19,7 @@ First install FsCheck, open an fsx file and start with:*)
 
 open FsCheck
 
-(** In C#: To easily experiment, start a new console app to execute the snippets below (the output is written to console
+(** In C#: to easily experiment, start a new console app to execute the snippets below (the output is written to console
 by default). Alternatively, in LinqPad, reference FsCheck.dll and FSharp.Core.dll, open namespace FsCheck, change the language to "C# statements"
 and you should be able to execute most of the snippets as well. 
 
