@@ -21,7 +21,7 @@ This leaves us in the unfortunate position that some documentation is out of dat
 
 The documentation and API docs for 2.x are not easily accessible anymore. The last commit of the 2.x documentation site is [here](https://github.com/fscheck/FsCheck/tree/1458b268b4311f7e4b25871715f1f9b5d58a21b3).
 
-Pleae help fixing this! FsCheck welcoms contributions of all kinds, big or small. See [issues](https://github.com/fscheck/FsCheck/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) for inspiration. Feel free to open an issue to highlight specific documentation problems or gaps, even if you're not sure it really is a problem. At worst you'll get an answer to your question.
+Please help fixing this! FsCheck welcoms contributions of all kinds, big or small. See [issues](https://github.com/fscheck/FsCheck/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) for inspiration. Feel free to open an issue to highlight specific documentation problems or gaps, even if you're not sure it really is a problem. At worst you'll get an answer to your question.
 
 Documentation
 -------------
