@@ -10,7 +10,7 @@ open System
 # Properties
 
 Properties are expressed as F# function definitions or C# lambdas or methods. 
-Properties are universally quantified over their parameters, so *)
+Properties are universally quantified over their parameters, so: *)
 
 let revRevIsOrig (xs:list<int>) = List.rev(List.rev xs) = xs
 
@@ -35,7 +35,7 @@ be a function of any number of parameters that returns bool or unit. In the latt
 
 Properties may take the form `<condition> ==> <property>`
 
-For example,*)
+For example: *)
 
 (***hide***)
 let rec ordered xs = 
@@ -100,7 +100,7 @@ Check.Quick moreLazy
 
 Properties may take the form `forAll <arbitrary>  (fun <args> -> <property>)`.
 
-For example, *)
+For example: *)
 
 (***define-output:insertWithArb***)
 let orderedList = ArbMap.defaults |> ArbMap.arbitrary<list<int>> |> Arb.mapFilter List.sort ordered
@@ -153,7 +153,7 @@ are then summarized when testing is complete.
 
 A property may take the form `trivial <condition> <property>`
 
-For example,*)
+For example: *)
 
 (***define-output:insertTrivial***)
 let insertTrivial (x:int) xs = 
@@ -174,7 +174,7 @@ trivial test cases in the total is reported:*)
 
 A property may take the form `classify <condition> <string> <property>`
 
-For example,*)
+For example: *)
 
 (***define-output:insertClassify***)
 let insertClassify (x:int) xs = 
@@ -198,7 +198,7 @@ Note that a test case may fall into more than one classification.
 
 A property may take the form `collect <expression> <property>`
 
-For example,*)
+For example: *)
 
 (***define-output: insertCollect***)
 let insertCollect (x:int) xs = 
@@ -247,7 +247,7 @@ In that case, it might be difficult upon failure to know excactly which sub-prop
 That's why you can label sub-properties, and FsCheck shows the labels of the failed subproperties when 
 it finds a counter-example using `Prop.label`.
 
-For example,*)
+For example: *)
 
 (***define-output:complex***)
 let complex (m: int) (n: int) =
