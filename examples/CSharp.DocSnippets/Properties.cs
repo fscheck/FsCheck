@@ -43,7 +43,7 @@ namespace CSharp.DocSnippets
     class Properties {
 
         //[revRevIsOrig]
-        public static bool RevRevIsOriginal(int[] ts) {
+        static bool RevRevIsOriginal(int[] ts) {
             return ts.Reverse().Reverse().SequenceEqual(ts);
         }
         //[/revRevIsOrig]
