@@ -27,7 +27,7 @@ It's very simple to fix any types anyway simply by adding some type annotations.
 FsCheck can check properties of various forms - these forms are called testable, 
 and are indicated in the API by a generic type called `'Testable`. A `'Testable` may 
 be a function of any number of parameters that returns `bool` or `unit`. In the latter case, 
- a test passes if it does not throw. The entry point to create properties is the Prop module.
+ a test passes if it does not throw. The entry point to create properties is the `Prop` module.
 
  Like all of FsCheck's API, there are C# counterparts for all of the F# methods described.
     
