@@ -11,7 +11,7 @@
 
 The fastest way to understand how FsCheck works is by writing some *properties* - FsCheck's terminology for a parametrized
 test, or a generative test - and run them using the built-in test runner. Later on, we'll describe how they can be integrated
-with existing test frameworks like NUnit, xUnit.NET or MsTest.
+with existing test frameworks like NUnit, xUnit.net or MsTest.
 
 First install FsCheck, open an fsx file and start with:*)
 
@@ -132,8 +132,8 @@ runTestsWithCLIArgs [] [||] properties
 
 ### Integration with xUnit
 
-Another frequently used runner is xUnit.NET. Here is how to write 
-the unit test above so it can be run from xUnit.NET:*)
+Another frequently used runner is xUnit.net. Here is how to write 
+the unit test above so it can be run from xUnit.net:*)
 
 open global.Xunit
 
@@ -149,9 +149,9 @@ For xUnit, the test looks like any normal test, and the QuickThrowOnFailure ensu
 an exception with the necessary information is raised so xUnit knows the test failed. The output of the test is the same
 as above.
 
-### Using FsCheck with xUnit.NET using the plugin
+### Using FsCheck with xUnit.net using the plugin
 
-xUnit.NET is "blessed" with an FsCheck plugin. To use it, install the FsCheck.Xunit NuGet package. The test above can now
+xUnit.net is "blessed" with an FsCheck plugin. To use it, install the FsCheck.Xunit NuGet package. The test above can now
 be written more tersely as follows:*)
 
 open FsCheck.Xunit

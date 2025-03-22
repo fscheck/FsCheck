@@ -25,8 +25,8 @@ This section describes the various ways in which you can run FsCheck tests:
 It writes the result of tests to standard output, and you can configure the FsCheck runner to throw an exception on test failure
 to signal the failure to whichever test runner you use.
 
-* FsCheck.Xunit integrates FsCheck with xUnit.NET to allow you to specify properties in a terse way. Tests written
-this way look like native xUnit.NET tests, except they can take arguments.
+* FsCheck.Xunit integrates FsCheck with xUnit.net to allow you to specify properties in a terse way. Tests written
+this way look like native xUnit.net tests, except they can take arguments.
 
 * FsCheck.NUnit integrates FsCheck with NUnit to allow you to specify properties in a terse way. Tests written
 this way look like native NUnit tests, except they can take arguments.
@@ -131,11 +131,11 @@ open FsCheck
 open FsCheck.Xunit
 
 (**
-You can now attribute tests with `PropertyAttribute` (a subclass of xUnit.NET's `FactAttribute`). Unlike xUnit.NET's facts, these 
+You can now attribute tests with `PropertyAttribute` (a subclass of xUnit.net's `FactAttribute`). Unlike xUnit.net's facts, these 
 methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
 type and the currently registered generators. 
 
-An FsCheck test fails from xUnit.NET's perspective if it finds a counter-example, or if the arguments are exhausted. It
+An FsCheck test fails from xUnit.net's perspective if it finds a counter-example, or if the arguments are exhausted. It
 passes when FsCheck can execute 100 tests (or whatever the configured number of tests is) succesfully.
 
 The `PropertyAttribute` allows you to customize how FsCheck will run for that
