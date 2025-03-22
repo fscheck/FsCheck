@@ -138,7 +138,7 @@ the unit test above so it can be run from xUnit.net:*)
 open global.Xunit
 
 [<Fact>]
-let ``Reverse of reverse of a list is the original list``() =
+let ``Reverse of reverse of a list is the original list`` () =
   let revRevIsOrig (xs:list<int>) = List.rev(List.rev xs) = xs
   Check.QuickThrowOnFailure revRevIsOrig
   
@@ -157,7 +157,7 @@ be written more tersely as follows:*)
 open FsCheck.Xunit
 
 [<Property>]
-let ``Reverse of reverse of a list is the original list ``(xs:list<int>) =
+let ``Reverse of reverse of a list is the original list `` (xs:list<int>) =
   List.rev(List.rev xs) = xs
   
 (** xUnit now shows the test similarly to a regular test, and is able to run it directly.
