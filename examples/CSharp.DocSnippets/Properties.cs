@@ -7,8 +7,8 @@ using System.Runtime.CompilerServices;
 
 namespace CSharp.DocSnippets
 {
-    public static class Extensions {
-        public static IEnumerable<int> Insert(this IEnumerable<int> cs, int x) {
+    static class Extensions {
+        internal static IEnumerable<int> Insert(this IEnumerable<int> cs, int x) {
             var result = new List<int>(cs);
             foreach (var c in cs) {
                 if (x <= c) {
@@ -20,7 +20,7 @@ namespace CSharp.DocSnippets
             return result;
         }
 
-        public static bool IsOrdered<T>(this IEnumerable<T> source) {
+        internal static bool IsOrdered<T>(this IEnumerable<T> source) {
             //by Jon Skeet
             //I was too lazy to write it myself, and wondered whether a prettier 
             //solution might exist in C# than the one I had in mind.
@@ -43,7 +43,7 @@ namespace CSharp.DocSnippets
     class Properties {
 
         //[revRevIsOrig]
-        public static bool RevRevIsOriginal(int[] ts) {
+        static bool RevRevIsOriginal(int[] ts) {
             return ts.Reverse().Reverse().SequenceEqual(ts);
         }
         //[/revRevIsOrig]

@@ -19,7 +19,7 @@ namespace FsCheck.XUnit.CSharpExamples
             return badReverse2.Count > 10 ? badReverse2 : badReverse2.Reverse();
         }
 
-        /// <summary> When the <paramref name="list"/> is accidently sorted, doesn't revert it! </summary>
+        /// <summary> When the <paramref name="list"/> is accidentally sorted, doesn't revert it! </summary>
         public static IEnumerable<TSource> BadReverse3<TSource>(this IEnumerable<TSource> list) where TSource : IEquatable<TSource>
         {
             var copy = list.ToList();

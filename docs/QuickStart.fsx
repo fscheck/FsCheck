@@ -11,7 +11,7 @@
 
 The fastest way to understand how FsCheck works is by writing some *properties* - FsCheck's terminology for a parametrized
 test, or a generative test - and run them using the built-in test runner. Later on, we'll describe how they can be integrated
-with existing test frameworks like NUnit, xUnit.NET or MsTest.
+with existing test frameworks like NUnit, xUnit.net or MsTest.
 
 First install FsCheck, open an fsx file and start with:*)
 
@@ -19,7 +19,7 @@ First install FsCheck, open an fsx file and start with:*)
 
 open FsCheck
 
-(** In C#: To easily experiment, start a new console app to execute the snippets below (the output is written to console
+(** In C#: to easily experiment, start a new console app to execute the snippets below (the output is written to console
 by default). Alternatively, in LinqPad, reference FsCheck.dll and FSharp.Core.dll, open namespace FsCheck, change the language to "C# statements"
 and you should be able to execute most of the snippets as well. 
 
@@ -62,7 +62,7 @@ To learn more on how to write properties, see [Properties](Properties.html).
 ## What do I do if a test loops or encounters an error?
 
 In this case we know that the property does not hold, but Check.Quick does not display the counter-example. 
-There is another testing function provided for this situation. Repeat the test using 
+There is another testing function provided for this situation. Repeat the test using:
 <pre>Check.Verbose</pre> or in C# <pre>VerboseCheck()</pre>
 which displays each test case before running the test: the last test case displayed is thus
 the one in which the loop or error arises.
@@ -132,13 +132,13 @@ runTestsWithCLIArgs [] [||] properties
 
 ### Integration with xUnit
 
-Another frequently used runner is xUnit.NET. Here is how to write 
-the unit test above so it can be run from xUnit.NET:*)
+Another frequently used runner is xUnit.net. Here is how to write 
+the unit test above so it can be run from xUnit.net:*)
 
 open global.Xunit
 
 [<Fact>]
-let ``Reverse of reverse of a list is the original list``() =
+let ``Reverse of reverse of a list is the original list`` () =
   let revRevIsOrig (xs:list<int>) = List.rev(List.rev xs) = xs
   Check.QuickThrowOnFailure revRevIsOrig
   
@@ -149,15 +149,15 @@ For xUnit, the test looks like any normal test, and the QuickThrowOnFailure ensu
 an exception with the necessary information is raised so xUnit knows the test failed. The output of the test is the same
 as above.
 
-### Using FsCheck with xUnit.NET using the plugin
+### Using FsCheck with xUnit.net using the plugin
 
-xUnit.NET is "blessed" with an FsCheck plugin. To use it, install the FsCheck.Xunit NuGet package. The test above can now
+xUnit.net is "blessed" with an FsCheck plugin. To use it, install the FsCheck.Xunit NuGet package. The test above can now
 be written more tersely as follows:*)
 
 open FsCheck.Xunit
 
 [<Property>]
-let ``Reverse of reverse of a list is the original list ``(xs:list<int>) =
+let ``Reverse of reverse of a list is the original list `` (xs:list<int>) =
   List.rev(List.rev xs) = xs
   
 (** xUnit now shows the test similarly to a regular test, and is able to run it directly.
