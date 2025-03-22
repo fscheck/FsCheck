@@ -29,7 +29,8 @@ namespace CSharp
 
         //[revRevIsOrigFact]
         [Fact]
-        public void RevRevIsOrig(){
+        void RevRevIsOrig()
+        {
             Prop.ForAll<int[]>(xs => xs.Reverse().Reverse().SequenceEqual(xs))
                 .QuickCheckThrowOnFailure();
         }
