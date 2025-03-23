@@ -25,7 +25,10 @@ type Counter(?initial:int) =
     member __.Reset() = n <- 0
     override __.ToString() = sprintf "Counter = %i" n
 
-(**
+(** In C#:
+
+    [lang=csharp,file=../examples/CSharp.DocSnippets/StatefulTesting.cs,key=Counter]
+
 As a model to test this class we can use an int value which is an abstraction of the object's internal state. The
 idea is that each operation on the class (in this case, Inc, Dec and Reset) affects both the model object and the actual object, and 
 after each such operation, the model and the actual instance should still be equivalent.
