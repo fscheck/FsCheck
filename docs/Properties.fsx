@@ -269,7 +269,7 @@ This is useful for displaying intermediate results, for example:*)
 (***define-output:multiply***)
 let multiply (n: int, m: int) =
     let res = n*m
-    sprintf "evidence = %i" res @| (
+    Prop.label (sprintf "evidence = %i" res) (
       Prop.label "div1" (m <> 0 ==> lazy (res / m = n)) .&. 
       Prop.label "div2" (n <> 0 ==> lazy (res / n = m)) .&. 
       Prop.label "lt1"  (res > m) .&. 
