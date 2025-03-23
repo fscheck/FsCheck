@@ -29,11 +29,11 @@ type Counter(?initial:int) =
 
     [lang=csharp,file=../examples/CSharp.DocSnippets/StatefulTesting.cs,key=Counter]
 
-As a model to test this class we can use an int value which is an abstraction of the object's internal state. The
-idea is that each operation on the class (in this case, Inc, Dec and Reset) affects both the model object and the actual object, and 
+As a model to test this class we can use an `int` value which is an abstraction of the object's internal state. The
+idea is that each operation on the class (in this case, `Inc`, `Dec` and `Reset`) affects both the model object and the actual object, and 
 after each such operation, the model and the actual instance should still be equivalent.
 
-With this idea in mind, you can write a specification of the Counter class using an int model as follows:*)
+With this idea in mind, you can write a specification of the `Counter` class using an int model as follows:*)
 
 let spec =
     let inc = 
@@ -91,7 +91,7 @@ calls `Inc()` or `Dec()` on the `Counter` instance, and checks that after that t
 silly, for demonstration purposes) precondition that the value should be strictly greater than 0 - if we run this machine our `Counter` throws if we call `Dec` 
 so when we run this specification we can check that FsCheck does the right thing here (testing the test library, very meta...)
 
-We also override ToString in each `Operation` so that counter-examples can be printed.
+We also override `ToString` in each `Operation` so that counter-examples can be printed.
 
 A specification can be checked as follows:*)
 
