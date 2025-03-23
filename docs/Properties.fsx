@@ -10,7 +10,7 @@ open System
 # Properties
 
 Properties are expressed as F# function definitions or C# lambdas or methods. 
-Properties are universally quantified over their parameters, so *)
+Properties are universally quantified over their parameters, so: *)
 
 let revRevIsOrig (xs:list<int>) = List.rev(List.rev xs) = xs
 
@@ -26,8 +26,8 @@ It's very simple to fix any types anyway simply by adding some type annotations.
 
 FsCheck can check properties of various forms - these forms are called testable, 
 and are indicated in the API by a generic type called `'Testable`. A `'Testable` may 
-be a function of any number of parameters that returns bool or unit. In the latter case, 
- a test passes if it does not throw. The entry point to create properties is the Prop module.
+be a function of any number of parameters that returns `bool` or `unit`. In the latter case, 
+ a test passes if it does not throw. The entry point to create properties is the `Prop` module.
 
  Like all of FsCheck's API, there are C# counterparts for all of the F# methods described.
     
@@ -35,7 +35,7 @@ be a function of any number of parameters that returns bool or unit. In the latt
 
 Properties may take the form `<condition> ==> <property>`
 
-For example,*)
+For example: *)
 
 (***hide***)
 let rec ordered xs = 
@@ -66,7 +66,7 @@ an overall limit on the number of test cases is reached (to avoid looping if the
 never holds). In this case a message such as "Arguments exhausted after 97 tests."
 indicates that 97 test cases satisfying the condition were found, and that the property held in those 97 cases.
 
-Notice that in this case the generated values had to be restricted to int. This is because the generated 
+Notice that in this case the generated values had to be restricted to `int`. This is because the generated 
 values need to be comparable, but this is not reflected in the types. Therefore, without the explicit 
 restriction, FsCheck could generate lists containing different types (subtypes of objects), and these are not mutually comparable.
     
@@ -100,7 +100,7 @@ Check.Quick moreLazy
 
 Properties may take the form `forAll <arbitrary>  (fun <args> -> <property>)`.
 
-For example, *)
+For example: *)
 
 (***define-output:insertWithArb***)
 let orderedList = ArbMap.defaults |> ArbMap.arbitrary<list<int>> |> Arb.mapFilter List.sort ordered
@@ -113,7 +113,7 @@ Check.Quick insertWithArb
 (***include-output:insertWithArb***)
 
 (**
-The first argument of forAll is an IArbitrary instance. Such an instance 
+The first argument of `forAll` is an `IArbitrary` instance. Such an instance 
 encapsulates a test data generator and a shrinker (more on that in [Test Data](TestData.html)).
 By supplying a custom generator, instead of using the default generator 
 for that type, it is possible to control the distribution of test data. In 
@@ -153,7 +153,7 @@ are then summarized when testing is complete.
 
 A property may take the form `trivial <condition> <property>`
 
-For example,*)
+For example: *)
 
 (***define-output:insertTrivial***)
 let insertTrivial (x:int) xs = 
@@ -174,7 +174,7 @@ trivial test cases in the total is reported:*)
 
 A property may take the form `classify <condition> <string> <property>`
 
-For example,*)
+For example: *)
 
 (***define-output:insertClassify***)
 let insertClassify (x:int) xs = 
@@ -198,7 +198,7 @@ Note that a test case may fall into more than one classification.
 
 A property may take the form `collect <expression> <property>`
 
-For example,*)
+For example: *)
 
 (***define-output: insertCollect***)
 let insertCollect (x:int) xs = 
@@ -247,7 +247,7 @@ In that case, it might be difficult upon failure to know excactly which sub-prop
 That's why you can label sub-properties, and FsCheck shows the labels of the failed subproperties when 
 it finds a counter-example using `Prop.label`.
 
-For example,*)
+For example: *)
 
 (***define-output:complex***)
 let complex (m: int) (n: int) =
