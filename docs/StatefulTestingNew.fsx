@@ -63,6 +63,12 @@ let spec =
         member __.Next _ = Gen.elements [ inc; dec ] }
 
 (**
+
+ In C#:
+
+    [lang=csharp,file=../examples/CSharp.DocSnippets/StatefulTesting.cs,key=Specification]
+
+
 Let's break this down a bit. A specification is put together as an object that is a subtype of the abstract class `Machine<'TypeUnderTest,'ModelType>`. 
 What you're actually defining is a state machine which can simultaneously apply operations, or state transitions, to the actual system
 under test (in this case, a simple object) and a model of the system under test.
