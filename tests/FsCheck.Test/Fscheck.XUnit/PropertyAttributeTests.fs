@@ -77,11 +77,17 @@ module ``when type implements IAsyncLifetime`` =
 
         interface IAsyncLifetime with
             member _.InitializeAsync() =
-                executed <- true;
-                Task.CompletedTask
+
+                async {
+                    do! Async.Sleep 300
+                    executed <- true
+                    return ()
+                }
+                |> Async.StartAsTask
+                :> Task
 
             member _.DisposeAsync() = Task.CompletedTask
 
-        [<Property>]
+        [<Property(MaxTest = 1)>]
         member this.``then InitializeAsync() is invoked``() =
             executed = true
