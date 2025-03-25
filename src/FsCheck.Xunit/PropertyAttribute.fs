@@ -234,7 +234,15 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                     let target =
                         let testClass = this.TestMethod.TestClass.Class.ToRuntimeType()
                         if (not (isNull this.TestMethod.TestClass)) && not this.TestMethod.Method.IsStatic then
-                            Some (test.CreateTestClass(testClass, constructorArguments, messageBus, timer, cancellationTokenSource))
+                            let testInstance = test.CreateTestClass(testClass, constructorArguments, messageBus, timer, cancellationTokenSource)
+
+                            match testInstance with
+                            | :? IAsyncLifetime as asyncLifetime -> asyncLifetime.InitializeAsync()
+                            | _ -> Task.CompletedTask
+                            |> ignore
+
+                            Some testInstance
+
                         else None
 
                     timer.Aggregate(fun () -> Check.Method(config, runMethod, ?target=target))

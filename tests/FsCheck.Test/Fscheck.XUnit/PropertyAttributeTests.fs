@@ -1,8 +1,9 @@
 ﻿namespace Fscheck.Test.FsCheck.XUnit.PropertyAttribute
 
-open FsCheck
+open System.Threading.Tasks
 open FsCheck.FSharp
 open FsCheck.Xunit
+open Xunit
 
 type AttributeLevel =
 | Assembly
@@ -69,3 +70,18 @@ module ``when module has properties attribute`` =
         | _ -> false
 
 
+module ``when type implements IAsyncLifetime`` =
+    type Issue657() =
+
+        let mutable executed = false;
+
+        interface IAsyncLifetime with
+            member _.InitializeAsync() =
+                executed <- true;
+                Task.CompletedTask
+
+            member _.DisposeAsync() = Task.CompletedTask
+
+        [<Property>]
+        member this.``then InitializeAsync() is invoked``() =
+            executed = true
