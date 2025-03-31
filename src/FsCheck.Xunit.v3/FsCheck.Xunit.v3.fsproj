@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>FsCheck.Xunit</AssemblyName>
+        <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <PackageDescription>
+            FsCheck.Xunit integrates FsCheck with xUnit.v3.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.v3.NET's FactAttribute.
+
+            All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
+        </PackageDescription>
+        <PackageTags>$(PackageTags);xunit;xunit.net</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="AssemblyInfo.fs"/>
+        <Compile Include="../FsCheck.Xunit/Runner.fs"/>
+        <Compile Include="../FsCheck.Xunit/PropertyAttribute.fs"/>
+        <Compile Include="../FsCheck.Xunit/CheckExtensions.fs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FSharp.Core"/>
+        <PackageReference Include="xunit.v3.extensibility.core" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../FsCheck/FsCheck.fsproj"/>
+    </ItemGroup>
+</Project>

@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -59,6 +59,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharp.DocSnippets", "examp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.Test.CSharp", "tests\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj", "{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Xunit.v3", "src\FsCheck.Xunit.v3\FsCheck.Xunit.v3.fsproj", "{CADBF086-2B3D-42D5-8A66-F9ACC6119ED0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CADBF086-2B3D-42D5-8A66-F9ACC6119ED0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CADBF086-2B3D-42D5-8A66-F9ACC6119ED0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CADBF086-2B3D-42D5-8A66-F9ACC6119ED0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CADBF086-2B3D-42D5-8A66-F9ACC6119ED0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
