@@ -14,6 +14,7 @@
         <Compile Include="FsCheck.NUnit\PropertyAttributeTests.fs" />
         <Compile Include="Fscheck.XUnit\PropertyAttributeTests.fs" />
         <Compile Include="Helpers.fs" />
+        <Compile Include="Internal.Common.fs" />
         <Compile Include="Random.fs" />
         <Compile Include="TypeClass.fs" />
         <Compile Include="Gen.fs" />
