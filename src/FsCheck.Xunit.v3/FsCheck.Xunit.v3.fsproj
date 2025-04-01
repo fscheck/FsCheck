@@ -14,9 +14,9 @@
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="AssemblyInfo.fs"/>
-        <Compile Include="../FsCheck.Xunit/Runner.fs"/>
-        <Compile Include="../FsCheck.Xunit/PropertyAttribute.fs"/>
-        <Compile Include="../FsCheck.Xunit/CheckExtensions.fs"/>
+        <Compile Include="Runner.fs"/>
+        <Compile Include="PropertyAttribute.fs"/>
+        <Compile Include="CheckExtensions.fs"/>
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="FSharp.Core"/>
