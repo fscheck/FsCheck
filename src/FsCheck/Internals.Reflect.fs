@@ -56,22 +56,33 @@ module internal Reflect =
     let isCSharpRecordType (ty: Type) =
         let typeinfo = ty.GetTypeInfo()
         let props = getProperties ty |> Seq.toArray
-        let initOnlyPropNames = 
-            props
-            |> Array.filter isInitOnlyProperty
-            |> Array.map (fun p -> p.Name)
+
+        let recordPropNames =
+            if ty.IsValueType then
+                // Struct records are mutable unless explicitly marked `readonly`:
+                //     public record struct MutableStructRecord(int A);
+                props |> Array.filter _.CanWrite |> Array.map _.Name
+            else
+                // Immutable records:
+                //     public record ImmutableClassRecord(int A);
+                //     public record class ImmutableClassRecord(int A);
+                //     public readonly record struct ImmutableStructRecord(int A);
+                props |> Array.filter isInitOnlyProperty |> Array.map _.Name
+
         let hasRecordCtor =
             // either no parameters, or for each parameter there is a corresponding
             // init-only property which we can set. THis is what C# generates with its
             // record syntax.
             match getPublicCtors ty |> Array.ofSeq with
-            [| ctor |] -> 
+            | [| ctor |] ->
                 ctor.GetParameters() 
-                |> Seq.forall (fun param -> initOnlyPropNames |> Array.contains param.Name)
+                |> Seq.forall (fun param -> recordPropNames |> Array.contains param.Name)
+            // Mutable struct record with no positional properties.
+            | [||] -> ty.IsValueType
             | _ -> false
         let hasWritableProperties =
             props |> Array.exists (fun p -> p.CanWrite)
-        typeinfo.IsClass && not typeinfo.IsAbstract
+        not typeinfo.IsAbstract
         && not typeinfo.ContainsGenericParameters
         && hasRecordCtor
         && hasWritableProperties
@@ -129,22 +140,22 @@ module internal Reflect =
             |> Seq.filter (fun p -> p.CanWrite)
             |> Seq.map (fun p -> p.PropertyType)
         else
-            failwithf "The input type must be a C# record-like class. Got %A" recordType
+            failwithf "The input type must be a C# record-like type. Got %A" recordType
 
     let getCSharpRecordConstructor (t:Type) =
         let props = getProperties t |> Seq.filter (fun p -> p.CanWrite) |> Seq.toArray
-        let propNames = props |> Array.map (fun p -> p.Name)
   
-        let ctor  = getPublicCtors t |> Seq.head
-        let ctorps= ctor.GetParameters ()
-        let ctorParamPropIndex = 
-            ctorps
-            |> Array.map (fun ctorParam -> propNames |> Array.findIndex (fun propName -> propName = ctorParam.Name))
         let par = Expression.Parameter (typeof<obj[]>, "args")
-        let pars  = ctorps |> Array.mapi (fun i p ->  Expression.Convert (
-                                                          Expression.ArrayIndex (par, Expression.Constant ctorParamPropIndex.[i]),
-                                                          p.ParameterType)
-                                                      :> Expression)
+
+        let maybeCtor = getPublicCtors t |> Seq.tryHead
+
+        let pars =
+            maybeCtor
+            |> Option.map (_.GetParameters() >> Array.mapi (fun i p ->
+                Expression.Convert
+                    (Expression.ArrayIndex (par, Expression.Constant i), p.ParameterType) : Expression))
+            |> Option.defaultValue [||]
+
         let values = 
             props 
             |> Seq.mapi (fun i p ->  
@@ -155,10 +166,19 @@ module internal Reflect =
             |> Seq.zip values
             |> Seq.map (fun (v, p) -> Expression.Bind(p, v) :> MemberBinding)
 
-        let ctor = Expression.New (ctor, pars)
-        let body = Expression.MemberInit(ctor, bindings)
-        let l     = Expression.Lambda<Func<obj[], obj>> (body, par)
-        let f     = l.Compile ()
+        let newExpr =
+            maybeCtor
+            |> Option.map (fun ctor -> Expression.New (ctor, pars))
+            |> Option.defaultWith (fun () -> Expression.New t)
+
+        let body =
+            if t.IsValueType then
+                Expression.Convert (Expression.MemberInit (newExpr, bindings), typeof<obj>) : Expression
+            else
+                Expression.MemberInit (newExpr, bindings)
+
+        let l = Expression.Lambda<Func<obj[], obj>> (body, par)
+        let f = l.Compile ()
         f.Invoke
 
     let getCSharpRecordReader (recordType: Type) =

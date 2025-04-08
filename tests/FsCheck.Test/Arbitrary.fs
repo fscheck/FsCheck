@@ -763,6 +763,12 @@ module Arbitrary =
         let mixed = generate<CSharp.CtorAndProps> |> sample 10
         test <@ mixed |> Seq.exists(fun p -> p.B <> 0) @>
 
+    [<Fact>]
+    let ``should derive generator for csharp struct record types`` () =
+        generate<CSharp.ReadOnlyStructPositionalRecord> |> sample 10 |> ignore
+        generate<CSharp.ReadOnlyStructInitOnlyRecord> |> sample 10 |> ignore
+        generate<CSharp.MutableStructPositionalRecord> |> sample 10 |> ignore
+        generate<CSharp.MutableStructRecord> |> sample 10 |> ignore
 
     [<Property>]
     let ``Derived generator for c# record types shrinks - RgbColor`` (value: CSharp.RgbColor) =
