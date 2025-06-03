@@ -1,3 +1,7 @@
+### 3.3.0 - 3 June 2025
+
+* Added FsCheck.Xunit.v3. (by JohSand)
+
 ### 3.2.0 - 10 April 2025
 
 * Support C# struct record generation. (by Brian Rourke Boll)

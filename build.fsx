@@ -208,7 +208,10 @@ let packages =
       Summary = "Integrates FsCheck with NUnit"
     }
     { Name = "FsCheck.Xunit"
-      Summary = "Integrates FsCheck with xUnit.NET"
+      Summary = "Integrates FsCheck with xUnit.NET v2"
+    }
+    { Name = "FsCheck.Xunit.v3"
+      Summary = "Integrates FsCheck with xUnit.NET v3"
     }
   ]
 
@@ -315,7 +318,7 @@ let packNuGet (_ : HaveTested) : HavePacked =
     // via `dotnet pack`. Without this next bit, FsCheck.Xunit vA.B.C depends on >= FsCheck vA.B.C, not
     // on FsCheck exactly at vA.B.C.
 
-    for package in ["FsCheck.Xunit" ; "FsCheck.NUnit"] do
+    for package in ["FsCheck.Xunit" ; "FsCheck.NUnit" ; "FsCheck.Xunit.v3"] do
         let nupkg = FileInfo (Path.Combine ("bin", $"%s{package}.%s{buildVersion}.nupkg"))
         let stream = nupkg.Open (FileMode.Open, FileAccess.ReadWrite)
         use archive = new ZipArchive (stream, ZipArchiveMode.Update)
@@ -348,7 +351,7 @@ let pushNuGet (_ : HaveTested) (_ : HavePacked) =
         ["NUGET_KEY", nugetKey]
         |> Map.ofList
 
-    for package in ["FsCheck" ; "FsCheck.NUnit" ; "FsCheck.Xunit"] do
+    for { Name = package } in packages do
         let package = Path.Combine ("bin", $"%s{package}.%s{buildVersion}.nupkg")
         // yup, `dotnet nuget` really does have no way to pass in the critical secret secretly, so we have
         // to get the shell to do it
