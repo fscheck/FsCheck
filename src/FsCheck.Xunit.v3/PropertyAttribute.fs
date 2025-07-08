@@ -175,6 +175,19 @@ type PropertyTestCase =
     new(testMethod, testCaseDisplayName, uniqueID, explicit, skipException, skipReason) =
         { inherit XunitTestCase(testMethod, testCaseDisplayName, uniqueID, explicit, skipException, skipReason) }
 
+    new(testMethod, testCaseDisplayName, uniqueID, explicit, ?skipException, ?skipReason, ?skipType, ?skipUnless, ?skipWhen, ?traits, ?testMethodArguments, ?sourceFilePath, ?sourceLineNumber, ?timeout) =
+        let skipException = Option.toObj skipException
+        let skipReason = Option.toObj skipReason
+        let skipType = Option.toObj skipType
+        let skipUnless = Option.toObj skipUnless
+        let skipWhen = Option.toObj skipWhen
+        let traits = Option.toObj traits
+        let testMethodArguments = Option.toObj testMethodArguments
+        let sourceFilePath = Option.toObj sourceFilePath
+        let sourceLineNumber = Option.toNullable sourceLineNumber
+        let timeout = Option.toNullable timeout
+        { inherit XunitTestCase(testMethod, testCaseDisplayName, uniqueID, explicit, skipException, skipReason,skipType, skipUnless, skipWhen, traits, testMethodArguments, sourceFilePath, sourceLineNumber, timeout) }
+
     static let combineAttributes (configs: (PropertyConfig option) list) =
         configs
         |> List.choose id
@@ -258,7 +271,7 @@ type PropertyDiscoverer(messageSink:IMessageSink) =
             let result = ResizeArray<IXunitTestCase>()
             let struct (testCaseDisplayName, explicit, skipExceptions, skipReason, _, _, _, _, uniqueID, testMethod) =
                 TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, attr)
-                
-            result.Add(PropertyTestCase(testMethod, testCaseDisplayName, uniqueID, explicit, skipExceptions, skipReason))
+            let traits = TestIntrospectionHelper.GetTraits(testMethod, null)
+            result.Add(PropertyTestCase(testMethod, testCaseDisplayName, uniqueID, explicit, skipExceptions, skipReason, traits=traits))
             ValueTask<_>(result  :> IReadOnlyCollection<IXunitTestCase>)
 
