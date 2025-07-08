@@ -173,17 +173,17 @@ type PropertyTestCase =
     new() = { inherit XunitTestCase() }
 
     new(testMethod, testCaseDisplayName, uniqueID, explicit, ?skipException, ?skipReason, ?skipType, ?skipUnless, ?skipWhen, ?traits, ?testMethodArguments, ?sourceFilePath, ?sourceLineNumber, ?timeout) =
-        let skipException = Option.toObj skipException
-        let skipReason = Option.toObj skipReason
-        let skipType = Option.toObj skipType
-        let skipUnless = Option.toObj skipUnless
-        let skipWhen = Option.toObj skipWhen
-        let traits = Option.toObj traits
-        let testMethodArguments = Option.toObj testMethodArguments
-        let sourceFilePath = Option.toObj sourceFilePath
-        let sourceLineNumber = Option.toNullable sourceLineNumber
-        let timeout = Option.toNullable timeout
-        { inherit XunitTestCase(testMethod, testCaseDisplayName, uniqueID, explicit, skipException, skipReason,skipType, skipUnless, skipWhen, traits, testMethodArguments, sourceFilePath, sourceLineNumber, timeout) }
+        let skipException       = skipException       |> Option.toObj
+        let skipReason          = skipReason          |> Option.toObj
+        let skipType            = skipType            |> Option.toObj
+        let skipUnless          = skipUnless          |> Option.toObj
+        let skipWhen            = skipWhen            |> Option.toObj
+        let traits              = traits              |> Option.toObj
+        let testMethodArguments = testMethodArguments |> Option.toObj
+        let sourceFilePath      = sourceFilePath      |> Option.toObj
+        let sourceLineNumber    = sourceLineNumber    |> Option.toNullable
+        let timeout             = timeout             |> Option.toNullable
+        { inherit XunitTestCase(testMethod, testCaseDisplayName, uniqueID, explicit, skipException, skipReason, skipType, skipUnless, skipWhen, traits, testMethodArguments, sourceFilePath, sourceLineNumber, timeout) }
 
     static let combineAttributes (configs: (PropertyConfig option) list) =
         configs
