@@ -172,9 +172,6 @@ type PropertyTestCase =
     [<Obsolete>]
     new() = { inherit XunitTestCase() }
 
-    new(testMethod, testCaseDisplayName, uniqueID, explicit, skipException, skipReason) =
-        { inherit XunitTestCase(testMethod, testCaseDisplayName, uniqueID, explicit, skipException, skipReason) }
-
     new(testMethod, testCaseDisplayName, uniqueID, explicit, ?skipException, ?skipReason, ?skipType, ?skipUnless, ?skipWhen, ?traits, ?testMethodArguments, ?sourceFilePath, ?sourceLineNumber, ?timeout) =
         let skipException = Option.toObj skipException
         let skipReason = Option.toObj skipReason
