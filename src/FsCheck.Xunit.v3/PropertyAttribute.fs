@@ -266,8 +266,8 @@ type PropertyDiscoverer(messageSink:IMessageSink) =
     interface IXunitTestCaseDiscoverer with
         override this.Discover(discoveryOptions: ITestFrameworkDiscoveryOptions, testMethod: IXunitTestMethod, attr: IFactAttribute)=
             let result = ResizeArray<IXunitTestCase>()
-            let struct (testCaseDisplayName, explicit, skipExceptions, skipReason, _, _, _, _, uniqueID, testMethod) =
-                TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, attr)
+            let struct (testCaseDisplayName, explicit, skipExceptions, skipReason, _, _, _, _, _, _, uniqueID, testMethod) =
+                TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, attr, null, Nullable(), null, null)
             let traits = TestIntrospectionHelper.GetTraits(testMethod, null)
             result.Add(PropertyTestCase(testMethod, testCaseDisplayName, uniqueID, explicit, skipExceptions, skipReason, traits=traits))
             ValueTask<_>(result  :> IReadOnlyCollection<IXunitTestCase>)
