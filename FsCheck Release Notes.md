@@ -1,3 +1,7 @@
+### 3.3.1 - 24 August 2025
+
+* Update xunit.v3.extensibility.core to v3.0.1 to fix a test discovery issue. (by Hyogeol Lee)
+
 ### 3.3.0 - 3 June 2025
 
 * Added FsCheck.Xunit.v3. (by JohSand)
