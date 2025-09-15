@@ -459,7 +459,7 @@ module Gen =
                 piles k n
                 |> bind (fun sizes -> sequenceToList [ for size in sizes -> resize size gen ])))
 
-    /// Generates non-empty lists of random lengths between zero and size.
+    /// Generates non-empty lists of random lengths between one and size.
     //[category: Creating generators from generators]
     [<CompiledName("NonEmptyListOf")>]
     let nonEmptyListOf gen :Gen<list<'T>> =
