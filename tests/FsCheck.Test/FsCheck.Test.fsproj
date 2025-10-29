@@ -33,7 +33,7 @@
         <ProjectReference Include="..\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="FSharp.Core" />
+        <PackageReference Include="FSharp.Core" VersionOverride="9.0.303" />
         <PackageReference Include="xunit.core" />
         <PackageReference Include="xunit.runner.visualstudio">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
