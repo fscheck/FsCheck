@@ -1,4 +1,4 @@
-﻿namespace FsCheck.NUnit
+namespace FsCheck.NUnit
 
 open System
 open System.Threading
@@ -273,6 +273,13 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
                      elif x.Method.MethodInfo.IsStatic then None
                      else Some context.TestObject
         Check.Method(config, x.Method.MethodInfo, ?target = target)
+
+        let rec (|NonFailingNUnitResultStateException|_|) (exn : exn) =
+            match exn with
+            | :? ResultStateException as e when e.ResultState.Status <> TestStatus.Failed -> Some e
+            | :? AggregateException as e -> (|NonFailingNUnitResultStateException|_|) e.InnerException
+            | _ -> None
+
         match testRunner.Result with
         | TestResult.Passed _ ->
             if not config.QuietOnSuccess then
@@ -281,21 +288,8 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(ResultState(TestStatus.Failed, msg), msg)
-        | TestResult.Failed (_, _, _, outcome, _, _, _) ->
-            let nonFailure =
-                match outcome with
-                | Outcome.Failed ex ->
-                    let unwrappedEx =
-                        match ex with
-                        | :? AggregateException as ae -> ae.InnerException
-                        | _ -> ex
-                    match unwrappedEx with
-                    | :? ResultStateException as rse when rse.ResultState.Status = TestStatus.Failed -> None
-                    | _ -> Some unwrappedEx
-                | _ -> None
-            match nonFailure with
-            | Some ex ->
-                testResult.RecordException(ex)
-            | _ ->
-                let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
-                testResult.SetResult(ResultState(TestStatus.Failed, msg), msg)
+        | TestResult.Failed (_, _, _, Outcome.Failed (NonFailingNUnitResultStateException e), _, _, _) ->
+            testResult.RecordException e
+        | TestResult.Failed _ ->
+            let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
+            testResult.SetResult(ResultState(TestStatus.Failed, msg), msg)
