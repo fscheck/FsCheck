@@ -499,9 +499,12 @@ module Runner =
         | 1 -> sprintf "Label of failing property: %s%s" (labelsToString l) newline
         | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labelsToString l) newline
 
-    let onFailureToString name data originalArgs args usedSeed lastSeed lastSize =
-        sprintf "%sFalsifiable, after %i test%s (%i shrink%s) (%A)%sLast step was invoked with size of %i and seed of (%A):%s" 
-                name data.NumberOfTests (pluralize data.NumberOfTests) data.NumberOfShrinks (pluralize data.NumberOfShrinks) usedSeed newline lastSize lastSeed newline
+    let onFailureToString name data originalArgs args usedSeed (lastSeed:Rnd) lastSize =
+        let replayHint =
+            if data.NumberOfTests > 1 then $".%s{newline}Replay directly at failing step with (%d{lastSeed.Seed},%d{lastSeed.Gamma},%d{lastSize})."
+            else ":"
+
+        $"%s{name}Falsifiable, after %i{data.NumberOfTests} test%s{pluralize data.NumberOfTests} (%i{data.NumberOfShrinks} shrink%s{pluralize data.NumberOfShrinks}) (%A{usedSeed}). %s{newline}Last step was invoked with size of %i{lastSize} and seed of (%A{lastSeed})%s{replayHint}%s{newline}"
             + maybePrintLabels data.Labels
             + sprintf "Original:%s%s%s" newline (argumentsToString originalArgs) newline
             + if (data.NumberOfShrinks > 0 ) then sprintf "Shrunk:%s%s%s" newline (argumentsToString args) newline else ""
