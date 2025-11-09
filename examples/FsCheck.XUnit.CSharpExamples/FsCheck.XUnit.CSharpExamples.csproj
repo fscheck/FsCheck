@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FsCheck.Xunit.CSharpExamples</AssemblyName>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <WarningLevel>3</WarningLevel>

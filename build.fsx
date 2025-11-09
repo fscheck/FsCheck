@@ -149,9 +149,6 @@ let releaseNotesFile = "FsCheck Release Notes.md"
 /// Solution or project files to be built during the building process
 let solution = "FsCheck.sln"
 
-/// Pattern specifying assemblies to be tested
-let testAssemblies = "tests/**/bin/Release/net6.0/*.Test.dll"
-
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
 let gitOwner = "fscheck"
