@@ -1,3 +1,9 @@
+### 3.3.2 - 9 November 2025
+
+* Fixed FsCheck.NUnit failure reporting. (by Brian Rourke Boll)
+
+* Added a replay hint to failure message. (by Brian Rourke Boll)
+
 ### 3.3.1 - 24 August 2025
 
 * Update xunit.v3.extensibility.core to v3.0.1 to fix a test discovery issue. (by Hyogeol Lee)
