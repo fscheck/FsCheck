@@ -7,6 +7,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <Deterministic>true</Deterministic>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Copyright>Copyright 2008-2024</Copyright>
     <Authors>Kurt Schelfthout and contributors</Authors>
     <PackageTags>F# fsharp test random</PackageTags>
