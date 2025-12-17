@@ -4,7 +4,7 @@
 (*** hide ***)
 #I @"../src/FsCheck/bin/Release/netstandard2.0"
 #I @"../src/FsCheck.Xunit/bin/Release/netstandard2.0"
-#I @"../src/FsCheck.NUnit/bin/Release/netstandard2.0"
+#I @"../src/FsCheck.NUnit/bin/Release/net6.0"
 #r @"nuget: xunit.core"
 #r @"nuget: NUnit"
 #r "FsCheck"
@@ -13,6 +13,7 @@
 
 open FsCheck
 open System
+open FsCheck.FSharp
 
 (**
 # Running tests

@@ -371,7 +371,6 @@ let fsdocParameters =
 
 let fsdocProperties = [
   "Configuration=Release"
-  "TargetFramework=netstandard2.0"
 ]
 
 type HaveGeneratedDocs = HaveGeneratedDocs
@@ -381,7 +380,6 @@ let docs (_ : HaveBuilt) : HaveGeneratedDocs =
 
     [
         "fsdocs" ; "build" ; "--strict" ; "--eval" ; "--clean"
-        "--projects" ; "src/FsCheck/FsCheck.fsproj"
         "--properties" ; yield! fsdocProperties
         "--parameters" ; yield! fsdocParameters
     ]
