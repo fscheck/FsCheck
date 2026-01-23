@@ -638,7 +638,6 @@ However, there are some important things to notice that are listed here to avoid
 - `Arb.fromGen` makes a new Arbitrary instance from just a given generator - the shrinker return the empty sequence
 - `Arb.fromGenShrink` make a new Arbitrary instance from a given generator and shrinker. This is equivalent to implementing Arbitrary yourself, but may be shorter.
 - `ArbMap.generate<'a> arbMap` returns the generator of the Arbitrary instance in `arbMap` for the given type 'a
-- `Arb.shrink` return the immediate shrinks of the registered Arbitrary instance for the given value
 - `Arb.convert` given conversion functions to ('a ->'b) and from ('b ->'a), converts an Arbitrary<'a> instance to an Arbitrary<'b>
 - `Arb.filter` filters the generator and shrinker for a given Arbitrary instance to contain only those values that match with the given filter function
 - `Arb.mapFilter` maps the generator and filter the shrinkers for a given Arbitrary instance. Mapping the generator is sometimes faster, e.g. for a PositiveInt it is faster to take the absolute value than to filter the negative values.
