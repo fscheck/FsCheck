@@ -634,11 +634,11 @@ However, there are some important things to notice that are listed here to avoid
     
 ## Useful methods on the Arb and ArbMap module
 
-- `ArbMap.arbitrary<'a> arbMap` returns the Arbitrary instance in `arbMap` for the given type 'a
 - `Arb.fromGen` makes a new Arbitrary instance from just a given generator - the shrinker return the empty sequence
 - `Arb.fromGenShrink` make a new Arbitrary instance from a given generator and shrinker. This is equivalent to implementing Arbitrary yourself, but may be shorter.
-- `ArbMap.generate<'a> arbMap` returns the generator of the Arbitrary instance in `arbMap` for the given type 'a
 - `Arb.convert` given conversion functions to ('a ->'b) and from ('b ->'a), converts an Arbitrary<'a> instance to an Arbitrary<'b>
 - `Arb.filter` filters the generator and shrinker for a given Arbitrary instance to contain only those values that match with the given filter function
 - `Arb.mapFilter` maps the generator and filter the shrinkers for a given Arbitrary instance. Mapping the generator is sometimes faster, e.g. for a PositiveInt it is faster to take the absolute value than to filter the negative values.
+- `ArbMap.arbitrary<'a> arbMap` returns the Arbitrary instance in `arbMap` for the given type 'a
+- `ArbMap.generate<'a> arbMap` returns the generator of the Arbitrary instance in `arbMap` for the given type 'a
 - `ArbMap.defaults` is a map that provides access to all the default Arbitrary instances as they are shipped by FsCheck by default. This is useful when you override a default generator - typically this is because you want to filter certain values from it, and then you need to be able to refer to the default generator in your overriding generator.*)
