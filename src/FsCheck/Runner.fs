@@ -435,12 +435,13 @@ module Runner =
                     lastStep := step
                     lastSeed := seed
                     lastSize := s
-                    config.Runner.OnArguments(!testNb, result.Arguments, config.Every)
                     match result with
                     | { Outcome = Outcome.Passed } -> 
+                        config.Runner.OnArguments(!testNb, result.Arguments, config.Every)
                         testNb := !testNb + 1
                         !testNb <> config.MaxTest && size.IsNone //stop if we have enough tests or this was fast-forward single test run
                     | { Outcome = Outcome.Failed _ } -> 
+                        config.Runner.OnArguments(!testNb, result.Arguments, config.Every)
                         origArgs := result.Arguments
                         testNb := !testNb + 1
                         true //failed, true to continue with shrinking

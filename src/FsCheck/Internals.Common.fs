@@ -51,8 +51,8 @@ module internal Common =
             if en.MoveNext() then
                 // Always yield the current, stop if predicate does not hold
                 yield en.Current
-            if predicate en.Current then
-                yield! loop en }
+                if predicate en.Current then
+                    yield! loop en }
 
         // Get enumerator of the sequence and yield all results
         // (making sure that the enumerator gets disposed)
