@@ -410,6 +410,7 @@ module Gen =
         let rec tryValue k s =
             match (k,s) with 
             | (_,0) -> constant None
+            // Resize with 2*k+s to progressively increase size with each retry attempt
             | (k,s) -> (resize (2*k+s) generator) |> bind (fun x -> 
                          match chooser x with
                          | Some v -> constant (Some v)
