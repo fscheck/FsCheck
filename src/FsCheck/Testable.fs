@@ -22,34 +22,26 @@ type Result =
         Stamp       : list<string>
         Labels      : Set<string>
         Arguments   : list<obj> } 
+    static member private MergeStampsAndLabels(l, r) =
+        { l with
+            Stamp = List.append l.Stamp r.Stamp
+            Labels = Set.union l.Labels r.Labels }
     ///Returns a new result that is Passed if and only if both this
     ///and the given Result are Passed.
     static member internal ResAnd(l, r) = 
         match (l.Outcome,r.Outcome) with
-        | (Outcome.Failed _,Outcome.Failed _) -> 
-            { l with
-                Stamp = List.append l.Stamp r.Stamp
-                Labels = Set.union l.Labels r.Labels }
+        | (Outcome.Failed _,Outcome.Failed _) -> Result.MergeStampsAndLabels(l, r)
         | (Outcome.Failed _,_) -> l
         | (_,Outcome.Failed _) -> r
-        | (Outcome.Rejected,_) -> l
         | (_,Outcome.Rejected) -> r
-        | (Outcome.Passed,Outcome.Passed) ->
-            { l with
-                Stamp = List.append l.Stamp r.Stamp
-                Labels = Set.union l.Labels r.Labels }
+        | (Outcome.Rejected,_) -> l
+        | (Outcome.Passed,Outcome.Passed) -> Result.MergeStampsAndLabels(l, r)
     static member internal ResOr(l, r) =
         match (l.Outcome, r.Outcome) with
-        | (Outcome.Failed _,Outcome.Failed _) ->
-            { l with
-                Stamp = List.append l.Stamp r.Stamp
-                Labels = Set.union l.Labels r.Labels }
+        | (Outcome.Failed _,Outcome.Failed _) -> Result.MergeStampsAndLabels(l, r)
         | (Outcome.Failed _,_) -> r
         | (_,Outcome.Failed _) -> l
-        | (Outcome.Passed,Outcome.Passed) ->
-            { l with
-                Stamp = List.append l.Stamp r.Stamp
-                Labels = Set.union l.Labels r.Labels }
+        | (Outcome.Passed,Outcome.Passed) -> Result.MergeStampsAndLabels(l, r)
         | (Outcome.Passed,_) -> l
         | (_,Outcome.Passed) -> r
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
