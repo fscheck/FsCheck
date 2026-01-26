@@ -26,15 +26,30 @@ type Result =
     ///and the given Result are Passed.
     static member internal ResAnd(l, r) = 
         match (l.Outcome,r.Outcome) with
-        | (Outcome.Failed _,_) -> l //here a potential Failed in r is thrown away...
+        | (Outcome.Failed _,Outcome.Failed _) -> 
+            { l with
+                Stamp = List.append l.Stamp r.Stamp
+                Labels = Set.union l.Labels r.Labels }
+        | (Outcome.Failed _,_) -> l
         | (_,Outcome.Failed _) -> r
-        | (_,Outcome.Passed) -> l
-        | (Outcome.Passed,_) -> r
-        | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
+        | (Outcome.Rejected,_) -> l
+        | (_,Outcome.Rejected) -> r
+        | (Outcome.Passed,Outcome.Passed) ->
+            { l with
+                Stamp = List.append l.Stamp r.Stamp
+                Labels = Set.union l.Labels r.Labels }
     static member internal ResOr(l, r) =
         match (l.Outcome, r.Outcome) with
+        | (Outcome.Failed _,Outcome.Failed _) ->
+            { l with
+                Stamp = List.append l.Stamp r.Stamp
+                Labels = Set.union l.Labels r.Labels }
         | (Outcome.Failed _,_) -> r
         | (_,Outcome.Failed _) -> l
+        | (Outcome.Passed,Outcome.Passed) ->
+            { l with
+                Stamp = List.append l.Stamp r.Stamp
+                Labels = Set.union l.Labels r.Labels }
         | (Outcome.Passed,_) -> l
         | (_,Outcome.Passed) -> r
         | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
