@@ -17,9 +17,9 @@ namespace FsCheck.Test.CSharp
         }
 
         [FsCheck.Xunit.Property]
-        public void Test1()
+        public void Test1(int x)
         {
-            _testOutputHelper.WriteLine($"{nameof(Test1)}");
+            _testOutputHelper.WriteLine($"{nameof(Test1)}: {x}");
         }
 
         [Fact]
@@ -29,15 +29,26 @@ namespace FsCheck.Test.CSharp
         }
 
         [FsCheck.Xunit.Property]
-        public void Test3()
+        public void Test3(string s)
         {
-            _testOutputHelper.WriteLine($"{nameof(Test3)}");
+            _testOutputHelper.WriteLine($"{nameof(Test3)}: {s ?? "null"}");
         }
 
         [Fact]
         public void Test4()
         {
             _testOutputHelper.WriteLine($"{nameof(Test4)}");
+        }
+
+        /// <summary>
+        /// This test specifically exercises the Every and EveryShrink callbacks by enabling Verbose mode.
+        /// These callbacks capture the TestOutputHelper in closures, which was the root cause of the lifetime issue.
+        /// </summary>
+        [FsCheck.Xunit.Property(Verbose = true, MaxTest = 5)]
+        public bool Test5_VerboseMode(int x, int y)
+        {
+            _testOutputHelper.WriteLine($"{nameof(Test5_VerboseMode)}: x={x}, y={y}");
+            return true; // Always pass
         }
     }
 }
