@@ -75,14 +75,14 @@ type NUnitTest() =
     // Regression test for issue: Implies with Replay causes TargetInvocationException/NullReferenceException
     // This test verifies that using Implies with Replay doesn't throw a NullReferenceException
     // Note: This test will be exhausted because the condition is always false, but that's expected behavior
-    //[<Property(Replay="123,127,123")>]
-    //member __.ImpliesWithReplay_FalseCondition_WillExhaust() =
-    //    // This will result in "Exhausted" because the condition is always false,
-    //    // but it should NOT throw a NullReferenceException (which was the bug)
-    //    false.Implies(true)
+    [<Property(Replay="123,127,123")>]
+    member __.ImpliesWithReplayFalseCondition_shouldFail() =
+        // This will result in "Exhausted" because the condition is always false,
+        // but it should NOT throw a NullReferenceException (which was the bug)
+        false.Implies(true)
 
     // Regression test with a passing condition
     [<Property(Replay="123,127,123")>]
-    member __.ImpliesWithReplay_TrueCondition_ShouldPass() =
+    member __.ImpliesWithReplayTrueCondition() =
         // This should pass because the condition is true and the property is true
         true.Implies(true)
