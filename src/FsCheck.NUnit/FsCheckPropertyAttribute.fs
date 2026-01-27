@@ -24,9 +24,9 @@ type private NunitRunner() =
             // doesn't look pretty in the cases where it turns out that there's truly nothing to write (e.g.
             // when QuietOnSuccess is true, and the Property passed.
             if not (String.IsNullOrWhiteSpace argsForOutput) then
-                TestContext.WriteLine("{0}", argsForOutput)
+                TestContext.WriteLine(argsForOutput)
         override __.OnShrink(args, everyShrink) =
-            TestContext.WriteLine("{0}", everyShrink args)
+            TestContext.WriteLine(everyShrink args)
         override __.OnFinished(_,testResult) =
             result <- Some testResult
 
@@ -283,7 +283,7 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         match testRunner.Result with
         | TestResult.Passed _ ->
             if not config.QuietOnSuccess then
-                TestContext.WriteLine("{0}", Runner.onFinishedToString "" testRunner.Result)
+                TestContext.WriteLine(Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(ResultState(TestStatus.Passed))
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)

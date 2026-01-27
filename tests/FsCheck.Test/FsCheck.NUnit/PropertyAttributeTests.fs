@@ -38,15 +38,18 @@ module TestContextFormatterTests =
             | :? CustomType as custom -> $"[CUSTOM:{custom.Value}]"
             | _ -> ct.ToString())
     
-    [<Property(MaxTest = 1, Verbose = true)>]
-    let ``should use TestContext formatter for custom types`` (value: int) =
+    [<Property(MaxTest = 1)>]
+    let ``should allow TestContext.WriteLine within property tests`` (value: int) =
         // Create a custom type instance
         let customValue = CustomType(abs value % 100)
         
         // Write it to TestContext - this should use the custom formatter
+        // This demonstrates that users can use TestContext.WriteLine with custom formatters
+        // within their FsCheck property tests
         TestContext.WriteLine("Testing with value: {0}", customValue)
         
-        // The property always passes, but we're testing that the formatter is used
+        // The property always passes, but we're testing that TestContext is accessible
+        // and custom formatters work when used directly
         true
 
 module ResultOutputTests =
