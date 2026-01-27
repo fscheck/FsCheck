@@ -242,6 +242,20 @@ module Gen =
                 |> ((=) (abs v)) )
     
     [<Property>]
+    let TryPick (v:int) (chooser:int -> option<string>) =
+        let expected = chooser v
+        assertTrue ( Gen.tryPick chooser (Gen.constant v)
+                |> sample1
+                |> ((=) expected) )
+    
+    [<Property>]
+    let Pick (v:int) =
+        let chooser x = if x >= 0 then Some (string x) else None
+        assertTrue ( Gen.pick chooser (Gen.elements [v;abs v])
+                |> sample1
+                |> ((=) (string (abs v))) )
+    
+    [<Property>]
     let ListOf (NonNegativeInt size) (v:char) =
         assertTrue ( Gen.resize size (Gen.listOf <| Gen.constant v)
                 |> sample 10
