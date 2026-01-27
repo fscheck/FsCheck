@@ -6,29 +6,39 @@ open FsCheck
 open Xunit.Abstractions
 
 module private Helper =
+    // Helper to safely write to output, handling case where test may have completed
+    let private safeWriteLine (testOutputHelper: ITestOutputHelper) (message: string) =
+        try
+            testOutputHelper.WriteLine(message)
+        with
+        | :? InvalidOperationException -> 
+            // Test has completed, TestOutputHelper is no longer active
+            // Silently ignore as this is expected when runners outlive test lifetime
+            ()
+    
     let private runner (testOutputHelper: ITestOutputHelper) =
         { new IRunner with
             member __.OnStartFixture t =
-                Runner.onStartFixtureToString t |> testOutputHelper.WriteLine
+                Runner.onStartFixtureToString t |> safeWriteLine testOutputHelper
             member __.OnArguments (ntest,args, every) =
-                every ntest args |> testOutputHelper.WriteLine
+                every ntest args |> safeWriteLine testOutputHelper
             member __.OnShrink(args, everyShrink) =
-                everyShrink args |> testOutputHelper.WriteLine
+                everyShrink args |> safeWriteLine testOutputHelper
             member __.OnFinished(name,testResult) = 
-                Runner.onFinishedToString name testResult |> testOutputHelper.WriteLine
+                Runner.onFinishedToString name testResult |> safeWriteLine testOutputHelper
         }
 
     let private throwingRunner (testOutputHelper: ITestOutputHelper) =
         { new IRunner with
             member __.OnStartFixture t =
-                testOutputHelper.WriteLine (Runner.onStartFixtureToString t)
+                safeWriteLine testOutputHelper (Runner.onStartFixtureToString t)
             member __.OnArguments (ntest,args, every) =
-                testOutputHelper.WriteLine (every ntest args)
+                safeWriteLine testOutputHelper (every ntest args)
             member __.OnShrink(args, everyShrink) =
-                testOutputHelper.WriteLine (everyShrink args)
+                safeWriteLine testOutputHelper (everyShrink args)
             member __.OnFinished(name,testResult) = 
                 match testResult with
-                | TestResult.Passed _ -> testOutputHelper.WriteLine (Runner.onFinishedToString name testResult)
+                | TestResult.Passed _ -> safeWriteLine testOutputHelper (Runner.onFinishedToString name testResult)
                 | _ -> failwithf "%s" (Runner.onFinishedToString name testResult)
         }
 

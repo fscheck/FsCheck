@@ -6,4 +6,13 @@
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="../../src/FsCheck.Xunit/FsCheck.Xunit.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="xunit.core" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    </ItemGroup>
+
 </Project>

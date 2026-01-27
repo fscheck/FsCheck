@@ -80,6 +80,16 @@ module internal PropertyConfig =
         { Rnd = Rnd (seed,gamma); Size = size }
 
     let toConfig (output : TestOutputHelper) propertyConfig =
+        // Helper to safely write to output, handling case where test may have completed
+        let safeWriteLine (message: string) =
+            try
+                output.WriteLine(message)
+            with
+            | :? InvalidOperationException -> 
+                // Test has completed, TestOutputHelper is no longer active
+                // Silently ignore as this is expected when closures outlive test lifetime
+                ()
+        
         Config.Default
               .WithReplay(
                   propertyConfig.Replay
@@ -100,13 +110,13 @@ module internal PropertyConfig =
               .WithRunner(XunitRunner())
               .WithEvery(
                   if propertyConfig.Verbose |> Option.exists id then 
-                      fun n args -> output.WriteLine (Config.Verbose.Every n args); ""
+                      fun n args -> safeWriteLine (Config.Verbose.Every n args); ""
                   else 
                       Config.Quick.Every
               )
               .WithEveryShrink(
                   if propertyConfig.Verbose |> Option.exists id then 
-                      fun args -> output.WriteLine (Config.Verbose.EveryShrink args); ""
+                      fun args -> safeWriteLine (Config.Verbose.EveryShrink args); ""
                   else 
                       Config.Quick.EveryShrink
               )
