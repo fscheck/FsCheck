@@ -21,23 +21,31 @@ type Result =
     {   Outcome     : Outcome
         Stamp       : list<string>
         Labels      : Set<string>
-        Arguments   : list<obj> } 
+        Arguments   : list<obj> }
+    member private t.MergeLabels(o) =
+        { t with Labels = Set.union t.Labels o.Labels }
+    member private t.MergeStamps(o) =
+        { t with Stamp = List.append t.Stamp o.Stamp }
     ///Returns a new result that is Passed if and only if both this
     ///and the given Result are Passed.
     static member internal ResAnd(l, r) = 
         match (l.Outcome,r.Outcome) with
-        | (Outcome.Failed _,_) -> l //here a potential Failed in r is thrown away...
+        // no need to merge stamps when overall outcome is failed - they won't be shown anyway.
+        // no need to merge labels when overall outcome is not failed (passed, rejected) - they won't be shown anyway.
+        | (Outcome.Failed _,Outcome.Failed _) -> l.MergeLabels(r)
+        | (Outcome.Failed _,_) -> l
         | (_,Outcome.Failed _) -> r
-        | (_,Outcome.Passed) -> l
-        | (Outcome.Passed,_) -> r
-        | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
+        | (_,Outcome.Rejected) -> r.MergeStamps(l)
+        | (Outcome.Rejected,_) -> l.MergeStamps(r)
+        | (Outcome.Passed,Outcome.Passed) -> l.MergeStamps(r)
     static member internal ResOr(l, r) =
         match (l.Outcome, r.Outcome) with
-        | (Outcome.Failed _,_) -> r
-        | (_,Outcome.Failed _) -> l
-        | (Outcome.Passed,_) -> l
-        | (_,Outcome.Passed) -> r
-        | (Outcome.Rejected,Outcome.Rejected) -> l //or r, whatever
+        | (Outcome.Failed _,Outcome.Failed _) -> l.MergeLabels(r)
+        | (Outcome.Failed _,_) -> r.MergeStamps(l)
+        | (_,Outcome.Failed _) -> l.MergeStamps(r)
+        | (Outcome.Passed,_) -> l.MergeStamps(r)
+        | (_,Outcome.Passed) -> r.MergeStamps(l)
+        | (Outcome.Rejected,Outcome.Rejected) -> l.MergeStamps(r) //or r.MergeStamps(l), whatever
 
 type ResultContainer = 
     | Value of Result

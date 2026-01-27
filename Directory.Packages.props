@@ -4,7 +4,6 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="Microsoft.NETCore.Platforms" Version="5.0.2" />
     <PackageVersion Include="Microsoft.NETCore.Targets" Version="5.0" />
-    <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
     <PackageVersion Include="Microsoft.TestPlatform.ObjectModel" Version="16.11" />
     <PackageVersion Include="MSTest.TestAdapter" Version="3.7.0" />
     <PackageVersion Include="MSTest.TestFramework" Version="3.7.0" />
