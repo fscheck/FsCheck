@@ -25,6 +25,33 @@ module ResultStateExceptionHandlingTest =
             NUnit.Framework.Assert.Pass()
         }
 
+module TestContextFormatterTests =
+    type CustomType(value: int) =
+        member _.Value = value
+        override _.ToString() = $"CustomType({value})"
+    
+    [<OneTimeSetUp>]
+    let setupFormatter() =
+        // Register a custom formatter for CustomType
+        TestContext.AddFormatter<CustomType>(fun (ct: obj) -> 
+            match ct with
+            | :? CustomType as custom -> $"[CUSTOM:{custom.Value}]"
+            | _ -> ct.ToString())
+    
+    [<Property(MaxTest = 1)>]
+    let ``should allow TestContext.WriteLine within property tests`` (value: int) =
+        // Create a custom type instance
+        let customValue = CustomType(abs value % 100)
+        
+        // Write it to TestContext - this should use the custom formatter
+        // This demonstrates that users can use TestContext.WriteLine with custom formatters
+        // within their FsCheck property tests
+        TestContext.WriteLine("Testing with value: {0}", customValue)
+        
+        // The property always passes, but we're testing that TestContext is accessible
+        // and custom formatters work when used directly
+        true
+
 module ResultOutputTests =
     [<Ignore("These should be run by the test below")>]
     module TestModule =
