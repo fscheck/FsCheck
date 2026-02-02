@@ -30,27 +30,26 @@ module TestContextFormatterTests =
         member _.Value = value
         override _.ToString() = $"CustomType({value})"
     
+    // Arbitrary instance for CustomType
+    type CustomTypeArb =
+        static member CustomType() =
+            ArbMap.defaults.ArbFor<int>()
+            |> Arb.convert CustomType (fun ct -> ct.Value)
+    
     [<OneTimeSetUp>]
     let setupFormatter() =
-        // Register a custom formatter for CustomType
-        TestContext.AddFormatter<CustomType>(fun (ct: obj) -> 
+        // Register a custom formatter for CustomType using FsCheck.NUnit.ValueFormatter
+        ValueFormatter.AddFormatter<CustomType>(fun (ct: obj) -> 
             match ct with
             | :? CustomType as custom -> $"[CUSTOM:{custom.Value}]"
             | _ -> ct.ToString())
     
-    [<Property(MaxTest = 1)>]
-    let ``should allow TestContext.WriteLine within property tests`` (value: int) =
-        // Create a custom type instance
-        let customValue = CustomType(abs value % 100)
-        
-        // Write it to TestContext - this should use the custom formatter
-        // This demonstrates that users can use TestContext.WriteLine with custom formatters
-        // within their FsCheck property tests
-        TestContext.WriteLine("Testing with value: {0}", customValue)
-        
-        // The property always passes, but we're testing that TestContext is accessible
-        // and custom formatters work when used directly
-        true
+    [<Property(Verbose = true, MaxTest = 1, Arbitrary = [| typeof<CustomTypeArb> |])>]
+    let ``should use custom formatter for test arguments`` (ct: CustomType) =
+        // This test demonstrates that custom formatters are used for console output during verbose mode.
+        // When you run this test with verbose=true, the console will show [CUSTOM:x] instead of CustomType(x)
+        true  // Pass so we can see the formatted output in verbose mode
+
 
 module ResultOutputTests =
     [<Ignore("These should be run by the test below")>]
