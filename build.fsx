@@ -411,7 +411,7 @@ let releaseDocs (_ : HaveGeneratedDocs) =
     let tempDocsDir = "temp/gh-pages"
     cleanDirectories [tempDocsDir]
     let tempDocsDir = Directory.CreateDirectory tempDocsDir
-    runProcess "git" ["clone" ; "git@github.com:fscheck/FsCheck.git" ; "--single-branch" ; "--branch" ; "gh-pages" ; tempDocsDir.FullName]
+    runProcess "git" ["clone" ; "https://github.com/fscheck/FsCheck.git" ; "--single-branch" ; "--branch" ; "gh-pages" ; tempDocsDir.FullName]
 
     copyDir (DirectoryInfo "output") tempDocsDir true
 
