@@ -26,6 +26,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
     <!-- END SEARCH BOX: this adds support for the search box -->
 
+    <style>
+        .fsdocs-tip { white-space: pre-line; }
+    </style>
+
 </head>
 
 <body>
@@ -34,7 +38,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
             <!-- BEGIN SEARCH BOX: this adds support for the search box -->
             <div id="header">
                 <div class="searchbox" id="fsdocs-searchbox">
@@ -85,27 +89,33 @@
         <hr />
         <div class="container" id="fsdocs-content">
             <div>
-  <h1>
+  <h2>
     Shrink<'T> Type
-  </h1>
-  <p>
-    Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals.html">
-      FsCheck.Internals
-    </a>
-  </p>
-  <p>
-    Assembly: FsCheck.dll
-  </p>
-  <p>
-    Base Type: 
-    <code>obj</code>
-  </p>
+  </h2>
+  <dl class="fsdocs-metadata">
+    <dt>
+      Namespace: 
+      <a href="https://fscheck.github.io/FsCheck/reference/fscheck-internals.html">
+        FsCheck.Internals
+      </a>
+    </dt>
+    <dt>
+      Assembly: FsCheck.dll
+    </dt>
+    <dt>
+      Base Type: 
+      <code>obj</code>
+    </dt>
+  </dl>
   <div class="fsdocs-xmldoc">
-    
- Shrink<T> keeps a value and the possible shrinks for that value in an n-ary tree.
+    <div>
+      <div class="fsdocs-summary-contents">
+        <p class="fsdocs-summary">
+           Shrink<T> keeps a value and the possible shrinks for that value in an n-ary tree.
  This tree is explored by the test runner to find a smaller value of a counter-example.
-
+        </p>
+      </div>
+    </div>
   </div>
 </div>
             
@@ -122,4 +132,3 @@
 </body>
 
 </html>
-

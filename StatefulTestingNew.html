@@ -27,6 +27,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
     <!-- END SEARCH BOX: this adds support for the search box -->
 
+    <style>
+        .fsdocs-tip { white-space: pre-line; }
+    </style>
+
 </head>
 
 <body>
@@ -35,7 +39,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
             <!-- BEGIN SEARCH BOX: this adds support for the search box -->
             <div id="header">
                 <div class="searchbox" id="fsdocs-searchbox">
@@ -269,16 +273,27 @@ so when we run this specification we can check that FsCheck does the right thing
 <p>A specification can be checked as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs42', 105)" onmouseover="showTip(event, 'fs42', 105)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs43', 106)" onmouseover="showTip(event, 'fs43', 106)" class="id">Quick</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs44', 107)" onmouseover="showTip(event, 'fs44', 107)" class="m">StateMachine</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs45', 108)" onmouseover="showTip(event, 'fs45', 108)" class="id">toProperty</span> <span onmouseout="hideTip(event, 'fs13', 109)" onmouseover="showTip(event, 'fs13', 109)" class="id">spec</span><span class="pn">)</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 4 tests (2 shrinks) (14366654795077628011,16084604498746219839)
-Last step was invoked with size of 5 and seed of (16085007916889491838,9608441260416857165):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 14 tests (12 shrinks) (756806409913305369,14970423538377888995). 
+Last step was invoked with size of 15 and seed of (5179660923930655085,5897922060171666459).
+Replay directly at failing step with (5179660923930655085,5897922060171666459,15).
 Label of failing property: Inc: model = 5, actual = 6
 Original:
 (2, Setup Counter)
+dec -&gt; 1
+inc -&gt; 2
+dec -&gt; 1
+inc -&gt; 2
+dec -&gt; 1
+inc -&gt; 2
 inc -&gt; 3
 inc -&gt; 4
 inc -&gt; 5
+inc -&gt; 6
+dec -&gt; 5
 dec -&gt; 4
-inc -&gt; 5
+dec -&gt; 3
+dec -&gt; 2
+inc -&gt; 3
 
 Shrunk:
 (2, Setup Counter)
@@ -310,47 +325,114 @@ during the test run and during shrinking, and relies on them not changing.</p>
 <div class="fsdocs-tip" id="fs2">namespace FsCheck.FSharp</div>
 <div class="fsdocs-tip" id="fs3">namespace FsCheck.Experimental</div>
 <div class="fsdocs-tip" id="fs4">namespace System</div>
-<div class="fsdocs-tip" id="fs5">Multiple items<br />type Counter =<br />&#160;&#160;new : ?initial:int -&gt; Counter<br />&#160;&#160;member Dec : unit -&gt; int<br />&#160;&#160;member Inc : unit -&gt; int<br />&#160;&#160;member Reset : unit -&gt; unit<br />&#160;&#160;override ToString : unit -&gt; string<br /><br />--------------------<br />new : ?initial:int -&gt; Counter</div>
-<div class="fsdocs-tip" id="fs6">val initial : int option</div>
-<div class="fsdocs-tip" id="fs7">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />[&lt;Struct&gt;]<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; =<br />&#160;&#160;int</div>
-<div class="fsdocs-tip" id="fs8">val mutable n : int</div>
-<div class="fsdocs-tip" id="fs9">val defaultArg : arg:&#39;T option -&gt; defaultValue:&#39;T -&gt; &#39;T</div>
-<div class="fsdocs-tip" id="fs10">val __ : Counter</div>
-<div class="fsdocs-tip" id="fs11">val failwithf : format:Printf.StringFormat&lt;&#39;T,&#39;Result&gt; -&gt; &#39;T</div>
-<div class="fsdocs-tip" id="fs12">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T</div>
-<div class="fsdocs-tip" id="fs13">val spec : Machine&lt;Counter,int&gt;</div>
-<div class="fsdocs-tip" id="fs14">val inc : Operation&lt;Counter,int&gt;</div>
-<div class="fsdocs-tip" id="fs15">Multiple items<br />type Operation&lt;&#39;Actual,&#39;Model&gt; =<br />&#160;&#160;interface IOperation<br />&#160;&#160;new : unit -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;<br />&#160;&#160;abstract member Check : &#39;Actual * &#39;Model -&gt; Property<br />&#160;&#160;abstract member Pre : &#39;Model -&gt; bool + 1 overload<br />&#160;&#160;abstract member Run : &#39;Model -&gt; &#39;Model<br /><br />--------------------<br />new : unit -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;</div>
-<div class="fsdocs-tip" id="fs16">val m : int</div>
-<div class="fsdocs-tip" id="fs17">val __ : Operation&lt;Counter,int&gt;</div>
-<div class="fsdocs-tip" id="fs18">abstract member Operation.Check : &#39;Actual * &#39;Model -&gt; Property</div>
-<div class="fsdocs-tip" id="fs19">val c : Counter</div>
-<div class="fsdocs-tip" id="fs20">val res : int</div>
-<div class="fsdocs-tip" id="fs21">member Counter.Inc : unit -&gt; int</div>
-<div class="fsdocs-tip" id="fs22">module Prop<br /><br />from FsCheck.FSharp</div>
-<div class="fsdocs-tip" id="fs23">val label : l:string -&gt; (&#39;Testable -&gt; Property)</div>
+<div class="fsdocs-tip" id="fs5">Multiple items<br />type Counter =
+  new: ?initial: int -&gt; Counter
+  member Dec: unit -&gt; int
+  member Inc: unit -&gt; int
+  member Reset: unit -&gt; unit
+  override ToString: unit -&gt; string<br /><br />--------------------<br />new: ?initial: int -&gt; Counter</div>
+<div class="fsdocs-tip" id="fs6">val initial: int option</div>
+<div class="fsdocs-tip" id="fs7">Multiple items<br />val int: value: &#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; =
+  int</div>
+<div class="fsdocs-tip" id="fs8">val mutable n: int</div>
+<div class="fsdocs-tip" id="fs9">val defaultArg: arg: &#39;T option -&gt; defaultValue: &#39;T -&gt; &#39;T</div>
+<div class="fsdocs-tip" id="fs10">val __: Counter</div>
+<div class="fsdocs-tip" id="fs11">val failwithf: format: Printf.StringFormat&lt;&#39;T,&#39;Result&gt; -&gt; &#39;T</div>
+<div class="fsdocs-tip" id="fs12">val sprintf: format: Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T</div>
+<div class="fsdocs-tip" id="fs13">val spec: Machine&lt;Counter,int&gt;</div>
+<div class="fsdocs-tip" id="fs14">val inc: Operation&lt;Counter,int&gt;</div>
+<div class="fsdocs-tip" id="fs15">Multiple items<br />type Operation&lt;&#39;Actual,&#39;Model&gt; =
+  interface IOperation
+  new: unit -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;
+  abstract Check: &#39;Actual * &#39;Model -&gt; Property
+  abstract Pre: &#39;Model -&gt; bool + 1 overload
+  abstract Run: &#39;Model -&gt; &#39;Model<br /><em>&lt;summary&gt;
+An operation describes pre and post conditions and the model for a single operation under test.
+The post-conditions are the invariants that will be checked; when these do not hold the test fails.
+&lt;/summary&gt;</em><br /><br />--------------------<br />new: unit -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;</div>
+<div class="fsdocs-tip" id="fs16">val m: int</div>
+<div class="fsdocs-tip" id="fs17">val __: Operation&lt;Counter,int&gt;</div>
+<div class="fsdocs-tip" id="fs18">abstract Operation.Check: &#39;Actual * &#39;Model -&gt; Property</div>
+<div class="fsdocs-tip" id="fs19">val c: Counter</div>
+<div class="fsdocs-tip" id="fs20">val res: int</div>
+<div class="fsdocs-tip" id="fs21">member Counter.Inc: unit -&gt; int</div>
+<div class="fsdocs-tip" id="fs22">module Prop
+
+from FsCheck.FSharp<br /><em>&lt;summary&gt;
+Combinators to build properties, which define the property to be tested, with some
+convenience methods to investigate the generated arguments and any found counter-examples.
+&lt;/summary&gt;</em></div>
+<div class="fsdocs-tip" id="fs23">val label: l: string -&gt; (&#39;Testable -&gt; Property)<br /><em>&lt;summary&gt;
+Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
+&lt;/summary&gt;</em></div>
 <div class="fsdocs-tip" id="fs24">Object.ToString() : string</div>
-<div class="fsdocs-tip" id="fs25">val dec : Operation&lt;Counter,int&gt;</div>
-<div class="fsdocs-tip" id="fs26">override Operation.Pre : &#39;Model -&gt; bool</div>
-<div class="fsdocs-tip" id="fs27">member Counter.Dec : unit -&gt; int</div>
-<div class="fsdocs-tip" id="fs28">val create : (int -&gt; Setup&lt;Counter,int&gt;)</div>
-<div class="fsdocs-tip" id="fs29">val initialValue : int</div>
-<div class="fsdocs-tip" id="fs30">Multiple items<br />type Setup&lt;&#39;Actual,&#39;Model&gt; =<br />&#160;&#160;new : unit -&gt; Setup&lt;&#39;Actual,&#39;Model&gt;<br />&#160;&#160;abstract member Actual : unit -&gt; &#39;Actual<br />&#160;&#160;abstract member Model : unit -&gt; &#39;Model<br />&#160;&#160;override ToString : unit -&gt; string<br /><br />--------------------<br />new : unit -&gt; Setup&lt;&#39;Actual,&#39;Model&gt;</div>
-<div class="fsdocs-tip" id="fs31">val __ : Setup&lt;Counter,int&gt;</div>
-<div class="fsdocs-tip" id="fs32">abstract member Setup.Model : unit -&gt; &#39;Model</div>
-<div class="fsdocs-tip" id="fs33">Multiple items<br />type Machine&lt;&#39;Actual,&#39;Model&gt; =<br />&#160;&#160;new : maxNumberOfCommands:int -&gt; Machine&lt;&#39;Actual,&#39;Model&gt; + 1 overload<br />&#160;&#160;abstract member Next : &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;<br />&#160;&#160;abstract member ShrinkOperations : Operation&lt;&#39;Actual,&#39;Model&gt; list -&gt; seq&lt;Operation&lt;&#39;Actual,&#39;Model&gt; list&gt; + 1 overload<br />&#160;&#160;member MaxNumberOfCommands : int<br />&#160;&#160;abstract member Setup : Arbitrary&lt;Setup&lt;&#39;Actual,&#39;Model&gt;&gt;<br />&#160;&#160;override TearDown : TearDown&lt;&#39;Actual&gt;<br />&#160;&#160;abstract member TearDown : TearDown&lt;&#39;Actual&gt;<br /><br />--------------------<br />new : unit -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;<br />new : maxNumberOfCommands:int -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;</div>
-<div class="fsdocs-tip" id="fs34">Multiple items<br />module Gen<br /><br />from FsCheck.FSharp<br /><br />--------------------<br />type Gen&lt;&#39;T&gt; =<br />&#160;&#160;private | Gen of (int -&gt; Rnd -&gt; struct (&#39;T * Rnd))<br />&#160;&#160;&#160;&#160;interface IGen</div>
-<div class="fsdocs-tip" id="fs35">val choose : l:int * h:int -&gt; Gen&lt;int&gt;</div>
-<div class="fsdocs-tip" id="fs36">val map : f:(&#39;T -&gt; &#39;U) -&gt; Gen&lt;&#39;T&gt; -&gt; Gen&lt;&#39;U&gt;</div>
-<div class="fsdocs-tip" id="fs37">module Arb<br /><br />from FsCheck.FSharp</div>
-<div class="fsdocs-tip" id="fs38">val fromGen : gen:Gen&lt;&#39;Value&gt; -&gt; Arbitrary&lt;&#39;Value&gt;</div>
-<div class="fsdocs-tip" id="fs39">val __ : Machine&lt;Counter,int&gt;</div>
-<div class="fsdocs-tip" id="fs40">abstract member Machine.Next : &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;</div>
-<div class="fsdocs-tip" id="fs41">val elements : xs:seq&lt;&#39;T&gt; -&gt; Gen&lt;&#39;T&gt;</div>
-<div class="fsdocs-tip" id="fs42">type Check =<br />&#160;&#160;static member All : config:Config * test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member Method : config:Config * methodInfo:MethodInfo * ?target:obj -&gt; unit<br />&#160;&#160;static member One : config:Config * property:&#39;Testable -&gt; unit + 1 overload<br />&#160;&#160;static member Quick : property:&#39;Testable -&gt; unit + 1 overload<br />&#160;&#160;static member QuickAll : test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member QuickThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;static member QuickThrowOnFailureAll : test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member Verbose : property:&#39;Testable -&gt; unit + 1 overload<br />&#160;&#160;static member VerboseAll : test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member VerboseThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;...</div>
-<div class="fsdocs-tip" id="fs43">static member Check.Quick : property:&#39;Testable -&gt; unit<br />static member Check.Quick : name:string * property:&#39;Testable -&gt; unit</div>
-<div class="fsdocs-tip" id="fs44">module StateMachine<br /><br />from FsCheck.Experimental</div>
-<div class="fsdocs-tip" id="fs45">val toProperty : spec:Machine&lt;&#39;Actual,&#39;Model&gt; -&gt; Property</div>
+<div class="fsdocs-tip" id="fs25">val dec: Operation&lt;Counter,int&gt;</div>
+<div class="fsdocs-tip" id="fs26">override Operation.Pre: &#39;Model -&gt; bool</div>
+<div class="fsdocs-tip" id="fs27">member Counter.Dec: unit -&gt; int</div>
+<div class="fsdocs-tip" id="fs28">val create: initialValue: int -&gt; Setup&lt;Counter,int&gt;</div>
+<div class="fsdocs-tip" id="fs29">val initialValue: int</div>
+<div class="fsdocs-tip" id="fs30">Multiple items<br />type Setup&lt;&#39;Actual,&#39;Model&gt; =
+  new: unit -&gt; Setup&lt;&#39;Actual,&#39;Model&gt;
+  abstract Actual: unit -&gt; &#39;Actual
+  abstract Model: unit -&gt; &#39;Model
+  override ToString: unit -&gt; string<br /><br />--------------------<br />new: unit -&gt; Setup&lt;&#39;Actual,&#39;Model&gt;</div>
+<div class="fsdocs-tip" id="fs31">val __: Setup&lt;Counter,int&gt;</div>
+<div class="fsdocs-tip" id="fs32">abstract Setup.Model: unit -&gt; &#39;Model</div>
+<div class="fsdocs-tip" id="fs33">Multiple items<br />type Machine&lt;&#39;Actual,&#39;Model&gt; =
+  new: maxNumberOfCommands: int -&gt; Machine&lt;&#39;Actual,&#39;Model&gt; + 1 overload
+  abstract Next: &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;
+  abstract ShrinkOperations: Operation&lt;&#39;Actual,&#39;Model&gt; list -&gt; Operation&lt;&#39;Actual,&#39;Model&gt; list seq + 1 overload
+  member MaxNumberOfCommands: int with get
+  abstract Setup: Arbitrary&lt;Setup&lt;&#39;Actual,&#39;Model&gt;&gt; with get
+  override TearDown: TearDown&lt;&#39;Actual&gt; with get
+  abstract TearDown: TearDown&lt;&#39;Actual&gt; with get<br /><em>&lt;summary&gt;
+Defines the initial state for actual and model object, and allows to define the generator to use
+for the next state, based on the model.
+&lt;/summary&gt;</em><br /><br />--------------------<br />new: unit -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;<br />new: maxNumberOfCommands: int -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;</div>
+<div class="fsdocs-tip" id="fs34">Multiple items<br />module Gen
+
+from FsCheck.FSharp<br /><br />--------------------<br />type Gen&lt;&#39;T&gt; =
+  private | Gen of (int -&gt; Rnd -&gt; struct (&#39;T * Rnd))
+  interface IGen<br /><em>&lt;summary&gt;
+ Generator of a random value, based on a size parameter and a randomly generated int.
+&lt;/summary&gt;</em></div>
+<div class="fsdocs-tip" id="fs35">val choose: l: int * h: int -&gt; Gen&lt;int&gt;<br /><em>&lt;summary&gt;
+ Generates ints between l and h, inclusive.
+&lt;/summary&gt;</em></div>
+<div class="fsdocs-tip" id="fs36">val map: f: (&#39;T -&gt; &#39;U) -&gt; Gen&lt;&#39;T&gt; -&gt; Gen&lt;&#39;U&gt;<br /><em>&lt;summary&gt;
+ Create a new generator by applying f to each value in the given generator.
+&lt;/summary&gt;</em></div>
+<div class="fsdocs-tip" id="fs37">module Arb
+
+from FsCheck.FSharp</div>
+<div class="fsdocs-tip" id="fs38">val fromGen: gen: Gen&lt;&#39;Value&gt; -&gt; Arbitrary&lt;&#39;Value&gt;<br /><em>&lt;summary&gt;
+ Construct an Arbitrary instance from a generator.
+ Shrink is not supported for this type.
+&lt;/summary&gt;</em></div>
+<div class="fsdocs-tip" id="fs39">val __: Machine&lt;Counter,int&gt;</div>
+<div class="fsdocs-tip" id="fs40">abstract Machine.Next: &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;</div>
+<div class="fsdocs-tip" id="fs41">val elements: xs: &#39;T seq -&gt; Gen&lt;&#39;T&gt;<br /><em>&lt;summary&gt;
+Build a generator that randomly generates one of the values in the given non-empty, finite seq.
+&lt;/summary&gt;</em></div>
+<div class="fsdocs-tip" id="fs42">type Check =
+  static member All: config: Config * test: Type -&gt; unit + 1 overload
+  static member Method: config: Config * methodInfo: MethodInfo * ?target: obj -&gt; unit
+  static member One: config: Config * property: &#39;Testable -&gt; unit + 1 overload
+  static member Quick: property: &#39;Testable -&gt; unit + 1 overload
+  static member QuickAll: test: Type -&gt; unit + 1 overload
+  static member QuickThrowOnFailure: property: &#39;Testable -&gt; unit
+  static member QuickThrowOnFailureAll: test: Type -&gt; unit + 1 overload
+  static member Verbose: property: &#39;Testable -&gt; unit + 1 overload
+  static member VerboseAll: test: Type -&gt; unit + 1 overload
+  static member VerboseThrowOnFailure: property: &#39;Testable -&gt; unit
+  ...</div>
+<div class="fsdocs-tip" id="fs43">static member Check.Quick: property: &#39;Testable -&gt; unit<br />static member Check.Quick: name: string * property: &#39;Testable -&gt; unit</div>
+<div class="fsdocs-tip" id="fs44">module StateMachine
+
+from FsCheck.Experimental</div>
+<div class="fsdocs-tip" id="fs45">val toProperty: spec: Machine&lt;&#39;Actual,&#39;Model&gt; -&gt; Property<br /><em>&lt;summary&gt;
+Turn a machine specification into a property.
+&lt;/summary&gt;</em></div>
 
         </div>
 
@@ -365,4 +447,3 @@ during the test run and during shrinking, and relies on them not changing.</p>
 </body>
 
 </html>
-

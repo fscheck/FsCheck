@@ -1,84 +1,126 @@
-var lunrIndex, pagesIndex;
+import Fuse from "https://esm.sh/fuse.js@7.0.0";
 
-function endsWith(str, suffix) {
-    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+const searchBtn = document.querySelector("#search-btn");
+
+function hideSearchBtn() {
+    // Hide search icon if we can't search in the first place.
+    searchBtn.style.display = 'none';
 }
 
-// Initialize lunrjs using our generated index file
-function initLunr() {
-    if (!endsWith(fsdocs_search_baseurl,"/")){
-        fsdocs_search_baseurl = fsdocs_search_baseurl+'/'
+function debounce(mainFunction, delay) {
+    // Declare a variable called 'timer' to store the timer ID
+    let timer;
+
+    // Return an anonymous function that takes in any number of arguments
+    return function (...args) {
+        // Clear the previous timer to prevent the execution of 'mainFunction'
+        clearTimeout(timer);
+
+        // Set a new timer that will execute 'mainFunction' after the specified delay
+        timer = setTimeout(() => {
+            mainFunction(...args);
+        }, delay);
     };
+}
 
-    // First retrieve the index file
-    $.getJSON(fsdocs_search_baseurl +"index.json")
-        .done(function(index) {
-            pagesIndex = index;
-            // Set up lunrjs by declaring the fields we use
-            // Also provide their boost level for the ranking
-            lunrIndex = lunr(function() {
-                this.ref("uri");
-                this.field('title', {
-		    boost: 15
-                });
-                this.field('tags', {
-		    boost: 10
-                });
-                this.field("content", {
-		    boost: 5
-                });
-				
-                this.pipeline.remove(lunr.stemmer);
-                this.searchPipeline.remove(lunr.stemmer);
-				
-                // Feed lunr with each file and let lunr actually index them
-                pagesIndex.forEach(function(page) {
-		    this.add(page);
-                }, this);
-            })
+const root = document.documentElement.getAttribute("data-root");
+if (root && searchBtn) {
+    let fuse = null;
+    const searchIndexUrl = `${root}/index.json`;
+    fetch(searchIndexUrl, {})
+        .then(response => response.json())
+        .then(index => {
+            fuse = new Fuse(index, {
+                includeScore: true,
+                keys: ['uri', 'title', 'content', 'headings'],
+                includeMatches: true,
+                limit: 20,
+                ignoreLocation: true,
+                threshold: 0.6,
+                minMatchCharLength: 2,
+                ignoreFieldNorm: true,
+                shouldSort: true
+            });
         })
-        .fail(function(jqxhr, textStatus, error) {
-            var err = textStatus + ", " + error;
-            console.error("Error getting Hugo index file:", err);
-        });
-}
+        .catch(() => {
+            hideSearchBtn();
+        })
 
-/**
- * Trigger a search in lunr and transform the result
- *
- * @param  {String} query
- * @return {Array}  results
- */
-function search(queryTerm) {
-    // Find the item in our index corresponding to the lunr one to have more info
-    return lunrIndex.search(queryTerm+"^100"+" "+queryTerm+"*^10"+" "+"*"+queryTerm+"^10"+" "+queryTerm+"~2^1").map(function(result) {
-            return pagesIndex.filter(function(page) {
-                return page.uri === result.ref;
-            })[0];
-        });
-}
+    const searchDialog = document.querySelector("dialog");
+    const empty = document.querySelector("dialog .empty");
+    const resultsElement = document.querySelector("dialog ul");
+    const searchBox = document.querySelector("dialog input[type=search]");
 
-// Let's get started
-initLunr();
+    searchBtn.addEventListener("click", () => {
+        searchDialog.showModal();
+    })
 
-$( document ).ready(function() {
-    var searchList = new autoComplete({
-        /* selector for the search box element */
-        minChars: 1,
-        selector: $("#search-by").get(0),
-        /* source is the callback to perform the search */
-        source: function(term, response) {
-            response(search(term));
-        },
-        /* renderItem displays individual search results */
-        renderItem: function(item, search) {
-            search = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
-            return '<div class="autocomplete-suggestion" data-val="'+search+'" data-uri="' + item.uri + '">' + item.title.replace(re, "<b>$1</b>") + '</div>';
-        },
-        /* onSelect callback fires when a search suggestion is chosen */
-        onSelect: function(e, term, item) {
-            location.href = item.getAttribute('data-uri');
+    searchDialog.addEventListener("click", ev => {
+        if (ev.target.tagName === "DIALOG") {
+            searchBox.value = '';
+            searchDialog.close()
+        }
+    })
+
+    function searchAux(searchTerm) {
+        if (!fuse) return;
+
+        const results = fuse.search(searchTerm);
+        if (results.length === 0) {
+            clearResults();
+            empty.textContent = "No results were found";
+        } else {
+            if (location.hostname === 'localhost'){
+                console.table(results);
+            }
+
+            empty.style.display = 'none';
+            const newResultNodes =
+                results
+                    .map(result => {
+                        const item = result.item;
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+                        a.setAttribute("href", item.uri);
+                        const icon = document.createElement("iconify-icon");
+                        icon.setAttribute("width", "24");
+                        icon.setAttribute("height", "24");
+                        icon.setAttribute("icon", item.type === "content" ? "iconoir:page" : "bxs:file-doc")
+                        a.append(icon, item.title);
+                        li.appendChild(a);
+                        return li;
+                    });
+            resultsElement.replaceChildren(...newResultNodes);
+        }
+    }
+
+    const search = debounce(searchAux, 250);
+
+    function clearResults() {
+        empty.style.display = 'block';
+        resultsElement.replaceChildren();
+    }
+
+    searchBox.addEventListener('keyup', ev => {
+        ev.stopPropagation();
+        const searchTerm = ev.target.value;
+        if (!searchTerm) {
+            empty.textContent = "Type something to start searching.";
+            clearResults();
+        } else {
+            search(searchTerm);
         }
     });
-});
+
+    window.addEventListener('keyup', ev => {
+        if (ev.key === 'Escape' && searchDialog.open) {
+            searchDialog.close();
+        }
+
+        if (ev.key === '/' && !searchDialog.open) {
+            searchDialog.showModal();
+        }
+    })
+} else {
+    hideSearchBtn();
+}

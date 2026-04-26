@@ -26,6 +26,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
     <!-- END SEARCH BOX: this adds support for the search box -->
 
+    <style>
+        .fsdocs-tip { white-space: pre-line; }
+    </style>
+
 </head>
 
 <body>
@@ -34,7 +38,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
             <!-- BEGIN SEARCH BOX: this adds support for the search box -->
             <div id="header">
                 <div class="searchbox" id="fsdocs-searchbox">
@@ -85,24 +89,32 @@
         <hr />
         <div class="container" id="fsdocs-content">
             <div>
-  <h1>
+  <h2>
     ObjectMachine<'Actual> Type
-  </h1>
-  <p>
-    Namespace: 
-    <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental.html">
-      FsCheck.Experimental
-    </a>
-  </p>
-  <p>
-    Assembly: FsCheck.dll
-  </p>
-  <p>
-    Base Type: 
-    <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machine-2.html">Machine</a>&lt;<span>'Actual,&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-objectmachinemodel.html">ObjectMachineModel</a></span>&gt;</span></code>
-  </p>
+  </h2>
+  <dl class="fsdocs-metadata">
+    <dt>
+      Namespace: 
+      <a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental.html">
+        FsCheck.Experimental
+      </a>
+    </dt>
+    <dt>
+      Assembly: FsCheck.dll
+    </dt>
+    <dt>
+      Base Type: 
+      <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-machine-2.html">Machine</a>&lt;<span>'Actual,&#32;<a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-objectmachinemodel.html">ObjectMachineModel</a></span>&gt;</span></code>
+    </dt>
+  </dl>
   <div class="fsdocs-xmldoc">
-    
+    <div>
+      <div class="fsdocs-summary-contents">
+        <p class="fsdocs-summary">
+          
+        </p>
+      </div>
+    </div>
   </div>
   <div></div>
   <div></div>
@@ -122,23 +134,24 @@
           </td>
           <td class="fsdocs-member-list-header">
             Description
+            <fsdocs-details-toggle></fsdocs-details-toggle>
           </td>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td class="fsdocs-member-name">
+          <td class="fsdocs-member-usage">
             <div>
-              <code onmouseout="hideTip(event, '287', 287)" onmouseover="showTip(event, '287', 287)">
+              <code onmouseout="hideTip(event, '297', 297)" onmouseover="showTip(event, '297', 297)">
                 <p>
-                  <a id="( .ctor )">
-                    <a href="#( .ctor )">
+                  <a id="``.ctor``">
+                    <a href="#``.ctor``">
                       <code><span>ObjectMachine<span><span>(<span>arbMap,&#32;?methodFilter</span>)</span></span></span></code>
                     </a>
                   </a>
                 </p>
               </code>
-              <div class="fsdocs-tip" id="287">
+              <div class="fsdocs-tip" id="297">
                 <div class="member-tooltip">
                   Full Usage: 
                   <code><span>ObjectMachine<span><span>(<span>arbMap,&#32;?methodFilter</span>)</span></span></span></code>
@@ -159,7 +172,7 @@
                         ?methodFilter
                       </b>
                       :
-                      <code><span><a href="https://docs.microsoft.com/dotnet/api/system.reflection.methodinfo">MethodInfo</a>&#32;->&#32;bool</span></code>
+                      <code><span><a href="https://learn.microsoft.com/dotnet/api/system.reflection.methodinfo">MethodInfo</a>&#32;->&#32;bool</span></code>
                     </span>
                     <br/>
                   </ul>
@@ -173,41 +186,41 @@
               </div>
             </div>
           </td>
-          <td class="fsdocs-xmldoc">
-            <p class="fsdocs-summary">
-              <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L166-166" class="fsdocs-source-link">
-                <img src="https://fscheck.github.io/FsCheck/content/img/github.png" class="normal"/>
-                <img src="https://fscheck.github.io/FsCheck/content/img/github-blue.png" class="hover"/>
-              </a>
-              
-            </p>
-            <dl class="fsdocs-params">
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  arbMap
-                </span>
-                :
-                <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-              <dt class="fsdocs-param">
-                <span class="fsdocs-param-name">
-                  ?methodFilter
-                </span>
-                :
-                <code><span><a href="https://docs.microsoft.com/dotnet/api/system.reflection.methodinfo">MethodInfo</a>&#32;->&#32;bool</span></code>
-              </dt>
-              <dd class="fsdocs-param-docs"></dd>
-            </dl>
-            <dl class="fsdocs-returns">
-              <dt>
-                <span class="fsdocs-return-name">
-                  Returns:
-                </span>
-                <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-objectmachine-1.html">ObjectMachine</a>&lt;'Actual&gt;</span></code>
-              </dt>
-              <dd class="fsdocs-return-docs"></dd>
-            </dl>
+          <td class="fsdocs-member-xmldoc">
+            <div class="fsdocs-member-xmldoc-column">
+              <div class="icon-button-row">
+                <a href="https://github.com/Fscheck/fscheck/tree/master/src/FsCheck/StateMachine.fs#L166-166" class="fsdocs-source-link" title="Source on GitHub">
+                  <iconify-icon icon="ri:github-fill" height="24" width="24"></iconify-icon>
+                </a>
+              </div>
+              <dl class="fsdocs-params">
+                <dt class="fsdocs-param">
+                  <span class="fsdocs-param-name">
+                    arbMap
+                  </span>
+                  :
+                  <code><a href="https://fscheck.github.io/FsCheck/reference/fscheck-iarbmap.html">IArbMap</a></code>
+                </dt>
+                <dd class="fsdocs-param-docs"></dd>
+                <dt class="fsdocs-param">
+                  <span class="fsdocs-param-name">
+                    ?methodFilter
+                  </span>
+                  :
+                  <code><span><a href="https://learn.microsoft.com/dotnet/api/system.reflection.methodinfo">MethodInfo</a>&#32;->&#32;bool</span></code>
+                </dt>
+                <dd class="fsdocs-param-docs"></dd>
+              </dl>
+              <dl class="fsdocs-returns">
+                <dt>
+                  <span class="fsdocs-return-name">
+                    Returns: 
+                  </span>
+                  <code><span><a href="https://fscheck.github.io/FsCheck/reference/fscheck-experimental-objectmachine-1.html">ObjectMachine</a>&lt;'Actual&gt;</span></code>
+                </dt>
+                <dd class="fsdocs-return-docs"></dd>
+              </dl>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -230,4 +243,3 @@
 </body>
 
 </html>
-

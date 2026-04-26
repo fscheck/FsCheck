@@ -27,6 +27,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.css" />
     <!-- END SEARCH BOX: this adds support for the search box -->
 
+    <style>
+        .fsdocs-tip { white-space: pre-line; }
+    </style>
+
 </head>
 
 <body>
@@ -35,7 +39,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="https://fscheck.github.io/FsCheck/img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
+            <a href="https://fscheck.github.io/FsCheck/"><img id="fsdocs-logo" src="img/logo.png" alt="FsCheck logo - an inverted A, the mathematical symbol for forall." style="width:150px;margin:10px" /></a>
             <!-- BEGIN SEARCH BOX: this adds support for the search box -->
             <div id="header">
                 <div class="searchbox" id="fsdocs-searchbox">
@@ -113,10 +117,10 @@ Prop.ForAll((Func&lt;<span class="k">int</span>[], <span class="k">bool</span>&g
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 15)" onmouseover="showTip(event, 'fs10', 15)" class="fn">revIsOrig</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs3', 16)" onmouseover="showTip(event, 'fs3', 16)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 17)" onmouseover="showTip(event, 'fs4', 17)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 18)" onmouseover="showTip(event, 'fs5', 18)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 20)" onmouseover="showTip(event, 'fs7', 20)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs3', 21)" onmouseover="showTip(event, 'fs3', 21)" class="fn">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 22)" onmouseover="showTip(event, 'fs3', 22)" class="fn">xs</span>
 <span onmouseout="hideTip(event, 'fs8', 23)" onmouseover="showTip(event, 'fs8', 23)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 24)" onmouseover="showTip(event, 'fs9', 24)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs10', 25)" onmouseover="showTip(event, 'fs10', 25)" class="fn">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 2 tests (1 shrink) (5709466752295455875,12739451653173662003)
-Last step was invoked with size of 3 and seed of (13767088983123318444,5539025663973166079):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (10009980987080259767,5705867303905414105). 
+Last step was invoked with size of 2 and seed of (17816661767983404309,18345234917098953595):
 Original:
-[-1; 0]
+[2; 0]
 Shrunk:
 [1; 0]
 with exception:
@@ -144,11 +148,11 @@ To see this error, ask FsCheck to generate lists of floats:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 26)" onmouseover="showTip(event, 'fs11', 26)" class="fn">revRevIsOrigFloat</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs12', 27)" onmouseover="showTip(event, 'fs12', 27)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 28)" onmouseover="showTip(event, 'fs4', 28)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs13', 29)" onmouseover="showTip(event, 'fs13', 29)" class="vt">float</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 30)" onmouseover="showTip(event, 'fs6', 30)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 31)" onmouseover="showTip(event, 'fs7', 31)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 32)" onmouseover="showTip(event, 'fs6', 32)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 33)" onmouseover="showTip(event, 'fs7', 33)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs12', 34)" onmouseover="showTip(event, 'fs12', 34)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 35)" onmouseover="showTip(event, 'fs12', 35)" class="fn">xs</span>
 <span onmouseout="hideTip(event, 'fs8', 36)" onmouseover="showTip(event, 'fs8', 36)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 37)" onmouseover="showTip(event, 'fs9', 37)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs11', 38)" onmouseover="showTip(event, 'fs11', 38)" class="fn">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 15 tests (10 shrinks) (17587490294502809239,9264174851013238517)
-Last step was invoked with size of 16 and seed of (13545071279912755977,5327736373747774849):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 8 tests (3 shrinks) (4226938812845520598,18142044689842425553). 
+Last step was invoked with size of 9 and seed of (15656813757620074793,3398733996589857897).
+Replay directly at failing step with (15656813757620074793,3398733996589857897,9).
 Original:
-[-3.732020178; -0.0; -0.0; -0.0; -1.797693135e+308; 4.940656458e-324; 0.0;
- -0.4757469122; nan; -0.0; 0.0]
+[nan; -0.0; -0.0; -0.0]
 Shrunk:
 [nan]
 with exception:
@@ -197,9 +201,9 @@ the unit test above so it can be run from xUnit.net:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="k">global</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs16', 49)" onmouseover="showTip(event, 'fs16', 49)" class="id">Xunit</span>
 
 <span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs17', 50)" onmouseover="showTip(event, 'fs17', 50)" class="rt">Fact</span><span class="pn">&gt;]</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 51)" onmouseover="showTip(event, 'fs18', 51)" class="fn">``Reverse of reverse of a list is the original list``</span> <span class="pn">(</span><span class="pn">)</span> <span class="o">=</span>
-  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 52)" onmouseover="showTip(event, 'fs19', 52)" class="fn">revRevIsOrig</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs3', 53)" onmouseover="showTip(event, 'fs3', 53)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 54)" onmouseover="showTip(event, 'fs4', 54)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 55)" onmouseover="showTip(event, 'fs5', 55)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 56)" onmouseover="showTip(event, 'fs6', 56)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 57)" onmouseover="showTip(event, 'fs7', 57)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 58)" onmouseover="showTip(event, 'fs6', 58)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 59)" onmouseover="showTip(event, 'fs7', 59)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs3', 60)" onmouseover="showTip(event, 'fs3', 60)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 61)" onmouseover="showTip(event, 'fs3', 61)" class="fn">xs</span>
-  <span onmouseout="hideTip(event, 'fs8', 62)" onmouseover="showTip(event, 'fs8', 62)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs20', 63)" onmouseover="showTip(event, 'fs20', 63)" class="id">QuickThrowOnFailure</span> <span onmouseout="hideTip(event, 'fs19', 64)" onmouseover="showTip(event, 'fs19', 64)" class="fn">revRevIsOrig</span>
+<span class="k">let</span> <span class="fn">``Reverse of reverse of a list is the original list``</span> <span class="pn">(</span><span class="pn">)</span> <span class="o">=</span>
+  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs2', 51)" onmouseover="showTip(event, 'fs2', 51)" class="fn">revRevIsOrig</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs3', 52)" onmouseover="showTip(event, 'fs3', 52)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 53)" onmouseover="showTip(event, 'fs4', 53)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 54)" onmouseover="showTip(event, 'fs5', 54)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 55)" onmouseover="showTip(event, 'fs6', 55)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 56)" onmouseover="showTip(event, 'fs7', 56)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 57)" onmouseover="showTip(event, 'fs6', 57)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 58)" onmouseover="showTip(event, 'fs7', 58)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs3', 59)" onmouseover="showTip(event, 'fs3', 59)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 60)" onmouseover="showTip(event, 'fs3', 60)" class="fn">xs</span>
+  <span onmouseout="hideTip(event, 'fs8', 61)" onmouseover="showTip(event, 'fs8', 61)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs18', 62)" onmouseover="showTip(event, 'fs18', 62)" class="id">QuickThrowOnFailure</span> <span onmouseout="hideTip(event, 'fs2', 63)" onmouseover="showTip(event, 'fs2', 63)" class="fn">revRevIsOrig</span>
   
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">[Fact]
@@ -214,11 +218,11 @@ as above.</p>
 <h3><a name="Using-FsCheck-with-xUnit-net-using-the-plugin" class="anchor" href="#Using-FsCheck-with-xUnit-net-using-the-plugin">Using FsCheck with xUnit.net using the plugin</a></h3>
 <p>xUnit.net is "blessed" with an FsCheck plugin. To use it, install the FsCheck.Xunit NuGet package. The test above can now
 be written more tersely as follows:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 65)" onmouseover="showTip(event, 'fs1', 65)" class="id">FsCheck</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 66)" onmouseover="showTip(event, 'fs21', 66)" class="id">Xunit</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 64)" onmouseover="showTip(event, 'fs1', 64)" class="id">FsCheck</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs19', 65)" onmouseover="showTip(event, 'fs19', 65)" class="id">Xunit</span>
 
-<span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs22', 67)" onmouseover="showTip(event, 'fs22', 67)" class="rt">Property</span><span class="pn">&gt;]</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs23', 68)" onmouseover="showTip(event, 'fs23', 68)" class="fn">``Reverse of reverse of a list is the original list ``</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs3', 69)" onmouseover="showTip(event, 'fs3', 69)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 70)" onmouseover="showTip(event, 'fs4', 70)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 71)" onmouseover="showTip(event, 'fs5', 71)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span>
-  <span onmouseout="hideTip(event, 'fs6', 72)" onmouseover="showTip(event, 'fs6', 72)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 73)" onmouseover="showTip(event, 'fs7', 73)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 74)" onmouseover="showTip(event, 'fs6', 74)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 75)" onmouseover="showTip(event, 'fs7', 75)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs3', 76)" onmouseover="showTip(event, 'fs3', 76)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 77)" onmouseover="showTip(event, 'fs3', 77)" class="fn">xs</span>
+<span class="pn">[&lt;</span><span onmouseout="hideTip(event, 'fs20', 66)" onmouseover="showTip(event, 'fs20', 66)" class="rt">Property</span><span class="pn">&gt;]</span>
+<span class="k">let</span> <span class="fn">``Reverse of reverse of a list is the original list ``</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs3', 67)" onmouseover="showTip(event, 'fs3', 67)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 68)" onmouseover="showTip(event, 'fs4', 68)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 69)" onmouseover="showTip(event, 'fs5', 69)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span>
+  <span onmouseout="hideTip(event, 'fs6', 70)" onmouseover="showTip(event, 'fs6', 70)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 71)" onmouseover="showTip(event, 'fs7', 71)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 72)" onmouseover="showTip(event, 'fs6', 72)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 73)" onmouseover="showTip(event, 'fs7', 73)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs3', 74)" onmouseover="showTip(event, 'fs3', 74)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 75)" onmouseover="showTip(event, 'fs3', 75)" class="fn">xs</span>
   
 </code></pre>
 <p>xUnit now shows the test similarly to a regular test, and is able to run it directly.</p>
@@ -226,28 +230,77 @@ be written more tersely as follows:</p>
 see <a href="RunningTests.html">Running Tests</a>.</p>
 
             <div class="fsdocs-tip" id="fs1">namespace FsCheck</div>
-<div class="fsdocs-tip" id="fs2">val revRevIsOrig : xs:int list -&gt; bool</div>
-<div class="fsdocs-tip" id="fs3">val xs : int list</div>
+<div class="fsdocs-tip" id="fs2">val revRevIsOrig: xs: int list -&gt; bool</div>
+<div class="fsdocs-tip" id="fs3">val xs: int list</div>
 <div class="fsdocs-tip" id="fs4">type &#39;T list = List&lt;&#39;T&gt;</div>
-<div class="fsdocs-tip" id="fs5">Multiple items<br />val int : value:&#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />[&lt;Struct&gt;]<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; =<br />&#160;&#160;int</div>
-<div class="fsdocs-tip" id="fs6">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyList&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetReverseIndex : rank:int * offset:int -&gt; int<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;...</div>
-<div class="fsdocs-tip" id="fs7">val rev : list:&#39;T list -&gt; &#39;T list</div>
-<div class="fsdocs-tip" id="fs8">type Check =<br />&#160;&#160;static member All : config:Config * test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member Method : config:Config * methodInfo:MethodInfo * ?target:obj -&gt; unit<br />&#160;&#160;static member One : config:Config * property:&#39;Testable -&gt; unit + 1 overload<br />&#160;&#160;static member Quick : property:&#39;Testable -&gt; unit + 1 overload<br />&#160;&#160;static member QuickAll : test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member QuickThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;static member QuickThrowOnFailureAll : test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member Verbose : property:&#39;Testable -&gt; unit + 1 overload<br />&#160;&#160;static member VerboseAll : test:Type -&gt; unit + 1 overload<br />&#160;&#160;static member VerboseThrowOnFailure : property:&#39;Testable -&gt; unit<br />&#160;&#160;...</div>
-<div class="fsdocs-tip" id="fs9">static member Check.Quick : property:&#39;Testable -&gt; unit<br />static member Check.Quick : name:string * property:&#39;Testable -&gt; unit</div>
-<div class="fsdocs-tip" id="fs10">val revIsOrig : xs:int list -&gt; bool</div>
-<div class="fsdocs-tip" id="fs11">val revRevIsOrigFloat : xs:float list -&gt; bool</div>
-<div class="fsdocs-tip" id="fs12">val xs : float list</div>
-<div class="fsdocs-tip" id="fs13">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />--------------------<br />[&lt;Struct&gt;]<br />type float = System.Double<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; =<br />&#160;&#160;float</div>
-<div class="fsdocs-tip" id="fs14">val config : obj</div>
-<div class="fsdocs-tip" id="fs15">val properties : obj</div>
+<div class="fsdocs-tip" id="fs5">Multiple items<br />val int: value: &#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; =
+  int</div>
+<div class="fsdocs-tip" id="fs6">Multiple items<br />module List
+
+from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =
+  | op_Nil
+  | op_ColonColon of Head: &#39;T * Tail: &#39;T list
+  interface IReadOnlyList&lt;&#39;T&gt;
+  interface IReadOnlyCollection&lt;&#39;T&gt;
+  interface IEnumerable
+  interface IEnumerable&lt;&#39;T&gt;
+  member GetReverseIndex: rank: int * offset: int -&gt; int
+  member GetSlice: startIndex: int option * endIndex: int option -&gt; &#39;T list
+  static member Cons: head: &#39;T * tail: &#39;T list -&gt; &#39;T list
+  member Head: &#39;T with get
+  member IsEmpty: bool with get
+  member Item: index: int -&gt; &#39;T with get
+  ...</div>
+<div class="fsdocs-tip" id="fs7">val rev: list: &#39;T list -&gt; &#39;T list</div>
+<div class="fsdocs-tip" id="fs8">type Check =
+  static member All: config: Config * test: Type -&gt; unit + 1 overload
+  static member Method: config: Config * methodInfo: MethodInfo * ?target: obj -&gt; unit
+  static member One: config: Config * property: &#39;Testable -&gt; unit + 1 overload
+  static member Quick: property: &#39;Testable -&gt; unit + 1 overload
+  static member QuickAll: test: Type -&gt; unit + 1 overload
+  static member QuickThrowOnFailure: property: &#39;Testable -&gt; unit
+  static member QuickThrowOnFailureAll: test: Type -&gt; unit + 1 overload
+  static member Verbose: property: &#39;Testable -&gt; unit + 1 overload
+  static member VerboseAll: test: Type -&gt; unit + 1 overload
+  static member VerboseThrowOnFailure: property: &#39;Testable -&gt; unit
+  ...</div>
+<div class="fsdocs-tip" id="fs9">static member Check.Quick: property: &#39;Testable -&gt; unit<br />static member Check.Quick: name: string * property: &#39;Testable -&gt; unit</div>
+<div class="fsdocs-tip" id="fs10">val revIsOrig: xs: int list -&gt; bool</div>
+<div class="fsdocs-tip" id="fs11">val revRevIsOrigFloat: xs: float list -&gt; bool</div>
+<div class="fsdocs-tip" id="fs12">val xs: float list</div>
+<div class="fsdocs-tip" id="fs13">Multiple items<br />val float: value: &#39;T -&gt; float (requires member op_Explicit)<br /><br />--------------------<br />type float = System.Double<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; =
+  float</div>
+<div class="fsdocs-tip" id="fs14">val config: obj</div>
+<div class="fsdocs-tip" id="fs15">val properties: obj</div>
 <div class="fsdocs-tip" id="fs16">Multiple items<br />namespace FsCheck.Xunit<br /><br />--------------------<br />namespace Xunit</div>
-<div class="fsdocs-tip" id="fs17">Multiple items<br />type FactAttribute =<br />&#160;&#160;inherit Attribute<br />&#160;&#160;new : unit -&gt; unit<br />&#160;&#160;val ``&lt;DisplayName&gt;k__BackingField`` : string<br />&#160;&#160;val ``&lt;Skip&gt;k__BackingField`` : string<br />&#160;&#160;val ``&lt;Timeout&gt;k__BackingField`` : int<br />&#160;&#160;member DisplayName : string<br />&#160;&#160;member Skip : string<br />&#160;&#160;member Timeout : int<br /><br />--------------------<br />FactAttribute() : FactAttribute</div>
-<div class="fsdocs-tip" id="fs18">val ( Reverse of reverse of a list is the original list ) : unit -&gt; unit</div>
-<div class="fsdocs-tip" id="fs19">val revRevIsOrig : (int list -&gt; bool)</div>
-<div class="fsdocs-tip" id="fs20">static member Check.QuickThrowOnFailure : property:&#39;Testable -&gt; unit</div>
-<div class="fsdocs-tip" id="fs21">namespace FsCheck.Xunit</div>
-<div class="fsdocs-tip" id="fs22">Multiple items<br />type Property =<br />&#160;&#160;private | Property of (IArbMap -&gt; Gen&lt;Shrink&lt;ResultContainer&gt;&gt;)<br />&#160;&#160;&#160;&#160;static member private GetGen : arbMap:IArbMap -&gt; Property -&gt; Gen&lt;Shrink&lt;ResultContainer&gt;&gt;<br /><br />--------------------<br />type PropertyAttribute =<br />&#160;&#160;inherit FactAttribute<br />&#160;&#160;new : unit -&gt; PropertyAttribute<br />&#160;&#160;member Arbitrary : Type []<br />&#160;&#160;member private Config : PropertyConfig<br />&#160;&#160;member EndSize : int<br />&#160;&#160;member MaxRejected : int<br />&#160;&#160;member MaxTest : int<br />&#160;&#160;member Parallelism : int<br />&#160;&#160;member QuietOnSuccess : bool<br />&#160;&#160;member Replay : string<br />&#160;&#160;...<br /><br />--------------------<br />new : unit -&gt; PropertyAttribute</div>
-<div class="fsdocs-tip" id="fs23">val ( Reverse of reverse of a list is the original list  ) : xs:int list -&gt; bool</div>
+<div class="fsdocs-tip" id="fs17">Multiple items<br />type FactAttribute =
+  inherit Attribute
+  new: unit -&gt; unit
+  member DisplayName: string
+  member Skip: string
+  member Timeout: int<br /><em>&lt;summary&gt;
+            Attribute that is applied to a method to indicate that it is a fact that should be run
+            by the test runner. It can also be extended to support a customized definition of a
+            test method.
+            &lt;/summary&gt;</em><br /><br />--------------------<br />FactAttribute() : FactAttribute</div>
+<div class="fsdocs-tip" id="fs18">static member Check.QuickThrowOnFailure: property: &#39;Testable -&gt; unit</div>
+<div class="fsdocs-tip" id="fs19">namespace FsCheck.Xunit</div>
+<div class="fsdocs-tip" id="fs20">Multiple items<br />type Property = private | Property of (IArbMap -&gt; Gen&lt;Shrink&lt;ResultContainer&gt;&gt;)<br /><em>&lt;summary&gt;
+A Property can be checked by FsCheck.
+&lt;/summary&gt;</em><br /><br />--------------------<br />type PropertyAttribute =
+  inherit FactAttribute
+  new: unit -&gt; PropertyAttribute
+  member Arbitrary: Type array with get, set
+  member EndSize: int with get, set
+  member MaxRejected: int with get, set
+  member MaxTest: int with get, set
+  member Parallelism: int with get, set
+  member QuietOnSuccess: bool with get, set
+  member Replay: string with get, set
+  member StartSize: int with get, set
+  ...<br /><em>&lt;summary&gt;
+Run this method as an FsCheck test.
+&lt;/summary&gt;</em><br /><br />--------------------<br />new: unit -&gt; PropertyAttribute</div>
 
         </div>
 
@@ -262,4 +315,3 @@ see <a href="RunningTests.html">Running Tests</a>.</p>
 </body>
 
 </html>
-
