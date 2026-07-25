@@ -15,7 +15,7 @@ you can [find on NuGet](https://www.nuget.org/packages?q=fscheck).
 Warning: Documentation
 ----------------------
 
-The Documentation section below was written for version 2.x, but 3.x is the version that is currently maintained. Only v3 will get new features and fixes, even though it's in pre-release.
+The Documentation section below was written for version 2.x, but 3.x is the version that is currently maintained. Only v3 will get new features and fixes.
 
 This leaves us in the unfortunate position that some documentation is out of date and incomplete. One exception is the API docs. They are generated from the 3.x code and are accurate - if in doubt, believe the API docs.
 
