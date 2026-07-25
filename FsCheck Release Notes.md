@@ -1,3 +1,7 @@
+## 3.3.4 - 25 July 2026
+
+* Fixed a bug in C# record type generation.
+
 ## 3.3.3 - 26 April 2026
 
 * Add Gen.pick and Gen.tryPick functions.
