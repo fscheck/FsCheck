@@ -749,9 +749,12 @@ module Arbitrary =
 
     [<Fact>]
     let ``should derive generator for csharp record types``() =
-        generate<CSharp.RgbColor> |> sample 10 |> ignore
-        generate<CSharp.CsRecordExample1> |> sample 10 |> ignore
-        generate<CSharp.CsRecordExample2> |> sample 10 |> ignore
+        let s = generate<CSharp.RgbColor> |> sample 10
+        test <@ s |> Seq.forall (fun rgb -> let b = rgb.Blue in true) @>
+        let s = generate<CSharp.CsRecordExample1> |> sample 10 
+        test <@ s |> Seq.forall (fun r -> let b = r.C in true) @>
+        let s = generate<CSharp.CsRecordExample2> |> sample 10
+        test <@ s |> Seq.forall (fun r -> let b = r.Ex1 in true) @>
 
         let persons = generate<CSharp.Person> |> sample 10 
         test <@ persons |> Seq.exists(fun p -> not (System.String.IsNullOrEmpty(p.FirstName))) @>
@@ -762,6 +765,12 @@ module Arbitrary =
 
         let mixed = generate<CSharp.CtorAndProps> |> sample 10
         test <@ mixed |> Seq.exists(fun p -> p.B <> 0) @>
+
+    [<Fact>]
+    let ``should derive generator for csharp positional record subtype``() =
+        let sample = generate<CSharp.PositionalSubRecord> |> sample 10
+        test <@ sample |> Seq.forall(fun p -> let s = (p :> CSharp.AbstractPositionalRecord).S in true) @>
+
 
     [<Fact>]
     let ``should derive generator for csharp struct record types`` () =
@@ -793,6 +802,14 @@ module Arbitrary =
         |> Seq.forall (fun shrunkv -> 
             shrunkv <> value
             && (abs shrunkv.A <= abs value.A || abs shrunkv.B <= abs value.B))
+
+    [<Property>]
+    let ``Derived generator for c# record types shrinks - PositionalSubRecord`` (value: CSharp.PositionalSubRecord) =
+        let shrunk = shrink value
+        shrunk
+        |> Seq.forall (fun shrunkv -> 
+            shrunkv <> value
+            && (shrunkv.S <= value.S || abs shrunkv.I <= abs value.I))
 
 
     [<Fact>]
