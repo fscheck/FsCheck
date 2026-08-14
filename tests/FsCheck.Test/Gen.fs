@@ -16,6 +16,12 @@ module Gen =
                 |> sample 10
                 |> Seq.forall (fun v -> l <= v && v <= h) )
     
+    [<Fact>]
+    let ``choose returns the same value when bounds are equal``() =
+        let value = 42
+        let result = Gen.choose (value, value) |> sample 10 |> Seq.toList
+        assertTrue (result |> List.forall ((=) value))
+    
     [<Property>] 
     let Elements (l:list<char>) =
         not l.IsEmpty ==> 
