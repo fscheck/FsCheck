@@ -1,3 +1,7 @@
+## 3.4.0 - To be released
+
+* Updated xunit.v3 to version 4.x. (by Simon Baynes)
+
 ## 3.3.4 - 25 July 2026
 
 * Fixed a bug in C# record type generation.
