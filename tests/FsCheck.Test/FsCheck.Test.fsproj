@@ -42,6 +42,5 @@
         <PackageReference Include="Unquote" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="System.Collections.Immutable" />
-        <PackageReference Include="NUnit3TestAdapter" />
     </ItemGroup>
 </Project>
