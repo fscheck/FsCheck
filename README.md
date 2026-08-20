@@ -13,29 +13,12 @@ FsCheck's generator combinators can be used in any testing framework to easily g
 
 * [FsCheck](http://nuget.org/List/Packages/FsCheck)
 * [FsCheck.Xunit](http://nuget.org/List/Packages/FsCheck.Xunit)
+* [FsCheck.Xunit.v3](https://www.nuget.org/packages/FsCheck.Xunit.v3)
 * [FsCheck.Nunit](http://www.nuget.org/packages/FsCheck.Nunit/)
 
 FsCheck follows [Semantic Versioning 2.0.0](http://semver.org/spec/v2.0.0.html), except for the API exposed in `FsCheck.Experimental` which is subject to change at any time.
 
-All AppVeyor builds are available using the NuGet feed: <https://ci.appveyor.com/nuget/fscheck>
-
-If using Paket, add the source at the top of `paket.dependencies`.
-
-```paket
-source https://www.nuget.org/api/v2
-source https://ci.appveyor.com/nuget/fscheck
-```
-
-See the build history for a list of available versions: <https://ci.appveyor.com/project/kurtschelfthout/fscheck/history>
-
-Here are some options for specifying the dependency:
-
-```paket
-nuget FsCheck
-nuget FsCheck prerelease
-nuget FsCheck 2.0.4
-nuget FsCheck 2.0.5-b247
-```
+All AppVeyor CI builds are available using the [AppVeyor NuGet feed](https://ci.appveyor.com/nuget/fscheck). See the [build history](https://ci.appveyor.com/project/kurtschelfthout/fscheck/history) for a list of available versions.
 
 # Documentation
 
