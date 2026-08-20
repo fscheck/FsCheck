@@ -100,13 +100,13 @@ module internal PropertyConfig =
               .WithRunner(XunitRunner())
               .WithEvery(
                   if propertyConfig.Verbose |> Option.exists id then 
-                      fun n args -> output.WriteLine (Config.Verbose.Every n args); ""
+                      fun n args -> Helpers.safeWriteLine output (Config.Verbose.Every n args); ""
                   else 
                       Config.Quick.Every
               )
               .WithEveryShrink(
                   if propertyConfig.Verbose |> Option.exists id then 
-                      fun args -> output.WriteLine (Config.Verbose.EveryShrink args); ""
+                      fun args -> Helpers.safeWriteLine output (Config.Verbose.EveryShrink args); ""
                   else 
                       Config.Quick.EveryShrink
               )

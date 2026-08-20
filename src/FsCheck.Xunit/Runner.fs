@@ -1,6 +1,7 @@
 ﻿namespace FsCheck.Xunit
 
 open FsCheck
+open System
    
 /// A runner for FsCheck (i.e. that you can use as Config.Runner) which outputs
 /// to Xunit's given ITestOutputHelper.
@@ -8,13 +9,13 @@ open FsCheck
 type TestOutputRunner(output: Xunit.Abstractions.ITestOutputHelper) =
     interface IRunner with
         member _.OnStartFixture t =
-            output.WriteLine (Runner.onStartFixtureToString t)
+            Helpers.safeWriteLine output (Runner.onStartFixtureToString t)
         member _.OnArguments (ntest, args, every) =
-            output.WriteLine (every ntest args)
+            Helpers.safeWriteLine output (every ntest args)
         member _.OnShrink(args, everyShrink) =
-            output.WriteLine (everyShrink args)
+            Helpers.safeWriteLine output (everyShrink args)
         member _.OnFinished(name,testResult) =
             let resultText = Runner.onFinishedToString name testResult
             match testResult with
-            | TestResult.Passed _ -> resultText |> output.WriteLine
+            | TestResult.Passed _ -> resultText |> Helpers.safeWriteLine output
             | _ -> failwithf "%s" resultText
