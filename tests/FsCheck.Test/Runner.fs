@@ -1,5 +1,6 @@
 ﻿namespace FsCheck.Test
 
+open global.Xunit
 open FsCheck
 open FsCheck.FSharp
 
@@ -19,7 +20,6 @@ module RunnerHelper =
 
 module RunnerInternals =
     open System
-    open global.Xunit
     open System.Linq
     open RunnerHelper
 
@@ -173,7 +173,6 @@ module RunnerInternals =
 module Runner =
     open RunnerHelper
     open System
-    open global.Xunit
     open FsCheck.Xunit
     open System.Linq
     open Swensen.Unquote
@@ -277,24 +276,14 @@ module Runner =
         test <@ (Seq.head same).Contains "(123,654321)" @>
 
     
-    //type Integer = Integer of int
     type UInteger = UInteger of uint32
         
-    //type IntegerGen =
-    //    static member Integer() =
-    //        {new Arbitrary<Integer>() with
-    //            override x.Generator = Arb.generate<int> Arb.defaults |> Gen.map Integer
-    //            override x.Shrinker t = Seq.empty }
-
     type UIntegerGen =
             static member UInteger() =
                 {new Arbitrary<UInteger>() with
                     override x.Generator = ArbMap.defaults.ArbFor<uint32>().Generator |> Gen.map UInteger
                     override x.Shrinker t = Seq.empty }
     
-    //Arb.register<UIntegerGen> ()
-    //Arb.register<IntegerGen> ()
-
     type ProbeRunner () =
         let mutable result = None
         member __.TestData () = match result.Value with
@@ -426,7 +415,6 @@ module Runner =
 
 module BugReproIssue195 =
 
-    open FsCheck
     open FsCheck.Xunit
     open System
 
@@ -450,9 +438,6 @@ module BugReproIssue195 =
 // Each successful shrink caused the stackframe to grow by 2-3 frames, causing a stackoverflow.
 module BugReproIssue344 =
     
-    open FsCheck
-    open global.Xunit
-
     open System.Diagnostics
     open System.Threading
 
@@ -498,8 +483,6 @@ module BugReproIssue344 =
 
 module Override =
     open System
-    open FsCheck
-    open global.Xunit
 
     type Calc = { Float: float }
 
@@ -514,51 +497,10 @@ module Override =
         Check.One(Config.QuickThrowOnFailure.WithArbitrary([ typeof<Arbitraries> ]),
              fun (calc:Calc) -> not (Double.IsNaN calc.Float || Double.IsInfinity calc.Float || calc.Float = Double.Epsilon || calc.Float = Double.MinValue || calc.Float = Double.MaxValue))
 
-// see https://github.com/fscheck/FsCheck/issues/514
-// Dispose not called
-module BugReproIssue514 =
-    open System
-    open System.Threading
-    open FsCheck
-    open FsCheck.Xunit
-    open global.Xunit
-    open Xunit.Sdk
-
-    type TestMessageBus() =
-        interface IMessageBus with
-            member _.QueueMessage _ = true
-            member _.Dispose() = ()
-
-    let mutable disposed = false
-
-    type DisposableTestClass() =
-
-        [<Property>]
-        member _.FakeTest (x:int) =
-            Check.One(Config.Quick, true)       
-
-        interface IDisposable with
-            member _.Dispose() = 
-                disposed <- true
-
-    [<Property>]
-    let ``should call Dispose on classes inheriting from IDisposable`` () =
-            let methodInfo = typeof<DisposableTestClass>.GetMethod("FakeTest") |> ReflectionMethodInfo
-            let typeInfo = typeof<DisposableTestClass> |> ReflectionTypeInfo
-            let assemblyInfo = typeof<DisposableTestClass>.Assembly |> ReflectionAssemblyInfo |> TestAssembly
-            let testCollection = TestCollection(assemblyInfo, typeInfo, typeof<DisposableTestClass>.Name)
-            let testClass = TestClass(testCollection, typeInfo)
-            let testMethod = TestMethod(testClass, methodInfo)
-            let testCase = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, testMethod)
-            testCase.RunAsync(null, new TestMessageBus(), [||], ExceptionAggregator(), new CancellationTokenSource()) |> Async.AwaitTask |> ignore
-            Check.One(Config.Quick, disposed)
-
 
 module ShrinkingMutatedTypes =
     open global.Xunit
     open Swensen.Unquote
-    open FsCheck
-
 
     type Member () =
         member val Name = "" with get, set
@@ -575,7 +517,6 @@ module ShrinkingMutatedTypes =
         
 module BugReproIssue583 =
     module Common =
-        open FsCheck
 
         type BaseGenerator =
             static member Strings() =
@@ -584,7 +525,6 @@ module BugReproIssue583 =
                 }
 
     module MyTests =
-        open FsCheck
         open FsCheck.Xunit
         open Common
 
