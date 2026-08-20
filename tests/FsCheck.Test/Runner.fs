@@ -452,7 +452,7 @@ module Runner =
         
             [<Property>]
             let ``should use configuration from closest enclosing module``(x:int) =
-                /// checking if the generated value is always the same (18) from "12345,67891" Replay
+                // checking if the generated value is always the same (18) from "12345,67891" Replay
                x =! -93
 
         [<Property( Replay = "12345,67891")>]
