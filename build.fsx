@@ -287,6 +287,7 @@ type HaveTested = HaveTested
 let runDotnetTest (_ : HaveCleaned) : HaveTested =
     Console.Write "Performing dotnet test... "
     runProcess "dotnet" ["test" ; "tests/FsCheck.Test" ; "--configuration" ; "Release"]
+    runProcess "dotnet" ["test" ; "tests/FsCheck.Test.v3" ; "--configuration" ; "Release"]
     Console.WriteLine "done."
     HaveTested
 
