@@ -1,4 +1,4 @@
-## 3.4.0 - To be released
+## 3.4.0 - 20 August 2026
 
 * Updated xunit.v3 to version 4.x. (by Simon Baynes)
 
