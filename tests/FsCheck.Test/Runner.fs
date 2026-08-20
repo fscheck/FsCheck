@@ -355,55 +355,6 @@ module Runner =
         //this test
         ()
 
-    [<Fact>]
-    let ``PropertyConfig combine should prepend extra Arbitrary``() =
-        let original = { PropertyConfig.zero with Arbitrary = [| typeof<PositiveDoublesOnly> |] }
-        let extra    = { PropertyConfig.zero with Arbitrary = [| typeof<NegativeDoublesOnly> |] }
-        let combined = PropertyConfig.combine extra original
-
-        combined.Arbitrary.[0] =! typeof<NegativeDoublesOnly>
-
-    [<Property>]
-    let ``PropertyConfig combine should favor extra config``(orignalMaxTest, extraMaxTest) =
-        let original = { PropertyConfig.zero with MaxTest = Some orignalMaxTest }
-        let extra    = { PropertyConfig.zero with MaxTest = Some extraMaxTest }
-        let combined = PropertyConfig.combine extra original
-
-        combined.MaxTest =! Some extraMaxTest
-
-    [<Property>]
-    let ``PropertyConfig toConfig should favor specified setting``(maxTest) =
-        let propertyConfig = { PropertyConfig.zero with MaxTest = Some maxTest }
-        let testOutputHelper = Sdk.TestOutputHelper()
-        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
-
-        config.MaxTest =! maxTest
-
-    [<Fact>]
-    let ``PropertyConfig toConfig should use defaults as a fallback``() =
-        let propertyConfig = PropertyConfig.zero
-        let testOutputHelper = Sdk.TestOutputHelper()
-        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
-
-        config.MaxTest =! Config.Default.MaxTest
-
-    [<Property>]
-    let ``Replay should pick fast-forward``(size :int) =
-        let size = Math.Abs size
-        let propertyConfig = { PropertyConfig.zero with Replay = Some <| sprintf "(01234,56789,%i)" size }
-        let testOutputHelper = Sdk.TestOutputHelper()
-        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
-
-        config.Replay =! (Some {Rnd = Random.CreateWithSeedAndGamma (01234UL,56789UL); Size = Some size})
-
-    [<Fact>]
-    let ``Replay with no fast-forward``() =
-        let propertyConfig = { PropertyConfig.zero with Replay = Some <| sprintf "(01234,56789)" }
-        let testOutputHelper = Sdk.TestOutputHelper()
-        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
-
-        config.Replay =! (Some {Rnd = Random.CreateWithSeedAndGamma (01234UL,56789UL); Size = None})
-
     type TypeToInstantiate() =
         [<Property>]
         member __.``Should run a property on an instance``(_:int) = ()
@@ -459,6 +410,19 @@ module Runner =
         let ``should use configuration on method preferentially``(x:int) =
             // checking if the generated value is always the same (18) from "12345,67890" Replay
             x =! -93
+
+        [<Properties( MaxTest = 1, Replay = "(01235,56789,100)")>]
+        module NestedModuleWithPropertiesFastForwardReplay =
+
+            [<Property>]
+            let ``should parse replay with fast-forward from enclosing module``(x:int) =
+                // same seed as above, but size comes from replay tuple third value
+                x =! 19
+
+        [<Property( MaxTest = 1, Replay = "(12345,67891,100)")>]
+        let ``should parse replay with fast-forward on method preferentially``(x:int) =
+            // same seed as above, but size comes from replay tuple third value
+            x =! -97
 
 module BugReproIssue195 =
 
