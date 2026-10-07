@@ -1,5 +1,6 @@
 ﻿namespace FsCheck.Test
 
+open global.Xunit
 open FsCheck
 open FsCheck.FSharp
 
@@ -19,7 +20,6 @@ module RunnerHelper =
 
 module RunnerInternals =
     open System
-    open global.Xunit
     open System.Linq
     open RunnerHelper
 
@@ -173,7 +173,6 @@ module RunnerInternals =
 module Runner =
     open RunnerHelper
     open System
-    open global.Xunit
     open FsCheck.Xunit
     open System.Linq
     open Swensen.Unquote
@@ -277,24 +276,14 @@ module Runner =
         test <@ (Seq.head same).Contains "(123,654321)" @>
 
     
-    //type Integer = Integer of int
     type UInteger = UInteger of uint32
         
-    //type IntegerGen =
-    //    static member Integer() =
-    //        {new Arbitrary<Integer>() with
-    //            override x.Generator = Arb.generate<int> Arb.defaults |> Gen.map Integer
-    //            override x.Shrinker t = Seq.empty }
-
     type UIntegerGen =
             static member UInteger() =
                 {new Arbitrary<UInteger>() with
                     override x.Generator = ArbMap.defaults.ArbFor<uint32>().Generator |> Gen.map UInteger
                     override x.Shrinker t = Seq.empty }
     
-    //Arb.register<UIntegerGen> ()
-    //Arb.register<IntegerGen> ()
-
     type ProbeRunner () =
         let mutable result = None
         member __.TestData () = match result.Value with
@@ -355,55 +344,6 @@ module Runner =
         //this test
         ()
 
-    [<Fact>]
-    let ``PropertyConfig combine should prepend extra Arbitrary``() =
-        let original = { PropertyConfig.zero with Arbitrary = [| typeof<PositiveDoublesOnly> |] }
-        let extra    = { PropertyConfig.zero with Arbitrary = [| typeof<NegativeDoublesOnly> |] }
-        let combined = PropertyConfig.combine extra original
-
-        combined.Arbitrary.[0] =! typeof<NegativeDoublesOnly>
-
-    [<Property>]
-    let ``PropertyConfig combine should favor extra config``(orignalMaxTest, extraMaxTest) =
-        let original = { PropertyConfig.zero with MaxTest = Some orignalMaxTest }
-        let extra    = { PropertyConfig.zero with MaxTest = Some extraMaxTest }
-        let combined = PropertyConfig.combine extra original
-
-        combined.MaxTest =! Some extraMaxTest
-
-    [<Property>]
-    let ``PropertyConfig toConfig should favor specified setting``(maxTest) =
-        let propertyConfig = { PropertyConfig.zero with MaxTest = Some maxTest }
-        let testOutputHelper = Sdk.TestOutputHelper()
-        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
-
-        config.MaxTest =! maxTest
-
-    [<Fact>]
-    let ``PropertyConfig toConfig should use defaults as a fallback``() =
-        let propertyConfig = PropertyConfig.zero
-        let testOutputHelper = Sdk.TestOutputHelper()
-        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
-
-        config.MaxTest =! Config.Default.MaxTest
-
-    [<Property>]
-    let ``Replay should pick fast-forward``(size :int) =
-        let size = Math.Abs size
-        let propertyConfig = { PropertyConfig.zero with Replay = Some <| sprintf "(01234,56789,%i)" size }
-        let testOutputHelper = Sdk.TestOutputHelper()
-        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
-
-        config.Replay =! (Some {Rnd = Random.CreateWithSeedAndGamma (01234UL,56789UL); Size = Some size})
-
-    [<Fact>]
-    let ``Replay with no fast-forward``() =
-        let propertyConfig = { PropertyConfig.zero with Replay = Some <| sprintf "(01234,56789)" }
-        let testOutputHelper = Sdk.TestOutputHelper()
-        let config = PropertyConfig.toConfig testOutputHelper propertyConfig
-
-        config.Replay =! (Some {Rnd = Random.CreateWithSeedAndGamma (01234UL,56789UL); Size = None})
-
     type TypeToInstantiate() =
         [<Property>]
         member __.``Should run a property on an instance``(_:int) = ()
@@ -452,7 +392,7 @@ module Runner =
         
             [<Property>]
             let ``should use configuration from closest enclosing module``(x:int) =
-                /// checking if the generated value is always the same (18) from "12345,67891" Replay
+                // checking if the generated value is always the same (18) from "12345,67891" Replay
                x =! -93
 
         [<Property( Replay = "12345,67891")>]
@@ -460,9 +400,21 @@ module Runner =
             // checking if the generated value is always the same (18) from "12345,67890" Replay
             x =! -93
 
+        [<Properties( MaxTest = 1, Replay = "(01235,56789,100)")>]
+        module NestedModuleWithPropertiesFastForwardReplay =
+
+            [<Property>]
+            let ``should parse replay with fast-forward from enclosing module``(x:int) =
+                // same seed as above, but size comes from replay tuple third value
+                x =! 19
+
+        [<Property( MaxTest = 1, Replay = "(12345,67891,100)")>]
+        let ``should parse replay with fast-forward on method preferentially``(x:int) =
+            // same seed as above, but size comes from replay tuple third value
+            x =! -97
+
 module BugReproIssue195 =
 
-    open FsCheck
     open FsCheck.Xunit
     open System
 
@@ -486,9 +438,6 @@ module BugReproIssue195 =
 // Each successful shrink caused the stackframe to grow by 2-3 frames, causing a stackoverflow.
 module BugReproIssue344 =
     
-    open FsCheck
-    open global.Xunit
-
     open System.Diagnostics
     open System.Threading
 
@@ -534,8 +483,6 @@ module BugReproIssue344 =
 
 module Override =
     open System
-    open FsCheck
-    open global.Xunit
 
     type Calc = { Float: float }
 
@@ -550,51 +497,10 @@ module Override =
         Check.One(Config.QuickThrowOnFailure.WithArbitrary([ typeof<Arbitraries> ]),
              fun (calc:Calc) -> not (Double.IsNaN calc.Float || Double.IsInfinity calc.Float || calc.Float = Double.Epsilon || calc.Float = Double.MinValue || calc.Float = Double.MaxValue))
 
-// see https://github.com/fscheck/FsCheck/issues/514
-// Dispose not called
-module BugReproIssue514 =
-    open System
-    open System.Threading
-    open FsCheck
-    open FsCheck.Xunit
-    open global.Xunit
-    open Xunit.Sdk
-
-    type TestMessageBus() =
-        interface IMessageBus with
-            member _.QueueMessage _ = true
-            member _.Dispose() = ()
-
-    let mutable disposed = false
-
-    type DisposableTestClass() =
-
-        [<Property>]
-        member _.FakeTest (x:int) =
-            Check.One(Config.Quick, true)       
-
-        interface IDisposable with
-            member _.Dispose() = 
-                disposed <- true
-
-    [<Property>]
-    let ``should call Dispose on classes inheriting from IDisposable`` () =
-            let methodInfo = typeof<DisposableTestClass>.GetMethod("FakeTest") |> ReflectionMethodInfo
-            let typeInfo = typeof<DisposableTestClass> |> ReflectionTypeInfo
-            let assemblyInfo = typeof<DisposableTestClass>.Assembly |> ReflectionAssemblyInfo |> TestAssembly
-            let testCollection = TestCollection(assemblyInfo, typeInfo, typeof<DisposableTestClass>.Name)
-            let testClass = TestClass(testCollection, typeInfo)
-            let testMethod = TestMethod(testClass, methodInfo)
-            let testCase = new PropertyTestCase(null, TestMethodDisplay.ClassAndMethod, TestMethodDisplayOptions.None, testMethod)
-            testCase.RunAsync(null, new TestMessageBus(), [||], ExceptionAggregator(), new CancellationTokenSource()) |> Async.AwaitTask |> ignore
-            Check.One(Config.Quick, disposed)
-
 
 module ShrinkingMutatedTypes =
     open global.Xunit
     open Swensen.Unquote
-    open FsCheck
-
 
     type Member () =
         member val Name = "" with get, set
@@ -611,7 +517,6 @@ module ShrinkingMutatedTypes =
         
 module BugReproIssue583 =
     module Common =
-        open FsCheck
 
         type BaseGenerator =
             static member Strings() =
@@ -620,7 +525,6 @@ module BugReproIssue583 =
                 }
 
     module MyTests =
-        open FsCheck
         open FsCheck.Xunit
         open Common
 

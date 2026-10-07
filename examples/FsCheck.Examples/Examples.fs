@@ -45,7 +45,7 @@ type SmartShrinker =
     static member Smart(value:Arbitrary<'a>) =
         let generator = value.Generator |> Gen.map (fun arb -> Smart (0,arb))
         let shrinker (Smart (i,x)) = 
-            let ys = Seq.zip {0..Int32.MaxValue} (value.Shrinker x) |> Seq.map Smart 
+            let ys = Seq.zip (seq {0..Int32.MaxValue}) (value.Shrinker x) |> Seq.map Smart 
             let i' = Math.Max(0,i-2)
             let rec interleave left right =
                 match (left,right) with

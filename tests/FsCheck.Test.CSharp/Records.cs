@@ -17,15 +17,16 @@ namespace FsCheck.Test.CSharp
     public record PersonWithHeight : Person
     {
         public int HeightInInches { get; init; }
-
-        public PersonWithHeight Grow(int inches) =>
-          this with { HeightInInches = HeightInInches + inches };
     }
 
     public record CtorAndProps(int A)
     {
         public int B { get; init; }
     }
+
+    public abstract record AbstractPositionalRecord(string S);
+
+    public record PositionalSubRecord(string S, int I) : AbstractPositionalRecord(S);
 
     public readonly record struct ReadOnlyStructPositionalRecord(byte Red, byte Green, byte Blue);
 

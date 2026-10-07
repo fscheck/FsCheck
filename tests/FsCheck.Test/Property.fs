@@ -312,4 +312,77 @@ module Property =
                 failwith "Expected label to be applied"
         | t -> failwithf "Expected failing test with exception, got %A" t
 
+    [<Fact>]
+    let ``And should merge stamps from both properties when both pass``() =
+        let prop1 = true |> Prop.collect "Property 1"
+        let prop2 = true |> Prop.collect "Property 2"
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        Check.One(config, prop1 .&. prop2)
+        test <@ match resultRunner.Result with
+                | TestResult.Passed (d, _) -> 
+                    let stamps = d.Stamps |> Seq.collect snd |> Set.ofSeq
+                    stamps.Contains("\"Property 1\"") && stamps.Contains("\"Property 2\"")
+                | _ -> false @>
 
+    [<Fact>]
+    let ``And should merge labels from both failing properties``() =
+        let prop1 = false |> Prop.label "L1"
+        let prop2 = false |> Prop.label "L2"
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        Check.One(config, prop1 .&. prop2)
+        test <@ match resultRunner.Result with
+                | TestResult.Failed (d, _, _, _, _, _, _) -> 
+                    d.Labels.Contains("L1") && d.Labels.Contains("L2")
+                | _ -> false @>
+
+    [<Fact>]
+    let ``And should keep label from the failing property``() =
+        let prop1 = false |> Prop.label "L1"
+        let prop2 = true |> Prop.label "L2"
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        Check.One(config, prop1 .&. prop2)
+        test <@ match resultRunner.Result with
+                | TestResult.Failed (d, _, _, _, _, _, _) -> 
+                    d.Labels.Contains("L1") && not(d.Labels.Contains("L2"))
+                | _ -> false @>
+
+    [<Fact>]
+    let ``Or should merge stamps from both properties when both pass``() =
+        let prop1 = true |> Prop.collect "Property 1"
+        let prop2 = true |> Prop.collect "Property 2"
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        Check.One(config, prop1 .|. prop2)
+        test <@ match resultRunner.Result with
+                | TestResult.Passed (d, _) -> 
+                    let stamps = d.Stamps |> Seq.collect snd |> Set.ofSeq
+                    stamps.Contains("\"Property 1\"") && stamps.Contains("\"Property 2\"")
+                | _ -> false @>
+
+    [<Fact>]
+    let ``Or should merge stamps from both properties when one passes``() =
+        let prop1 = true |> Prop.collect "Property 1"
+        let prop2 = false |> Prop.collect "Property 2"
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        Check.One(config, prop1 .|. prop2)
+        test <@ match resultRunner.Result with
+                | TestResult.Passed (d, _) -> 
+                    let stamps = d.Stamps |> Seq.collect snd |> Set.ofSeq
+                    stamps.Contains("\"Property 1\"") && stamps.Contains("\"Property 2\"")
+                | _ -> false @>
+
+    [<Fact>]
+    let ``Or should merge labels from both failing properties when both fail``() =
+        let prop1 = false |> Prop.label "L1"
+        let prop2 = false |> Prop.label "L2"
+        let resultRunner = GetResultRunner()
+        let config = Config.Quick.WithRunner(resultRunner).WithMaxTest(1)
+        Check.One(config, prop1 .|. prop2)
+        test <@ match resultRunner.Result with
+                | TestResult.Failed (d, _, _, _, _, _, _) -> 
+                    d.Labels.Contains("L1") && d.Labels.Contains("L2")
+                | _ -> false @>

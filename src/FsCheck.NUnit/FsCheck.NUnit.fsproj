@@ -5,6 +5,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageDescription>FsCheck.NUnit integrates FsCheck with NUnit by adding a PropertyAttribute that runs FsCheck tests, similar to NUnit TestAttribute.
 
             All the options normally available in vanilla FsCheck via configuration can be controlled via the PropertyAttribute.
@@ -14,6 +15,9 @@
     <ItemGroup>
         <Compile Include="AssemblyInfo.fs"/>
         <Compile Include="FsCheckPropertyAttribute.fs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="../FsCheck/FsCheck.fsproj"/>

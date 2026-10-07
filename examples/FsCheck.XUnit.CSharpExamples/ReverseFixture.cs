@@ -8,26 +8,26 @@ namespace FsCheck.XUnit.CSharpExamples
     public class ReverseFixture
     {
         [Property(QuietOnSuccess = true, EndSize = 10000)]
-        public Task<bool> Task_shouldFail(int i)
+        public Task<bool> ShouldFail_Task(int i)
         {
-            return System.Threading.Tasks.Task.FromResult(i < 2000);
+            return Task.FromResult(i < 2000);
         }
 
         [Property(QuietOnSuccess = true, EndSize = 1000)]
-        public async Task<bool> TaskDelay_shouldFail(int i)
+        public async Task<bool> ShouldFail_TaskDelay(int i)
         {
-            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(4)).ConfigureAwait(false);
+            await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
             return false;
         }
 
         [Property(QuietOnSuccess = true)]
-        public bool Bcl(int[] xs)
+        public bool ShouldPass_Bool(int[] xs)
         {
             return xs.Reverse().Reverse().SequenceEqual(xs);
         }
 
         [Property(QuietOnSuccess = true)]
-        public void Bcl2(int[] xs)
+        public void ShouldPass_Void(int[] xs)
         {
           if(true == xs.Reverse().Reverse().SequenceEqual(xs))
           {

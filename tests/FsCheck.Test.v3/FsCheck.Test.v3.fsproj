@@ -5,8 +5,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <IsPackable>false</IsPackable>
-		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
-		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+		    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DefineConstants>DEBUG</DefineConstants>

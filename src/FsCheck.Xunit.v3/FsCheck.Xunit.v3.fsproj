@@ -5,6 +5,7 @@
 		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageDescription>
 			FsCheck.Xunit.v3 integrates FsCheck with xUnit.v3.NET by adding a PropertyAttribute that runs FsCheck tests, similar to xUnit.v3.NET's FactAttribute.
 
@@ -18,6 +19,9 @@
 		<Compile Include="PropertyAttribute.fs" />
 		<Compile Include="CheckExtensions.fs" />
 	</ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="FSharp.Core" />
 		<PackageReference Include="xunit.v3.extensibility.core" />
