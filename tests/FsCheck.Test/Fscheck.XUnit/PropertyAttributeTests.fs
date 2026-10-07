@@ -84,9 +84,9 @@ module ``when type implements IAsyncLifetime`` =
                     return ()
                 }
                 |> Async.StartAsTask
-                :> Task
+                |> ValueTask
 
-            member _.DisposeAsync() = Task.CompletedTask
+            member _.DisposeAsync() = ValueTask.CompletedTask
 
         [<Property(MaxTest = 1)>]
         member this.``then InitializeAsync() is invoked``() =

@@ -224,7 +224,7 @@ type PropertyTestCase =
                     let xunitRunner = if config.Runner :? XunitRunner then (config.Runner :?> XunitRunner) else XunitRunner()
         
                     let sw = Stopwatch.StartNew()
-                    Check.Method(config, ctxt.TestMethod, ?target=target)
+                    Check.Method(config, ctxt.Test.TestMethod.Method, ?target=target)
                     let ts = sw.Elapsed
                     match xunitRunner.Result with
                     | TestResult.Passed _ ->
@@ -241,18 +241,18 @@ type PropertyTestCase =
             }
         { new XunitTestCaseRunner() with
             override _.RunTest(x, test) =
-                runner.Run(test, x.MessageBus, x.ConstructorArguments, x.ExplicitOption, x.Aggregator.Clone(), x.CancellationTokenSource, x.BeforeAfterTestAttributes)
+                runner.Run(test, x.MessageBus, x.ConstructorArguments, x.ExplicitOption, x.Aggregator.Clone(), x.CancellationTokenSource, x.ParallelMode, x.Scheduler, x.BeforeAfterTestAttributes, x.CaseFixtureMappings)
         }
         
-    member this.TestExec(opts: ExplicitOption, buss: IMessageBus, ctorArgs: obj array, aggregator: ExceptionAggregator, cts: CancellationTokenSource) = async {
+    member this.TestExec(opts: ExplicitOption, buss: IMessageBus, ctorArgs: obj array, aggregator: ExceptionAggregator, cts: CancellationTokenSource, parallelMode: ParallelMode, scheduler: ExecutionScheduler, methodFixtureMappings: FixtureMappingManager) = async {
         let invoker = this.MakeInvoker()
         let! tests = aggregator.RunAsync(Func<_>(this.CreateTests), []).AsTask() |> Async.AwaitTask
-        return! invoker.Run(this, tests, buss, aggregator.Clone(), cts, this.TestCaseDisplayName, this.SkipReason, opts, ctorArgs).AsTask() |> Async.AwaitTask
+        return! invoker.Run(this, tests, buss, aggregator.Clone(), cts, parallelMode, scheduler, this.TestCaseDisplayName, this.SkipReason, opts, ctorArgs, methodFixtureMappings).AsTask() |> Async.AwaitTask
     }
 
     interface ISelfExecutingXunitTestCase with
-        member this.Run (opts: ExplicitOption, messageBus: IMessageBus, ctorArgs: obj array, aggregator: ExceptionAggregator, cts: CancellationTokenSource) = 
-            ValueTask<RunSummary>(Async.StartImmediateAsTask(this.TestExec(opts, messageBus, ctorArgs, aggregator, cts)))
+        member this.Run (opts: ExplicitOption, messageBus: IMessageBus, ctorArgs: obj array, aggregator: ExceptionAggregator, cts: CancellationTokenSource, parallelMode: ParallelMode, scheduler: ExecutionScheduler, methodFixtureMappings: FixtureMappingManager) = 
+            ValueTask<RunSummary>(Async.StartImmediateAsTask(this.TestExec(opts, messageBus, ctorArgs, aggregator, cts, parallelMode, scheduler, methodFixtureMappings)))
          
          
 /// xUnit.v3 test case discoverer to link the method with the PropertyAttribute to the PropertyTestCase
@@ -266,9 +266,9 @@ type PropertyDiscoverer(messageSink:IMessageSink) =
     interface IXunitTestCaseDiscoverer with
         override this.Discover(discoveryOptions: ITestFrameworkDiscoveryOptions, testMethod: IXunitTestMethod, attr: IFactAttribute)=
             let result = ResizeArray<IXunitTestCase>()
-            let struct (testCaseDisplayName, explicit, skipExceptions, skipReason, _, _, _, _, _, _, uniqueID, testMethod) =
-                TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, attr, null, Nullable(), null, null)
-            let traits = TestIntrospectionHelper.GetTraits(testMethod, null)
-            result.Add(PropertyTestCase(testMethod, testCaseDisplayName, uniqueID, explicit, skipExceptions, skipReason, traits=traits))
+            let struct (testCaseDisplayName, explicit, skipExceptions, skipReason, skipType, skipUnless, skipWhen, sourceFilePath, sourceLineNumber, _, uniqueID, resolvedTestMethod) =
+                TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, attr)
+            let traits = TestIntrospectionHelper.GetTraits(resolvedTestMethod, null)
+            result.Add(PropertyTestCase(resolvedTestMethod, testCaseDisplayName, uniqueID, explicit, skipExceptions, skipReason, skipType, skipUnless, skipWhen, traits=traits, sourceFilePath=sourceFilePath, ?sourceLineNumber=(sourceLineNumber |> Option.ofNullable)))
             ValueTask<_>(result  :> IReadOnlyCollection<IXunitTestCase>)
 

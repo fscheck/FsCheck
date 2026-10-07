@@ -8,7 +8,7 @@
   <PropertyGroup>
     <Deterministic>true</Deterministic>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <Copyright>Copyright 2008-2024</Copyright>
+    <Copyright>Copyright 2008-2026</Copyright>
     <Authors>Kurt Schelfthout and contributors</Authors>
     <PackageTags>F# fsharp test random</PackageTags>
     <RepositoryUrl>https://github.com/Fscheck/fscheck</RepositoryUrl>

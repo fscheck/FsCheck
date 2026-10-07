@@ -96,7 +96,6 @@ module internal Reflect =
                 "ImmutableDictionary`2"; "ImmutableSortedDictionary`2"
                 |]
 
-
     /// Get information on the fields of an F# record type
     let getRecordFieldTypes (recordType: System.Type) = 
         if isRecordType recordType then 
@@ -135,29 +134,42 @@ module internal Reflect =
         f.Invoke
 
     let getCSharpRecordFields (recordType: Type) =
-        if isCSharpRecordType recordType then
-            getProperties recordType
-            |> Seq.filter (fun p -> p.CanWrite)
-            |> Seq.map (fun p -> p.PropertyType)
-        else
+        if not <| isCSharpRecordType recordType then
             failwithf "The input type must be a C# record-like type. Got %A" recordType
 
-    let getCSharpRecordConstructor (t:Type) =
-        let props = getProperties t |> Seq.filter (fun p -> p.CanWrite) |> Seq.toArray
+        let maybeCtor = getPublicCtors recordType |> Seq.tryHead
+        let pars =
+           maybeCtor
+           |> Option.map (_.GetParameters())
+           |> Option.defaultValue [||]
+
+        getProperties recordType
+        |> Seq.filter (fun p -> p.CanWrite)
+        |> Seq.sortBy (fun p -> pars |> Array.tryFindIndex (fun param -> param.Name = p.Name) |> Option.defaultValue Int32.MaxValue)
+        |> Seq.map (fun p -> p.PropertyType)
+            
+
+    let getCSharpRecordConstructor (recordType:Type) =
+        let maybeCtor = getPublicCtors recordType |> Seq.tryHead
+        let ctorPars =
+           maybeCtor
+           |> Option.map (_.GetParameters())
+           |> Option.defaultValue [||]
+
+        let props = getProperties recordType 
+                    |> Seq.filter (fun p -> p.CanWrite)
+                    |> Seq.sortBy (fun p -> ctorPars |> Array.tryFindIndex (fun param -> param.Name = p.Name) |> Option.defaultValue Int32.MaxValue)
+                    |> Seq.toArray
   
         let par = Expression.Parameter (typeof<obj[]>, "args")
-
-        let maybeCtor = getPublicCtors t |> Seq.tryHead
-
         let pars =
-            maybeCtor
-            |> Option.map (_.GetParameters() >> Array.mapi (fun i p ->
+            ctorPars
+            |> Array.mapi (fun i p ->
                 Expression.Convert
-                    (Expression.ArrayIndex (par, Expression.Constant i), p.ParameterType) : Expression))
-            |> Option.defaultValue [||]
+                    (Expression.ArrayIndex (par, Expression.Constant i), p.ParameterType) : Expression)
 
         let values = 
-            props 
+            props
             |> Seq.mapi (fun i p ->  
                 let idx = Expression.ArrayIndex (par, Expression.Constant i)
                 Expression.Convert (idx, p.PropertyType) :> Expression)
@@ -169,10 +181,10 @@ module internal Reflect =
         let newExpr =
             maybeCtor
             |> Option.map (fun ctor -> Expression.New (ctor, pars))
-            |> Option.defaultWith (fun () -> Expression.New t)
+            |> Option.defaultWith (fun () -> Expression.New recordType)
 
         let body =
-            if t.IsValueType then
+            if recordType.IsValueType then
                 Expression.Convert (Expression.MemberInit (newExpr, bindings), typeof<obj>) : Expression
             else
                 Expression.MemberInit (newExpr, bindings)

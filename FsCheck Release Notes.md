@@ -1,3 +1,19 @@
+## 3.4.0 - 20 August 2026
+
+* Updated xunit.v3 to version 4.x. (by Simon Baynes)
+
+## 3.3.4 - 25 July 2026
+
+* Fixed a bug in C# record type generation.
+
+## 3.3.3 - 26 April 2026
+
+* Add Gen.pick and Gen.tryPick functions.
+
+* Fill NullReferenceException when using Replay with an Implies combinator.
+
+* Improve behavior of stamps and labels when using And/Or property combinators.
+
 ### 3.3.2 - 9 November 2025
 
 * Fixed FsCheck.NUnit failure reporting. (by Brian Rourke Boll)
