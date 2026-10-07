@@ -10,9 +10,34 @@ open NUnit.Framework
 open NUnit.Framework.Interfaces
 open NUnit.Framework.Internal
 
+//Helper type to allow users to register custom formatters for FsCheck test output
+type ValueFormatter private () =
+    static let mutable customFormatters = System.Collections.Generic.Dictionary<System.Type, obj -> string>()
+    
+    /// Register a custom formatter for a specific type. The formatter will be used when outputting
+    /// values of that type in FsCheck property test results.
+    static member AddFormatter<'T>(formatter: obj -> string) =
+        customFormatters.[typeof<'T>] <- formatter
+    
+    static member internal TryFormat(value: obj) =
+        if isNull value then
+            Some "null"
+        else
+            let valueType = value.GetType()
+            match customFormatters.TryGetValue(valueType) with
+            | true, formatter -> Some (formatter value)
+            | false, _ -> None
+
 //can not be an anonymous type because of let mutable.
 type private NunitRunner() =
     let mutable result = None
+    
+    // Helper function to format a value using registered custom formatters
+    let formatValue (value: obj) =
+        match ValueFormatter.TryFormat(value) with
+        | Some formatted -> formatted
+        | None -> value.ToString()
+    
     member __.Result = result.Value
     interface IRunner with
         override __.OnStartFixture _ = ()
@@ -24,9 +49,19 @@ type private NunitRunner() =
             // doesn't look pretty in the cases where it turns out that there's truly nothing to write (e.g.
             // when QuietOnSuccess is true, and the Property passed.
             if not (String.IsNullOrWhiteSpace argsForOutput) then
-                printfn "%s" argsForOutput
+                // Output the test number
+                TestContext.WriteLine("{0}:", ntest)
+                // Output each argument individually using custom formatters if registered
+                for arg in args do
+                    TestContext.WriteLine(formatValue arg)
+                TestContext.WriteLine("")
         override __.OnShrink(args, everyShrink) =
-            printfn "%s" (everyShrink args)
+            let shrinkOutput = everyShrink args
+            if not (String.IsNullOrWhiteSpace shrinkOutput) then
+                // Output each shrunk argument individually using custom formatters if registered
+                for arg in args do
+                    TestContext.WriteLine(formatValue arg)
+                TestContext.WriteLine("")
         override __.OnFinished(_,testResult) =
             result <- Some testResult
 
@@ -283,7 +318,7 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         match testRunner.Result with
         | TestResult.Passed _ ->
             if not config.QuietOnSuccess then
-                printfn "%s" (Runner.onFinishedToString "" testRunner.Result)
+                TestContext.WriteLine(Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(ResultState(TestStatus.Passed))
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)

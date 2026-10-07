@@ -25,6 +25,32 @@ module ResultStateExceptionHandlingTest =
             NUnit.Framework.Assert.Pass()
         }
 
+module TestContextFormatterTests =
+    type CustomType(value: int) =
+        member _.Value = value
+        override _.ToString() = $"CustomType({value})"
+    
+    // Arbitrary instance for CustomType
+    type CustomTypeArb =
+        static member CustomType() =
+            ArbMap.defaults.ArbFor<int>()
+            |> Arb.convert CustomType (fun ct -> ct.Value)
+    
+    [<OneTimeSetUp>]
+    let setupFormatter() =
+        // Register a custom formatter for CustomType using FsCheck.NUnit.ValueFormatter
+        ValueFormatter.AddFormatter<CustomType>(fun (ct: obj) -> 
+            match ct with
+            | :? CustomType as custom -> $"[CUSTOM:{custom.Value}]"
+            | _ -> ct.ToString())
+    
+    [<Property(Verbose = true, MaxTest = 1, Arbitrary = [| typeof<CustomTypeArb> |])>]
+    let ``should use custom formatter for test arguments`` (ct: CustomType) =
+        // This test demonstrates that custom formatters are used for console output during verbose mode.
+        // When you run this test with verbose=true, the console will show [CUSTOM:x] instead of CustomType(x)
+        true  // Pass so we can see the formatted output in verbose mode
+
+
 module ResultOutputTests =
     [<Ignore("These should be run by the test below")>]
     module TestModule =
