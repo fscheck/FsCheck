@@ -9,26 +9,26 @@ module private Helper =
     let private runner (testOutputHelper: ITestOutputHelper) =
         { new IRunner with
             member __.OnStartFixture t =
-                Runner.onStartFixtureToString t |> testOutputHelper.WriteLine
+                Runner.onStartFixtureToString t |> Helpers.safeWriteLine testOutputHelper
             member __.OnArguments (ntest,args, every) =
-                every ntest args |> testOutputHelper.WriteLine
+                every ntest args |> Helpers.safeWriteLine testOutputHelper
             member __.OnShrink(args, everyShrink) =
-                everyShrink args |> testOutputHelper.WriteLine
+                everyShrink args |> Helpers.safeWriteLine testOutputHelper
             member __.OnFinished(name,testResult) = 
-                Runner.onFinishedToString name testResult |> testOutputHelper.WriteLine
+                Runner.onFinishedToString name testResult |> Helpers.safeWriteLine testOutputHelper
         }
 
     let private throwingRunner (testOutputHelper: ITestOutputHelper) =
         { new IRunner with
             member __.OnStartFixture t =
-                testOutputHelper.WriteLine (Runner.onStartFixtureToString t)
+                Helpers.safeWriteLine testOutputHelper (Runner.onStartFixtureToString t)
             member __.OnArguments (ntest,args, every) =
-                testOutputHelper.WriteLine (every ntest args)
+                Helpers.safeWriteLine testOutputHelper (every ntest args)
             member __.OnShrink(args, everyShrink) =
-                testOutputHelper.WriteLine (everyShrink args)
+                Helpers.safeWriteLine testOutputHelper (everyShrink args)
             member __.OnFinished(name,testResult) = 
                 match testResult with
-                | TestResult.Passed _ -> testOutputHelper.WriteLine (Runner.onFinishedToString name testResult)
+                | TestResult.Passed _ -> Helpers.safeWriteLine testOutputHelper (Runner.onFinishedToString name testResult)
                 | _ -> failwithf "%s" (Runner.onFinishedToString name testResult)
         }
 
