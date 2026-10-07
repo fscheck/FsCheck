@@ -1,4 +1,4 @@
-namespace Fscheck.Test.FsCheck.NUnit.PropertyAttribute
+module FsCheck.Test.NUnit.PropertyAttribute
 
 open System.Reflection
 open System.Threading.Tasks

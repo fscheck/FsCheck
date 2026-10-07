@@ -11,7 +11,7 @@
     <Copyright>Copyright 2008-2026</Copyright>
     <Authors>Kurt Schelfthout and contributors</Authors>
     <PackageTags>F# fsharp test random</PackageTags>
-    <RepositoryUrl>https://github.com/Fscheck/fscheck</RepositoryUrl>
+    <RepositoryUrl>https://github.com/fscheck/FsCheck</RepositoryUrl>
     <PackageProjectUrl>https://fscheck.github.io/FsCheck/</PackageProjectUrl>
     <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>

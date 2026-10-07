@@ -11,7 +11,7 @@
         <DefineConstants>DEBUG</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="Fscheck.XUnit\PropertyAttributeTests.fs" />
+        <Compile Include="FsCheck.XUnit\PropertyAttributeTests.fs" />
         <Content Include="App.config" />
     </ItemGroup>
     <ItemGroup>

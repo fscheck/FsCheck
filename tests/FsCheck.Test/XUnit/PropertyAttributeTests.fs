@@ -1,4 +1,4 @@
-﻿namespace Fscheck.Test.FsCheck.XUnit.PropertyAttribute
+﻿module FsCheck.Test.XUnit.PropertyAttribute
 
 open System.Threading.Tasks
 open FsCheck.FSharp

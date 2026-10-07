@@ -522,7 +522,7 @@ were hiding a bunch of methods unnecessarily. The upshot is that C# users will s
 
 * Improve assert failure reporting in FsCheck.Xunit (by Mark Seemann)
 * Add discard method (by Mauricio Scheffer)
-* Fix capitalization of Fscheck.NUnit package
+* Fix capitalization of FsCheck.NUnit package
 
 ### 2.0.0-alpha - 26 April 2015
 
