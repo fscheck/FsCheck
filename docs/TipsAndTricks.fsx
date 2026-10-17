@@ -68,8 +68,9 @@ Check.One(Config.Quick.WithArbitrary([typeof<ArbitraryModifiers>]), ``generated 
 (**
 It's now easy to define custom shrink functions as well.
 
-FsCheck uses this pattern frequently, e.g. `NonNegativeInt`, `PositiveInt`, `StringWithoutNullChars` etc. See the
-default Arbitrary instances on the `Arb.Default` type.
+FsCheck uses this pattern frequently, e.g. `NonNegativeInt`, `PositiveInt`, `StringWithoutNullChars` etc. The default
+Arbitrary instances are available through `ArbMap.defaults`; for example,
+`ArbMap.defaults |> ArbMap.arbitrary<int>` retrieves the default `Arbitrary<int>`.
 
 Also, for these kinds of generators, the `Arb.filter`, `Arb.convert` and `Arb.mapFilter` functions will come in handy.
   
