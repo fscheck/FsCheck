@@ -1,0 +1,24 @@
+code[lang="fsharp"]::before,
+code[lang="csharp"]::before {
+    display: block;
+    width: fit-content;
+    margin-bottom: var(--spacing-100);
+    padding: 0 var(--spacing-100);
+    border: 1px solid;
+    border-radius: var(--radius);
+    color: var(--text-color);
+    font-family: var(--system-font);
+    font-size: var(--font-100);
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+code[lang="fsharp"]::before {
+    content: "F#";
+    border-color: #4871f7;
+}
+
+code[lang="csharp"]::before {
+    content: "C#";
+    border-color: #009999;
+}
