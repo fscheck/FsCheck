@@ -1,4 +1,4 @@
-## To be released
+## 3.5.0 - To be released
 
 * Support NUnit 5 (by Nathan Bierema)
 * Added support for NUnit ValueFormatters.
