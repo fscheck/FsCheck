@@ -66,6 +66,15 @@ Check.One(Config.Quick.WithArbitrary([typeof<ArbitraryModifiers>]), ``generated 
 (***include-output:EvenInt***)
 
 (**
+This example builds on the default `int` Arbitrary instance in three steps:
+
+1. `ArbMap.defaults |> ArbMap.arbitrary<int>` retrieves the default instance.
+2. `Arb.filter` keeps only even values, filtering both generated values and shrinks.
+3. `Arb.convert` wraps the values in `EvenInt`, preserving the mapped shrink behavior.
+
+The static member returns `Arbitrary<EvenInt>`. Passing its containing type to
+`Config.WithArbitrary` registers it for this check; FsCheck discovers the instance from the member's return type.
+
 It's now easy to define custom shrink functions as well.
 
 FsCheck uses this pattern frequently, e.g. `NonNegativeInt`, `PositiveInt`, `StringWithoutNullChars` etc. The default

@@ -587,7 +587,8 @@ type Box<'a> = Whitebox of 'a | Blackbox of 'a
 
 (**
 you can use the same principle - except to write the generator and shrinker you now need an instance for whatever the generic parameter(s) will be
-when building the generator. To this end, the methods can take an argument of type `Arbitrary<'T>`. For example, the class `MyGenerators` can be extended as follows:*)
+when building the generator. A factory method can take an argument of type `Arbitrary<'T>`; FsCheck supplies the instance
+for the requested type from the configured `IArbMap`. For example, the class `MyGenerators` can be extended as follows:*)
 
 let boxGen<'a> (contents:Arbitrary<'a>) : Gen<Box<'a>> = 
     gen { let! a = contents.Generator
@@ -601,12 +602,40 @@ type MyTreeGenerator =
     static member Box(contents:Arbitrary<'a>) = contents |> boxGen |> Arb.fromGen
 
 (**
-Now, when FsCheck examines the static methods on `MyTreeGenerator`, it will "inject" the necessary `Arbitrary` instance. For example,
+Now, when FsCheck examines the static methods on `MyTreeGenerator`, it injects the necessary `Arbitrary` instance. For example,
 if we request to generate a `Box<int>`, FsCheck first finds the `Arbitrary` instance for `int`, and then calls `MyTreeGenerator.Box` with
 that instance to get an `Arbitrary` instance for `Box<int>`. You can think of this as a parameter-driven dependency injection.
 
-This allows you to define generic generators recursively. Have a look at the FsCheck source for examples of default Arbitrary implementations 
-to get a feeling of how to write such Arbitrary instances. The Arb module or class should help you with this task as well.
+If the factory needs to look up more than one type, it can take the whole `IArbMap` instead and use `ArbMap.generate` or
+`ArbMap.arbitrary` to retrieve the needed instances. For example, this factory uses the configured map to generate the
+elements of a generic, non-empty list:*)
+
+type NonEmptyList<'a> = NonEmptyList of 'a list
+
+type NonEmptyListGenerators =
+    static member NonEmptyList<'a>(map:IArbMap) : Arbitrary<NonEmptyList<'a>> =
+        map
+        |> ArbMap.generate<'a>
+        |> Gen.nonEmptyListOf
+        |> Gen.map NonEmptyList
+        |> Arb.fromGen
+
+(**
+The factory receives the map for the current test configuration, so element types can use either their default
+Arbitrary instances or ones registered by the caller. `Arb.fromGen` does not provide shrinking; use `Arb.fromGenShrink`
+if the custom type needs a shrinker.
+
+Register the factory type with the configuration to use it for properties:*)
+
+(***define-output:NonEmptyListExample***)
+let nonEmptyListsAreNonEmpty (NonEmptyList (values:list<int>)) = not (List.isEmpty values)
+Check.One(Config.Quick.WithArbitrary([typeof<NonEmptyListGenerators>]), nonEmptyListsAreNonEmpty)
+
+(***include-output:NonEmptyListExample***)
+
+(**
+This factory approach also supports recursively defined generic generators. Have a look at the FsCheck source for examples
+of default Arbitrary implementations. The `Arb` module provides helpers for constructing and transforming instances.
 
 Now, the following property can be checked:*)
 
