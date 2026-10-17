@@ -12,7 +12,9 @@ open NUnit.Framework.Internal
 
 module private NUnitFormatter =
     let formatValue value =
-        TestExecutionContext.CurrentContext.CurrentValueFormatter.Invoke(value)
+        // NUnit's formatter chain does not handle null itself (e.g. F# unit).
+        if isNull (box value) then "null"
+        else TestExecutionContext.CurrentContext.CurrentValueFormatter.Invoke(value)
 
 //can not be an anonymous type because of let mutable.
 type private NunitRunner() =
