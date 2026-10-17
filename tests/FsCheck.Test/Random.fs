@@ -50,5 +50,5 @@ module Random =
     let ``returns same splits of int64 as JDK8``() =
         let r = ref (Random.CreateWithSeed 25122001UL)
         let l = ref (Random.CreateWithSeed 25122001UL)
-        let longs = [| for i in 1..100 do Random.Split(!r,l,r); yield Random.NextInt64 r |]
+        let longs = [| for i in 1..100 do Random.Split(r.Value,l,r); yield Random.NextInt64 r |]
         test <@ Array.zip jdk8splits longs |> Array.forall(fun (l,r) -> l = r) @>

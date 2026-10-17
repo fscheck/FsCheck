@@ -351,7 +351,7 @@ let pushNuGet (_ : HaveTested) (_ : HavePacked) =
         | s -> s
 
     let env =
-        ["NUGET_KEY", nugetKey]
+        [("NUGET_KEY", nugetKey)]
         |> Map.ofList
 
     for { Name = package } in packages do

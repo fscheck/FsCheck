@@ -459,9 +459,9 @@ module Gen =
         // same as Gen.constant n, just to test while
         let convolutedGenNumber n =
             gen { let s = ref 0
-                  while !s < n do
-                    s := !s + 1
-                  return !s
+                  while s.Value < n do
+                    s.Value <- s.Value + 1
+                  return s.Value
                 }
         assertTrue ( convolutedGenNumber 100 
                 |> Gen.sample 10
@@ -473,8 +473,8 @@ module Gen =
         let convolutedGenNumber n =
             gen { let s = ref 0
                   for _ in [1..n] do
-                    s := !s + 1
-                  return !s
+                    s.Value <- s.Value + 1
+                  return s.Value
                 }
         assertTrue ( convolutedGenNumber 100 
                 |> Gen.sample 10

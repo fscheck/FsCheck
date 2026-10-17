@@ -6,15 +6,14 @@ module StateMachine =
     open FsCheck
     open FsCheck.FSharp
     open FsCheck.Experimental
-    open Microsoft.FSharp.Core.LanguagePrimitives.IntrinsicOperators
     open Swensen.Unquote
     open FsCheck.Xunit
 
     type SimpleModel(?init) =
         let count = ref (defaultArg init 0)
-        member __.Inc() = incr count
-        member __.Add i = count := !count + i
-        member __.Get = !count
+        member __.Inc() = count.Value <- count.Value + 1
+        member __.Add i = count.Value <- count.Value + i
+        member __.Get = count.Value
 
     let checkSimpleModelSpec size =
         let inc = StateMachine.operation "inc" ((+) 1) (fun (actual:SimpleModel,model) -> actual.Get = model)

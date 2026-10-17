@@ -348,8 +348,8 @@ module Arbitrary =
     let ``Array2D shrinks to smaller array or smaller elements`` (value:int[,]) =
         let existsSmallerElement v = 
             let result = ref false
-            Array2D.iteri (fun i j elem -> result := (!result || abs elem <= abs value.[i,j])) v
-            !result
+            Array2D.iteri (fun i j elem -> result.Value <- (result.Value || abs elem <= abs value.[i,j])) v
+            result.Value
         shrink value 
         |> Seq.forall (fun v -> 
                 Array2D.length1 v < Array2D.length1 value
