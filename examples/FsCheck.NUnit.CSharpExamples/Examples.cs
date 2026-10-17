@@ -52,5 +52,22 @@ namespace FsCheck.NUnit.CSharpExamples
         {
             Assert.Inconclusive("this test is inconclusive");
         }
+
+        public sealed record CustomType(int Id, string Name);
+
+        [SetUp]
+        public void Setup()
+        {
+            TestContext.AddFormatter<CustomType>(x => $"CustomType Formatter Works: (Id: {((CustomType)x).Id}, Name: {((CustomType)x).Name})");
+        }
+
+        /// <summary>
+        /// Should show the above Formatter in the FsCheck output for the counerexample.
+        /// </summary>
+        [Property]
+        public void CustomFormatter_shouldFail(CustomType _)
+        {
+            Assert.Fail();
+        }
     }
 }

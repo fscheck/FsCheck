@@ -10,6 +10,10 @@ open NUnit.Framework
 open NUnit.Framework.Interfaces
 open NUnit.Framework.Internal
 
+module private NUnitFormatter =
+    let formatValue value =
+        TestExecutionContext.CurrentContext.CurrentValueFormatter.Invoke(value)
+
 //can not be an anonymous type because of let mutable.
 type private NunitRunner() =
     let mutable result = None
@@ -24,9 +28,11 @@ type private NunitRunner() =
             // doesn't look pretty in the cases where it turns out that there's truly nothing to write (e.g.
             // when QuietOnSuccess is true, and the Property passed.
             if not (String.IsNullOrWhiteSpace argsForOutput) then
-                printfn "%s" argsForOutput
+                TestContext.WriteLine(argsForOutput)
         override __.OnShrink(args, everyShrink) =
-            printfn "%s" (everyShrink args)
+            let argsForOutput = everyShrink args
+            if not (String.IsNullOrWhiteSpace argsForOutput) then
+                TestContext.WriteLine(argsForOutput)
         override __.OnFinished(_,testResult) =
             result <- Some testResult
 
@@ -100,13 +106,13 @@ module internal PropertyConfig =
               .WithRunner(runner)
               .WithEvery(
                   if propertyConfig.Verbose |> Option.exists id then 
-                      Config.Verbose.Every
+                      Runner.onArgumentsToStringWithFormatter NUnitFormatter.formatValue
                   else
                       Config.Quick.Every
               )
               .WithEveryShrink(
                   if propertyConfig.Verbose |> Option.exists id then 
-                      Config.Verbose.EveryShrink
+                      Runner.onShrinkToStringWithFormatter NUnitFormatter.formatValue
                   else 
                       Config.Quick.EveryShrink
               )
@@ -283,7 +289,7 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         match testRunner.Result with
         | TestResult.Passed _ ->
             if not config.QuietOnSuccess then
-                printfn "%s" (Runner.onFinishedToString "" testRunner.Result)
+                TestContext.WriteLine(Runner.onFinishedToString "" testRunner.Result)
             testResult.SetResult(ResultState(TestStatus.Passed))
         | TestResult.Exhausted _ ->
             let msg = sprintf "Exhausted: %s" (Runner.onFinishedToString "" testRunner.Result)
@@ -291,5 +297,5 @@ and FsCheckTestMethod(mi : IMethodInfo, parentSuite : Test) =
         | TestResult.Failed (_, _, _, Outcome.Failed (NonFailingNUnitResultStateException e), _, _, _) ->
             testResult.RecordException e
         | TestResult.Failed _ ->
-            let msg = sprintf "%s" (Runner.onFinishedToString "" testRunner.Result)
+            let msg = Runner.onFinishedToStringWithFormatter NUnitFormatter.formatValue "" testRunner.Result
             testResult.SetResult(ResultState(TestStatus.Failed, msg), msg)

@@ -467,7 +467,8 @@ module Runner =
 
     let private newline = Environment.NewLine
 
-    let argumentsToString args =
+    /// Formats generated arguments using the supplied value formatter.
+    let argumentsToStringWithFormatter (formatValue: obj -> string) args =
         let escapeControlChars (s:string) =
             if isNull s then s
             else
@@ -483,8 +484,11 @@ module Runner =
                 result.ToString()
 
         args
-        |> List.map (sprintf "%A" >> escapeControlChars)
+        |> List.map (formatValue >> escapeControlChars)
         |> String.concat newline
+
+    let argumentsToString args =
+        argumentsToStringWithFormatter (sprintf "%A") args
 
     let onStartFixtureToString (t:Type) =
         sprintf "--- Checking %s ---%s" t.Name newline
@@ -499,18 +503,22 @@ module Runner =
         | 1 -> sprintf "Label of failing property: %s%s" (labelsToString l) newline
         | _ -> sprintf "Labels of failing property (one or more is failing):%s%s%s" newline (labelsToString l) newline
 
-    let onFailureToString name data originalArgs args usedSeed (lastSeed:Rnd) lastSize =
+    let private onFailureToStringWithFormatter formatValue name data originalArgs args usedSeed (lastSeed:Rnd) lastSize =
         let replayHint =
             if data.NumberOfTests > 1 then $".%s{newline}Replay directly at failing step with (%d{lastSeed.Seed},%d{lastSeed.Gamma},%d{lastSize})."
             else ":"
 
         $"%s{name}Falsifiable, after %i{data.NumberOfTests} test%s{pluralize data.NumberOfTests} (%i{data.NumberOfShrinks} shrink%s{pluralize data.NumberOfShrinks}) (%A{usedSeed}). %s{newline}Last step was invoked with size of %i{lastSize} and seed of (%A{lastSeed})%s{replayHint}%s{newline}"
             + maybePrintLabels data.Labels
-            + sprintf "Original:%s%s%s" newline (argumentsToString originalArgs) newline
-            + if (data.NumberOfShrinks > 0 ) then sprintf "Shrunk:%s%s%s" newline (argumentsToString args) newline else ""
+            + sprintf "Original:%s%s%s" newline (argumentsToStringWithFormatter formatValue originalArgs) newline
+            + if (data.NumberOfShrinks > 0 ) then sprintf "Shrunk:%s%s%s" newline (argumentsToStringWithFormatter formatValue args) newline else ""
+
+    let onFailureToString name data originalArgs args usedSeed lastSeed lastSize =
+        onFailureToStringWithFormatter (sprintf "%A") name data originalArgs args usedSeed lastSeed lastSize
 
     ///A function that returns the default string that is printed as a result of the test.
-    let onFinishedToString name testResult =
+        ///Uses the supplied value formatter for original and shrunk arguments.
+    let onFinishedToStringWithFormatter (formatValue: obj -> string) name testResult =
         let display l = match l with
                         | []  -> sprintf ".%s" newline
                         | [x] -> sprintf " (%s).%s" x newline
@@ -524,19 +532,30 @@ module Runner =
             else sprintf "%sOk, passed %i test%s%s"
                     name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stampsToString)
         | TestResult.Failed (data, originalArgs, args, Outcome.Failed exc, originalSeed, lastSeed, lastSize) -> 
-            onFailureToString name data originalArgs args originalSeed lastSeed lastSize
+            onFailureToStringWithFormatter formatValue name data originalArgs args originalSeed lastSeed lastSize
             + sprintf "with exception:%s%A%s" newline exc newline
         | TestResult.Failed (data, originalArgs, args, _, originalSeed, lastSeed, lastSize) -> 
-            onFailureToString name data originalArgs args originalSeed lastSeed lastSize
+            onFailureToStringWithFormatter formatValue name data originalArgs args originalSeed lastSeed lastSize
         | TestResult.Exhausted data -> 
             sprintf "%sArguments exhausted after %i test%s%s" 
                 name data.NumberOfTests (pluralize data.NumberOfTests) (data.Stamps |> stampsToString )
 
-    let onArgumentsToString n args = 
-        sprintf "%i:%s%s%s" n newline (argumentsToString args) newline
+    let onFinishedToString name testResult =
+        onFinishedToStringWithFormatter (sprintf "%A") name testResult
+
+    /// Formats the generated arguments for a test step using the supplied value formatter.
+    let onArgumentsToStringWithFormatter formatValue n args =
+        sprintf "%i:%s%s%s" n newline (argumentsToStringWithFormatter formatValue args) newline
+
+    let onArgumentsToString n args =
+        onArgumentsToStringWithFormatter (sprintf "%A") n args
     
+    /// Formats shrunk arguments using the supplied value formatter.
+    let onShrinkToStringWithFormatter formatValue args =
+        sprintf "shrink:%s%s%s" newline (argumentsToStringWithFormatter formatValue args) newline
+
     let onShrinkToString args =
-        sprintf "shrink:%s%s%s" newline (argumentsToString args) newline
+        onShrinkToStringWithFormatter (sprintf "%A") args
     
     ///A runner that prints results to the standard output.
     let consoleRunner =

@@ -31,6 +31,21 @@ module ResultOutputTests =
         type private T = T
         let ty = typeof<T>.DeclaringType
 
+        type CustomType(value: int) =
+            member _.Value = value
+
+        type CustomTypeArb =
+            static member CustomType() =
+                ArbMap.defaults.ArbFor<int>()
+                |> Arb.convert CustomType (fun value -> value.Value)
+
+        [<SetUp>]
+        let setupFormatter() =
+            TestContext.AddFormatter<CustomType>(fun value ->
+                match value with
+                | :? CustomType as custom -> $"CUSTOM:{custom.Value}"
+                | _ -> value.ToString())
+
         [<Property>]
         let ``should show full result info on exn in test method`` () =
             do failwith "Some exception."
@@ -38,6 +53,10 @@ module ResultOutputTests =
         [<Property>]
         let ``should show full result info on failing property in test method`` () =
             Prop.ofTestable false |> Prop.label "Some label."
+
+        [<Property(MaxTest = 1, Arbitrary = [| typeof<CustomTypeArb> |])>]
+        let ``should use NUnit's custom value formatter in failure output`` (value: CustomType) =
+            Prop.ofTestable false
 
         [<Property>]
         let ``should show full result info on exn in Async<'Testable>-returning test method`` () =
@@ -87,4 +106,12 @@ module ResultOutputTests =
 
         withoutFalsifiable
         |> Array.isEmpty
-        |> Prop.label $"Expected all messages to contain falsifiable message but got: '%A{withoutFalsifiable}'."
+        |> fun allFailuresAreReported ->
+            let customFormatterOutputIsPresent =
+                results
+                |> Array.exists (fun result ->
+                    result.Name.Contains "custom value formatter"
+                    && result.Message.Contains "CUSTOM:")
+
+            allFailuresAreReported && customFormatterOutputIsPresent
+        |> Prop.label $"Expected falsification details and custom formatting; messages missing falsification details: '%A{withoutFalsifiable}'."
