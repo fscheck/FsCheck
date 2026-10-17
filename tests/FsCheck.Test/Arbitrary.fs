@@ -37,13 +37,13 @@ module Arbitrary =
     [<Property>]
     let Int16 (NonNegativeInt size) (v:int16) =
         assertTrue ( generate<int16> |> Gen.resize size |> sample 10 |> Seq.forall (fun v -> -size <= int v && int v <= size) )
-        assertTrue ( shrink<int16> v |> Seq.forall (fun shrunkv -> shrunkv <= abs v) )
+        assertTrue ( shrink<int16> v |> Seq.forall (fun shrunkv -> int shrunkv <= abs (int v)) )
 
     [<Property>]
     let DoNotSizeInt16 (DoNotSize v as doNotSizeV) =
         //could theoretically go wrong, if all the values do happen to be zero.
         assertTrue ( generate<DoNotSize<int16>> |> Gen.resize 0 |> sample 100 |> Seq.exists (fun (DoNotSize v) -> v <> 0s) )
-        assertTrue ( shrink<DoNotSize<int16>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> shrunkv <= abs v) )
+        assertTrue ( shrink<DoNotSize<int16>> doNotSizeV |> Seq.forall (fun (DoNotSize shrunkv) -> int shrunkv <= abs (int v)) )
 
     [<Property>]
     let UInt16 (NonNegativeInt size) (v:uint16) =
