@@ -275,9 +275,8 @@ public class Test
 (**
 ## Using FsCheck.NUnit
 
-To use the integration with NUnit 3, install the FsCheck.NUnit NuGet package.
-Make sure your project targets .NET `4.5` or later.
-Then open FsCheck.NUnit.
+FsCheck.NUnit integrates FsCheck with NUnit 4. Install the FsCheck.NUnit NuGet package
+and target .NET 6 or later, then open `FsCheck.NUnit`.
 
 You can now attribute tests with `PropertyAttribute` (a subclass of NUnit's `TestAttribute`). Unlike NUnit tests, these 
 methods can take arguments and should return a property. FsCheck will be used to generate and shrink the arguments based on the
@@ -297,8 +296,33 @@ let ``Reverse of reverse of a list is the original list ``(xs:list<int>) =
   List.rev(List.rev xs) = xs
 
 (**
-Note: the NUnit integration doesn't have the ability, like FsCheck.Xunit, to override `Arbitrary` instances on a per class
-or per module basis. Otherwise, it is very similar.
+Use `PropertiesAttribute` to configure Arbitrary instances for a class, module, or assembly, and `PropertyAttribute` to
+configure an individual property. An individual property's settings take precedence over settings from its containing
+class or assembly. For example:*)
+
+type PositiveIntegers =
+    static member Int() =
+        ArbMap.defaults
+        |> ArbMap.arbitrary<int>
+        |> Arb.filter (fun value -> value > 0)
+
+type NegativeIntegers =
+    static member Int() =
+        ArbMap.defaults
+        |> ArbMap.arbitrary<int>
+        |> Arb.filter (fun value -> value < 0)
+
+[<Properties(Arbitrary = [| typeof<PositiveIntegers> |])>]
+module NUnitPropertiesWithCustomArbitraries =
+
+    [<Property>]
+    let ``uses the class or module Arbitrary`` (value:int) = value > 0
+
+    [<Property(Arbitrary = [| typeof<NegativeIntegers> |])>]
+    let ``uses the property Arbitrary`` (value:int) = value < 0
+
+(**
+The NUnit integration is similar to FsCheck.Xunit for per-property and shared Arbitrary configuration.
 
 ## Implementing IRunner 
 
