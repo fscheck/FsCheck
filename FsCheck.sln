@@ -65,6 +65,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Xunit.v3", "src\FsC
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsCheck.Test.Xunit", "tests\FsCheck.Test.Xunit\FsCheck.Test.Xunit.fsproj", "{DB3A0ADB-C21D-4414-A1BF-DE7BCD9DC251}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.Test.Xunit.CSharp", "tests\FsCheck.Test.Xunit.CSharp\FsCheck.Test.Xunit.CSharp.csproj", "{6DF8D01B-C4D0-44E6-99AB-EBCAB4D16A92}"
+EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FsCheck.Test.NUnit", "tests\FsCheck.Test.NUnit\FsCheck.Test.NUnit.fsproj", "{A019FD8F-0E4C-4154-A075-805F9DCE0484}"
 EndProject
 Global
@@ -133,6 +135,10 @@ Global
 		{DB3A0ADB-C21D-4414-A1BF-DE7BCD9DC251}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB3A0ADB-C21D-4414-A1BF-DE7BCD9DC251}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB3A0ADB-C21D-4414-A1BF-DE7BCD9DC251}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DF8D01B-C4D0-44E6-99AB-EBCAB4D16A92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DF8D01B-C4D0-44E6-99AB-EBCAB4D16A92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DF8D01B-C4D0-44E6-99AB-EBCAB4D16A92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DF8D01B-C4D0-44E6-99AB-EBCAB4D16A92}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A019FD8F-0E4C-4154-A075-805F9DCE0484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A019FD8F-0E4C-4154-A075-805F9DCE0484}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A019FD8F-0E4C-4154-A075-805F9DCE0484}.Release|Any CPU.ActiveCfg = Release|Any CPU

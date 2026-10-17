@@ -291,6 +291,8 @@ let runDotnetTest (_ : HaveCleaned) : HaveTested =
         runProcess "dotnet" ["test" ; "--project" ; $"tests/%s{project}" ; "--configuration" ; "Release"]
     runProcess "dotnet" ["build" ; "tests/FsCheck.Test.Xunit" ; "--configuration" ; "Release"]
     runProcess "dotnet" ["vstest" ; "tests/FsCheck.Test.Xunit/bin/Release/net8.0/FsCheck.Test.Xunit.dll"]
+    runProcess "dotnet" ["build" ; "tests/FsCheck.Test.Xunit.CSharp" ; "--configuration" ; "Release"]
+    runProcess "dotnet" ["vstest" ; "tests/FsCheck.Test.Xunit.CSharp/bin/Release/net8.0/FsCheck.Test.Xunit.CSharp.dll"]
     Console.WriteLine "done."
     HaveTested
 

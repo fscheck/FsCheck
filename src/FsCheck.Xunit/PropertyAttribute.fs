@@ -205,14 +205,15 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
         // pre-2.9.0: as a TestOutputHelper constructor argument
         // post-2.9.0: as a Func<TestOutputHelper> constructor argument https://github.com/xunit/xunit/issues/2996#issuecomment-2271764192
         // The below code handles both cases.
+        let propertyConstructorArguments = Array.copy constructorArguments
         let mutable outputHelper = TestOutputHelper()
-        for i in 0..constructorArguments.Length-1 do
-            match constructorArguments[i] with
+        for i in 0..propertyConstructorArguments.Length-1 do
+            match propertyConstructorArguments[i] with
             | :? TestOutputHelper as foundHelper -> 
                 outputHelper <- foundHelper
             | :? Func<TestOutputHelper> as foundHelperFunc -> 
                 outputHelper <- foundHelperFunc.Invoke()
-                constructorArguments.[i] <- outputHelper
+                propertyConstructorArguments.[i] <- outputHelper
             | _ -> ()
         outputHelper.Initialize(messageBus, test)
 
@@ -235,7 +236,7 @@ type PropertyTestCase(diagnosticMessageSink:IMessageSink, defaultMethodDisplay:T
                         let testClass = this.TestMethod.TestClass.Class.ToRuntimeType()
                         if (not (isNull this.TestMethod.TestClass)) && not this.TestMethod.Method.IsStatic then
 
-                            let testInstance = test.CreateTestClass(testClass, constructorArguments, messageBus, timer, cancellationTokenSource)
+                            let testInstance = test.CreateTestClass(testClass, propertyConstructorArguments, messageBus, timer, cancellationTokenSource)
 
                             match testInstance with
                             | :? IAsyncLifetime as asyncLifetime -> asyncLifetime.InitializeAsync()
