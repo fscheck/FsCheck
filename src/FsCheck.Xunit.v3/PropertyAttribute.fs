@@ -269,6 +269,5 @@ type PropertyDiscoverer(messageSink:IMessageSink) =
             let struct (testCaseDisplayName, explicit, skipExceptions, skipReason, skipType, skipUnless, skipWhen, sourceFilePath, sourceLineNumber, _, uniqueID, resolvedTestMethod) =
                 TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, attr)
             let traits = TestIntrospectionHelper.GetTraits(resolvedTestMethod, null)
-            result.Add(PropertyTestCase(resolvedTestMethod, testCaseDisplayName, uniqueID, explicit, skipExceptions, skipReason, skipType, skipUnless, skipWhen, traits=traits, sourceFilePath=sourceFilePath, ?sourceLineNumber=(sourceLineNumber |> Option.ofNullable)))
+            result.Add(PropertyTestCase(resolvedTestMethod, testCaseDisplayName, uniqueID, explicit, skipExceptions, skipReason, skipType, skipUnless, skipWhen, traits=traits, sourceFilePath=sourceFilePath, ?sourceLineNumber=(sourceLineNumber |> Option.ofNullable), ?timeout=Some attr.Timeout))
             ValueTask<_>(result  :> IReadOnlyCollection<IXunitTestCase>)
-

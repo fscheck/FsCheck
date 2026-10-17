@@ -59,6 +59,13 @@ Configure FsCheck via the `PropertyAttribute`:
 member _.``Custom configuration`` (xs:list<int>) = true
 ```
 
+xUnit v3's inherited `Timeout` setting also applies to the complete property run:
+
+```fsharp
+[<Property(Timeout = 1000)>]
+member _.``Completes within one second`` (xs:list<int>) = true
+```
+
 ## Documentation
 
 For comprehensive documentation, visit [https://fscheck.github.io/FsCheck/](https://fscheck.github.io/FsCheck/)
