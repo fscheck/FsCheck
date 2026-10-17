@@ -1,8 +1,9 @@
-## 3.5.0 - To be released
+## 3.5.0 - 17 October 2026
 
 * Support NUnit 5 (by Nathan Bierema)
 * Added support for NUnit ValueFormatters.
 * Added `Gen.delay` to defer generator construction until a value is generated.
+* Added support for timeout in xUnit v3.
 
 ## 3.4.0 - 20 August 2026
 
