@@ -273,6 +273,42 @@ public class Test
 *)
 
 (**
+## Using FsCheck.Xunit.v3
+
+For xUnit v3, install the `FsCheck.Xunit.v3` NuGet package instead of `FsCheck.Xunit`.
+For example, run `dotnet add package FsCheck.Xunit.v3` in your test project. The package
+uses the `FsCheck.Xunit` namespace and provides a `PropertyAttribute` that runs FsCheck
+properties as xUnit v3 tests:
+
+```csharp
+using System.Linq;
+using FsCheck.Xunit;
+using Xunit;
+
+public class ListProperties
+{
+    [Property]
+    public void ReverseOfReverseIsIdentity(int[] xs)
+    {
+        Assert.Equal(xs, xs.Reverse().Reverse());
+    }
+}
+```
+
+The attribute supports FsCheck settings such as `MaxTest`, `StartSize`, `EndSize`, and `Arbitrary`.
+The inherited xUnit v3 `Timeout` setting also applies to the complete property run:
+
+```csharp
+[Property(MaxTest = 1000, Timeout = 5000)]
+public void PropertyWithConfiguration(int[] xs)
+{
+    Assert.Equal(xs, xs.Reverse().Reverse());
+}
+```
+
+*)
+
+(**
 ## Using FsCheck.NUnit
 
 FsCheck.NUnit integrates FsCheck with NUnit 4. Install the FsCheck.NUnit NuGet package
