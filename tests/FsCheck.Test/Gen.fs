@@ -52,6 +52,19 @@ module Gen =
         assertTrue ( Gen.fresh (fun () -> (i,c)) 
                 |> sample 10
                 |> Seq.forall (fun actual -> not (obj.ReferenceEquals(actual, v)) && actual = v) )
+
+    [<Fact>]
+    let delay () =
+        let mutable creations = 0
+        let delayed =
+            Gen.delay (fun () ->
+                creations <- creations + 1
+                Gen.constant creations)
+
+        assertTrue (creations = 0)
+        let samples = Gen.sample 3 delayed
+        assertTrue (samples = [|1; 2; 3|])
+        assertTrue (creations = 3)
     
     [<Property>]
     let Oneof (l:list<string>) =

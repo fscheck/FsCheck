@@ -17,9 +17,6 @@ module GenBuilder =
 
     let inline private using r f = tryFinally (f r) (fun () -> dispose r)
 
-    let inline private delay createGen : Gen<'T> = 
-        Gen (fun n r -> let (Gen g) = createGen() in g n r)
-
     let inline private whileDo p (Gen m) =
         let go pred size rInit =
             let mutable r = rInit
@@ -31,7 +28,7 @@ module GenBuilder =
 
     let inline private forDo (s:#seq<_>) f =
         using (s.GetEnumerator()) (fun ie ->
-            whileDo (fun () -> ie.MoveNext()) (delay (fun () -> f ie.Current))
+            whileDo (fun () -> ie.MoveNext()) (Gen.delay (fun () -> f ie.Current))
           )
 
     /// The computation expression type for generators.
@@ -39,7 +36,7 @@ module GenBuilder =
         member _.Zero() = zero
         member _.Return(a: 'T) : Gen<_> = Gen.constant a
         member _.ReturnFrom (g: Gen<'T>) = g
-        member _.Delay(f: unit -> Gen<'T>) = delay f
+        member _.Delay(f: unit -> Gen<'T>) = Gen.delay f
 
         member _.Bind(m: Gen<'T>, k: 'T -> Gen<'U>) = Gen.bind k m
         member _.Combine(m1: Gen<unit>, m2: Gen<'T>) = Gen.bind (fun () -> m2) m1

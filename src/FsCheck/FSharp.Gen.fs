@@ -34,6 +34,12 @@ module Gen =
         Gen (fun s r -> let mr = create (run s r) in struct(mr,r))
         //Gen (fun s r -> let mr = Rose.map (Gen.run s r) m in struct (mr,r))
 
+    /// Create a generator by deferring its construction until a value is generated.
+    //[category: Creating generators]
+    [<CompiledName("Delay")>]
+    let delay (createGen: unit -> Gen<'T>) : Gen<'T> =
+        Gen (fun n r -> let (Gen g) = createGen() in g n r)
+
     /// Always generate the same given value. See also fresh.
     //[category: Creating generators]
     [<CompiledName("Constant")>]

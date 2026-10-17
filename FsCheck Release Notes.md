@@ -1,3 +1,9 @@
+## To be released
+
+* Support NUnit 5 (by Nathan Bierema)
+* Added support for NUnit ValueFormatters.
+* Added `Gen.delay` to defer generator construction until a value is generated.
+
 ## 3.4.0 - 20 August 2026
 
 * Updated xunit.v3 to version 4.x. (by Simon Baynes)
