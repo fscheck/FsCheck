@@ -45,7 +45,7 @@
                 <li class="release-notes-menu-item builtin-menu-item nav-item"><a class="nav-link"
                                         href="https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md">Release
                     Notes</a></li>
-                <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/Fscheck/fscheck/">Source
+                <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/">Source
                     Repository</a></li>
                 <li class="nav-header">
   Documentation
@@ -114,7 +114,7 @@
         </a>
     </div>
     <div class="end">
-        <a href="https://github.com/Fscheck/fscheck/" target="_blank">
+        <a href="https://github.com/fscheck/FsCheck/" target="_blank">
             <iconify-icon icon="uil:github" width="26" height="26"></iconify-icon>
         </a>
         <iconify-icon id="search-btn" icon="carbon:search" class="search" width="24" height="24"></iconify-icon>
@@ -129,7 +129,7 @@
         <li class="release-notes-menu-item builtin-menu-item nav-item"><a class="nav-link"
                                 href="https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md">Release
             Notes</a></li>
-        <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/Fscheck/fscheck/">Source
+        <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/">Source
             Repository</a></li>
         <li class="nav-header">
   Documentation
@@ -213,13 +213,13 @@ FsCheck can even shrink <code>Function</code>s. For example:</p>
       <span class="k">lazy</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs20', 36)" onmouseover="showTip(event, 'fs20', 36)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 37)" onmouseover="showTip(event, 'fs21', 37)" class="id">map</span> <span onmouseout="hideTip(event, 'fs16', 38)" onmouseover="showTip(event, 'fs16', 38)" class="fn">f</span> <span onmouseout="hideTip(event, 'fs17', 39)" onmouseover="showTip(event, 'fs17', 39)" class="fn">l</span> <span class="o">=</span> <span class="pn">(</span><span class="c">(*f &lt;|*)</span> <span onmouseout="hideTip(event, 'fs20', 40)" onmouseover="showTip(event, 'fs20', 40)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs22', 41)" onmouseover="showTip(event, 'fs22', 41)" class="id">head</span> <span onmouseout="hideTip(event, 'fs17', 42)" onmouseover="showTip(event, 'fs17', 42)" class="fn">l</span><span class="pn">)</span> <span class="uc">::</span> <span onmouseout="hideTip(event, 'fs20', 43)" onmouseover="showTip(event, 'fs20', 43)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 44)" onmouseover="showTip(event, 'fs21', 44)" class="id">map</span> <span onmouseout="hideTip(event, 'fs16', 45)" onmouseover="showTip(event, 'fs16', 45)" class="fn">f</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs20', 46)" onmouseover="showTip(event, 'fs20', 46)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs23', 47)" onmouseover="showTip(event, 'fs23', 47)" class="id">tail</span> <span onmouseout="hideTip(event, 'fs17', 48)" onmouseover="showTip(event, 'fs17', 48)" class="fn">l</span><span class="pn">)</span><span class="pn">)</span>
 <span onmouseout="hideTip(event, 'fs12', 49)" onmouseover="showTip(event, 'fs12', 49)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs13', 50)" onmouseover="showTip(event, 'fs13', 50)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs14', 51)" onmouseover="showTip(event, 'fs14', 51)" class="fn">mapRec</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (4 shrinks) (14574754949443574449,17207482613382273967). 
-Last step was invoked with size of 3 and seed of (10629901798563345898,3580657942618491741):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (8 shrinks) (3862086042726196880,15188274921139641095). 
+Last step was invoked with size of 4 and seed of (11108997129393117969,6886954922117788449):
 Original:
-{ 0-&gt;-2; 1-&gt;3 }
-[1; 0]
+{ -1-&gt;-3; 0-&gt;1; 1-&gt;3 }
+[1; 0; -1; 0]
 Shrunk:
-{ 0-&gt;0; 1-&gt;0 }
+{ -1-&gt;0; 0-&gt;0; 1-&gt;0 }
 [1]
 with exception:
 System.Exception: Expected true, got false.</code></pre></td></tr></table>
@@ -245,9 +245,18 @@ case, and register a generator for the new type:</p>
 <span onmouseout="hideTip(event, 'fs12', 74)" onmouseover="showTip(event, 'fs12', 74)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs33', 75)" onmouseover="showTip(event, 'fs33', 75)" class="id">One</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs34', 76)" onmouseover="showTip(event, 'fs34', 76)" class="rt">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs35', 77)" onmouseover="showTip(event, 'fs35', 77)" class="id">Quick</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs36', 78)" onmouseover="showTip(event, 'fs36', 78)" class="id">WithArbitrary</span><span class="pn">(</span><span class="pn">[</span><span onmouseout="hideTip(event, 'fs37', 79)" onmouseover="showTip(event, 'fs37', 79)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs38', 80)" onmouseover="showTip(event, 'fs38', 80)" class="rt">ArbitraryModifiers</span><span class="pn">&gt;]</span><span class="pn">)</span><span class="pn">,</span> <span class="fn">``generated even ints should be even``</span><span class="pn">)</span>
 </code></pre>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
+<p>This example builds on the default <code>int</code> Arbitrary instance in three steps:</p>
+<ol>
+<li><code>ArbMap.defaults |&gt; ArbMap.arbitrary&lt;int&gt;</code> retrieves the default instance.</li>
+<li><code>Arb.filter</code> keeps only even values, filtering both generated values and shrinks.</li>
+<li><code>Arb.convert</code> wraps the values in <code>EvenInt</code>, preserving the mapped shrink behavior.</li>
+</ol>
+<p>The static member returns <code>Arbitrary&lt;EvenInt&gt;</code>. Passing its containing type to
+<code>Config.WithArbitrary</code> registers it for this check; FsCheck discovers the instance from the member's return type.</p>
 <p>It's now easy to define custom shrink functions as well.</p>
-<p>FsCheck uses this pattern frequently, e.g. <code>NonNegativeInt</code>, <code>PositiveInt</code>, <code>StringWithoutNullChars</code> etc. See the
-default Arbitrary instances on the <code>Arb.Default</code> type.</p>
+<p>FsCheck uses this pattern frequently, e.g. <code>NonNegativeInt</code>, <code>PositiveInt</code>, <code>StringWithoutNullChars</code> etc. The default
+Arbitrary instances are available through <code>ArbMap.defaults</code>; for example,
+<code>ArbMap.defaults |&gt; ArbMap.arbitrary&lt;int&gt;</code> retrieves the default <code>Arbitrary&lt;int&gt;</code>.</p>
 <p>Also, for these kinds of generators, the <code>Arb.filter</code>, <code>Arb.convert</code> and <code>Arb.mapFilter</code> functions will come in handy.</p>
 <h2><a name="An-equality-comparison-that-prints-the-left-and-right-sides-of-the-equality" class="anchor" href="#An-equality-comparison-that-prints-the-left-and-right-sides-of-the-equality">An equality comparison that prints the left and right sides of the equality</a></h2>
 <p>Properties commonly check for equality. If a test case fails, FsCheck prints the counterexample, but
@@ -259,14 +268,14 @@ define your own labelling equality combinator:</p>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs44', 90)" onmouseover="showTip(event, 'fs44', 90)" class="fn">testCompare</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs26', 91)" onmouseover="showTip(event, 'fs26', 91)" class="fn">i</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs6', 92)" onmouseover="showTip(event, 'fs6', 92)" class="vt">int</span><span class="pn">)</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs45', 93)" onmouseover="showTip(event, 'fs45', 93)" class="fn">j</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs6', 94)" onmouseover="showTip(event, 'fs6', 94)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs26', 95)" onmouseover="showTip(event, 'fs26', 95)" class="fn">i</span><span class="o">+</span><span class="n">1</span>  <span class="o">.</span><span class="o">=.</span> <span class="n">2</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs45', 96)" onmouseover="showTip(event, 'fs45', 96)" class="fn">j</span><span class="o">-</span><span class="n">1</span>
 <span onmouseout="hideTip(event, 'fs12', 97)" onmouseover="showTip(event, 'fs12', 97)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs13', 98)" onmouseover="showTip(event, 'fs13', 98)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs44', 99)" onmouseover="showTip(event, 'fs44', 99)" class="fn">testCompare</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (1 shrink) (2628060209160298250,1179272212425646095). 
-Last step was invoked with size of 2 and seed of (7939727467901487071,9644160341713726265):
-Label of failing property: 3 = -1
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (4 shrinks) (67792325119159331,4484084208709184759). 
+Last step was invoked with size of 2 and seed of (1985201191621995015,11536808325989144329):
+Label of failing property: 1 = -1
 Original:
-1
-1
+-2
+-2
 Shrunk:
-1
+0
 0
 with exception:
 System.Exception: Expected true, got false.</code></pre></td></tr></table>

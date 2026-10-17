@@ -45,7 +45,7 @@
                 <li class="release-notes-menu-item builtin-menu-item nav-item"><a class="nav-link"
                                         href="https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md">Release
                     Notes</a></li>
-                <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/Fscheck/fscheck/">Source
+                <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/">Source
                     Repository</a></li>
                 <li class="nav-header">
   Documentation
@@ -114,7 +114,7 @@
         </a>
     </div>
     <div class="end">
-        <a href="https://github.com/Fscheck/fscheck/" target="_blank">
+        <a href="https://github.com/fscheck/FsCheck/" target="_blank">
             <iconify-icon icon="uil:github" width="26" height="26"></iconify-icon>
         </a>
         <iconify-icon id="search-btn" icon="carbon:search" class="search" width="24" height="24"></iconify-icon>
@@ -129,7 +129,7 @@
         <li class="release-notes-menu-item builtin-menu-item nav-item"><a class="nav-link"
                                 href="https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md">Release
             Notes</a></li>
-        <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/Fscheck/fscheck/">Source
+        <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/">Source
             Repository</a></li>
         <li class="nav-header">
   Documentation
@@ -222,11 +222,10 @@ Prop.ForAll((Func&lt;<span class="k">int</span>[], <span class="k">bool</span>&g
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 15)" onmouseover="showTip(event, 'fs10', 15)" class="fn">revIsOrig</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs3', 16)" onmouseover="showTip(event, 'fs3', 16)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 17)" onmouseover="showTip(event, 'fs4', 17)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs5', 18)" onmouseover="showTip(event, 'fs5', 18)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 19)" onmouseover="showTip(event, 'fs6', 19)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 20)" onmouseover="showTip(event, 'fs7', 20)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs3', 21)" onmouseover="showTip(event, 'fs3', 21)" class="fn">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs3', 22)" onmouseover="showTip(event, 'fs3', 22)" class="fn">xs</span>
 <span onmouseout="hideTip(event, 'fs8', 23)" onmouseover="showTip(event, 'fs8', 23)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 24)" onmouseover="showTip(event, 'fs9', 24)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs10', 25)" onmouseover="showTip(event, 'fs10', 25)" class="fn">revIsOrig</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 3 tests (2 shrinks) (6969308849880007138,4412916593300648983). 
-Last step was invoked with size of 4 and seed of (6725941128390296776,4035411294352238261).
-Replay directly at failing step with (6725941128390296776,4035411294352238261,4).
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (2 shrinks) (10291676617307249092,3101776441483573011). 
+Last step was invoked with size of 2 and seed of (7112853861957605745,11941848772523572901):
 Original:
-[2; 0; 0]
+[-2; 0]
 Shrunk:
 [1; 0]
 with exception:
@@ -234,10 +233,10 @@ System.Exception: Expected true, got false.</code></pre></td></tr></table>
 <p>In C#:</p>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>[]<span class="o">&gt;</span>(xs <span class="o">=</span><span class="o">&gt;</span> xs.Reverse().SequenceEqual(xs))
     .QuickCheck();</code></pre></td></tr></table>
-<p>FsCheck also <em>shrinks</em> the counter example: it tries to find the minimal counter example that
-still fails the property. The counter example is indeed minimal:
+<p>FsCheck also <em>shrinks</em> the counterexample: it tries to find the minimal counterexample that
+still fails the property. The counterexample is indeed minimal:
 the list must have at least two different elements for the test to fail. FsCheck displays how many times it
-found a smaller (in some way) counter example and so proceeded to shrink further.</p>
+found a smaller (in some way) counterexample and so proceeded to shrink further.</p>
 <p>To learn more on how to write properties, see <a href="Properties.html">Properties</a>.</p>
 <h2><a name="What-do-I-do-if-a-test-loops-or-encounters-an-error" class="anchor" href="#What-do-I-do-if-a-test-loops-or-encounters-an-error">What do I do if a test loops or encounters an error?</a></h2>
 <p>In this case we know that the property does not hold, but Check.Quick does not display the counter-example.
@@ -254,13 +253,11 @@ To see this error, ask FsCheck to generate lists of floats:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 26)" onmouseover="showTip(event, 'fs11', 26)" class="fn">revRevIsOrigFloat</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs12', 27)" onmouseover="showTip(event, 'fs12', 27)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs4', 28)" onmouseover="showTip(event, 'fs4', 28)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs13', 29)" onmouseover="showTip(event, 'fs13', 29)" class="vt">float</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs6', 30)" onmouseover="showTip(event, 'fs6', 30)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 31)" onmouseover="showTip(event, 'fs7', 31)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs6', 32)" onmouseover="showTip(event, 'fs6', 32)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs7', 33)" onmouseover="showTip(event, 'fs7', 33)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs12', 34)" onmouseover="showTip(event, 'fs12', 34)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 35)" onmouseover="showTip(event, 'fs12', 35)" class="fn">xs</span>
 <span onmouseout="hideTip(event, 'fs8', 36)" onmouseover="showTip(event, 'fs8', 36)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 37)" onmouseover="showTip(event, 'fs9', 37)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs11', 38)" onmouseover="showTip(event, 'fs11', 38)" class="fn">revRevIsOrigFloat</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 17 tests (13 shrinks) (18412954878553630320,103572958543487283). 
-Last step was invoked with size of 18 and seed of (2871496377137323087,18068680344347009027).
-Replay directly at failing step with (2871496377137323087,18068680344347009027,18).
+<table class="pre"><tr><td><pre><code>Falsifiable, after 8 tests (7 shrinks) (12846594495861470765,1688276415209415521). 
+Last step was invoked with size of 9 and seed of (12635070444276085804,13966074090447723545).
+Replay directly at failing step with (12635070444276085804,13966074090447723545,9).
 Original:
-[nan; 0.0; 0.761651722; 0.4287284632; 0.9567869754; -infinity; -0.5085641028;
- -0.0; 0.03720831863; -0.9236322897; -9.082203968; 4.940656458e-324;
- 1.797693135e+308; nan]
+[-1.797693135e+308; 0.0; 0.0; 1.797693135e+308; 0.0; -0.0; nan; 4.584783342]
 Shrunk:
 [nan]
 with exception:
@@ -279,7 +276,7 @@ unit test framework to augment unit tests or just to run the properties more eas
 integration, but we leave it up to you to choose whichever suits your environment best.</p>
 <h3><a name="Integration-with-Expecto" class="anchor" href="#Integration-with-Expecto">Integration with Expecto</a></h3>
 <p>Some testing frameworks like Expecto have an out-of-the-box integration with FsCheck. By using one of the runners that
-support FsCheck out of the box, you gain access the the frameworks' reporting capabilities and integrations with IDEs
+support FsCheck out of the box, you gain access to the frameworks' reporting capabilities and integrations with IDEs
 and build tooling.</p>
 <p>Here's a sample:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span class="id">Expecto</span>

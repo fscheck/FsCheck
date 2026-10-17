@@ -45,7 +45,7 @@
                 <li class="release-notes-menu-item builtin-menu-item nav-item"><a class="nav-link"
                                         href="https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md">Release
                     Notes</a></li>
-                <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/Fscheck/fscheck/">Source
+                <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/">Source
                     Repository</a></li>
                 <li class="nav-header">
   Documentation
@@ -114,7 +114,7 @@
         </a>
     </div>
     <div class="end">
-        <a href="https://github.com/Fscheck/fscheck/" target="_blank">
+        <a href="https://github.com/fscheck/FsCheck/" target="_blank">
             <iconify-icon icon="uil:github" width="26" height="26"></iconify-icon>
         </a>
         <iconify-icon id="search-btn" icon="carbon:search" class="search" width="24" height="24"></iconify-icon>
@@ -129,7 +129,7 @@
         <li class="release-notes-menu-item builtin-menu-item nav-item"><a class="nav-link"
                                 href="https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md">Release
             Notes</a></li>
-        <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/Fscheck/fscheck/">Source
+        <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/">Source
             Repository</a></li>
         <li class="nav-header">
   Documentation
@@ -195,18 +195,16 @@
 <main>
     <div id="content">
         <h1><a name="FsCheck-Random-Testing-for-NET" class="anchor" href="#FsCheck-Random-Testing-for-NET">FsCheck: Random Testing for .NET</a></h1>
-<p>FsCheck is a tool for testing .NET programs automatically. The programmer provides a specification of the program, in the form of properties which functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. While writing the properties, you are actually writing a testable specification of your program. Specifications are expressed in F#, C# or VB, using combinators defined in the FsCheck library. FsCheck provides combinators to define properties, observe the distribution of test data, and define test data generators. When a property fails, FsCheck automatically displays a minimal counter example.</p>
-<p>FsCheck, NUnit and xUnit.NET plugin can be <a href="https://www.nuget.org/packages?q=fscheck">installed from NuGet</a> using your favorite package manager.</p>
+<p>FsCheck is a tool for testing .NET programs automatically. The programmer provides a specification of the program, in the form of properties which functions, methods or objects should satisfy, and FsCheck then tests that the properties hold in a large number of randomly generated cases. While writing the properties, you are actually writing a testable specification of your program. Specifications are expressed in F#, C# or VB, using combinators defined in the FsCheck library. FsCheck provides combinators to define properties, observe the distribution of test data, and define test data generators. When a property fails, FsCheck automatically displays a minimal counterexample.</p>
+<p>FsCheck, NUnit and xUnit.NET plugins can be <a href="https://www.nuget.org/packages?q=fscheck">installed from NuGet</a> using your favorite package manager.</p>
 <p>Users have also created integrations with <a href="https://github.com/haf/Expecto">Expecto</a>,
 <a href="https://github.com/mausch/Fuchu">Fuchu</a>,
 <a href="https://github.com/AutoFixture/AutoFixture">AutoFixture</a> and
 <a href="https://github.com/microsoft/testfx">MSTest</a> that
 you can <a href="https://www.nuget.org/packages?q=fscheck">find on NuGet</a>.</p>
-<h2><a name="Warning-Documentation" class="anchor" href="#Warning-Documentation">Warning: Documentation</a></h2>
-<p>The Documentation section below was written for version 2.x, but 3.x is the version that is currently maintained. Only v3 will get new features and fixes.</p>
-<p>This leaves us in the unfortunate position that some documentation is out of date and incomplete. One exception is the API docs. They are generated from the 3.x code and are accurate - if in doubt, believe the API docs.</p>
+<p>The guides below have been updated to include FsCheck 3, but some explanations and examples may still be incomplete or out of date. The API reference is generated from the current code and describes the current public API. If a guide conflicts with the API reference, follow the API reference and please report the documentation issue.</p>
 <p>The documentation and API docs for 2.x are not easily accessible anymore. The last commit of the 2.x documentation site is <a href="https://github.com/fscheck/FsCheck/tree/1458b268b4311f7e4b25871715f1f9b5d58a21b3">here</a>.</p>
-<p>Please help fixing this! FsCheck welcoms contributions of all kinds, big or small. See <a href="https://github.com/fscheck/FsCheck/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22">issues</a> for inspiration. Feel free to open an issue to highlight specific documentation problems or gaps, even if you're not sure it really is a problem. At worst you'll get an answer to your question.</p>
+<p>FsCheck welcomes contributions of all kinds, big or small. See <a href="https://github.com/fscheck/FsCheck/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22">issues</a> for inspiration. Feel free to open an issue to highlight specific  problems or gaps, even if you're not sure it really is a problem. At worst you'll get an answer to your question.</p>
 <h2><a name="Documentation" class="anchor" href="#Documentation">Documentation</a></h2>
 <ul>
 <li><p><a href="QuickStart.html">QuickStart</a> to get started.</p></li>
@@ -249,11 +247,6 @@ redistribution for both commercial and non-commercial purposes. For more informa
   <li class="level-1">
     <a href="#FsCheck-Random-Testing-for-NET">
       FsCheck: Random Testing for .NET
-    </a>
-  </li>
-  <li class="level-2">
-    <a href="#Warning-Documentation">
-      Warning: Documentation
     </a>
   </li>
   <li class="level-2">

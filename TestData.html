@@ -45,7 +45,7 @@
                 <li class="release-notes-menu-item builtin-menu-item nav-item"><a class="nav-link"
                                         href="https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md">Release
                     Notes</a></li>
-                <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/Fscheck/fscheck/">Source
+                <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/">Source
                     Repository</a></li>
                 <li class="nav-header">
   Documentation
@@ -114,7 +114,7 @@
         </a>
     </div>
     <div class="end">
-        <a href="https://github.com/Fscheck/fscheck/" target="_blank">
+        <a href="https://github.com/fscheck/FsCheck/" target="_blank">
             <iconify-icon icon="uil:github" width="26" height="26"></iconify-icon>
         </a>
         <iconify-icon id="search-btn" icon="carbon:search" class="search" width="24" height="24"></iconify-icon>
@@ -129,7 +129,7 @@
         <li class="release-notes-menu-item builtin-menu-item nav-item"><a class="nav-link"
                                 href="https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md">Release
             Notes</a></li>
-        <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/Fscheck/fscheck/">Source
+        <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/">Source
             Repository</a></li>
         <li class="nav-header">
   Documentation
@@ -206,9 +206,9 @@ The name for the methods in F# and C# are largely the same except for casing.</p
 <p>Shrinkers have types of the form <code>'a -&gt; seq&lt;'a&gt;</code> aka <code>Func&lt;T,IEnumerable&lt;T&gt;&gt;</code>; given a value, a shrinker
 produces a sequence of values that are (in some way) smaller than the given value.
 If FsCheck finds a set of values that falsify a given property, it will try
-to make that value smaller than the original (random) value by getting the
+to make those values smaller than the original (random) values by getting the
 shrinks for the value and trying each one in turn to check that the property
-is still false. If it is, the smaller value becomes the new counter example
+is still false. If it is, the smaller value becomes the new counterexample
 and the shrinking process continues with that value.</p>
 <p>Shrinkers have no special support from FsCheck - this is not needed,
 since you have all you need in <code>seq</code> computation expressions and the <code>Seq</code> module, or in LINQ and IEnumerable.</p>
@@ -380,7 +380,7 @@ values between a minimum and maximum value, both inclusive:</p>
 but any value would do; it wouldn't change the result.</p>
 <p>While <code>Gen.choose (0, 9)</code> generates a single integer value, <code>Gen.sample 0 10</code>
 generates 10 sample values:</p>
-<table class="pre"><tr><td><pre><code>[|6; 7; 6; 7; 7; 2; 1; 5; 8; 7|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|6; 8; 3; 8; 1; 9; 5; 6; 7; 5|]</code></pre></td></tr></table>
 <p>If you supply values in the 'wrong order', <code>Gen.choose</code> will follow
 <a href="https://en.wikipedia.org/wiki/Robustness_principle">Postel's law</a> and 'know
 what you meant':</p>
@@ -389,7 +389,7 @@ what you meant':</p>
 <p>In this example, the first value is greater than the second value, but
 <code>Gen.choose</code> will happily interpret this as a range, and produce values between
 42 and 99, both included:</p>
-<table class="pre"><tr><td><pre><code>[|97; 69; 51; 84; 60; 75; 93; 67; 44; 80|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|51; 43; 47; 66; 74; 71; 66; 57; 48; 50|]</code></pre></td></tr></table>
 <p>Since both values are included, if you set both to the same value, you'll
 effectively constrain the generator to that single value, and it'll behave like
 <code>Gen.constant</code>.</p>
@@ -407,7 +407,7 @@ the result.</p>
 </code></pre>
 <p>The result of this expression is a list of ten sample values. Each value is
 a single integer drawn from the collection of numbers:</p>
-<table class="pre"><tr><td><pre><code>[|42; 7; 42; 1453; 1337; 42; 7; 1453; 42; 1337|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|42; 7; 1337; -100; 1453; 7; -100; 1453; 7; 7|]</code></pre></td></tr></table>
 <p>All elements are equally likely to be drawn from the collection; we say that
 the random function has a uniform distribution. One easy way to affect the
 distribution is to put more than one identical element into the collection:</p>
@@ -415,7 +415,7 @@ distribution is to put more than one identical element into the collection:</p>
 </code></pre>
 <p>In the above example, the value <code>"foo"</code> appears twice, so is twice as likely
 to be drawn from the collection:</p>
-<table class="pre"><tr><td><pre><code>[|"bar"; "bar"; "foo"; "foo"; "foo"; "bar"; "foo"; "bar"; "foo"; "foo"|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|"bar"; "foo"; "bar"; "foo"; "bar"; "foo"; "foo"; "foo"; "bar"; "foo"|]</code></pre></td></tr></table>
 <p>The above examples all use <code>list</code> values as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -433,13 +433,13 @@ argument, it's <code>3</code> in this example, which means only values from the 
 </code></pre>
 <p>The result of this expression is a list of ten sample values. Each value is
 a single character drawn from the segment <code>['a'; 'b'; 'c']</code>:</p>
-<table class="pre"><tr><td><pre><code>[|'c'; 'b'; 'c'; 'a'; 'c'; 'c'; 'b'; 'b'; 'a'; 'b'|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|'a'; 'c'; 'c'; 'c'; 'c'; 'c'; 'b'; 'a'; 'b'; 'b'|]</code></pre></td></tr></table>
 <p>Let's run <code>Gen.growingElements</code> again, with the same input but with size <code>7</code>:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs8', 132)" onmouseover="showTip(event, 'fs8', 132)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs42', 133)" onmouseover="showTip(event, 'fs42', 133)" class="id">growingElements</span> <span class="pn">[</span><span class="s">&#39;a&#39;</span><span class="pn">;</span> <span class="s">&#39;b&#39;</span><span class="pn">;</span> <span class="s">&#39;c&#39;</span><span class="pn">;</span> <span class="s">&#39;d&#39;</span><span class="pn">;</span> <span class="s">&#39;e&#39;</span><span class="pn">;</span> <span class="s">&#39;f&#39;</span><span class="pn">;</span> <span class="s">&#39;g&#39;</span><span class="pn">;</span> <span class="s">&#39;h&#39;</span><span class="pn">;</span> <span class="s">&#39;i&#39;</span><span class="pn">;</span> <span class="s">&#39;j&#39;</span><span class="pn">]</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs8', 134)" onmouseover="showTip(event, 'fs8', 134)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 135)" onmouseover="showTip(event, 'fs40', 135)" class="id">sampleWithSize</span> <span class="n">7</span> <span class="n">10</span>
 </code></pre>
 <p>The result of this expression is a list of ten sample values. Each value is
 now a single character drawn from the segment <code>['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g']</code>:</p>
-<table class="pre"><tr><td><pre><code>[|'c'; 'a'; 'c'; 'a'; 'f'; 'e'; 'd'; 'f'; 'd'; 'f'|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|'g'; 'e'; 'c'; 'c'; 'g'; 'f'; 'c'; 'a'; 'a'; 'f'|]</code></pre></td></tr></table>
 <p>The above examples all use <code>list</code> values as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -453,24 +453,24 @@ produce a <code>Gen&lt;byte&gt;</code> from a <code>Gen&lt;int&gt;</code> is to 
 </code></pre>
 <p>This example uses the <code>byte</code> <em>function</em> to cast any <code>int</code> created by
 <code>Gen.choose (0, 127)</code> to a <code>byte</code> value:</p>
-<table class="pre"><tr><td><pre><code>[|84uy; 86uy; 58uy; 16uy; 117uy; 40uy; 104uy; 90uy; 91uy; 78uy|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|52uy; 49uy; 59uy; 103uy; 29uy; 49uy; 101uy; 87uy; 113uy; 57uy|]</code></pre></td></tr></table>
 <p>This is only a basic example of the concept of <code>Gen.map</code>. In this particular
 example, you could also have used <code>Gen.elements [0uy..127uy]</code> to achieve the
 same result without using <code>Gen.map</code>, so let's consider a second
 example.</p>
 <p>Assume that you need to create a date in a particular month; e.g. November
 2019. You can do that by creating an integer for the day of the month, and then
-combine <code>Gen.map</code> with an anymous function to get the desired date:</p>
+combine <code>Gen.map</code> with an anonymous function to get the desired date:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs8', 143)" onmouseover="showTip(event, 'fs8', 143)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 144)" onmouseover="showTip(event, 'fs9', 144)" class="id">choose</span> <span class="pn">(</span><span class="n">1</span><span class="pn">,</span> <span class="n">30</span><span class="pn">)</span>
 <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs8', 145)" onmouseover="showTip(event, 'fs8', 145)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs28', 146)" onmouseover="showTip(event, 'fs28', 146)" class="id">map</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs7', 147)" onmouseover="showTip(event, 'fs7', 147)" class="fn">i</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs44', 148)" onmouseover="showTip(event, 'fs44', 148)" class="fn">DateTime</span><span class="pn">(</span><span class="n">2019</span><span class="pn">,</span> <span class="n">11</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs7', 149)" onmouseover="showTip(event, 'fs7', 149)" class="fn">i</span><span class="pn">)</span><span class="pn">.</span><span class="id">ToString</span> <span class="s">&quot;u&quot;</span><span class="pn">)</span>
 <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs8', 150)" onmouseover="showTip(event, 'fs8', 150)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 151)" onmouseover="showTip(event, 'fs40', 151)" class="id">sampleWithSize</span> <span class="n">0</span> <span class="n">10</span>
 </code></pre>
 <p>In this example, the generated <code>DateTime</code> value is immediately formatted as
 a <code>string</code>, so that the output is more readable:</p>
-<table class="pre"><tr><td><pre><code>[|"2019-11-21 00:00:00Z"; "2019-11-09 00:00:00Z"; "2019-11-01 00:00:00Z";
-  "2019-11-17 00:00:00Z"; "2019-11-06 00:00:00Z"; "2019-11-30 00:00:00Z";
-  "2019-11-13 00:00:00Z"; "2019-11-22 00:00:00Z"; "2019-11-30 00:00:00Z";
-  "2019-11-21 00:00:00Z"|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|"2019-11-22 00:00:00Z"; "2019-11-13 00:00:00Z"; "2019-11-30 00:00:00Z";
+  "2019-11-08 00:00:00Z"; "2019-11-08 00:00:00Z"; "2019-11-19 00:00:00Z";
+  "2019-11-24 00:00:00Z"; "2019-11-19 00:00:00Z"; "2019-11-08 00:00:00Z";
+  "2019-11-24 00:00:00Z"|]</code></pre></td></tr></table>
 <p>This causes the resulting generator to have the type <code>Gen&lt;string&gt;</code>, but if
 you omit calling <code>ToString "u"</code>, its type would have been <code>Gen&lt;DateTime&gt;</code>.</p>
 <h4><a name="Lists" class="anchor" href="#Lists">Lists</a></h4>
@@ -482,9 +482,9 @@ you can use <code>Gen.constant</code> to generate lists that all contain the sam
 <pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs8', 152)" onmouseover="showTip(event, 'fs8', 152)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs39', 153)" onmouseover="showTip(event, 'fs39', 153)" class="id">constant</span> <span class="n">42</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs8', 154)" onmouseover="showTip(event, 'fs8', 154)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs45', 155)" onmouseover="showTip(event, 'fs45', 155)" class="id">listOf</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs8', 156)" onmouseover="showTip(event, 'fs8', 156)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 157)" onmouseover="showTip(event, 'fs40', 157)" class="id">sampleWithSize</span> <span class="n">1</span> <span class="n">10</span>
 </code></pre>
 <p>This combination uses <code>Gen.constant 42</code> as an individual generator, and then
-generates lists containing the the number 42. While the value(s) in the list is
+generates lists containing the number 42. While the value(s) in the list is
 always 42, the length of the generated lists varies.</p>
-<table class="pre"><tr><td><pre><code>[|[]; []; []; [42]; [42]; [42]; [42]; [42]; [42]; [42]|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|[]; []; []; []; [42]; [42]; []; [42]; [42]; [42]|]</code></pre></td></tr></table>
 <p>The length of the generated list is determined by the <code>size</code> argument. In
 this example, the <code>size</code> argument is <code>1</code>, so the generated lists are short.
 Note that while there's a correlation beteen <code>size</code> and the length of the
@@ -495,10 +495,10 @@ lists, you can't rely on a deterministic length. For that, there's
 <p>This example uses <code>Gen.choose (24, 42)</code> in order to generate individual
 integer values between 24 and 42. It then pipes this generator into
 <code>Gen.listOfLength 5</code> in order to generate lists with exactly five elements:</p>
-<table class="pre"><tr><td><pre><code>[|[32; 28; 35; 28; 24]; [24; 29; 39; 29; 25]; [42; 35; 30; 28; 34];
-  [37; 24; 42; 27; 34]; [32; 42; 35; 39; 34]; [36; 40; 27; 33; 34];
-  [33; 30; 31; 40; 28]; [36; 32; 35; 28; 31]; [38; 24; 25; 33; 42];
-  [25; 27; 25; 41; 41]|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|[24; 35; 26; 41; 35]; [32; 32; 41; 29; 30]; [42; 37; 41; 34; 28];
+  [26; 35; 34; 28; 36]; [31; 26; 27; 31; 31]; [38; 26; 27; 35; 40];
+  [37; 36; 29; 26; 33]; [28; 37; 25; 25; 36]; [31; 42; 28; 28; 42];
+  [35; 35; 32; 33; 35]|]</code></pre></td></tr></table>
 <p>Notice that all sample lists have exactly five elements.</p>
 <p>You can also use <code>Gen.nonEmptyListOf</code> to create lists that are guaranteed to
 have at least one element. Like the other list generators, it uses a
@@ -509,11 +509,11 @@ single-value generator to generate its elements:</p>
 of the generated lists. They may still be small, but the larger the <code>size</code>
 argument, the larger the lists may become.</p>
 <table class="pre"><tr><td><pre><code>[|["baz"];
-  ["baz"; "bar"; "baz"; "foo"; "foo"; "baz"; "foo"; "baz"; "bar"; "baz"; "foo";
-   "bar"];
-  ["baz"; "bar"; "baz"; "bar"; "foo"; "foo"; "foo"; "baz"; "baz"; "bar"; "bar";
-   "baz"; "baz"; "foo"; "baz"; "baz"];
-  ["baz"; "bar"; "baz"; "foo"; "foo"; "bar"; "baz"; "bar"; "baz"; "baz"; "bar"]|]</code></pre></td></tr></table>
+  ["bar"; "baz"; "baz"; "bar"; "foo"; "foo"; "foo"; "foo"; "bar"; "foo"; "bar";
+   "baz"; "foo"];
+  ["baz"; "foo"; "foo"; "bar"; "foo"; "baz"; "baz"; "bar"; "foo"; "bar"; "bar";
+   "baz"];
+  ["foo"; "bar"; "foo"; "foo"; "bar"; "baz"; "foo"; "baz"; "foo"; "bar"]|]</code></pre></td></tr></table>
 <p>In this example, each element is drawn from the small set "foo", "bar", and
 "baz". The lists are guaranteed to have at least a single element, but may be
 longer.</p>
@@ -529,9 +529,9 @@ random permutation of a given finite sequence.</p>
 example, but any value would do; it wouldn't change the result.</p>
 <p>The result of this expression is a list of lists, where each list contains
 the original input list, but shuffled:</p>
-<table class="pre"><tr><td><pre><code>[|[|"bar"; "foo"; "baz"; "qux"|]; [|"foo"; "baz"; "qux"; "bar"|];
-  [|"foo"; "bar"; "qux"; "baz"|]; [|"baz"; "foo"; "qux"; "bar"|];
-  [|"qux"; "foo"; "bar"; "baz"|]; [|"qux"; "baz"; "bar"; "foo"|]|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|[|"qux"; "baz"; "bar"; "foo"|]; [|"baz"; "foo"; "bar"; "qux"|];
+  [|"foo"; "bar"; "qux"; "baz"|]; [|"foo"; "bar"; "baz"; "qux"|];
+  [|"qux"; "bar"; "foo"; "baz"|]; [|"qux"; "baz"; "foo"; "bar"|]|]</code></pre></td></tr></table>
 <p>The above example uses a <code>list</code> value as input, but you can use any <code>seq</code>
 expression, including <code>list</code> and <code>array</code> values, as long as the sequence is
 finite.</p>
@@ -552,8 +552,8 @@ can use integers:</p>
 <p><code>Gen.two</code> uses a single-value generator to create a generator of two-element
 tuples. This example generates 10 sample points, where each coordinate is
 between -100 and 100:</p>
-<table class="pre"><tr><td><pre><code>[|(23, 77); (43, 70); (-66, 20); (-73, -72); (-41, 59); (59, -5); (-47, -75);
-  (82, 29); (2, 35); (65, -63)|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|(-62, 85); (-1, 66); (-53, 20); (53, 35); (95, -90); (-17, -85); (8, -62);
+  (99, 56); (-31, 89); (10, -78)|]</code></pre></td></tr></table>
 <p>If you want to model a coordinate system in three-dimensional space, you may
 decide to use floating points instead:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs8', 180)" onmouseover="showTip(event, 'fs8', 180)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs41', 181)" onmouseover="showTip(event, 'fs41', 181)" class="id">elements</span> <span class="pn">[</span><span class="o">-</span><span class="n">10.0</span><span class="o">..</span><span class="n">0.01</span><span class="o">..</span><span class="n">10.0</span><span class="pn">]</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs8', 182)" onmouseover="showTip(event, 'fs8', 182)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs50', 183)" onmouseover="showTip(event, 'fs50', 183)" class="id">three</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs8', 184)" onmouseover="showTip(event, 'fs8', 184)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 185)" onmouseover="showTip(event, 'fs40', 185)" class="id">sampleWithSize</span> <span class="n">0</span> <span class="n">10</span>
@@ -562,10 +562,10 @@ decide to use floating points instead:</p>
 from between -10 and 10, with two decimals; that defines a <code>Gen&lt;float&gt;</code>.
 Second, <code>Gen.three</code> takes that <code>Gen&lt;float&gt;</code> and turns it into a
 <code>Gen&lt;float * float * float&gt;</code>:</p>
-<table class="pre"><tr><td><pre><code>[|(7.22, 2.27, -2.05); (-0.06, 4.76, -8.09); (5.45, -0.66, 4.33);
-  (-1.5, 2.97, -7.4); (7.1, 1.26, 0.28); (-4.98, 5.21, -4.46);
-  (9.87, -4.58, 4.59); (9.03, -7.29, -4.94); (-2.71, -7.74, -8.08);
-  (-5.77, 9.48, 7.67)|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|(1.64, -1.83, 6.56); (3.83, -4.88, 9.18); (4.53, -8.97, -3.45);
+  (-1.7, -6.47, -5.17); (1.79, -6.94, 6.64); (1.82, -0.02, 7.79);
+  (0.92, -1.42, -3.21); (-6.43, 5.31, 2.01); (-9.47, -2.29, 7.82);
+  (9.91, -5.42, 0.15)|]</code></pre></td></tr></table>
 <p>Finally, <code>Gen.four</code> transforms a single-value generator into a generator of
 four-element tuples. As all the other <em>combinators</em> in the <code>Gen</code> module, you
 can combine it with other functions to define more specific values. Imagine,
@@ -587,8 +587,8 @@ Third, you can pipe that generator into <code>Gen.map</code>, using the construc
 overload of <code>Version</code> that takes four integers; in F# 4, constructors can be
 treated as functions, and a constructor with four arguments can be treated as a
 function that takes a four-element tuple.</p>
-<table class="pre"><tr><td><pre><code>[|"0.4.6.4"; "1.1.7.2"; "2.3.0.4"; "6.3.6.8"; "1.2.4.5"; "8.5.2.9"; "5.4.9.8";
-  "7.2.9.0"; "9.4.4.5"; "5.6.6.7"|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|"5.2.1.0"; "6.1.1.0"; "7.1.9.2"; "7.4.7.8"; "7.5.6.7"; "2.6.4.4"; "8.9.3.6";
+  "8.7.7.5"; "3.4.7.2"; "3.3.7.6"|]</code></pre></td></tr></table>
 <p>This example composes the <code>Version</code> constructor with the <code>string</code> function,
 in order to produce a more readable output. The resulting generator has the
 type <code>Gen&lt;string&gt;</code>, but if you remove the <code>string</code> composition, the type would
@@ -611,8 +611,8 @@ remove all pairs where the elements are equal. Subsequently, you can use
 </code></pre>
 <p>This expression generates 10 sample lists, each containing two different
 numbers:</p>
-<table class="pre"><tr><td><pre><code>[|[17; 56]; [58; 24]; [73; 51]; [98; 67]; [61; 26]; [72; 51]; [86; 75]; [15; 43];
-  [36; 16]; [86; 45]|]</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>[|[13; 39]; [60; 12]; [76; 92]; [26; 1]; [44; 85]; [34; 48]; [82; 81]; [75; 64];
+  [81; 29]; [71; 94]|]</code></pre></td></tr></table>
 <p>When using <code>Gen.filter</code>, be sure to provide a predicate with a high chance
 of returning <code>true</code>. If the predicate discards 'too many' candidates, it may
 cause tests to run slower, or to not terminate at all. If your filter is
@@ -642,11 +642,12 @@ return an instance of a subclass of <code>Arbitrary&lt;'a&gt;</code>:</p>
         <span class="k">return</span> SafeTree().ToArbitrary();
     }
 }</code></pre></td></tr></table>
-<p>Replace the <code>'a</code> by the particular type you are defining an Arbitary instance for.
+<p>Replace the <code>'a</code> by the particular type you are defining an Arbitrary instance for.
 Only the <code>Generator</code> method needs to be defined; <code>Shrinker</code> by default returns the empty
 sequence which means no shrinking will be done for this type).</p>
-<p>As the F# code shows, you can create your own subclass of Arbitrary and return that, or you can use one of the <code>Arb.from</code>
-methods or functions.</p>
+<p>As the F# code shows, you can create your own subclass of <code>Arbitrary</code> and return it, or construct one from a generator
+using <code>Arb.fromGen</code> or <code>Arb.fromGenShrink</code>. To retrieve an existing Arbitrary instance, use <code>ArbMap.arbitrary</code> with an
+<code>IArbMap</code>, as shown below.</p>
 <p>Now, to make FsCheck aware of all Arbitrary instances in this class, you can add it to the Config:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs60', 221)" onmouseover="showTip(event, 'fs60', 221)" class="id">myConfig</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs61', 222)" onmouseover="showTip(event, 'fs61', 222)" class="rt">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs62', 223)" onmouseover="showTip(event, 'fs62', 223)" class="id">Quick</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs63', 224)" onmouseover="showTip(event, 'fs63', 224)" class="id">WithArbitrary</span><span class="pn">(</span><span class="pn">[</span> <span onmouseout="hideTip(event, 'fs64', 225)" onmouseover="showTip(event, 'fs64', 225)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs65', 226)" onmouseover="showTip(event, 'fs65', 226)" class="rt">MyGenerators</span><span class="pn">&gt;</span> <span class="pn">]</span><span class="pn">)</span>
 </code></pre>
@@ -662,7 +663,8 @@ option values containing Trees:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs72', 241)" onmouseover="showTip(event, 'fs72', 241)" class="rt">Box</span><span class="pn">&lt;</span><span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 242)" onmouseover="showTip(event, 'fs73', 242)" class="id">a</span><span class="pn">&gt;</span> <span class="o">=</span> <span class="uc">Whitebox</span> <span class="k">of</span> <span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 243)" onmouseover="showTip(event, 'fs73', 243)" class="id">a</span> <span class="pn">|</span> <span class="uc">Blackbox</span> <span class="k">of</span> <span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 244)" onmouseover="showTip(event, 'fs73', 244)" class="id">a</span>
 </code></pre>
 <p>you can use the same principle - except to write the generator and shrinker you now need an instance for whatever the generic parameter(s) will be
-when build the generator. To this end, the methods can take argument of type <code>Arbitrary&lt;'T&gt;. For example, the class</code>MyGenerators` can be extended as follows:</p>
+when building the generator. A factory method can take an argument of type <code>Arbitrary&lt;'T&gt;</code>; FsCheck supplies the instance
+for the requested type from the configured <code>IArbMap</code>. For example, the class <code>MyGenerators</code> can be extended as follows:</p>
 <pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs74', 245)" onmouseover="showTip(event, 'fs74', 245)" class="fn">boxGen</span><span class="pn">&lt;</span><span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 246)" onmouseover="showTip(event, 'fs73', 246)" class="id">a</span><span class="pn">&gt;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs75', 247)" onmouseover="showTip(event, 'fs75', 247)" class="fn">contents</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs57', 248)" onmouseover="showTip(event, 'fs57', 248)" class="rt">Arbitrary</span><span class="pn">&lt;</span><span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 249)" onmouseover="showTip(event, 'fs73', 249)" class="id">a</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="pn">:</span> <span onmouseout="hideTip(event, 'fs8', 250)" onmouseover="showTip(event, 'fs8', 250)" class="rt">Gen</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs72', 251)" onmouseover="showTip(event, 'fs72', 251)" class="rt">Box</span><span class="pn">&lt;</span><span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 252)" onmouseover="showTip(event, 'fs73', 252)" class="id">a</span><span class="pn">&gt;</span><span class="pn">&gt;</span> <span class="o">=</span> 
     <span onmouseout="hideTip(event, 'fs6', 253)" onmouseover="showTip(event, 'fs6', 253)" class="k">gen</span> <span class="pn">{</span> <span class="k">let!</span> <span onmouseout="hideTip(event, 'fs76', 254)" onmouseover="showTip(event, 'fs76', 254)" class="fn">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs75', 255)" onmouseover="showTip(event, 'fs75', 255)" class="fn">contents</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs77', 256)" onmouseover="showTip(event, 'fs77', 256)" class="id">Generator</span>
           <span class="k">return!</span> <span onmouseout="hideTip(event, 'fs8', 257)" onmouseover="showTip(event, 'fs8', 257)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs41', 258)" onmouseover="showTip(event, 'fs41', 258)" class="id">elements</span> <span class="pn">[</span> <span onmouseout="hideTip(event, 'fs78', 259)" onmouseover="showTip(event, 'fs78', 259)" class="uc">Whitebox</span> <span onmouseout="hideTip(event, 'fs76', 260)" onmouseover="showTip(event, 'fs76', 260)" class="fn">a</span><span class="pn">;</span> <span onmouseout="hideTip(event, 'fs79', 261)" onmouseover="showTip(event, 'fs79', 261)" class="uc">Blackbox</span> <span onmouseout="hideTip(event, 'fs76', 262)" onmouseover="showTip(event, 'fs76', 262)" class="fn">a</span><span class="pn">]</span> <span class="pn">}</span>
@@ -674,15 +676,36 @@ when build the generator. To this end, the methods can take argument of type <co
             <span class="k">override</span> <span onmouseout="hideTip(event, 'fs80', 269)" onmouseover="showTip(event, 'fs80', 269)" class="fn">x</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs82', 270)" onmouseover="showTip(event, 'fs82', 270)" class="fn">Shrinker</span> <span onmouseout="hideTip(event, 'fs83', 271)" onmouseover="showTip(event, 'fs83', 271)" class="fn">t</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs58', 272)" onmouseover="showTip(event, 'fs58', 272)" class="m">Seq</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs59', 273)" onmouseover="showTip(event, 'fs59', 273)" class="id">empty</span> <span class="pn">}</span>
     <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs72', 274)" onmouseover="showTip(event, 'fs72', 274)" class="fn">Box</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs75', 275)" onmouseover="showTip(event, 'fs75', 275)" class="fn">contents</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs57', 276)" onmouseover="showTip(event, 'fs57', 276)" class="rt">Arbitrary</span><span class="pn">&lt;</span><span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 277)" onmouseover="showTip(event, 'fs73', 277)" class="id">a</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs75', 278)" onmouseover="showTip(event, 'fs75', 278)" class="fn">contents</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs74', 279)" onmouseover="showTip(event, 'fs74', 279)" class="fn">boxGen</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs84', 280)" onmouseover="showTip(event, 'fs84', 280)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs85', 281)" onmouseover="showTip(event, 'fs85', 281)" class="id">fromGen</span>
 </code></pre>
-<p>Now, when FsCheck examines the static methods on <code>MyTreeGenerator</code>, it will "inject" the necessary <code>Arbitrary</code> instance. For example,
+<p>Now, when FsCheck examines the static methods on <code>MyTreeGenerator</code>, it injects the necessary <code>Arbitrary</code> instance. For example,
 if we request to generate a <code>Box&lt;int&gt;</code>, FsCheck first finds the <code>Arbitrary</code> instance for <code>int</code>, and then calls <code>MyTreeGenerator.Box</code> with
 that instance to get an <code>Arbitrary</code> instance for <code>Box&lt;int&gt;</code>. You can think of this as a parameter-driven dependency injection.</p>
-<p>This allows you to define generic generators recursively. Have a look at the FsCheck source for examples of default Arbitrary implementations
-to get a feeling of how to write such Arbitrary instances. The Arb module or class should help you with this task as well.</p>
+<p>If the factory needs to look up more than one type, it can take the whole <code>IArbMap</code> instead and use <code>ArbMap.generate</code> or
+<code>ArbMap.arbitrary</code> to retrieve the needed instances. For example, this factory uses the configured map to generate the
+elements of a generic, non-empty list:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs86', 282)" onmouseover="showTip(event, 'fs86', 282)" class="rt">NonEmptyList</span><span class="pn">&lt;</span><span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 283)" onmouseover="showTip(event, 'fs73', 283)" class="id">a</span><span class="pn">&gt;</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs87', 284)" onmouseover="showTip(event, 'fs87', 284)" class="uc">NonEmptyList</span> <span class="k">of</span> <span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 285)" onmouseover="showTip(event, 'fs73', 285)" class="id">a</span> <span onmouseout="hideTip(event, 'fs68', 286)" onmouseover="showTip(event, 'fs68', 286)" class="rt">list</span>
+
+<span class="k">type</span> <span class="rt">NonEmptyListGenerators</span> <span class="o">=</span>
+    <span class="k">static</span> <span class="k">member</span> <span onmouseout="hideTip(event, 'fs87', 287)" onmouseover="showTip(event, 'fs87', 287)" class="fn">NonEmptyList</span><span class="pn">&lt;</span><span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 288)" onmouseover="showTip(event, 'fs73', 288)" class="id">a</span><span class="pn">&gt;</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs88', 289)" onmouseover="showTip(event, 'fs88', 289)" class="fn">map</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs89', 290)" onmouseover="showTip(event, 'fs89', 290)" class="if">IArbMap</span><span class="pn">)</span> <span class="pn">:</span> <span onmouseout="hideTip(event, 'fs57', 291)" onmouseover="showTip(event, 'fs57', 291)" class="rt">Arbitrary</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs86', 292)" onmouseover="showTip(event, 'fs86', 292)" class="rt">NonEmptyList</span><span class="pn">&lt;</span><span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 293)" onmouseover="showTip(event, 'fs73', 293)" class="id">a</span><span class="pn">&gt;</span><span class="pn">&gt;</span> <span class="o">=</span>
+        <span onmouseout="hideTip(event, 'fs88', 294)" onmouseover="showTip(event, 'fs88', 294)" class="fn">map</span>
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs25', 295)" onmouseover="showTip(event, 'fs25', 295)" class="m">ArbMap</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs27', 296)" onmouseover="showTip(event, 'fs27', 296)" class="id">generate</span><span class="pn">&lt;</span><span class="ta">&#39;</span><span onmouseout="hideTip(event, 'fs73', 297)" onmouseover="showTip(event, 'fs73', 297)" class="id">a</span><span class="pn">&gt;</span>
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs8', 298)" onmouseover="showTip(event, 'fs8', 298)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs47', 299)" onmouseover="showTip(event, 'fs47', 299)" class="id">nonEmptyListOf</span>
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs8', 300)" onmouseover="showTip(event, 'fs8', 300)" class="m">Gen</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs28', 301)" onmouseover="showTip(event, 'fs28', 301)" class="id">map</span> <span onmouseout="hideTip(event, 'fs86', 302)" onmouseover="showTip(event, 'fs86', 302)" class="uc">NonEmptyList</span>
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs84', 303)" onmouseover="showTip(event, 'fs84', 303)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs85', 304)" onmouseover="showTip(event, 'fs85', 304)" class="id">fromGen</span>
+</code></pre>
+<p>The factory receives the map for the current test configuration, so element types can use either their default
+Arbitrary instances or ones registered by the caller. <code>Arb.fromGen</code> does not provide shrinking; use <code>Arb.fromGenShrink</code>
+if the custom type needs a shrinker.</p>
+<p>Register the factory type with the configuration to use it for properties:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs90', 305)" onmouseover="showTip(event, 'fs90', 305)" class="fn">nonEmptyListsAreNonEmpty</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs86', 306)" onmouseover="showTip(event, 'fs86', 306)" class="id">NonEmptyList</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs91', 307)" onmouseover="showTip(event, 'fs91', 307)" class="fn">values</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs68', 308)" onmouseover="showTip(event, 'fs68', 308)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs22', 309)" onmouseover="showTip(event, 'fs22', 309)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span><span class="pn">)</span> <span class="o">=</span> <span class="fn">not</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 310)" onmouseover="showTip(event, 'fs10', 310)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs92', 311)" onmouseover="showTip(event, 'fs92', 311)" class="id">isEmpty</span> <span class="fn">values</span><span class="pn">)</span>
+<span onmouseout="hideTip(event, 'fs70', 312)" onmouseover="showTip(event, 'fs70', 312)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs71', 313)" onmouseover="showTip(event, 'fs71', 313)" class="id">One</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs61', 314)" onmouseover="showTip(event, 'fs61', 314)" class="rt">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs62', 315)" onmouseover="showTip(event, 'fs62', 315)" class="id">Quick</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs63', 316)" onmouseover="showTip(event, 'fs63', 316)" class="id">WithArbitrary</span><span class="pn">(</span><span class="pn">[</span><span onmouseout="hideTip(event, 'fs64', 317)" onmouseover="showTip(event, 'fs64', 317)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs93', 318)" onmouseover="showTip(event, 'fs93', 318)" class="rt">NonEmptyListGenerators</span><span class="pn">&gt;]</span><span class="pn">)</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs90', 319)" onmouseover="showTip(event, 'fs90', 319)" class="fn">nonEmptyListsAreNonEmpty</span><span class="pn">)</span>
+</code></pre>
+<table class="pre"><tr><td><pre><code></code></pre></td></tr></table>
+<p>This factory approach also supports recursively defined generic generators. Have a look at the FsCheck source for examples
+of default Arbitrary implementations. The <code>Arb</code> module provides helpers for constructing and transforming instances.</p>
 <p>Now, the following property can be checked:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs86', 282)" onmouseover="showTip(event, 'fs86', 282)" class="fn">revRevBox</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs87', 283)" onmouseover="showTip(event, 'fs87', 283)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs68', 284)" onmouseover="showTip(event, 'fs68', 284)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs72', 285)" onmouseover="showTip(event, 'fs72', 285)" class="rt">Box</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs22', 286)" onmouseover="showTip(event, 'fs22', 286)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> 
-  <span onmouseout="hideTip(event, 'fs10', 287)" onmouseover="showTip(event, 'fs10', 287)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs69', 288)" onmouseover="showTip(event, 'fs69', 288)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 289)" onmouseover="showTip(event, 'fs10', 289)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs69', 290)" onmouseover="showTip(event, 'fs69', 290)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs87', 291)" onmouseover="showTip(event, 'fs87', 291)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs87', 292)" onmouseover="showTip(event, 'fs87', 292)" class="fn">xs</span>
-<span onmouseout="hideTip(event, 'fs70', 293)" onmouseover="showTip(event, 'fs70', 293)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs71', 294)" onmouseover="showTip(event, 'fs71', 294)" class="id">One</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs61', 295)" onmouseover="showTip(event, 'fs61', 295)" class="rt">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs62', 296)" onmouseover="showTip(event, 'fs62', 296)" class="id">Quick</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs63', 297)" onmouseover="showTip(event, 'fs63', 297)" class="id">WithArbitrary</span><span class="pn">(</span><span class="pn">[</span><span onmouseout="hideTip(event, 'fs64', 298)" onmouseover="showTip(event, 'fs64', 298)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs88', 299)" onmouseover="showTip(event, 'fs88', 299)" class="rt">MyTreeGenerator</span><span class="pn">&gt;]</span><span class="pn">)</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs86', 300)" onmouseover="showTip(event, 'fs86', 300)" class="fn">revRevBox</span><span class="pn">)</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs94', 320)" onmouseover="showTip(event, 'fs94', 320)" class="fn">revRevBox</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs95', 321)" onmouseover="showTip(event, 'fs95', 321)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs68', 322)" onmouseover="showTip(event, 'fs68', 322)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs72', 323)" onmouseover="showTip(event, 'fs72', 323)" class="rt">Box</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs22', 324)" onmouseover="showTip(event, 'fs22', 324)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> 
+  <span onmouseout="hideTip(event, 'fs10', 325)" onmouseover="showTip(event, 'fs10', 325)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs69', 326)" onmouseover="showTip(event, 'fs69', 326)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 327)" onmouseover="showTip(event, 'fs10', 327)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs69', 328)" onmouseover="showTip(event, 'fs69', 328)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs95', 329)" onmouseover="showTip(event, 'fs95', 329)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs95', 330)" onmouseover="showTip(event, 'fs95', 330)" class="fn">xs</span>
+<span onmouseout="hideTip(event, 'fs70', 331)" onmouseover="showTip(event, 'fs70', 331)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs71', 332)" onmouseover="showTip(event, 'fs71', 332)" class="id">One</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs61', 333)" onmouseover="showTip(event, 'fs61', 333)" class="rt">Config</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs62', 334)" onmouseover="showTip(event, 'fs62', 334)" class="id">Quick</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs63', 335)" onmouseover="showTip(event, 'fs63', 335)" class="id">WithArbitrary</span><span class="pn">(</span><span class="pn">[</span><span onmouseout="hideTip(event, 'fs64', 336)" onmouseover="showTip(event, 'fs64', 336)" class="k">typeof</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs96', 337)" onmouseover="showTip(event, 'fs96', 337)" class="rt">MyTreeGenerator</span><span class="pn">&gt;]</span><span class="pn">)</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs94', 338)" onmouseover="showTip(event, 'fs94', 338)" class="fn">revRevBox</span><span class="pn">)</span>
 </code></pre>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 <p>Note that the class needs not be tagged with attributes in any way. FsCheck determines the type of
@@ -695,18 +718,18 @@ However, there are some important things to notice that are listed here to avoid
 <ul>
 <li>Most of the default sized generators of the number-like types produce the uniformly distributed values in the ranges specified in the comments.</li>
 <li>The same thing with the default DoNotSize generators of the number-like types except Decimal.</li>
-<li>Most of the default generators of the collection types are just "wrappers" around the F# list. Thus, you can assume that they are generated and shrinked the same way.</li>
+<li>Most of the default generators of the collection types are just "wrappers" around the F# list. Thus, you can assume that they are generated and shrunk the same way.</li>
 </ul>
-<h2><a name="Useful-methods-on-the-Arb-and-ArbMap-module" class="anchor" href="#Useful-methods-on-the-Arb-and-ArbMap-module">Useful methods on the Arb and ArbMap module</a></h2>
+<h2><a name="Useful-functions-in-the-Arb-and-ArbMap-modules" class="anchor" href="#Useful-functions-in-the-Arb-and-ArbMap-modules">Useful functions in the Arb and ArbMap modules</a></h2>
 <ul>
-<li><code>Arb.fromGen</code> makes a new Arbitrary instance from just a given generator - the shrinker return the empty sequence</li>
-<li><code>Arb.fromGenShrink</code> make a new Arbitrary instance from a given generator and shrinker. This is equivalent to implementing Arbitrary yourself, but may be shorter.</li>
-<li><code>Arb.convert</code> given conversion functions to ('a -&gt;'b) and from ('b -&gt;'a), converts an Arbitrary<'a> instance to an Arbitrary<'b></li>
-<li><code>Arb.filter</code> filters the generator and shrinker for a given Arbitrary instance to contain only those values that match with the given filter function</li>
-<li><code>Arb.mapFilter</code> maps the generator and filter the shrinkers for a given Arbitrary instance. Mapping the generator is sometimes faster, e.g. for a PositiveInt it is faster to take the absolute value than to filter the negative values.</li>
-<li><code>ArbMap.arbitrary&lt;'a&gt; arbMap</code> returns the Arbitrary instance in <code>arbMap</code> for the given type 'a</li>
-<li><code>ArbMap.generate&lt;'a&gt; arbMap</code> returns the generator of the Arbitrary instance in <code>arbMap</code> for the given type 'a</li>
-<li><code>ArbMap.defaults</code> is a map that provides access to all the default Arbitrary instances as they are shipped by FsCheck by default. This is useful when you override a default generator - typically this is because you want to filter certain values from it, and then you need to be able to refer to the default generator in your overriding generator.</li>
+<li><code>Arb.fromGen gen</code> creates an <code>Arbitrary</code> instance from a generator. Its shrinker returns an empty sequence.</li>
+<li><code>Arb.fromGenShrink (gen, shrinker)</code> creates an <code>Arbitrary</code> instance from a generator and shrinker.</li>
+<li><code>Arb.convert to from arb</code> converts an <code>Arbitrary&lt;'a&gt;</code> instance to an <code>Arbitrary&lt;'b&gt;</code> using the supplied conversion functions.</li>
+<li><code>Arb.filter predicate arb</code> filters the generator and shrinker of an <code>Arbitrary</code> instance to values that satisfy the predicate.</li>
+<li><code>Arb.mapFilter mapper predicate arb</code> maps the generated values and filters them, and filters the shrinks using the predicate. Mapping can be more efficient than filtering alone; for example, a positive integer can be generated by taking the absolute value rather than rejecting negative values.</li>
+<li><code>ArbMap.arbitrary&lt;'a&gt; arbMap</code> returns the <code>Arbitrary&lt;'a&gt;</code> instance from <code>arbMap</code>.</li>
+<li><code>ArbMap.generate&lt;'a&gt; arbMap</code> returns the generator from the <code>Arbitrary&lt;'a&gt;</code> instance in <code>arbMap</code>.</li>
+<li><code>ArbMap.defaults</code> is the immutable map of FsCheck's default Arbitrary instances. For example, <code>ArbMap.defaults |&gt; ArbMap.arbitrary&lt;int&gt;</code> retrieves the default <code>Arbitrary&lt;int&gt;</code>. Use this when deriving a custom Arbitrary from a default one.</li>
 </ul>
 
         <div class="fsdocs-tip" id="fs1">namespace FsCheck</div>
@@ -853,9 +876,9 @@ Build a generator that generates a 4-tuple of the values generated by the given 
   interface IFormattable
   interface ISpanFormattable
   interface IUtf8SpanFormattable
+  interface IUtf8SpanParsable&lt;Version&gt;
   new: unit -&gt; unit + 4 overloads
   member Clone: unit -&gt; obj
-  member CompareTo: version: obj -&gt; int + 1 overload
   ...<br /><em>&lt;summary&gt;Represents the version number of an assembly, operating system, or the common language runtime. This class cannot be inherited.&lt;/summary&gt;</em><br /><br />--------------------<br />Version() : Version<br />Version(version: string) : Version<br />Version(major: int, minor: int) : Version<br />Version(major: int, minor: int, build: int) : Version<br />Version(major: int, minor: int, build: int, revision: int) : Version</div>
 <div class="fsdocs-tip" id="fs53">Multiple items<br />val string: value: &#39;T -&gt; string<br /><br />--------------------<br />type string = String</div>
 <div class="fsdocs-tip" id="fs54">val filter: predicate: (&#39;T -&gt; bool) -&gt; generator: Gen&lt;&#39;T&gt; -&gt; Gen&lt;&#39;T&gt;<br /><em>&lt;summary&gt;
@@ -942,9 +965,23 @@ from FsCheck.FSharp</div>
  Construct an Arbitrary instance from a generator.
  Shrink is not supported for this type.
 &lt;/summary&gt;</em></div>
-<div class="fsdocs-tip" id="fs86">val revRevBox: xs: Box&lt;int&gt; list -&gt; bool</div>
-<div class="fsdocs-tip" id="fs87">val xs: Box&lt;int&gt; list</div>
-<div class="fsdocs-tip" id="fs88">type MyTreeGenerator =
+<div class="fsdocs-tip" id="fs86">Multiple items<br />union case NonEmptyList.NonEmptyList: &#39;a list -&gt; NonEmptyList&lt;&#39;a&gt;<br /><br />--------------------<br />type NonEmptyList&lt;&#39;a&gt; = | NonEmptyList of &#39;a list</div>
+<div class="fsdocs-tip" id="fs87">type NonEmptyList&lt;&#39;a&gt; = | NonEmptyList of &#39;a list</div>
+<div class="fsdocs-tip" id="fs88">val map: IArbMap</div>
+<div class="fsdocs-tip" id="fs89">type IArbMap =
+  abstract ArbFor: Type -&gt; Arbitrary&lt;obj&gt; + 1 overload
+  abstract MergeFactory: Func&lt;&#39;a,Arbitrary&lt;&#39;b&gt;&gt; -&gt; IArbMap<br /><em>&lt;summary&gt;
+ Maps types to Arbitrary instances for that type.
+ Once constructed, the map is immutable.
+&lt;/summary&gt;</em></div>
+<div class="fsdocs-tip" id="fs90">val nonEmptyListsAreNonEmpty: NonEmptyList&lt;int&gt; -&gt; bool</div>
+<div class="fsdocs-tip" id="fs91">val values: int list</div>
+<div class="fsdocs-tip" id="fs92">val isEmpty: list: &#39;T list -&gt; bool</div>
+<div class="fsdocs-tip" id="fs93">type NonEmptyListGenerators =
+  static member NonEmptyList: map: IArbMap -&gt; Arbitrary&lt;NonEmptyList&lt;&#39;a&gt;&gt;</div>
+<div class="fsdocs-tip" id="fs94">val revRevBox: xs: Box&lt;int&gt; list -&gt; bool</div>
+<div class="fsdocs-tip" id="fs95">val xs: Box&lt;int&gt; list</div>
+<div class="fsdocs-tip" id="fs96">type MyTreeGenerator =
   static member Box: contents: Arbitrary&lt;&#39;a&gt; -&gt; Arbitrary&lt;Box&lt;&#39;a&gt;&gt;
   static member Tree: unit -&gt; Arbitrary&lt;Tree&gt;</div>
 
@@ -1044,8 +1081,8 @@ from FsCheck.FSharp</div>
     </a>
   </li>
   <li class="level-2">
-    <a href="#Useful-methods-on-the-Arb-and-ArbMap-module">
-      Useful methods on the Arb and ArbMap module
+    <a href="#Useful-functions-in-the-Arb-and-ArbMap-modules">
+      Useful functions in the Arb and ArbMap modules
     </a>
   </li>
 </ul>
