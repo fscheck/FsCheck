@@ -50,10 +50,10 @@ Check.Quick revIsOrig
 
     [lang=csharp,file=../examples/CSharp.DocSnippets/QuickStart.cs,key=revIsOrig]
 
-FsCheck also *shrinks* the counter example: it tries to find the minimal counter example that 
-still fails the property. The counter example is indeed minimal: 
+FsCheck also *shrinks* the counterexample: it tries to find the minimal counterexample that
+still fails the property. The counterexample is indeed minimal:
 the list must have at least two different elements for the test to fail. FsCheck displays how many times it 
-found a smaller (in some way) counter example and so proceeded to shrink further.
+found a smaller (in some way) counterexample and so proceeded to shrink further.
 
 To learn more on how to write properties, see [Properties](Properties.html).
 
@@ -100,7 +100,7 @@ integration, but we leave it up to you to choose whichever suits your environmen
 ### Integration with Expecto
 
 Some testing frameworks like Expecto have an out-of-the-box integration with FsCheck. By using one of the runners that
-support FsCheck out of the box, you gain access the the frameworks' reporting capabilities and integrations with IDEs
+support FsCheck out of the box, you gain access to the frameworks' reporting capabilities and integrations with IDEs
 and build tooling.
 
 Here's a sample:

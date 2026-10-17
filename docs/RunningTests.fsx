@@ -80,7 +80,7 @@ Check.QuickAll<ListProperties>()
 
 (***include-output:ListProperties***)
 
-(**Since all top level functions of a a module are also compiled as static member of a class with the name of the module, 
+(**Since all top level functions of a module are also compiled as static members of a class with the name of the module,
 you can also use Check.QuickAll to test all the top level functions in a certain module. 
 However, the type of a module is not directly accessible via F#, so you can use the following trick:*)
 
@@ -93,9 +93,9 @@ Notice also the counterpart of `Check.Verbose`: `Check.VerboseAll`.
 ### Running tests using only modules
 
 Arbitrary instances are given as static members of classes, and properties can be grouped together 
-as static members of classes. Top level let functions are compiled as static member of their 
+as static members of classes. Top level let functions are compiled as static members of their
 enclosing module (which is compiled as a class), and so you can simply define your properties and generators as 
-top level let-bound functions, and then register all generators and and all properties at once using the following trick:*)
+top level let-bound functions, and then register all generators and all properties at once using the following trick:*)
 
 (***define-output:Marker***)
 let myprop (i:int) = i >= 0
@@ -119,7 +119,7 @@ FsCheck determines the intent of the function based on its return type:
 or Lazy value of any of those types. So `myprop` is the only property that is run; `helper'` also returns bool but is private.
 * Arbitrary instances: return Arbitrary<_>
 
-All other functions are respectfully ignored. If you have top level functions that return types that FsCheck will 
+All other functions are ignored. If you have top level functions that return types that FsCheck will
 do something with, but do not want them checked or registered, just make them private. FsCheck will ignore those functions.
 
 ## Using FsCheck.Xunit
@@ -135,7 +135,7 @@ methods can take arguments and should return a property. FsCheck will be used to
 type and the currently registered generators. 
 
 An FsCheck test fails from xUnit.net's perspective if it finds a counter-example, or if the arguments are exhausted. It
-passes when FsCheck can execute 100 tests (or whatever the configured number of tests is) succesfully.
+passes when FsCheck can execute 100 tests (or whatever the configured number of tests is) successfully.
 
 The `PropertyAttribute` allows you to customize how FsCheck will run for that
 method, similar to how you would use the `Config` type otherwise. For example:*)
@@ -193,9 +193,9 @@ module ModuleWithProperties =
 (**
 Using `PropertiesAttribute` and `PropertyAttribute` you can set any configuration. For example in following module:
 
-* property 1 would use default config + overriden MaxTest = 10 and EndSize = 10 from `Properties` attribute
-* property 2 would use default config + overriden EndSize = 10 from `Properties` attribute and MaxTest = 500 from `Property` attribute
-* property 3 would use default config + overriden MaxTest = 10 and EndSize = 10 from `Properties` attribute and Replay = "123,456" from `Property` attribute 
+* property 1 would use default config + overridden MaxTest = 10 and EndSize = 10 from `Properties` attribute
+* property 2 would use default config + overridden EndSize = 10 from `Properties` attribute and MaxTest = 500 from `Property` attribute
+* property 3 would use default config + overridden MaxTest = 10 and EndSize = 10 from `Properties` attribute and Replay = "123,456" from `Property` attribute
 *)
 
 [<Properties(MaxTest = 10, EndSize = 10)>] 
@@ -275,8 +275,8 @@ public class Test
 (**
 ## Using FsCheck.NUnit
 
-To use the integration with NUnit 3 install the FsCheck.NUnit nuget package.
-Make sure your project(s) has target .NET `4.5` or greater.
+To use the integration with NUnit 3, install the FsCheck.NUnit NuGet package.
+Make sure your project targets .NET `4.5` or later.
 Then open FsCheck.NUnit.
 
 You can now attribute tests with `PropertyAttribute` (a subclass of NUnit's `TestAttribute`). Unlike NUnit tests, these 
@@ -284,7 +284,7 @@ methods can take arguments and should return a property. FsCheck will be used to
 type and the currently registered generators. 
 
 An FsCheck test fails from NUnit's perspective if it finds a counter-example, or if the arguments are exhausted. It
-passes when FsCheck can execute 100 tests (or whatever the configured number of tests is) succesfully.
+passes when FsCheck can execute 100 tests (or whatever the configured number of tests is) successfully.
 
 The `PropertyAttribute` allows you to customize how FsCheck will run for that
 method, similar to how you would use the `Config` type otherwise.
@@ -304,12 +304,11 @@ or per module basis. Otherwise, it is very similar.
 
 ### Example 1: to integrate FsCheck with other unit testing frameworks
 
-The `Config` type that can be passed to the `Check.One` or `Check.All` methods takes an `IRunner` as argument. This i
-nterface has the following methods:
+The `Config` type that can be passed to the `Check.One` or `Check.All` methods takes an `IRunner` as argument. This interface has the following methods:
 
 * `OnStartFixture` is called when FsCheck is testing all the methods on a type, before starting any tests.
-* `OnArguments` is called after every test, passing the implementation the test number, the arguments and the every function. 
-* `OnShrink` is called at every succesful shrink.
+* `OnArguments` is called after every test, passing the test number, the arguments, and the `every` function to the implementation.
+* `OnShrink` is called at every successful shrink.
 * `OnFinished` is called with the name of the test and the outcome of the overall test run. This is used in the example below 
 to call Assert statements from a particular unit testing framework - allowing FsCheck to integrate easily. You can leverage 
 another unit testing framework's ability to setup and tear down tests, have a nice graphical runner etc.*)

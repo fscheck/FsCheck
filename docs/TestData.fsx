@@ -21,9 +21,9 @@ The name for the methods in F# and C# are largely the same except for casing.
 Shrinkers have types of the form `'a -> seq<'a>` aka `Func<T,IEnumerable<T>>`; given a value, a shrinker 
 produces a sequence of values that are (in some way) smaller than the given value. 
 If FsCheck finds a set of values that falsify a given property, it will try 
-to make that value smaller than the original (random) value by getting the 
+to make those values smaller than the original (random) values by getting the
 shrinks for the value and trying each one in turn to check that the property 
-is still false. If it is, the smaller value becomes the new counter example 
+is still false. If it is, the smaller value becomes the new counterexample
 and the shrinking process continues with that value.
 
 Shrinkers have no special support from FsCheck - this is not needed, 
@@ -339,7 +339,7 @@ example.
 
 Assume that you need to create a date in a particular month; e.g. November
 2019. You can do that by creating an integer for the day of the month, and then
-combine `Gen.map` with an anymous function to get the desired date:*)
+combine `Gen.map` with an anonymous function to get the desired date:*)
 
 (***define-output:MapIntToDateExample***)
 Gen.choose (1, 30)
@@ -366,7 +366,7 @@ you can use `Gen.constant` to generate lists that all contain the same value:*)
 Gen.constant 42 |> Gen.listOf |> Gen.sampleWithSize 1 10
 
 (**This combination uses `Gen.constant 42` as an individual generator, and then
-generates lists containing the the number 42. While the value(s) in the list is
+generates lists containing the number 42. While the value(s) in the list is
 always 42, the length of the generated lists varies.*)
 
 (***include-it:ConstantListOfExample***)
@@ -555,7 +555,7 @@ type MyGenerators =
 (**
     [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=MyGenerators]
 
-Replace the `'a` by the particular type you are defining an Arbitary instance for. 
+Replace the `'a` by the particular type you are defining an Arbitrary instance for.
 Only the `Generator` method needs to be defined; `Shrinker` by default returns the empty 
 sequence which means no shrinking will be done for this type).
 
@@ -586,7 +586,7 @@ type Box<'a> = Whitebox of 'a | Blackbox of 'a
 
 (**
 you can use the same principle - except to write the generator and shrinker you now need an instance for whatever the generic parameter(s) will be
-when build the generator. To this end, the methods can take argument of type `Arbitrary<'T>. For example, the class `MyGenerators` can be extended as follows:*)
+when building the generator. To this end, the methods can take an argument of type `Arbitrary<'T>`. For example, the class `MyGenerators` can be extended as follows:*)
 
 let boxGen<'a> (contents:Arbitrary<'a>) : Gen<Box<'a>> = 
     gen { let! a = contents.Generator
@@ -630,7 +630,7 @@ However, there are some important things to notice that are listed here to avoid
 
 - Most of the default sized generators of the number-like types produce the uniformly distributed values in the ranges specified in the comments.
 - The same thing with the default DoNotSize generators of the number-like types except Decimal.
-- Most of the default generators of the collection types are just "wrappers" around the F# list. Thus, you can assume that they are generated and shrinked the same way.
+- Most of the default generators of the collection types are just "wrappers" around the F# list. Thus, you can assume that they are generated and shrunk the same way.
     
 ## Useful methods on the Arb and ArbMap module
 

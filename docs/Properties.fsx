@@ -84,7 +84,7 @@ Check.Quick tooEager
 (***include-output: eager***)
 
 (**
-Non-strict evaluation is needed here to make sure the propery is checked correctly:*)
+Non-strict evaluation is needed here to make sure the property is checked correctly:*)
 
 (***define-output: lazy***)
 let moreLazy a = a <> 0 ==> (lazy (1/a = 1/a))

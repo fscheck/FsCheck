@@ -9,7 +9,7 @@ Since v0.5, [scalacheck](https://github.com/rickynils/scalacheck) has influenced
 
 FsCheck's generator combinators can be used in any testing framework to easily generate random values for many types, and FsCheck itself integrates nicely with existing unit testing frameworks such as NUnit, xUnit, MSTest and MbUnit.
 
-# Releases on Nuget
+# Releases on NuGet
 
 * [FsCheck](http://nuget.org/List/Packages/FsCheck)
 * [FsCheck.Xunit](http://nuget.org/List/Packages/FsCheck.Xunit)
@@ -38,7 +38,7 @@ FsCheck uses standard .NET package management via NuGet and is built, tested and
 
 To get started, check out the repository and run `dotnet build` to build. Use `dotnet test .\tests\FsCheck.Test\` to run the tests. If that passes after you've changed some code, you are ready to send a Pull Request!
 
-For Visual Studio/MonoDevelop/Xamarin Studio/VsCode: open (the folder that contains) FsCheck.sln and start coding. Building and running tests in IDEs should work out of the box.
+For Visual Studio/MonoDevelop/Xamarin Studio/VS Code: open (the folder that contains) FsCheck.sln and start coding. Building and running tests in IDEs should work out of the box.
 
 FsCheck uses a build script inspired by FAKE. Run `build.[cmd|sh] -t <Target>` (or `dotnet fsi build.fsx -t <Target>`) to do something. Important targets are:
 

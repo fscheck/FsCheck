@@ -16,7 +16,7 @@
 
 * Add Gen.pick and Gen.tryPick functions.
 
-* Fill NullReferenceException when using Replay with an Implies combinator.
+* Fix NullReferenceException when using Replay with an Implies combinator.
 
 * Improve behavior of stamps and labels when using And/Or property combinators.
 
@@ -68,7 +68,7 @@
 
 * Added more `ForAll` overloads for various `Task` types.
 
-* The collections types `NonEmptySet`, `NonEmptyArray` and `FixedLengthArray` now implement `IEnnumerable` to avoid a call to `Get` in common scenarios.
+* The collection types `NonEmptySet`, `NonEmptyArray` and `FixedLengthArray` now implement `IEnumerable` to avoid a call to `Get` in common scenarios.
 
 * Enabled source linking and deterministic builds. (by Patrick Stevens)
 
@@ -484,7 +484,7 @@ were hiding a bunch of methods unnecessarily. The upshot is that C# users will s
   to others.
 * FsCheck.Runner.init is Obsolete, it should not longer be necessary to call it explicitly. (though
   I am cautious here - please report any issues.)
-* Fix for AppVeryor NuGet feed dependency problem.
+* Fix for AppVeyor NuGet feed dependency problem.
 
 ### 2.0.7 - 20 August 2015
 
@@ -522,7 +522,7 @@ were hiding a bunch of methods unnecessarily. The upshot is that C# users will s
 
 ### 2.0.1 - 23 May 2015
 
-* Because apparently there there is some problem with FsCheck.Xunit and FsCheck.NUnit's NuGet dependencies to unstable versions.
+* Because apparently there is some problem with FsCheck.Xunit and FsCheck.NUnit's NuGet dependencies to unstable versions.
 
 ### 2.0.1-rc1 - 23 May 2015
 
