@@ -11,9 +11,6 @@
         <DefineConstants>DEBUG</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="NUnit\PropertiesAttributeTests.fs" />
-        <Compile Include="NUnit\PropertyAttributeTests.fs" />
-        <Compile Include="XUnit\PropertyAttributeTests.fs" />
         <Compile Include="Helpers.fs" />
         <Compile Include="Internal.Common.fs" />
         <Compile Include="Random.fs" />
@@ -30,7 +27,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="../../src/FsCheck.Xunit.v3/FsCheck.Xunit.v3.fsproj" />
-        <ProjectReference Include="../../src/FsCheck.NUnit/FsCheck.NUnit.fsproj" />
         <ProjectReference Include="../FsCheck.Test.CSharp/FsCheck.Test.CSharp.csproj" />
     </ItemGroup>
     <ItemGroup>
@@ -40,8 +36,6 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="NUnit" />
-        <PackageReference Include="NUnit3TestAdapter" />
         <PackageReference Include="Unquote" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="System.Collections.Immutable" />

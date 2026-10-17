@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <AssemblyName>FsCheck.Test.v3</AssemblyName>
+        <AssemblyName>FsCheck.Test.Xunit.v3</AssemblyName>
         <TargetFramework>net8.0</TargetFramework>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <IsPackable>false</IsPackable>
@@ -11,7 +11,7 @@
         <DefineConstants>DEBUG</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="XUnit\PropertyAttributeTests.fs" />
+        <Compile Include="PropertyAttributeTests.fs" />
         <Content Include="App.config" />
     </ItemGroup>
     <ItemGroup>

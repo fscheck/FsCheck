@@ -95,7 +95,9 @@ module ResultOutputTests =
                         FsCheckTestMethod (meth, test)
             |]
 
-        let ctx = TestExecutionContext ()
+        // SetUp methods are not run when invoking test methods directly, so register the formatter by hand.
+        TestModule.setupFormatter ()
+        let ctx = TestExecutionContext (TestExecutionContext.CurrentContext)
         let results = testMethods |> Array.map _.RunTest(ctx)
 
         let withoutFalsifiable =

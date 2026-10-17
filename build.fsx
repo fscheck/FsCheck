@@ -286,8 +286,11 @@ let build (_ : HaveCleaned) (_ : HaveGeneratedAssemblyInfo) : HaveBuilt =
 type HaveTested = HaveTested
 let runDotnetTest (_ : HaveCleaned) : HaveTested =
     Console.Write "Performing dotnet test... "
-    runProcess "dotnet" ["test" ; "tests/FsCheck.Test" ; "--configuration" ; "Release"]
-    runProcess "dotnet" ["test" ; "tests/FsCheck.Test.v3" ; "--configuration" ; "Release"]
+    // The xunit v2 project is a VSTest project, which `dotnet test` rejects when global.json selects Microsoft.Testing.Platform.
+    for project in ["FsCheck.Test" ; "FsCheck.Test.Xunit.v3" ; "FsCheck.Test.NUnit"] do
+        runProcess "dotnet" ["test" ; "--project" ; $"tests/%s{project}" ; "--configuration" ; "Release"]
+    runProcess "dotnet" ["build" ; "tests/FsCheck.Test.Xunit" ; "--configuration" ; "Release"]
+    runProcess "dotnet" ["vstest" ; "tests/FsCheck.Test.Xunit/bin/Release/net8.0/FsCheck.Test.Xunit.dll"]
     Console.WriteLine "done."
     HaveTested
 
