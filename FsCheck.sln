@@ -57,7 +57,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.XUnit.CSharpExample
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharp.DocSnippets", "examples\CSharp.DocSnippets\CSharp.DocSnippets.csproj", "{6AB84678-E55F-4387-A040-67312735D089}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.Test.CSharp", "tests\FsCheck.Test.CSharp\FsCheck.Test.CSharp.csproj", "{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FsCheck.Test.CSharpTypes", "tests\FsCheck.Test.CSharpTypes\FsCheck.Test.CSharpTypes.csproj", "{86955D54-4D54-4D4C-A7DC-F98F4CCFE498}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FsCheck.Test.Xunit.v3", "tests\FsCheck.Test.Xunit.v3\FsCheck.Test.Xunit.v3.fsproj", "{0CE5ED25-7AE1-C88B-2C70-D4C110D59BDE}"
 EndProject

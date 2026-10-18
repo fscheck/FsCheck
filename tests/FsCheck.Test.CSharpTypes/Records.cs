@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace FsCheck.Test.CSharp
+namespace FsCheck.Test.CSharpTypes
 {
     public record RgbColor(byte Red, byte Green, byte Blue) { }
 

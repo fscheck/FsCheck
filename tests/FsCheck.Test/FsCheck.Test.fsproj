@@ -27,7 +27,7 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="../../src/FsCheck.Xunit.v3/FsCheck.Xunit.v3.fsproj" />
-        <ProjectReference Include="../FsCheck.Test.CSharp/FsCheck.Test.CSharp.csproj" />
+        <ProjectReference Include="../FsCheck.Test.CSharpTypes/FsCheck.Test.CSharpTypes.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="FSharp.Core" VersionOverride="9.0.303" />
