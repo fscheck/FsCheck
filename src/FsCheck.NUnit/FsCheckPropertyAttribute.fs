@@ -38,6 +38,7 @@ type private NunitRunner() =
         override __.OnFinished(_,testResult) =
             result <- Some testResult
 
+[<NoComparison>]
 type internal PropertyConfig =
     { MaxTest        : Option<int>
       MaxRejected    : Option<int>

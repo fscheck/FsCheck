@@ -192,7 +192,7 @@ module Gen =
             struct (x, r1)
         )
 
-    [<Struct>]
+    [<Struct; NoEquality; NoComparison>]
     type internal ListAccessWrapper<'T> =
         { Count: int
           Item: int -> 'T

@@ -613,6 +613,7 @@ module Arbitrary =
     
     type SimpleEnum = A = 0 | B = 1 | C = 2
     type [<Flags>] FlagsEnum = None = 0 | A = 1 | B = 2 | C = 4 | All = 7
+    [<NoComparison>]
     type FlagsShrunkResult = {Original: FlagsEnum; Shrunk: seq<FlagsEnum>}
     [<Property>]
     let ``Only enums marked as flags are shrunk`` (flags : FlagsEnum) (simple : SimpleEnum) =

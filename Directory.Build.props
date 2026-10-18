@@ -8,6 +8,9 @@
   <PropertyGroup>
     <Deterministic>true</Deterministic>
     <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel Condition="'$(MSBuildProjectExtension)' != '.fsproj'">9999</WarningLevel>
+    <WarningLevel Condition="'$(MSBuildProjectExtension)' == '.fsproj'">5</WarningLevel>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Copyright>Copyright 2008-2026</Copyright>
     <Authors>Kurt Schelfthout and contributors</Authors>

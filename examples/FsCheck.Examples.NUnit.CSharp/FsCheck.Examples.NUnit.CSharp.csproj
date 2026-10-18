@@ -4,7 +4,6 @@
         <AssemblyName>FsCheck.Examples.NUnit.CSharp</AssemblyName>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <WarningLevel>3</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
         <None Remove="App.config" />

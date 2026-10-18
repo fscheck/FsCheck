@@ -114,6 +114,7 @@ type Machine<'Actual,'Model>(maxNumberOfCommands:int) =
     default __.ShrinkOperations s = Shrink.listShorten s
 
 [<StructuredFormatDisplayAttribute("{StructuredToString}")>]
+[<NoComparison>]
 type MachineRun<'Actual, 'Model> =
     { Setup         : 'Model * Setup<'Actual,'Model> 
       Operations    : list<Operation<'Actual,'Model> * 'Model>
@@ -352,4 +353,3 @@ type StateMachineExtensions =
     static member ToProperty(arbitraryRun:Arbitrary<MachineRun<'Actual,'Model>>) = StateMachine.forAll arbitraryRun
     [<Extension>]
     static member ToProperty(run: MachineRun<'Actual,'Model>) = StateMachine.forOne run
-

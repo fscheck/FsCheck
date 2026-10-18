@@ -60,6 +60,7 @@ and
     //   - Splitting discover and registration of `this` as a config parameter causes essential 
     //     factories to be filtered out during discovery
     // - Using a mutable finder field could work, but would allow mutation of a type that is meant to be immutable
+    [<NoComparison>]
     private ArbMapInit = 
     | FromTypeClass of TypeClass.TypeClass<Arbitrary<obj>>
     | FromDiscover of (Type * ArbMap option)

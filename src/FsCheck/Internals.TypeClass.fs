@@ -51,6 +51,7 @@ module internal TypeClass =
                     Array <| arr
             | prim -> Primitive prim
 
+    [<NoComparison>]
     type InvocationData = {
         Method : MethodInfo
         Target : obj
@@ -72,6 +73,7 @@ module internal TypeClass =
             Some (InstanceKind.FromType instance, inv)
         | _ -> None
 
+    [<NoComparison>]
     type ParameterErrors = 
         | NoneAllowed
         | NotCreatable of ParameterInfo array

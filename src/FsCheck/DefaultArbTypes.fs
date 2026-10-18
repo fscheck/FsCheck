@@ -10,31 +10,31 @@ open System.Collections.Generic
 ///Represents an int < 0
 type NegativeInt = NegativeInt of int with
     member x.Get = match x with NegativeInt r -> r
-    override x.ToString() = x.Get.ToString()
+    override x.ToString() = let value = x.Get in value.ToString()
     static member op_Explicit(NegativeInt i) = i
 
 ///Represents an int >= 0
 type NonNegativeInt = NonNegativeInt of int with
     member x.Get = match x with NonNegativeInt r -> r
-    override x.ToString() = x.Get.ToString()
+    override x.ToString() = let value = x.Get in value.ToString()
     static member op_Explicit(NonNegativeInt i) = i
 
 ///Represents an int > 0
 type PositiveInt = PositiveInt of int with
     member x.Get = match x with PositiveInt r -> r
-    override x.ToString() = x.Get.ToString()
+    override x.ToString() = let value = x.Get in value.ToString()
     static member op_Explicit(PositiveInt i) = i
 
 ///Represents an int <> 0
 type NonZeroInt = NonZeroInt of int with
     member x.Get = match x with NonZeroInt r -> r
-    override x.ToString() = x.Get.ToString()
+    override x.ToString() = let value = x.Get in value.ToString()
     static member op_Explicit(NonZeroInt i) = i
 
 ///Represents a float that is not NaN or Infinity.
 type NormalFloat = NormalFloat of float with
     member x.Get = match x with NormalFloat f -> f
-    override x.ToString() = x.Get.ToString()
+    override x.ToString() = let value = x.Get in value.ToString()
     static member op_Explicit(NormalFloat f) = f
 
 ///Represents a string that is not null or empty, and does not contain any null characters ('\000')
@@ -77,7 +77,7 @@ type Interval = Interval of int * int with
 ///Represents an int that can include int.MinValue and int.MaxValue.
 type IntWithMinMax = IntWithMinMax of int with
     member x.Get = match x with IntWithMinMax r -> r
-    override x.ToString() = x.Get.ToString()
+    override x.ToString() = let value = x.Get in value.ToString()
     static member op_Explicit(IntWithMinMax i) = i
 
 ///Represents a non-empty Set.
@@ -115,6 +115,7 @@ type NonNull<'a when 'a : null> = NonNull of 'a with
 type NullableRef<'a when 'a : null> = NullableRef of 'a with
     member x.Value = match x with NullableRef r -> r
 
+[<NoEquality;NoComparison>]
 type ThrowingFunction<'a,'b> = ThrowingFunction of ('a -> 'b) with
     member x.Get = match x with ThrowingFunction f -> f
 
@@ -152,7 +153,9 @@ type DoNotSize<'a when 'a : struct and 'a : comparison> =
     DoNotSize of 'a with
     static member Unwrap(DoNotSize a) : 'a = a
 
+[<NoComparison>]
 type IPv4Address = IPv4Address of IPAddress
+[<NoComparison>]
 type IPv6Address = IPv6Address of IPAddress
 
 type HostName = HostName of string with
@@ -165,4 +168,3 @@ open FsCheck
 [<AutoOpen>]
 module ArbPatterns =
     let (|Fun|) (f:Function<'a,'b>) = f.Value
-

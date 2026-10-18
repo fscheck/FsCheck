@@ -33,6 +33,7 @@ type XunitRunner() =
         override _.OnFinished(_ ,testResult) =
             result <- Some testResult
 
+[<NoComparison>]
 type internal PropertyConfig =
     { MaxTest        : Option<int>
       MaxRejected    : Option<int>
@@ -169,6 +170,8 @@ type public PropertiesAttribute() = inherit PropertyAttribute()
 type PropertyTestCase =
     inherit XunitTestCase
 
+    // xUnit requires this obsolete constructor for test-case deserialization.
+    #nowarn "44"
     [<Obsolete>]
     new() = { inherit XunitTestCase() }
 
@@ -241,7 +244,9 @@ type PropertyTestCase =
             }
         { new XunitTestCaseRunner() with
             override _.RunTest(x, test) =
-                runner.Run(test, x.MessageBus, x.ConstructorArguments, x.ExplicitOption, x.Aggregator.Clone(), x.CancellationTokenSource, x.ParallelMode, x.Scheduler, x.BeforeAfterTestAttributes, x.CaseFixtureMappings)
+                let aggregator = x.Aggregator
+                let clonedAggregator = aggregator.Clone()
+                runner.Run(test, x.MessageBus, x.ConstructorArguments, x.ExplicitOption, clonedAggregator, x.CancellationTokenSource, x.ParallelMode, x.Scheduler, x.BeforeAfterTestAttributes, x.CaseFixtureMappings)
         }
         
     member this.TestExec(opts: ExplicitOption, buss: IMessageBus, ctorArgs: obj array, aggregator: ExceptionAggregator, cts: CancellationTokenSource, parallelMode: ParallelMode, scheduler: ExecutionScheduler, methodFixtureMappings: FixtureMappingManager) = async {

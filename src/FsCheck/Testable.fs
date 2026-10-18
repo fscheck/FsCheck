@@ -47,6 +47,7 @@ type Result =
         | (_,Outcome.Passed) -> r.MergeStamps(l)
         | (Outcome.Rejected,Outcome.Rejected) -> l.MergeStamps(r) //or r.MergeStamps(l), whatever
 
+[<NoComparison>]
 type ResultContainer = 
     | Value of Result
     | Future of Task<Result>
@@ -84,6 +85,7 @@ module internal Res =
 
 
 ///A Property can be checked by FsCheck.
+[<NoEquality;NoComparison>]
 type Property = private Property of (IArbMap -> Gen<Shrink<ResultContainer>>) with
     static member internal GetGen arbMap (Property g) = g arbMap
 
