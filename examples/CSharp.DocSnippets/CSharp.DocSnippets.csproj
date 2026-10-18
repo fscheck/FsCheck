@@ -3,8 +3,11 @@
     <PropertyGroup>
         <AssemblyName>CSharp.DocSnippets</AssemblyName>
         <OutputType>Exe</OutputType>
+        <!-- The xunit.core package marks the project as a test project; these are only doc snippets. -->
+        <IsTestProject>false</IsTestProject>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectCapability Remove="TestContainer"/>
         <PackageReference Include="xunit"/>
         <PackageReference Include="FSharp.Core"/>
     </ItemGroup>
