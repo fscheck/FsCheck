@@ -8,6 +8,18 @@ open System.Net.Mail
 open System.Collections.Generic
 open System.Linq
 open System.Globalization
+#if NETSTANDARD2_1_OR_GREATER || NET
+open System.Buffers
+open System.Threading.Tasks
+
+type internal MemorySegment<'T>(memory: ReadOnlyMemory<'T>) as this =
+    inherit ReadOnlySequenceSegment<'T>()
+    do this.Memory <- memory
+
+    member this.Append(next: MemorySegment<'T>) =
+        next.RunningIndex <- this.RunningIndex + int64 this.Memory.Length
+        this.Next <- next
+#endif
 
 
 /// A collection of default Arbitrary instances for some types.
@@ -575,11 +587,92 @@ type internal Default private() =
             |> Arb.convert NegativeInt int
         with get
 
-    static member val NonNegativeInt =
+    static member val NonNegativeInt : Arbitrary<NonNegativeInt> =
             Default.Int32
             |> Arb.mapFilter abs (fun i -> i >= 0)
             |> Arb.convert NonNegativeInt int
         with get
+
+#if NETSTANDARD2_1_OR_GREATER || NET
+    ///Generates Index values, both from the start and from the end. 
+    ///An Index is shrunk by shrinking its value, and by turning an index from the end into one from the start.
+    static member val Index : Arbitrary<Index> =
+            let genIndex =
+                gen { let! (NonNegativeInt v) = Default.NonNegativeInt.Generator
+                      and! fromEnd = Default.Bool.Generator
+                      return Index(v, fromEnd) }
+            let shrinkIndex (i: Index) =
+                seq { if i.IsFromEnd then yield Index(i.Value, false)
+                      for v in Default.NonNegativeInt.Shrinker (NonNegativeInt i.Value) ->
+                          let (NonNegativeInt v) = v
+                          Index(v, i.IsFromEnd) }
+            Arb.fromGenShrink (genIndex, shrinkIndex)
+        with get
+
+    ///Generates Range values whose start never lies after its end when both indexes are on the same side.
+    ///A Range is shrunk by shrinking its start and end, keeping that ordering.
+    static member val Range : Arbitrary<Range> =
+            let isOrdered (s: Index) (e: Index) =
+                s.IsFromEnd <> e.IsFromEnd || (if s.IsFromEnd then s.Value >= e.Value else s.Value <= e.Value)
+            let order (s: Index) (e: Index) =
+                if isOrdered s e then Range(s, e) else Range(e, s)
+            let genRange =
+                gen { let! s = Default.Index.Generator
+                      and! e = Default.Index.Generator
+                      return order s e }
+            let shrinkRange (r: Range) =
+                seq { for s in Default.Index.Shrinker r.Start do
+                          if isOrdered s r.End then yield Range(s, r.End)
+                      for e in Default.Index.Shrinker r.End do
+                          if isOrdered r.Start e then yield Range(r.Start, e) }
+            Arb.fromGenShrink (genRange, shrinkRange)
+        with get
+
+    ///Generates Memory values backed by an array, shrunk like an array.
+    static member Memory(elements: Arbitrary<'T>) =
+        Arb.array elements
+        |> Arb.convert (fun (a: 'T[]) -> Memory<'T>(a)) (fun (m: Memory<'T>) -> m.ToArray())
+
+    ///Generates ReadOnlyMemory values backed by an array, shrunk like an array.
+    static member ReadOnlyMemory(elements: Arbitrary<'T>) =
+        Arb.array elements
+        |> Arb.convert (fun (a: 'T[]) -> ReadOnlyMemory<'T>(a)) (fun (m: ReadOnlyMemory<'T>) -> m.ToArray())
+
+    ///Generates ReadOnlySequence values made of zero or more (possibly empty) linked segments.
+    ///A ReadOnlySequence is shrunk by removing segments and shrinking the contents of its segments.
+    static member ReadOnlySequence(elements: Arbitrary<'T>) =
+        let ofSegments (segments: 'T[][]) =
+            if segments.Length = 0 then
+                ReadOnlySequence<'T>(Array.empty<'T>)
+            else
+                let linked = segments |> Array.map (fun s -> MemorySegment<'T>(ReadOnlyMemory<'T>(s)))
+                for i in 0 .. linked.Length - 2 do
+                    linked.[i].Append linked.[i + 1]
+                let last = linked.[linked.Length - 1]
+                ReadOnlySequence<'T>(linked.[0], 0, last, last.Memory.Length)
+        let toSegments (s: ReadOnlySequence<'T>) =
+            let result = ResizeArray<'T[]>()
+            let mutable e = s.GetEnumerator()
+            while e.MoveNext() do
+                result.Add(e.Current.ToArray())
+            result.ToArray()
+        Arb.array (Arb.array elements)
+        |> Arb.convert ofSegments toSegments
+
+    ///Generates ValueTask values that are already completed successfully.
+    static member val ValueTask : Arbitrary<ValueTask> =
+            Arb.fromGen (Gen.constant (ValueTask()))
+        with get
+
+    ///Generates ValueTask values that are already completed with a result, shrunk by shrinking the result.
+    static member ValueTaskOf(result: Arbitrary<'T>) =
+        let shrink (v: ValueTask<'T>) =
+            if v.IsCompletedSuccessfully then
+                result.Shrinker v.Result |> Seq.map (fun r -> ValueTask<'T>(r))
+            else
+                Seq.empty
+        Arb.fromGenShrink (result.Generator |> Gen.map (fun r -> ValueTask<'T>(r)), shrink)
+#endif
 
     static member val PositiveInt =
             Default.Int32

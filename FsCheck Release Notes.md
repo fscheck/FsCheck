@@ -1,3 +1,7 @@
+## 3.5.1 - To be released
+
+* Added default generators and shrinkers for `System.Index` and `System.Range` (#621), `Memory<T>`, `ReadOnlyMemory<T>`, `ReadOnlySequence<T>`, `ValueTask` and `ValueTask<T>`. FsCheck now also targets netstandard2.1, where these types are available.
+
 ## 3.5.0 - 17 October 2026
 
 * Support NUnit 5 (by Nathan Bierema)

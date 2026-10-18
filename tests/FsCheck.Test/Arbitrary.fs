@@ -330,6 +330,67 @@ module Arbitrary =
                                             || (v.Millisecond = 0 && v.Second = 0 && v.Minute = 0 && v.Hour = 0))))
 
     [<Fact>]
+    let Index() =
+        generate<Index> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``Index shrinks to smaller or from-start index`` (i: Index) =
+        shrink i
+        |> Seq.forall (fun v -> (i.IsFromEnd && not v.IsFromEnd) || (v.IsFromEnd = i.IsFromEnd && v.Value < i.Value))
+
+    [<Fact>]
+    let Range() =
+        generate<Range> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``Range is ordered when both indexes are on the same side`` (r: Range) =
+        r.Start.IsFromEnd <> r.End.IsFromEnd
+        || (if r.Start.IsFromEnd then r.Start.Value >= r.End.Value else r.Start.Value <= r.End.Value)
+
+    [<Property>]
+    let ``Range shrinks stay ordered`` (r: Range) =
+        shrink r
+        |> Seq.forall (fun v -> v.Start.IsFromEnd <> v.End.IsFromEnd
+                                || (if v.Start.IsFromEnd then v.Start.Value >= v.End.Value else v.Start.Value <= v.End.Value))
+
+    [<Fact>]
+    let Memory() =
+        generate<Memory<int>> |> sample 10 |> ignore
+
+    [<Fact>]
+    let ReadOnlyMemory() =
+        generate<ReadOnlyMemory<int>> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``Memory shrinks to shorter memory or smaller elements`` (value: Memory<int>) =
+        shrink value
+        |> Seq.forall (fun v -> v.Length < value.Length || Array.exists2 (fun e1 e2 -> abs e1 <= abs e2) (v.ToArray()) (value.ToArray()))
+
+    [<Fact>]
+    let ReadOnlySequence() =
+        generate<System.Buffers.ReadOnlySequence<int>> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``ReadOnlySequence has consistent length`` (value: System.Buffers.ReadOnlySequence<int>) =
+        let mutable e = value.GetEnumerator()
+        let mutable total = 0L
+        while e.MoveNext() do total <- total + int64 e.Current.Length
+        total = value.Length
+
+    [<Property>]
+    let ``ReadOnlySequence shrinks to smaller sequence`` (value: System.Buffers.ReadOnlySequence<int>) =
+        shrink value |> Seq.forall (fun v -> v.Length <= value.Length)
+
+    [<Fact>]
+    let ``ValueTask`` () =
+        generate<System.Threading.Tasks.ValueTask> |> sample 10 |> Seq.forall (fun v -> v.IsCompletedSuccessfully) |> assertTrue
+
+    [<Property>]
+    let ``ValueTask of int is completed and shrinks the result`` (value: System.Threading.Tasks.ValueTask<int>) =
+        value.IsCompletedSuccessfully
+        && (shrink value |> Seq.forall (fun v -> v.IsCompletedSuccessfully && abs v.Result <= abs value.Result))
+
+    [<Fact>]
     let KeyValuePair () =
         generate<KeyValuePair<int,int>> |> sample 10 |> ignore
 
