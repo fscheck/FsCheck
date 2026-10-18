@@ -15,7 +15,7 @@ Properties are universally quantified over their parameters, so: *)
 let revRevIsOrig (xs:list<int>) = List.rev(List.rev xs) = xs
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=revRevIsOrig]
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/Properties.cs,key=revRevIsOrig]
 
 means that the equality holds for all lists xs.
 
@@ -53,7 +53,7 @@ let insertKeepsOrder (x:int) xs = ordered xs ==> ordered (insert x xs)
 Check.Quick insertKeepsOrder
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=insertKeepsOrder]    *)
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/Properties.cs,key=insertKeepsOrder]    *)
 
 (***include-output:insertKeepsOrder***)
 
@@ -91,7 +91,7 @@ let moreLazy a = a <> 0 ==> (lazy (1/a = 1/a))
 Check.Quick moreLazy
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=lazy] *)
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/Properties.cs,key=lazy] *)
 
 (***include-output: lazy***)
 
@@ -108,7 +108,7 @@ let insertWithArb x = Prop.forAll orderedList (fun xs -> ordered(insert x xs))
 Check.Quick insertWithArb
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=insertWithArb] *)
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/Properties.cs,key=insertWithArb] *)
 
 (***include-output:insertWithArb***)
 
@@ -162,7 +162,7 @@ let insertTrivial (x:int) xs =
 Check.Quick insertTrivial
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=insertTrivial]
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/Properties.cs,key=insertTrivial]
 
 Test cases for which the condition is true are classified as trivial, and the proportion of 
 trivial test cases in the total is reported:*)
@@ -184,7 +184,7 @@ let insertClassify (x:int) xs =
 Check.Quick insertClassify
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=insertClassify]
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/Properties.cs,key=insertClassify]
 
 Test cases satisfying the condition are assigned the classification given, and the distribution of 
 classifications is reported after testing:*)
@@ -207,7 +207,7 @@ let insertCollect (x:int) xs =
 Check.Quick insertCollect
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=insertCollect]
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/Properties.cs,key=insertCollect]
 
 The argument of collect is evaluated in each test case, and the distribution of 
 values is reported. The type of this argument is printed using `sprintf "%A"`:*)
@@ -230,7 +230,7 @@ let insertCombined (x:int) xs =
 Check.Quick insertCombined
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=insertCombined]*)
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/Properties.cs,key=insertCombined]*)
 
 (***include-output:insertCombined***)
 
@@ -258,7 +258,7 @@ let complex (m: int) (n: int) =
 Check.Quick complex
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=complexProperty]*)
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/Properties.cs,key=complexProperty]*)
 
 (***include-output:complex***)
 
@@ -277,6 +277,6 @@ let multiply (n: int, m: int) =
 Check.Quick multiply
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/Properties.cs,key=multipleLabels]*)
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/Properties.cs,key=multipleLabels]*)
 
 (***include-output:multiply***)

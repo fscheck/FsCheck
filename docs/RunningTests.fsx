@@ -63,7 +63,7 @@ the output on success:*)
 Check.One(Config.Quick.WithMaxTest(1000).WithQuietOnSuccess(true), fun _ -> true)
 
 (**
-    [lang=csharp, file=../examples/CSharp.DocSnippets/RunningTests.cs,key=configuration]
+    [lang=csharp, file=../examples/FsCheck.Docs.CSharpSnippets/RunningTests.cs,key=configuration]
 
 ### Running many properties at once with Check.All
 

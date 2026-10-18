@@ -134,7 +134,7 @@ let testMutableList =
             underTest.Count = itemsToAdd.Length))
 
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/TipsAndTricks.cs,key=testMutableList]
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/TipsAndTricks.cs,key=testMutableList]
 
 This works, as a bonus you get shrinking for free.
 
@@ -156,7 +156,7 @@ Check.One(Config.Quick.WithReplay(1145655947UL,296144285UL), fun x -> abs x >= 0
 (**
 In C#:
 
-    [lang=csharp,file=../examples/CSharp.DocSnippets/TipsAndTricks.cs,key=replay]
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/TipsAndTricks.cs,key=replay]
 *)
 
 (**

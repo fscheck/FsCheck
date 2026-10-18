@@ -1,0 +1,20 @@
+﻿using FsCheck;
+using FsCheck.Fluent;
+
+namespace FsCheck.Docs.CSharpSnippets
+{
+    class RunningTests
+    {
+        public static void Samples()
+        {
+            //[configuration]
+            var configuration = Config.Quick
+                                      .WithMaxTest(1000)
+                                      .WithQuietOnSuccess(true);
+            true.ToProperty().Check(configuration);
+            //[/configuration]
+        }
+    }
+}
+
+

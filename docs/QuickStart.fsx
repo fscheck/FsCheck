@@ -36,7 +36,7 @@ Check.Quick revRevIsOrig
 
 (** In C#:
 
-    [lang=csharp,file=../examples/CSharp.DocSnippets/QuickStart.cs,key=revRevIsOrig]
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/QuickStart.cs,key=revRevIsOrig]
 
 When a property fails, FsCheck displays a counter-example. For example, if we define *)
 
@@ -48,7 +48,7 @@ Check.Quick revIsOrig
 
 (** In C#: 
 
-    [lang=csharp,file=../examples/CSharp.DocSnippets/QuickStart.cs,key=revIsOrig]
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/QuickStart.cs,key=revIsOrig]
 
 FsCheck also *shrinks* the counterexample: it tries to find the minimal counterexample that
 still fails the property. The counterexample is indeed minimal:
@@ -82,7 +82,7 @@ Check.Quick revRevIsOrigFloat
 
 (** That said, the example in C# using floats actually works!
 
-    [lang=csharp,file=../examples/CSharp.DocSnippets/QuickStart.cs,key=revRevIsOrigFloat]
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/QuickStart.cs,key=revRevIsOrigFloat]
 
 This is because SequenceEquals uses the default equality comparer under the hood, which uses `Double`'s `Equals` method, which
 has a special provision for `NaN`, as you can see in the [reference source](http://referencesource.microsoft.com/#mscorlib/system/double.cs,152).
@@ -141,7 +141,7 @@ let ``Reverse of reverse of a list is the original list`` () =
   Check.QuickThrowOnFailure revRevIsOrig
   
 (**
-    [lang=csharp,file=../examples/CSharp.DocSnippets/QuickStart.cs,key=revRevIsOrigFact]
+    [lang=csharp,file=../examples/FsCheck.Docs.CSharpSnippets/QuickStart.cs,key=revRevIsOrigFact]
 
 For xUnit, the test looks like any normal test, and the QuickThrowOnFailure ensures that if the test fails,
 an exception with the necessary information is raised so xUnit knows the test failed. The output of the test is the same

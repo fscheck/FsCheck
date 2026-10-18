@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>FsCheck.Examples.FSharp</AssemblyName>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="Examples.fs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../src/FsCheck/FsCheck.fsproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FSharp.Core"/>
+    </ItemGroup>
+</Project>
