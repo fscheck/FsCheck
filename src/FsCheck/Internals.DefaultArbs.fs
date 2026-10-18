@@ -396,7 +396,7 @@ type internal Default private() =
             |> Arb.fromGenShrink
         with get
 
-    ///Generates strings, which are lists of characters or null (1/10 of the time).
+    ///Generates strings, which are lists of characters (never null).
     static member val String :Arbitrary<string> =
             let arrayOfChars = Arb.array Default.Char
             let generator = 
@@ -1182,5 +1182,4 @@ type internal Default private() =
         let shrinker a =
             ReflectiveShrinker.reflectShrink getShrink a
         Arb.fromGenShrink(generator, shrinker)
-
 
