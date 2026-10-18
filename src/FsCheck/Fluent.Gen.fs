@@ -10,6 +10,11 @@ open FsCheck.Internals
 
 [<AbstractClass; Sealed; Extension>]
 type Gen = 
+    /// Convert a generator to an arbitrary without shrinking.
+    [<Extension>]
+    static member ToArbitrary(generator:Gen<'T>) =
+        Arb.fromGen generator
+
     /// Always generate the same given value. See also Fresh.
     //[category: Creating generators]
     static member Constant(value:'T) = 
@@ -325,7 +330,6 @@ type Gen =
     [<Extension>]
     static member OrNull (generator:Gen<'T>) =
         Gen.frequency [ (7, generator); (1, Gen.constant null) ]
-
 
 
 

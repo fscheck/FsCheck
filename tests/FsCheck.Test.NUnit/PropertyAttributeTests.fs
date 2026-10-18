@@ -37,7 +37,7 @@ module ResultOutputTests =
         type CustomTypeArb =
             static member CustomType() =
                 ArbMap.defaults.ArbFor<int>()
-                |> Arb.convert CustomType (fun value -> value.Value)
+                |> Arb.convert CustomType (fun (value: CustomType) -> value.Value)
 
         [<SetUp>]
         let setupFormatter() =

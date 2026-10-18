@@ -33,7 +33,7 @@ let labelBug (x:int) =
     |> Prop.label "bla"
 Check.Quick labelBug
 
-//smart shrinking
+//integrated shrinking
 [<StructuredFormatDisplay("{Display}")>]
 type Smart<'a> = 
     Smart of int * 'a with
@@ -41,22 +41,13 @@ type Smart<'a> =
         member x.Display = x.ToString()
     
 
-type SmartShrinker =
-    static member Smart(value:Arbitrary<'a>) =
-        let generator = value.Generator |> Gen.map (fun arb -> Smart (0,arb))
-        let shrinker (Smart (i,x)) = 
-            let ys = Seq.zip (seq {0..Int32.MaxValue}) (value.Shrinker x) |> Seq.map Smart 
-            let i' = Math.Max(0,i-2)
-            let rec interleave left right =
-                match (left,right) with
-                | ([],rs) -> rs
-                | (ls,[]) -> ls
-                | (l::ls,r::rs) -> l::r::(interleave ls rs)
-            interleave (Seq.take i' ys |> Seq.toList) (Seq.skip i' ys |> Seq.toList) |> List.toSeq
-        Arb.fromGenShrink(generator, shrinker)
+type SmartArbitrary =
+    static member Smart(value:Arbitrary<int>) =
+        value
+        |> Arb.map (fun value -> Smart (value, value))
 
-let smartShrink (Smart (_,i)) = i < 20
-Check.One(Config.Default.WithArbitrary([typeof<SmartShrinker>]), smartShrink)
+let smartShrink (Smart (_,value)) = value < 20
+Check.One(Config.Default.WithArbitrary([typeof<SmartArbitrary>]), smartShrink)
 
 //-------------examples from QuickCheck paper-------------
 let revUnit (x:char) = List.rev [x] = [x]

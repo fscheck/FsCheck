@@ -1,4 +1,9 @@
-﻿namespace FsCheck.Internals
+﻿
+///Generates Function values that can be printed and shrunk. Function values can be generated for types 'T->'U
+///where 'b has an Arbitrary instance.///Generates Function values that can be printed and shrunk. Function values can be generated for types 'T->'U
+///where 'b has an Arbitrary instance.///Generates Function values that can be printed and shrunk. Function values can be generated for types 'T->'U
+///where 'b has an Arbitrary instance.
+namespace FsCheck.Internals
 
 open FsCheck
 open FsCheck.FSharp
@@ -30,191 +35,154 @@ type internal Default private() =
 
     /// Generates (), of the unit type.
     static member val Unit =
-            Gen.constant ()
-            |> Arb.fromGen
+            Arb.constant ()
         with get
 
     /// Generates bool values.
     static member val Bool :Arbitrary<bool> = 
-            Gen.elements [false; true]
-            |> Arb.fromGen
+            Arb.bool
         with get
 
     /// Generates byte values that are uniformly distributed in the whole range of byte values.
     static member val Byte :Arbitrary<byte> = 
-            (Gen.choose (int Byte.MinValue, int Byte.MaxValue) |> Gen.map byte,
-             Shrink.unsignedNumber)
-             |> Arb.fromGenShrink
+            Gen.choose (int Byte.MinValue, int Byte.MaxValue)
+            |> Gen.map (byte >> Shrink.ofShrinker Shrink.unsignedNumber id)
+            |> Arbitrary
         with get
 
     /// Generates sbyte values that are uniformly distributed in the whole range of sbyte values.
-    static member val SByte =
-            (Gen.choose (int SByte.MinValue, int SByte.MaxValue) |> Gen.map sbyte,
-             Shrink.signedNumber)
-            |> Arb.fromGenShrink
+    static member val SByte :Arbitrary<sbyte> =
+            Gen.choose (int Byte.MinValue, int Byte.MaxValue)
+            |> Gen.map (sbyte >> Shrink.ofShrinker Shrink.signedNumber id)
+            |> Arbitrary
         with get
 
     /// Generates int16 values that are between -size and size.
-    static member val Int16 =
-            (Gen.sized( fun s -> Gen.choose(-s, s) |> Gen.map int16),
-             Shrink.signedNumber)
-            |> Arb.fromGenShrink
+    static member val Int16 :Arbitrary<int16> =
+            Gen.sized (fun s -> 
+                Gen.choose(-s, s) |> Gen.map (int16 >> Shrink.ofShrinker Shrink.signedNumber id))
+            |> Arbitrary
         with get
 
-    /// Generate int16 values that are uniformly distributed in the whole range of int16 values.
+    /// Generates int16 values that are uniformly distributed in the whole range of int16 values.
     static member val DoNotSizeInt16 :Arbitrary<DoNotSize<int16>> = 
-            (Gen.choose(int Int16.MinValue, int Int16.MaxValue) |> Gen.map int16,
-             Shrink.signedNumber)
-            |> Arb.fromGenShrink
-            |> Arb.convert DoNotSize DoNotSize.Unwrap 
+            Gen.choose(int Int16.MinValue, int Int16.MaxValue)
+            |> Gen.map (int16 >> Shrink.ofShrinker Shrink.signedNumber DoNotSize)
+            |> Arbitrary
         with get
 
     /// Generates uint16 values that are between 0 and size.
-    static member val UInt16 =
-            (Gen.sized( fun s -> Gen.choose(0, s) |> Gen.map uint16),
-             Shrink.unsignedNumber)
-            |> Arb.fromGenShrink
+    static member val UInt16 :Arbitrary<uint16> =
+            Gen.sized (fun s ->
+                Gen.choose (0, s) |> Gen.map (uint16 >> Shrink.ofShrinker Shrink.unsignedNumber id))
+            |> Arbitrary
         with get
 
-    /// Generate arbitrary uint16 that is uniformly distributed in the whole range of uint16 values.
-    static member val DoNotSizeUInt16 =
-            (Gen.choose(int UInt16.MinValue, int UInt16.MaxValue) |> Gen.map uint16, 
-             Shrink.unsignedNumber)
-            |> Arb.fromGenShrink
-            |> Arb.convert DoNotSize DoNotSize.Unwrap 
+    /// Generates uint16 values that are uniformly distributed in the whole range of uint16 values.
+    static member val DoNotSizeUInt16 :Arbitrary<DoNotSize<uint16>> =
+            Gen.choose(int UInt16.MinValue, int UInt16.MaxValue)
+            |> Gen.map (uint16 >> Shrink.ofShrinker Shrink.unsignedNumber DoNotSize)
+            |> Arbitrary
         with get
          
     /// Generates int32 values that are between -size and size.
-    static member val Int32 =
-            (Gen.sized (fun n -> Gen.choose (-n,n)),
-             Shrink.signedNumber)
-            |> Arb.fromGenShrink
+    static member val Int32 :Arbitrary<int> =
+            Arb.sized (fun n -> Arb.choose (-n,n))
         with get
 
-    ///Generate arbitrary int32 that is unrestricted by size.
-    static member val DoNotSizeInt32 =
-            (Gen.choose(Int32.MinValue, Int32.MaxValue),
-             Shrink.signedNumber)
-            |> Arb.fromGenShrink
-            |> Arb.convert DoNotSize DoNotSize.Unwrap
+    /// Generates int32 values that are uniformly distributed in the whole range of Int32 values.
+    static member val DoNotSizeInt32 :Arbitrary<DoNotSize<int>> =
+            Arb.choose(Int32.MinValue, Int32.MaxValue)
+            |> Arb.map DoNotSize
         with get
 
-    ///Generates uint32 values that are between 0 and size.
-    static member val UInt32 =
-            (Gen.sized( fun s -> Gen.choose(0, s) |> Gen.map uint32),
-             Shrink.unsignedNumber)
-            |> Arb.fromGenShrink
+    /// Generates uint32 values that are between 0 and size.
+    static member val UInt32 :Arbitrary<uint32> =
+            Gen.sized (fun s ->
+                Gen.choose(0, s) |> Gen.map (uint32 >> Shrink.ofShrinker Shrink.unsignedNumber id))
+            |> Arbitrary
         with get
 
-    ///Generate arbitrary uint32 that is unrestricted by size.
-    static member val DoNotSizeUInt32 =
-            (Gen.choose64(int64 UInt32.MinValue, int64 UInt32.MaxValue) |> Gen.map uint32,
-             Shrink.unsignedNumber)
-            |> Arb.fromGenShrink
-            |> Arb.convert DoNotSize DoNotSize.Unwrap
+    /// Generate arbitrary uint32 that is unrestricted by size.
+    static member val DoNotSizeUInt32 :Arbitrary<DoNotSize<uint32>> =
+            Gen.choose64(int64 UInt32.MinValue, int64 UInt32.MaxValue)
+            |> Gen.map (uint32 >> Shrink.ofShrinker Shrink.unsignedNumber DoNotSize)
+            |>Arbitrary
         with get
 
     ///Generates int64 values that are between -size and size.
     ///Note that since the size is an int32, this does not actually cover the full
     ///range of int64. See DoNotSize<int64> instead.
     static member val Int64 =
-            (Gen.sized( fun s -> Gen.choose64(int64 -s, int64 s)),
-             Shrink.signedNumber)
-            |> Arb.fromGenShrink
+            Arb.sized(fun s -> Arb.choose64(int64 -s, int64 s))
         with get
 
-    ///Generate arbitrary int64 that is unrestricted by size.
+    /// Generate arbitrary int64 that is unrestricted by size.
     static member val DoNotSizeInt64 : Arbitrary<DoNotSize<int64>> =
-            (Gen.choose64(Int64.MinValue, Int64.MaxValue),
-             Shrink.signedNumber)
-            |> Arb.fromGenShrink
-            |> Arb.convert DoNotSize DoNotSize.Unwrap
+            Arb.choose64(Int64.MinValue, Int64.MaxValue)
+            |> Arb.map DoNotSize
         with get
      
-    ///Generates uint64 values that are between 0 and size.
-    static member val UInt64 =
-            (Gen.sized( fun s -> Gen.choose(0, s) |> Gen.map uint64),
-             Shrink.unsignedNumber)
-            |> Arb.fromGenShrink
+    /// Generates uint64 values that are between 0 and size.
+    static member val UInt64 :Arbitrary<uint64> =
+            Gen.sized (fun s -> 
+                Gen.choose(0, s) |> Gen.map (uint64 >> Shrink.ofShrinker Shrink.unsignedNumber id))
+            |> Arbitrary
         with get
      
     ///Generates uint64 values that are unrestricted by size.
-    static member val DoNotSizeUInt64 =
-            (Default.DoNotSizeInt64.Generator |> Gen.map (fun (DoNotSize i64) -> Operators.uint64 i64),
-             Shrink.unsignedNumber)
-            |> Arb.fromGenShrink
-            |> Arb.convert DoNotSize DoNotSize.Unwrap
+    static member val DoNotSizeUInt64 :Arbitrary<DoNotSize<uint64>> =
+            Gen.choose64(Int64.MinValue, Int64.MaxValue)
+            |> Gen.map (uint64 >> Shrink.ofShrinker Shrink.unsignedNumber DoNotSize)
+            |> Arbitrary
         with get
 
     ///Generates float values that are between -size and size (without NaN, Infinity, Epsilon, MinValue, MaxValue)
     ///Shrinks by yielding zero, abs of the origin and the truncated origin.
     static member val NormalFloat :Arbitrary<NormalFloat> =
-            let generator = Gen.sized (fun size ->
-                Gen.map2
-                    (fun f isNegative -> 
-                        let value = f * float size
-                        if isNegative then -value else value)
-                    Gen.double
-                    Default.Bool.Generator
-                )
-            let shrinker fl =
-                let (|<|) x y = abs x < abs y
-                seq { 
-                        if fl <> 0.0 then yield 0.0
-                        if fl < 0.0 then yield -fl
-                        let truncated = truncate fl
-                        if truncated |<| fl then yield truncated }
-                |> Seq.distinct
-            (generator, shrinker)
-            |> Arb.fromGenShrink
-            |> Arb.convert NormalFloat float
+            Arb.double
+            |> Arb.sized 
+            |> Arb.map NormalFloat
         with get
 
     /// Generates float values that are between -size and size.
     /// One of NaN, NegativeInfinity, PositiveInfinity, MaxValue, MinValue or Epsilon is generated on average 1 time for every 8 values.
     /// Shrinks by yielding zero, abs of the origin and the truncated origin.
-    static member val Float = 
-            let generator =
-                Gen.frequency [(7, Default.NormalFloat.Generator |> Gen.map (fun (NormalFloat f) -> f))
-                               (1, Gen.elements [ Double.NaN; Double.NegativeInfinity; Double.PositiveInfinity
-                                                  Double.MaxValue; Double.MinValue; Double.Epsilon])]
-            let shrinker fl =
-                if Double.IsInfinity fl || Double.IsNaN fl then Seq.singleton 0.0
-                else Default.NormalFloat.Shrinker (NormalFloat fl) |> Seq.map (fun (NormalFloat f) -> f)
-            Arb.fromGenShrink(generator, shrinker)
+    static member val Float :Arbitrary<float> = 
+            Arb.frequency [(7, Arb.sized Arb.double)
+                           (1, Arb.elements [ Double.NaN; Double.NegativeInfinity; Double.PositiveInfinity
+                                              Double.MaxValue; Double.MinValue; Double.Epsilon])]
+
         with get
 
     /// Generates float values that are between -size and size.
     /// One of NaN, NegativeInfinity, PositiveInfinity, MaxValue, MinValue or Epsilon is generated on average 1 time for every 8 values.
     /// Shrinks by yielding zero, abs of the origin and the truncated origin.
-    static member val Float32 = 
-            let generator =
-                Gen.frequency [(7, Default.NormalFloat.Generator |> Gen.map (fun (NormalFloat f) -> float32 f))
-                               (1, Gen.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity
-                                                  Single.MaxValue; Single.MinValue; Single.Epsilon])]
-            let shrinker fl =
-                if Single.IsInfinity fl || Single.IsNaN fl then seq {yield 0.0f}
-                else Default.NormalFloat.Shrinker (NormalFloat <| float fl) |> Seq.map (fun (NormalFloat f) -> float32 f)
-            Arb.fromGenShrink (generator,shrinker)
+    static member val Float32 :Arbitrary<float32> = 
+            Arb.frequency [(7, Default.NormalFloat |> Arb.map (fun (NormalFloat f) -> float32 f))
+                           (1, Arb.elements [ Single.NaN; Single.NegativeInfinity; Single.PositiveInfinity
+                                              Single.MaxValue; Single.MinValue; Single.Epsilon])]
+        with get
+
+    static member val Complex :Arbitrary<Numerics.Complex> =
+            Arb.map2 (fun real imaginary -> Numerics.Complex(real, imaginary)) Default.Float Default.Float
         with get
 
     /// Generates decimal values that are between -size and size.
-    // /Shrinks by yielding zero, abs of the origin and the truncated origin.
     static member val Decimal :Arbitrary<decimal> =
-            /// Generates uniformly distributed Decimal values in range [0; 1).
             let decimalGen =
                 let tenPow9 = 1_000_000_000
                 Gen.choose(0, tenPow9 - 1)
                 |> Gen.map Decimal
-                |> Gen.map (fun d -> d / (Decimal tenPow9)) 
-            let generator = Gen.sized (fun size ->
-                Gen.map2
-                    (fun d isNegative -> 
-                        let value = d * Decimal(size)
-                        if isNegative then -value else value)
-                    decimalGen
-                    Default.Bool.Generator
-                )
+                |> Gen.map (fun d -> d / Decimal tenPow9)
+            let generator =
+                Gen.sized (fun size ->
+                    Gen.map2
+                        (fun d isNegative ->
+                            let value = d * Decimal size
+                            if isNegative then -value else value)
+                        decimalGen
+                        (Arb.toGen Default.Bool))
             let shrinker d =
                 let (|<|) x y = abs x < abs y
                 seq {
@@ -223,77 +191,106 @@ type internal Default private() =
                     let truncated = truncate d
                     if truncated |<| d then yield truncated
                 }
-            (generator, shrinker)
-            |> Arb.fromGenShrink
+            Arb.fromGenShrink (generator, shrinker)
         with get
 
-    ///Generates decimal values that are unrestricted by size.
-    ///Shrinks by yielding zero, abs of the origin and the truncated origin.
+    /// Generates decimal values unrestricted by size.
     static member val DoNotSizeDecimal =
-            let int32Gen = Default.DoNotSizeInt32 |> Arb.toGen |> Gen.map (fun (DoNotSize i) -> i)
-            let generator = 
-                Gen.map5 
+            let int32Gen =
+                Default.DoNotSizeInt32
+                |> Arb.toGen
+                |> Gen.map (fun (DoNotSize i) -> i)
+            let generator =
+                Gen.map5
                     (fun lo mid hi isNegative scale -> Decimal(lo, mid, hi, isNegative, scale))
                     int32Gen
                     int32Gen
                     int32Gen
-                    Default.Bool.Generator
-                    (Gen.choose(0, 28) |> Gen.map Operators.byte)
-            (generator, Default.Decimal.Shrinker)
-            |> Arb.fromGenShrink
+                    (Arb.toGen Default.Bool)
+                    (Gen.choose(0, 28) |> Gen.map byte)
+            let shrinker d =
+                let (|<|) x y = abs x < abs y
+                seq {
+                    if d <> 0m then yield 0m
+                    if d < 0m then yield -d
+                    let truncated = truncate d
+                    if truncated |<| d then yield truncated
+                }
+            Arb.fromGenShrink (generator, shrinker)
             |> Arb.convert DoNotSize DoNotSize.Unwrap
         with get
 
-    ///Generates complex values of form {float + i*float}. 
-    ///Shrinks by removing the imaginary part and shrinking both parts.
-    static member val Complex =
-            let arbFloat = Default.Float
-            let arbFloat2 = Arb.zip (arbFloat, arbFloat)
-            let generator = arbFloat2.Generator
-                            |> Gen.map Numerics.Complex
-            let shrinker (c : Numerics.Complex) =
-                match (c.Real, c.Imaginary) with
-                | (r, 0.0) -> 
-                    arbFloat.Shrinker r
-                    |> Seq.map (fun r -> Numerics.Complex(r, 0.0))
-                | (r, i) ->
-                    let realOnly = seq { yield Numerics.Complex(r, 0.0)}
-                    let shrunk =
-                        arbFloat2.Shrinker (r, i)
-                        |> Seq.filter (fun (sr, si) -> not (si = 0.0 && sr.Equals r)) //We use Equals to properly compare NaNs
-                        |> Seq.map Numerics.Complex
-                    Seq.append realOnly shrunk
-            Arb.fromGenShrink (generator, shrinker)
-        with get
+    /////Generates complex values of form {float + i*float}. 
+    /////Shrinks by removing the imaginary part and shrinking both parts.
+    //static member val Complex =
+    //        let arbFloat = Default.Float
+    //        let arbFloat2 = Arb.zip (arbFloat, arbFloat)
+    //        let generator = arbFloat2.Generator
+    //                        |> Gen.map Numerics.Complex
+    //        let shrinker (c : Numerics.Complex) =
+    //            match (c.Real, c.Imaginary) with
+    //            | (r, 0.0) -> 
+    //                arbFloat.Shrinker r
+    //                |> Seq.map (fun r -> Numerics.Complex(r, 0.0))
+    //            | (r, i) ->
+    //                let realOnly = seq { yield Numerics.Complex(r, 0.0)}
+    //                let shrunk =
+    //                    arbFloat2.Shrinker (r, i)
+    //                    |> Seq.filter (fun (sr, si) -> not (si = 0.0 && sr.Equals r)) //We use Equals to properly compare NaNs
+    //                    |> Seq.map Numerics.Complex
+    //                Seq.append realOnly shrunk
+    //        Arb.fromGenShrink (generator, shrinker)
+    //    with get
 
     /// Generates characters that are between ASCII codes Char.MinValue and 127.
-    static member val Char =
-            let generator = Gen.choose (int Char.MinValue, 127) |> Gen.map char
-            let shrinker c = seq { for c' in ['a';'b';'c'] do if c' < c || not (Char.IsLower c) then yield c' }
-            (generator, shrinker)
-            |> Arb.fromGenShrink
+    static member val Char :Arbitrary<char> =
+            Arb.choose (int Char.MinValue, 127) 
+            |> Arb.map char
         with get
 
     ///Generates strings, which are lists of characters or null (1/10 of the time).
     static member val String :Arbitrary<string> =
-            let arrayOfChars = Arb.array Default.Char
-            let generator = 
-                arrayOfChars.Generator 
-                |> Gen.map String
-            let shrinker (s:string) = 
-                    match s with
-                    | null -> Seq.empty<string>
-                    | _ -> s.ToCharArray() |> arrayOfChars.Shrinker |> Seq.map String
+            let nonNullString = Arb.array Default.Char |> Arb.map String
+            Arb.frequency [(1, Arb.constant null); (9, nonNullString)]
+        with get
+
+    static member val UnicodeChar :Arbitrary<UnicodeChar> =
+            let generator =
+                Gen.choose (int Char.MinValue, int Char.MaxValue)
+                |> Gen.map (char >> UnicodeChar)
+            let shrinker (UnicodeChar c) =
+                seq {
+                    for candidate in [ 'a'; 'b'; 'c' ] do
+                        if candidate < c || not (Char.IsLower c) then
+                            yield UnicodeChar candidate
+                }
             Arb.fromGenShrink (generator, shrinker)
         with get
 
-    ///Generates a rank 1 arrays. 
-    ///The length of the generated array is between 0 and the test size + 1. 
-    ///The sum of the sizes of the elements is equal to the size of the generated array.
+    static member val UnicodeString :Arbitrary<UnicodeString> =
+            Default.UnicodeChar
+            |> Arb.map (fun (UnicodeChar c) -> c)
+            |> Arb.array
+            |> Arb.map String
+            |> Arb.map UnicodeString
+        with get
+
+    /// Generates one-dimensional (rank 1) arrays. 
+    /// The length of the generated array is between 0 and the test size. 
+    /// The sum of the sizes of the elements is equal to the size of the generated array.
     static member Array(elements: Arbitrary<'T>) =
         elements
         |> Arb.array
 
+    static member FixedLengthArray(elements: Arbitrary<'T>) =
+        let generator =
+            Gen.sized (fun size ->
+                Gen.choose (0, size)
+                |> Gen.bind (fun length ->
+                    Arb.sequenceToArray (Seq.replicate length elements)
+                    |> Arb.unArb))
+        Arb.fromGenTree generator
+        |> Arb.map FixedLengthArray
         
     ///Generates option values that are 'None' 1/8 of the time.
     static member Option(value: Arbitrary<'T>) = 
@@ -305,7 +302,13 @@ type internal Default private() =
         let inline notNull x = not (isNull x)
         value
         |> Arb.filter notNull
-        |> Arb.convert NonNull (fun (NonNull x) -> x)
+        |> Arb.map NonNull
+
+    static member DoNotShrink(value: Arbitrary<'T>) =
+        value
+        |> Arb.toGen
+        |> Gen.map DoNotShrink
+        |> Arb.fromGen
 
 
     ///Generates nullable values that are null 1/8 of the time.
@@ -322,23 +325,10 @@ type internal Default private() =
 
     ///Generates objects which are a boxed char, string or boolean value.
     static member val Object =
-            let (arbChar, arbString, arbBool) = Default.Char, Default.String, Default.Bool
-            let generator = 
-                Gen.oneof [ Gen.map box <| arbChar.Generator
-                            Gen.map box <| arbString.Generator
-                            Gen.map box <| arbBool.Generator ]
-            let shrinker (o:obj) =
-                if isNull o then
-                    Seq.empty
-                else
-                    seq {
-                        match o with
-                        | :? char as c -> yield box true; yield box false; yield! arbChar.Shrinker c |> Seq.map box
-                        | :? string as s -> yield box true; yield box false; yield! arbString.Shrinker s |> Seq.map box
-                        | :? bool -> yield! Seq.empty
-                        | _ -> failwithf "Unknown type in shrink of obj type - object is %A" o
-                    }
-            Arb.fromGenShrink (generator, shrinker)
+        Arb.oneof
+            [ Default.Char |> Arb.map box
+              Default.String |> Arb.map box
+              Default.Bool |> Arb.map box ]
         with get
 
 
@@ -346,23 +336,17 @@ type internal Default private() =
     ///Generate a rank 2, zero based array. 
     ///The product of the width and the height is between 0 and the test size.
     // {NOT YET} The sum of the sizes of the elements is equal to the size of the generated array.
-    static member Array2D(elements: Arbitrary<'T>) = 
-        let shrinkArray2D (arr:_[,]) =
-            let removeRow r (arr:_[,]) =
-                Array2D.init (Array2D.length1 arr-1) (Array2D.length2 arr) (fun i j -> if i < r then arr.[i,j] else arr.[i+1,j])
-            let removeCol c (arr:_[,]) =
-                Array2D.init (Array2D.length1 arr) (Array2D.length2 arr-1) (fun i j -> if j < c then arr.[i,j] else arr.[i,j+1])
-            seq { for r in 1..Array2D.length1 arr do yield removeRow r arr
-                  for c in 1..Array2D.length2 arr do yield removeCol c arr
-                  for i in 0..Array2D.length1 arr-1 do //hopefully the matrix is shrunk considerably before we get here...
-                    for j in 0..Array2D.length2 arr-1 do
-                        for elem in elements.Shrinker arr.[i,j] do
-                            let shrunk = Array2D.copy arr
-                            shrunk.[i,j] <- elem
-                            yield shrunk
-                }       
-        Arb.fromGenShrink (elements.Generator |> Gen.array2DOf, shrinkArray2D)
-           
+    static member Array2D(elements: Arbitrary<'T>) =
+        let shrinkArray (array: 'T[,]) =
+            seq {
+                for row in 0 .. Array2D.length1 array - 1 do
+                    yield Array2D.init (Array2D.length1 array - 1) (Array2D.length2 array) (fun i j -> array.[(if i < row then i else i + 1), j])
+                for col in 0 .. Array2D.length2 array - 1 do
+                    yield Array2D.init (Array2D.length1 array) (Array2D.length2 array - 1) (fun i j -> array.[i, (if j < col then j else j + 1)])
+            }
+        let generator = Gen.array2DOf (Arb.toGen elements)
+        Arb.fromGenShrink (generator, shrinkArray)
+
 
     // NOTE: Function types are a bit special in that they need to have explicit type parameters.
     // Otherwise the discovery of the default arbitrary map will not work correctly, as it assumes
@@ -373,611 +357,926 @@ type internal Default private() =
     /// Generates F# function values. Function values can be generated for types 'T->'U where the target domain 'U has an Arbitrary instance.
     /// There is no shrinking for function values.
     [<CompiledName("FSharpFunc")>]
-    static member FSharpFunc<'T,'U when 'T:equality>(target: Arbitrary<'U>) :Arbitrary<'T->'U> = 
-        target.Generator
-        |> Gen.pureFunction
-        |> Arb.fromGen
+    static member FSharpFunc<'T,'U when 'T:equality>(target: Arbitrary<'U>) : Arbitrary<'T -> 'U> =
+        Arb.pureFunction target
 
     ///Generates F# function values that generate an instance of the function result type about half the time. The other 
     ///times it generate one of a list of common .NET exceptions, including Exception, ArgumentException, ArithmeticException,
     ///IOException, NotImplementedException, OUtOfMemoryException and others.
     [<CompiledName("ThrowingFSharpFunc")>]
-    static member ThrowingFSharpFunc<'T,'U when 'T:equality>(target: Arbitrary<'U>) :Arbitrary<ThrowingFunction<'T,'U>> = 
-        let exns: exn array = [|Exception()
-
-                                ArgumentException()
-                                ArgumentNullException()
-                                ArgumentOutOfRangeException()
-                                     
-                                ArithmeticException()
-                                DivideByZeroException()
-                                OverflowException()
-                                FormatException()
-                                IndexOutOfRangeException()
-                                InvalidCastException()
-                                InvalidOperationException()
-                                     
-                                IO.IOException()
-                                IO.EndOfStreamException()
-                                IO.FileNotFoundException()
-
-                                NotImplementedException()
-                                NotSupportedException()
-
-                                NullReferenceException()
-                                OutOfMemoryException()
-
-                                NotFiniteNumberException()
-                                StackOverflowException()
-
-                                IO.DirectoryNotFoundException()
-                                IO.FileLoadException()
-                                KeyNotFoundException()
-                                IO.PathTooLongException()
-                            |]
-        target |> Arb.throwingFunction exns |> Arb.convert ThrowingFunction (fun tf -> tf.Get)
-
-    ///Generates Function values that can be printed and shrunk. Function values can be generated for types 'T->'U
+    static member ThrowingFSharpFunc<'T,'U when 'T:equality>(target: Arbitrary<'U>) :Arbitrary<ThrowingFunction<'T,'U>> =
+        let exceptions: exn array =
+            [| Exception()
+               ArgumentException()
+               ArgumentNullException()
+               ArgumentOutOfRangeException()
+               ArithmeticException()
+               DivideByZeroException()
+               OverflowException()
+               FormatException()
+               IndexOutOfRangeException()
+               InvalidCastException()
+               InvalidOperationException()
+               IO.IOException()
+               IO.EndOfStreamException()
+               IO.FileNotFoundException()
+               NotImplementedException()
+               NotSupportedException()
+               NullReferenceException()
+               OutOfMemoryException()
+               NotFiniteNumberException()
+               StackOverflowException()
+               IO.DirectoryNotFoundException()
+               IO.FileLoadException()
+               KeyNotFoundException()
+               IO.PathTooLongException() |]
+        Arb.throwingFunction exceptions target
+        |> Arb.map ThrowingFunction
+   ///Generates Function values that can be printed and shrunk. Function values can be generated for types 'T->'U
     ///where 'b has an Arbitrary instance.
-    static member Function<'T,'U when 'T:equality and 'T:comparison>(target: Arbitrary<'U>) : Arbitrary<Function<'T,'U>> =
-        let generator =
-            target.Generator
-            |> Gen.pureFunction 
-            |> Gen.map Function<_,_>.From
-        let shrinker (f:Function<_, _>) = 
-            let update x' y' f x = if x = x' then y' else f x
-            seq { for (x,y) in f.Table do 
-                    for y' in target.Shrinker y do 
-                        yield Function<_,_>.From (update x y' f.Value) }
-        Arb.fromGenShrink(generator, shrinker)
+    static member Function<'T,'U when 'T:equality and 'T:comparison>(target: Arbitrary<'U>) :Arbitrary<Function<'T,'U>> =
+        target
+        |> Arb.pureFunction
+        |> Arb.map Function<_,_>.From
 
-    ///Generates Func'1 values.
-    static member SystemFunc(target: Arbitrary<'U>) =
-        Default.FSharpFunc(target)
-        |> Arb.convert (fun f -> Func<_>(f)) (fun f -> f.Invoke)
+    static member SystemFunc<'U>(target: Arbitrary<'U>) : Arbitrary<Func<'U>> =
+        Default.FSharpFunc target
+        |> Arb.convert (fun (f: unit -> 'U) -> Func<'U>(f)) (fun (f: Func<'U>) -> f.Invoke())
 
-    ///Generates Func'2 values.
-    static member SystemFunc1(target: Arbitrary<'U>) =
+    static member SystemFunc1<'T,'U when 'T:equality>(target: Arbitrary<'U>) : Arbitrary<Func<'T,'U>> =
         target
         |> Default.FSharpFunc
-        |> Arb.convert (fun f -> Func<_,_>(f)) (fun f -> f.Invoke)
+        |> Arb.convert (fun (f: 'T -> 'U) -> Func<'T,'U>(f)) (fun (f: Func<'T,'U>) -> f.Invoke)
 
-    ///Generates Func'3 values.
-    static member SystemFunc2(target: Arbitrary<'U>) =
+    static member SystemFunc2<'T1,'T2,'U when 'T1:equality and 'T2:equality>(target: Arbitrary<'U>) : Arbitrary<Func<'T1,'T2,'U>> =
         target
         |> Default.FSharpFunc
         |> Default.FSharpFunc
-        |> Arb.convert (fun f -> Func<_,_,_>(f)) (fun f a b -> f.Invoke(a,b))
+        |> Arb.convert (fun (f: 'T1 -> 'T2 -> 'U) -> Func<'T1,'T2,'U>(fun a b -> f a b)) (fun (f: Func<'T1,'T2,'U>) -> f.Invoke)
 
-    ///Generates Func'4 values.
-    static member SystemFunc3(target: Arbitrary<'U>) =
+    static member SystemFunc3<'T1,'T2,'T3,'U when 'T1:equality and 'T2:equality and 'T3:equality>(target: Arbitrary<'U>) : Arbitrary<Func<'T1,'T2,'T3,'U>> =
         target
         |> Default.FSharpFunc
         |> Default.FSharpFunc
         |> Default.FSharpFunc
-        |> Arb.convert (fun f -> Func<_,_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
+        |> Arb.convert (fun (f: 'T1 -> 'T2 -> 'T3 -> 'U) -> Func<'T1,'T2,'T3,'U>(fun a b c -> f a b c)) (fun (f: Func<'T1,'T2,'T3,'U>) -> f.Invoke)
 
-    ///Generates Action'0 values.
-    static member SystemAction() =
+    static member SystemAction() : Arbitrary<Action> =
         Default.Unit
         |> Default.FSharpFunc
-        |> Arb.convert (fun f -> Action(f)) (fun f -> f.Invoke)
+        |> Arb.convert (fun (f: unit -> unit) -> Action(f)) (fun (f: Action) -> f.Invoke())
 
-    ///Generates Action'1 values.
-    static member SystemAction1() =
+    static member SystemAction1<'T when 'T:equality>() : Arbitrary<Action<'T>> =
         Default.Unit
         |> Default.FSharpFunc
-        |> Arb.convert (fun f -> Action<_>(f)) (fun f -> f.Invoke)
+        |> Arb.convert (fun (f: 'T -> unit) -> Action<'T>(f)) (fun (f: Action<'T>) -> f.Invoke)
 
-    ///Generates Action'2 values.
-    static member SystemAction2() =
+    static member SystemAction2<'T1,'T2 when 'T1:equality and 'T2:equality>() : Arbitrary<Action<'T1,'T2>> =
         Default.Unit
         |> Default.FSharpFunc
         |> Default.FSharpFunc
-        |> Arb.convert (fun f -> Action<_,_>(f)) (fun f a b -> f.Invoke(a,b))
+        |> Arb.convert (fun (f: 'T1 -> 'T2 -> unit) -> Action<'T1,'T2>(fun a b -> f a b)) (fun (f: Action<'T1,'T2>) -> f.Invoke)
 
-    ///Generates Action'3 values.
-    static member SystemAction3() =
+    static member SystemAction3<'T1,'T2,'T3 when 'T1:equality and 'T2:equality and 'T3:equality>() : Arbitrary<Action<'T1,'T2,'T3>> =
         Default.Unit
         |> Default.FSharpFunc
         |> Default.FSharpFunc
         |> Default.FSharpFunc
-        |> Arb.convert (fun f -> Action<_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
+        |> Arb.convert (fun (f: 'T1 -> 'T2 -> 'T3 -> unit) -> Action<'T1,'T2,'T3>(fun a b c -> f a b c)) (fun (f: Action<'T1,'T2,'T3>) -> f.Invoke)
 
-    ///Generates DateTime values that are between 1900 and 2100. 
-    ///A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour components.
+    //// NOTE: Function types are a bit special in that they need to have explicit type parameters.
+    //// Otherwise the discovery of the default arbitrary map will not work correctly, as it assumes
+    //// that if looking for a Arbitrary<FSharpFunc<int,string>> it can instantiate the generic method with
+    //// int and string in that order. Due to the "target" parameter however, the order of the generic parameters
+    //// is reversed if not given explicitly, so you end with a function from target to domain.
+
+    ///// Generates F# function values. Function values can be generated for types 'T->'U where the target domain 'U has an Arbitrary instance.
+    ///// There is no shrinking for function values.
+    //[<CompiledName("FSharpFunc")>]
+    //static member FSharpFunc<'T,'U when 'T:equality>(target: Arbitrary<'U>) :Arbitrary<'T->'U> = 
+    //    target.Generator
+    //    |> Gen.pureFunction
+    //    |> Arb.fromGen
+
+    /////Generates F# function values that generate an instance of the function result type about half the time. The other 
+    /////times it generate one of a list of common .NET exceptions, including Exception, ArgumentException, ArithmeticException,
+    /////IOException, NotImplementedException, OUtOfMemoryException and others.
+    //[<CompiledName("ThrowingFSharpFunc")>]
+    //static member ThrowingFSharpFunc<'T,'U when 'T:equality>(target: Arbitrary<'U>) :Arbitrary<ThrowingFunction<'T,'U>> = 
+    //    let exns: exn array = [|Exception()
+
+    //                            ArgumentException()
+    //                            ArgumentNullException()
+    //                            ArgumentOutOfRangeException()
+                                     
+    //                            ArithmeticException()
+    //                            DivideByZeroException()
+    //                            OverflowException()
+    //                            FormatException()
+    //                            IndexOutOfRangeException()
+    //                            InvalidCastException()
+    //                            InvalidOperationException()
+                                     
+    //                            IO.IOException()
+    //                            IO.EndOfStreamException()
+    //                            IO.FileNotFoundException()
+
+    //                            NotImplementedException()
+    //                            NotSupportedException()
+
+    //                            NullReferenceException()
+    //                            OutOfMemoryException()
+
+    //                            NotFiniteNumberException()
+    //                            StackOverflowException()
+
+    //                            IO.DirectoryNotFoundException()
+    //                            IO.FileLoadException()
+    //                            KeyNotFoundException()
+    //                            IO.PathTooLongException()
+    //                        |]
+    //    target |> Arb.throwingFunction exns |> Arb.convert ThrowingFunction (fun tf -> tf.Get)
+
+    /////Generates Function values that can be printed and shrunk. Function values can be generated for types 'T->'U
+    /////where 'b has an Arbitrary instance.
+    //static member Function<'T,'U when 'T:equality and 'T:comparison>(target: Arbitrary<'U>) : Arbitrary<Function<'T,'U>> =
+    //    let generator =
+    //        target.Generator
+    //        |> Gen.pureFunction 
+    //        |> Gen.map Function<_,_>.From
+    //    let shrinker (f:Function<_, _>) = 
+    //        let update x' y' f x = if x = x' then y' else f x
+    //        seq { for (x,y) in f.Table do 
+    //                for y' in target.Shrinker y do 
+    //                    yield Function<_,_>.From (update x y' f.Value) }
+    //    Arb.fromGenShrink(generator, shrinker)
+
+    /////Generates Func'1 values.
+    //static member SystemFunc(target: Arbitrary<'U>) =
+    //    Default.FSharpFunc(target)
+    //    |> Arb.convert (fun f -> Func<_>(f)) (fun f -> f.Invoke)
+
+    /////Generates Func'2 values.
+    //static member SystemFunc1(target: Arbitrary<'U>) =
+    //    target
+    //    |> Default.FSharpFunc
+    //    |> Arb.convert (fun f -> Func<_,_>(f)) (fun f -> f.Invoke)
+
+    /////Generates Func'3 values.
+    //static member SystemFunc2(target: Arbitrary<'U>) =
+    //    target
+    //    |> Default.FSharpFunc
+    //    |> Default.FSharpFunc
+    //    |> Arb.convert (fun f -> Func<_,_,_>(f)) (fun f a b -> f.Invoke(a,b))
+
+    /////Generates Func'4 values.
+    //static member SystemFunc3(target: Arbitrary<'U>) =
+    //    target
+    //    |> Default.FSharpFunc
+    //    |> Default.FSharpFunc
+    //    |> Default.FSharpFunc
+    //    |> Arb.convert (fun f -> Func<_,_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
+
+    /////Generates Action'0 values.
+    //static member SystemAction() =
+    //    Default.Unit
+    //    |> Default.FSharpFunc
+    //    |> Arb.convert (fun f -> Action(f)) (fun f -> f.Invoke)
+
+    /////Generates Action'1 values.
+    //static member SystemAction1() =
+    //    Default.Unit
+    //    |> Default.FSharpFunc
+    //    |> Arb.convert (fun f -> Action<_>(f)) (fun f -> f.Invoke)
+
+    /////Generates Action'2 values.
+    //static member SystemAction2() =
+    //    Default.Unit
+    //    |> Default.FSharpFunc
+    //    |> Default.FSharpFunc
+    //    |> Arb.convert (fun f -> Action<_,_>(f)) (fun f a b -> f.Invoke(a,b))
+
+    /////Generates Action'3 values.
+    //static member SystemAction3() =
+    //    Default.Unit
+    //    |> Default.FSharpFunc
+    //    |> Default.FSharpFunc
+    //    |> Default.FSharpFunc
+    //    |> Arb.convert (fun f -> Action<_,_,_>(f)) (fun f a b c -> f.Invoke(a,b,c))
+
+    /// Generates DateTime values between 1900 and 2100.
     static member val DateTime :Arbitrary<DateTime> =
-            let genDate = 
-                gen {   let! y = Gen.choose(1900,2100)
-                        and! m = Gen.choose(1, 12)
-                        let! d = Gen.choose(1, DateTime.DaysInMonth(y, m))
-                        and! h = Gen.choose(0,23)
-                        and! min = Gen.choose(0,59)
-                        and! sec = Gen.choose(0,59)
-                        and! ms = Gen.choose(0,999)
-                        and! kind = Gen.elements [DateTimeKind.Unspecified; DateTimeKind.Utc; DateTimeKind.Local]
-                        return DateTime(y, m, d, h, min, sec, ms, kind) }
+            let genDate =
+                gen {
+                    let! y = Gen.choose(1900, 2100)
+                    and! m = Gen.choose(1, 12)
+                    let! d = Gen.choose(1, DateTime.DaysInMonth(y, m))
+                    and! h = Gen.choose(0, 23)
+                    and! min = Gen.choose(0, 59)
+                    and! sec = Gen.choose(0, 59)
+                    and! ms = Gen.choose(0, 999)
+                    and! kind = Gen.elements [ DateTimeKind.Unspecified; DateTimeKind.Utc; DateTimeKind.Local ]
+                    return DateTime(y, m, d, h, min, sec, ms, kind)
+                }
             Arb.fromGenShrink (genDate, Shrink.date)
         with get
 
-    ///Generates DateTime values that are unrestricted by size.
-    ///A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour components.
-    static member val DoNotSizeDateTime =
-            let genDate = gen { let! (DoNotSize ticks) = Default.DoNotSizeInt64.Generator
-                                and! kind = Gen.elements [DateTimeKind.Unspecified; DateTimeKind.Utc; DateTimeKind.Local]
-                                return DateTime(abs ticks, kind) }
-            Arb.fromGenShrink (genDate, Shrink.date)
+    static member val DoNotSizeDateTime :Arbitrary<DoNotSize<DateTime>> =
+            let generator =
+                gen {
+                    let! (DoNotSize ticks) = Arb.toGen Default.DoNotSizeInt64
+                    and! kind = Gen.elements [ DateTimeKind.Unspecified; DateTimeKind.Utc; DateTimeKind.Local ]
+                    return DateTime(abs ticks, kind)
+                }
+            Arb.fromGenShrink (generator, Shrink.date)
             |> Arb.convert DoNotSize DoNotSize.Unwrap
         with get
 
-    ///Generates TimeSpan values that are unrestricted by size. 
-    ///A TimeSpan is shrunk by removing days, hours, minutes, second and milliseconds.
     static member val TimeSpan :Arbitrary<TimeSpan> =
-            let genTimeSpan = Default.DoNotSizeInt64.Generator |> Gen.map (fun (DoNotSize i) -> TimeSpan i)
-            let shrink (t: TimeSpan) = 
-                if t.Days <> 0 then
-                    seq { yield TimeSpan(0, t.Hours, t.Minutes, t.Seconds, t.Milliseconds) }
-                elif t.Hours <> 0 then
-                    seq { yield TimeSpan(0, 0, t.Minutes, t.Seconds, t.Milliseconds) }
-                elif t.Minutes <> 0 then
-                    seq { yield TimeSpan(0, 0, 0, t.Seconds, t.Milliseconds) }
-                elif t.Seconds <> 0 then
-                    seq { yield TimeSpan(0, 0, 0, 0, t.Milliseconds) }
-                elif t.Milliseconds <> 0 then
+            let generator =
+                Default.DoNotSizeInt64
+                |> Arb.toGen
+                |> Gen.map (fun (DoNotSize ticks) -> TimeSpan ticks)
+            let shrink (timeSpan: TimeSpan) =
+                if timeSpan.Days <> 0 then
+                    seq { yield TimeSpan(0, timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds) }
+                elif timeSpan.Hours <> 0 then
+                    seq { yield TimeSpan(0, 0, timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds) }
+                elif timeSpan.Minutes <> 0 then
+                    seq { yield TimeSpan(0, 0, 0, timeSpan.Seconds, timeSpan.Milliseconds) }
+                elif timeSpan.Seconds <> 0 then
+                    seq { yield TimeSpan(0, 0, 0, 0, timeSpan.Milliseconds) }
+                elif timeSpan.Milliseconds <> 0 then
                     seq { yield TimeSpan.Zero }
                 else
                     Seq.empty
-            Arb.fromGenShrink (genTimeSpan, shrink)
+            Arb.fromGenShrink (generator, shrink)
         with get
 
-    ///Generates DateTimeOffset values that are between 1900 and 2100. 
-    /// A DateTimeOffset is shrunk first by shrinking its offset, then by removing its second, minute and hour components.
-    static member val DateTimeOffset =
-            let genTimeZone = gen {
-                let! hours = Gen.choose(-12, 14)
-                let! minutes =
-                    if hours = -12 || hours = 14 then
-                        Gen.constant 0
-                    else 
-                        Gen.choose(0, 59)
-                return TimeSpan(hours, minutes, 0) }
-            let arbTimeSpan = Default.TimeSpan
-            let shrinkTimeZone (t: TimeSpan) =
-                arbTimeSpan.Shrinker t |> Seq.where (fun z -> z.Hours > 0 || z.Minutes > 0)
-            let genDateTime = Default.DateTime.Generator
-            let genDate = gen { 
-                let! t = genDateTime
-                and! tz = genTimeZone
-                return DateTimeOffset(DateTime.SpecifyKind(t, DateTimeKind.Unspecified), tz) }
-            let shrinkDateTimeOffset (d: DateTimeOffset) =
+    static member val DateTimeOffset :Arbitrary<DateTimeOffset> =
+            let genTimeZone =
+                gen {
+                    let! hours = Gen.choose(-12, 14)
+                    let! minutes =
+                        if hours = -12 || hours = 14 then Gen.constant 0
+                        else Gen.choose(0, 59)
+                    return TimeSpan(hours, minutes, 0)
+                }
+            let generator =
+                Gen.map2
+                    (fun date offset ->
+                        DateTimeOffset(DateTime.SpecifyKind(date, DateTimeKind.Unspecified), offset))
+                    (Arb.toGen Default.DateTime)
+                    genTimeZone
+            let shrinkOffset (offset: TimeSpan) =
                 seq {
-                    for ts in shrinkTimeZone d.Offset ->
-                        DateTimeOffset(d.DateTime, ts)
-                    if d.Offset <> TimeSpan.Zero then
-                        yield DateTimeOffset(d.DateTime, TimeSpan.Zero)
-                    for dt in Default.DateTime.Shrinker d.DateTime ->
-                        DateTimeOffset(dt, TimeSpan.Zero) }
-            Arb.fromGenShrink (genDate, shrinkDateTimeOffset)
+                    if offset.Hours <> 0 then
+                        yield TimeSpan(0, 0, offset.Minutes, 0, 0)
+                    if offset.Minutes <> 0 then
+                        yield TimeSpan.Zero
+                }
+                |> Seq.where (fun shrunk -> shrunk.Hours > 0 || shrunk.Minutes > 0)
+            let shrink (date: DateTimeOffset) =
+                seq {
+                    yield! shrinkOffset date.Offset |> Seq.map (fun offset -> DateTimeOffset(date.DateTime, offset))
+                    if date.Offset <> TimeSpan.Zero then
+                        yield DateTimeOffset(date.DateTime, TimeSpan.Zero)
+                    yield! Shrink.date date.DateTime |> Seq.map (fun dateTime -> DateTimeOffset(dateTime, TimeSpan.Zero))
+                }
+            Arb.fromGenShrink (generator, shrink)
         with get
 
     static member KeyValuePair(key: Arbitrary<'K>, value: Arbitrary<'V>) =
-        let genKeyValuePair =
-            Gen.map2 (fun k v -> KeyValuePair(k, v)) key.Generator value.Generator
-        let shrinkKeyValuePair (kvp:KeyValuePair<_,_>) = 
-            seq { for key in key.Shrinker kvp.Key do
-                    for value in value.Shrinker kvp.Value do
-                        yield new KeyValuePair<_,_>(key, value) }
-        Arb.fromGenShrink(genKeyValuePair,shrinkKeyValuePair)
+        Arb.map2 (fun k v -> KeyValuePair(k, v)) key value
+
+    /////Generates DateTime values that are unrestricted by size.
+    /////A DateTime is shrunk by removing its Kind, millisecond, second, minute and hour components.
+    //static member val DoNotSizeDateTime =
+    //        let genDate = gen { let! (DoNotSize ticks) = Default.DoNotSizeInt64.Generator
+    //                            and! kind = Gen.elements [DateTimeKind.Unspecified; DateTimeKind.Utc; DateTimeKind.Local]
+    //                            return DateTime(abs ticks, kind) }
+    //        Arb.fromGenShrink (genDate, Shrink.date)
+    //        |> Arb.convert DoNotSize DoNotSize.Unwrap
+    //    with get
+
+    /////Generates TimeSpan values that are unrestricted by size. 
+    /////A TimeSpan is shrunk by removing days, hours, minutes, second and milliseconds.
+    //static member val TimeSpan :Arbitrary<TimeSpan> =
+    //        let genTimeSpan = Default.DoNotSizeInt64.Generator |> Gen.map (fun (DoNotSize i) -> TimeSpan i)
+    //        let shrink (t: TimeSpan) = 
+    //            if t.Days <> 0 then
+    //                seq { yield TimeSpan(0, t.Hours, t.Minutes, t.Seconds, t.Milliseconds) }
+    //            elif t.Hours <> 0 then
+    //                seq { yield TimeSpan(0, 0, t.Minutes, t.Seconds, t.Milliseconds) }
+    //            elif t.Minutes <> 0 then
+    //                seq { yield TimeSpan(0, 0, 0, t.Seconds, t.Milliseconds) }
+    //            elif t.Seconds <> 0 then
+    //                seq { yield TimeSpan(0, 0, 0, 0, t.Milliseconds) }
+    //            elif t.Milliseconds <> 0 then
+    //                seq { yield TimeSpan.Zero }
+    //            else
+    //                Seq.empty
+    //        Arb.fromGenShrink (genTimeSpan, shrink)
+    //    with get
+
+    /////Generates DateTimeOffset values that are between 1900 and 2100. 
+    ///// A DateTimeOffset is shrunk first by shrinking its offset, then by removing its second, minute and hour components.
+    //static member val DateTimeOffset =
+    //        let genTimeZone = gen {
+    //            let! hours = Gen.choose(-12, 14)
+    //            let! minutes =
+    //                if hours = -12 || hours = 14 then
+    //                    Gen.constant 0
+    //                else 
+    //                    Gen.choose(0, 59)
+    //            return TimeSpan(hours, minutes, 0) }
+    //        let arbTimeSpan = Default.TimeSpan
+    //        let shrinkTimeZone (t: TimeSpan) =
+    //            arbTimeSpan.Shrinker t |> Seq.where (fun z -> z.Hours > 0 || z.Minutes > 0)
+    //        let genDateTime = Default.DateTime.Generator
+    //        let genDate = gen { 
+    //            let! t = genDateTime
+    //            and! tz = genTimeZone
+    //            return DateTimeOffset(DateTime.SpecifyKind(t, DateTimeKind.Unspecified), tz) }
+    //        let shrinkDateTimeOffset (d: DateTimeOffset) =
+    //            seq {
+    //                for ts in shrinkTimeZone d.Offset ->
+    //                    DateTimeOffset(d.DateTime, ts)
+    //                if d.Offset <> TimeSpan.Zero then
+    //                    yield DateTimeOffset(d.DateTime, TimeSpan.Zero)
+    //                for dt in Default.DateTime.Shrinker d.DateTime ->
+    //                    DateTimeOffset(dt, TimeSpan.Zero) }
+    //        Arb.fromGenShrink (genDate, shrinkDateTimeOffset)
+    //    with get
+
+    //static member KeyValuePair(key: Arbitrary<'K>, value: Arbitrary<'V>) =
+    //    let genKeyValuePair =
+    //        Gen.map2 (fun k v -> KeyValuePair(k, v)) key.Generator value.Generator
+    //    let shrinkKeyValuePair (kvp:KeyValuePair<_,_>) = 
+    //        seq { for key in key.Shrinker kvp.Key do
+    //                for value in value.Shrinker kvp.Value do
+    //                    yield new KeyValuePair<_,_>(key, value) }
+    //    Arb.fromGenShrink(genKeyValuePair,shrinkKeyValuePair)
 
     static member val NegativeInt =
             Default.Int32
-            |> Arb.mapFilter (fun x -> -abs x) (fun x -> x < 0) // fsharplint:disable-line CanBeReplacedWithComposition
-            |> Arb.convert NegativeInt int
+            |> Arb.map (fun x -> -abs x) // fsharplint:disable-line CanBeReplacedWithComposition
+            |> Arb.filter(fun x -> x < 0)
+            |> Arb.map NegativeInt
         with get
 
     static member val NonNegativeInt =
             Default.Int32
-            |> Arb.mapFilter abs (fun i -> i >= 0)
-            |> Arb.convert NonNegativeInt int
+            |> Arb.map (abs >> NonNegativeInt)
         with get
 
     static member val PositiveInt =
             Default.Int32
-            |> Arb.mapFilter abs (fun i -> i > 0)
-            |> Arb.convert PositiveInt int
+            |> Arb.map abs
+            |> Arb.filter (fun i -> i > 0)
+            |> Arb.map PositiveInt
         with get
 
     static member val NonZeroInt =
             Default.Int32
             |> Arb.filter ((<>) 0)
-            |> Arb.convert NonZeroInt int
+            |> Arb.map NonZeroInt
         with get
 
-    static member val IntWithMinMax =
-            let arbInt32 = Default.Int32
-            let generator = Gen.frequency [(1,  Gen.elements [Int32.MaxValue; Int32.MinValue])
-                                           (10, arbInt32.Generator) ] 
-                            |> Gen.map IntWithMinMax
-            let shrinker (IntWithMinMax i) = arbInt32.Shrinker i |> Seq.map IntWithMinMax
-            Arb.fromGenShrink(generator, shrinker)
+    static member val Interval :Arbitrary<Interval> =
+            Arb.map2 (fun start offset -> Interval(abs start, abs start + abs offset)) Default.Int32 Default.Int32
         with get
 
-    ///Generates intervals between two non-negative integers.
-    static member val Interval =
-            let arbInt32 = Default.Int32
-            let arbTuple = Arb.zip(arbInt32, arbInt32)
-            let generator = 
-                arbInt32.Generator
-                |> Gen.two
-                |> Gen.map (fun (start, offset) -> Interval (abs start, abs start + abs offset))
-            let shrinker (i : Interval) =
-                (i.Left, i.Right - i.Left)
-                |> arbTuple.Shrinker
-                |> Seq.map (fun (start, offset) -> Interval(start, start + offset))
-            Arb.fromGenShrink(generator, shrinker)
+    static member val IntWithMinMax :Arbitrary<IntWithMinMax> =
+            Arb.frequency
+                [ 1, Arb.elements [ Int32.MaxValue; Int32.MinValue ]
+                  10, Default.Int32 ]
+            |> Arb.map IntWithMinMax
         with get
 
-    static member val StringNoNullChar =
+    //static member val IntWithMinMax =
+    //        let arbInt32 = Default.Int32
+    //        let generator = Gen.frequency [(1,  Gen.elements [Int32.MaxValue; Int32.MinValue])
+    //                                       (10, arbInt32.Generator) ] 
+    //                        |> Gen.map IntWithMinMax
+    //        let shrinker (IntWithMinMax i) = arbInt32.Shrinker i |> Seq.map IntWithMinMax
+    //        Arb.fromGenShrink(generator, shrinker)
+    //    with get
+
+    /////Generates intervals between two non-negative integers.
+    //static member val Interval =
+    //        let arbInt32 = Default.Int32
+    //        let arbTuple = Arb.zip(arbInt32, arbInt32)
+    //        let generator = 
+    //            arbInt32.Generator
+    //            |> Gen.two
+    //            |> Gen.map (fun (start, offset) -> Interval (abs start, abs start + abs offset))
+    //        let shrinker (i : Interval) =
+    //            (i.Left, i.Right - i.Left)
+    //            |> arbTuple.Shrinker
+    //            |> Seq.map (fun (start, offset) -> Interval(start, start + offset))
+    //        Arb.fromGenShrink(generator, shrinker)
+    //    with get
+
+    static member val StringNoNullChar :Arbitrary<StringNoNullChar> =
             Default.String
             |> Arb.filter (not << String.exists ((=) '\000'))
-            |> Arb.convert StringNoNullChar string
+            |> Arb.map StringNoNullChar
         with get
 
-    static member val NonEmptyString =
+    static member val NonEmptyString :Arbitrary<NonEmptyString> =
             Default.String
             |> Arb.filter (fun s -> not (String.IsNullOrEmpty s) && not (String.exists ((=) '\000') s))
-            |> Arb.convert NonEmptyString string
+            |> Arb.map NonEmptyString
         with get
 
-    static member val NonWhiteSpaceString =
+    static member val NonWhiteSpaceString :Arbitrary<NonWhiteSpaceString> =
             Default.String
             |> Arb.filter (fun s -> not (String.IsNullOrWhiteSpace s) && not (String.exists ((=) '\000') s))
-            |> Arb.convert NonWhiteSpaceString string
+            |> Arb.map NonWhiteSpaceString
         with get
 
-    static member val XmlEncodedString =
+    static member val XmlEncodedString :Arbitrary<XmlEncodedString> =
             Default.String
-            |> Arb.mapFilter 
-                System.Net.WebUtility.HtmlEncode
-                (String.forall Xml.XmlConvert.IsXmlChar)
-            |> Arb.convert XmlEncodedString string
-        with get
-
-    static member val UnicodeChar: Arbitrary<UnicodeChar> =
-            let generator = 
-                Gen.choose (int Char.MinValue, int Char.MaxValue)
-                |> Gen.map (char >> UnicodeChar)
-
-            let shrinker (UnicodeChar c) = seq { for c' in ['a';'b';'c'] do if c' < c || not (Char.IsLower c) then yield UnicodeChar c' }
-            Arb.fromGenShrink (generator, shrinker)
-        with get
-
-    static member val UnicodeString: Arbitrary<UnicodeString> =
-            let arrayOfChars = Arb.array (Default.UnicodeChar |> Arb.convert char UnicodeChar)
-            let generator = 
-                arrayOfChars.Generator 
-                |> Gen.map String
-            let shrinker (s:string) = 
-                match s with
-                | null -> Seq.empty<string>
-                | _ -> s.ToCharArray() |> arrayOfChars.Shrinker |> Seq.map String
-            Arb.fromGenShrink (generator, shrinker)
-            |> Arb.convert UnicodeString string
+            |> Arb.map System.Net.WebUtility.HtmlEncode
+            |> Arb.filter (String.forall Xml.XmlConvert.IsXmlChar)
+            |> Arb.map XmlEncodedString
         with get
 
     static member Set(elements: Arbitrary<'T>) = 
-        Default.FsList(elements)
-        |> Arb.convert Set.ofList Set.toList
+        elements
+        |> Arb.set
 
     static member Map(keys: Arbitrary<'K>, values: Arbitrary<'V>) = 
-        Default.FsList(Arb.zip(keys, values))
-        |> Arb.convert Map.ofList Map.toList
+        Arb.mapKV (keys, values)
 
     static member NonEmptyArray(elements: Arbitrary<'T>) =
         Default.Array(elements)
         |> Arb.filter (fun a -> Array.length a > 0)
-        |> Arb.convert NonEmptyArray (fun (NonEmptyArray s) -> s)
+        |> Arb.map NonEmptyArray
 
     static member NonEmptySet(elements: Arbitrary<'T>) =
         Default.Set(elements)
         |> Arb.filter (not << Set.isEmpty) 
-        |> Arb.convert NonEmptySet (fun (NonEmptySet s) -> s)
+        |> Arb.map NonEmptySet
 
-    ///Arrays whose length does not change when shrinking.
-    static member FixedLengthArray(elements: Arbitrary<'T>) =
-        let arbArray = Default.Array(elements)
-        let generator = arbArray.Generator
-        Arb.fromGenShrink (generator, Shrink.arrayElements elements.Shrinker)
-        |> Arb.convert FixedLengthArray (fun (FixedLengthArray a) -> a)
+    /////Arrays whose length does not change when shrinking.
+    //static member FixedLengthArray(elements: Arbitrary<'T>) =
+    //    let arbArray = Default.Array(elements)
+    //    let generator = arbArray.Generator
+    //    Arb.fromGenShrink (generator, Shrink.arrayElements elements.Shrinker)
+    //    |> Arb.convert FixedLengthArray (fun (FixedLengthArray a) -> a)
 
     /// Generates System.Collections.Generic.List instances.
     static member List(elements: Arbitrary<'T>) =
         Default.Array(elements)
-        |> Arb.convert Enumerable.ToList Seq.toArray
+        |> Arb.map Enumerable.ToList
 
     /// Generates System.Collections.Generic.IList instances.
     static member IList(elements: Arbitrary<'T>) =
         Default.List(elements)
-        |> Arb.convert (fun x -> x :> _ IList) (fun x -> x :?> _ List)
+        |> Arb.map (fun x -> x :> _ IList)
 
     /// Generates System.Collections.Generic.ICollection instances.
     static member ICollection(elements: Arbitrary<'T>) =
         Default.List(elements)
-        |> Arb.convert (fun x -> x :> _ ICollection) (fun x -> x :?> _ List)
+        |> Arb.map (fun x -> x :> _ ICollection)
 
     /// Generates System.Collections.Generic.Dictionary instances.
-    static member Dictionary(keys: Arbitrary<'K>, values: Arbitrary<'V>) =
-        let genDictionary = 
-            gen {
-                let! keys = keys.Generator |> Gen.arrayOf |> Gen.map (Seq.where (fun x -> not (obj.Equals(x, null))) >> Seq.distinct >> Seq.toArray)
-                let! values = values.Generator |> Gen.arrayOfLength keys.Length
-                return (Seq.zip keys values).ToDictionary(fst, snd)
-            }
-        let shrinkDictionary (d: Dictionary<_,_>) = 
-            let keys = Seq.toArray d.Keys
+    static member Dictionary(keys: Arbitrary<'K>, values: Arbitrary<'V>) :Arbitrary<Dictionary<'K,'V>>=
+        let keyValue =
+            Arb.map2 (fun key value -> key, value)
+                (keys |> Arb.filter (fun key -> not (isNull (box key))))
+                values
+        let generator =
+            keyValue
+            |> Arb.array
+            |> Arb.toGen
+            |> Gen.map (fun entries ->
+                let dictionary = Dictionary<'K, 'V>()
+                for key, value in entries do
+                    if not (dictionary.ContainsKey key) then
+                        dictionary.Add(key, value)
+                dictionary)
+        let shrinkDictionary (dictionary: Dictionary<'K, 'V>) =
+            let entries = dictionary |> Seq.toArray
             seq {
-                for c in keys.Length-2 .. -1 .. 0 ->
-                    let k = keys.[0..c]
-                    let values = Seq.truncate k.Length d.Values
-                    (Seq.zip k values).ToDictionary(fst, snd)
+                for count in entries.Length - 1 .. -1 .. 0 do
+                    let shrunk = Dictionary<'K, 'V>()
+                    for index in 0 .. count - 1 do
+                        let entry = entries.[index]
+                        shrunk.Add(entry.Key, entry.Value)
+                    yield shrunk
             }
-        Arb.fromGenShrink (genDictionary, shrinkDictionary)
+        Arb.fromGenShrink (generator, shrinkDictionary)
 
     /// Generates System.Collections.Generic.IDictionary instances.
     static member IDictionary(keys: Arbitrary<'K>, values: Arbitrary<'V>) =
         Default.Dictionary(keys, values)
-        |> Arb.convert (fun x -> x :> IDictionary<_,_>) (fun x -> x :?> Dictionary<_,_>)
+        |> Arb.map (fun x -> x :> IDictionary<_,_>)
 
-    static member val Culture =
-            let genCulture = Gen.elements (CultureInfo.GetCultures (CultureTypes.NeutralCultures ||| CultureTypes.SpecificCultures))
-            let shrinkCulture =
-                Seq.unfold <| fun c -> if (isNull c) || c = CultureInfo.InvariantCulture || (isNull c.Parent)
-                                            then None
-                                            else Some (c.Parent, c.Parent)
-            Arb.fromGenShrink (genCulture, shrinkCulture)
+    static member val Culture :Arbitrary<CultureInfo> =
+            let generator =
+                Gen.elements (CultureInfo.GetCultures(CultureTypes.NeutralCultures ||| CultureTypes.SpecificCultures))
+            let shrink culture =
+                Seq.unfold
+                    (fun current ->
+                        if isNull current || current = CultureInfo.InvariantCulture || isNull current.Parent then None
+                        else Some(current.Parent, current.Parent))
+                    culture
+            Arb.fromGenShrink (generator, shrink)
         with get
 
-    static member val Guid =
-            let int32Gen = Default.DoNotSizeInt32.Generator |> Gen.map (fun (DoNotSize i) -> i)
-            let int16Gen = Default.DoNotSizeInt16.Generator |> Gen.map (fun (DoNotSize i) -> i)
-            let byteGen = Default.Byte.Generator
-            gen {
-                let! a = int32Gen
-                and! b = int16Gen
-                and! c = int16Gen
-                and! d = byteGen
-                and! e = byteGen
-                and! f = byteGen
-                and! g = byteGen
-                and! h = byteGen
-                and! i = byteGen
-                and! j = byteGen
-                and! k = byteGen
-                return Guid((a: int),b,c,d,e,f,g,h,i,j,k) 
-            } 
-            |> Arb.fromGen
-        with get
-
-    ///Generates System.ConsoleKeyInfo values.
-    ///Shrinks by reducing number of special key modifiers
-    static member val ConsoleKeyInfo =
-            let genBool, genChar = Default.Bool.Generator, Default.Char.Generator
-            let generator = 
+    static member val Guid :Arbitrary<Guid> =
+            let int32Generator =
+                Default.DoNotSizeInt32
+                |> Arb.toGen
+                |> Gen.map (fun (DoNotSize value) -> value)
+            let int16Generator =
+                Default.DoNotSizeInt16
+                |> Arb.toGen
+                |> Gen.map (fun (DoNotSize value) -> value)
+            let byteGenerator = Arb.toGen Default.Byte
+            let generator =
                 gen {
-                    let! char = genChar
-                    and! key = ReflectiveGenerator.enumOfType (typeof<ConsoleKey>)
-                    and! shift = genBool
-                    and! alt = genBool
-                    and! ctrl = genBool
-                    return ConsoleKeyInfo(char, key :?> ConsoleKey, shift, alt, ctrl)
+                    let! a = int32Generator
+                    and! b = int16Generator
+                    and! c = int16Generator
+                    and! d = byteGenerator
+                    and! e = byteGenerator
+                    and! f = byteGenerator
+                    and! g = byteGenerator
+                    and! h = byteGenerator
+                    and! i = byteGenerator
+                    and! j = byteGenerator
+                    and! k = byteGenerator
+                    return Guid(a, b, c, d, e, f, g, h, i, j, k)
                 }
-            let shrinker (cki : ConsoleKeyInfo) =
-                let toBools (m : ConsoleModifiers) = (
-                    (m &&& ConsoleModifiers.Shift) <> enum<ConsoleModifiers>(0),
-                    (m &&& ConsoleModifiers.Alt) <> enum<ConsoleModifiers>(0),
-                    (m &&& ConsoleModifiers.Control) <> enum<ConsoleModifiers>(0))
-                let (shift, alt, ctrl) = toBools cki.Modifiers
+            Arb.fromGen generator
+        with get
+
+    static member val ConsoleKeyInfo :Arbitrary<ConsoleKeyInfo> =
+            let generator =
+                gen {
+                    let! character = Arb.toGen Default.Char
+                    and! key = ReflectiveGenerator.enumOfType typeof<ConsoleKey> |> Arb.toGen
+                    and! shift = Arb.toGen Default.Bool
+                    and! alt = Arb.toGen Default.Bool
+                    and! control = Arb.toGen Default.Bool
+                    return ConsoleKeyInfo(character, unbox<ConsoleKey> key, shift, alt, control)
+                }
+            let shrink (info: ConsoleKeyInfo) =
+                let hasModifier modifier = (info.Modifiers &&& modifier) <> enum<ConsoleModifiers> 0
+                let shift, alt, control =
+                    hasModifier ConsoleModifiers.Shift,
+                    hasModifier ConsoleModifiers.Alt,
+                    hasModifier ConsoleModifiers.Control
                 seq {
-                    if shift then yield (false, alt, ctrl)
-                    if alt then yield (shift, false, ctrl)
-                    if ctrl then yield (shift, alt, false)
+                    if shift then yield false, alt, control
+                    if alt then yield shift, false, control
+                    if control then yield shift, alt, false
                 }
-                |> Seq.map (fun (shift, alt, ctrl) -> 
-                    ConsoleKeyInfo(cki.KeyChar, cki.Key, shift, alt, ctrl))
-            Arb.fromGenShrink(generator, shrinker)
+                |> Seq.map (fun (shift, alt, control) ->
+                    ConsoleKeyInfo(info.KeyChar, info.Key, shift, alt, control))
+            Arb.fromGenShrink (generator, shrink)
         with get
 
-    static member val IPv4Address =
-            let arbByte = Default.Byte
+    static member val IPv4Address :Arbitrary<IPv4Address> =
+            let byteGenerator = Arb.toGen Default.Byte
             let generator =
-                arbByte.Generator
-                |> Gen.arrayOfLength 4
+                Gen.arrayOfLength 4 byteGenerator
                 |> Gen.map (IPAddress >> IPv4Address)
-            let shrinker (IPv4Address a) =
-                a.GetAddressBytes()
-                |> Shrink.arrayElements arbByte.Shrinker
+            let shrink (IPv4Address address) =
+                address.GetAddressBytes()
+                |> Shrink.arrayElements (fun value -> Shrink.unsignedNumber value |> Seq.map byte)
                 |> Seq.map (IPAddress >> IPv4Address)
-     
-            Arb.fromGenShrink (generator, shrinker)
+            Arb.fromGenShrink (generator, shrink)
         with get
 
-    static member val IPv6Address =
-            let arbByte = Default.Byte
+    static member val IPv6Address :Arbitrary<IPv6Address> =
+            let byteGenerator = Arb.toGen Default.Byte
             let generator =
-                arbByte.Generator
-                |> Gen.arrayOfLength 16
+                Gen.arrayOfLength 16 byteGenerator
                 |> Gen.map (IPAddress >> IPv6Address)
-            let shrinker (IPv6Address a) =
-                a.GetAddressBytes()
-                |> Shrink.arrayElements arbByte.Shrinker
+            let shrink (IPv6Address address) =
+                address.GetAddressBytes()
+                |> Shrink.arrayElements (fun value -> Shrink.unsignedNumber value |> Seq.map byte)
                 |> Seq.map (IPAddress >> IPv6Address)
-     
-            Arb.fromGenShrink (generator, shrinker)
+            Arb.fromGenShrink (generator, shrink)
         with get
 
-    static member val IPAddress =
-            let arbByte = Default.Byte
-            let generator = gen {
-                let! byteLength = Gen.elements [4; 16]
-                let! bytes = arbByte.Generator |> Gen.arrayOfLength byteLength
-                return IPAddress bytes }
-            let shrinker (a:IPAddress) =
-                a.GetAddressBytes()
-                |> Shrink.arrayElements arbByte.Shrinker
+    static member val IPAddress :Arbitrary<IPAddress> =
+            let byteGenerator = Arb.toGen Default.Byte
+            let generator =
+                Gen.choose (0, 1)
+                |> Gen.bind (fun length ->
+                    Gen.arrayOfLength (if length = 0 then 4 else 16) byteGenerator)
+                |> Gen.map IPAddress
+            let shrink (address: IPAddress) =
+                address.GetAddressBytes()
+                |> Shrink.arrayElements (fun value -> Shrink.unsignedNumber value |> Seq.map byte)
                 |> Seq.map IPAddress
-     
-            Arb.fromGenShrink (generator, shrinker)
+            Arb.fromGenShrink (generator, shrink)
         with get
 
     static member val HostName :Arbitrary<HostName> =
-            let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
-            let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
-            let subdomain = 
+            let isValidSubdomain (subdomain: string) =
+                not (String.IsNullOrWhiteSpace subdomain)
+                && subdomain.Length <= 63
+                && not (subdomain.StartsWith("-"))
+                && not (subdomain.EndsWith("-"))
+            let isValidHost (host: string) =
+                not (String.IsNullOrWhiteSpace host)
+                && host.Length <= 255
+                && not (host.StartsWith("."))
+                && host.Split('.') |> Array.forall isValidSubdomain
+            let subdomain =
                 gen {
-                    let subdomainCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-".ToCharArray()
-                    let! subdomainLength = Gen.choose (1, 63)
-                    return! 
-                        Gen.elements subdomainCharacters 
-                        |> Gen.arrayOfLength subdomainLength 
-                        |> Gen.map String
-                        |> Gen.filter isValidSubdomain
+                    let characters = "abcdefghijklmnopqrstuvwxyz0123456789-".ToCharArray()
+                    let! length = Gen.choose(1, 63)
+                    return! Gen.elements characters
+                            |> Gen.arrayOfLength length
+                            |> Gen.map String
+                            |> Gen.filter isValidSubdomain
                 }
-
-            let host = 
+            let generator =
                 gen {
                     let! tld = Gen.elements Data.topLevelDomains
-                    let! numberOfSubdomains = Gen.frequency [(20, Gen.constant 0); (4, Gen.constant 1); (2, Gen.constant 2); (1, Gen.constant 3)]
-             
-                    return! 
-                        Gen.listOfLength numberOfSubdomains subdomain
-                        |> Gen.map (fun x -> x @ [tld] |> String.concat ".")
-                        |> Gen.filter isValidHost
-                        |> Gen.map HostName
+                    let! count = Gen.frequency [ 20, Gen.constant 0; 4, Gen.constant 1; 2, Gen.constant 2; 1, Gen.constant 3 ]
+                    return! Gen.listOfLength count subdomain
+                            |> Gen.map (fun parts -> String.concat "." (parts @ [ tld ]))
+                            |> Gen.filter isValidHost
+                            |> Gen.map HostName
                 }
-
-            let shrinkHost (HostName host) =
-                let parts = host.Split '.'
-                let topLevelDomain = parts.[parts.Length - 1]
-
+            let shrink (HostName host) =
+                let parts = host.Split('.')
+                let tld = parts.[parts.Length - 1]
                 seq {
                     if parts.Length > 1 then
-                        yield parts.[1 ..] |> String.concat "."
-                    if Seq.exists (fun tld -> tld = topLevelDomain) Data.commonTopLevelDomains |> not then
+                        yield String.concat "." parts.[1..]
+                    if not (Seq.contains tld Data.commonTopLevelDomains) then
                         yield! Data.commonTopLevelDomains
-                                |> Seq.map (fun tld -> Array.append parts.[0 .. parts.Length - 2] [|tld|] |> String.concat ".") }
+                                |> Seq.map (fun commonTld ->
+                                    Array.append parts.[0..parts.Length - 2] [| commonTld |]
+                                    |> String.concat ".")
+                }
                 |> Seq.map HostName
-
-            Arb.fromGenShrink (host, shrinkHost)
+            Arb.fromGenShrink (generator, shrink)
         with get
 
-    static member val MailAddress =
-            let isValidUser (user: string) = 
-                String.IsNullOrWhiteSpace user |> not &&
-                not (user.StartsWith("\"")) && 
-                not (user.EndsWith("\"")) && 
-                not (user.StartsWith(".")) && 
-                not (user.EndsWith(".")) && 
-                not (user.Contains(".."))
-
-            let split (str: string) = 
-                if String.IsNullOrWhiteSpace str || str.Length <= 1 then 
-                    Seq.empty
-                else seq {
-                    yield str.[0 .. str.Length / 2 - 1]
-                    yield str.[str.Length / 2 ..]
-                }
-
+    static member val MailAddress :Arbitrary<MailAddress> =
+            let isValidUser (user: string) =
+                not (String.IsNullOrWhiteSpace user)
+                && not (user.StartsWith("\""))
+                && not (user.EndsWith("\""))
+                && not (user.StartsWith("."))
+                && not (user.EndsWith("."))
+                && not (user.Contains(".."))
+            let split (value: string) =
+                if String.IsNullOrWhiteSpace value || value.Length <= 1 then Seq.empty
+                else
+                    seq {
+                        yield value.[0 .. value.Length / 2 - 1]
+                        yield value.[value.Length / 2 ..]
+                    }
             let createMailAddress name user host =
                 if String.IsNullOrWhiteSpace name then
-                    MailAddress (sprintf "%s@%s" user host)
-                else 
-                    MailAddress (sprintf "%s <%s@%s>" name user host)      
-
-            let name = 
+                    MailAddress(sprintf "%s@%s" user host)
+                else
+                    MailAddress(sprintf "%s <%s@%s>" name user host)
+            let name =
                 gen {
-                    let! localLength = Gen.choose (1, 63)
-
+                    let! length = Gen.choose(1, 63)
                     return! Gen.elements "abcdefghijklmnopqrstuvwxyz0123456789!#$%&'*+-/=?^_`.{|}~,:;[] "
-                            |> Gen.arrayOfLength (localLength - 2) 
+                            |> Gen.arrayOfLength (length - 2)
                             |> Gen.map String
                 }
-
-            let host = 
-                Default.HostName.Generator
-                |> Gen.map (fun (HostName h) -> h)
-
-            let user = 
+            let user =
                 gen {
-                    let userChars = "abcdefghijklmnopqrstuvwxyz0123456789!#$%&'*+-/=?^_`{|}~"
-                    let! localLength = Gen.choose (1, 63)
-
-                    return! Gen.elements userChars
-                            |> Gen.arrayOfLength localLength
+                    let characters = "abcdefghijklmnopqrstuvwxyz0123456789!#$%&'*+-/=?^_`{|}~"
+                    let! length = Gen.choose(1, 63)
+                    return! Gen.elements characters
+                            |> Gen.arrayOfLength length
                             |> Gen.map String
                             |> Gen.filter isValidUser
                 }
-         
-            let generator = 
+            let generator =
                 gen {
-                    let! name = name
-                    let! user = user
-                    let! host = host
-                    return createMailAddress name user host
+                    let! displayName = name
+                    and! user = user
+                    and! (HostName host) = Arb.toGen Default.HostName
+                    return createMailAddress displayName user host
                 }
-
-            let shrinkDisplayName (a:MailAddress) =
-                if String.IsNullOrWhiteSpace a.DisplayName then
-                    Seq.empty
-                else seq {
-                    yield! a.DisplayName |> split |> Seq.map (fun displayName -> createMailAddress displayName a.User a.Host)
-                    yield createMailAddress "" a.User a.Host
-                }
-
-            let shrinkUser (a:MailAddress) = 
-                a.User |> split |> Seq.map (fun user -> createMailAddress a.DisplayName user a.Host)
-
-            let shrinkHost (a:MailAddress) = 
-                Default.HostName.Shrinker (HostName a.Host)
-                |> Seq.map (fun (HostName h) -> createMailAddress a.DisplayName a.User h)
-         
-            let shrinker (a:MailAddress) = 
+            let shrink (address: MailAddress) =
+                let shrinkDisplayName =
+                    if String.IsNullOrWhiteSpace address.DisplayName then Seq.empty
+                    else
+                        seq {
+                            yield! split address.DisplayName
+                                  |> Seq.map (fun displayName -> createMailAddress displayName address.User address.Host)
+                            yield createMailAddress "" address.User address.Host
+                        }
+                let shrinkUser =
+                    split address.User
+                    |> Seq.map (fun user -> createMailAddress address.DisplayName user address.Host)
+                let shrinkHost (HostName host) =
+                    let parts = host.Split('.')
+                    seq {
+                        if parts.Length > 1 then yield String.concat "." parts.[1..]
+                        if not (Seq.contains parts.[parts.Length - 1] Data.commonTopLevelDomains) then
+                            yield! Data.commonTopLevelDomains
+                                    |> Seq.map (fun commonTld ->
+                                        Array.append parts.[0..parts.Length - 2] [| commonTld |]
+                                        |> String.concat ".")
+                    }
+                    |> Seq.map (fun host -> createMailAddress address.DisplayName address.User host)
                 seq {
-                    yield! shrinkDisplayName a
-                    yield! shrinkUser a
-                    yield! shrinkHost a
-                } |> Seq.distinct
-     
-            Arb.fromGenShrink (generator, shrinker)
+                    yield! shrinkDisplayName
+                    yield! shrinkUser
+                    yield! shrinkHost (HostName address.Host)
+                }
+                |> Seq.distinct
+            Arb.fromGenShrink (generator, shrink)
         with get
 
+    //static member val IPv4Address =
+    //        let arbByte = Default.Byte
+    //        let generator =
+    //            arbByte.Generator
+    //            |> Gen.arrayOfLength 4
+    //            |> Gen.map (IPAddress >> IPv4Address)
+    //        let shrinker (IPv4Address a) =
+    //            a.GetAddressBytes()
+    //            |> Shrink.arrayElements arbByte.Shrinker
+    //            |> Seq.map (IPAddress >> IPv4Address)
+     
+    //        Arb.fromGenShrink (generator, shrinker)
+    //    with get
+
+    //static member val IPv6Address =
+    //        let arbByte = Default.Byte
+    //        let generator =
+    //            arbByte.Generator
+    //            |> Gen.arrayOfLength 16
+    //            |> Gen.map (IPAddress >> IPv6Address)
+    //        let shrinker (IPv6Address a) =
+    //            a.GetAddressBytes()
+    //            |> Shrink.arrayElements arbByte.Shrinker
+    //            |> Seq.map (IPAddress >> IPv6Address)
+     
+    //        Arb.fromGenShrink (generator, shrinker)
+    //    with get
+
+    //static member val IPAddress =
+    //        let arbByte = Default.Byte
+    //        let generator = gen {
+    //            let! byteLength = Gen.elements [4; 16]
+    //            let! bytes = arbByte.Generator |> Gen.arrayOfLength byteLength
+    //            return IPAddress bytes }
+    //        let shrinker (a:IPAddress) =
+    //            a.GetAddressBytes()
+    //            |> Shrink.arrayElements arbByte.Shrinker
+    //            |> Seq.map IPAddress
+     
+    //        Arb.fromGenShrink (generator, shrinker)
+    //    with get
+
+    //static member val HostName :Arbitrary<HostName> =
+    //        let isValidSubdomain (subDomain: string) = String.IsNullOrWhiteSpace subDomain |> not && subDomain.Length <= 63 && subDomain.StartsWith("-") |> not && subDomain.EndsWith("-") |> not
+    //        let isValidHost (host: string) = String.IsNullOrWhiteSpace host |> not && host.Length <= 255 && host.StartsWith(".") |> not && host.Split('.') |> Array.forall isValidSubdomain
+    //        let subdomain = 
+    //            gen {
+    //                let subdomainCharacters = "abcdefghijklmnopqrstuvwxyz0123456789-".ToCharArray()
+    //                let! subdomainLength = Gen.choose (1, 63)
+    //                return! 
+    //                    Gen.elements subdomainCharacters 
+    //                    |> Gen.arrayOfLength subdomainLength 
+    //                    |> Gen.map String
+    //                    |> Gen.filter isValidSubdomain
+    //            }
+
+    //        let host = 
+    //            gen {
+    //                let! tld = Gen.elements Data.topLevelDomains
+    //                let! numberOfSubdomains = Gen.frequency [(20, Gen.constant 0); (4, Gen.constant 1); (2, Gen.constant 2); (1, Gen.constant 3)]
+             
+    //                return! 
+    //                    Gen.listOfLength numberOfSubdomains subdomain
+    //                    |> Gen.map (fun x -> x @ [tld] |> String.concat ".")
+    //                    |> Gen.filter isValidHost
+    //                    |> Gen.map HostName
+    //            }
+
+    //        let shrinkHost (HostName host) =
+    //            let parts = host.Split '.'
+    //            let topLevelDomain = parts.[parts.Length - 1]
+
+    //            seq {
+    //                if parts.Length > 1 then
+    //                    yield parts.[1 ..] |> String.concat "."
+    //                if Seq.exists (fun tld -> tld = topLevelDomain) Data.commonTopLevelDomains |> not then
+    //                    yield! Data.commonTopLevelDomains
+    //                            |> Seq.map (fun tld -> Array.append parts.[0 .. parts.Length - 2] [|tld|] |> String.concat ".") }
+    //            |> Seq.map HostName
+
+    //        Arb.fromGenShrink (host, shrinkHost)
+    //    with get
+
+    //static member val MailAddress =
+    //        let isValidUser (user: string) = 
+    //            String.IsNullOrWhiteSpace user |> not &&
+    //            not (user.StartsWith("\"")) && 
+    //            not (user.EndsWith("\"")) && 
+    //            not (user.StartsWith(".")) && 
+    //            not (user.EndsWith(".")) && 
+    //            not (user.Contains(".."))
+
+    //        let split (str: string) = 
+    //            if String.IsNullOrWhiteSpace str || str.Length <= 1 then 
+    //                Seq.empty
+    //            else seq {
+    //                yield str.[0 .. str.Length / 2 - 1]
+    //                yield str.[str.Length / 2 ..]
+    //            }
+
+    //        let createMailAddress name user host =
+    //            if String.IsNullOrWhiteSpace name then
+    //                MailAddress (sprintf "%s@%s" user host)
+    //            else 
+    //                MailAddress (sprintf "%s <%s@%s>" name user host)      
+
+    //        let name = 
+    //            gen {
+    //                let! localLength = Gen.choose (1, 63)
+
+    //                return! Gen.elements "abcdefghijklmnopqrstuvwxyz0123456789!#$%&'*+-/=?^_`.{|}~,:;[] "
+    //                        |> Gen.arrayOfLength (localLength - 2) 
+    //                        |> Gen.map String
+    //            }
+
+    //        let host = 
+    //            Default.HostName.Generator
+    //            |> Gen.map (fun (HostName h) -> h)
+
+    //        let user = 
+    //            gen {
+    //                let userChars = "abcdefghijklmnopqrstuvwxyz0123456789!#$%&'*+-/=?^_`{|}~"
+    //                let! localLength = Gen.choose (1, 63)
+
+    //                return! Gen.elements userChars
+    //                        |> Gen.arrayOfLength localLength
+    //                        |> Gen.map String
+    //                        |> Gen.filter isValidUser
+    //            }
+         
+    //        let generator = 
+    //            gen {
+    //                let! name = name
+    //                let! user = user
+    //                let! host = host
+    //                return createMailAddress name user host
+    //            }
+
+    //        let shrinkDisplayName (a:MailAddress) =
+    //            if String.IsNullOrWhiteSpace a.DisplayName then
+    //                Seq.empty
+    //            else seq {
+    //                yield! a.DisplayName |> split |> Seq.map (fun displayName -> createMailAddress displayName a.User a.Host)
+    //                yield createMailAddress "" a.User a.Host
+    //            }
+
+    //        let shrinkUser (a:MailAddress) = 
+    //            a.User |> split |> Seq.map (fun user -> createMailAddress a.DisplayName user a.Host)
+
+    //        let shrinkHost (a:MailAddress) = 
+    //            Default.HostName.Shrinker (HostName a.Host)
+    //            |> Seq.map (fun (HostName h) -> createMailAddress a.DisplayName a.User h)
+         
+    //        let shrinker (a:MailAddress) = 
+    //            seq {
+    //                yield! shrinkDisplayName a
+    //                yield! shrinkUser a
+    //                yield! shrinkHost a
+    //            } |> Seq.distinct
+     
+    //        Arb.fromGenShrink (generator, shrinker)
+    //    with get
+
     ///Generates BigInteger values that are between -size and size.
-    static member val BigInt = Default.Int32 |> Arb.convert bigint int with get
+    static member val BigInt = Default.Int32 |> Arb.map bigint with get
 
-    ///Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
-    static member DoNotShrink(any: Arbitrary<'T>) =
-        any.Generator
-        |> Gen.map DoNotShrink
-        |> Arb.fromGen
+    /////Overrides the shrinker of any type to be empty, i.e. not to shrink at all.
+    //static member DoNotShrink(any: Arbitrary<'T>) =
+    //    any.Generator
+    //    |> Gen.map DoNotShrink
+    //    |> Arb.fromGen
 
-    ///Try to derive an arbitrary instance for the given type reflectively. 
-    ///Generates and shrinks values for record, union, tuple and enum types.
-    ///Also generates (but doesn't shrink) values for basic classes 
-    ///(i.e. either classes having a single constructor with immutable values  
-    ///or DTO classes with a default constructor and public property setters).
-    static member Derive<'T>(arbMap: IArbMap) =
-        let getGenerator t =
-            let arb = arbMap.ArbFor t
-            arb.Generator
-        let getShrink t =
-            let arb = arbMap.ArbFor t
-            arb.Shrinker
-                
-        let generator = 
-            typeof<'T>
-            |> ReflectiveGenerator.reflectGenObj getGenerator
-            |> Gen.map unbox<'T>
-        let shrinker a =
-            ReflectiveShrinker.reflectShrink getShrink a
-        Arb.fromGenShrink(generator, shrinker)
-
-
+    /// Try to derive an arbitrary instance for the given type reflectively. 
+    /// Generates and shrinks values for record, union, tuple and enum types.
+    /// Also generates (but doesn't shrink) values for basic classes 
+    /// (i.e. either classes having a single constructor with immutable values  
+    /// or DTO classes with a default constructor and public property setters).
+    static member Derive<'T>(arbMap: IArbMap) :Arbitrary<'T> =
+        typeof<'T>
+        |> ReflectiveGenerator.reflectGenObj  arbMap.ArbFor
+        |> Arb.map unbox<'T>

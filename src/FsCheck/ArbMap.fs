@@ -44,7 +44,7 @@ type internal ArbMap private (init: ArbMapInit) as this=
         member _.ArbFor t =
             finder.GetInstance t
             |> unbox<IArbitrary>
-            |> (fun arb -> Arb.fromGenShrink (arb.GeneratorObj, arb.ShrinkerObj))
+            |> (fun arb -> arb.ArbitraryObj)
 
         member _.ArbFor<'TArb>() =
             finder.InstanceFor<'TArb, Arbitrary<'TArb>>()

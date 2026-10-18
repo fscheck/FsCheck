@@ -1,20 +1,46 @@
 ﻿namespace FsCheck.Internals
 
-module internal Common =
+open System.Collections.Generic
 
-    open System.Collections.Generic
+[<Struct>]
+type internal ListAccessWrapper<'T> =
+    { Count: int
+      Item: int -> 'T
+    }
+    static member Create(xs:seq<_>) =
+        match xs with
+        | :? array<_> as arr ->
+            { Count=arr.Length; Item=fun i -> arr.[i] }
+        | :? IReadOnlyList<_> as list ->
+            { Count=list.Count; Item=fun i -> list.[i] }
+        | :? IList<_> as list ->
+            { Count=list.Count; Item=fun i -> list.[i] }
+        | _ ->
+            let arr = xs |> Seq.toArray
+            { Count=arr.Length; Item=fun i -> arr.[i] }
+
+module internal Common =
     
     ///Memoize the given function using the given dictionary
     let memoizeWith (memo:IDictionary<'a,'b>) (f: 'a -> 'b) =
+        let mutable nullValue = None
         fun n ->
             lock memo 
                 (fun _ -> 
-                    match memo.TryGetValue n with
-                    | true, res -> res
-                    | _ ->
-                        let res = f n
-                        memo.Add(n,res)
-                        res)
+                    if isNull (box n) then
+                        match nullValue with
+                        | Some res -> res
+                        | None ->
+                            let res = f n
+                            nullValue <- Some res
+                            res
+                    else
+                        match memo.TryGetValue n with
+                        | true, res -> res
+                        | _ ->
+                            let res = f n
+                            memo.Add(n,res)
+                            res)
 
     ///Memoize the given function.
     let memoize f =

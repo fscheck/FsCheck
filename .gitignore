@@ -173,3 +173,5 @@ output/
 tmp/
 
 .idea/
+
+*.received.txt

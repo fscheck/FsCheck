@@ -428,7 +428,7 @@ module Runner =
                 parallelTest config 
             else 
                 test size.IsSome
-        testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen config.ArbMap)
+        testSeq (float <| defaultArg size config.StartSize) ((+) increaseSizeStep) seed (property prop |> Property.GetGen config.ArbMap |> Arb.unArb)
         |> Common.takeWhilePlusLast (fun step ->
             match step with
                 | Run (result,s,seed) ->
@@ -743,4 +743,3 @@ type Check =
     /// Check all public static methods on the given type that have a testable return type with the verbose configuration,
     ///and throws on failure or exhaustion.
     static member VerboseThrowOnFailureAll<'Test>() = Check.All(Config.VerboseThrowOnFailure,typeof<'Test>)
-

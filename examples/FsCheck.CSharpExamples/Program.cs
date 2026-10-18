@@ -200,21 +200,13 @@ namespace FsCheck.CSharpExamples
             return Gen.Sized(s => gen.Resize(Convert.ToInt32(Math.Sqrt(s))));
         }
 
-        public class ArbitraryLong : Arbitrary<long>
-        {
-            public override Gen<long> Generator
-            {
-	            get {
-                    return Gen.Sized(s => Gen.Choose(-s, s))
-                        .Select(i => Convert.ToInt64(i));
-                }
-            }
-        }
-
-
         public class MyArbitraries
         {
-            public static Arbitrary<long> Long { get; } = new ArbitraryLong();
+            public static Arbitrary<long> Long() {
+                return Gen.Sized(s => Gen.Choose(-s, s))
+                    .Select(i => Convert.ToInt64(i))
+                    .ToArbitrary();
+            }
 
             public static Arbitrary<IEnumerable<T>> Enumerable<T>() {
                 return ArbMap.Default.ArbFor<T[]>().Convert(x => (IEnumerable<T>)x, x => (T[])x);

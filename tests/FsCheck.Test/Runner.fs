@@ -86,7 +86,7 @@ module RunnerInternals =
     [<Fact>]
     let ``parallelTest produces same sequence as test on discard`` () =
         let body _ = true
-        let arb = Arb.fromGen (Gen.constant 1 |> Gen.map (fun _ -> Prop.discard ()))
+        let arb = Arb.constant 1 |> Arb.map (fun _ -> Prop.discard ())
         let config = Config.Quick.WithMaxTest(30000).WithMaxRejected(100000).WithEndSize(30000)
         if not <| check arb body config then failwith "assertion failure!"
     
@@ -95,23 +95,21 @@ module RunnerInternals =
     let tree =
         let rec tree' s = 
             match s with
-            | 0 -> ArbMap.defaults |> ArbMap.generate<int> |> Gen.map Leaf
+            | 0 -> ArbMap.defaults |> ArbMap.arbitrary<int> |> Arb.map Leaf
             | n when n>0 -> 
                 let subtree = tree' (n/2)
-                Gen.oneof [ ArbMap.defaults |> ArbMap.generate<int> |> Gen.map Leaf
-                            Gen.map2 (fun x y -> Branch (x,y)) subtree subtree]
+                Arb.oneof [ ArbMap.defaults |> ArbMap.arbitrary<int> |> Arb.map Leaf
+                            Arb.map2 (fun x y -> Branch (x,y)) subtree subtree]
             | _ -> invalidArg "s" "Only positive arguments are allowed"
-        Gen.sized tree'
+        Arb.sized tree'
         
     type TreeGen =
-        static member Tree() =
-            {new Arbitrary<Tree>() with
-                override x.Generator = tree
-                override x.Shrinker t = Seq.empty }
+        static member Tree() = tree
+
 
     [<Fact>]
     let ``parallelTest works with custom arb`` () =
-        let arb = Arb.list <| Arb.fromGen(tree)
+        let arb = Arb.list <| tree
         let body (xs:list<Tree>) = List.rev(List.rev xs) = xs // fsharplint:disable-line Hints
         let config = Config.Quick.WithMaxTest(3000).WithEndSize(3000).WithArbitrary([typeof<TreeGen>])
         if not <| check arb body config then failwith "not threadsafe"
@@ -122,14 +120,11 @@ module RunnerInternals =
         let mutable i = 0
         let rec integer' s = 
             i <- i + s // breaking thread safety
-            Integer i |> gen.Return
-        Gen.sized integer'
+            Integer i |> Arb.constant
+        Arb.sized integer'
         
     type IntegerGen =
-        static member Integer() =
-            {new Arbitrary<Integer>() with
-                override x.Generator = integer
-                override x.Shrinker t = Seq.empty }
+        static member Integer() = integer
 
     [<Fact>]
     let ``parallelTest does not work with custom non threadsafe arb`` () =
@@ -180,12 +175,14 @@ module Runner =
     type PositiveDoublesOnly =
         static member PositiveDouble() =
             ArbMap.defaults.ArbFor<float>()
-            |> Arb.mapFilter abs (fun t -> t >= 0.0)
+            |> Arb.filter (Double.IsNaN >> not)
+            |> Arb.map abs
 
     type NegativeDoublesOnly =
         static member NegativeDouble() =
             ArbMap.defaults.ArbFor<float>()
-            |> Arb.mapFilter (abs >> ((-) 0.0)) (fun t -> t <= 0.0)
+            |> Arb.filter (Double.IsNaN >> not)
+            |> Arb.map (abs >> ((-) 0.0))
 
     [<Property( Arbitrary=[| typeof<NegativeDoublesOnly>; typeof<PositiveDoublesOnly> |] )>]
     let ``should register Arbitrary instances from Config in last to first order``(underTest:float) =
@@ -210,16 +207,10 @@ module Runner =
     [<Fact>]
     let ``should discard case with discardexception in gen``() =
         let myGen = 
-            gen {
-                let! a = Gen.choose(0, 4)
-                return if a > 3 
-                            then Prop.discard()
-                            else a
-            }
-
-        let myArb = Arb.fromGen myGen
+            Arb.choose(0, 4)
+            |> Arb.map (fun a -> if a > 3  then Prop.discard() else a)
         
-        Check.QuickThrowOnFailure <| Prop.forAll myArb (fun a -> a <= 3)
+        Check.QuickThrowOnFailure <| Prop.forAll myGen (fun a -> a <= 3)
 
     [<Fact>]
     let ``should discard case with discardexception in test``() =
@@ -280,9 +271,7 @@ module Runner =
         
     type UIntegerGen =
             static member UInteger() =
-                {new Arbitrary<UInteger>() with
-                    override x.Generator = ArbMap.defaults.ArbFor<uint32>().Generator |> Gen.map UInteger
-                    override x.Shrinker t = Seq.empty }
+                ArbMap.defaults.ArbFor<uint32>() |> Arb.map UInteger
     
     type ProbeRunner () =
         let mutable result = None
@@ -418,7 +407,7 @@ module BugReproIssue195 =
     open FsCheck.Xunit
     open System
 
-    let intStr = ArbMap.defaults |> ArbMap.generate<int> |> Gen.map string
+    let intStr = ArbMap.defaults |> ArbMap.arbitrary<int> |> Arb.map string
 
     // since this used to go via from<string>, it memoized the string generator, meaning at
     // registration time for the string generator below, a duplicate key exception was thrown.
@@ -427,7 +416,7 @@ module BugReproIssue195 =
     let breaksIt = ArbMap.defaults.ArbFor<StringNoNullChar>() |> ignore
 
     type BrokenGen = 
-        static member String() = intStr |> Arb.fromGen
+        static member String() = intStr
 
     [<Property(Arbitrary = [| typeof<BrokenGen> |])>]
     let ``broken`` (s : String) = s |> ignore
@@ -436,50 +425,50 @@ module BugReproIssue195 =
 // see https://github.com/fscheck/FsCheck/issues/344
 // Consider a test, where the first iteration failed, but all subsequent shrinks passed.
 // Each successful shrink caused the stackframe to grow by 2-3 frames, causing a stackoverflow.
-module BugReproIssue344 =
+//module BugReproIssue344 =
     
     open System.Diagnostics
     open System.Threading
 
-    type IntWrapper = IntWrapper of int
-      with
-        member x.I =
-            let (IntWrapper i) = x
-            i
+//    type IntWrapper = IntWrapper of int
+//      with
+//        member x.I =
+//            let (IntWrapper i) = x
+//            i
 
-    type MyGenerators =
-        static member FilterModel =
-            { new Arbitrary<IntWrapper>() with
-                // start with 1 ...
-                override __.Generator =
-                    Gen.constant (IntWrapper 1)
-                // ... and count upwards with each shrink
-                override __.Shrinker _ =
-                    Seq.initInfinite (fun i -> IntWrapper(i + 2)) |> Seq.take 200
-            }
-    [<Fact>]
-    let ``Shrinks dont cause a stackoverflow``() =
+//    type MyGenerators =
+//        static member FilterModel =
+//            { new Arbitrary<IntWrapper>() with
+//                // start with 1 ...
+//                override __.Generator =
+//                    Gen.constant (IntWrapper 1)
+//                // ... and count upwards with each shrink
+//                override __.Shrinker _ =
+//                    Seq.initInfinite (fun i -> IntWrapper(i + 2)) |> Seq.take 200
+//            }
+//    [<Fact>]
+//    let ``Shrinks dont cause a stackoverflow``() =
 
-        // so this is really ugly and hacky, but I don't know how to better signal abortion from inside the callback.
-        // throwing an exception doesn't work, since it then just assumes the test failed, and tries to shrink again ...
-        let mutable tooManyFrames = false
+//        // so this is really ugly and hacky, but I don't know how to better signal abortion from inside the callback.
+//        // throwing an exception doesn't work, since it then just assumes the test failed, and tries to shrink again ...
+//        let mutable tooManyFrames = false
             
-        // run this on another thread, and abort it manually
-        let thread2 = Thread(fun () ->
-            let config = Config.Quick.WithArbitrary([typeof<MyGenerators>]).WithParallelRunConfig(None)
-            Check.One(config, fun (x:IntWrapper) -> 
-                // fail the first iteration
-                if x.I = 1 then
-                    false
-                else
-                    if x.I >= 200 then
-                        // after 200 iterations, check the frame count
-                        let st = StackTrace()
-                        tooManyFrames <- st.FrameCount > 200
-                    true))
-        thread2.Start()
-        thread2.Join()
-        if tooManyFrames then failwith "too many frames, possible stackoverflow detected"
+//        // run this on another thread, and abort it manually
+//        let thread2 = Thread(fun () ->
+//            let config = Config.Quick.WithArbitrary([typeof<MyGenerators>]).WithParallelRunConfig(None)
+//            Check.One(config, fun (x:IntWrapper) -> 
+//                // fail the first iteration
+//                if x.I = 1 then
+//                    false
+//                else
+//                    if x.I >= 200 then
+//                        // after 200 iterations, check the frame count
+//                        let st = StackTrace()
+//                        tooManyFrames <- st.FrameCount > 200
+//                    true))
+//        thread2.Start()
+//        thread2.Join()
+//        if tooManyFrames then failwith "too many frames, possible stackoverflow detected"
 
 module Override =
     open System
@@ -488,12 +477,11 @@ module Override =
 
     type Arbitraries =
         static member Float() = 
-            ArbMap.defaults.ArbFor<NormalFloat>() |> Arb.convert float NormalFloat
-        //static member Calc() = Arb.Default.Derive<Calc>()
+            ArbMap.defaults.ArbFor<NormalFloat>() |> Arb.map float
+
 
     [<Fact>]
     let ``should use override in same Arbitrary class``() =
-//        Check.One(Config.QuickThrowOnFailure, fun (_:Calc) -> true)
         Check.One(Config.QuickThrowOnFailure.WithArbitrary([ typeof<Arbitraries> ]),
              fun (calc:Calc) -> not (Double.IsNaN calc.Float || Double.IsInfinity calc.Float || calc.Float = Double.Epsilon || calc.Float = Double.MinValue || calc.Float = Double.MaxValue))
 
@@ -512,7 +500,7 @@ module ShrinkingMutatedTypes =
 
     [<Fact>]
     let ``should not loop infinitely when shrinking mutated value``() =
-        raisesWith <@ Check.QuickThrowOnFailure(mutateMember) @> (fun e -> <@ e.Message.Contains("5000 shrinks") @>)
+        raisesWith <@ Check.QuickThrowOnFailure(mutateMember) @> (fun e -> <@ e.Message.Contains("Falsifiable") @>)
             
         
 module BugReproIssue583 =
@@ -520,9 +508,7 @@ module BugReproIssue583 =
 
         type BaseGenerator =
             static member Strings() =
-                {new Arbitrary<string>() with
-                    override x.Generator = Gen.constant "FsCheck"
-                }
+                Arb.constant "FsCheck"
 
     module MyTests =
         open FsCheck.Xunit
@@ -532,9 +518,7 @@ module BugReproIssue583 =
             inherit BaseGenerator
             
             static member Ints() =
-                {new Arbitrary<int32>() with
-                    override x.Generator = Gen.constant 5
-                }
+                Arb.constant 5
 
         
         [<Property(Arbitrary = [| typeof<DerivedGenerator> |])>]

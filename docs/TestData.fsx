@@ -542,26 +542,24 @@ can derive them. Usually you can let type inference do the job of finding out th
 based on your properties. However if you want to coerce FsCheck to use a particular generator 
 and shrinker, you can do so by providing the appropriate type annotations.
 
-FsCheck packages a generator and shrinker for a particular type in an `Arbitrary` type. You can 
-provide FsCheck with an Arbitrary instance for your own types, by defining static members that 
-return an instance of a subclass of `Arbitrary<'a>`:*)
+FsCheck packages generated values and their shrink trees together in an `Arbitrary` value.
+You can provide an instance for your own types by defining static members that return an
+`Arbitrary<'a>`:*)
 
 type MyGenerators =
-  static member Tree() =
-      {new Arbitrary<Tree>() with
-          override _.Generator = tree
-          override _.Shrinker _ = Seq.empty }
+  static member Tree() = Arb.fromGen tree
 
 (**
     [lang=csharp,file=../examples/CSharp.DocSnippets/TestData.cs,key=MyGenerators]
 
 Replace the `'a` by the particular type you are defining an Arbitrary instance for.
-Only the `Generator` method needs to be defined; `Shrinker` by default returns the empty 
-sequence which means no shrinking will be done for this type).
+`Arb.fromGen` creates an arbitrary without shrinking; use `Arb.fromGenShrink` when you
+need to provide a custom shrinker.
 
-As the F# code shows, you can create your own subclass of `Arbitrary` and return it, or construct one from a generator
-using `Arb.fromGen` or `Arb.fromGenShrink`. To retrieve an existing Arbitrary instance, use `ArbMap.arbitrary` with an
-`IArbMap`, as shown below.
+As the F# code shows, construct an arbitrary from a generator using `Arb.fromGen`, or from a
+generator and explicit shrink function using `Arb.fromGenShrink`. Existing arbitraries can be
+composed with the `Arb` combinators, which preserve their shrink trees. To retrieve an existing
+arbitrary, use `ArbMap.arbitrary` with an `IArbMap`, as shown below.
 
 Now, to make FsCheck aware of all Arbitrary instances in this class, you can add it to the Config:*)
 
@@ -591,14 +589,11 @@ when building the generator. A factory method can take an argument of type `Arbi
 for the requested type from the configured `IArbMap`. For example, the class `MyGenerators` can be extended as follows:*)
 
 let boxGen<'a> (contents:Arbitrary<'a>) : Gen<Box<'a>> = 
-    gen { let! a = contents.Generator
+    gen { let! a = Arb.toGen contents
           return! Gen.elements [ Whitebox a; Blackbox a] }
 
 type MyTreeGenerator =
-    static member Tree() =
-        {new Arbitrary<Tree>() with
-            override x.Generator = tree
-            override x.Shrinker t = Seq.empty }
+    static member Tree() = Arb.fromGen tree
     static member Box(contents:Arbitrary<'a>) = contents |> boxGen |> Arb.fromGen
 
 (**
@@ -622,8 +617,9 @@ type NonEmptyListGenerators =
 
 (**
 The factory receives the map for the current test configuration, so element types can use either their default
-Arbitrary instances or ones registered by the caller. `Arb.fromGen` does not provide shrinking; use `Arb.fromGenShrink`
-if the custom type needs a shrinker.
+Arbitrary instances or ones registered by the caller. `Arb.fromGen` creates values without shrinking; use
+`Arb.fromGenShrink` when the custom type needs an explicit shrinker. Existing arbitraries can be composed with
+`Arb.map`, `Arb.bind`, and the other `Arb` combinators, which preserve their shrink trees.
 
 Register the factory type with the configuration to use it for properties:*)
 
