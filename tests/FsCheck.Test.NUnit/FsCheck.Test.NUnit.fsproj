@@ -2,9 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FsCheck.Test.NUnit</AssemblyName>
-        <TargetFramework>net10.0</TargetFramework>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <IsPackable>false</IsPackable>
         <EnableNUnitRunner>true</EnableNUnitRunner>
         <!-- NUnit3TestAdapter's props read EnableNUnitRunner before this file is evaluated, so set this explicitly. -->
         <IsTestingPlatformApplication>true</IsTestingPlatformApplication>

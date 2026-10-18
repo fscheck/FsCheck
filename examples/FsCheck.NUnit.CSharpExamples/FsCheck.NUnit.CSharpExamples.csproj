@@ -2,11 +2,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FsCheck.NUnit.CSharpExamples</AssemblyName>
-        <TargetFramework>net10.0</TargetFramework>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <WarningLevel>3</WarningLevel>
-        <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup>
         <None Remove="App.config" />

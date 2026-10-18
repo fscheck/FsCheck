@@ -2,9 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FsCheck.Examples</AssemblyName>
-        <TargetFramework>net10.0</TargetFramework>
         <OutputType>Exe</OutputType>
-        <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="Examples.fs"/>

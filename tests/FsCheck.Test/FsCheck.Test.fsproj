@@ -2,9 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FsCheck.Test</AssemblyName>
-        <TargetFramework>net10.0</TargetFramework>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <IsPackable>false</IsPackable>
         <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
