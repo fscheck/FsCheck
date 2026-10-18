@@ -16,20 +16,26 @@ namespace FsCheck.MsTest.Examples
                 .QuickCheckThrowOnFailure();
         }
 
-        [TestMethod, ExpectedException(typeof(Exception))]
+        [TestMethod]
         public void RevId()
         {
+            Assert.ThrowsExactly<Exception>(() =>
+            {
             Prop.ForAll<int[]>(xs => xs.Reverse().SequenceEqual(xs))
                 .VerboseCheckThrowOnFailure();
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(Exception))]
+        [TestMethod]
         public void Insert()
-        {            
+        {
+            Assert.ThrowsExactly<Exception>(() =>
+            {            
              Prop.ForAll<int, int[]>((x, xs) =>
                         xs.Insert(x).IsOrdered()
                         .When(xs.IsOrdered()))
                 .QuickCheckThrowOnFailure();
+            });
         }
 
         [TestMethod]
@@ -39,40 +45,51 @@ namespace FsCheck.MsTest.Examples
                 .QuickCheckThrowOnFailure();
         }
 
-        [TestMethod, ExpectedException(typeof(Exception))]
+        [TestMethod]
         public void InsertTrivial()
         {
+            Assert.ThrowsExactly<Exception>(() =>
+            {
             Prop.ForAll<int, int[]>((x, xs) =>
                     xs.Insert(x).IsOrdered()
                     .When(xs.IsOrdered())
                     .Classify(xs.Count() == 0, "trivial"))
-                .QuickCheckThrowOnFailure();           
+                .QuickCheckThrowOnFailure();
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(Exception))]
+        [TestMethod]
         public void InsertClassify()
         {
+            Assert.ThrowsExactly<Exception>(() =>
+            {
             Prop.ForAll<int, int[]>((x, xs) =>
                     xs.Insert(x).IsOrdered()
                     .When(xs.IsOrdered())
                     .Classify(new[] { x }.Concat(xs).IsOrdered(), "at-head")
                     .Classify(xs.Concat(new int[] { x }).IsOrdered(), "at-tail"))
-                .QuickCheckThrowOnFailure();            
+                .QuickCheckThrowOnFailure();
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(Exception))]
+        [TestMethod]
         public void InsertCollect()
         {
+            Assert.ThrowsExactly<Exception>(() =>
+            {
             Prop.ForAll<int, int[]>((x, xs) =>
                     xs.Insert(x).IsOrdered()
                     .When(xs.IsOrdered())
                     .Collect("length " + xs.Count().ToString()))
                 .QuickCheckThrowOnFailure();
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(Exception))]
+        [TestMethod]
         public void InsertCombined()
         {
+            Assert.ThrowsExactly<Exception>(() =>
+            {
             Prop.ForAll<int, int[]>((x, xs) =>
                     xs.Insert(x).IsOrdered()
                     .When(xs.IsOrdered())
@@ -80,25 +97,32 @@ namespace FsCheck.MsTest.Examples
                     .Classify(xs.Concat(new int[] { x }).IsOrdered(), "at-tail")
                     .Collect("length " + xs.Count().ToString()))
                 .QuickCheckThrowOnFailure();
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(Exception))]
+        [TestMethod]
         public void ComplexProp()
         {
+            Assert.ThrowsExactly<Exception>(() =>
+            {
             Prop.ForAll<int, int>((m, n) => {
                     var result = m + n;
                     return ( result >= m).Label("result > #1")
                        .And( result >= n).Label("result > #2")
                        .And( result < m + n).Label("result not sum");
             }).QuickCheckThrowOnFailure();
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(Exception))]
+        [TestMethod]
         public void Label()
         {
+            Assert.ThrowsExactly<Exception>(() =>
+            {
             Prop.ForAll<int>(x => false.Label("Always false")
                             .And(Math.Abs(x) - x == 0))
                .QuickCheckThrowOnFailure();
+            });
         }
     }
 }

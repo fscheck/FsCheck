@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FsCheck.Test.NUnit</AssemblyName>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <IsPackable>false</IsPackable>
         <EnableNUnitRunner>true</EnableNUnitRunner>
@@ -27,6 +27,5 @@
         <PackageReference Include="NUnit3TestAdapter" />
         <PackageReference Include="Unquote" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="System.Collections.Immutable" />
     </ItemGroup>
 </Project>

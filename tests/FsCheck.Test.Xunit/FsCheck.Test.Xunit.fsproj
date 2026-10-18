@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FsCheck.Test.Xunit</AssemblyName>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
@@ -20,7 +20,6 @@
         <PackageReference Include="FSharp.Core" VersionOverride="9.0.303" />
         <PackageReference Include="Unquote" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="System.Collections.Immutable" />
         <PackageReference Include="xunit" />
         <PackageReference Include="xunit.runner.visualstudio">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

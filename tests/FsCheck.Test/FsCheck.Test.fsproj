@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FsCheck.Test</AssemblyName>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <IsPackable>false</IsPackable>
         <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
@@ -38,6 +38,5 @@
         </PackageReference>
         <PackageReference Include="Unquote" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="System.Collections.Immutable" />
     </ItemGroup>
 </Project>

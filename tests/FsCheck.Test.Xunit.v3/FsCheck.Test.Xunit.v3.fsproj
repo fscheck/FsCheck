@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FsCheck.Test.Xunit.v3</AssemblyName>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <IsPackable>false</IsPackable>
 		    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
@@ -18,10 +18,9 @@
         <ProjectReference Include="../../src/FsCheck.Xunit.v3/FsCheck.Xunit.v3.fsproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="FSharp.Core" />
+        <PackageReference Include="FSharp.Core" VersionOverride="6.0.0" />
         <PackageReference Include="Unquote" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="System.Collections.Immutable" />
         <PackageReference Include="xunit.v3" />
     </ItemGroup>
 </Project>

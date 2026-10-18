@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>FsCheck.NUnit.CSharpExamples</AssemblyName>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
         <WarningLevel>3</WarningLevel>
