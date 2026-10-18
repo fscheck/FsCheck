@@ -555,7 +555,16 @@ let args =
     | "build.fsx" :: rest -> rest
     | args -> args
 
-match args |> List.map (fun s -> s.ToLowerInvariant ()) with
+// `--ci` forces a deterministic/CI-style build (normalised source paths, needed for SourceLink) when building locally.
+// MSBuild reads environment variables as properties, and child processes inherit this one.
+let argsWithoutCiFlag =
+    if args |> List.exists (fun s -> s.ToLowerInvariant () = "--ci") then
+        Environment.SetEnvironmentVariable ("ContinuousIntegrationBuild", "true")
+        args |> List.filter (fun s -> s.ToLowerInvariant () <> "--ci")
+    else
+        args
+
+match argsWithoutCiFlag |> List.map (fun s -> s.ToLowerInvariant ()) with
 | [] | ["-t" ; "runtests"] ->
     let haveCleaned = doClean ()
     runDotnetTest haveCleaned |> ignore<HaveTested>
@@ -618,6 +627,6 @@ match args |> List.map (fun s -> s.ToLowerInvariant ()) with
     generateAssemblyInfo haveCleaned |> ignore<HaveGeneratedAssemblyInfo>
 | _ ->
     let args =
-        args
+        argsWithoutCiFlag
         |> String.concat " "
-    failwith $"Unrecognised arguments. Supply '-t [RunTests,Clean,CI,Build,Tests,GHRelease,Docs,WatchDocs,ReleaseDocs,NugetPack,NugetPush,BuildVersion,AssemblyInfo,Release]'. Unrecognised args were: %s{args}"
+    failwith $"Unrecognised arguments. Supply '-t [RunTests,Clean,CI,Build,Tests,GHRelease,Docs,WatchDocs,ReleaseDocs,NugetPack,NugetPush,BuildVersion,AssemblyInfo,Release]', optionally with '--ci' to force a CI-style deterministic build. Unrecognised args were: %s{args}"
