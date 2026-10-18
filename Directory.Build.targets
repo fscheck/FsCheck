@@ -1,4 +1,8 @@
 <Project>
+<!-- The default name of the generated file contains a comma, which F# embed mishandles, so it would not be embedded. -->
+<PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.fsproj'">
+  <TargetFrameworkMonikerAssemblyAttributesPath>$(IntermediateOutputPath)$(TargetFramework).AssemblyAttributes.fs</TargetFrameworkMonikerAssemblyAttributesPath>
+</PropertyGroup>
 <UsingTask TaskName="Base64Decode" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
   <ParameterGroup>
     <EncodedString ParameterType="System.String" Required="true" />
@@ -14,6 +18,14 @@
     </Code>
   </Task>
 </UsingTask>
+
+<!-- The SDK-generated AssemblyAttributes.fs is added to Compile after EmbedUntrackedSources has run for F# projects,
+     so embed it explicitly. -->
+<Target Name="EmbedGeneratedFsSources" BeforeTargets="CoreCompile" Condition="'$(MSBuildProjectExtension)' == '.fsproj' and '$(EmbedUntrackedSources)' == 'true'">
+  <ItemGroup>
+    <EmbeddedFiles Include="@(Compile)" Condition="$([System.String]::Copy('%(FullPath)').StartsWith('$([System.IO.Path]::GetFullPath($(IntermediateOutputPath)))'))" KeepDuplicates="false" />
+  </ItemGroup>
+</Target>
 
 <!-- This is the decode end of the base64-encoding that gets the release notes into `dotnet pack`.
      The problem is that we can't supply MsBuild properties that contain MsBuild metacharacters.
