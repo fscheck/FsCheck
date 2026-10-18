@@ -117,6 +117,22 @@ module Arb =
                 Seq.empty
         fromGenShrink(generator, shrinker)
 
+    /// Generates reference values that are null 1/8 of the time.
+    let nullableRef (value: Arbitrary<'T>) =
+        let generator =
+            Gen.frequency
+                [ (1, Gen.constant (NullableRef Unchecked.defaultof<'T>))
+                  (7, Gen.map NullableRef value.Generator) ]
+        let shrinker (NullableRef item) =
+            if isNull item then
+                Seq.empty
+            else
+                seq {
+                    yield NullableRef Unchecked.defaultof<'T>
+                    for item' in value.Shrinker item -> NullableRef item'
+                }
+        fromGenShrink(generator, shrinker)
+
     /// Generates FSharp.Core list<'T> values. 
     /// The length of the generated list is between 0 and size. 
     /// The sum of the sizes of the elements is equal to the size of the generated list.

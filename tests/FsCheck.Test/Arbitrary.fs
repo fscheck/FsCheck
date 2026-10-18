@@ -197,6 +197,14 @@ module Arbitrary =
         else 
             assertTrue (shrinks = Seq.empty)
 
+    [<Fact>]
+    let NullableRef() =
+        let values = generate<NullableRef<string>> |> sample 1000 |> Seq.map (fun value -> value.Value) |> Seq.toList
+        assertTrue (values |> List.contains null)
+        assertTrue (values |> List.exists (isNull >> not))
+        assertTrue (shrink (NullableRef "test") |> Seq.head = NullableRef null)
+        assertTrue (shrink (NullableRef null) |> Seq.isEmpty)
+
     let testFunction (f: _ -> _) (vs: _ list) =
         let tabledF = Function<_,_>.From f
         assertTrue (List.map tabledF.Value vs = List.map f vs)

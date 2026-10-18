@@ -111,6 +111,10 @@ type FixedLengthArray<'T> = FixedLengthArray of 'T[] with
 type NonNull<'a when 'a : null> = NonNull of 'a with
     member x.Get = match x with NonNull r -> r
 
+///Wrap a reference type to generate null values as well as values of the wrapped type.
+type NullableRef<'a when 'a : null> = NullableRef of 'a with
+    member x.Value = match x with NullableRef r -> r
+
 type ThrowingFunction<'a,'b> = ThrowingFunction of ('a -> 'b) with
     member x.Get = match x with ThrowingFunction f -> f
 

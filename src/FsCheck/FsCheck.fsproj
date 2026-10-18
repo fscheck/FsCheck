@@ -24,9 +24,9 @@
         <Compile Include="Internals.Shrink.fs"/>
         <Compile Include="Internals.ReflectiveGenerator.fs"/>
         <Compile Include="Internals.ReflectiveShrinker.fs"/>
+        <Compile Include="DefaultArbTypes.fs"/>
         <Compile Include="FSharp.Arbitrary.fs"/>
         <Compile Include="ArbMap.fs"/>
-        <Compile Include="DefaultArbTypes.fs"/>
         <Compile Include="Internals.DefaultArbs.fs"/>
         <Compile Include="FSharp.ArbMap.fs"/>
         <Compile Include="Testable.fs"/>

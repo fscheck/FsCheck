@@ -435,6 +435,11 @@ type internal Default private() =
         value
         |> Arb.nullable
 
+    ///Generates reference values that are null 1/8 of the time.
+    static member NullableRef(value: Arbitrary<'T>) =
+        value
+        |> Arb.nullableRef
+
     ///Generates F# (immutable) lists. 
     ///The length of the generated list is between 0 and the test size + 1. 
     ///The sum of the sizes of the elements is equal to the size of the generated list.
