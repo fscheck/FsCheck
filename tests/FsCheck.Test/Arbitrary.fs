@@ -390,6 +390,71 @@ module Arbitrary =
         value.IsCompletedSuccessfully
         && (shrink value |> Seq.forall (fun v -> v.IsCompletedSuccessfully && abs v.Result <= abs value.Result))
 
+#if NET5_0_OR_GREATER
+    [<Fact>]
+    let Half() =
+        generate<Half> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``Half shrinks to smaller magnitude`` (value: Half) =
+        shrink value
+        |> Seq.forall (fun v -> System.Half.IsNaN value || System.Half.IsInfinity value || abs (float v) <= abs (float value))
+#endif
+
+#if NET7_0_OR_GREATER
+    [<Fact>]
+    let Int128() =
+        generate<System.Int128> |> sample 10 |> ignore
+        generate<DoNotSize<System.Int128>> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``Int128 shrinks to zero first and never to itself`` (value: System.Int128) =
+        let shrinks = shrink value |> Seq.toList
+        shrinks |> List.forall (fun v -> v <> value)
+        && (value = System.Int128.Zero || shrinks |> List.contains System.Int128.Zero)
+
+    [<Property>]
+    let ``DoNotSize Int128 shrinks never to itself`` (DoNotSize value: DoNotSize<System.Int128>) =
+        shrink value |> Seq.forall (fun v -> v <> value)
+
+    [<Fact>]
+    let UInt128() =
+        generate<System.UInt128> |> sample 10 |> ignore
+        generate<DoNotSize<System.UInt128>> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``UInt128 shrinks to smaller values`` (value: System.UInt128) =
+        shrink value |> Seq.forall (fun v -> v < value)
+
+    [<Property>]
+    let ``DoNotSize UInt128 shrinks to smaller values`` (DoNotSize value: DoNotSize<System.UInt128>) =
+        shrink value |> Seq.forall (fun v -> v < value)
+
+    [<Fact>]
+    let DateOnly() =
+        generate<DateOnly> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``DateOnly shrinks to first of month or year`` (value: DateOnly) =
+        shrink value |> Seq.forall (fun v -> v < value && v.Day = 1)
+
+    [<Fact>]
+    let TimeOnly() =
+        generate<TimeOnly> |> sample 10 |> ignore
+
+    [<Property>]
+    let ``TimeOnly shrinks to earlier, rounder times`` (value: TimeOnly) =
+        shrink value |> Seq.forall (fun v -> v < value && v.Ticks % System.TimeSpan.TicksPerMillisecond = 0L)
+
+    [<Fact>]
+    let Rune() =
+        generate<System.Text.Rune> |> sample 100 |> ignore
+
+    [<Property>]
+    let ``Rune shrinks to a, b or c`` (value: System.Text.Rune) =
+        shrink value |> Seq.forall (fun v -> v.Value >= int 'a' && v.Value <= int 'c' && v <> value)
+#endif
+
     [<Fact>]
     let KeyValuePair () =
         generate<KeyValuePair<int,int>> |> sample 10 |> ignore

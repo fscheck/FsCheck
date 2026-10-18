@@ -1,6 +1,7 @@
-## 3.5.1 - To be released
+## 3.6.0 - To be released
 
 * Added default generators and shrinkers for `System.Index` and `System.Range` (#621), `Memory<T>`, `ReadOnlyMemory<T>`, `ReadOnlySequence<T>`, `ValueTask` and `ValueTask<T>`. FsCheck now also targets netstandard2.1, where these types are available.
+* Added a default generator and shrinker for `System.Half`, `Int128`, `UInt128`, `DateOnly`, `TimeOnly` and `Rune`. FsCheck now also targets net8.0, where these types are available.
 
 ## 3.5.0 - 17 October 2026
 

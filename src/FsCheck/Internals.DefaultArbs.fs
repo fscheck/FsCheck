@@ -11,7 +11,11 @@ open System.Globalization
 #if NETSTANDARD2_1_OR_GREATER || NET
 open System.Buffers
 open System.Threading.Tasks
-
+#endif
+#if NET7_0_OR_GREATER
+open System.Text
+#endif
+#if NETSTANDARD2_1_OR_GREATER || NET
 type internal MemorySegment<'T>(memory: ReadOnlyMemory<'T>) as this =
     inherit ReadOnlySequenceSegment<'T>()
     do this.Memory <- memory
@@ -151,7 +155,7 @@ type internal Default private() =
         with get
      
     ///Generates uint64 values that are unrestricted by size.
-    static member val DoNotSizeUInt64 =
+    static member val DoNotSizeUInt64 : Arbitrary<DoNotSize<uint64>> =
             (Default.DoNotSizeInt64.Generator |> Gen.map (fun (DoNotSize i64) -> Operators.uint64 i64),
              Shrink.unsignedNumber)
             |> Arb.fromGenShrink
@@ -209,6 +213,112 @@ type internal Default private() =
                 else Default.NormalFloat.Shrinker (NormalFloat <| float fl) |> Seq.map (fun (NormalFloat f) -> float32 f)
             Arb.fromGenShrink (generator,shrinker)
         with get
+
+#if NET5_0_OR_GREATER
+    /// Generates Half values that are between -size and size, clamped to the range of Half.
+    /// One of NaN, NegativeInfinity, PositiveInfinity, MaxValue, MinValue or Epsilon is generated on average 1 time for every 8 values.
+    /// Shrinks by yielding zero, abs of the origin and the truncated origin.
+    static member val Half : Arbitrary<Half> =
+            let toHalf (f: float) : Half = Half.op_Explicit f
+            let toFloat (h: Half) : float = Half.op_Explicit h
+            let maxHalf = toFloat Half.MaxValue
+            let generator =
+                Gen.frequency [(7, Default.NormalFloat.Generator |> Gen.map (fun (NormalFloat f) -> toHalf (max -maxHalf (min maxHalf f))))
+                               (1, Gen.elements [ Half.NaN; Half.NegativeInfinity; Half.PositiveInfinity
+                                                  Half.MaxValue; Half.MinValue; Half.Epsilon])]
+            let shrinker (h: Half) =
+                if Half.IsInfinity h || Half.IsNaN h then Seq.singleton (toHalf 0.0)
+                else Default.NormalFloat.Shrinker (NormalFloat (toFloat h)) |> Seq.map (fun (NormalFloat f) -> toHalf f)
+            Arb.fromGenShrink (generator, shrinker)
+        with get
+#endif
+
+#if NET7_0_OR_GREATER
+    ///Generates Int128 values that are between -size and size.
+    static member val Int128 : Arbitrary<Int128> =
+            let ofInt64 (v: int64) = Int128((if v < 0L then UInt64.MaxValue else 0UL), uint64 v)
+            let two = Int128(0UL, 2UL)
+            let shrinker (n: Int128) =
+                let rec closer (d: Int128) =
+                    seq { if d <> Int128.Zero then
+                            yield n - d
+                            yield! closer (d / two) }
+                seq { if n < Int128.Zero then yield (if n = Int128.MinValue then Int128.MaxValue else -n)
+                      if n <> Int128.Zero then yield Int128.Zero
+                      yield! closer (n / two) }
+            Arb.fromGenShrink (Gen.sized (fun s -> Gen.choose64 (int64 -s, int64 s)) |> Gen.map ofInt64, shrinker)
+        with get
+
+    ///Generates Int128 values that are unrestricted by size.
+    static member val DoNotSizeInt128 : Arbitrary<DoNotSize<Int128>> =
+            let generator = Gen.map2 (fun (hi: DoNotSize<uint64>) (lo: DoNotSize<uint64>) -> Int128(DoNotSize.Unwrap hi, DoNotSize.Unwrap lo)) Default.DoNotSizeUInt64.Generator Default.DoNotSizeUInt64.Generator
+            Arb.fromGenShrink (generator, Default.Int128.Shrinker)
+            |> Arb.convert DoNotSize DoNotSize.Unwrap
+        with get
+
+    ///Generates UInt128 values that are between 0 and size.
+    static member val UInt128 : Arbitrary<UInt128> =
+            let two = UInt128(0UL, 2UL)
+            let shrinker (n: UInt128) =
+                let rec closer (d: UInt128) =
+                    seq { if d <> UInt128.Zero then
+                            yield n - d
+                            yield! closer (d / two) }
+                seq { if n <> UInt128.Zero then yield UInt128.Zero
+                      yield! closer (n / two) }
+            Arb.fromGenShrink (Gen.sized (fun s -> Gen.choose (0, s)) |> Gen.map (fun v -> UInt128(0UL, uint64 v)), shrinker)
+        with get
+
+    ///Generates UInt128 values that are unrestricted by size.
+    static member val DoNotSizeUInt128 : Arbitrary<DoNotSize<UInt128>> =
+            let generator = Gen.map2 (fun (hi: DoNotSize<uint64>) (lo: DoNotSize<uint64>) -> UInt128(DoNotSize.Unwrap hi, DoNotSize.Unwrap lo)) Default.DoNotSizeUInt64.Generator Default.DoNotSizeUInt64.Generator
+            Arb.fromGenShrink (generator, Default.UInt128.Shrinker)
+            |> Arb.convert DoNotSize DoNotSize.Unwrap
+        with get
+
+    ///Generates DateOnly values between 1900 and 2100.
+    ///A DateOnly is shrunk by moving to the first day of its month, then to the first day of its year.
+    static member val DateOnly : Arbitrary<DateOnly> =
+            let generator =
+                Gen.choose (DateOnly(1900, 1, 1).DayNumber, DateOnly(2100, 12, 31).DayNumber)
+                |> Gen.map DateOnly.FromDayNumber
+            let shrinker (d: DateOnly) =
+                seq { if d.Day <> 1 then yield DateOnly(d.Year, d.Month, 1)
+                      if d.Month <> 1 then yield DateOnly(d.Year, 1, 1) }
+            Arb.fromGenShrink (generator, shrinker)
+        with get
+
+    ///Generates TimeOnly values over the full range of a day.
+    ///A TimeOnly is shrunk by removing its sub-millisecond, millisecond, second, minute and hour components.
+    static member val TimeOnly : Arbitrary<TimeOnly> =
+            let generator = Gen.choose64 (0L, TimeOnly.MaxValue.Ticks) |> Gen.map (fun t -> TimeOnly(t))
+            let shrinker (t: TimeOnly) =
+                [ TimeOnly(t.Hour, t.Minute, t.Second, t.Millisecond)
+                  TimeOnly(t.Hour, t.Minute, t.Second)
+                  TimeOnly(t.Hour, t.Minute)
+                  TimeOnly(t.Hour, 0)
+                  TimeOnly.MinValue ]
+                |> Seq.filter (fun c -> c < t)
+                |> Seq.distinct
+            Arb.fromGenShrink (generator, shrinker)
+        with get
+
+    ///Generates Rune values: mostly ASCII, sometimes from the rest of the BMP or from the supplementary planes.
+    ///A Rune is shrunk towards 'a', 'b' and 'c'.
+    static member val Rune : Arbitrary<Rune> =
+            let scalar (v: int) = Rune(v)
+            let generator =
+                Gen.frequency [ (7, Gen.choose (0, 127))
+                                (2, Gen.oneof [ Gen.choose (128, 0xD7FF); Gen.choose (0xE000, 0xFFFF) ])
+                                (1, Gen.choose (0x10000, 0x10FFFF)) ]
+                |> Gen.map scalar
+            let shrinker (r: Rune) =
+                seq { for c in [ 'a'; 'b'; 'c' ] do
+                        if int c < r.Value || not (Rune.IsLower r) then yield scalar (int c) }
+                |> Seq.filter (fun c -> c <> r)
+            Arb.fromGenShrink (generator, shrinker)
+        with get
+#endif
 
     /// Generates decimal values that are between -size and size.
     // /Shrinks by yielding zero, abs of the origin and the truncated origin.
