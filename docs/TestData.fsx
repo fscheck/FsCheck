@@ -656,11 +656,12 @@ derive suitable instances using reflection for discriminated unions, record type
 ### Notes about the default Generators and Shrinkers
 
 Most of the default Arbitrary instances are documented with xml comments that can be discovered via IntelliSense.
-However, there are some important things to notice that are listed here to avoid much duplicating comments.
+Here are some important things not mentioned in the xml comments to avoid duplication..
 
-- Most of the default sized generators of the number-like types produce the uniformly distributed values in the ranges specified in the comments.
-- The same thing with the default DoNotSize generators of the number-like types except Decimal.
-- Most of the default generators of the collection types are just "wrappers" around the F# list. Thus, you can assume that they are generated and shrunk the same way.
+- Most of the default sized generators of the number-like types produce uniformly distributed values in size-dependent ranges specified in the comments.
+- The DoNotSize generators of the number-like types except Decimal produce uniformly distributed values in the full range of the type.
+- Most of the collection type generators are wrappers around F# list. You can assume that they are generated and shrunk the same way.
+- The generators for reference types like string do not produce null by default. If that is desired, generate the `NullableRef<T>` type instead - it generates null 1/8 of the time.
     
 ## Useful functions in the Arb and ArbMap modules
 
