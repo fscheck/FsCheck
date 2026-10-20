@@ -1,14 +1,21 @@
 ## 3.6.0 - To be released
 
-* Added default generators and shrinkers for `System.Index` and `System.Range` (#621), `Memory<T>`, `ReadOnlyMemory<T>`, `ReadOnlySequence<T>`, `ValueTask` and `ValueTask<T>`. FsCheck now also targets netstandard2.1, where these types are available.
-* Added a default generator and shrinker for `System.Half`, `Int128`, `UInt128`, `DateOnly`, `TimeOnly` and `Rune`. FsCheck now also targets net8.0, where these types are available.
-* Added `NullableRef<T>` to conveniently generate null values for reference types (#610)
+* Additionally target netstandard2.1 and net8.0.
+
+* Added generators and shrinkers for `System.Index` and `System.Range` (#621), `Memory<T>`, `ReadOnlyMemory<T>`, `ReadOnlySequence<T>`, `ValueTask` and `ValueTask<T>` in netstandard2.1.
+
+* Added generators and shrinkers for `System.Half`, `Int128`, `UInt128`, `DateOnly`, `TimeOnly` and `Rune` in net8.0.
+
+* Added `NullableRef<T>` to conveniently generate nulls for reference types (#610).
 
 ## 3.5.0 - 17 October 2026
 
 * Support NUnit 5 (by Nathan Bierema)
+
 * Added support for NUnit ValueFormatters.
+
 * Added `Gen.delay` to defer generator construction until a value is generated.
+
 * Added support for timeout in xUnit v3.
 
 ## 3.4.0 - 20 August 2026
