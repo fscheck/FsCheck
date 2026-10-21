@@ -35,37 +35,7 @@ module Utils =
             |> Seq.exists containsTaskCancellation
         | _ -> false
 
-    type Waiter (stdout : ResizeArray<string>, stderr : ResizeArray<string>) =
-        let rec go () : Async<unit> = async {
-            do! Async.Sleep (TimeSpan.FromSeconds 10.0)
-            let lastStdout =
-                lock stdout (fun () -> if stdout.Count = 0 then None else Some stdout.[stdout.Count - 1])
-                |> Option.defaultValue "<no output yet>"
-            if lastStdout.Contains ("listener started", StringComparison.OrdinalIgnoreCase) then
-                // `fsdocs watch` will sit there until it's quit, so we just stop watching in that case
-                Console.WriteLine $"\n%s{lastStdout}"
-                return ()
-            else
-                Console.WriteLine $"Last stdout: %s{lastStdout}"
-                let lastStderr =
-                    lock stderr (fun () -> if stderr.Count = 0 then None else Some stderr.[stderr.Count - 1])
-                    |> Option.defaultValue "<no error output yet>"
-                Console.WriteLine $"Last stderr: %s{lastStderr}"
-                return! go ()
-        }
-        let cts = new CancellationTokenSource ()
-
-        let task = Async.StartAsTask (go (), cancellationToken = cts.Token)
-
-        interface IDisposable with
-            member _.Dispose () =
-                cts.Cancel ()
-                try
-                    task.Wait ()
-                with
-                | e when containsTaskCancellation e -> ()
-
-    let runProcessWithOutput (env : Map<string, string>) (command : string) (args : string seq) : string =
+    let runProcessCore (echo : bool) (env : Map<string, string>) (command : string) (args : string seq) : string =
         let psi = ProcessStartInfo (command, args)
         psi.RedirectStandardOutput <- true
         psi.RedirectStandardError <- true
@@ -79,20 +49,26 @@ module Utils =
         // to a full output buffer, but we aren't doing anything to clear the output buffer until the subprocess
         // quits
         let stdoutArr = ResizeArray ()
-        proc.OutputDataReceived.Add (fun evt -> lock stdoutArr (fun () -> stdoutArr.Add evt.Data))
+        proc.OutputDataReceived.Add (fun evt ->
+            lock stdoutArr (fun () ->
+                stdoutArr.Add evt.Data
+                if echo && not (isNull evt.Data) then Console.WriteLine evt.Data
+            )
+        )
         let stderrArr = ResizeArray ()
-        proc.ErrorDataReceived.Add (fun evt -> lock stderrArr (fun () -> stderrArr.Add evt.Data))
+        proc.ErrorDataReceived.Add (fun evt ->
+            lock stderrArr (fun () ->
+                stderrArr.Add evt.Data
+                if echo && not (String.IsNullOrEmpty evt.Data) then Console.WriteLine $"stderr: %s{evt.Data}"
+            )
+        )
 
         if not (proc.Start ()) then
             let args = args |> String.concat " "
             failwith $"Failed to start process '%s{command}' with args: %s{args}"
         proc.BeginOutputReadLine ()
         proc.BeginErrorReadLine ()
-        Console.Write $"(started process %i{proc.Id}) "
-
-        do
-            use waiter = new Waiter (stdoutArr, stderrArr)
-            proc.WaitForExit ()
+        proc.WaitForExit ()
 
         let stdout = stdoutArr |> Seq.filter (fun s -> not (String.IsNullOrEmpty s)) |> String.concat "\n"
 
@@ -106,7 +82,8 @@ module Utils =
 
         stdout
 
-    let inline runProcessWithEnv env command args : unit = runProcessWithOutput env command args |> ignore<string>
+    let runProcessWithOutput env command args : string = runProcessCore false env command args
+    let inline runProcessWithEnv env command args : unit = runProcessCore true env command args |> ignore<string>
     let inline runProcess command args : unit = runProcessWithEnv Map.empty command args
 
     let rec copyDir (source : DirectoryInfo) (target : DirectoryInfo) (overwrite : bool): unit =
@@ -121,9 +98,9 @@ module Utils =
 
 type HaveCleaned = HaveCleaned
 let doClean () : HaveCleaned =
-    Console.Write "Cleaning... "
+    Console.WriteLine "Cleaning..."
     cleanDirectories ["bin" ; "temp" ; "output"]
-    Console.WriteLine "done."
+    Console.WriteLine "Cleaning done."
     HaveCleaned
 
 // ===================
@@ -214,18 +191,17 @@ let packages =
 
 type HaveUpdatedBuildVersion = | HaveUpdatedBuildVersion
 let appveyorBuildVersion (_ : HaveCleaned) : HaveUpdatedBuildVersion =
-    Console.Write "appveyor UpdateBuild... "
+    Console.WriteLine "appveyor UpdateBuild..."
     runProcess "appveyor" ["UpdateBuild" ; "-Version" ; buildVersion]
-    Console.WriteLine "done."
+    Console.WriteLine "appveyor UpdateBuild done."
     HaveUpdatedBuildVersion
 
 // Generate assembly info files with the right version & up-to-date information
 type HaveGeneratedAssemblyInfo = | HaveGeneratedAssemblyInfo
 let generateAssemblyInfo (_ : HaveCleaned) : HaveGeneratedAssemblyInfo =
-    Console.Write "Generating AssemblyInfo files... "
+    Console.WriteLine "Generating AssemblyInfo files..."
     for package in packages do
         let fileName = $"src/%s{package.Name}/AssemblyInfo.fs"
-        Console.Write $"(%s{fileName}) "
 
         let shouldHaveInternalsVisibleTo =
             [
@@ -264,7 +240,7 @@ module internal AssemblyVersionInformation =
     %s{ivtLiteral}
 """
         File.WriteAllText (fileName, assemblyInfoText)
-    Console.WriteLine "done."
+    Console.WriteLine "Generating AssemblyInfo files done."
     HaveGeneratedAssemblyInfo
 
 // --------------------------------------------------------------------------------------
@@ -272,12 +248,12 @@ module internal AssemblyVersionInformation =
 
 type HaveBuilt = HaveBuilt
 let build (_ : HaveCleaned) (_ : HaveGeneratedAssemblyInfo) : HaveBuilt =
-    Console.Write "Performing dotnet restore... "
+    Console.WriteLine "Performing dotnet restore..."
     runProcess "dotnet" ["restore" ; solution]
-    Console.WriteLine "done."
-    Console.Write "Performing dotnet build... "
+    Console.WriteLine "Performing dotnet restore done."
+    Console.WriteLine "Performing dotnet build..."
     runProcess "dotnet" ["build" ; solution ; "--configuration" ; "Release"]
-    Console.WriteLine "done."
+    Console.WriteLine "Performing dotnet build done."
     HaveBuilt
 
 // --------------------------------------------------------------------------------------
@@ -285,7 +261,7 @@ let build (_ : HaveCleaned) (_ : HaveGeneratedAssemblyInfo) : HaveBuilt =
 
 type HaveTested = HaveTested
 let runDotnetTest (_ : HaveCleaned) : HaveTested =
-    Console.Write "Performing dotnet test... "
+    Console.WriteLine "Performing dotnet test..."
     // The xunit v2 project is a VSTest project, which `dotnet test` rejects when global.json selects Microsoft.Testing.Platform.
     for project in ["FsCheck.Test" ; "FsCheck.Test.Xunit.v3" ; "FsCheck.Test.NUnit"] do
         runProcess "dotnet" ["test" ; "--project" ; $"tests/%s{project}" ; "--configuration" ; "Release"]
@@ -293,7 +269,7 @@ let runDotnetTest (_ : HaveCleaned) : HaveTested =
     runProcess "dotnet" ["vstest" ; "tests/FsCheck.Test.Xunit/bin/Release/net10.0/FsCheck.Test.Xunit.dll"]
     runProcess "dotnet" ["build" ; "tests/FsCheck.Test.Xunit.CSharp" ; "--configuration" ; "Release"]
     runProcess "dotnet" ["vstest" ; "tests/FsCheck.Test.Xunit.CSharp/bin/Release/net10.0/FsCheck.Test.Xunit.CSharp.dll"]
-    Console.WriteLine "done."
+    Console.WriteLine "Performing dotnet test done."
     HaveTested
 
 // --------------------------------------------------------------------------------------
@@ -304,7 +280,7 @@ let base64 (s : string) =
 
 type HavePacked = HavePacked
 let packNuGet (_ : HaveTested) : HavePacked =
-    Console.Write "Performing dotnet pack... "
+    Console.WriteLine "Performing dotnet pack..."
     let releaseNotes =
         releaseNotes.Notes
         |> String.concat "\n"
@@ -338,12 +314,12 @@ let packNuGet (_ : HaveTested) : HavePacked =
             use writer = new StreamWriter (newContents)
             writer.Write desiredContents
 
-    Console.WriteLine "done."
+    Console.WriteLine "Performing dotnet pack done."
     HavePacked
 
 type HavePushed = HavePushed
 let pushNuGet (_ : HaveTested) (_ : HavePacked) =
-    Console.Write "Performing NuGet push... "
+    Console.WriteLine "Performing NuGet push..."
     let nugetKey =
         match Environment.GetEnvironmentVariable "NUGET_KEY" with
         | null ->
@@ -362,7 +338,7 @@ let pushNuGet (_ : HaveTested) (_ : HavePacked) =
             runProcessWithEnv env "cmd" ["/c" ; $"dotnet nuget push %s{package} --api-key %%NUGET_KEY%% --source https://api.nuget.org/v3/index.json"]
         else
             runProcessWithEnv env "sh" ["-c" ; $"dotnet nuget push %s{package} --api-key \"$NUGET_KEY\" --source https://api.nuget.org/v3/index.json"]
-    Console.WriteLine "done."
+    Console.WriteLine "Performing NuGet push done."
     HavePushed
 
 // --------------------------------------------------------------------------------------
@@ -381,7 +357,7 @@ let fsdocProperties = [
 
 type HaveGeneratedDocs = HaveGeneratedDocs
 let docs (_ : HaveBuilt) : HaveGeneratedDocs =
-    Console.Write "Running fsdocs build... "
+    Console.WriteLine "Running fsdocs build..."
     cleanDirectories [".fsdocs"]
 
     [
@@ -392,12 +368,12 @@ let docs (_ : HaveBuilt) : HaveGeneratedDocs =
     |> runProcess "dotnet"
 
     let cwd = Environment.CurrentDirectory
-    Console.WriteLine $"done (access at %s{cwd}/output/index.html)."
+    Console.WriteLine $"Running fsdocs build done (access at %s{cwd}/output/index.html)."
 
     HaveGeneratedDocs
 
 let watchDocs () =
-    Console.Write "Running fsdocs watch... "
+    Console.WriteLine "Running fsdocs watch..."
     cleanDirectories [".fsdocs"]
 
     [
@@ -407,13 +383,13 @@ let watchDocs () =
         "--parameters" ; yield! fsdocParameters
     ]
     |> runProcess "dotnet"
-    Console.WriteLine "fsdocs watch completed."
+    Console.WriteLine "Running fsdocs watch done."
 
 // --------------------------------------------------------------------------------------
 // Release Scripts
 
 let releaseDocs (_ : HaveGeneratedDocs) =
-    Console.Write "Releasing docs to gh-pages branch... "
+    Console.WriteLine "Releasing docs to gh-pages branch..."
     let tempDocsDir = "temp/gh-pages"
     cleanDirectories [tempDocsDir]
     let tempDocsDir = Directory.CreateDirectory tempDocsDir
@@ -424,7 +400,7 @@ let releaseDocs (_ : HaveGeneratedDocs) =
     runProcess "git" ["-C" ; tempDocsDir.FullName ; "add" ; "--all"]
     runProcess "git" ["-C" ; tempDocsDir.FullName ; "commit" ; "--all" ; "--message" ; $"Update generated documentation for version %s{buildVersion}"]
     runProcess "git" ["-C" ; tempDocsDir.FullName ; "push"]
-    Console.WriteLine "done."
+    Console.WriteLine "Releasing docs to gh-pages branch done."
 
 let rec getUserInput (prompt : string) =
     Console.Write $"%s{prompt}: "
@@ -544,7 +520,7 @@ let gitHubRelease (_ : HaveTested) =
 
     Console.WriteLine $"Parsed GitHub response: %+A{output}"
 
-    Console.WriteLine "done."
+    Console.WriteLine "Creating GitHub release done."
 
 let runCi (_ : HaveGeneratedDocs) (_ : HaveTested) (_ : HavePacked) =
     // this is just a target to note that we have done all the above
