@@ -51,14 +51,23 @@ if (root && searchBtn) {
     const resultsElement = document.querySelector("dialog ul");
     const searchBox = document.querySelector("dialog input[type=search]");
 
-    searchBtn.addEventListener("click", () => {
+    function openSearch() {
         searchDialog.showModal();
-    })
+        searchBox.focus();
+    }
+
+    function closeSearch() {
+        searchBox.value = '';
+        empty.textContent = "Type something to start searching.";
+        clearResults();
+        searchDialog.close();
+    }
+
+    searchBtn.addEventListener("click", openSearch)
 
     searchDialog.addEventListener("click", ev => {
         if (ev.target.tagName === "DIALOG") {
-            searchBox.value = '';
-            searchDialog.close()
+            closeSearch();
         }
     })
 
@@ -112,13 +121,21 @@ if (root && searchBtn) {
         }
     });
 
-    window.addEventListener('keyup', ev => {
+    window.addEventListener('keydown', ev => {
         if (ev.key === 'Escape' && searchDialog.open) {
-            searchDialog.close();
+            ev.preventDefault();
+            closeSearch();
         }
 
-        if (ev.key === '/' && !searchDialog.open) {
-            searchDialog.showModal();
+        const focusedTag = document.activeElement?.tagName;
+        const isTypingInInput = focusedTag === 'INPUT' || focusedTag === 'TEXTAREA';
+        const isShortcut =
+            (ev.key === '/' && !isTypingInInput) ||
+            (ev.key === 'k' && (ev.ctrlKey || ev.metaKey));
+
+        if (isShortcut && !searchDialog.open) {
+            ev.preventDefault();
+            openSearch();
         }
     })
 } else {

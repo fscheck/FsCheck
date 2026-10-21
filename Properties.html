@@ -75,7 +75,7 @@
   </a>
 </li>             
 <li class="nav-item ">
-  <a class="nav-link" href="https://fscheck.github.io/FsCheck/StatefulTestingNew.html">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/StatefulTesting.html">
     Model-based Testing (Experimental)
 
   </a>
@@ -109,7 +109,7 @@
             </ul>
         </div>
         <a href="https://fscheck.github.io/FsCheck/">
-            <img alt="Header menu logo" src="https://fscheck.github.io/FsCheck/img/logo.png">
+            <img alt="Logo" src="https://fscheck.github.io/FsCheck/img/logo.png">
             <strong>FsCheck</strong>
         </a>
     </div>
@@ -159,7 +159,7 @@
   </a>
 </li>             
 <li class="nav-item ">
-  <a class="nav-link" href="https://fscheck.github.io/FsCheck/StatefulTestingNew.html">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/StatefulTesting.html">
     Model-based Testing (Experimental)
 
   </a>
@@ -197,7 +197,7 @@
         <h1><a name="Properties" class="anchor" href="#Properties">Properties</a></h1>
 <p>Properties are expressed as F# function definitions or C# lambdas or methods.
 Properties are universally quantified over their parameters, so:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="fn">revRevIsOrig</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs5', 6)" onmouseover="showTip(event, 'fs5', 6)" class="fn">xs</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs6', 7)" onmouseover="showTip(event, 'fs6', 7)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs7', 8)" onmouseover="showTip(event, 'fs7', 8)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 10)" onmouseover="showTip(event, 'fs9', 10)" class="id">rev</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs8', 11)" onmouseover="showTip(event, 'fs8', 11)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs9', 12)" onmouseover="showTip(event, 'fs9', 12)" class="id">rev</span> <span onmouseout="hideTip(event, 'fs5', 13)" onmouseover="showTip(event, 'fs5', 13)" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 14)" onmouseover="showTip(event, 'fs5', 14)" class="fn">xs</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs4" data-fsdocs-tip-unique="5" class="fn">revRevIsOrig</span> <span class="pn">(</span><span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="6" class="fn">xs</span><span class="pn">:</span><span data-fsdocs-tip="fs6" data-fsdocs-tip-unique="7" class="rt">list</span><span class="pn">&lt;</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="8" class="vt">int</span><span class="pn">&gt;</span><span class="pn">)</span> <span class="o">=</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="9" class="m">List</span><span class="pn">.</span><span data-fsdocs-tip="fs9" data-fsdocs-tip-unique="10" class="id">rev</span><span class="pn">(</span><span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="11" class="m">List</span><span class="pn">.</span><span data-fsdocs-tip="fs9" data-fsdocs-tip-unique="12" class="id">rev</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="13" class="fn">xs</span><span class="pn">)</span> <span class="o">=</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="14" class="fn">xs</span>
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">static</span> <span class="k">bool</span> RevRevIsOriginal(<span class="k">int</span>[] ts) {
     <span class="k">return</span> ts.Reverse().Reverse().SequenceEqual(ts);
@@ -215,12 +215,12 @@ a test passes if it does not throw. The entry point to create properties is the 
 <h2><a name="Conditional-Properties" class="anchor" href="#Conditional-Properties">Conditional Properties</a></h2>
 <p>Properties may take the form <code>&lt;condition&gt; ==&gt; &lt;property&gt;</code></p>
 <p>For example:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 42)" onmouseover="showTip(event, 'fs18', 42)" class="fn">insertKeepsOrder</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs19', 43)" onmouseover="showTip(event, 'fs19', 43)" class="fn">x</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs7', 44)" onmouseover="showTip(event, 'fs7', 44)" class="vt">int</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs5', 45)" onmouseover="showTip(event, 'fs5', 45)" class="fn">xs</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs10', 46)" onmouseover="showTip(event, 'fs10', 46)" class="fn">ordered</span> <span onmouseout="hideTip(event, 'fs5', 47)" onmouseover="showTip(event, 'fs5', 47)" class="fn">xs</span> <span class="o">==&gt;</span> <span onmouseout="hideTip(event, 'fs10', 48)" onmouseover="showTip(event, 'fs10', 48)" class="fn">ordered</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs15', 49)" onmouseover="showTip(event, 'fs15', 49)" class="fn">insert</span> <span onmouseout="hideTip(event, 'fs19', 50)" onmouseover="showTip(event, 'fs19', 50)" class="fn">x</span> <span onmouseout="hideTip(event, 'fs5', 51)" onmouseover="showTip(event, 'fs5', 51)" class="fn">xs</span><span class="pn">)</span>
-<span onmouseout="hideTip(event, 'fs20', 52)" onmouseover="showTip(event, 'fs20', 52)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 53)" onmouseover="showTip(event, 'fs21', 53)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs18', 54)" onmouseover="showTip(event, 'fs18', 54)" class="fn">insertKeepsOrder</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs18" data-fsdocs-tip-unique="42" class="fn">insertKeepsOrder</span> <span class="pn">(</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="43" class="fn">x</span><span class="pn">:</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="44" class="vt">int</span><span class="pn">)</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="45" class="fn">xs</span> <span class="o">=</span> <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="46" class="fn">ordered</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="47" class="fn">xs</span> <span class="o">==&gt;</span> <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="48" class="fn">ordered</span> <span class="pn">(</span><span data-fsdocs-tip="fs15" data-fsdocs-tip-unique="49" class="fn">insert</span> <span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="50" class="fn">x</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="51" class="fn">xs</span><span class="pn">)</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="52" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="53" class="id">Quick</span> <span data-fsdocs-tip="fs18" data-fsdocs-tip-unique="54" class="fn">insertKeepsOrder</span>
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span> xs.Insert(x).IsOrdered().When(xs.IsOrdered()))
     .QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 22 tests.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 17 tests.</code></pre></td></tr></table>
 <p>Such a property holds if the property after <code>==&gt;</code> holds whenever the condition does.</p>
 <p>Testing discards test cases which do not satisfy the condition. Test case generation
 continues until 100 cases which do satisfy the condition have been found, or until
@@ -235,22 +235,13 @@ restriction, FsCheck could generate lists containing different types (subtypes o
 it evaluates the property at the right of the condition no matter what the
 outcome of the condition on the left. While only a performance consideration in the above
 example, this may limit the expressiveness of properties - consider:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 55)" onmouseover="showTip(event, 'fs22', 55)" class="fn">tooEager</span> <span onmouseout="hideTip(event, 'fs23', 56)" onmouseover="showTip(event, 'fs23', 56)" class="fn">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs23', 57)" onmouseover="showTip(event, 'fs23', 57)" class="fn">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="pn">(</span><span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs23', 58)" onmouseover="showTip(event, 'fs23', 58)" class="fn">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs23', 59)" onmouseover="showTip(event, 'fs23', 59)" class="fn">a</span><span class="pn">)</span>
-<span onmouseout="hideTip(event, 'fs20', 60)" onmouseover="showTip(event, 'fs20', 60)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 61)" onmouseover="showTip(event, 'fs21', 61)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs22', 62)" onmouseover="showTip(event, 'fs22', 62)" class="fn">tooEager</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs22" data-fsdocs-tip-unique="55" class="fn">tooEager</span> <span data-fsdocs-tip="fs23" data-fsdocs-tip-unique="56" class="fn">a</span> <span class="o">=</span> <span data-fsdocs-tip="fs23" data-fsdocs-tip-unique="57" class="fn">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="pn">(</span><span class="n">1</span><span class="o">/</span><span data-fsdocs-tip="fs23" data-fsdocs-tip-unique="58" class="fn">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span data-fsdocs-tip="fs23" data-fsdocs-tip-unique="59" class="fn">a</span><span class="pn">)</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="60" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="61" class="id">Quick</span> <span data-fsdocs-tip="fs22" data-fsdocs-tip-unique="62" class="fn">tooEager</span>
 </code></pre>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (14698680111560867978,12375897430027891879). 
-Last step was invoked with size of 2 and seed of (15546221375514726807,7718696210858483429):
-Original:
-0
-with exception:
-System.DivideByZeroException: Attempted to divide by zero.
-   at FSI_0019.tooEager(Int32 a)
-   at System.Lazy`1.ViaFactory(LazyThreadSafetyMode mode)
-   at System.Lazy`1.CreateValue()
-   at FsCheck.Testable.Prop.safeForce[a](Lazy`1 body) in C:\Users\kurts\Projects\FsCheck\src\FsCheck\Testable.fs:line 164</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 <p>Non-strict evaluation is needed here to make sure the property is checked correctly:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs24', 63)" onmouseover="showTip(event, 'fs24', 63)" class="fn">moreLazy</span> <span onmouseout="hideTip(event, 'fs23', 64)" onmouseover="showTip(event, 'fs23', 64)" class="fn">a</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs23', 65)" onmouseover="showTip(event, 'fs23', 65)" class="fn">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="pn">(</span><span class="k">lazy</span> <span class="pn">(</span><span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs23', 66)" onmouseover="showTip(event, 'fs23', 66)" class="fn">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs23', 67)" onmouseover="showTip(event, 'fs23', 67)" class="fn">a</span><span class="pn">)</span><span class="pn">)</span>
-<span onmouseout="hideTip(event, 'fs20', 68)" onmouseover="showTip(event, 'fs20', 68)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 69)" onmouseover="showTip(event, 'fs21', 69)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs24', 70)" onmouseover="showTip(event, 'fs24', 70)" class="fn">moreLazy</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs24" data-fsdocs-tip-unique="63" class="fn">moreLazy</span> <span data-fsdocs-tip="fs23" data-fsdocs-tip-unique="64" class="fn">a</span> <span class="o">=</span> <span data-fsdocs-tip="fs23" data-fsdocs-tip-unique="65" class="fn">a</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="pn">(</span><span class="k">lazy</span> <span class="pn">(</span><span class="n">1</span><span class="o">/</span><span data-fsdocs-tip="fs23" data-fsdocs-tip-unique="66" class="fn">a</span> <span class="o">=</span> <span class="n">1</span><span class="o">/</span><span data-fsdocs-tip="fs23" data-fsdocs-tip-unique="67" class="fn">a</span><span class="pn">)</span><span class="pn">)</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="68" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="69" class="id">Quick</span> <span data-fsdocs-tip="fs24" data-fsdocs-tip-unique="70" class="fn">moreLazy</span>
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>&gt;(a <span class="o">=</span><span class="o">&gt;</span> <span class="k">new</span> Func&lt;<span class="k">bool</span>&gt;(() <span class="o">=</span><span class="o">&gt;</span> <span class="n">1</span> <span class="o">/</span> a <span class="o">=</span><span class="o">=</span> <span class="n">1</span> <span class="o">/</span> a).When(a <span class="o">!</span><span class="o">=</span> <span class="n">0</span>))
     .QuickCheck();</code></pre></td></tr></table>
@@ -258,9 +249,9 @@ System.DivideByZeroException: Attempted to divide by zero.
 <h2><a name="Quantified-Properties" class="anchor" href="#Quantified-Properties">Quantified Properties</a></h2>
 <p>Properties may take the form <code>forAll &lt;arbitrary&gt;  (fun &lt;args&gt; -&gt; &lt;property&gt;)</code>.</p>
 <p>For example:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs25', 71)" onmouseover="showTip(event, 'fs25', 71)" class="id">orderedList</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs26', 72)" onmouseover="showTip(event, 'fs26', 72)" class="m">ArbMap</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs27', 73)" onmouseover="showTip(event, 'fs27', 73)" class="id">defaults</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs26', 74)" onmouseover="showTip(event, 'fs26', 74)" class="m">ArbMap</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs28', 75)" onmouseover="showTip(event, 'fs28', 75)" class="id">arbitrary</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs6', 76)" onmouseover="showTip(event, 'fs6', 76)" class="rt">list</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs7', 77)" onmouseover="showTip(event, 'fs7', 77)" class="vt">int</span><span class="pn">&gt;</span><span class="pn">&gt;</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs29', 78)" onmouseover="showTip(event, 'fs29', 78)" class="m">Arb</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs30', 79)" onmouseover="showTip(event, 'fs30', 79)" class="id">mapFilter</span> <span onmouseout="hideTip(event, 'fs8', 80)" onmouseover="showTip(event, 'fs8', 80)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs31', 81)" onmouseover="showTip(event, 'fs31', 81)" class="id">sort</span> <span onmouseout="hideTip(event, 'fs10', 82)" onmouseover="showTip(event, 'fs10', 82)" class="fn">ordered</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs32', 83)" onmouseover="showTip(event, 'fs32', 83)" class="fn">insertWithArb</span> <span onmouseout="hideTip(event, 'fs19', 84)" onmouseover="showTip(event, 'fs19', 84)" class="fn">x</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs33', 85)" onmouseover="showTip(event, 'fs33', 85)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs34', 86)" onmouseover="showTip(event, 'fs34', 86)" class="id">forAll</span> <span onmouseout="hideTip(event, 'fs25', 87)" onmouseover="showTip(event, 'fs25', 87)" class="id">orderedList</span> <span class="pn">(</span><span class="k">fun</span> <span onmouseout="hideTip(event, 'fs5', 88)" onmouseover="showTip(event, 'fs5', 88)" class="fn">xs</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs10', 89)" onmouseover="showTip(event, 'fs10', 89)" class="fn">ordered</span><span class="pn">(</span><span onmouseout="hideTip(event, 'fs15', 90)" onmouseover="showTip(event, 'fs15', 90)" class="fn">insert</span> <span onmouseout="hideTip(event, 'fs19', 91)" onmouseover="showTip(event, 'fs19', 91)" class="fn">x</span> <span onmouseout="hideTip(event, 'fs5', 92)" onmouseover="showTip(event, 'fs5', 92)" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span>
-<span onmouseout="hideTip(event, 'fs20', 93)" onmouseover="showTip(event, 'fs20', 93)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 94)" onmouseover="showTip(event, 'fs21', 94)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs32', 95)" onmouseover="showTip(event, 'fs32', 95)" class="fn">insertWithArb</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs25" data-fsdocs-tip-unique="71" class="id">orderedList</span> <span class="o">=</span> <span data-fsdocs-tip="fs26" data-fsdocs-tip-unique="72" class="m">ArbMap</span><span class="pn">.</span><span data-fsdocs-tip="fs27" data-fsdocs-tip-unique="73" class="id">defaults</span> <span class="o">|&gt;</span> <span data-fsdocs-tip="fs26" data-fsdocs-tip-unique="74" class="m">ArbMap</span><span class="pn">.</span><span data-fsdocs-tip="fs28" data-fsdocs-tip-unique="75" class="id">arbitrary</span><span class="pn">&lt;</span><span data-fsdocs-tip="fs6" data-fsdocs-tip-unique="76" class="rt">list</span><span class="pn">&lt;</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="77" class="vt">int</span><span class="pn">&gt;</span><span class="pn">&gt;</span> <span class="o">|&gt;</span> <span data-fsdocs-tip="fs29" data-fsdocs-tip-unique="78" class="m">Arb</span><span class="pn">.</span><span data-fsdocs-tip="fs30" data-fsdocs-tip-unique="79" class="id">mapFilter</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="80" class="m">List</span><span class="pn">.</span><span data-fsdocs-tip="fs31" data-fsdocs-tip-unique="81" class="id">sort</span> <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="82" class="fn">ordered</span>
+<span class="k">let</span> <span data-fsdocs-tip="fs32" data-fsdocs-tip-unique="83" class="fn">insertWithArb</span> <span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="84" class="fn">x</span> <span class="o">=</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="85" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs34" data-fsdocs-tip-unique="86" class="id">forAll</span> <span data-fsdocs-tip="fs25" data-fsdocs-tip-unique="87" class="id">orderedList</span> <span class="pn">(</span><span class="k">fun</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="88" class="fn">xs</span> <span class="k">-&gt;</span> <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="89" class="fn">ordered</span><span class="pn">(</span><span data-fsdocs-tip="fs15" data-fsdocs-tip-unique="90" class="fn">insert</span> <span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="91" class="fn">x</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="92" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="93" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="94" class="id">Quick</span> <span data-fsdocs-tip="fs32" data-fsdocs-tip-unique="95" class="fn">insertWithArb</span>
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">var</span> orderedList <span class="o">=</span> ArbMap.Default.ArbFor&lt;<span class="k">int</span>[]<span class="o">&gt;</span>()
                      .MapFilter(xs <span class="o">=</span><span class="o">&gt;</span> xs.OrderBy(i <span class="o">=</span><span class="o">&gt;</span> i).ToArray(), xs <span class="o">=</span><span class="o">&gt;</span> xs.IsOrdered());
@@ -279,8 +270,8 @@ Combinators for defining generators are described in <a href="TestData.html">Tes
 <h2><a name="Expecting-exceptions" class="anchor" href="#Expecting-exceptions">Expecting exceptions</a></h2>
 <p>You may want to test that a function or method throws an exception under certain circumstances.
 Use <code>throws&lt;'e :&gt; exn,'a&gt; Lazy&lt;'a&gt;</code> to achieve this. For example:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 96)" onmouseover="showTip(event, 'fs35', 96)" class="fn">expectDivideByZero</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs33', 97)" onmouseover="showTip(event, 'fs33', 97)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs36', 98)" onmouseover="showTip(event, 'fs36', 98)" class="id">throws</span><span class="pn">&lt;</span><span onmouseout="hideTip(event, 'fs37', 99)" onmouseover="showTip(event, 'fs37', 99)" class="rt">DivideByZeroException</span><span class="pn">,</span><span class="id">_</span><span class="pn">&gt;</span> <span class="pn">(</span><span class="k">lazy</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs38', 100)" onmouseover="showTip(event, 'fs38', 100)" class="k">raise</span> <span class="o">&lt;|</span> <span onmouseout="hideTip(event, 'fs37', 101)" onmouseover="showTip(event, 'fs37', 101)" class="fn">DivideByZeroException</span><span class="pn">(</span><span class="pn">)</span><span class="pn">)</span><span class="pn">)</span>
-<span onmouseout="hideTip(event, 'fs20', 102)" onmouseover="showTip(event, 'fs20', 102)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 103)" onmouseover="showTip(event, 'fs21', 103)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs35', 104)" onmouseover="showTip(event, 'fs35', 104)" class="fn">expectDivideByZero</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs35" data-fsdocs-tip-unique="96" class="fn">expectDivideByZero</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="97" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs36" data-fsdocs-tip-unique="98" class="id">throws</span><span class="pn">&lt;</span><span data-fsdocs-tip="fs37" data-fsdocs-tip-unique="99" class="rt">DivideByZeroException</span><span class="pn">,</span><span class="id">_</span><span class="pn">&gt;</span> <span class="pn">(</span><span class="k">lazy</span> <span class="pn">(</span><span data-fsdocs-tip="fs38" data-fsdocs-tip-unique="100" class="k">raise</span> <span class="o">&lt;|</span> <span data-fsdocs-tip="fs37" data-fsdocs-tip-unique="101" class="fn">DivideByZeroException</span><span class="pn">(</span><span class="pn">)</span><span class="pn">)</span><span class="pn">)</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="102" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="103" class="id">Quick</span> <span data-fsdocs-tip="fs35" data-fsdocs-tip-unique="104" class="fn">expectDivideByZero</span>
 </code></pre>
 <table class="pre"><tr><td><pre><code>Ok, passed 100 tests.</code></pre></td></tr></table>
 <pre class="fssnip highlighted"><code lang="fsharp">  
@@ -298,10 +289,10 @@ are then summarized when testing is complete.</p>
 <h3><a name="Counting-Trivial-Cases" class="anchor" href="#Counting-Trivial-Cases">Counting Trivial Cases</a></h3>
 <p>A property may take the form <code>trivial &lt;condition&gt; &lt;property&gt;</code></p>
 <p>For example:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs39', 105)" onmouseover="showTip(event, 'fs39', 105)" class="fn">insertTrivial</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs19', 106)" onmouseover="showTip(event, 'fs19', 106)" class="fn">x</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs7', 107)" onmouseover="showTip(event, 'fs7', 107)" class="vt">int</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs5', 108)" onmouseover="showTip(event, 'fs5', 108)" class="fn">xs</span> <span class="o">=</span> 
-  <span onmouseout="hideTip(event, 'fs10', 109)" onmouseover="showTip(event, 'fs10', 109)" class="fn">ordered</span> <span onmouseout="hideTip(event, 'fs5', 110)" onmouseover="showTip(event, 'fs5', 110)" class="fn">xs</span> <span class="o">==&gt;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 111)" onmouseover="showTip(event, 'fs10', 111)" class="fn">ordered</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs15', 112)" onmouseover="showTip(event, 'fs15', 112)" class="fn">insert</span> <span onmouseout="hideTip(event, 'fs19', 113)" onmouseover="showTip(event, 'fs19', 113)" class="fn">x</span> <span onmouseout="hideTip(event, 'fs5', 114)" onmouseover="showTip(event, 'fs5', 114)" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span>
-  <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 115)" onmouseover="showTip(event, 'fs33', 115)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs40', 116)" onmouseover="showTip(event, 'fs40', 116)" class="id">trivial</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs8', 117)" onmouseover="showTip(event, 'fs8', 117)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs41', 118)" onmouseover="showTip(event, 'fs41', 118)" class="id">length</span> <span onmouseout="hideTip(event, 'fs5', 119)" onmouseover="showTip(event, 'fs5', 119)" class="fn">xs</span> <span class="o">=</span> <span class="n">0</span><span class="pn">)</span>
-<span onmouseout="hideTip(event, 'fs20', 120)" onmouseover="showTip(event, 'fs20', 120)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 121)" onmouseover="showTip(event, 'fs21', 121)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs39', 122)" onmouseover="showTip(event, 'fs39', 122)" class="fn">insertTrivial</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs39" data-fsdocs-tip-unique="105" class="fn">insertTrivial</span> <span class="pn">(</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="106" class="fn">x</span><span class="pn">:</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="107" class="vt">int</span><span class="pn">)</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="108" class="fn">xs</span> <span class="o">=</span> 
+  <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="109" class="fn">ordered</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="110" class="fn">xs</span> <span class="o">==&gt;</span> <span class="pn">(</span><span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="111" class="fn">ordered</span> <span class="pn">(</span><span data-fsdocs-tip="fs15" data-fsdocs-tip-unique="112" class="fn">insert</span> <span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="113" class="fn">x</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="114" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span>
+  <span class="o">|&gt;</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="115" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs40" data-fsdocs-tip-unique="116" class="id">trivial</span> <span class="pn">(</span><span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="117" class="m">List</span><span class="pn">.</span><span data-fsdocs-tip="fs41" data-fsdocs-tip-unique="118" class="id">length</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="119" class="fn">xs</span> <span class="o">=</span> <span class="n">0</span><span class="pn">)</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="120" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="121" class="id">Quick</span> <span data-fsdocs-tip="fs39" data-fsdocs-tip-unique="122" class="fn">insertTrivial</span>
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span>
             xs.Insert(x).IsOrdered()
@@ -310,15 +301,15 @@ are then summarized when testing is complete.</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>Test cases for which the condition is true are classified as trivial, and the proportion of
 trivial test cases in the total is reported:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 19 tests (36% trivial).</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 13 tests (23% trivial).</code></pre></td></tr></table>
 <h3><a name="Classifying-Test-Cases" class="anchor" href="#Classifying-Test-Cases">Classifying Test Cases</a></h3>
 <p>A property may take the form <code>classify &lt;condition&gt; &lt;string&gt; &lt;property&gt;</code></p>
 <p>For example:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs42', 123)" onmouseover="showTip(event, 'fs42', 123)" class="fn">insertClassify</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs19', 124)" onmouseover="showTip(event, 'fs19', 124)" class="fn">x</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs7', 125)" onmouseover="showTip(event, 'fs7', 125)" class="vt">int</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs5', 126)" onmouseover="showTip(event, 'fs5', 126)" class="fn">xs</span> <span class="o">=</span> 
-  <span onmouseout="hideTip(event, 'fs10', 127)" onmouseover="showTip(event, 'fs10', 127)" class="fn">ordered</span> <span onmouseout="hideTip(event, 'fs5', 128)" onmouseover="showTip(event, 'fs5', 128)" class="fn">xs</span> <span class="o">==&gt;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 129)" onmouseover="showTip(event, 'fs10', 129)" class="fn">ordered</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs15', 130)" onmouseover="showTip(event, 'fs15', 130)" class="fn">insert</span> <span onmouseout="hideTip(event, 'fs19', 131)" onmouseover="showTip(event, 'fs19', 131)" class="fn">x</span> <span onmouseout="hideTip(event, 'fs5', 132)" onmouseover="showTip(event, 'fs5', 132)" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span>
-  <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 133)" onmouseover="showTip(event, 'fs33', 133)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs43', 134)" onmouseover="showTip(event, 'fs43', 134)" class="id">classify</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 135)" onmouseover="showTip(event, 'fs10', 135)" class="fn">ordered</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs19', 136)" onmouseover="showTip(event, 'fs19', 136)" class="fn">x</span><span class="uc">::</span><span onmouseout="hideTip(event, 'fs5', 137)" onmouseover="showTip(event, 'fs5', 137)" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span> <span class="s">&quot;at-head&quot;</span>
-  <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 138)" onmouseover="showTip(event, 'fs33', 138)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs43', 139)" onmouseover="showTip(event, 'fs43', 139)" class="id">classify</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 140)" onmouseover="showTip(event, 'fs10', 140)" class="fn">ordered</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs5', 141)" onmouseover="showTip(event, 'fs5', 141)" class="fn">xs</span> <span class="o">@</span> <span class="pn">[</span><span onmouseout="hideTip(event, 'fs19', 142)" onmouseover="showTip(event, 'fs19', 142)" class="fn">x</span><span class="pn">]</span><span class="pn">)</span><span class="pn">)</span> <span class="s">&quot;at-tail&quot;</span>
-<span onmouseout="hideTip(event, 'fs20', 143)" onmouseover="showTip(event, 'fs20', 143)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 144)" onmouseover="showTip(event, 'fs21', 144)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs42', 145)" onmouseover="showTip(event, 'fs42', 145)" class="fn">insertClassify</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs42" data-fsdocs-tip-unique="123" class="fn">insertClassify</span> <span class="pn">(</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="124" class="fn">x</span><span class="pn">:</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="125" class="vt">int</span><span class="pn">)</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="126" class="fn">xs</span> <span class="o">=</span> 
+  <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="127" class="fn">ordered</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="128" class="fn">xs</span> <span class="o">==&gt;</span> <span class="pn">(</span><span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="129" class="fn">ordered</span> <span class="pn">(</span><span data-fsdocs-tip="fs15" data-fsdocs-tip-unique="130" class="fn">insert</span> <span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="131" class="fn">x</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="132" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span>
+  <span class="o">|&gt;</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="133" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs43" data-fsdocs-tip-unique="134" class="id">classify</span> <span class="pn">(</span><span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="135" class="fn">ordered</span> <span class="pn">(</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="136" class="fn">x</span><span class="uc">::</span><span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="137" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span> <span class="s">&quot;at-head&quot;</span>
+  <span class="o">|&gt;</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="138" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs43" data-fsdocs-tip-unique="139" class="id">classify</span> <span class="pn">(</span><span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="140" class="fn">ordered</span> <span class="pn">(</span><span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="141" class="fn">xs</span> <span class="o">@</span> <span class="pn">[</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="142" class="fn">x</span><span class="pn">]</span><span class="pn">)</span><span class="pn">)</span> <span class="s">&quot;at-tail&quot;</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="143" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="144" class="id">Quick</span> <span data-fsdocs-tip="fs42" data-fsdocs-tip-unique="145" class="fn">insertClassify</span>
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span>
         xs.Insert(x).IsOrdered()
@@ -328,18 +319,18 @@ trivial test cases in the total is reported:</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>Test cases satisfying the condition are assigned the classification given, and the distribution of
 classifications is reported after testing:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 23 tests.
-39% at-tail, at-head.
-30% at-head.
-17% at-tail.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 17 tests.
+41% at-tail.
+29% at-head.
+23% at-tail, at-head.</code></pre></td></tr></table>
 <p>Note that a test case may fall into more than one classification.</p>
 <h3><a name="Collecting-Data-Values" class="anchor" href="#Collecting-Data-Values">Collecting Data Values</a></h3>
 <p>A property may take the form <code>collect &lt;expression&gt; &lt;property&gt;</code></p>
 <p>For example:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs44', 146)" onmouseover="showTip(event, 'fs44', 146)" class="fn">insertCollect</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs19', 147)" onmouseover="showTip(event, 'fs19', 147)" class="fn">x</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs7', 148)" onmouseover="showTip(event, 'fs7', 148)" class="vt">int</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs5', 149)" onmouseover="showTip(event, 'fs5', 149)" class="fn">xs</span> <span class="o">=</span> 
-  <span onmouseout="hideTip(event, 'fs10', 150)" onmouseover="showTip(event, 'fs10', 150)" class="fn">ordered</span> <span onmouseout="hideTip(event, 'fs5', 151)" onmouseover="showTip(event, 'fs5', 151)" class="fn">xs</span> <span class="o">==&gt;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 152)" onmouseover="showTip(event, 'fs10', 152)" class="fn">ordered</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs15', 153)" onmouseover="showTip(event, 'fs15', 153)" class="fn">insert</span> <span onmouseout="hideTip(event, 'fs19', 154)" onmouseover="showTip(event, 'fs19', 154)" class="fn">x</span> <span onmouseout="hideTip(event, 'fs5', 155)" onmouseover="showTip(event, 'fs5', 155)" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span>
-      <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 156)" onmouseover="showTip(event, 'fs33', 156)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs45', 157)" onmouseover="showTip(event, 'fs45', 157)" class="id">collect</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs8', 158)" onmouseover="showTip(event, 'fs8', 158)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs41', 159)" onmouseover="showTip(event, 'fs41', 159)" class="id">length</span> <span onmouseout="hideTip(event, 'fs5', 160)" onmouseover="showTip(event, 'fs5', 160)" class="fn">xs</span><span class="pn">)</span>
-<span onmouseout="hideTip(event, 'fs20', 161)" onmouseover="showTip(event, 'fs20', 161)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 162)" onmouseover="showTip(event, 'fs21', 162)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs44', 163)" onmouseover="showTip(event, 'fs44', 163)" class="fn">insertCollect</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs44" data-fsdocs-tip-unique="146" class="fn">insertCollect</span> <span class="pn">(</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="147" class="fn">x</span><span class="pn">:</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="148" class="vt">int</span><span class="pn">)</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="149" class="fn">xs</span> <span class="o">=</span> 
+  <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="150" class="fn">ordered</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="151" class="fn">xs</span> <span class="o">==&gt;</span> <span class="pn">(</span><span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="152" class="fn">ordered</span> <span class="pn">(</span><span data-fsdocs-tip="fs15" data-fsdocs-tip-unique="153" class="fn">insert</span> <span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="154" class="fn">x</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="155" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span>
+      <span class="o">|&gt;</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="156" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs45" data-fsdocs-tip-unique="157" class="id">collect</span> <span class="pn">(</span><span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="158" class="m">List</span><span class="pn">.</span><span data-fsdocs-tip="fs41" data-fsdocs-tip-unique="159" class="id">length</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="160" class="fn">xs</span><span class="pn">)</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="161" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="162" class="id">Quick</span> <span data-fsdocs-tip="fs44" data-fsdocs-tip-unique="163" class="fn">insertCollect</span>
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span>
         xs.Insert(x).IsOrdered()
@@ -348,23 +339,20 @@ classifications is reported after testing:</p>
     .QuickCheck();</code></pre></td></tr></table>
 <p>The argument of collect is evaluated in each test case, and the distribution of
 values is reported. The type of this argument is printed using <code>sprintf "%A"</code>:</p>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 17 tests.
-35% 2.
-23% 1.
-17% 0.
-11% 3.
-5% 7.
-5% 4.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 18 tests.
+44% 1.
+27% 2.
+27% 0.</code></pre></td></tr></table>
 <h3><a name="Combining-Observations" class="anchor" href="#Combining-Observations">Combining Observations</a></h3>
 <p>The observations described here may be combined in any way. All the observations
 of each test case are combined, and the distribution of these combinations is
 reported. For example:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs46', 164)" onmouseover="showTip(event, 'fs46', 164)" class="fn">insertCombined</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs19', 165)" onmouseover="showTip(event, 'fs19', 165)" class="fn">x</span><span class="pn">:</span><span onmouseout="hideTip(event, 'fs7', 166)" onmouseover="showTip(event, 'fs7', 166)" class="vt">int</span><span class="pn">)</span> <span onmouseout="hideTip(event, 'fs5', 167)" onmouseover="showTip(event, 'fs5', 167)" class="fn">xs</span> <span class="o">=</span> 
-    <span onmouseout="hideTip(event, 'fs10', 168)" onmouseover="showTip(event, 'fs10', 168)" class="fn">ordered</span> <span onmouseout="hideTip(event, 'fs5', 169)" onmouseover="showTip(event, 'fs5', 169)" class="fn">xs</span> <span class="o">==&gt;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 170)" onmouseover="showTip(event, 'fs10', 170)" class="fn">ordered</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs15', 171)" onmouseover="showTip(event, 'fs15', 171)" class="fn">insert</span> <span onmouseout="hideTip(event, 'fs19', 172)" onmouseover="showTip(event, 'fs19', 172)" class="fn">x</span> <span onmouseout="hideTip(event, 'fs5', 173)" onmouseover="showTip(event, 'fs5', 173)" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span>
-    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 174)" onmouseover="showTip(event, 'fs33', 174)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs43', 175)" onmouseover="showTip(event, 'fs43', 175)" class="id">classify</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 176)" onmouseover="showTip(event, 'fs10', 176)" class="fn">ordered</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs19', 177)" onmouseover="showTip(event, 'fs19', 177)" class="fn">x</span><span class="uc">::</span><span onmouseout="hideTip(event, 'fs5', 178)" onmouseover="showTip(event, 'fs5', 178)" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span> <span class="s">&quot;at-head&quot;</span>
-    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 179)" onmouseover="showTip(event, 'fs33', 179)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs43', 180)" onmouseover="showTip(event, 'fs43', 180)" class="id">classify</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs10', 181)" onmouseover="showTip(event, 'fs10', 181)" class="fn">ordered</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs5', 182)" onmouseover="showTip(event, 'fs5', 182)" class="fn">xs</span> <span class="o">@</span> <span class="pn">[</span><span onmouseout="hideTip(event, 'fs19', 183)" onmouseover="showTip(event, 'fs19', 183)" class="fn">x</span><span class="pn">]</span><span class="pn">)</span><span class="pn">)</span> <span class="s">&quot;at-tail&quot;</span>
-    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 184)" onmouseover="showTip(event, 'fs33', 184)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs45', 185)" onmouseover="showTip(event, 'fs45', 185)" class="id">collect</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs8', 186)" onmouseover="showTip(event, 'fs8', 186)" class="m">List</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs41', 187)" onmouseover="showTip(event, 'fs41', 187)" class="id">length</span> <span onmouseout="hideTip(event, 'fs5', 188)" onmouseover="showTip(event, 'fs5', 188)" class="fn">xs</span><span class="pn">)</span>
-<span onmouseout="hideTip(event, 'fs20', 189)" onmouseover="showTip(event, 'fs20', 189)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 190)" onmouseover="showTip(event, 'fs21', 190)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs46', 191)" onmouseover="showTip(event, 'fs46', 191)" class="fn">insertCombined</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs46" data-fsdocs-tip-unique="164" class="fn">insertCombined</span> <span class="pn">(</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="165" class="fn">x</span><span class="pn">:</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="166" class="vt">int</span><span class="pn">)</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="167" class="fn">xs</span> <span class="o">=</span> 
+    <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="168" class="fn">ordered</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="169" class="fn">xs</span> <span class="o">==&gt;</span> <span class="pn">(</span><span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="170" class="fn">ordered</span> <span class="pn">(</span><span data-fsdocs-tip="fs15" data-fsdocs-tip-unique="171" class="fn">insert</span> <span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="172" class="fn">x</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="173" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span>
+    <span class="o">|&gt;</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="174" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs43" data-fsdocs-tip-unique="175" class="id">classify</span> <span class="pn">(</span><span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="176" class="fn">ordered</span> <span class="pn">(</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="177" class="fn">x</span><span class="uc">::</span><span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="178" class="fn">xs</span><span class="pn">)</span><span class="pn">)</span> <span class="s">&quot;at-head&quot;</span>
+    <span class="o">|&gt;</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="179" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs43" data-fsdocs-tip-unique="180" class="id">classify</span> <span class="pn">(</span><span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="181" class="fn">ordered</span> <span class="pn">(</span><span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="182" class="fn">xs</span> <span class="o">@</span> <span class="pn">[</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="183" class="fn">x</span><span class="pn">]</span><span class="pn">)</span><span class="pn">)</span> <span class="s">&quot;at-tail&quot;</span>
+    <span class="o">|&gt;</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="184" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs45" data-fsdocs-tip-unique="185" class="id">collect</span> <span class="pn">(</span><span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="186" class="m">List</span><span class="pn">.</span><span data-fsdocs-tip="fs41" data-fsdocs-tip-unique="187" class="id">length</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="188" class="fn">xs</span><span class="pn">)</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="189" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="190" class="id">Quick</span> <span data-fsdocs-tip="fs46" data-fsdocs-tip-unique="191" class="fn">insertCombined</span>
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>[]<span class="o">&gt;</span>((x, xs) <span class="o">=</span><span class="o">&gt;</span>
         xs.Insert(x).IsOrdered()
@@ -373,15 +361,13 @@ reported. For example:</p>
         .Classify(xs.Concat(<span class="k">new</span> <span class="k">int</span>[] { x }).IsOrdered(), <span class="s">"at-tail"</span>)
         .Collect(<span class="s">"length "</span> <span class="o">+</span> xs.Count().ToString()))
     .QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Arguments exhausted after 17 tests.
-29% 1, at-head.
-23% 1, at-tail.
-17% 2, at-head.
-5% 5, at-head.
-5% 3, at-head.
-5% 2, at-tail.
-5% 1, at-tail, at-head.
-5% 0, at-tail, at-head.</code></pre></td></tr></table>
+<table class="pre"><tr><td><pre><code>Arguments exhausted after 12 tests.
+50% 0, at-tail, at-head.
+16% 1, at-head.
+8% 4, at-tail.
+8% 2, at-head.
+8% 1, at-tail, at-head.
+8% 1, at-tail.</code></pre></td></tr></table>
 <h2><a name="And-Or-and-Labels" class="anchor" href="#And-Or-and-Labels">And, Or and Labels</a></h2>
 <p>Properties may take the form</p>
 <ul>
@@ -393,12 +379,12 @@ In that case, it might be difficult upon failure to know excactly which sub-prop
 That's why you can label sub-properties, and FsCheck shows the labels of the failed subproperties when
 it finds a counter-example using <code>Prop.label</code>.</p>
 <p>For example:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs47', 192)" onmouseover="showTip(event, 'fs47', 192)" class="fn">complex</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs48', 193)" onmouseover="showTip(event, 'fs48', 193)" class="fn">m</span><span class="pn">:</span> <span onmouseout="hideTip(event, 'fs7', 194)" onmouseover="showTip(event, 'fs7', 194)" class="vt">int</span><span class="pn">)</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs49', 195)" onmouseover="showTip(event, 'fs49', 195)" class="fn">n</span><span class="pn">:</span> <span onmouseout="hideTip(event, 'fs7', 196)" onmouseover="showTip(event, 'fs7', 196)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span>
-  <span class="k">let</span> <span onmouseout="hideTip(event, 'fs50', 197)" onmouseover="showTip(event, 'fs50', 197)" class="fn">res</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs49', 198)" onmouseover="showTip(event, 'fs49', 198)" class="fn">n</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs48', 199)" onmouseover="showTip(event, 'fs48', 199)" class="fn">m</span>
-  <span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 200)" onmouseover="showTip(event, 'fs50', 200)" class="fn">res</span> <span class="o">&gt;</span><span class="o">=</span> <span onmouseout="hideTip(event, 'fs48', 201)" onmouseover="showTip(event, 'fs48', 201)" class="fn">m</span><span class="pn">)</span>    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 202)" onmouseover="showTip(event, 'fs33', 202)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs51', 203)" onmouseover="showTip(event, 'fs51', 203)" class="id">label</span> <span class="s">&quot;result &gt; #1&quot;</span> <span class="o">.</span><span class="o">&amp;.</span>
-  <span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 204)" onmouseover="showTip(event, 'fs50', 204)" class="fn">res</span> <span class="o">&gt;</span><span class="o">=</span> <span onmouseout="hideTip(event, 'fs49', 205)" onmouseover="showTip(event, 'fs49', 205)" class="fn">n</span><span class="pn">)</span>    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 206)" onmouseover="showTip(event, 'fs33', 206)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs51', 207)" onmouseover="showTip(event, 'fs51', 207)" class="id">label</span> <span class="s">&quot;result &gt; #2&quot;</span> <span class="o">.</span><span class="o">&amp;.</span> 
-  <span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 208)" onmouseover="showTip(event, 'fs50', 208)" class="fn">res</span> <span class="o">&lt;</span> <span onmouseout="hideTip(event, 'fs48', 209)" onmouseover="showTip(event, 'fs48', 209)" class="fn">m</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs49', 210)" onmouseover="showTip(event, 'fs49', 210)" class="fn">n</span><span class="pn">)</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 211)" onmouseover="showTip(event, 'fs33', 211)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs51', 212)" onmouseover="showTip(event, 'fs51', 212)" class="id">label</span> <span class="s">&quot;result not sum&quot;</span>
-<span onmouseout="hideTip(event, 'fs20', 213)" onmouseover="showTip(event, 'fs20', 213)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 214)" onmouseover="showTip(event, 'fs21', 214)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs47', 215)" onmouseover="showTip(event, 'fs47', 215)" class="fn">complex</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs47" data-fsdocs-tip-unique="192" class="fn">complex</span> <span class="pn">(</span><span data-fsdocs-tip="fs48" data-fsdocs-tip-unique="193" class="fn">m</span><span class="pn">:</span> <span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="194" class="vt">int</span><span class="pn">)</span> <span class="pn">(</span><span data-fsdocs-tip="fs49" data-fsdocs-tip-unique="195" class="fn">n</span><span class="pn">:</span> <span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="196" class="vt">int</span><span class="pn">)</span> <span class="o">=</span>
+  <span class="k">let</span> <span data-fsdocs-tip="fs50" data-fsdocs-tip-unique="197" class="fn">res</span> <span class="o">=</span> <span data-fsdocs-tip="fs49" data-fsdocs-tip-unique="198" class="fn">n</span> <span class="o">+</span> <span data-fsdocs-tip="fs48" data-fsdocs-tip-unique="199" class="fn">m</span>
+  <span class="pn">(</span><span data-fsdocs-tip="fs50" data-fsdocs-tip-unique="200" class="fn">res</span> <span class="o">&gt;</span><span class="o">=</span> <span data-fsdocs-tip="fs48" data-fsdocs-tip-unique="201" class="fn">m</span><span class="pn">)</span>    <span class="o">|&gt;</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="202" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs51" data-fsdocs-tip-unique="203" class="id">label</span> <span class="s">&quot;result &gt; #1&quot;</span> <span class="o">.</span><span class="o">&amp;.</span>
+  <span class="pn">(</span><span data-fsdocs-tip="fs50" data-fsdocs-tip-unique="204" class="fn">res</span> <span class="o">&gt;</span><span class="o">=</span> <span data-fsdocs-tip="fs49" data-fsdocs-tip-unique="205" class="fn">n</span><span class="pn">)</span>    <span class="o">|&gt;</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="206" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs51" data-fsdocs-tip-unique="207" class="id">label</span> <span class="s">&quot;result &gt; #2&quot;</span> <span class="o">.</span><span class="o">&amp;.</span> 
+  <span class="pn">(</span><span data-fsdocs-tip="fs50" data-fsdocs-tip-unique="208" class="fn">res</span> <span class="o">&lt;</span> <span data-fsdocs-tip="fs48" data-fsdocs-tip-unique="209" class="fn">m</span> <span class="o">+</span> <span data-fsdocs-tip="fs49" data-fsdocs-tip-unique="210" class="fn">n</span><span class="pn">)</span> <span class="o">|&gt;</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="211" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs51" data-fsdocs-tip-unique="212" class="id">label</span> <span class="s">&quot;result not sum&quot;</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="213" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="214" class="id">Quick</span> <span data-fsdocs-tip="fs47" data-fsdocs-tip-unique="215" class="fn">complex</span>
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>&gt;((m, n) <span class="o">=</span><span class="o">&gt;</span> {
     <span class="k">var</span> result <span class="o">=</span> m <span class="o">+</span> n;
@@ -406,12 +392,12 @@ it finds a counter-example using <code>Prop.label</code>.</p>
        .And(result <span class="o">&gt;</span><span class="o">=</span> n).Label(<span class="s">"result &gt; #2"</span>)
        .And(result <span class="o">&lt;</span> m <span class="o">+</span> n).Label(<span class="s">"result not sum"</span>);
 }).QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (10214784424213203828,10435980111727377593). 
-Last step was invoked with size of 2 and seed of (3764709013380207636,16439481462871619223):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (3 shrinks) (16112310852730796372,9277243122003327503). 
+Last step was invoked with size of 2 and seed of (2873436021610948579,11707097760983469733):
 Label of failing property: result not sum
 Original:
+-1
 2
--2
 Shrunk:
 0
 0
@@ -419,14 +405,14 @@ with exception:
 System.Exception: Expected true, got false.</code></pre></td></tr></table>
 <p>It's perfectly fine to apply more than one label to a property; FsCheck displays all the applicable labels.
 This is useful for displaying intermediate results, for example:</p>
-<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs52', 216)" onmouseover="showTip(event, 'fs52', 216)" class="fn">multiply</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs49', 217)" onmouseover="showTip(event, 'fs49', 217)" class="fn">n</span><span class="pn">:</span> <span onmouseout="hideTip(event, 'fs7', 218)" onmouseover="showTip(event, 'fs7', 218)" class="vt">int</span><span class="pn">,</span> <span onmouseout="hideTip(event, 'fs48', 219)" onmouseover="showTip(event, 'fs48', 219)" class="fn">m</span><span class="pn">:</span> <span onmouseout="hideTip(event, 'fs7', 220)" onmouseover="showTip(event, 'fs7', 220)" class="vt">int</span><span class="pn">)</span> <span class="o">=</span>
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs50', 221)" onmouseover="showTip(event, 'fs50', 221)" class="fn">res</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs49', 222)" onmouseover="showTip(event, 'fs49', 222)" class="fn">n</span><span class="o">*</span><span onmouseout="hideTip(event, 'fs48', 223)" onmouseover="showTip(event, 'fs48', 223)" class="fn">m</span>
-    <span onmouseout="hideTip(event, 'fs33', 224)" onmouseover="showTip(event, 'fs33', 224)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs51', 225)" onmouseover="showTip(event, 'fs51', 225)" class="id">label</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs53', 226)" onmouseover="showTip(event, 'fs53', 226)" class="fn">sprintf</span> <span class="s">&quot;evidence = </span><span class="pf">%i</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs50', 227)" onmouseover="showTip(event, 'fs50', 227)" class="fn">res</span><span class="pn">)</span> <span class="pn">(</span>
-      <span onmouseout="hideTip(event, 'fs33', 228)" onmouseover="showTip(event, 'fs33', 228)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs51', 229)" onmouseover="showTip(event, 'fs51', 229)" class="id">label</span> <span class="s">&quot;div1&quot;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs48', 230)" onmouseover="showTip(event, 'fs48', 230)" class="fn">m</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 231)" onmouseover="showTip(event, 'fs50', 231)" class="fn">res</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs48', 232)" onmouseover="showTip(event, 'fs48', 232)" class="fn">m</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs49', 233)" onmouseover="showTip(event, 'fs49', 233)" class="fn">n</span><span class="pn">)</span><span class="pn">)</span> <span class="o">.</span><span class="o">&amp;.</span> 
-      <span onmouseout="hideTip(event, 'fs33', 234)" onmouseover="showTip(event, 'fs33', 234)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs51', 235)" onmouseover="showTip(event, 'fs51', 235)" class="id">label</span> <span class="s">&quot;div2&quot;</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs49', 236)" onmouseover="showTip(event, 'fs49', 236)" class="fn">n</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> <span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 237)" onmouseover="showTip(event, 'fs50', 237)" class="fn">res</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs49', 238)" onmouseover="showTip(event, 'fs49', 238)" class="fn">n</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs48', 239)" onmouseover="showTip(event, 'fs48', 239)" class="fn">m</span><span class="pn">)</span><span class="pn">)</span> <span class="o">.</span><span class="o">&amp;.</span> 
-      <span onmouseout="hideTip(event, 'fs33', 240)" onmouseover="showTip(event, 'fs33', 240)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs51', 241)" onmouseover="showTip(event, 'fs51', 241)" class="id">label</span> <span class="s">&quot;lt1&quot;</span>  <span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 242)" onmouseover="showTip(event, 'fs50', 242)" class="fn">res</span> <span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs48', 243)" onmouseover="showTip(event, 'fs48', 243)" class="fn">m</span><span class="pn">)</span> <span class="o">.</span><span class="o">&amp;.</span> 
-      <span onmouseout="hideTip(event, 'fs33', 244)" onmouseover="showTip(event, 'fs33', 244)" class="m">Prop</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs51', 245)" onmouseover="showTip(event, 'fs51', 245)" class="id">label</span> <span class="s">&quot;lt2&quot;</span>  <span class="pn">(</span><span onmouseout="hideTip(event, 'fs50', 246)" onmouseover="showTip(event, 'fs50', 246)" class="fn">res</span> <span class="o">&gt;</span> <span onmouseout="hideTip(event, 'fs49', 247)" onmouseover="showTip(event, 'fs49', 247)" class="fn">n</span><span class="pn">)</span><span class="pn">)</span>
-<span onmouseout="hideTip(event, 'fs20', 248)" onmouseover="showTip(event, 'fs20', 248)" class="rt">Check</span><span class="pn">.</span><span onmouseout="hideTip(event, 'fs21', 249)" onmouseover="showTip(event, 'fs21', 249)" class="id">Quick</span> <span onmouseout="hideTip(event, 'fs52', 250)" onmouseover="showTip(event, 'fs52', 250)" class="fn">multiply</span>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs52" data-fsdocs-tip-unique="216" class="fn">multiply</span> <span class="pn">(</span><span data-fsdocs-tip="fs49" data-fsdocs-tip-unique="217" class="fn">n</span><span class="pn">:</span> <span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="218" class="vt">int</span><span class="pn">,</span> <span data-fsdocs-tip="fs48" data-fsdocs-tip-unique="219" class="fn">m</span><span class="pn">:</span> <span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="220" class="vt">int</span><span class="pn">)</span> <span class="o">=</span>
+    <span class="k">let</span> <span data-fsdocs-tip="fs50" data-fsdocs-tip-unique="221" class="fn">res</span> <span class="o">=</span> <span data-fsdocs-tip="fs49" data-fsdocs-tip-unique="222" class="fn">n</span><span class="o">*</span><span data-fsdocs-tip="fs48" data-fsdocs-tip-unique="223" class="fn">m</span>
+    <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="224" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs51" data-fsdocs-tip-unique="225" class="id">label</span> <span class="pn">(</span><span data-fsdocs-tip="fs53" data-fsdocs-tip-unique="226" class="fn">sprintf</span> <span class="s">&quot;evidence = </span><span class="pf">%i</span><span class="s">&quot;</span> <span data-fsdocs-tip="fs50" data-fsdocs-tip-unique="227" class="fn">res</span><span class="pn">)</span> <span class="pn">(</span>
+      <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="228" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs51" data-fsdocs-tip-unique="229" class="id">label</span> <span class="s">&quot;div1&quot;</span> <span class="pn">(</span><span data-fsdocs-tip="fs48" data-fsdocs-tip-unique="230" class="fn">m</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> <span class="pn">(</span><span data-fsdocs-tip="fs50" data-fsdocs-tip-unique="231" class="fn">res</span> <span class="o">/</span> <span data-fsdocs-tip="fs48" data-fsdocs-tip-unique="232" class="fn">m</span> <span class="o">=</span> <span data-fsdocs-tip="fs49" data-fsdocs-tip-unique="233" class="fn">n</span><span class="pn">)</span><span class="pn">)</span> <span class="o">.</span><span class="o">&amp;.</span> 
+      <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="234" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs51" data-fsdocs-tip-unique="235" class="id">label</span> <span class="s">&quot;div2&quot;</span> <span class="pn">(</span><span data-fsdocs-tip="fs49" data-fsdocs-tip-unique="236" class="fn">n</span> <span class="o">&lt;&gt;</span> <span class="n">0</span> <span class="o">==&gt;</span> <span class="k">lazy</span> <span class="pn">(</span><span data-fsdocs-tip="fs50" data-fsdocs-tip-unique="237" class="fn">res</span> <span class="o">/</span> <span data-fsdocs-tip="fs49" data-fsdocs-tip-unique="238" class="fn">n</span> <span class="o">=</span> <span data-fsdocs-tip="fs48" data-fsdocs-tip-unique="239" class="fn">m</span><span class="pn">)</span><span class="pn">)</span> <span class="o">.</span><span class="o">&amp;.</span> 
+      <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="240" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs51" data-fsdocs-tip-unique="241" class="id">label</span> <span class="s">&quot;lt1&quot;</span>  <span class="pn">(</span><span data-fsdocs-tip="fs50" data-fsdocs-tip-unique="242" class="fn">res</span> <span class="o">&gt;</span> <span data-fsdocs-tip="fs48" data-fsdocs-tip-unique="243" class="fn">m</span><span class="pn">)</span> <span class="o">.</span><span class="o">&amp;.</span> 
+      <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="244" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs51" data-fsdocs-tip-unique="245" class="id">label</span> <span class="s">&quot;lt2&quot;</span>  <span class="pn">(</span><span data-fsdocs-tip="fs50" data-fsdocs-tip-unique="246" class="fn">res</span> <span class="o">&gt;</span> <span data-fsdocs-tip="fs49" data-fsdocs-tip-unique="247" class="fn">n</span><span class="pn">)</span><span class="pn">)</span>
+<span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="248" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="249" class="id">Quick</span> <span data-fsdocs-tip="fs52" data-fsdocs-tip-unique="250" class="fn">multiply</span>
 </code></pre>
 <table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp">Prop.ForAll&lt;<span class="k">int</span>, <span class="k">int</span>&gt;((n, m) <span class="o">=</span><span class="o">&gt;</span> {
     <span class="k">var</span> res <span class="o">=</span> n <span class="o">*</span> m;
@@ -436,8 +422,8 @@ This is useful for displaying intermediate results, for example:</p>
       .And((res <span class="o">&gt;</span> n).Label(<span class="s">"lt2"</span>))
       .Label(<span class="k">string</span>.Format(<span class="s">"evidence = {0}"</span>, res));
 }).QuickCheck();</code></pre></td></tr></table>
-<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (4378345558607498661,18342981053978521039). 
-Last step was invoked with size of 2 and seed of (363198961137199847,3723540746297313357):
+<table class="pre"><tr><td><pre><code>Falsifiable, after 1 test (0 shrinks) (8946670000005809398,12281210755365013215). 
+Last step was invoked with size of 2 and seed of (5950114523851521599,11957359414702762399):
 Labels of failing property (one or more is failing):
 evidence = 0
 lt1
@@ -447,15 +433,15 @@ Original:
 with exception:
 System.Exception: Expected true, got false.</code></pre></td></tr></table>
 
-        <div class="fsdocs-tip" id="fs1">namespace FsCheck</div>
-<div class="fsdocs-tip" id="fs2">namespace FsCheck.FSharp</div>
-<div class="fsdocs-tip" id="fs3">namespace System</div>
-<div class="fsdocs-tip" id="fs4">val revRevIsOrig: xs: int list -&gt; bool</div>
-<div class="fsdocs-tip" id="fs5">val xs: int list</div>
-<div class="fsdocs-tip" id="fs6">type &#39;T list = List&lt;&#39;T&gt;</div>
-<div class="fsdocs-tip" id="fs7">Multiple items<br />val int: value: &#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; =
+        <div popover class="fsdocs-tip" id="fs1">namespace FsCheck</div>
+<div popover class="fsdocs-tip" id="fs2">namespace FsCheck.FSharp</div>
+<div popover class="fsdocs-tip" id="fs3">namespace System</div>
+<div popover class="fsdocs-tip" id="fs4">val revRevIsOrig: xs: int list -&gt; bool</div>
+<div popover class="fsdocs-tip" id="fs5">val xs: int list</div>
+<div popover class="fsdocs-tip" id="fs6">type &#39;T list = List&lt;&#39;T&gt;</div>
+<div popover class="fsdocs-tip" id="fs7">Multiple items<br />val int: value: &#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; =
   int</div>
-<div class="fsdocs-tip" id="fs8">Multiple items<br />module List
+<div popover class="fsdocs-tip" id="fs8">Multiple items<br />module List
 
 from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =
   | op_Nil
@@ -467,22 +453,22 @@ from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List
   member GetReverseIndex: rank: int * offset: int -&gt; int
   member GetSlice: startIndex: int option * endIndex: int option -&gt; &#39;T list
   static member Cons: head: &#39;T * tail: &#39;T list -&gt; &#39;T list
-  member Head: &#39;T with get
-  member IsEmpty: bool with get
+  member Head: &#39;T
+  member IsEmpty: bool
   member Item: index: int -&gt; &#39;T with get
   ...</div>
-<div class="fsdocs-tip" id="fs9">val rev: list: &#39;T list -&gt; &#39;T list</div>
-<div class="fsdocs-tip" id="fs10">val ordered: xs: &#39;a list -&gt; bool (requires comparison)</div>
-<div class="fsdocs-tip" id="fs11">val xs: &#39;a list (requires comparison)</div>
-<div class="fsdocs-tip" id="fs12">val x: &#39;a (requires comparison)</div>
-<div class="fsdocs-tip" id="fs13">val y: &#39;a (requires comparison)</div>
-<div class="fsdocs-tip" id="fs14">val ys: &#39;a list (requires comparison)</div>
-<div class="fsdocs-tip" id="fs15">val insert: x: &#39;a -&gt; xs: &#39;a list -&gt; &#39;a list (requires comparison)</div>
-<div class="fsdocs-tip" id="fs16">val c: &#39;a (requires comparison)</div>
-<div class="fsdocs-tip" id="fs17">val cs: &#39;a list (requires comparison)</div>
-<div class="fsdocs-tip" id="fs18">val insertKeepsOrder: x: int -&gt; xs: int list -&gt; Property</div>
-<div class="fsdocs-tip" id="fs19">val x: int</div>
-<div class="fsdocs-tip" id="fs20">type Check =
+<div popover class="fsdocs-tip" id="fs9">val rev: list: &#39;T list -&gt; &#39;T list</div>
+<div popover class="fsdocs-tip" id="fs10">val ordered: xs: &#39;a list -&gt; bool (requires comparison)</div>
+<div popover class="fsdocs-tip" id="fs11">val xs: &#39;a list (requires comparison)</div>
+<div popover class="fsdocs-tip" id="fs12">val x: &#39;a (requires comparison)</div>
+<div popover class="fsdocs-tip" id="fs13">val y: &#39;a (requires comparison)</div>
+<div popover class="fsdocs-tip" id="fs14">val ys: &#39;a list (requires comparison)</div>
+<div popover class="fsdocs-tip" id="fs15">val insert: x: &#39;a -&gt; xs: &#39;a list -&gt; &#39;a list (requires comparison)</div>
+<div popover class="fsdocs-tip" id="fs16">val c: &#39;a (requires comparison)</div>
+<div popover class="fsdocs-tip" id="fs17">val cs: &#39;a list (requires comparison)</div>
+<div popover class="fsdocs-tip" id="fs18">val insertKeepsOrder: x: int -&gt; xs: int list -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs19">val x: int</div>
+<div popover class="fsdocs-tip" id="fs20">type Check =
   static member All: config: Config * test: Type -&gt; unit + 1 overload
   static member Method: config: Config * methodInfo: MethodInfo * ?target: obj -&gt; unit
   static member One: config: Config * property: &#39;Testable -&gt; unit + 1 overload
@@ -494,72 +480,72 @@ from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List
   static member VerboseAll: test: Type -&gt; unit + 1 overload
   static member VerboseThrowOnFailure: property: &#39;Testable -&gt; unit
   ...</div>
-<div class="fsdocs-tip" id="fs21">static member Check.Quick: property: &#39;Testable -&gt; unit<br />static member Check.Quick: name: string * property: &#39;Testable -&gt; unit</div>
-<div class="fsdocs-tip" id="fs22">val tooEager: a: int -&gt; Property</div>
-<div class="fsdocs-tip" id="fs23">val a: int</div>
-<div class="fsdocs-tip" id="fs24">val moreLazy: a: int -&gt; Property</div>
-<div class="fsdocs-tip" id="fs25">val orderedList: Arbitrary&lt;int list&gt;</div>
-<div class="fsdocs-tip" id="fs26">module ArbMap
+<div popover class="fsdocs-tip" id="fs21">static member Check.Quick: property: &#39;Testable -&gt; unit<br />static member Check.Quick: name: string * property: &#39;Testable -&gt; unit</div>
+<div popover class="fsdocs-tip" id="fs22">val tooEager: a: int -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs23">val a: int</div>
+<div popover class="fsdocs-tip" id="fs24">val moreLazy: a: int -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs25">val orderedList: Arbitrary&lt;int list&gt;</div>
+<div popover class="fsdocs-tip" id="fs26">module ArbMap
 
 from FsCheck.FSharp</div>
-<div class="fsdocs-tip" id="fs27">val defaults: IArbMap<br /><em>&lt;summary&gt;
+<div popover class="fsdocs-tip" id="fs27">val defaults: IArbMap<br /><em>&lt;summary&gt;
  The immutable default mapping from a type to Arbitrary for that type.
 &lt;/summary&gt;</em></div>
-<div class="fsdocs-tip" id="fs28">val arbitrary: arbMap: IArbMap -&gt; Arbitrary&lt;&#39;T&gt;</div>
-<div class="fsdocs-tip" id="fs29">module Arb
+<div popover class="fsdocs-tip" id="fs28">val arbitrary: arbMap: IArbMap -&gt; Arbitrary&lt;&#39;T&gt;</div>
+<div popover class="fsdocs-tip" id="fs29">module Arb
 
 from FsCheck.FSharp</div>
-<div class="fsdocs-tip" id="fs30">val mapFilter: mapper: (&#39;T -&gt; &#39;T) -&gt; pred: (&#39;T -&gt; bool) -&gt; a: Arbitrary&lt;&#39;T&gt; -&gt; Arbitrary&lt;&#39;T&gt;<br /><em>&lt;summary&gt;
+<div popover class="fsdocs-tip" id="fs30">val mapFilter: mapper: (&#39;T -&gt; &#39;T) -&gt; pred: (&#39;T -&gt; bool) -&gt; a: Arbitrary&lt;&#39;T&gt; -&gt; Arbitrary&lt;&#39;T&gt;<br /><em>&lt;summary&gt;
  Return an Arbitrary instance that is a mapped and filtered version of an existing arbitrary instance.
  The generator uses Gen.map with the given mapper and then Gen.where with the given predicate,
  and the shrinks are filtered using Seq.filter with the given predicate.
  This is sometimes useful if using just a filter would reduce the chance of getting a good value
  from the generator - and you can map the value instead. E.g. PositiveInt.
 &lt;/summary&gt;</em></div>
-<div class="fsdocs-tip" id="fs31">val sort: list: &#39;T list -&gt; &#39;T list (requires comparison)</div>
-<div class="fsdocs-tip" id="fs32">val insertWithArb: x: int -&gt; Property</div>
-<div class="fsdocs-tip" id="fs33">module Prop
+<div popover class="fsdocs-tip" id="fs31">val sort: list: &#39;T list -&gt; &#39;T list (requires comparison)</div>
+<div popover class="fsdocs-tip" id="fs32">val insertWithArb: x: int -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs33">module Prop
 
 from FsCheck.FSharp<br /><em>&lt;summary&gt;
 Combinators to build properties, which define the property to be tested, with some
 convenience methods to investigate the generated arguments and any found counter-examples.
 &lt;/summary&gt;</em></div>
-<div class="fsdocs-tip" id="fs34">val forAll: arb: Arbitrary&lt;&#39;Value&gt; -&gt; body: (&#39;Value -&gt; &#39;Testable) -&gt; Property<br /><em>&lt;summary&gt;
+<div popover class="fsdocs-tip" id="fs34">val forAll: arb: Arbitrary&lt;&#39;Value&gt; -&gt; body: (&#39;Value -&gt; &#39;Testable) -&gt; Property<br /><em>&lt;summary&gt;
 Quantified property combinator. Provide a custom test data generator to a property.
 &lt;/summary&gt;</em></div>
-<div class="fsdocs-tip" id="fs35">val expectDivideByZero: unit -&gt; Property</div>
-<div class="fsdocs-tip" id="fs36">val throws&lt;&#39;Exception,&#39;Testable (requires &#39;Exception :&gt; exn)&gt; : p: Lazy&lt;&#39;Testable&gt; -&gt; Property (requires &#39;Exception :&gt; exn)<br /><em>&lt;summary&gt;
+<div popover class="fsdocs-tip" id="fs35">val expectDivideByZero: unit -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs36">val throws&lt;&#39;Exception,&#39;Testable (requires &#39;Exception :&gt; exn)&gt; : p: Lazy&lt;&#39;Testable&gt; -&gt; Property (requires &#39;Exception :&gt; exn)<br /><em>&lt;summary&gt;
 Expect exception &#39;t when executing p. So, results in success if an exception of the given type is thrown, 
 and a failure otherwise.
 &lt;/summary&gt;</em></div>
-<div class="fsdocs-tip" id="fs37">Multiple items<br />type DivideByZeroException =
+<div popover class="fsdocs-tip" id="fs37">Multiple items<br />type DivideByZeroException =
   inherit ArithmeticException
   new: unit -&gt; unit + 2 overloads<br /><em>&lt;summary&gt;The exception that is thrown when there is an attempt to divide an integral or &lt;see cref=&quot;T:System.Decimal&quot; /&gt; value by zero.&lt;/summary&gt;</em><br /><br />--------------------<br />DivideByZeroException() : DivideByZeroException<br />DivideByZeroException(message: string) : DivideByZeroException<br />DivideByZeroException(message: string, innerException: exn) : DivideByZeroException</div>
-<div class="fsdocs-tip" id="fs38">val raise: exn: Exception -&gt; &#39;T</div>
-<div class="fsdocs-tip" id="fs39">val insertTrivial: x: int -&gt; xs: int list -&gt; Property</div>
-<div class="fsdocs-tip" id="fs40">val trivial: b: bool -&gt; (&#39;Testable -&gt; Property)<br /><em>&lt;summary&gt;
+<div popover class="fsdocs-tip" id="fs38">val raise: exn: Exception -&gt; &#39;T</div>
+<div popover class="fsdocs-tip" id="fs39">val insertTrivial: x: int -&gt; xs: int list -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs40">val trivial: b: bool -&gt; (&#39;Testable -&gt; Property)<br /><em>&lt;summary&gt;
 Count trivial cases. Test cases for which the condition is True are classified as trivial.
 &lt;/summary&gt;</em></div>
-<div class="fsdocs-tip" id="fs41">val length: list: &#39;T list -&gt; int</div>
-<div class="fsdocs-tip" id="fs42">val insertClassify: x: int -&gt; xs: int list -&gt; Property</div>
-<div class="fsdocs-tip" id="fs43">val classify: b: bool -&gt; name: string -&gt; (&#39;Testable -&gt; Property)<br /><em>&lt;summary&gt;
+<div popover class="fsdocs-tip" id="fs41">val length: list: &#39;T list -&gt; int</div>
+<div popover class="fsdocs-tip" id="fs42">val insertClassify: x: int -&gt; xs: int list -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs43">val classify: b: bool -&gt; name: string -&gt; (&#39;Testable -&gt; Property)<br /><em>&lt;summary&gt;
 Classify test cases. Test cases satisfying the condition are assigned the classification given.
 &lt;/summary&gt;</em></div>
-<div class="fsdocs-tip" id="fs44">val insertCollect: x: int -&gt; xs: int list -&gt; Property</div>
-<div class="fsdocs-tip" id="fs45">val collect: v: &#39;CollectedValue -&gt; (&#39;Testable -&gt; Property)<br /><em>&lt;summary&gt;
+<div popover class="fsdocs-tip" id="fs44">val insertCollect: x: int -&gt; xs: int list -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs45">val collect: v: &#39;CollectedValue -&gt; (&#39;Testable -&gt; Property)<br /><em>&lt;summary&gt;
 Collect data values. The argument of collect is evaluated in each test case, 
 and the distribution of values is reported, using sprintf &quot;%A&quot;.
 &lt;/summary&gt;</em></div>
-<div class="fsdocs-tip" id="fs46">val insertCombined: x: int -&gt; xs: int list -&gt; Property</div>
-<div class="fsdocs-tip" id="fs47">val complex: m: int -&gt; n: int -&gt; Property</div>
-<div class="fsdocs-tip" id="fs48">val m: int</div>
-<div class="fsdocs-tip" id="fs49">val n: int</div>
-<div class="fsdocs-tip" id="fs50">val res: int</div>
-<div class="fsdocs-tip" id="fs51">val label: l: string -&gt; (&#39;Testable -&gt; Property)<br /><em>&lt;summary&gt;
+<div popover class="fsdocs-tip" id="fs46">val insertCombined: x: int -&gt; xs: int list -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs47">val complex: m: int -&gt; n: int -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs48">val m: int</div>
+<div popover class="fsdocs-tip" id="fs49">val n: int</div>
+<div popover class="fsdocs-tip" id="fs50">val res: int</div>
+<div popover class="fsdocs-tip" id="fs51">val label: l: string -&gt; (&#39;Testable -&gt; Property)<br /><em>&lt;summary&gt;
 Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
 &lt;/summary&gt;</em></div>
-<div class="fsdocs-tip" id="fs52">val multiply: n: int * m: int -&gt; Property</div>
-<div class="fsdocs-tip" id="fs53">val sprintf: format: Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T</div>
+<div popover class="fsdocs-tip" id="fs52">val multiply: n: int * m: int -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs53">val sprintf: format: Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T</div>
 
     </div>
 </main>
@@ -635,6 +621,7 @@ Add the given label to the property. The labels of a failing sub-property are di
 <script type="module" src="https://fscheck.github.io/FsCheck/content/fsdocs-details-toggle.js"></script>
 <script type="module" src="https://fscheck.github.io/FsCheck/content/fsdocs-theme.js"></script>
 <script type="module" src="https://fscheck.github.io/FsCheck/content/fsdocs-search.js"></script>
+<script type="module" src="https://fscheck.github.io/FsCheck/content/fsdocs-copy-button.js"></script>
 
 </body>
 </html>

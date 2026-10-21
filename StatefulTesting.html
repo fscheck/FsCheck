@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" data-root="https://fscheck.github.io/FsCheck/">
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Kurt Schelfthout and contributors" name="author">
+    <!-- Opengraph properties (https://ogp.me/) -->
+    <meta property="og:site_name" content="FsCheck">
+    <meta property="og:title" content="Model-based Testing (Experimental)
+" />
+    <meta property="og:url" content="https://fscheck.github.io/FsCheck/StatefulTesting.html">
+    <meta property="og:type" content="website" />
+    <!-- Twitter cards (https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/summary-card-with-large-image) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="https://fscheck.github.io/FsCheck/">
+    <meta name="twitter:title" content="Model-based Testing (Experimental)
+">
+    
+    <title>Model-based Testing (Experimental)
+ | FsCheck</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fscheck.github.io/FsCheck/img/favicon.ico" rel="icon" sizes="32x32" type="image/png"/>
+    <script type="application/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-theme-set-dark.js"></script>
+    <script type="application/javascript" src="https://fscheck.github.io/FsCheck/content/fsdocs-details-set-expanded.js"></script>
+    <link href="https://fscheck.github.io/FsCheck/content/fsdocs-default.css" rel="stylesheet" type="text/css"/>
+    <link href="https://fscheck.github.io/FsCheck/content/fsdocs-theme.css" rel="stylesheet" type="text/css"/>
+    
+    
+</head>
+<body class="content">
+<header>
+    <div class="start">
+        <div id="menu-toggle">
+            <iconify-icon class="icon closed" height="22" icon="eva:menu-fill" width="22"></iconify-icon>
+            <iconify-icon class="icon open" height="22" icon="mi:close" width="22"></iconify-icon>
+            <input type="checkbox" name="mobile-menu" />
+            <ul class="menu">
+                <li class="nav-header">Links</li>
+                <li class="license-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License</a>
+                </li>
+                <li class="release-notes-menu-item builtin-menu-item nav-item"><a class="nav-link"
+                                        href="https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md">Release
+                    Notes</a></li>
+                <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/">Source
+                    Repository</a></li>
+                <li class="nav-header">
+  Documentation
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/LearningResources.html">
+    Learning resources
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/Properties.html">
+    Properties
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/QuickStart.html">
+    Quick Start
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/RunningTests.html">
+    Running tests
+
+  </a>
+</li>             
+<li class="nav-item active">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/StatefulTesting.html">
+    Model-based Testing (Experimental)
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/TestData.html">
+    Test data: generators, shrinkers and Arbitrary instances
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/TipsAndTricks.html">
+    Tips and Tricks
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/users.html">
+    Who is using FsCheck?
+
+  </a>
+</li>
+                <li class="nav-header">
+  API Reference
+</li>             
+<li class="nav-item">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/index.html">
+    All Namespaces
+  </a>
+</li>
+            </ul>
+        </div>
+        <a href="https://fscheck.github.io/FsCheck/">
+            <img alt="Logo" src="https://fscheck.github.io/FsCheck/img/logo.png">
+            <strong>FsCheck</strong>
+        </a>
+    </div>
+    <div class="end">
+        <a href="https://github.com/fscheck/FsCheck/" target="_blank">
+            <iconify-icon icon="uil:github" width="26" height="26"></iconify-icon>
+        </a>
+        <iconify-icon id="search-btn" icon="carbon:search" class="search" width="24" height="24"></iconify-icon>
+        <fsdocs-theme-toggle></fsdocs-theme-toggle>
+    </div>
+</header>
+<aside id="fsdocs-main-menu">
+    <ul class="menu">
+        <li class="nav-header">Links</li>
+        <li class="license-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/blob/master/License.txt">License</a>
+        </li>
+        <li class="release-notes-menu-item builtin-menu-item nav-item"><a class="nav-link"
+                                href="https://github.com/fscheck/FsCheck/blob/master/FsCheck%20Release%20Notes.md">Release
+            Notes</a></li>
+        <li class="repository-menu-item builtin-menu-item nav-item"><a class="nav-link" href="https://github.com/fscheck/FsCheck/">Source
+            Repository</a></li>
+        <li class="nav-header">
+  Documentation
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/LearningResources.html">
+    Learning resources
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/Properties.html">
+    Properties
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/QuickStart.html">
+    Quick Start
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/RunningTests.html">
+    Running tests
+
+  </a>
+</li>             
+<li class="nav-item active">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/StatefulTesting.html">
+    Model-based Testing (Experimental)
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/TestData.html">
+    Test data: generators, shrinkers and Arbitrary instances
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/TipsAndTricks.html">
+    Tips and Tricks
+
+  </a>
+</li>             
+<li class="nav-item ">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/users.html">
+    Who is using FsCheck?
+
+  </a>
+</li>
+        <li class="nav-header">
+  API Reference
+</li>             
+<li class="nav-item">
+  <a class="nav-link" href="https://fscheck.github.io/FsCheck/reference/index.html">
+    All Namespaces
+  </a>
+</li>
+    </ul>
+</aside>
+<main>
+    <div id="content">
+        <h1><a name="Model-based-Testing-Experimental" class="anchor" href="#Model-based-Testing-Experimental">Model-based Testing (Experimental)</a></h1>
+<p><em>Caveat: since this is in the FsCheck.Experimental namespace, the rules of semantic versioning do
+not apply to this particular part of the API. In other words, minor version releases may break your code.</em></p>
+<p>Let's look at the following simple class, which has an artificial bug:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="7" class="rt">Counter</span><span class="pn">(</span><span class="o">?</span><span data-fsdocs-tip="fs6" data-fsdocs-tip-unique="8" class="fn">initial</span><span class="pn">:</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="9" class="vt">int</span><span class="pn">)</span> <span class="o">=</span>
+    <span class="k">let</span> <span class="k">mutable</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="10" class="mv">n</span> <span class="o">=</span> <span data-fsdocs-tip="fs9" data-fsdocs-tip-unique="11" class="fn">defaultArg</span> <span data-fsdocs-tip="fs6" data-fsdocs-tip-unique="12" class="fn">initial</span> <span class="n">0</span>
+    <span class="k">member</span> <span class="id">__</span><span class="pn">.</span><span class="fn">Inc</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> 
+        <span class="c">//silly bug</span>
+        <span class="k">if</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="13" class="mv">n</span> <span class="o">&lt;=</span> <span class="n">3</span>  <span class="k">then</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="14" class="mv">n</span> <span class="k">&lt;-</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="15" class="mv">n</span> <span class="o">+</span> <span class="n">1</span> <span class="k">else</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="16" class="mv">n</span> <span class="k">&lt;-</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="17" class="mv">n</span> <span class="o">+</span> <span class="n">2</span>
+        <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="18" class="mv">n</span>
+    <span class="k">member</span> <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="19" class="id">__</span><span class="pn">.</span><span class="fn">Dec</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span class="k">if</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="20" class="mv">n</span> <span class="o">&lt;=</span> <span class="n">0</span> <span class="k">then</span> <span data-fsdocs-tip="fs11" data-fsdocs-tip-unique="21" class="fn">failwithf</span> <span class="s">&quot;Precondition fail&quot;</span> <span class="k">else</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="22" class="mv">n</span> <span class="k">&lt;-</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="23" class="mv">n</span> <span class="o">-</span> <span class="n">1</span><span class="pn">;</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="24" class="mv">n</span>
+    <span class="k">member</span> <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="25" class="id">__</span><span class="pn">.</span><span class="fn">Reset</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="26" class="mv">n</span> <span class="k">&lt;-</span> <span class="n">0</span>
+    <span class="k">override</span> <span data-fsdocs-tip="fs10" data-fsdocs-tip-unique="27" class="id">__</span><span class="pn">.</span><span class="fn">ToString</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span data-fsdocs-tip="fs12" data-fsdocs-tip-unique="28" class="fn">sprintf</span> <span class="s">&quot;Counter = </span><span class="pf">%i</span><span class="s">&quot;</span> <span data-fsdocs-tip="fs8" data-fsdocs-tip-unique="29" class="mv">n</span>
+</code></pre>
+<p>In C#:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">public</span> <span class="k">class</span> Counter
+{
+    <span class="k">internal</span> <span class="k">int</span> N { get; <span class="k">private</span> set; }
+
+    <span class="k">internal</span> Counter(<span class="k">int</span> n)
+    {
+        N <span class="o">=</span> n;
+    }
+
+    <span class="k">internal</span> <span class="k">void</span> Inc()
+    {
+        <span class="k">if</span> (N <span class="o">&lt;</span><span class="o">=</span> <span class="n">3</span>)
+            N <span class="o">+</span><span class="o">=</span> <span class="n">1</span>;
+        <span class="k">else</span>
+            N <span class="o">=</span> -N <span class="o">+</span> <span class="n">2</span>;
+    }
+
+    <span class="k">internal</span> <span class="k">void</span> Dec()
+    {
+        <span class="k">if</span> (N <span class="o">&lt;</span><span class="o">=</span> <span class="n">0</span>)
+            <span class="k">throw</span> <span class="k">new</span> InvalidOperationException(<span class="s">"Precondition fail"</span>);
+
+        N <span class="o">-</span><span class="o">=</span> <span class="n">1</span>;
+    }
+
+    <span class="k">internal</span> <span class="k">void</span> Reset()
+    {
+        N <span class="o">=</span> <span class="n">0</span>;
+    }
+
+    <span class="k">public</span> <span class="k">override</span> <span class="k">string</span> ToString() <span class="o">=</span><span class="o">&gt;</span> $<span class="s">"Counter = {N}"</span>;
+}</code></pre></td></tr></table>
+<p>As a model to test this class we can use an <code>int</code> value which is an abstraction of the object's internal state. The
+idea is that each operation on the class (in this case, <code>Inc</code>, <code>Dec</code> and <code>Reset</code>) affects both the model object and the actual object, and
+after each such operation, the model and the actual instance should still be equivalent.</p>
+<p>With this idea in mind, you can write a specification of the <code>Counter</code> class using an int model as follows:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span data-fsdocs-tip="fs13" data-fsdocs-tip-unique="30" class="id">spec</span> <span class="o">=</span>
+    <span class="k">let</span> <span data-fsdocs-tip="fs14" data-fsdocs-tip-unique="31" class="fn">inc</span> <span class="o">=</span> 
+        <span class="pn">{</span> <span class="k">new</span> <span data-fsdocs-tip="fs15" data-fsdocs-tip-unique="32" class="rt">Operation</span><span class="pn">&lt;</span><span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="33" class="rt">Counter</span><span class="pn">,</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="34" class="vt">int</span><span class="pn">&gt;</span><span class="pn">(</span><span class="pn">)</span> <span class="k">with</span>
+            <span class="k">member</span> <span class="id">__</span><span class="pn">.</span><span class="fn">Run</span> <span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="35" class="fn">m</span> <span class="o">=</span> <span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="36" class="fn">m</span> <span class="o">+</span> <span class="n">1</span>
+            <span class="k">member</span> <span data-fsdocs-tip="fs17" data-fsdocs-tip-unique="37" class="id">__</span><span class="pn">.</span><span data-fsdocs-tip="fs18" data-fsdocs-tip-unique="38" class="fn">Check</span> <span class="pn">(</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="39" class="fn">c</span><span class="pn">,</span><span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="40" class="fn">m</span><span class="pn">)</span> <span class="o">=</span> 
+                <span class="k">let</span> <span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="41" class="fn">res</span> <span class="o">=</span> <span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="42" class="fn">c</span><span class="pn">.</span><span data-fsdocs-tip="fs21" data-fsdocs-tip-unique="43" class="id">Inc</span><span class="pn">(</span><span class="pn">)</span> 
+                <span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="44" class="fn">m</span> <span class="o">=</span> <span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="45" class="fn">res</span> 
+                <span class="o">|&gt;</span> <span data-fsdocs-tip="fs22" data-fsdocs-tip-unique="46" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs23" data-fsdocs-tip-unique="47" class="id">label</span> <span class="pn">(</span><span data-fsdocs-tip="fs12" data-fsdocs-tip-unique="48" class="fn">sprintf</span> <span class="s">&quot;Inc: model = </span><span class="pf">%i</span><span class="s">, actual = </span><span class="pf">%i</span><span class="s">&quot;</span> <span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="49" class="fn">m</span> <span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="50" class="fn">res</span><span class="pn">)</span>
+            <span class="k">override</span> <span data-fsdocs-tip="fs17" data-fsdocs-tip-unique="51" class="id">__</span><span class="pn">.</span><span data-fsdocs-tip="fs24" data-fsdocs-tip-unique="52" class="fn">ToString</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span class="s">&quot;inc&quot;</span><span class="pn">}</span>
+    <span class="k">let</span> <span data-fsdocs-tip="fs25" data-fsdocs-tip-unique="53" class="fn">dec</span> <span class="o">=</span> 
+        <span class="pn">{</span> <span class="k">new</span> <span data-fsdocs-tip="fs15" data-fsdocs-tip-unique="54" class="rt">Operation</span><span class="pn">&lt;</span><span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="55" class="rt">Counter</span><span class="pn">,</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="56" class="vt">int</span><span class="pn">&gt;</span><span class="pn">(</span><span class="pn">)</span> <span class="k">with</span>
+            <span class="k">member</span> <span class="id">__</span><span class="pn">.</span><span class="fn">Run</span> <span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="57" class="fn">m</span> <span class="o">=</span> <span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="58" class="fn">m</span> <span class="o">-</span> <span class="n">1</span>
+            <span class="k">override</span> <span data-fsdocs-tip="fs17" data-fsdocs-tip-unique="59" class="id">__</span><span class="pn">.</span><span data-fsdocs-tip="fs26" data-fsdocs-tip-unique="60" class="fn">Pre</span> <span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="61" class="fn">m</span> <span class="o">=</span> 
+                <span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="62" class="fn">m</span> <span class="o">&gt;</span> <span class="n">0</span>
+            <span class="k">member</span> <span data-fsdocs-tip="fs17" data-fsdocs-tip-unique="63" class="id">__</span><span class="pn">.</span><span data-fsdocs-tip="fs18" data-fsdocs-tip-unique="64" class="fn">Check</span> <span class="pn">(</span><span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="65" class="fn">c</span><span class="pn">,</span><span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="66" class="fn">m</span><span class="pn">)</span> <span class="o">=</span> 
+                <span class="k">let</span> <span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="67" class="fn">res</span> <span class="o">=</span> <span data-fsdocs-tip="fs19" data-fsdocs-tip-unique="68" class="fn">c</span><span class="pn">.</span><span data-fsdocs-tip="fs27" data-fsdocs-tip-unique="69" class="id">Dec</span><span class="pn">(</span><span class="pn">)</span>
+                <span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="70" class="fn">m</span> <span class="o">=</span> <span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="71" class="fn">res</span> 
+                <span class="o">|&gt;</span> <span data-fsdocs-tip="fs22" data-fsdocs-tip-unique="72" class="m">Prop</span><span class="pn">.</span><span data-fsdocs-tip="fs23" data-fsdocs-tip-unique="73" class="id">label</span> <span class="pn">(</span><span data-fsdocs-tip="fs12" data-fsdocs-tip-unique="74" class="fn">sprintf</span> <span class="s">&quot;Dec: model = </span><span class="pf">%i</span><span class="s">, actual = </span><span class="pf">%i</span><span class="s">&quot;</span> <span data-fsdocs-tip="fs16" data-fsdocs-tip-unique="75" class="fn">m</span> <span data-fsdocs-tip="fs20" data-fsdocs-tip-unique="76" class="fn">res</span><span class="pn">)</span>
+            <span class="k">override</span> <span data-fsdocs-tip="fs17" data-fsdocs-tip-unique="77" class="id">__</span><span class="pn">.</span><span data-fsdocs-tip="fs24" data-fsdocs-tip-unique="78" class="fn">ToString</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span class="s">&quot;dec&quot;</span><span class="pn">}</span>
+    <span class="k">let</span> <span data-fsdocs-tip="fs28" data-fsdocs-tip-unique="79" class="fn">create</span> <span data-fsdocs-tip="fs29" data-fsdocs-tip-unique="80" class="fn">initialValue</span> <span class="o">=</span> 
+        <span class="pn">{</span> <span class="k">new</span> <span data-fsdocs-tip="fs30" data-fsdocs-tip-unique="81" class="rt">Setup</span><span class="pn">&lt;</span><span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="82" class="rt">Counter</span><span class="pn">,</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="83" class="vt">int</span><span class="pn">&gt;</span><span class="pn">(</span><span class="pn">)</span> <span class="k">with</span>
+            <span class="k">member</span> <span class="id">__</span><span class="pn">.</span><span class="fn">Actual</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span class="k">new</span> <span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="84" class="rt">Counter</span><span class="pn">(</span><span data-fsdocs-tip="fs29" data-fsdocs-tip-unique="85" class="fn">initialValue</span><span class="pn">)</span>
+            <span class="k">member</span> <span data-fsdocs-tip="fs31" data-fsdocs-tip-unique="86" class="id">__</span><span class="pn">.</span><span data-fsdocs-tip="fs32" data-fsdocs-tip-unique="87" class="fn">Model</span><span class="pn">(</span><span class="pn">)</span> <span class="o">=</span> <span data-fsdocs-tip="fs29" data-fsdocs-tip-unique="88" class="fn">initialValue</span> <span class="pn">}</span>
+    <span class="pn">{</span> <span class="k">new</span> <span data-fsdocs-tip="fs33" data-fsdocs-tip-unique="89" class="rt">Machine</span><span class="pn">&lt;</span><span data-fsdocs-tip="fs5" data-fsdocs-tip-unique="90" class="rt">Counter</span><span class="pn">,</span><span data-fsdocs-tip="fs7" data-fsdocs-tip-unique="91" class="vt">int</span><span class="pn">&gt;</span><span class="pn">(</span><span class="pn">)</span> <span class="k">with</span>
+        <span class="k">member</span> <span class="id">__</span><span class="pn">.</span><span class="fn">Setup</span> <span class="o">=</span> <span data-fsdocs-tip="fs34" data-fsdocs-tip-unique="92" class="m">Gen</span><span class="pn">.</span><span data-fsdocs-tip="fs35" data-fsdocs-tip-unique="93" class="id">choose</span> <span class="pn">(</span><span class="n">0</span><span class="pn">,</span><span class="n">3</span><span class="pn">)</span> <span class="o">|&gt;</span> <span data-fsdocs-tip="fs34" data-fsdocs-tip-unique="94" class="m">Gen</span><span class="pn">.</span><span data-fsdocs-tip="fs36" data-fsdocs-tip-unique="95" class="id">map</span> <span data-fsdocs-tip="fs28" data-fsdocs-tip-unique="96" class="fn">create</span> <span class="o">|&gt;</span> <span data-fsdocs-tip="fs37" data-fsdocs-tip-unique="97" class="m">Arb</span><span class="pn">.</span><span data-fsdocs-tip="fs38" data-fsdocs-tip-unique="98" class="id">fromGen</span>
+        <span class="k">member</span> <span data-fsdocs-tip="fs39" data-fsdocs-tip-unique="99" class="id">__</span><span class="pn">.</span><span data-fsdocs-tip="fs40" data-fsdocs-tip-unique="100" class="fn">Next</span> <span class="id">_</span> <span class="o">=</span> <span data-fsdocs-tip="fs34" data-fsdocs-tip-unique="101" class="m">Gen</span><span class="pn">.</span><span data-fsdocs-tip="fs41" data-fsdocs-tip-unique="102" class="id">elements</span> <span class="pn">[</span> <span data-fsdocs-tip="fs14" data-fsdocs-tip-unique="103" class="fn">inc</span><span class="pn">;</span> <span data-fsdocs-tip="fs25" data-fsdocs-tip-unique="104" class="fn">dec</span> <span class="pn">]</span> <span class="pn">}</span>
+</code></pre>
+<p>In C#:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="csharp"><span class="k">private</span> <span class="k">class</span> CounterSpec
+{
+    <span class="k">internal</span> <span class="k">class</span> Inc <span class="o">:</span> Operation&lt;Counter, <span class="k">int</span>&gt;
+    {
+        <span class="k">public</span> <span class="k">override</span> <span class="k">bool</span> Pre(<span class="k">int</span> m)
+        {
+            <span class="k">return</span> m <span class="o">&gt;</span> <span class="n">0</span>;
+        }
+
+        <span class="k">public</span> <span class="k">override</span> <span class="k">int</span> Run(<span class="k">int</span> m)
+        {
+            <span class="k">return</span> m <span class="o">+</span> <span class="n">1</span>;
+        }
+
+        <span class="k">public</span> <span class="k">override</span> Property Check(Counter c, <span class="k">int</span> m)
+        {
+            <span class="k">return</span> (m <span class="o">=</span><span class="o">=</span> c.N).Label($<span class="s">"Inc: model = {m}, actual = {c.N}"</span>);
+        }
+
+        <span class="k">public</span> <span class="k">override</span> <span class="k">string</span> ToString() <span class="o">=</span><span class="o">&gt;</span> <span class="s">"inc"</span>;
+    }
+
+    <span class="k">internal</span> <span class="k">class</span> Dec <span class="o">:</span> Operation&lt;Counter, <span class="k">int</span>&gt;
+    {
+        <span class="k">public</span> <span class="k">override</span> <span class="k">bool</span> Pre(<span class="k">int</span> m)
+        {
+            <span class="k">return</span> m <span class="o">&gt;</span> <span class="n">0</span>;
+        }
+
+        <span class="k">public</span> <span class="k">override</span> <span class="k">int</span> Run(<span class="k">int</span> m)
+        {
+            <span class="k">return</span> m <span class="o">-</span> <span class="n">1</span>;
+        }
+
+
+        <span class="k">public</span> <span class="k">override</span> Property Check(Counter c, <span class="k">int</span> m)
+        {
+            c.Dec();
+            <span class="k">return</span> (m <span class="o">=</span><span class="o">=</span> c.N).Label($<span class="s">"Dec: model = {m}, actual = {c.N}"</span>);
+        }
+
+        <span class="k">public</span> <span class="k">override</span> <span class="k">string</span> ToString() <span class="o">=</span><span class="o">&gt;</span> <span class="s">"dec"</span>;
+    }
+
+    <span class="k">internal</span> <span class="k">class</span> CounterSetup <span class="o">:</span> Setup&lt;Counter, <span class="k">int</span>&gt;
+    {
+        <span class="k">private</span> <span class="k">readonly</span> <span class="k">int</span> _initialValue;
+
+        <span class="k">internal</span> CounterSetup(<span class="k">int</span> initialValue)
+        {
+            _initialValue <span class="o">=</span> initialValue;
+        }
+
+        <span class="k">public</span> <span class="k">override</span> Counter Actual() <span class="o">=</span><span class="o">&gt;</span> <span class="k">new</span>(_initialValue);
+
+        <span class="k">public</span> <span class="k">override</span> <span class="k">int</span> Model() <span class="o">=</span><span class="o">&gt;</span> _initialValue;
+    }
+}
+
+<span class="k">public</span> <span class="k">class</span> Specification <span class="o">:</span> Machine&lt;Counter, <span class="k">int</span>&gt;
+{
+    <span class="k">public</span> Specification(<span class="k">int</span> maxNumberOfCommands) <span class="o">:</span> <span class="k">base</span>(maxNumberOfCommands) { }
+
+    <span class="k">public</span> <span class="k">override</span> Arbitrary&lt;Setup&lt;Counter, <span class="k">int</span>&gt;<span class="o">&gt;</span> Setup <span class="o">=</span><span class="o">&gt;</span>
+        Arb.From(Gen.Choose(<span class="n">0</span>, <span class="n">3</span>)
+            .Select&lt;<span class="k">int</span>, Setup&lt;Counter, <span class="k">int</span>&gt;<span class="o">&gt;</span>(i <span class="o">=</span><span class="o">&gt;</span> <span class="k">new</span> CounterSpec.CounterSetup(i)));
+
+    <span class="k">public</span> <span class="k">override</span> TearDown&lt;Counter&gt; TearDown <span class="o">=</span><span class="o">&gt;</span> <span class="k">new</span> DisposeCall&lt;Counter&gt;();
+
+    <span class="k">public</span> <span class="k">override</span> Gen&lt;Operation&lt;Counter, <span class="k">int</span>&gt;<span class="o">&gt;</span> Next(<span class="k">int</span> _) <span class="o">=</span><span class="o">&gt;</span>
+        Gen.Elements(<span class="k">new</span> Operation&lt;Counter, <span class="k">int</span>&gt;[]
+        {
+            <span class="k">new</span> CounterSpec.Inc(), 
+            <span class="k">new</span> CounterSpec.Dec()
+        });
+
+    <span class="k">public</span> <span class="k">override</span> IEnumerable&lt;FSharpList&lt;Operation&lt;Counter, <span class="k">int</span>&gt;<span class="o">&gt;</span><span class="o">&gt;</span> ShrinkOperations(FSharpList&lt;Operation&lt;Counter, <span class="k">int</span>&gt;<span class="o">&gt;</span> operation) <span class="o">=</span><span class="o">&gt;</span> 
+        <span class="k">base</span>.ShrinkOperations(operation);
+}</code></pre></td></tr></table>
+<p>Let's break this down a bit. A specification is put together as a subtype of the abstract class <code>Machine&lt;'TypeUnderTest,'ModelType&gt;</code>.
+What you're actually defining is a state machine which can simultaneously apply operations, or state transitions, to the actual system
+under test (in this case, a simple object) and a model of the system under test.</p>
+<p>The methods you override on <code>Machine</code> are <code>Setup</code>, <code>Next</code>, and optionally <code>TearDown</code>.</p>
+<p><code>Machine.Setup</code> is a property that returns an <code>Arbitrary</code> instance that generates (and optionally shrinks) a <code>Setup&lt;'TypeUnderTest, 'ModelType&gt;</code> object. This in turn has two methods
+to override: <code>Actual()</code> which should return a new, fresh instance of the system under test every time it is called, and <code>Model()</code> which should return the corresponding
+instance of the model object each time it is called. In the example, there is only one subclass of <code>Setup&lt;'Counter,int&gt;</code> (in more complex cases, there might be more). Our
+<code>Setup</code> instance takes as argument the initial counter value, and returns a fresh <code>Counter</code> as the SUT. The model is in this case simply the initial value.</p>
+<p><code>Machine.Next</code> is a method that takes a model and generates the next operations that are possible given the current model state. Each operation
+is represented by an <code>Operation</code> subclass.</p>
+<p><code>Operation</code> has three methods to override: <code>Run</code>, <code>Check</code> and optionally <code>Pre</code>. <code>Pre</code> takes a model and returns true
+if and only if this operation can execute on a model in that state - in other words it checks if the precondition for the operation is satisfied.
+<code>Machine.Next</code> can also return a reduced set of operations based on the model, which is more efficient, but the preconditions are checked regardless for each
+operation <code>Next</code> generates.</p>
+<p><code>Run</code> returns the model that is the result of applying this operation to the given model. <code>Check</code> then takes the new model (as returned from <code>Run</code>),
+applies the operation to the actual system under test, and checks whether the result of the SUT matches the model. The return type of <code>Check</code> is Property so
+you can use the usual FsCheck <code>Prop</code> methods to implement this method.</p>
+<p>In the example above there are only two operations that we're checking: <code>Inc</code> and <code>Dec</code>. The <code>Run</code> methods respectively increase and decrease the model. <code>Check</code>
+calls <code>Inc()</code> or <code>Dec()</code> on the <code>Counter</code> instance, and checks that after that the model counter is equal to the real <code>Counter</code>. <code>Dec</code> in addition has a (quite
+silly, for demonstration purposes) precondition that the value should be strictly greater than 0 - if we run this machine our <code>Counter</code> throws if we call <code>Dec</code>
+so when we run this specification we can check that FsCheck does the right thing here (testing the test library, very meta...)</p>
+<p>We also override <code>ToString</code> in each <code>Operation</code> so that counter-examples can be printed.</p>
+<p>A specification can be checked as follows:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span data-fsdocs-tip="fs42" data-fsdocs-tip-unique="105" class="rt">Check</span><span class="pn">.</span><span data-fsdocs-tip="fs43" data-fsdocs-tip-unique="106" class="id">Quick</span> <span class="pn">(</span><span data-fsdocs-tip="fs44" data-fsdocs-tip-unique="107" class="m">StateMachine</span><span class="pn">.</span><span data-fsdocs-tip="fs45" data-fsdocs-tip-unique="108" class="id">toProperty</span> <span data-fsdocs-tip="fs13" data-fsdocs-tip-unique="109" class="id">spec</span><span class="pn">)</span>
+</code></pre>
+<table class="pre"><tr><td><pre><code>Falsifiable, after 7 tests (2 shrinks) (17706996516827110184,3191068403699912417). 
+Last step was invoked with size of 8 and seed of (15501031102923974408,3043848505082987211).
+Replay directly at failing step with (15501031102923974408,3043848505082987211,8).
+Label of failing property: Inc: model = 5, actual = 6
+Original:
+(0, Setup Counter)
+inc -&gt; 1
+dec -&gt; 0
+inc -&gt; 1
+inc -&gt; 2
+inc -&gt; 3
+inc -&gt; 4
+inc -&gt; 5
+inc -&gt; 6
+
+Shrunk:
+(0, Setup Counter)
+inc -&gt; 1
+inc -&gt; 2
+inc -&gt; 3
+inc -&gt; 4
+inc -&gt; 5
+
+with exception:
+System.Exception: Expected true, got false.</code></pre></td></tr></table>
+<p>Notice that not only has FsCheck found our 'bug', it has also produced the minimal sequence of operations that leads to it.</p>
+<p>But what has actually happened? Using the generators from the <code>Machine</code> methods, FsCheck tries to generate a random sequence of operations, for example:</p>
+<pre class="fssnip highlighted"><code lang="fsharp"><span class="pn">{</span><span class="id">Setup</span> <span class="o">=</span> <span class="pn">(</span><span class="n">0</span><span class="pn">,</span> <span class="id">Setup</span> <span class="id">Counter</span><span class="pn">)</span><span class="pn">;</span>
+ <span class="id">Operations</span> <span class="o">=</span>
+  <span class="pn">[</span><span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">1</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">dec</span><span class="pn">,</span> <span class="n">0</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">1</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">2</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">3</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">4</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">inc</span><span class="pn">,</span> <span class="n">5</span><span class="pn">)</span><span class="pn">;</span>
+   <span class="pn">(</span><span class="id">dec</span><span class="pn">,</span> <span class="n">4</span><span class="pn">)</span><span class="pn">;</span> <span class="pn">(</span><span class="id">dec</span><span class="pn">,</span> <span class="n">3</span><span class="pn">)</span><span class="pn">]</span><span class="pn">;</span>
+ <span class="id">TearDown</span> <span class="o">=</span> <span class="id">TearDown</span> <span class="id">Counter</span><span class="pn">;</span><span class="pn">}</span>
+</code></pre>
+<p>You can read this as a trace of the operations: the counter started off in state <code>0</code>, then using operation <code>inc</code> when to state <code>1</code>, then using operation <code>dec</code>
+went to state <code>0</code> and so on.</p>
+<p>This sequence is first generated using the model only, i.e. no operations are actually applied to any <code>Counter</code> objects. After generating a full trace, the operations
+are applied to the system under test, using the <code>Operation.Check</code> methods of the various <code>Operation</code> objects.</p>
+<p>If a failing test is found, FsCheck will attempt to remove operations from the trace, as long as the test still fails. So in the example above,
+although the original sequence contains a few superfluous operations, FsCheck normally finds a shorter if not the shortest sequence that leads to the failure.</p>
+<p>Final tip: make the model class immutable. This makes it easier to reason about the model and the operations on it, and also makes it easier to write the <code>Check</code> methods.
+If the model is mutable, you MUST make sure that the result of <code>Run</code> is a new instance of the model that you don't modify later on. FsCheck captures these results
+during the test run and during shrinking, and relies on them not changing.</p>
+
+        <div popover class="fsdocs-tip" id="fs1">namespace FsCheck</div>
+<div popover class="fsdocs-tip" id="fs2">namespace FsCheck.FSharp</div>
+<div popover class="fsdocs-tip" id="fs3">namespace FsCheck.Experimental</div>
+<div popover class="fsdocs-tip" id="fs4">namespace System</div>
+<div popover class="fsdocs-tip" id="fs5">Multiple items<br />type Counter =
+  new: ?initial: int -&gt; Counter
+  member Dec: unit -&gt; int
+  member Inc: unit -&gt; int
+  member Reset: unit -&gt; unit
+  override ToString: unit -&gt; string<br /><br />--------------------<br />new: ?initial: int -&gt; Counter</div>
+<div popover class="fsdocs-tip" id="fs6">val initial: int option</div>
+<div popover class="fsdocs-tip" id="fs7">Multiple items<br />val int: value: &#39;T -&gt; int (requires member op_Explicit)<br /><br />--------------------<br />type int = int32<br /><br />--------------------<br />type int&lt;&#39;Measure&gt; =
+  int</div>
+<div popover class="fsdocs-tip" id="fs8">val mutable n: int</div>
+<div popover class="fsdocs-tip" id="fs9">val defaultArg: arg: &#39;T option -&gt; defaultValue: &#39;T -&gt; &#39;T</div>
+<div popover class="fsdocs-tip" id="fs10">val __: Counter</div>
+<div popover class="fsdocs-tip" id="fs11">val failwithf: format: Printf.StringFormat&lt;&#39;T,&#39;Result&gt; -&gt; &#39;T</div>
+<div popover class="fsdocs-tip" id="fs12">val sprintf: format: Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T</div>
+<div popover class="fsdocs-tip" id="fs13">val spec: Machine&lt;Counter,int&gt;</div>
+<div popover class="fsdocs-tip" id="fs14">val inc: Operation&lt;Counter,int&gt;</div>
+<div popover class="fsdocs-tip" id="fs15">Multiple items<br />type Operation&lt;&#39;Actual,&#39;Model&gt; =
+  interface IOperation
+  new: unit -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;
+  abstract Check: &#39;Actual * &#39;Model -&gt; Property
+  abstract Pre: &#39;Model -&gt; bool + 1 overload
+  abstract Run: &#39;Model -&gt; &#39;Model<br /><em>&lt;summary&gt;
+An operation describes pre and post conditions and the model for a single operation under test.
+The post-conditions are the invariants that will be checked; when these do not hold the test fails.
+&lt;/summary&gt;</em><br /><br />--------------------<br />new: unit -&gt; Operation&lt;&#39;Actual,&#39;Model&gt;</div>
+<div popover class="fsdocs-tip" id="fs16">val m: int</div>
+<div popover class="fsdocs-tip" id="fs17">val __: Operation&lt;Counter,int&gt;</div>
+<div popover class="fsdocs-tip" id="fs18">abstract Operation.Check: &#39;Actual * &#39;Model -&gt; Property</div>
+<div popover class="fsdocs-tip" id="fs19">val c: Counter</div>
+<div popover class="fsdocs-tip" id="fs20">val res: int</div>
+<div popover class="fsdocs-tip" id="fs21">member Counter.Inc: unit -&gt; int</div>
+<div popover class="fsdocs-tip" id="fs22">module Prop
+
+from FsCheck.FSharp<br /><em>&lt;summary&gt;
+Combinators to build properties, which define the property to be tested, with some
+convenience methods to investigate the generated arguments and any found counter-examples.
+&lt;/summary&gt;</em></div>
+<div popover class="fsdocs-tip" id="fs23">val label: l: string -&gt; (&#39;Testable -&gt; Property)<br /><em>&lt;summary&gt;
+Add the given label to the property. The labels of a failing sub-property are displayed when it fails.
+&lt;/summary&gt;</em></div>
+<div popover class="fsdocs-tip" id="fs24">Object.ToString() : string</div>
+<div popover class="fsdocs-tip" id="fs25">val dec: Operation&lt;Counter,int&gt;</div>
+<div popover class="fsdocs-tip" id="fs26">override Operation.Pre: &#39;Model -&gt; bool</div>
+<div popover class="fsdocs-tip" id="fs27">member Counter.Dec: unit -&gt; int</div>
+<div popover class="fsdocs-tip" id="fs28">val create: initialValue: int -&gt; Setup&lt;Counter,int&gt;</div>
+<div popover class="fsdocs-tip" id="fs29">val initialValue: int</div>
+<div popover class="fsdocs-tip" id="fs30">Multiple items<br />type Setup&lt;&#39;Actual,&#39;Model&gt; =
+  new: unit -&gt; Setup&lt;&#39;Actual,&#39;Model&gt;
+  abstract Actual: unit -&gt; &#39;Actual
+  abstract Model: unit -&gt; &#39;Model
+  override ToString: unit -&gt; string<br /><br />--------------------<br />new: unit -&gt; Setup&lt;&#39;Actual,&#39;Model&gt;</div>
+<div popover class="fsdocs-tip" id="fs31">val __: Setup&lt;Counter,int&gt;</div>
+<div popover class="fsdocs-tip" id="fs32">abstract Setup.Model: unit -&gt; &#39;Model</div>
+<div popover class="fsdocs-tip" id="fs33">Multiple items<br />type Machine&lt;&#39;Actual,&#39;Model&gt; =
+  new: maxNumberOfCommands: int -&gt; Machine&lt;&#39;Actual,&#39;Model&gt; + 1 overload
+  abstract Next: &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;
+  abstract ShrinkOperations: Operation&lt;&#39;Actual,&#39;Model&gt; list -&gt; Operation&lt;&#39;Actual,&#39;Model&gt; list seq + 1 overload
+  member MaxNumberOfCommands: int
+  abstract Setup: Arbitrary&lt;Setup&lt;&#39;Actual,&#39;Model&gt;&gt;
+  override TearDown: TearDown&lt;&#39;Actual&gt;
+  abstract TearDown: TearDown&lt;&#39;Actual&gt;<br /><em>&lt;summary&gt;
+Defines the initial state for actual and model object, and allows to define the generator to use
+for the next state, based on the model.
+&lt;/summary&gt;</em><br /><br />--------------------<br />new: unit -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;<br />new: maxNumberOfCommands: int -&gt; Machine&lt;&#39;Actual,&#39;Model&gt;</div>
+<div popover class="fsdocs-tip" id="fs34">Multiple items<br />module Gen
+
+from FsCheck.FSharp<br /><br />--------------------<br />type Gen&lt;&#39;T&gt; =
+  private | Gen of (int -&gt; Rnd -&gt; struct (&#39;T * Rnd))
+  interface IGen<br /><em>&lt;summary&gt;
+ Generator of a random value, based on a size parameter and a randomly generated int.
+&lt;/summary&gt;</em></div>
+<div popover class="fsdocs-tip" id="fs35">val choose: l: int * h: int -&gt; Gen&lt;int&gt;<br /><em>&lt;summary&gt;
+ Generates ints between l and h, inclusive.
+&lt;/summary&gt;</em></div>
+<div popover class="fsdocs-tip" id="fs36">val map: f: (&#39;T -&gt; &#39;U) -&gt; Gen&lt;&#39;T&gt; -&gt; Gen&lt;&#39;U&gt;<br /><em>&lt;summary&gt;
+ Create a new generator by applying f to each value in the given generator.
+&lt;/summary&gt;</em></div>
+<div popover class="fsdocs-tip" id="fs37">module Arb
+
+from FsCheck.FSharp</div>
+<div popover class="fsdocs-tip" id="fs38">val fromGen: gen: Gen&lt;&#39;Value&gt; -&gt; Arbitrary&lt;&#39;Value&gt;<br /><em>&lt;summary&gt;
+ Construct an Arbitrary instance from a generator.
+ Shrink is not supported for this type.
+&lt;/summary&gt;</em></div>
+<div popover class="fsdocs-tip" id="fs39">val __: Machine&lt;Counter,int&gt;</div>
+<div popover class="fsdocs-tip" id="fs40">abstract Machine.Next: &#39;Model -&gt; Gen&lt;Operation&lt;&#39;Actual,&#39;Model&gt;&gt;</div>
+<div popover class="fsdocs-tip" id="fs41">val elements: xs: &#39;T seq -&gt; Gen&lt;&#39;T&gt;<br /><em>&lt;summary&gt;
+Build a generator that randomly generates one of the values in the given non-empty, finite seq.
+&lt;/summary&gt;</em></div>
+<div popover class="fsdocs-tip" id="fs42">type Check =
+  static member All: config: Config * test: Type -&gt; unit + 1 overload
+  static member Method: config: Config * methodInfo: MethodInfo * ?target: obj -&gt; unit
+  static member One: config: Config * property: &#39;Testable -&gt; unit + 1 overload
+  static member Quick: property: &#39;Testable -&gt; unit + 1 overload
+  static member QuickAll: test: Type -&gt; unit + 1 overload
+  static member QuickThrowOnFailure: property: &#39;Testable -&gt; unit
+  static member QuickThrowOnFailureAll: test: Type -&gt; unit + 1 overload
+  static member Verbose: property: &#39;Testable -&gt; unit + 1 overload
+  static member VerboseAll: test: Type -&gt; unit + 1 overload
+  static member VerboseThrowOnFailure: property: &#39;Testable -&gt; unit
+  ...</div>
+<div popover class="fsdocs-tip" id="fs43">static member Check.Quick: property: &#39;Testable -&gt; unit<br />static member Check.Quick: name: string * property: &#39;Testable -&gt; unit</div>
+<div popover class="fsdocs-tip" id="fs44">module StateMachine
+
+from FsCheck.Experimental</div>
+<div popover class="fsdocs-tip" id="fs45">val toProperty: spec: Machine&lt;&#39;Actual,&#39;Model&gt; -&gt; Property<br /><em>&lt;summary&gt;
+Turn a machine specification into a property.
+&lt;/summary&gt;</em></div>
+
+    </div>
+</main>
+<aside id="fsdocs-page-menu">
+    <p id="on-this-page">On this page</p>
+    <ul>
+  <li class="level-1">
+    <a href="#Model-based-Testing-Experimental">
+      Model-based Testing (Experimental)
+    </a>
+  </li>
+</ul>
+</aside>
+<dialog>
+    <input type="search" placeholder="Search docs" />
+    <div class="results">
+        <ul></ul>
+        <p class="empty">Type something to start searching.</p>
+    </div>
+</dialog>
+<script type="module" src="https://fscheck.github.io/FsCheck/content/fsdocs-tips.js"></script>
+<script type="module" src="https://fscheck.github.io/FsCheck/content/fsdocs-theme-toggle.js"></script>
+<script type="module" src="https://fscheck.github.io/FsCheck/content/fsdocs-details-toggle.js"></script>
+<script type="module" src="https://fscheck.github.io/FsCheck/content/fsdocs-theme.js"></script>
+<script type="module" src="https://fscheck.github.io/FsCheck/content/fsdocs-search.js"></script>
+<script type="module" src="https://fscheck.github.io/FsCheck/content/fsdocs-copy-button.js"></script>
+
+</body>
+</html>

@@ -1,6 +1,6 @@
 ﻿import {LitElement, html, css} from 'https://cdn.jsdelivr.net/gh/lit/dist@3/core/lit-core.min.js';
 
-const prefersDark = window.matchMedia("@media (prefers-color-scheme: dark)").matches;
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 let currentTheme = localStorage.getItem('theme') ?? (prefersDark ? 'dark' : 'light');
 
 export class ThemeToggle extends LitElement {
