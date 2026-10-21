@@ -37,7 +37,7 @@ Documentation
  * [Running Tests](RunningTests.html) explains various ways to run FsCheck tests and how to
    integrate with unit testing frameworks.
 
- * [Model based testing](StatefulTestingNew.html), for testing stateful systems and objects. Since this is in the Experimental namespace, semantic versioning promises do not apply to this part of the API.
+ * [Model based testing](StatefulTesting.html), for testing stateful systems and objects. Since this is in the Experimental namespace, semantic versioning promises do not apply to this part of the API.
 
  * [Tips and tricks](TipsAndTricks.html) 
 
