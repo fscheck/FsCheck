@@ -1,4 +1,4 @@
-## 3.6.0 - To be released
+## 3.6.0 - 21 October 2026
 
 * Additionally target netstandard2.1 and net8.0.
 
